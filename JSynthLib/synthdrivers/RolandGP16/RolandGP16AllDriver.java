@@ -19,11 +19,13 @@ public class RolandGP16AllDriver extends BankDriver {
     	new SysexHandler("F0 41 @@ 2A 11 0F *patchnumber* 00 00 00 75 *checksum* F7");
     /** Time to sleep when doing sysex data transfers. */
     private static final int sleepTime = 100;
-
+    /** Single Driver for GP16 */
+    private RolandGP16SingleDriver singleDriver;
 	
 /** The constructor. */    
-    public RolandGP16AllDriver() {
+    public RolandGP16AllDriver(RolandGP16SingleDriver singleDriver) {
 	super("All", "Mikael Kurula", NS, 2);
+	this.singleDriver = singleDriver;
 
 	sysexID="F041**2A";
 	deviceIDoffset = 2;
@@ -44,7 +46,7 @@ public class RolandGP16AllDriver extends BankDriver {
     }
 
 /** Get group names in the memory patch for memory edit view. */
-   public String getPatchName(IPatch p,int patchNum) {
+   public String getPatchName(Patch p,int patchNum) {
      int nameStart=getPatchStart(patchNum);
      nameStart+=108; //offset of name in patch data
          try {
@@ -54,14 +56,14 @@ public class RolandGP16AllDriver extends BankDriver {
   }
     
 /** Calculate the checksum for all patches in the memory. */
-  public void calculateChecksum (IPatch p)
+  public void calculateChecksum (Patch p)
    {
      for (int i=0;i<64*NS;i++)
       calculateChecksum (p,i*127+5,i*127+124,i*127+125);
    }                                     
 
 /** Insert a given group into a given position of a given memory patch. */
-  public void putPatch(IPatch bank,IPatch p,int patchNum)
+  public void putPatch(Patch bank,Patch p,int patchNum)
    { 
    if (!canHoldPatch(p))
        {JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); return;}
@@ -71,14 +73,13 @@ public class RolandGP16AllDriver extends BankDriver {
    }
    
 /** Extract a given group from a given memory patch. */
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
   {
      byte [] sysex=new byte[singleSize];
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,0,singleSize);
   try{
-	    // pass Single Driver !!!FIXIT!!!
-     IPatch p = new Patch(sysex,getDevice());
-     p.getDriver().calculateChecksum(p);   
+     Patch p = new Patch(sysex,getDevice());
+     singleDriver.calcChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in GP16 Bank Driver",e);return null;}
    }
@@ -89,10 +90,10 @@ public class RolandGP16AllDriver extends BankDriver {
 	    requestSingleGroupDump(0,i);}    
 
 /** Send the memory patch back as it was received. */
-    public void storePatch (IPatch group, int groupNum,int bankNum)
+    public void storePatch (Patch group, int groupNum,int bankNum)
     { 
  	for (int i=0;i<NS;i++){
-		IPatch p=getPatch(group,i);
+		Patch p=getPatch(group,i);
 		storeSingleGroup(p,i,0);}
     }
 
@@ -112,7 +113,7 @@ public class RolandGP16AllDriver extends BankDriver {
     }
     
 /** Worker for storePatch. */
-    public void storeSingleGroup (IPatch p, int groupNum,int bankNum)
+    public void storeSingleGroup (Patch p, int groupNum,int bankNum)
     {   
     	byte[] gsysex = ((Patch)p).sysex;
 	byte[] ggsysex = new byte[127];
@@ -126,27 +127,27 @@ public class RolandGP16AllDriver extends BankDriver {
     }
 
 /** Create a new all memory patch, that conforms to the format of the GP-16. */
- public IPatch createNewPatch()
+ public Patch createNewPatch()
  {
      	 byte [] sysex = new byte[NS * singleSize];
 	 
 	 RolandGP16SingleDriver patchCreator = new RolandGP16SingleDriver();
-	 IPatch blankPatch = patchCreator.createNewPatch();
+	 Patch blankPatch = patchCreator.createNewPatch();
 	 for (int i=0;i<NS*64;i++)
 	     System.arraycopy(((Patch)blankPatch).sysex,0,sysex,getPatchStart(i)/64,singleSize/64);
-	 IPatch p = new Patch(sysex, this);
+	 Patch p = new Patch(sysex, this);
  	 calculateChecksum(p);	 
 	 return p;
  }
   
 /** The name string of the GP-16 is 16 characters long. */
-  public void deletePatch (IPatch p, int patchNum)
+  public void deletePatch (Patch p, int patchNum)
    {
      setPatchName(p,patchNum,"                ");
    }
 
 /** Smarter all memory naming, name the group after the first patch in it. */
-  public String getPatchName(IPatch p) {return getPatchName(p,0);}
+  public String getPatchName(Patch p) {return getPatchName(p,0);}
 
 }
 

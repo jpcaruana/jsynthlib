@@ -20,10 +20,13 @@ public class RolandGP16BankDriver extends BankDriver {
     	new SysexHandler("F0 41 @@ 2A 11 0B *patchnumber* 00 00 00 75 *checksum* F7");
     /** Time to sleep when doing sysex data transfers. */
     private static final int sleepTime = 100;
+    /** Single Driver for GP16 */
+    private RolandGP16SingleDriver singleDriver;
 
 /** The constructor. */    
-    public RolandGP16BankDriver() {
+    public RolandGP16BankDriver(RolandGP16SingleDriver singleDriver) {
 	super("Bank", "Mikael Kurula", NS, 2);
+	this.singleDriver = singleDriver;
 
 	sysexID="F041**2A";
 	deviceIDoffset = 2;
@@ -46,7 +49,7 @@ public class RolandGP16BankDriver extends BankDriver {
     }
 
 /** Get patch names in bank for bank edit view. */
-   public String getPatchName(IPatch p,int patchNum) {
+   public String getPatchName(Patch p,int patchNum) {
      int nameStart=getPatchStart(patchNum);
      nameStart+=108; //offset of name in patch data
          try {
@@ -56,7 +59,7 @@ public class RolandGP16BankDriver extends BankDriver {
   }
     
 /** Set patch names in bank for bank edit view. */
-  public void setPatchName(IPatch p,int patchNum, String name)
+  public void setPatchName(Patch p,int patchNum, String name)
   {
      patchNameSize=16;
      patchNameStart=getPatchStart(patchNum)+108;
@@ -72,14 +75,14 @@ public class RolandGP16BankDriver extends BankDriver {
      }
 
 /** Calculate the checksum for all patches in the bank. */
-  public void calculateChecksum (IPatch p)
+  public void calculateChecksum (Patch p)
    {
      for (int i=0;i<NS;i++)
       calculateChecksum (p,i*singleSize+5,i*singleSize+124,i*singleSize+125);
    }                                     
 
 /** Insert a given patch into a given position of a given bank. */
-  public void putPatch(IPatch bank,IPatch p,int patchNum)
+  public void putPatch(Patch bank,Patch p,int patchNum)
    { 
    if (!canHoldPatch(p))
        {JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); return;}
@@ -89,14 +92,13 @@ public class RolandGP16BankDriver extends BankDriver {
    }
    
 /** Extract a given patch from a given bank. */
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
   {
      byte [] sysex=new byte[singleSize];
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,0,singleSize);
   try{
-	    // pass Single Driver !!!FIXIT!!!
-     IPatch p = new Patch(sysex,getDevice());
-     p.getDriver().calculateChecksum(p);   
+     Patch p = new Patch(sysex,getDevice());
+     singleDriver.calcChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in GP16 Bank Driver",e);return null;}
    }
@@ -107,10 +109,10 @@ public class RolandGP16BankDriver extends BankDriver {
 	    requestSinglePatchDump(bankNum,i);}    
 
 /** Send the bank back as it was received. */
-    public void storePatch (IPatch bank, int bankNum,int patchNum)
+    public void storePatch (Patch bank, int bankNum,int patchNum)
     { 
  	for (int i=0;i<NS;i++){
-		IPatch p=getPatch(bank,i);
+		Patch p=getPatch(bank,i);
 		storeSinglePatch(p,bankNum,i);}
     }
 
@@ -127,7 +129,7 @@ public void requestSinglePatchDump(int bankNum, int patchNum){
     
 
 /** Worker for storePatch. */
-public void storeSinglePatch (IPatch p, int bankNum,int patchNum){   
+public void storeSinglePatch (Patch p, int bankNum,int patchNum){   
    ((Patch)p).sysex[5]=(byte)0x0B;
    ((Patch)p).sysex[6]=(byte)(bankNum*8+patchNum);
    ((Patch)p).sysex[7]=(byte)0x00;
@@ -136,27 +138,27 @@ public void storeSinglePatch (IPatch p, int bankNum,int patchNum){
   }
 
 /** Create a new bank, that conforms to the format of the GP-16. */
- public IPatch createNewPatch()
+ public Patch createNewPatch()
   {
      	 byte [] sysex = new byte[NS*singleSize];
 	 
 	 RolandGP16SingleDriver patchCreator = new RolandGP16SingleDriver();
-	 IPatch blankPatch = patchCreator.createNewPatch();
+	 Patch blankPatch = patchCreator.createNewPatch();
 	 for (int i=0;i<NS;i++)
 	     System.arraycopy(((Patch)blankPatch).sysex,0,sysex,getPatchStart(i),singleSize);
-	 IPatch p = new Patch(sysex, this);
+	 Patch p = new Patch(sysex, this);
  	 calculateChecksum(p);	 
 	 return p;
  }
   
 /** The name string of the GP-16 is 16 characters long. */
-  public void deletePatch (IPatch p, int patchNum)
+  public void deletePatch (Patch p, int patchNum)
    {
      setPatchName(p,patchNum,"                ");
    }
 
 /** Smarter bank naming, name the bank after the first patch in it. */
-  public String getPatchName(IPatch p) {return getPatchName(p,0);}
+  public String getPatchName(Patch p) {return getPatchName(p,0);}
 
 }
 

@@ -1,6 +1,5 @@
 package synthdrivers.RolandGP16;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -54,7 +53,7 @@ public class RolandGP16SingleDriver extends Driver {
     }
     
 /** Store patch in a specified location, the GP-16 way.*/
-    public void storePatch (IPatch p, int bankNum,int patchNum){   
+    public void storePatch (Patch p, int bankNum,int patchNum){   
    	((Patch)p).sysex[5]=(byte)0x09;
    	((Patch)p).sysex[6]=(byte)(bankNum*8+patchNum);
    	((Patch)p).sysex[7]=(byte)0x00;
@@ -63,7 +62,7 @@ public class RolandGP16SingleDriver extends Driver {
    }
 
 /** Send patch to the temporary edit memory of the GP-16. */
-    public void sendPatch (IPatch p){ 
+    public void sendPatch (Patch p){ 
    	((Patch)p).sysex[5]=(byte)0x08;
    	((Patch)p).sysex[6]=(byte)0x00;
    	((Patch)p).sysex[7]=(byte)0x00;
@@ -73,19 +72,24 @@ public class RolandGP16SingleDriver extends Driver {
    }
   
 /** Create an empty patch in acceptable GP-16 format. */
-    public IPatch createNewPatch (){
+    public Patch createNewPatch (){
 	 byte [] sysex = new byte[HSIZE + SSIZE + 1];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x41; sysex[3]=(byte)0x2A; sysex[4]=(byte)0x12;
 	 sysex[9]=(byte)0x01; sysex[10]=(byte)0x02; sysex[11]=(byte)0x03; sysex[12]=(byte)0x04; 
 	 sysex[13]=(byte)0x05; sysex[14]=(byte)0x06; sysex[15]=(byte)0x07; sysex[16]=(byte)0x08;
 	 sysex[17]=(byte)0x09; sysex[18]=(byte)0x0A; sysex[19]=(byte)0x0B; sysex[HSIZE + SSIZE]=(byte)0xF7;
-         IPatch p = new Patch(sysex,this);
+         Patch p = new Patch(sysex,this);
 	 setPatchName(p,"New Patch");
 	 calculateChecksum(p);	 
 	 return p;
     }
 
-    public JSLFrame editPatch(IPatch p) {
+    public JSLFrame editPatch(Patch p) {
 	return new RolandGP16SingleEditor((Patch)p);
+    }
+
+    /** for Bank Driver, etc. */
+    void calcChecksum(Patch p) {
+        calculateChecksum(p);
     }
 }

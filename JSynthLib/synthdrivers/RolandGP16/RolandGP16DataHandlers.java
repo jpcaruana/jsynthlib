@@ -1,8 +1,6 @@
 package synthdrivers.RolandGP16;
 import core.*;
 import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 import java.awt.event.*;
 import java.io.*;
@@ -201,8 +199,8 @@ class RolandGP16PatchNameWidget extends PatchNameWidget {
 
 	public RolandGP16PatchNameWidget(String label, IPatch patch) {
 		super(label, patch);
-		Driver driver = getDriver();
-		if (driver != null) {channel=driver.getChannel();}
+		Driver driver = (Driver) getDriver();
+		if (driver != null) {channel=driver.getDeviceID();}
 		else {channel=1;}
 
 		b[0]=(byte)0xF0; b[1]=(byte)0x41; b[2]=(byte)(channel-1);b[3]=(byte)0x2A;
@@ -211,9 +209,9 @@ class RolandGP16PatchNameWidget extends PatchNameWidget {
 
 /** We want a reaction when the patch name changes, not when patch name loses focus. */
 	protected void createWidgets() {
-		Driver driver = getDriver();
+		Driver driver = (Driver) getDriver();
 		if (driver != null) {
-			name = new JTextField(driver.getPatchName(getPatch()), 16);
+			name = new JTextField(getPatch().getName(), 16);
 		} else {
 	    	name = new JTextField("Patch Name", 16);
 		}
@@ -227,7 +225,7 @@ class RolandGP16PatchNameWidget extends PatchNameWidget {
 	
 /** The reaction that a keyrelease in the Name field causes. */
 	protected void eventListener(KeyEvent e) {
-		Driver driver = getDriver();
+		Driver driver = (Driver) getDriver();
 		byte[] shortName = new byte[(name.getText()).length()];
 		byte[] longName = new byte[16];
 		int shortLength = shortName.length;
@@ -244,7 +242,7 @@ class RolandGP16PatchNameWidget extends PatchNameWidget {
 		System.arraycopy(longName, 0, b,  8, 16);
 
 		if (driver != null){
-			driver.setPatchName(getPatch(), name.getText());
+		    getPatch().setName(name.getText());
 			driver.send(b);}
 	}
 }
@@ -275,7 +273,7 @@ class ExpLevScrollBarWidget extends ScrollBarWidget implements ItemListener
 	text.setText(new Double((double)(v + base)/subDiv).toString());
 	sendSysex(v);
 	try {Thread.sleep(100); } catch (Exception ex){}
-	(thisPatch.getDriver()).send(sndChange((thisPatch.getDriver()).getChannel()));
+	((Driver) thisPatch.getDriver()).send(sndChange(((Driver) thisPatch.getDriver()).getChannel()));
     }
 
 /** Generate the sound change request on correct channel. */
@@ -314,7 +312,9 @@ ErrorMsg.reportStatus("ExpLevScrollBarWidget: Received ItemEvent "+chosen);
 /** Set the range parameters of the RolandGP16ScrollBarWidget. */
     private void setRange(int newMin, int newMax, int newBase, int newSubDiv) {
 ErrorMsg.reportStatus("ExpLevScrollBarWidget: Setting quadruple "+newMin+","+newMax+","+newBase+","+newSubDiv);
-    	setMinMax(newMin, newMax);
+    	//setMinMax(newMin, newMax);
+        setMin(newMin);
+        setMax(newMax);
 	base = newBase; subDiv = newSubDiv;
 	setValue((newMin+newMax)/2);
     }
@@ -352,7 +352,7 @@ class GP16ComboBoxWidget extends ComboBoxWidget {
 	    sendSysex(cb.getSelectedIndex() + getValueMin());
 	    if (autoUpdate) {
 	         try {Thread.sleep(100); } catch (Exception ex){}
-	         (thisPatch.getDriver()).send(sndChange((thisPatch.getDriver()).getChannel()));
+	         ((Driver) thisPatch.getDriver()).send(sndChange(((Driver) thisPatch.getDriver()).getChannel()));
 	    }
 	    else
 	    	updater.itemStateChanged();
@@ -383,7 +383,7 @@ class GP16CheckBoxWidget extends CheckBoxWidget {
 	else
 	    sendSysex(0);
 	try {Thread.sleep(100); } catch (Exception ex){}
-	(thisPatch.getDriver()).send(sndChange((thisPatch.getDriver()).getChannel()));
+	((Driver) thisPatch.getDriver()).send(sndChange(((Driver) thisPatch.getDriver()).getChannel()));
     }
 
 /** Generate the sound change request on correct channel. */
@@ -408,7 +408,7 @@ class GP16JointPolice {
 	public void itemStateChanged() {
 ErrorMsg.reportStatus("GP16JointPolice: Got event, checking says "+sendOk());
 		if (sendOk())
-			(thisPatch.getDriver()).send(sndChange((thisPatch.getDriver()).getChannel()));
+			((Driver) thisPatch.getDriver()).send(sndChange(((Driver) thisPatch.getDriver()).getChannel()));
 	}
 
 /** Checks if joint data is consistent. */

@@ -5,10 +5,8 @@ package synthdrivers.RolandGP16;
 import core.*;
 import javax.swing.*;
 import java.awt.*;
+
 import javax.swing.border.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.io.*;
 
 class RolandGP16SingleEditor extends PatchEditorFrame
 {
@@ -73,7 +71,7 @@ class RolandGP16SingleEditor extends PatchEditorFrame
   JPanel joint=new JPanel();
   joint.setLayout(new GridBagLayout());
   
-  gbc.anchor=gbc.CENTER;
+  gbc.anchor=GridBagConstraints.CENTER;
   
   gbc.gridy=0;
   gbc.gridx=1; joint.add(new JLabel("      Block A"),gbc);

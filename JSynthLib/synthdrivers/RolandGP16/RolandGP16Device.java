@@ -35,9 +35,10 @@ public class RolandGP16Device extends Device {
 	this();
 	this.prefs = prefs;
 
-	addDriver(new RolandGP16SingleDriver());
-        addDriver(new RolandGP16BankDriver());
-	addDriver(new RolandGP16GroupDriver());
-	addDriver(new RolandGP16AllDriver());
+	RolandGP16SingleDriver singleDriver = new RolandGP16SingleDriver();
+	addDriver(singleDriver);
+        addDriver(new RolandGP16BankDriver(singleDriver));
+	addDriver(new RolandGP16GroupDriver(singleDriver));
+	addDriver(new RolandGP16AllDriver(singleDriver));
      }
 }
