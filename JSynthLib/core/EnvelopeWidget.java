@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
@@ -23,23 +25,17 @@ import javax.swing.event.MouseInputAdapter;
  * @see SysexWidget
  */
 public class EnvelopeWidget extends SysexWidget {
-    /** Array of EnvelopNodes provied by constructor */
+    /** Array of Nodes provied by constructor */
     protected Node[] nodes;
-    /**
-     * Array of JLabel widgets which show the names of the X/Y axis
-     * parameters riding each access.
-     */
-    protected JLabel[] valueLabels;
-    /** Array of JTextField which show the X/Y axis value. */
-    protected JTextField[] values;
-    /** A number of valid paramters (values). */
-    protected int numValues;
+    /** Array of Params (parameter/variable). */
+    protected Param[] params;
+
     /** EnvelopeCanvas instance */
     protected EnvelopeCanvas envelopeCanvas;
-    /** x axis padding used for insets */
-    private int xpadding;
-    /** y axis padding used for insets */
-    private int ypadding;
+    /** x axis insets (space at the right and left border) */
+    protected int xpadding;
+    /** y axis insets (space at the top and bottom border) */
+    protected int ypadding;
 
     /**
      * Creates a new <code>SysexWidget</code> instance.
@@ -47,15 +43,15 @@ public class EnvelopeWidget extends SysexWidget {
      * @param label a label text for the sysexWidget.
      * @param patch a <code>Patch</code>, which is edited.
      * @param nodes an array of Node.
-     * @param xpad horizontal padding value.
-     * @param ypad vertical padding value.
+     * @param xpadding space at the right and left border.
+     * @param ypadding space at the top and bottom border.
      */
     public EnvelopeWidget(String label, IPatch patch, Node[] nodes,
-			  int xpad, int ypad) {
+			  int xpadding, int ypadding) {
 	super(label, patch, null, null);
 	this.nodes = nodes;
-	xpadding = xpad;
-	ypadding = ypad;
+	this.xpadding = xpadding;
+	this.ypadding = ypadding;
 
 	createWidgets();
         layoutWidgets();
@@ -67,30 +63,36 @@ public class EnvelopeWidget extends SysexWidget {
     }
 
     protected void createWidgets() {
-        valueLabels = new JLabel[nodes.length * 2];
-        values = new JTextField[nodes.length * 2];
+        // count the number of paramters (faders)
         int j = 0;
         for (int i = 0; i < nodes.length; i++) {
-	    // Using <code>null</code>s for the Models and Senders and
-	    // setting min to max means that a node is stationary on
-	    // that axis and has no related parameter.
-	    if (nodes[i].minX != nodes[i].maxX) {
-		valueLabels[j] = new JLabel(nodes[i].nameX);
-		values[j] = new JTextField(new Integer(nodes[i].pmodelX.get()).toString(), 4);
-		values[j].setEditable(false);
+	    if (nodes[i].variableX)
+		j++;
+	    if (nodes[i].variableY)
+		j++;
+        }
+        setNumFaders(j);
+        params = new Param[j];
+
+        j = 0;
+        for (int i = 0; i < nodes.length; i++) {
+	    if (nodes[i].variableX) {
+	        params[j] = new Param(new JLabel(nodes[i].nameX), 
+	                new JTextField(String.valueOf(nodes[i].pmodelX.get()), 4), i, true);
+	        params[j].textField.setEditable(false);
+		nodes[i].faderNumX = j;
 		j++;
             }
-	    if (nodes[i].minY != nodes[i].maxY) {
-		valueLabels[j] = new JLabel(nodes[i].nameY);
-		values[j] = new JTextField(new Integer(nodes[i].pmodelY.get()).toString(), 4);
-		values[j].setEditable(false);
+	    if (nodes[i].variableY) {
+	        params[j] = new Param(new JLabel(nodes[i].nameY), 
+	                new JTextField(String.valueOf(nodes[i].pmodelY.get()), 4), i, false);
+		params[j].textField.setEditable(false);
+		nodes[i].faderNumY = j;
 		j++;
             }
         }
-        numValues = j;
-        setNumFaders(numValues); // numFaders == numValues?
 
-	envelopeCanvas = new EnvelopeCanvas(nodes, values);
+	envelopeCanvas = new EnvelopeCanvas(nodes, params);
     }
 
     protected void layoutWidgets() {
@@ -105,19 +107,16 @@ public class EnvelopeWidget extends SysexWidget {
         gbc.weighty = 1;
         gbc.insets = new Insets(ypadding, xpadding, ypadding, xpadding);
 
-        for (int j = 0; j < numValues; j++) {
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        for (int j = 0; j < params.length; j++) {
+	    gbc.gridy = j;
 	    // name of he X/Y axis paramters
 	    gbc.gridx = 0;
-	    gbc.gridy = j;
-	    gbc.gridwidth = 1;
-	    gbc.gridheight = 1;
-	    valuePane.add(valueLabels[j], gbc);
+	    valuePane.add(params[j].label, gbc);
 	    // X/Y axis value
 	    gbc.gridx = 1;
-	    gbc.gridy = j;
-	    gbc.gridwidth = 1;
-	    gbc.gridheight = 1;
-	    valuePane.add(values[j], gbc);
+	    valuePane.add(params[j].textField, gbc);
 	}
 
 	envelopeCanvas.setMinimumSize(new Dimension(300, 50));
@@ -130,15 +129,16 @@ public class EnvelopeWidget extends SysexWidget {
 
     public void setSliderNum(int num) {
         _setSliderNum(num);
-        setToolTipText("Bank " + ((num - 1) / 16)
-		       + "  Sliders " + (((num - 1) % 16) + 1)
-		       + " to " + (((num - 1) % 16) + getNumFaders()));
-// Should be???	       + " to " + (((num - 1 + numValues - 1) % 16) + 1));
-        for (int j = 0; j < numValues; j++) {
-	    String t = ("Bank " + ((num - 1) / 16)
-			+ "  Slider " + (((num - 1 + j) % 16) + 1));
-	    values[j].setToolTipText(t);
-	    valueLabels[j].setToolTipText(t);
+        setToolTipText("Bank " + ((num - 1) / 16 + 1)
+		       + "  Slider " + ((num - 1) % 16 + 1)
+		       + "  to  Bank " + ((num + params.length - 2) / 16 + 1)
+		       + "  Slider " + ((num + params.length - 2) % 16 + 1));
+
+        for (int j = 0; j < params.length; j++) {
+	    String t = ("Bank " + ((num - 1) / 16 + 1)
+			+ "  Slider " + ((num + j - 1) % 16 + 1));
+	    params[j].label.setToolTipText(t);
+	    params[j].textField.setToolTipText(t);
 	}
     }
 
@@ -152,270 +152,270 @@ public class EnvelopeWidget extends SysexWidget {
      * @param fader fader number.
      * @param value value to be set. [0-127]
      */
-    // Should the Widget state be updated?
     protected void setFaderValue(int fader, int value) {
         fader -= getSliderNum(); // set the 1st fader to '0'.
-        int j = 0;
-        for (int i = 0; i < nodes.length; i++) {
-            if (nodes[i].minX != nodes[i].maxX) {
-		if (fader == j) {
-		    value = (int) (nodes[i].minX
-				   + ((float) (value) / 127 * (nodes[i].maxX - nodes[i].minX)));
-		    // set paramModel and show the value.
-		    nodes[i].pmodelX.set(value);
-		    values[j].setText(new Integer(value).toString());
-		    // send System Exclusive Message
-		    sendSysex(nodes[i].senderX, value);
-		    break;	// added by hiroo
-                }
-                j++;
-            }
-            if (nodes[i].minY != nodes[i].maxY) {
-		if (fader == j) {
-		    value = (int) (nodes[i].minY
-				   + ((float) (value) / 127 * (nodes[i].maxY - nodes[i].minY)));
-		    // set paramModel and show the value.
-		    nodes[i].pmodelY.set(value);
-		    values[j].setText(new Integer(value).toString());
-		    // send System Exclusive Message
-		    sendSysex(nodes[i].senderY, value);
-		    break;	// added by hiroo
-                }
-                j++;
-            }
+
+        Node node = nodes[params[fader].node];
+        if (params[fader].isX) {
+            value = (int) (node.minX + ((float) (value) / 127 * (node.maxX - node.minX)));
+            // set paramModel and show the value.
+            node.pmodelX.set(value);
+            // send System Exclusive Message
+            sendSysex(node.senderX, value);
+        } else {
+            value = (int) (node.minY + ((float) (value) / 127 * (node.maxY - node.minY)));
+            // set paramModel and show the value.
+            node.pmodelY.set(value);
+            // send System Exclusive Message
+            sendSysex(node.senderY, value);
         }
+        params[fader].textField.setText(String.valueOf(value));
+        // update canvas
+        envelopeCanvas.repaint();
     }
 
     public void setValue() {
-	// Does this work?
-	//envelopeCanvas.repaint();
+	envelopeCanvas.repaint();
     }
 
-    /** not implemented yet */
     public void setEnabled(boolean e) {
-	// Does this work?
-	//envelopeCanvas.setEnabled(e);
+	envelopeCanvas.setEnabled(e);
     }
 
     /** Actual canvas for the envelop lines. */
     private final class EnvelopeCanvas extends JPanel {
         private Node[] nodes;
-        private JTextField[] values;
-	/** X coordinates on the canvas. */
-        private int[] nodeX;
-	/** Y coordinates on the canvas. */
-        private int[] nodeY;
-	/** width of abscissa. */
-	private int width;
-	/** height of ordinate. */
-	private int height;
+        private Param[] params;
 
-	private static final int DELTA = 5;
+        private float scaleX;
+	private float scaleY;
+	private int xorigin;
+	private int canvasHeight;
+	
+	private boolean enabled = true;  // for setEnabled()
+	private static final int DELTA = 6;
 
-        private EnvelopeCanvas(Node[] e, JTextField[] f) {
+        private EnvelopeCanvas(Node[] n, Param[] p) {
 	    super();
-	    values = f;
-	    nodes = e;
-	    nodeX = new int[nodes.length];
-	    nodeY = new int[nodes.length];
-	    //setMinimumSize(new Dimension(300, 50));
-	    //setPreferredSize(getMinimumSize());
+	    nodes = n;
+	    params = p;
+
 	    MyListener myListener = new MyListener();
 	    addMouseListener(myListener);
 	    addMouseMotionListener(myListener);
 
-	    // calculate width and height
-	    width = 0;
-	    height = 0;
+	    // calculate maximum total x/y value
+	    int x = 0;
+	    int y = 0;
             for (int i = 0; i < nodes.length; i++) {
-		width += nodes[i].maxX;
-		if ((nodes[i].maxY + nodes[i].baseY > height)
+		x += nodes[i].maxX;
+		if ((nodes[i].maxY + nodes[i].baseY > y)
 		    && nodes[i].minY != Node.SAME)
-		    height = nodes[i].maxY + nodes[i].baseY;
+		    y = nodes[i].maxY + nodes[i].baseY;
 	    }
+	    final int maxX = x;
+	    final int maxY = y;
+
+	    // recalculate canvas size dependent paramters every time size is
+	    // changed including the time the canvas is created.
+	    addComponentListener(new ComponentListener() {
+                public void componentResized(ComponentEvent e) {
+                    // scale by using actual canvas size
+                    Insets insets = getInsets();
+                    int canvasWidth = getWidth() - insets.left - insets.right - DELTA * 2;
+                    canvasHeight = getHeight() - insets.top - insets.bottom - DELTA;
+                    scaleX = (float) canvasWidth / (float) maxX;
+                    scaleY = (float) (canvasHeight - DELTA) / (float) maxY;
+                    xorigin = insets.left + DELTA;
+
+                    int sumX = 0;
+                    for (int i = 0; i < nodes.length; i++) {
+                        // calculate coordinates on the canvas
+        		sumX += getX(i);
+        		nodes[i].posX = xPos(sumX);
+        		nodes[i].posY = yPos(getY(i));
+                    }
+                }
+                public void componentMoved(ComponentEvent e) {}
+                public void componentShown(ComponentEvent e) {}
+                public void componentHidden(ComponentEvent e) {}
+            });
         }
 
-        /**
-	 * Update Envelope Canvas.
-	 *
-	 * @param g a <code>Graphics</code> value.
-	 */
-	// How is this called?  I see only 'paintComponent(null)' in
-	// this class.  Does repaint() call this indirectly? Hiroo
-	protected void paintComponent(Graphics g) {
-            if (g != null)
-		super.paintComponent(g);
-            Insets insets = getInsets(); // What's this? Hiroo
-
-	    // scale by using actual canvas size
-            int currentWidth = getWidth() - insets.left - insets.right - DELTA * 2;
-            int currentHeight = getHeight() - insets.top - insets.bottom - DELTA;
-            float scaleX = (float) currentWidth / (float) width;
-            float scaleY = (float) (currentHeight - DELTA) / (float) height;
-
-            int sumX = insets.left + DELTA;
-            for (int i = 0; i < nodes.length; i++) {
-		sumX += getX(i);
-		// calculate coordinates
-		nodeX[i] = (int) (sumX * scaleX);
-		nodeY[i] = currentHeight - (int) (getY(i) * scaleY);
-		// draw a rectangle and a line
-		if (g != null) {
-		    g.fillRect(nodeX[i] - 3, nodeY[i] - 3, 6, 6);
-		    if (i > 0)
-			g.drawLine(nodeX[i], nodeY[i],
-				   nodeX[i - 1], nodeY[i - 1]);
-		}
+        /** Convert X value to X position in the canvas. */
+        int xPos(int value) {
+            return xorigin + (int) (value * scaleX);
+        }
+        /** Convert X value for node[i] to X position in the canvas. */
+        int xPos(int i, int value) {
+            Node node = nodes[i];
+            if (i == 0) {
+                if (node.invertX)
+                    return xPos(node.maxX - value);
+                else
+                    return xPos(value);
+            } else {
+                if (node.invertX)
+                    return nodes[i - 1].posX
+                            + (int) ((node.maxX - value) * scaleX);
+                else
+                    return nodes[i - 1].posX + (int) (value * scaleX);
             }
         }
-
+        /** Convert Y value to Y position in the canvas. */
+        int yPos(int value) {
+            return canvasHeight - (int) (value * scaleY);
+        }
 	/** Return X axis value of <code>node[i]</code>. */
         private int getX(int i) {
-	    if (nodes[i].minX == nodes[i].maxX)
+	    if (!nodes[i].variableX)
 		return nodes[i].minX;
-	    if (nodes[i].invertX)
+	    else if (nodes[i].invertX)
 		return (nodes[i].maxX - nodes[i].pmodelX.get());
-	    return (nodes[i].pmodelX.get());
+	    else
+	        return (nodes[i].pmodelX.get());
         }
 
-	/*
-	 * Using <code>Node.SAME</code> for <code>miny</code>
-	 * or <code>maxy</code> means that the height remains at
-	 * whatever the previous node was at.
-	 */
 	/** Return Y axis value of <code>node[i]</code>. */
         private int getY(int i) {
 	    if (nodes[i].minY == Node.SAME)
 		return getY(i - 1);
-	    if (nodes[i].minY == nodes[i].maxY)
-		return nodes[i].minY + nodes[i].baseY;
-	    return (nodes[i].pmodelY.get() + nodes[i].baseY);
+	    else if (!nodes[i].variableY)
+		return nodes[i].baseY + nodes[i].minY;
+	    else
+	        return nodes[i].baseY + nodes[i].pmodelY.get();
         }
+
+	protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            int sumX = 0;
+            for (int i = 0; i < nodes.length; i++) {
+                // calculate coordinates on the canvas
+		sumX += getX(i);
+		nodes[i].posX = xPos(sumX);
+		nodes[i].posY = yPos(getY(i));
+
+		// draw a rectangle and a line. Filled box is used for a node for variable.
+                if ((nodes[i].variableX || nodes[i].variableY) && enabled)
+                    g.fillRect(nodes[i].posX - DELTA / 2, nodes[i].posY - DELTA
+                            / 2, DELTA, DELTA);
+                else
+                    g.drawRect(nodes[i].posX - DELTA / 2, nodes[i].posY - DELTA
+                            / 2, DELTA, DELTA);
+                if (i > 0)
+                    g.drawLine(nodes[i].posX, nodes[i].posY, nodes[i - 1].posX,
+                            nodes[i - 1].posY);
+            }
+        }
+
+	public void setEnabled(boolean enabled) {
+	    super.setEnabled(enabled);
+	    this.enabled = enabled;
+	    repaint();
+	}
 
         private class MyListener extends MouseInputAdapter {
 	    /** dragging node number */
-            private int dragNodeIdx;
-	    private Node dragNode;
+            private int dragNodeIdx = -1;
 
-            private int oldx;
-	    private int oldy;
-
-	    // set dragNode
             public void mousePressed(MouseEvent e) {
+                dragNodeIdx = -1;
+                if (!enabled) return;
+
                 int x = e.getX();
                 int y = e.getY();
 		// select the first close node.
-                for (int i = 0; i < nodes.length; i++)
+                for (int i = 0; i < nodes.length; i++) {
+                    Node node = nodes[i];
                     // ignore static node
-                    if ((nodes[i].minX != nodes[i].maxX || nodes[i].minY != nodes[i].maxY)
-                            && (Math.abs(x - nodeX[i]) < DELTA)
-                            && (Math.abs(y - nodeY[i]) < DELTA)) {
+                    if ((node.variableX || node.variableY)
+                            && (Math.abs(x - node.posX) < DELTA)
+                            && (Math.abs(y - node.posY) < DELTA)) {
                         dragNodeIdx = i;
-			dragNode = nodes[i];
-			oldx = nodeX[i];
-			oldy = nodeY[i];
-			repaint();
 			return;
 		    }
+                }
 		// not found
-		dragNode = null;
             }
 
+            /** last mouse position clocked or dragged. */
+            private int oldx, oldy;
+
             public void mouseDragged(MouseEvent e) {
-		if (dragNode == null)
+		if (dragNodeIdx == -1)
 		    return;
+
                 int x = e.getX();
                 int y = e.getY();
                 if ((x == oldx) && (y == oldy))
 		    return;
-		// move the selected node one dot by one dot. (Why? Hiroo)
+
+                Node node = nodes[dragNodeIdx];
+		// move the selected node one dot by one dot.
                 // and send Sysex Message (added Jan. 7, 2005)
-                if (x != oldx) {
-                    if (x > oldx) { // X+
-                        while ((x - nodeX[dragNodeIdx] > DELTA)
-                                && (getX(dragNodeIdx) < dragNode.maxX)
-                                && (dragNode.pmodelX != null)) {
-                            if (dragNode.invertX)
-                                dragNode.pmodelX
-                                        .set(dragNode.pmodelX.get() - 1);
-                            else
-                                dragNode.pmodelX
-                                        .set(dragNode.pmodelX.get() + 1);
-                            paintComponent(null);
+                if (node.variableX && x != oldx) {
+                    int xVal = node.pmodelX.get();
+                    if (node.invertX) {
+                        if (x > oldx) { // right
+                            while (x - node.posX > DELTA && xVal > node.minX)
+                                node.posX = xPos(dragNodeIdx, --xVal);
+                        } else { // left
+                            while (x - node.posX < -DELTA && xVal < node.maxX)
+                                node.posX = xPos(dragNodeIdx, ++xVal);
                         }
-                    } else { // X-
-                        while ((x - nodeX[dragNodeIdx] < -DELTA)
-                                && (getX(dragNodeIdx) > dragNode.minX)
-                                && (dragNode.pmodelX != null)) {
-                            if (dragNode.invertX)
-                                dragNode.pmodelX
-                                        .set(dragNode.pmodelX.get() + 1);
-                            else
-                                dragNode.pmodelX
-                                        .set(dragNode.pmodelX.get() - 1);
-                            paintComponent(null);
+                    } else {
+                        if (x > oldx) { // right
+                            while (x - node.posX > DELTA && xVal < node.maxX)
+                                node.posX = xPos(dragNodeIdx, ++xVal);
+                        } else { // left
+                            while (x - node.posX < -DELTA && xVal > node.minX)
+                                node.posX = xPos(dragNodeIdx, --xVal);
                         }
                     }
-                    if (dragNode.pmodelX != null)
-                        sendSysex(dragNode.senderX, dragNode.pmodelX.get());
+                    node.pmodelX.set(xVal);
+                    params[node.faderNumX].textField.setText(String.valueOf(xVal));
+                    sendSysex(node.senderX, xVal);
                     oldx = x;
                 }
-                if (y != oldy) {
-                    if (y < oldy) { // Y-
-                        while ((y - nodeY[dragNodeIdx] < -DELTA)
-                                && (getY(dragNodeIdx) < dragNode.maxY
-                                        + dragNode.baseY)
-                                && (dragNode.pmodelY != null)) {
-                            dragNode.pmodelY.set(dragNode.pmodelY.get() + 1);
-                            paintComponent(null);
-                        }
-                    } else { // Y+
-                        while ((y - nodeY[dragNodeIdx] > DELTA)
-                                && (getY(dragNodeIdx) > dragNode.minY
-                                        + dragNode.baseY)
-                                && (dragNode.pmodelY != null)) {
-                            dragNode.pmodelY.set(dragNode.pmodelY.get() - 1);
-                            paintComponent(null);
-                        }
+                if (node.variableY && y != oldy) {
+                    int yVal = node.pmodelY.get();
+                    if (y < oldy) { // up
+                        while (y - node.posY < -DELTA && yVal < node.maxY)
+                            node.posY = yPos(node.baseY + ++yVal);
+                    } else { // down
+                        while (y - node.posY > DELTA && yVal > node.minY)
+                            node.posY = yPos(node.baseY + --yVal);
                     }
-                    if (dragNode.pmodelY != null)
-                        sendSysex(dragNode.senderY, dragNode.pmodelY.get());
+                    node.pmodelY.set(yVal);
+                    params[node.faderNumY].textField.setText(String.valueOf(yVal));
+                    sendSysex(node.senderY, yVal);
                     oldy = y;
                 }
-
-		// update JTextField
-                int j = 0;
-                for (int i = 0; i < nodes.length; i++) {
-		    if (nodes[i].minX != nodes[i].maxX) {
-			if (i == dragNodeIdx) {
-			    values[j].setText(new Integer(nodes[i].pmodelX.get()).toString());
-			    //break; // added by hiroo
-			    //bk: this break here is wrong, code below might
-			    //improperly not execute.
-			}
-			j++;
-		    }
-		    if (nodes[i].minY != nodes[i].maxY) {
-			if (i == dragNodeIdx) {
-			    values[j].setText(new Integer(nodes[i].pmodelY.get()).toString());
-			    break; // added by hiroo
-			}
-			j++;
-		    }
-		}
-                repaint();
+                repaint();	// invokes paintComponent()
 	    }
-
-//            public void mouseReleased(MouseEvent e) {
-//		if (dragNode == null)
-//		    return;
-//		// Send System Exclusive message
-//		if (dragNode.pmodelX != null)
-//		    sendSysex(dragNode.senderX, dragNode.pmodelX.get());
-//		if (dragNode.pmodelY != null)
-//		    sendSysex(dragNode.senderY, dragNode.pmodelY.get());
-//	    }
 	}
+    }
+
+    /** Data structure for Paramaters. */
+    protected static class Param {
+        /**
+         * JLabel widgets which show the names of the X/Y axis
+         * parameters riding each access.
+         */
+        protected JLabel label;
+        /** JTextField which show the X/Y axis value. */
+        protected JTextField textField;
+        /** array index of 'nodes' for the corresponding Node. */
+        protected int node;
+        /** true for X value, false for Y value. */
+        protected boolean isX;
+        protected Param(JLabel label, JTextField textField, int node, boolean isX) {
+            this.label = label;
+            this.textField = textField;
+            this.node = node;
+            this.isX = isX;
+        }
     }
 
     /**
@@ -449,14 +449,25 @@ public class EnvelopeWidget extends SysexWidget {
 	private String nameX;
 	private String nameY;
 
+	/** can be moved in X direction or not */
+	private boolean variableX;
+	/** can be moved in Y direction or not */
+	private boolean variableY;
+        /** fader number for variable X value. */
+        private int faderNumX;
+        /** fader number for variable X value. */
+        private int faderNumY;
+	/** X coordinates on the canvas. */
+        private int posX;
+	/** Y coordinates on the canvas. */
+        private int posY;
+ 
 	/**
 	 * Construcutor for a <code>Node</code>.<p>
 	 *
 	 * Using <code>null</code>s for the Models and Senders and setting
 	 * min to max means that the node is stationary on that axis and has
 	 * no related parameter.<p>
-	 *
-	 * 
 	 *
 	 * @param minx The minimum value permitted by the synth
 	 * parameter which rides the X axis of the node.
@@ -514,6 +525,13 @@ public class EnvelopeWidget extends SysexWidget {
 	    nameX = namex;
 	    nameY = namey;
 	    invertX = invertx;
+	    
+	    variableX = minX != maxX;
+	    variableY = minY != maxY;
+	    if (variableX && (pmodelX == null || senderX == null)
+	            || variableY && (pmodelY == null || senderY == null))
+	        ErrorMsg.reportError("Illegal paramter",
+	                "Paramter model and Sender must be set for variable paramter.");
 	}
     }
 }
