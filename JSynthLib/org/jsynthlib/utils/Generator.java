@@ -1,7 +1,5 @@
 package org.jsynthlib.utils;
 
-import java.lang.reflect.Constructor;
-
 import org.xml.sax.SAXException;
 
 /**

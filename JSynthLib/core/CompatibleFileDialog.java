@@ -71,7 +71,7 @@ public class CompatibleFileDialog extends JFileChooser {
 		props.put(prop, "true");
 	    }		
 
-	    dialog.show();
+	    dialog.setVisible(true);
 
 	    if (isDirectorySelectionEnabled()) {
 		// Reset the system property

@@ -114,7 +114,7 @@ abstract class ConfigPanel extends JPanel {
 	PrefsDialog myOwnDialog = new PrefsDialog(parent);
 	myOwnDialog.setTitle(getPanelName());
 	myOwnDialog.add(this);
-	myOwnDialog.show();
+	myOwnDialog.setVisible(true);
     }
 
     /**

@@ -83,7 +83,7 @@ public class NovationNova1SingleDriver extends Driver
             NovationNova1PatchSender.deviceIDoffset = deviceIDoffset;
             NovationNova1PatchSender.channel = getChannel();
             NovationNova1PatchSender nps= new NovationNova1PatchSender(null,(Patch)p,this);
-            nps.show();
+            nps.setVisible(true);
         }
         else
         {
@@ -205,7 +205,7 @@ class NovationNova1PatchSender extends JDialog
         HidePannel.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             infoPannel info = new infoPannel(null);
-            info.show();
+            info.setVisible(true);
             setVisible(false);
         }});
         buttonPanel.add( HidePannel  );

@@ -121,8 +121,9 @@ public class FolderDialog extends FileDialog
 	 * you make it invisible yourself via <code>setVisible(false)</code>
 	 * or <code>dispose</code>.
 	 */
-	public void show()
+	public void setVisible(boolean b)
 	{
+	    if (b) {
 		// Set the system property required by Mac OS X
 		String prop = null;
 		if (MacUtils.isMac())
@@ -136,7 +137,7 @@ public class FolderDialog extends FileDialog
 		}
 		
 		// Do the usual thing
-		super.show();
+		super.setVisible(true);
 		
 		// Reset the system property
 		if (prop != null)
@@ -146,5 +147,8 @@ public class FolderDialog extends FileDialog
 			else
 				props.put(prop, oldValue);
 		}
+	    } else {
+	        super.setVisible(false);
+	    }
 	}
 }

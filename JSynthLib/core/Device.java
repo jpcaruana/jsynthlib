@@ -396,7 +396,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      */
     public void showDetails() {
         DeviceDetailsDialog ddd = new DeviceDetailsDialog(this);
-	ddd.show();
+	ddd.setVisible(true);
     }
 
     /**

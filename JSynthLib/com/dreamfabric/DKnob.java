@@ -170,11 +170,13 @@ public class DKnob extends JComponent {
 	return dragType;
     }
 
-    public boolean isManagingFocus() {
-	return true;
-    }
+    // comment out to make focus policy consistent with other Components.
+    // Sep. 26, 2004, Hiroo Hayashi
+//    public boolean isManagingFocus() {
+//	return true;
+//    }
 
-    public boolean isFocusTraversable() {
+    public boolean isFocusable() {
 	return true;
     }
 

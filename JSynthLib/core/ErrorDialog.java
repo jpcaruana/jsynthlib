@@ -171,7 +171,7 @@ public class ErrorDialog extends javax.swing.JDialog {
         dialog.showButton.setVisible(false);
 	try {
 	    Thread.sleep(30);
-	    dialog.show();
+	    dialog.setVisible(true);
 	    Thread.sleep(30);
 	} catch (InterruptedException ex) {}
     }
@@ -214,7 +214,7 @@ public class ErrorDialog extends javax.swing.JDialog {
         dialog.showButton.setVisible(true);
 	try {
 	    Thread.sleep(30);
-	    dialog.show();
+	    dialog.setVisible(true);
 	    Thread.sleep(30);
 	} catch (InterruptedException ex) {}
     }

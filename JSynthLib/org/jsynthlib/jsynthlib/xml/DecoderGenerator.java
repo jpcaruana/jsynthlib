@@ -1,7 +1,5 @@
 package org.jsynthlib.jsynthlib.xml;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.jsynthlib.plugins.PluginRegistry;
 import org.jsynthlib.plugins.Decoder;
 import org.jsynthlib.utils.Generator;

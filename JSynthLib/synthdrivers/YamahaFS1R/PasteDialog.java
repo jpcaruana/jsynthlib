@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.util.*;
 
 import core.IPatch;
-import core.Patch;
 import core.SysexWidget;
 
 
@@ -71,12 +70,12 @@ class PasteDialog extends JDialog
 		cancel.addActionListener (new ActionListener () {
 			public void actionPerformed (ActionEvent e)
 			{
-				setVisible (false);
+				setVisible(false);
 			}});
 		getContentPane().add ( cancel );
 		getRootPane().setDefaultButton (cancel);
 		setSize(250, 400);
-		show();
+		setVisible(true);
 	}
 
 

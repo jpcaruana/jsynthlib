@@ -152,7 +152,7 @@ class SynthConfigPanel extends ConfigPanel {
 
     private void addPressed() {
 	DeviceAddDialog dad = new DeviceAddDialog(null);
-        dad.show();
+        dad.setVisible(true);
         revalidateLibraries();
 	((TableModel) table.getModel()).fireTableDataChanged();
     }

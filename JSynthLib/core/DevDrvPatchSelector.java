@@ -150,7 +150,7 @@ public class DevDrvPatchSelector extends JDialog {
         Utility.centerDialog(this);
 
         if (nDriver > 0) {
-            show();
+            setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Oops, No driver was found, which support this patch! Nothing will happen",
 		    "Error while \""+action+"\" a patch", JOptionPane.WARNING_MESSAGE);

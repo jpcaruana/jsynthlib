@@ -1,7 +1,5 @@
 package org.jsynthlib.plugins;
 
-import javax.sound.midi.SysexMessage;
-
 import org.jsynthlib.jsynthlib.xml.XMLPatch;
 
 /**

@@ -115,15 +115,17 @@ public class SearchDialog extends JDialog {
 	}
     }
 
-    public void show() {
-	if (JSLDesktop.getSelectedFrame() instanceof SceneFrame) {
-	    button2.setEnabled(false);
-	    button3.setEnabled(false);
-	} else {
-	    button2.setEnabled(true);
-	    button3.setEnabled(true);
-	}
-	super.show();
+    public void setVisible(boolean b) {
+        if (b) {
+            if (JSLDesktop.getSelectedFrame() instanceof SceneFrame) {
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+            } else {
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+            }
+        }
+        super.setVisible(b);
     }
 
     void findString(String text, String command, boolean restart) {

@@ -153,7 +153,7 @@ public class MidiScan extends Thread {
 	if (anyUnknown && (parent != null)) {
 	    ScanUnkownReportDialog surd = new ScanUnkownReportDialog(parent, true);
 	    surd.addToReport(report);
-	    surd.show();
+	    surd.setVisible(true);
 	}
     }
 

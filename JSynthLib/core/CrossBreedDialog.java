@@ -81,10 +81,6 @@ public class CrossBreedDialog extends JDialog {
         Utility.centerDialog(this);
     }
 
-    public void show() {
-        super.show();
-    }
-
     void OKPressed() {
         this.setVisible(false);
     }

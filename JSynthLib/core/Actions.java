@@ -894,7 +894,7 @@ final class Actions {
 	//-----------------------------------------------------------------
 	public void actionPerformed(ActionEvent e) {
 	    SysexGetDialog myDialog = new SysexGetDialog(PatchEdit.getInstance());
-	    myDialog.show();
+	    myDialog.setVisible(true);
 	}
 
     } // End SubClass: GetAction
@@ -909,7 +909,7 @@ final class Actions {
 
 	public void actionPerformed(ActionEvent e) {
 	    UploadPatchDialog myDialog = new UploadPatchDialog(PatchEdit.getInstance());
-	    myDialog.show();
+	    myDialog.setVisible(true);
 	}
 
     }
@@ -1058,7 +1058,7 @@ final class Actions {
         public void actionPerformed(ActionEvent e) {
             try {
 		SortDialog sd = new SortDialog(PatchEdit.getInstance());
-		sd.show();
+		sd.setVisible(true);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Library to Sort must be Focused", ex);
 	    }
@@ -1076,7 +1076,7 @@ final class Actions {
             try {
 		if (searchDialog == null)
 		    searchDialog = new SearchDialog(PatchEdit.getInstance());
-		searchDialog.show();
+		searchDialog.setVisible(true);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Library to Sort must be Focused", ex);
 	    }
@@ -1102,7 +1102,7 @@ final class Actions {
 		File file = fc.getSelectedFile();
 
 		ImportAllDialog sd = new ImportAllDialog(PatchEdit.getInstance(), file);
-		sd.show();
+		sd.setVisible(true);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to Import Patches", ex);
 	    }
@@ -1172,7 +1172,7 @@ final class Actions {
         public void actionPerformed(ActionEvent e) {
             try {
 		CrossBreedDialog xbd = new CrossBreedDialog(PatchEdit.getInstance());
-		xbd.show();
+		xbd.setVisible(true);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to perform Crossbreed. (No Library selected?)", ex);
 	    }
@@ -1203,7 +1203,7 @@ final class Actions {
 	    try {
 		if (docWin == null)
 		    docWin = new DocumentationWindow("text/html", "file:doc/documentation.html");
-		docWin.show();
+		docWin.setVisible(true);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to show Documentation)", ex);
 	    }
@@ -1220,7 +1220,7 @@ final class Actions {
 	    try {
 		if (licWin == null)
 		    licWin = new DocumentationWindow("text/plain", "file:license.txt");
-		licWin.show();
+		licWin.setVisible(true);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to show Documentation)", ex);
 	    }
@@ -1239,7 +1239,7 @@ final class Actions {
 		    // www.gnu.org is simple enough for J2SE 1.4.2.
 		    //hpWin = new DocumentationWindow("text/html", "http://www.gnu.org/");
 		    hpWin = new DocumentationWindow("text/html", "http://www.jsynthlib.org/");
-		hpWin.show();
+		hpWin.setVisible(true);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to show Documentation)", ex);
 	    }
@@ -1256,7 +1256,7 @@ final class Actions {
 	    try {
 		if (midiMonitor == null)
 		    midiMonitor = new MidiMonitor();
-		midiMonitor.show();
+		midiMonitor.setVisible(true);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to show MIDI Monitor)", ex);
 	    }

@@ -1,11 +1,9 @@
 package org.jsynthlib.jsynthlib.xml;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.jsynthlib.plugins.PluginRegistry;
 import org.jsynthlib.utils.AdvDefaultHandler;
 import org.jsynthlib.utils.Generator;

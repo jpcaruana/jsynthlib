@@ -73,7 +73,7 @@ public final class PatchEdit  {
     }
 
     static void showPrefsDialog() {
-	prefsDialog.show();
+	prefsDialog.setVisible(true);
     }
 
     // PatchEdit.getInstance() can/should be replaced by
@@ -121,11 +121,11 @@ public final class PatchEdit  {
 
     ////////////////////////////////////////////////////////////////////////
     public static void showWaitDialog() {
-	waitDialog.show();
+	waitDialog.setVisible(true);
     }
 
     public static void hideWaitDialog() {
-	waitDialog.hide();
+	waitDialog.setVisible(false);
     }
 
     private class WaitDialog extends JDialog {
