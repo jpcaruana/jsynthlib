@@ -10,9 +10,9 @@ import javax.swing.*;
  */
 
 public class GeneralConfigPanel extends ConfigPanel {
-	UIManager.LookAndFeelInfo [] installedLF;
-	JComboBox cb5;
-	JComboBox cb6;
+	private UIManager.LookAndFeelInfo [] installedLF;
+	private JComboBox cb5;
+	private JComboBox cb6;
 
 	public GeneralConfigPanel(core.AppConfig appConfig) {
 		super(appConfig);
@@ -46,13 +46,10 @@ public class GeneralConfigPanel extends ConfigPanel {
 	* changes some stuff and then hits "Cancel".
 	*/
 	public void init() {
-		try {
-			UIManager.setLookAndFeel (installedLF[appConfig.getLookAndFeel()].getClassName ());
-		}catch (Exception e) {};
 		cb5.setSelectedIndex (appConfig.getLookAndFeel());
 		cb6.setSelectedIndex (appConfig.getGuiStyle());
 	}
-	
+
 	/**
 	* This is the opposite of init(). The implementing class should
 	* copy all GUI settings to internal data elements (and also
@@ -65,7 +62,7 @@ public class GeneralConfigPanel extends ConfigPanel {
 		appConfig.setLookAndFeel(cb5.getSelectedIndex());
 		appConfig.setGuiStyle(cb6.getSelectedIndex());
 	}
-	
+
 	/**
 	* This should return the name that should go on the tab (if using a tabbed config dialog).
 	* Otherwise, it could be used for a frame title, etc. However, this can be overridden by
@@ -81,6 +78,4 @@ public class GeneralConfigPanel extends ConfigPanel {
 	protected String getDefaultNamespace() {
 		return("general");
 	}
-
-
 }
