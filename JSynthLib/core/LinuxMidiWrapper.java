@@ -347,7 +347,6 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			    list.add(msg);
 			} else {
 			    thirdByte = false;
-			    runningStatus = c;
 			    switch (c) {
 			    case ShortMessage.END_OF_EXCLUSIVE:
 				if (runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
@@ -371,6 +370,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			    default:
 				buf[0] = (byte) c;
 			    }
+			    runningStatus = c;
 			}
 		    } else {
 			// data byte
