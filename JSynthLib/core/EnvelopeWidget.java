@@ -63,7 +63,7 @@ public class EnvelopeWidget extends SysexWidget {
     }
 
     protected void createWidgets() {
-        // count the number of paramters (faders)
+        // count the number of parameters (faders)
         int j = 0;
         for (int i = 0; i < nodes.length; i++) {
 	    if (nodes[i].variableX)
@@ -111,7 +111,7 @@ public class EnvelopeWidget extends SysexWidget {
         gbc.gridheight = 1;
         for (int j = 0; j < params.length; j++) {
 	    gbc.gridy = j;
-	    // name of he X/Y axis paramters
+	    // name of he X/Y axis parameters
 	    gbc.gridx = 0;
 	    valuePane.add(params[j].label, gbc);
 	    // X/Y axis value
@@ -211,7 +211,7 @@ public class EnvelopeWidget extends SysexWidget {
 	    final int maxX = x;
 	    final int maxY = y;
 
-	    // recalculate canvas size dependent paramters every time size is
+	    // recalculate canvas size dependent parameters every time size is
 	    // changed including the time the canvas is created.
 	    addComponentListener(new ComponentListener() {
                 public void componentResized(ComponentEvent e) {
@@ -540,13 +540,13 @@ public class EnvelopeWidget extends SysexWidget {
 	    nameX = namex;
 	    nameY = namey;
 	    invertX = invertx;
-	    
+
 	    variableX = minX != maxX;
 	    variableY = minY != maxY;
 	    if (variableX && (pmodelX == null || senderX == null)
 	            || variableY && (pmodelY == null || senderY == null))
-	        ErrorMsg.reportError("Illegal paramter",
-	                "Paramter model and Sender must be set for variable paramter.");
+	        ErrorMsg.reportError("Illegal parameter",
+	                "Parameter model and Sender must be set for variable parameter.");
 	}
     }
 }

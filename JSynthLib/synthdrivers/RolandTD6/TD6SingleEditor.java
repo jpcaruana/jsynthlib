@@ -666,7 +666,7 @@ class TD6KitSender extends RolandDT1Sender { // extended by TD6PadSender
      * Creates a new <code>TD6KitSender</code> instance.
      *
      * @param drumkit an <code>int</code> value which specifies drum kit [1 - 99]
-     * @param param offset address in kit paramters.
+     * @param param offset address in kit parameters.
      * @param nibbled true if nibbled (4 byte) data
      */
     TD6KitSender(int drumkit, int param, boolean nibbled) {
@@ -679,7 +679,7 @@ class TD6KitSender extends RolandDT1Sender { // extended by TD6PadSender
      * Creates a new <code>TD6KitSender</code> instance for editing
      * buffer (drum kit 99)
      *
-     * @param param offset address in kit paramters.
+     * @param param offset address in kit parameters.
      * @param nibbled true if nibbled (4 byte) data
      */
     TD6KitSender(int param, boolean nibbled) {
@@ -689,7 +689,7 @@ class TD6KitSender extends RolandDT1Sender { // extended by TD6PadSender
      * Creates a new <code>TD6KitSender</code> instance for editing
      * buffer (drum kit 99) and for 1 byte data.
      *
-     * @param param offset address in kit paramters.
+     * @param param offset address in kit parameters.
      */
     TD6KitSender(int param) {
 	this(99, param, false);
@@ -719,7 +719,7 @@ class TD6KitSender extends RolandDT1Sender { // extended by TD6PadSender
     /**
      * Generates a byte array for system exclusive message.
      *
-     * @param param offset address in kit paramters.
+     * @param param offset address in kit parameters.
      * @param value an <code>int</code> value
      */
     protected void setValue(int param, int value) {
@@ -740,7 +740,7 @@ class TD6KitModel extends ParamModel { // extended by TD6PadModel
      * Creates a new <code>TD6KitModel</code> instance.
      *
      * @param patch a <code>Patch</code> value
-     * @param param offset address in kit paramters.
+     * @param param offset address in kit parameters.
      * @param nibbled true if nibbled (4 byte) data
      */
     TD6KitModel(Patch patch, int param, boolean nibbled) {
@@ -752,7 +752,7 @@ class TD6KitModel extends ParamModel { // extended by TD6PadModel
      * Creates a new <code>TD6KitModel</code> instance for 1 byte data.
      *
      * @param p a <code>Patch</code> value
-     * @param param offset address in kit paramters.
+     * @param param offset address in kit parameters.
      */
     TD6KitModel(Patch p, int param) {
 	this(p, param, false);
@@ -762,7 +762,7 @@ class TD6KitModel extends ParamModel { // extended by TD6PadModel
      * Convert the relative offset address param to offset address in
      * sysex byte array.
      *
-     * @param param offset address in kit paramters.
+     * @param param offset address in kit parameters.
      * @return an <code>int</code> value
      */
     static int getOffset(int param) {

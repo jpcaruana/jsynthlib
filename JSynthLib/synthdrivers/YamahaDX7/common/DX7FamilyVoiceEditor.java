@@ -263,7 +263,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		scrollPane.add(cmnPane,gbc);
 
 		/*
-		 *	 DX7 Voice Paramter - LFO settings
+		 *	 DX7 Voice Parameter - LFO settings
 		 */
 
 		JPanel lfoPane=new JPanel();

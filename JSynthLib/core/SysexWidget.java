@@ -355,7 +355,7 @@ public abstract class SysexWidget extends JPanel {
     /**
      * Interface for Paramer Model.
      * 
-     * Paramter Model keeps track of the changes to the patch so that when we
+     * Parameter Model keeps track of the changes to the patch so that when we
      * next call up this patch the changes are there. This is also used to set
      * the widgets to the correct values for a particular patch when the Single
      * Editor is opened.
