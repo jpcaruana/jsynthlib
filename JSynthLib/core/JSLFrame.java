@@ -164,6 +164,8 @@ public class JSLFrame {
 	    while (it.hasNext()) {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
+	    // Enable pasteAction
+	    PatchEdit.pasteAction.enable();
 	}
 	public void internalFrameClosed(InternalFrameEvent e) {
 	    JSLFrameEvent fe = 
@@ -284,6 +286,8 @@ public class JSLFrame {
 	    while (it.hasNext()) {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
+	    // Enable pasteAction
+	    PatchEdit.pasteAction.enable();
 	}
 	public void windowClosed(WindowEvent e) {
 	    JSLFrameEvent fe = 

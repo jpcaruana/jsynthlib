@@ -34,14 +34,8 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	    try {
 		Patch p = (Patch)t.getTransferData(PATCH_FLAVOR);
 		
-		if (p == null)
-		    {
-			String s = (String)t.getTransferData(TEXT_FLAVOR);
-			p = getPatchFromUrl(s);
-			if (p==null) 
-			    return false;			
-		    }
-		return storePatch(p, c);
+		if (p != null)
+		    return storePatch(p, c);
 	    } catch (UnsupportedFlavorException ufe) {
 	    } catch (Exception ioe) {
 	    }
@@ -49,16 +43,16 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	    try{
 		String s = (String)t.getTransferData(TEXT_FLAVOR);
 		Patch p = getPatchFromUrl(s);
-		if (p==null) 
-		    return false;	
-		else return storePatch(p,c);
+		if (p!=null) 
+		    return storePatch(p,c);
 	    
-	} catch (UnsupportedFlavorException ufe) {
-	} catch (IOException ioe) {
+	    } catch (UnsupportedFlavorException ufe) {
+	    } catch (IOException ioe) {
+	    }
 	}
-    }
-   		
-    return false;
+	// Let user know we tried to paste.  
+   	Toolkit.getDefaultToolkit().beep();
+	return false;
     }
     
     public Patch getPatchFromUrl(String s)
@@ -106,6 +100,12 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	    }
 	}
 	return false;
+    }
+
+    /* Enable  paste action when copying to clipboard. */
+    public void exportToClipboard(JComponent comp, Clipboard clip, int action){
+	super.exportToClipboard(comp, clip, action);
+	PatchEdit.pasteAction.setEnabled(true);
     }
 
     /* Transferable containing patch and it's transient information. */

@@ -169,7 +169,11 @@ public class ErrorDialog extends javax.swing.JDialog {
         dialog.setTitle(title);
         dialog.setMessage((String)message);
         dialog.showButton.setVisible(false);
-        dialog.show();
+	try {
+	    Thread.sleep(30);
+	    dialog.show();
+	    Thread.sleep(30);
+	} catch (InterruptedException ex) {}
     }
         
     /**
@@ -208,7 +212,11 @@ public class ErrorDialog extends javax.swing.JDialog {
 		dialog.exceptionText=bas.toString();
 		// TODO: Make the informationPane scroll to the top
         dialog.showButton.setVisible(true);
-        dialog.show();
+	try {
+	    Thread.sleep(30);
+	    dialog.show();
+	    Thread.sleep(30);
+	} catch (InterruptedException ex) {}
     }
     
     /** Utility to center the dialog box to the screen */    

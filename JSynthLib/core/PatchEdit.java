@@ -78,6 +78,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     private static SearchDialog searchDialog;
     private static DocumentationWindow documentationWindow;
 
+    private static Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+
     /** Initialize Application: */
     public PatchEdit() {
 	// Load config file (JSynthLib.properties).
@@ -278,18 +281,10 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	menuPatch.add(uploadAction);
         menuBar.add(menuPatch);
 	menuPatch.addMenuListener(new MenuListener() {
-		Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
 		public void menuCanceled(MenuEvent e) {}
 		public void menuDeselected(MenuEvent e) {}
 		public void menuSelected(MenuEvent e) {
-		    try {
-			JSLFrame f = JSLDesktop.getSelectedFrame();
-			boolean b = f.canImport(c.getContents(this)
-						.getTransferDataFlavors());
-			pasteAction.setEnabled(b);
-		    } catch (Exception ex) {
-			pasteAction.setEnabled(false);
-		    }
+		    pasteAction.enable();
 		}
 	    });
 
@@ -780,6 +775,16 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		ErrorMsg.reportError("Error", "Library to Paste into must be the focused Window.", ex);
 	    }
         }
+	public void enable() {
+	    try {
+		JSLFrame f = JSLDesktop.getSelectedFrame();
+		boolean b = f.canImport(c.getContents(this)
+					.getTransferDataFlavors());
+		setEnabled(b);
+	    } catch (Exception ex) {
+		setEnabled(false);
+	    }
+	}
     }
 
     static class EditAction extends AbstractAction {

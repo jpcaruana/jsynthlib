@@ -99,7 +99,6 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		}
 		public void JSLFrameActivated(JSLFrameEvent e) {
 		    	PatchEdit.receiveAction.setEnabled(false);
-			//PatchEdit.pasteAction.setEnabled(true);
 			PatchEdit.importAction.setEnabled(true);
 			PatchEdit.importAllAction.setEnabled(true);
 			PatchEdit.newPatchAction.setEnabled(true);
@@ -261,7 +260,8 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void PastePatch() {
-	pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this));
+	if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
+	    PatchEdit.pasteAction.setEnabled(false);
     }
     public void PastePatch(Patch p) {
 	pth.importData(table, p);
@@ -300,7 +300,6 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	PatchEdit.dupAction.setEnabled(false);
 	PatchEdit.cutAction.setEnabled(false);
 	PatchEdit.copyAction.setEnabled(false);
-	PatchEdit.pasteAction.setEnabled(false);
 	PatchEdit.deleteAction.setEnabled(false);
 	PatchEdit.importAction.setEnabled(false);
 	PatchEdit.importAllAction.setEnabled(false);
