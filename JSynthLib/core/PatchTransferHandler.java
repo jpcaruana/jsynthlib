@@ -17,6 +17,7 @@ public abstract class PatchTransferHandler extends TransferHandler {
     protected abstract boolean storePatch(Patch p, JComponent c);
 		
     protected Transferable createTransferable(JComponent c) {
+
 	Patch p = getSelectedPatch(c);
 	if (p == null)
 	    return null;
@@ -28,10 +29,11 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	return COPY;
     }
 		
-    public boolean importData(JComponent c, Transferable t) {
+    public boolean importData(JComponent c, Transferable t){
 	if (canImport(c, t.getTransferDataFlavors())) {
 	    try {
 		Patch p = (Patch)t.getTransferData(PATCH_FLAVOR);
+		
 		if (p == null)
 		    {
 			String s = (String)t.getTransferData(TEXT_FLAVOR);
@@ -41,9 +43,9 @@ public abstract class PatchTransferHandler extends TransferHandler {
 		    }
 		return storePatch(p, c);
 	    } catch (UnsupportedFlavorException ufe) {
-	    } catch (IOException ioe) {
+	    } catch (Exception ioe) {
 	    }
-       
+     	
 	    try{
 		String s = (String)t.getTransferData(TEXT_FLAVOR);
 		Patch p = getPatchFromUrl(s);
@@ -55,6 +57,7 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	} catch (IOException ioe) {
 	}
     }
+   		
     return false;
     }
     
@@ -62,6 +65,7 @@ public abstract class PatchTransferHandler extends TransferHandler {
     {
 
 	try {
+	    System.out.println("S = " + s);
 	    URL u = new URL(s);
 	    InputStream in = u.openStream();
 	    int b; int i=0;
@@ -92,7 +96,9 @@ public abstract class PatchTransferHandler extends TransferHandler {
 
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
 	for (int i = 0; i < flavors.length; i++) {
-	    if (PATCH_FLAVOR.match(flavors[i])) {
+	   //System.out.println(flavors[i].getMimeType());
+	   //System.out.println(TEXT_FLAVOR.getMimeType());
+	   if (PATCH_FLAVOR.match(flavors[i])) {
 		return true;
 	    }
 	    if (TEXT_FLAVOR.match(flavors[i])) {
@@ -111,7 +117,6 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	}
 
 	public Object getTransferData(DataFlavor df) {
-	    System.out.println(df.getMimeType());
 
 	    if (df.match(flavors[0]))
 		return patch;

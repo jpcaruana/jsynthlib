@@ -14,17 +14,17 @@ import java.io.*;
 public class RepositoryConfigPanel extends ConfigPanel {
 	private final JTextField t1=new JTextField (null,20);
 	private final JTextField t2=new JTextField (null,20);
-	private final JTextField t3=new JTextField (null,20);
+	private final JPasswordField t3=new JPasswordField (null,20);
 
 	public RepositoryConfigPanel(core.AppConfig appConfig) {
 		super(appConfig);
 		setLayout (new core.ColumnLayout ());
 		JLabel l1=new JLabel ("Repository Site: ");
 		JPanel p1=new JPanel ();
-		JLabel l2=new JLabel ("User Name:      ");
+		JLabel l2=new JLabel ("User Name:        ");
 		JPanel p2=new JPanel ();
 		JPanel p3=new JPanel();
-		JLabel l3=new JLabel ("Password:        ");
+		JLabel l3=new JLabel ("Password:          ");
 		JLabel l0=new JLabel("Before you can upload patches to a repository, You will need to go to there");
 		JLabel l00=new JLabel("in your web browser and make an account if you do not have one.");
 		p1.add (l1);
@@ -51,9 +51,9 @@ public class RepositoryConfigPanel extends ConfigPanel {
 	* changes some stuff and then hits "Cancel".
 	*/
 	public void init() {
-		t1.setText ("FOO");
-		t2.setText ("FOO");
-		t3.setText ("FOO");
+		t1.setText (appConfig.getRepositoryURL());
+		t2.setText (appConfig.getRepositoryUser());
+		t3.setText (appConfig.getRepositoryPass());
 	}
 	
 	/**
@@ -62,6 +62,9 @@ public class RepositoryConfigPanel extends ConfigPanel {
 	* save those settings in to the preference-saving system, if any
 	*/
 	public void commitSettings() {
+		appConfig.setRepositoryURL(t1.getText());
+		appConfig.setRepositoryUser(t2.getText());
+		appConfig.setRepositoryPass(t3.getText());
 	}
 	
 	/**

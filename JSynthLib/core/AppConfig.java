@@ -47,6 +47,10 @@ public class AppConfig implements Storable {
    	private int[] faderController    = new int[Constants.NUM_FADERS];
    	private int[] faderChannel       = new int[Constants.NUM_FADERS];
 
+	private String repositoryURL     = "http://www.jsynthlib.org";
+	private String repositoryUser    = "";
+	private String repositoryPass    = "";
+
 	private ArrayList deviceList = new ArrayList();
 
 	/** MidiDevice.Info.name|vendor */
@@ -198,6 +202,23 @@ public class AppConfig implements Storable {
 	    this.masterController = masterController;
 	};
 
+	
+	/**Getter for RepositoryURL */
+	public String getRepositoryURL() {return this.repositoryURL;};
+	/**Setter for RepositoryURL */
+	public void setRepositoryURL(String url) {this.repositoryURL=url;};
+	
+	/**Getter for RepositoryUser */
+	public String getRepositoryUser() {return this.repositoryUser;};
+	/**Setter for RepositoryUser */
+	public void setRepositoryUser(String user) {this.repositoryUser=user;};
+	
+	/**Getter for RepositoryPass */
+	public String getRepositoryPass() {return this.repositoryPass;};
+	/**Setter for RepositoryPass */
+	public void setRepositoryPass(String Pass) {this.repositoryPass=Pass;};
+	
+	
 	/** Getter for lookAndFeel */
 	public int getLookAndFeel() { return this.lookAndFeel; };
 	/** Setter for lookAndFeel */
@@ -400,6 +421,7 @@ public class AppConfig implements Storable {
 	private static final String[] storedPropertyNames = {
 		"libPath", "sysexPath", "note",
 		"velocity", "delay", "lookAndFeel", "guiStyle",
+		"repositoryURL","repositoryUser","repositoryPass",
 		"faderEnable", "faderController","faderChannel",
 		"masterInEnable",
 		"initPortIn", "initPortOut", "masterController", "faderPort",
