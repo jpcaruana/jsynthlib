@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 
 import core.Driver;
 import core.ErrorMsg;
+import core.JSLFrame;
 import core.Patch;
 import core.PatchEdit;
 import core.SysexHandler;
@@ -476,6 +477,10 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 
         Patch p = new Patch(sysex);
         return p;
+    }
+    
+    public JSLFrame editPatch(Patch p) {
+	    return new QuasimidiQuasarSingleEditor(p);
     }
 }
 
