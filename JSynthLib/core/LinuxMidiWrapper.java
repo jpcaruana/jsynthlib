@@ -42,7 +42,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			try {
 				inStream[i]  = new java.io.FileInputStream(file);
 				outStream[i] = new java.io.FileOutputStream(file);
-				outStream[i] = new BufferedOutputStream(outStream[i], 4100);
+				//outStream[i] = new BufferedOutputStream(outStream[i], 4100);
 			} catch (Exception e) {
 				e.printStackTrace ();
 			}
@@ -138,9 +138,25 @@ public class LinuxMidiWrapper extends MidiWrapper {
 	public  void writeLongMessage (int port,byte []sysex,int length) throws IOException {
 		setOutputDeviceNum (port);
 		if (outStream[port]!=null) {
-			outStream[port].write (sysex,0,length);
-			outStream[port].flush ();
-			MidiUtil.logOut(port, sysex, length);
+			final int BUFSIZE = 250;
+			//final int BUFSIZE = 0;
+
+			if (BUFSIZE == 0) {
+				outStream[port].write(sysex,0,length);
+				outStream[port].flush ();
+				logMidi(port, false, sysex, length);
+			} else {
+				byte[] tmpArray = new byte[BUFSIZE+1];
+
+				for (int i = 0; length > 0; i += BUFSIZE, length -= BUFSIZE) {
+					int s = Math.min(length, BUFSIZE);
+
+					System.arraycopy(sysex, i, tmpArray, 0, s);
+					outStream[port].write(tmpArray,0,s);
+					outStream[port].flush ();
+					logMidi(port, false, tmpArray, s);
+				}
+			}
 		}
 	}
 
@@ -245,7 +261,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 
 		// pop the oldest message
 		MidiMessage msg = (MidiMessage) list.remove(0);
-		MidiUtil.logIn(port, msg);
+		logMidi(port, true, msg);
 		return msg;
 	}
 
