@@ -86,7 +86,7 @@ public class SysexGetDialog extends JDialog {
             {
       device=(Device)PatchEdit.appConfig.getDevice(i);
       deviceAssignmentList.add(new deviceAssignment( i, device) );        // the original deviceNum/device
-    
+
       for (int j=0;j<device.driverList.size();j++)
       {
         // Skipping a converter
@@ -96,7 +96,7 @@ public class SysexGetDialog extends JDialog {
         }
       }
     }
-    
+
     //----- Populate the combo boxes with the entries of the deviceAssignmentList
     for (int i=0; i<deviceAssignmentList.size();i++)
     {
@@ -188,18 +188,18 @@ public class SysexGetDialog extends JDialog {
       return;
 
     byte[] patchSysex;
-       if (sysex[0]==-16) //F0 
+       if (sysex[0]==-16) //F0
     {  patchSysex= new byte[sysexSize];
        System.arraycopy(sysex, 0, patchSysex, 0, sysexSize);
     } else
-     { 
+     {
      int i=0;
       while ((sysex[i]!=-16) && (i<sysexSize)) i++;
       if (i==sysexSize) return;
       patchSysex= new byte[sysexSize-i];
       System.arraycopy(sysex, i, patchSysex, 0, sysexSize-i);
      }
-	    
+
     Patch p = new Patch(patchSysex, deviceNum, driverNum );
 
     Patch[] patarray = p.dissect();
@@ -219,7 +219,7 @@ public class SysexGetDialog extends JDialog {
 	for ( int i =PatchEdit.Clipboard.deviceNum;i<PatchEdit.appConfig.deviceCount (); i++)
         {
           device=(Device)PatchEdit.appConfig.getDevice(i);
- 
+
           for (int j=0;j<device.driverList.size();j++)
           {
             if ( ((Driver)device.driverList.get(j)).supportsPatch(patchString,PatchEdit.Clipboard) )
@@ -282,17 +282,17 @@ public class SysexGetDialog extends JDialog {
 //----------------------------------------------------------------------------------------------------------------------
 // InnerClass: DeviceActionListener
 //----------------------------------------------------------------------------------------------------------------------
- 
+
    public class DeviceActionListener implements ActionListener {
      public void actionPerformed (ActionEvent evt) {
  //      ErrorMsg.reportStatus("DeviceActionListener->actionPerformed");
- 
+
       deviceAssignment myDevAssign = (deviceAssignment)deviceComboBox.getSelectedItem();
 
        driverComboBox.removeAllItems();
        bankComboBox.removeAllItems();
        patchNumComboBox.removeAllItems();
- 
+
       if (myDevAssign != null)
        {
 	 ArrayList driverAssignmentList = myDevAssign.getDriverAssignmentList();
@@ -301,12 +301,12 @@ public class SysexGetDialog extends JDialog {
 	   driverComboBox.addItem( (driverAssignment)driverAssignmentList.get(j) );
          }
        }
- 
+
        driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
      }
    } // End InnerClass: DeviceActionListener
- 
- 
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // InnerClass: DriverActionListener
@@ -320,22 +320,22 @@ public class SysexGetDialog extends JDialog {
 
       bankComboBox.removeAllItems();
       patchNumComboBox.removeAllItems();
-      
+
       if (myDrvAssign != null) {
           if (myDrvAssign.getDriver().bankNumbers.length > 1) {
               for (int i = 0 ; i < myDrvAssign.getDriver().bankNumbers.length ; i++) {
                   bankComboBox.addItem(myDrvAssign.getDriver().bankNumbers[i]);
               }
           }
-          
-          
+
+
           if (myDrvAssign.getDriver().patchNumbers.length > 1) {
               for (int i = 0 ; i < myDrvAssign.getDriver().patchNumbers.length ; i++) {
                   patchNumComboBox.addItem(myDrvAssign.getDriver().patchNumbers[i]);
               }
           }
-          
-          
+
+
           bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
           // N.B. Do not enable patch selection for banks
           patchNumComboBox.setEnabled(!(myDrvAssign.getDriver() instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
@@ -368,17 +368,18 @@ public class SysexGetDialog extends JDialog {
       driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).getDriverNum();
       bankNum = bankComboBox.getSelectedIndex();
       patchNum = patchNumComboBox.getSelectedIndex();
+      int inPort = driver.getInPort();
 
       ErrorMsg.reportStatus("");
-      ErrorMsg.reportStatus("SysexGetDialog | port: " + driver.inPort + " | bankNum: " + bankNum + " | patchNum: " + patchNum);
+      ErrorMsg.reportStatus("SysexGetDialog | port: " + inPort + " | bankNum: " + bankNum + " | patchNum: " + patchNum);
 
       //----- Clear MidiIn buffer
       try {
       	if(PatchEdit.MidiIn == null) {
       		System.err.println("Yup... it's null!");
       	}
-        while (PatchEdit.MidiIn.messagesWaiting(driver.inPort) > 0)
-          PatchEdit.MidiIn.readMessage(driver.inPort, buffer, 1024);
+        while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
+          PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
 
       } catch (Exception ex) {
         ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
@@ -399,9 +400,10 @@ public class SysexGetDialog extends JDialog {
   public class TimerActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
       try {
-        while (PatchEdit.MidiIn.messagesWaiting(driver.inPort) > 0) {
+	int inPort = driver.getInPort();
+        while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0) {
           int size;
-          size = PatchEdit.MidiIn.readMessage(driver.inPort, buffer, 1024);
+          size = PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
 //ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + size);
           System.arraycopy (buffer, 0, sysex, sysexSize, size);
           sysexSize += size;
@@ -416,5 +418,3 @@ public class SysexGetDialog extends JDialog {
   } // End InnerClass: SysexGetTimer
 
 } // End Class: SysexGetDialog
-
-
