@@ -52,6 +52,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     private int faderBank;
     /** Numfer of fader banks.  Set by show method. */
     private int numFaderBanks;
+    /** Number of patch edtor frame opened. */
+    private static int nFrame = 0;
+    /** send a patch when patch editor frame is activated. */
+    private static boolean sendPatchOnActivated = true;
 
     /**
      * This is a copy of the patch when we started editing (in case
@@ -75,6 +79,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     protected PatchEditorFrame(String name, ISinglePatch patch) {
         // create a resizable, closable, maximizable, and iconifiable frame.
         super(name, true, true, true, true);
+        ErrorMsg.reportStatus("!!!PE.Constructor: nFrame = " + nFrame);
+        nFrame++;
         p = patch;
         // make a backup copy
         originalPatch = (IPatch)p.clone();
@@ -137,6 +143,12 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * redefined in sub-classes.
      */
     protected void frameClosing() {
+        ErrorMsg.reportStatus("###PE.FrameCloseing: nFrame = " + nFrame);
+        nFrame--;
+        // If zero or one frame remains, send a patch next time when a editor
+        // frame is activated.
+        sendPatchOnActivated = (nFrame < 2);
+
         String[] choices = new String[] {
                 "Keep Changes",
                 "Revert to Original",
@@ -171,13 +183,23 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * in sub-classes.
      */
     protected void frameOpened() {
-        p.send();
     }
 
     /**
      * Called when the frame is activated. May be redefined in sub-classes.
      */
     protected void frameActivated() {
+        // If multiple Patch Editors are opened, send patch to edit buffer every
+        // time a frame is activated. This is required because multiple frames
+        // for one synth may be opened and it is not easy or worth to know for
+        // which synth every frame is.
+        ErrorMsg.reportStatus("###PE.FrameActivated: nFrame = " + nFrame);
+        if (sendPatchOnActivated || nFrame > 1) {
+            sendPatchOnActivated = false;
+            p.send();
+        }
+
+        // enable/disable menu entries
         Actions.setEnabled(false, Actions.EN_ALL);
 
         Actions.setEnabled(true,
