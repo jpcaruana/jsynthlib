@@ -149,10 +149,20 @@ public class Utility extends Object {
 	return (getSystemProperty("os.name"));
     }
 
+    /** Returns the "os.version" system property. */
+    public static String getOSVersion() {
+	return (getSystemProperty("os.version"));
+    }
+   
     /** Returns the "java.specification.version" system property. */
     // - emenaker 2003.03.13
     public static String getJavaSpecVersion() {
 	return (getSystemProperty("java.specification.version"));
+    }
+
+    /** Returns the "java.version" system property. */
+    public static String getJavaVersion() {
+	return (getSystemProperty("java.version"));
     }
 
     /** Looks up a system property and returns "" on exceptions. */

@@ -25,7 +25,12 @@ public final class PatchEdit  {
 
     /** Initialize Application: */
     public PatchEdit() {
-	// Load synth database (synthdrivers.properties)
+        // for bug report
+        ErrorMsg.reportStatus("JSynthLib: " + Constants.VERSION
+                + ", Java: " +  Utility.getJavaVersion()
+                + ", OS: " +  Utility.getOSName() + ", " + Utility.getOSVersion());
+
+        // Load synth database (synthdrivers.properties)
 	devConfig = new DevicesConfig();
 
 	// Load config file (JSynthLib.properties).
@@ -177,6 +182,9 @@ public final class PatchEdit  {
 		Receiver rcvr = MidiUtil.getReceiver(appConfig.getInitPortOut());
 		rcvr1 = new MasterReceiver(rcvr);
 		trns.setReceiver(rcvr1);
+//		ErrorMsg.reportStatus("masterInEnable.rcvr: " +  rcvr);
+//		ErrorMsg.reportStatus("masterInEnable.rcvr1: " +  rcvr1);
+//		ErrorMsg.reportStatus("masterInEnable.trns: " +  trns);
 	    } catch (MidiUnavailableException e) {
 		ErrorMsg.reportStatus(e);
 	    }
