@@ -13,15 +13,17 @@ import java.lang.reflect.*;
  * @author Joe Emenaker
  * @version $Id$
  */
-public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
+public class MidiConfigPanel extends ConfigPanel {
+    /** CheckBox for MIDI */
+    private JCheckBox cbxEnMidi;
     /** ComboBox for MIDI Out port. */
-    private JComboBox cb1 = null;
+    private JComboBox cbOut = null;
     /** ComboBox for MIDI In port. */
-    private JComboBox cb2 = null;
+    private JComboBox cbIn = null;
     /** ComboBox for MIDI In port for Master Controller. */
-    private JComboBox cb3 = null;
+    private JComboBox cbMC = null;
     /** CheckBox for Master Controller */
-    private JCheckBox enabledBox;
+    private JCheckBox cbxEnMC;
     /** ComboBox for MIDI Wrapper. */
     private JComboBox cbDriver = null;
 
@@ -36,27 +38,40 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	setLayout (new core.ColumnLayout ());
 	setPreferredSize(new Dimension(500,250));
 
-	// MIDI wrapper selection Combobox
-        JLabel l2 = new JLabel ("MIDI Access Method:");
-        add (l2);
-
-	cbDriver=new JComboBox ();
-	add (cbDriver);
-	// Fill the combo box with all Midi wrappers in the midiimps vector
-	Vector midiImps = appConfig.midiWrappers;
-	for(int i=0; i<midiImps.size(); i++) {
-	    cbDriver.addItem(midiImps.elementAt(i));
-	}
-	cbDriver.addItemListener (new ItemListener () {
-		public void itemStateChanged (ItemEvent e) {
-		    if (e.getStateChange ()==ItemEvent.SELECTED) {
-			System.out.println("itemStateChanged");
-			resetMidiDriver();
-			//resetPortComboBoxes();
-			//midiDriverSelected((MidiWrapper) ((JComboBox)e.getSource()).getSelectedItem());
-		    }
+	cbxEnMidi = new JCheckBox ("Enable MIDI Interface");
+	/*
+	cbxEnMidi.addActionListener(new ActionListener() {
+		public void actionPerformed (ActionEvent e) {
+		    // enable/disable all MIDI control !!!FIXIT!!!
+		    //cbXXXX.setEnabled(cbxEnMidi.isSelected());
 		}
-	    });
+	});
+	*/
+	add(cbxEnMidi);
+
+	// MIDI wrapper selection Combobox
+	if (!PatchEdit.newMidiAPI) { // only Javasound
+	    JLabel l2 = new JLabel ("MIDI Access Method:");
+	    add (l2);
+
+	    cbDriver=new JComboBox ();
+	    add (cbDriver);
+	    // Fill the combo box with all Midi wrappers in the midiimps vector
+	    Vector midiImps = appConfig.midiWrappers;
+	    for(int i=0; i<midiImps.size(); i++) {
+		cbDriver.addItem(midiImps.elementAt(i));
+	    }
+	    cbDriver.addItemListener (new ItemListener () {
+		    public void itemStateChanged (ItemEvent e) {
+			if (e.getStateChange ()==ItemEvent.SELECTED) {
+			    System.out.println("itemStateChanged");
+			    resetMidiDriver();
+			    //resetPortComboBoxes();
+			    //midiDriverSelected((MidiWrapper) ((JComboBox)e.getSource()).getSelectedItem());
+			}
+		    }
+		});
+	}
 
 	// panel for other settings
 	channelPanel = new JPanel();
@@ -82,29 +97,29 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	cbPanel.add (cbLabel);
 
 	gbc.gridx=0; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=1;
-	JLabel cb1Label = new JLabel("Out Port:");
-	gridbag.setConstraints(cb1Label, gbc);
-	cbPanel.add (cb1Label);
-        cb1 = new JComboBox ();
+	JLabel cbOutLabel = new JLabel("Out Port:");
+	gridbag.setConstraints(cbOutLabel, gbc);
+	cbPanel.add (cbOutLabel);
+        cbOut = new JComboBox ();
 	gbc.gridx=1; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
-	gridbag.setConstraints(cb1, gbc);
-        cbPanel.add (cb1);
+	gridbag.setConstraints(cbOut, gbc);
+        cbPanel.add (cbOut);
 
 	gbc.gridx=0; gbc.gridy=5; gbc.gridheight=1; gbc.gridwidth=1;
-	JLabel cb2Label = new JLabel("In Port:");
-	gridbag.setConstraints(cb2Label, gbc);
-        cbPanel.add (cb2Label);
-	cb2 = new JComboBox ();
+	JLabel cbInLabel = new JLabel("In Port:");
+	gridbag.setConstraints(cbInLabel, gbc);
+        cbPanel.add (cbInLabel);
+	cbIn = new JComboBox ();
 	gbc.gridx=1; gbc.gridy=5; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
-	gridbag.setConstraints(cb2, gbc);
-        cbPanel.add (cb2);
+	gridbag.setConstraints(cbIn, gbc);
+        cbPanel.add (cbIn);
 
 	// MIDI loopback test
 	gbc.gridx=1; gbc.gridy=6; gbc.gridheight=1; gbc.gridwidth=1;gbc.fill=gbc.NONE;
         JButton testButton = new JButton("MIDI Loopback Test...");
 	testButton.addActionListener (new ActionListener () {
 		public void actionPerformed (ActionEvent e) {
-		    MidiTest.runLoopbackTest(AppConfig.getMidiWrapper(), cb2.getSelectedIndex(), cb1.getSelectedIndex());
+		    MidiTest.runLoopbackTest(AppConfig.getMidiWrapper(), cbIn.getSelectedIndex(), cbOut.getSelectedIndex());
 		}
 	    });
 	gridbag.setConstraints(testButton, gbc);
@@ -121,21 +136,21 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	gridbag.setConstraints(l1, gbc);
         cbPanel.add (l1);
 
-	enabledBox = new JCheckBox ("Enable Master Controller");
+	cbxEnMC = new JCheckBox ("Enable Master Controller");
 	gbc.gridx = 1; gbc.gridy = 9; gbc.gridwidth = 1; gbc.gridheight = 1;
-	cbPanel.add(enabledBox, gbc);
-	enabledBox.addActionListener(new ActionListener() {
+	cbPanel.add(cbxEnMC, gbc);
+	cbxEnMC.addActionListener(new ActionListener() {
 		public void actionPerformed (ActionEvent e) {
-			JCheckBox chb = (JCheckBox)e.getSource();
-			cb3.setEnabled(enabledBox.isSelected());
+		    //JCheckBox chb = (JCheckBox)e.getSource();
+		    cbMC.setEnabled(cbxEnMC.isSelected());
 		}
-	});
+	    });
 
 	gbc.gridx=1; gbc.gridy=10; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
-        cb3 = new JComboBox ();
-	cb3.setEnabled(enabledBox.isEnabled() && enabledBox.isSelected());
-	gridbag.setConstraints(cb3, gbc);
-        cbPanel.add (cb3);
+        cbMC = new JComboBox ();
+	cbMC.setEnabled(cbxEnMC.isEnabled() && cbxEnMC.isSelected());
+	gridbag.setConstraints(cbMC, gbc);
+        cbPanel.add (cbMC);
 
 	channelPanel.add(cbPanel);
 	add(channelPanel);
@@ -171,11 +186,16 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
     }
 
     public void commitSettings() {
-	appConfig.setMidiPlatform(cbDriver.getSelectedIndex());
+	appConfig.setMidiEnable(cbxEnMidi.isSelected());
+	if (!cbxEnMidi.isSelected())
+	    return;
 
-	int midiIn = cb2.getSelectedIndex();
-	int midiOut = cb1.getSelectedIndex();
-	int masterIn = cb3.getSelectedIndex();
+	if (!PatchEdit.newMidiAPI)
+	    appConfig.setMidiPlatform(cbDriver.getSelectedIndex());
+
+	int midiIn = cbIn.getSelectedIndex();
+	int midiOut = cbOut.getSelectedIndex();
+	int masterIn = cbMC.getSelectedIndex();
 
 	appConfig.setInitPortIn(midiIn);
 	appConfig.setInitPortOut(midiOut);
@@ -187,7 +207,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	    appConfig.setMidiOut(jw.getOutputDevice(midiOut));
 	    appConfig.setMidiMasterIn(jw.getInputDevice(masterIn));
 	}
-	appConfig.setMasterInEnable(enabledBox.isSelected());
+	appConfig.setMasterInEnable(cbxEnMC.isSelected());
 
 	// Notify all listeners
 	for(int i = 0; i < driverChangeListeners.size(); i++) {
@@ -198,8 +218,10 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
     }
 
     public void init() {
-	setComboBox(cbDriver, PatchEdit.appConfig.getMidiPlatform());
-	enabledBox.setSelected(appConfig.getMasterInEnable());
+	if (!PatchEdit.newMidiAPI)
+	    setComboBox(cbDriver, PatchEdit.appConfig.getMidiPlatform());
+	cbxEnMidi.setSelected(appConfig.getMidiEnable());
+	cbxEnMC.setSelected(appConfig.getMasterInEnable());
 	resetPortComboBoxes();
 	//midiDriverSelected((MidiWrapper) cbDriver.getSelectedItem());
     }
@@ -225,34 +247,34 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
      */
     private void resetPortComboBoxes() {
 	MidiWrapper currentDriver = appConfig.getMidiWrapper();
-	cb1.removeAllItems ();
+	cbOut.removeAllItems ();
 	try {
 	    for (int j=0; j< currentDriver.getNumOutputDevices ();j++)
 		try {
-		    cb1.addItem (j+": "+ currentDriver.getOutputDeviceName (j));
+		    cbOut.addItem (j+": "+ currentDriver.getOutputDeviceName (j));
 		} catch (Exception e) {}
 	} catch (Exception e) {}
-	cb2.removeAllItems ();
+	cbIn.removeAllItems ();
 	try {
 	    for (int j=0; j< currentDriver.getNumInputDevices ();j++)
 		try {
-		    cb2.addItem (j+": "+currentDriver.getInputDeviceName (j));
+		    cbIn.addItem (j+": "+currentDriver.getInputDeviceName (j));
 		} catch (Exception e) {}
 	} catch (Exception e) {}
-	cb3.removeAllItems ();
+	cbMC.removeAllItems ();
 	try {
 	    for (int j=0; j< currentDriver.getNumInputDevices ();j++)
 		try {
-		    cb3.addItem (j+": "+currentDriver.getInputDeviceName (j));
+		    cbMC.addItem (j+": "+currentDriver.getInputDeviceName (j));
 		} catch (Exception e) {}
 	} catch (Exception e) {}
-	setComboBox(cb1, PatchEdit.appConfig.getInitPortOut());
-	setComboBox(cb2, PatchEdit.appConfig.getInitPortIn());
-	setComboBox(cb3, PatchEdit.appConfig.getMasterController());
-	enabledBox.setSelected(PatchEdit.appConfig.getMasterInEnable());
+	setComboBox(cbOut, PatchEdit.appConfig.getInitPortOut());
+	setComboBox(cbIn, PatchEdit.appConfig.getInitPortIn());
+	setComboBox(cbMC, PatchEdit.appConfig.getMasterController());
+	cbxEnMC.setSelected(PatchEdit.appConfig.getMasterInEnable());
 	setContainerEnabled(channelPanel,currentDriver.isReady());
-	// if cb3 is enabled/disabled depends from enabledBox
-	cb3.setEnabled(enabledBox.isEnabled() && enabledBox.isSelected());
+	// if cbMC is enabled/disabled depends from cbxEnMC
+	cbMC.setEnabled(cbxEnMC.isEnabled() && cbxEnMC.isSelected());
     }
 
     /**
