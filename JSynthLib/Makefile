@@ -1,5 +1,5 @@
 #
-# Makefile created at Mon Mar 29 12:04:21 2004, by mmake
+# Makefile created at Tue Mar 30 22:25:09 2004, by mmake
 #
 
 # Programs (with common options):
@@ -25,13 +25,13 @@ MODE_FILES      = 444
 MODE_DIRS       = 2755
 
 # Build programs
-JAVAC           = javac
+JAVAC           = jikes
 JAVADOC         = javadoc
 JAR             = jar
 
 # Build flags
-JAVAC_FLAGS     = $(if DEBUG, -g )
-JAVADOC_FLAGS   = -locale en_US -breakiterator -quiet -use -author -version -overview doc/programming.html
+JAVAC_FLAGS     = 
+JAVADOC_FLAGS   = -version -author
 JAR_FLAGS       = cvf0
 JIKES_DEP_FLAG	= +M
 
@@ -62,80 +62,112 @@ SCRIPT_DIR	= $(PREFIX)bin
 # ------------------------------------------------------------------- #
 
 # The name of the jar file to install
-JAR_FILE        = jsynthlib.jar
+JAR_FILE        = 
 
 # 
 # The VERSION variable below should be set to a value 
 # that will be tested in the .xjava code and Info.plist. 
 # 
-VERSION		= 0.19-cvs
+VERSION		= CHANGE_ME
 
 # ------------------------------------------------------------------- #
 
 # The name of the OS X Application Bundle to install
-BUNDLE_FILE	= JSynthLib.app
+BUNDLE_FILE	= 
 
 # Folder containing App Bundle resources (Info.plist, *.icns, etc.)
 BUNDLE_RESOURCE_DIR = misc/macosx
 
 # Items to copy to the Resources folder of the bundle
-BUNDLE_RESOURCES = $(addsuffix .icns, $(basename $(BUNDLE_FILE)) PatchLib)
+BUNDLE_RESOURCES = $(addsuffix .icns, $(basename $(APP_FILE)) Document)
 
 # Location of JavaApplicatonStub
-JAVA_STUB	= /System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub
+JAVA_STUB	= /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub
 # ------------------------------------------------------------------- #
+# (Moved here so they can be overriden in makefile.vars)
+
+# Resource files:
+#  Extend the list to install other files of your choice
+RESOURCE_SRC	:= *.properties *.gif *.au
+
+# Objects that should go into the jar file. (find syntax)
+JAR_OBJS	:= \( -name '*.class' -o -name '*.gif' -o -name "*.au" \
+		       -o -name '*.properties' \)
+
+# ----------------------------------------
+# Include the separate variables file if it exists
+# ----------------------------------------
+MAKEFILE_VARS	= makefile.vars
+VARS	= $(wildcard $(MAKEFILE_VARS))
+ifneq ($(VARS),)
+	include $(MAKEFILE_VARS)
+endif
 
 
 # Packages we should compile
 PACKAGES = \
-	synthdrivers.EnsoniqVFX \
+	synthdrivers.KawaiK4 \
+	synthdrivers.YamahaDX7II \
+	synthdrivers.RolandXV5080 \
+	synthdrivers.KorgX3 \
+	synthdrivers.EmuProteusMPS \
+	synthdrivers.BossDR660 \
+	midiprovider.LinuxCharDev.LinuxCharDevMidiProvider \
+	synthdrivers.RolandTD6 \
+	synthdrivers.Generic \
+	synthdrivers.RolandMKS50 \
+	org.jsynthlib.jsynthlib \
+	synthdrivers.OberheimMatrix \
 	synthdrivers.SCIProphet600 \
 	synthdrivers.YamahaTX7 \
-	synthdrivers.YamahaDX7 \
-	synthdrivers.AccessVirus \
-	synthdrivers.YamahaDX7.common \
 	synthdrivers.YamahaFS1R \
-	synthdrivers.YamahaMotif \
-	synthdrivers.AlesisQS \
-	synthdrivers.BossDR660 \
-	synthdrivers.AlesisA6 \
-	synthdrivers.RolandXV5080 \
-	com.dreamfabric \
-	synthdrivers.NovationNova1 \
-	synthdrivers.YamahaDX7s \
-	synthdrivers.EmuProteusMPS \
-	org.jsynthlib.jsynthlib \
+	synthdrivers.MIDIboxSID \
 	synthdrivers.YamahaTG33 \
+	synthdrivers.CasioCZ1000 \
+	synthdrivers.YamahaTX802 \
+	synthdrivers.PeaveyPC1600 \
+	synthdrivers.YamahaMotif \
+	synthdrivers.AccessVirus \
+	com.dreamfabric \
 	synthdrivers.NordLead \
 	synthdrivers.EnsoniqESQ1 \
-	synthdrivers.RolandTD6 \
-	com.apple.eawt \
-	synthdrivers.RolandMKS50 \
-	synthdrivers.YamahaDX100 \
-	synthdrivers.YamahaTX802 \
-	synthdrivers.KorgWavestation \
-	synthdrivers.PeaveyPC1600 \
-	synthdrivers.MIDIboxSID \
-	synthdrivers.KorgER1 \
-	synthdrivers.CasioCZ1000 \
-	synthdrivers.KawaiK4 \
-	synthdrivers.YamahaTX81z \
-	synthdrivers.Generic \
-	synthdrivers.KorgX3 \
-	synthdrivers.OberheimMatrix \
+	synthdrivers.NovationNova1 \
 	core \
-	synthdrivers.YamahaDX7II \
-	synthdrivers.KawaiK5000
+	synthdrivers.YamahaDX7 \
+	com.apple.eawt \
+	synthdrivers.AlesisQS \
+	synthdrivers.YamahaDX100 \
+	synthdrivers.AlesisA6 \
+	synthdrivers.YamahaDX7s \
+	synthdrivers.KorgWavestation \
+	synthdrivers.KawaiK5000 \
+	synthdrivers.EnsoniqVFX \
+	synthdrivers.YamahaDX7.common \
+	synthdrivers.KorgER1 \
+	synthdrivers.YamahaTX81z
+
+
+# All packages that can be recursively be compiled.
+ALL_PACKAGES = \
+	midiprovider \
+	com \
+	org \
+	com.apple \
+	org.jsynthlib \
+	midiprovider.LinuxCharDev \
+	synthdrivers \
+	$(PACKAGES)
+
 
 # Packages to generate docs for.
 JAVADOC_PACKAGES = $(PACKAGES)
 
+
 # Resource packages
 RESOURCES = \
+	synthdrivers.YamahaFS1R.images \
 	synthdrivers.YamahaDX7.images \
-	images..xvpics \
-	html.resources \
-	synthdrivers.YamahaFS1R.images
+	doc.api-docs.resources
 
 
 # Directories with shell scripts
@@ -158,6 +190,15 @@ XJAVA_SRC	:= $(foreach dir, $(JAVA_DIRS), $(wildcard $(dir)/*.xjava))
 # All the xjava files to build
 XJAVA_OBJS	:= $(XJAVA_SRC:.xjava=.java)
 
+# Directory coresponding to a package
+PACKAGE_DIR	= $(subst .,/,$(1))
+
+# All the (x)java files in a package
+PACKAGE_SRC	=  $(shell $(FIND) $(PACKAGE_DIR) \( -name '*.java' -or -name '*.xjava' \) )
+
+# All the classes to build in a package
+PACKAGE_OBJS	= $(patsubst %.java,%.class,$(PACKAGE_SRC: %.xjava=%.java))
+
 # All the .java source files:
 JAVA_SRC	:= $(foreach dir, $(JAVA_DIRS), $(wildcard $(dir)/*.java))
 JAVA_SRC	:= $(XJAVA_OBJS) $(JAVA_SRC)
@@ -165,19 +206,9 @@ JAVA_SRC	:= $(XJAVA_OBJS) $(JAVA_SRC)
 # Dependency files:
 DEPEND_OBJS	:= $(JAVA_SRC:.java=.u)
 
-# Objects that should go into the jar file. (find syntax)
-JAR_OBJS	:= \( \( -name '*.class' -o -name '*.gif' -o -name "*.png" \
-		       -o -name *.jpg -o -name '*.properties' \
-		       -o -name '*.txt' -o -name '*.html' \
-		       -o -name '*.syx' -o -name '*.new' \) \
-		    -and -not -path '*$(DOC_DIR)*' \)
-
 # The intermediate java files and main classes we should build:
 JAVA_OBJS	:= $(XJAVA_OBJS) $(JAVA_SRC:.java=.class)
 
-# Resource files:
-#  Extend the list to install other files of your choice
-RESOURCE_SRC	:= *.properties *.gif *.png *.jpg *.txt *.html *.syx *.new
 #  Search for resource files in both JAVA_DIRS and RESOURCE_DIRS
 RESOURCE_OBJS	:= $(foreach dir, $(JAVA_DIRS) $(RESOURCE_DIRS), \
 		     $(wildcard $(foreach file, $(RESOURCE_SRC), \
@@ -227,13 +258,27 @@ endef
 # Targets
 # -------
 
-.PHONY: all jar install uninstall doc clean depend tags bundle
-
-all::	$(JAVA_OBJS)
-
+.PHONY: all jar install uninstall doc clean depend tags bundle help $(ALL_PACKAGES)
 
 help:
-	@echo "Usage: make {all|jar|bundle|install|uninstall|doc|clean|depend|tags}"
+	@echo "Usage: make {all|jar|bundle|install|uninstall|doc|clean|depend|tags|PACKAGE_NAME}"
+	@echo "	all: build all classes"
+	@echo "	jar: build jar file"
+	@echo "	bundle: build OS X app bundle"
+	@echo "	install: install classes into $(CLASS_DIR)"
+	@echo "		jar into $(JAR_DIR)"
+	@echo "		bundle into $(BUNDLE_DIR)"
+	@echo "		javadocs into $(DOC_DIR)"
+	@echo "		scripts into $(SCRIPT_DIR)"
+	@echo "	uninstall: remove installed files"
+	@echo "	doc: generate api docs from javadoc comments"
+	@echo "	clean: remove classes and temporary files"
+	@echo "	depend: build class dependency info using jikes"
+	@echo "	tags: build emacs tags file"
+	@echo "	PACKAGE_NAME: builds all classes in this package and any subpackages."
+
+
+all::	$(JAVA_OBJS)
 
 
 # Jar target
@@ -258,13 +303,18 @@ jar:
 	@echo "No jar file defined"
 endif
 
+# Source jar target
+$(basename $(JAR_FILE))-src$(suffix $JAR_FILE): $(JAVA_SRC) $(RESOURCE_OBJS)
+	$(FIND) $(TOPLEVEL) $(JAR_OBJS: .class=.java) -print | $(XARGS) \
+	$(JAR) $(JAR_FLAGS) $@
+
 # Bundle target
 ifneq ($(strip $(BUNDLE_FILE)),)
 bundle:  $(BUNDLE_FILE)
 $(BUNDLE_FILE) : $(JAR_FILE)
 	$(INSTALL_DIR) $(BUNDLE_FILE)/Contents/Resources/Java $(check-exit)
 	$(INSTALL_DIR) $(BUNDLE_FILE)/Contents/MacOS $(check-exit)
-	$(INSTALL_PROG) $(JAVA_STUB) $(BUNDLE_FILE)/Contents/MacOS \
+	$(INSTALL_PROG) $(JAVA_STUB) $(BUNDLE_FILE)/Contents/MacOS/ \
 		$(check-exit)
 	( $(CAT) $(BUNDLE_RESOURCE_DIR)/Info.plist | $(SED) -e \
 		s/VERSION/$(VERSION)/ >98762infoplist876 ) $(check-exit)
@@ -273,7 +323,7 @@ $(BUNDLE_FILE) : $(JAR_FILE)
 	$(RM) 98762infoplist876 $(check-exit)
 	$(INSTALL_FILE) $(JAR_FILE) $(BUNDLE_FILE)/Contents/Resources/Java
 	checkexit="";for f in $(BUNDLE_RESOURCES); do \
-		$(INSTALL_FILE) $(BUNDLE_RESOURCE_DIR)/$$f $(BUNDLE_FILE)/Contents/Resources \
+		$(INSTALL_FILE) $(BUNDLE_RESOURCE_DIR)$$f $(BUNDLE_FILE)/Contents/Resources/ \
 		|| checkexit=$?; \
 		done; test -z $$checkexit
 
@@ -323,8 +373,8 @@ endif
 # Depend target
 ifeq ($(findstring jikes,$(JAVAC)),jikes)
 depend: $(XJAVA_OBJS) $(DEPEND_OBJS)
-	( $(CAT) $(DEPEND_OBJS) |  $(SED) -e '/\.java$$/d' \
-	  > $(MAKEFILE_DEPEND); $(RM) $(DEPEND_OBJS); )
+	( $(CAT) $(DEPEND_OBJS) |  $(SED) -e '/\.class$$/d' \
+	  -e '/.*$$.*/d' > $(MAKEFILE_DEPEND); $(RM) $(DEPEND_OBJS); )
 else
 depend:
 	@echo "mmake needs the jikes compiler to build class dependencies"
@@ -333,10 +383,11 @@ endif
 
 
 # Doc target
-ifneq ($(strip $(PACKAGES)),)
+ifneq ($(strip $(JAVADOC_PACKAGES)),)
 doc:	$(JAVA_SRC)
 	@echo "===> [Installing java documentation in $(DOC_DIR)] "
 	$(INSTALL_DIR) $(DOC_DIR) $(check-exit)
+	# JAVADOC_FLAGS first so -locale can be used
 	$(JAVADOC) $(JAVADOC_FLAGS) -d $(DOC_DIR) $(JAVADOC_PACKAGES)
 else
 doc:
@@ -376,8 +427,7 @@ tags:
 
 # Various cleanup routines
 clean::
-	$(FIND) . \( \( -name '*~' -o -name '*.class' \) -and -not \
-		\( -ipath '*wireprovider*' -or -ipath '*jmidi*' \) \) -print | \
+	$(FIND) . \( -name '*~' -o -name '*.class' \) -print | \
 	$(XARGS) $(RM) 
 	$(FIND) . -name '*.u' -print | $(XARGS) $(RM)
 
@@ -394,4 +444,13 @@ DEPEND	= $(wildcard $(MAKEFILE_DEPEND))
 ifneq ($(DEPEND),)
 	include $(MAKEFILE_DEPEND)
 endif
+
+#package targets
+midiprovider : $(call PACKAGE_OBJS,midiprovider)
+com : $(call PACKAGE_OBJS,com)
+org : $(call PACKAGE_OBJS,org)
+com.apple : $(call PACKAGE_OBJS,com.apple)
+org.jsynthlib : $(call PACKAGE_OBJS,org.jsynthlib)
+midiprovider.LinuxCharDev : $(call PACKAGE_OBJS,midiprovider.LinuxCharDev)
+synthdrivers : $(call PACKAGE_OBJS,synthdrivers)
 
