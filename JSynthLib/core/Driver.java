@@ -1,9 +1,9 @@
 package core;
 import java.io.*;
 import javax.swing.*;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
+// import java.util.Set;
+// import java.util.HashSet;
+// import java.util.Arrays;
 
 /**
  * This is the base class for all Drivers.
@@ -228,7 +228,14 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     void setDeviceNum(int deviceNum) {
 	this.deviceNum = deviceNum;
     }
-    /** Getter for property <code>deviceNum</code>. */
+    /**
+     * Getter for property <code>deviceNum</code>.<p>
+     * This method will be deprecated.
+     * Use <code>getDevice()</code> instead of
+     * <code>PatchEdit.appConfig.getDevice(getDeviceNum())</code>.
+     * Use <code>new Patch(sysex, getDevice())</code> instead of
+     * <code>new Patch(getDeviceNum(), sysex)</code>.
+     */
     protected int getDeviceNum() {
 // 	return this.deviceNum;
 	return device.getDeviceNum();
@@ -240,7 +247,12 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     void setDriverNum(int driverNum) {
 	this.driverNum = driverNum;
     }
-    /** Getter for property <code>driverNum</code>. */
+    /**
+     * Getter for property <code>driverNum</code>.<p>
+     * This method will be deprecated.
+     * Use <code>new Patch(sysex, this)</code> instead of
+     * <code>new Patch(sysex, getDeviceNum(), getDriverNum())</code>.
+     */
     protected int getDriverNum() {
 //  	return this.driverNum;
  	return device.driverList.indexOf(this);
@@ -312,10 +324,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         if (patchNameSize == 0)
 	    return ("-");
         try {
-// 	    StringBuffer s = new StringBuffer(new String(p.sysex, patchNameStart,
-// 							 patchNameSize, "US-ASCII"));
-// 	    return s.toString();
-	    // Why don't we simply do the following? Hiroo
  	    return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
 	} catch (UnsupportedEncodingException ex) {
 	    return "-";
@@ -357,19 +365,22 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @param ofs offset of the checksum data
      */
     protected void calculateChecksum(Patch p, int start, int end, int ofs) {
-        ErrorMsg.reportStatus("Driver:calcChecksum:1st byte is " + p.sysex[start]);
-        ErrorMsg.reportStatus("Last byte is " + p.sysex[end]);
-        ErrorMsg.reportStatus("Checksum was " + p.sysex[ofs]);
+// 	ErrorMsg.reportStatus("Driver:calcChecksum:1st byte is " + p.sysex[start]);
+// 	ErrorMsg.reportStatus("Last byte is " + p.sysex[end]);
+// 	ErrorMsg.reportStatus("Checksum was " + p.sysex[ofs]);
         int sum = 0;
         for (int i = start; i <= end; i++)
             sum += p.sysex[i];
-	// Here are examples of checksum caluculation
-// 	p.sysex[ofs] = (byte) (sum & 0x7f);
-// 	p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0x7f);
-// 	p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
-// 	p.sysex[ofs] = (byte) (p.sysex[ofs] & 0x7f);   //to ensure that checksum is in range 0-127;
-	p.sysex[ofs] = (byte) ((~sum + 1) & 0x7f);
-        ErrorMsg.reportStatus("Checksum is now " + p.sysex[ofs]);
+	// Here is an example of checksum calculation (for Roland, etc.)
+	/*
+	p.sysex[ofs] = (byte) (sum & 0x7f);
+	p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0x7f);
+	p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
+	p.sysex[ofs] = (byte) (p.sysex[ofs] & 0x7f);   //to ensure that checksum is in range 0-127;
+	*/
+	//p.sysex[ofs] = (byte) ((~sum + 1) & 0x7f);
+	p.sysex[ofs] = (byte) (-sum & 0x7f);
+//      ErrorMsg.reportStatus("Checksum is now " + p.sysex[ofs]);
     }
 
     /**
@@ -679,8 +690,13 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Returns String .. full name for referring to this Driver for
      * debugging purposes
      */
-    protected String getDriverName() {
+    protected String getDriverName() { // called by DX7* drivers
 	return getManufacturerName() + " " + getModelName() + " "
-	    + getPatchType() + " ";
+	    + getPatchType() + " "; // why tailing space?
+    }
+
+    public String toString() {
+	return getManufacturerName() + " " + getModelName() + " "
+	    + getPatchType();
     }
 }
