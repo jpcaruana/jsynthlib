@@ -163,7 +163,7 @@ public class ImportAllDialog extends JDialog
 			Patch pk = patarray[k];
                         if (putName==1) pk.setDate(pk.getDate() + files[i].getName());
                         if (putName==2) pk.setAuthor(pk.getAuthor() + files[i].getName());
-                        if (myModel.includeDevice[pk.deviceNum].booleanValue ())
+                        if (myModel.includeDevice[pk.getDriver().getDeviceNum()].booleanValue ())
                         {
                             if (extract && (pk.getDriver() instanceof BankDriver))
                             {
