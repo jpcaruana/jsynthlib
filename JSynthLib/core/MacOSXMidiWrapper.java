@@ -82,7 +82,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 	/**
 		Init for input read proc. Puts MIDIInputPort in mInputs.
 	*/
-	void inputInit(int inport) throws Exception
+	private void inputInit(int inport) throws Exception
 	{
 		// controller device
 		mInputs[inport] = mClient.inputPortCreate(new CAFString(getInputDeviceName(inport)), new ReadProcImpl());
@@ -90,7 +90,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 		mInputs[inport].connectSource(oInContr);
 	}
 
-
+	/*
 	public void setInputDeviceNum (int port) throws Exception
 	{
 //		System.out.println("setInputDeviceNum port = "+port);
@@ -100,11 +100,42 @@ public class MacOSXMidiWrapper extends MidiWrapper
 	{
 //		System.out.println("setOutputDeviceNum port = "+port);
 	}
+	*/
+	public void send(int port, MidiMessage msg) throws Exception
+	{
+		byte[] sysex = msg.getMessage();
+		int length = msg.getLength();
+		if (msg instanceof ShortMessage) {
+			switch (length) {
+			case 1:
+				writeShortMessage (port, sysex[0], (byte) 0, (byte) 0);
+				break;
+			case 2:
+				writeShortMessage (port, sysex[0], sysex[1], (byte) 0);
+				break;
+			case 3:
+				writeShortMessage (port, sysex[0], sysex[1], sysex[2]);
+				break;
+			default:
+				throw new InvalidMidiDataException();
+			}
+		} else {
+			// send sysex
+			MIDIEndpoint oOut = MIDISetup.getDestination(port);
+//			MIDIData oData = MIDIData.newMIDIPacketData(length);
+			MIDIData oData = MIDIData.newMIDIRawData(length);
 
+			oData.addRawData(sysex, 0, length);
+			MIDISysexSendRequest oSysex = new MIDISysexSendRequest(oOut, oData);
+			oSysex.send(MacOSXMidiWrapper.this);
+		}
+		MidiUtil.logOut(port, msg);
+	}
 	/**
 		Send a sysex but can be called with note data !!?
 		so it wraps writeShortMessage.
 	*/
+	/*
 	public void writeLongMessage (int port,byte []sysex,int length) throws Exception
 	{
 //		System.out.println("writeLongMessage port = "+port+" len = "+length);
@@ -142,8 +173,8 @@ public class MacOSXMidiWrapper extends MidiWrapper
 	{
 		writeShortMessage(port, b1, b2, (byte)0);
 	}
-
-	public void writeShortMessage (int port,byte b1, byte b2,byte b3) throws Exception
+	*/
+	private void writeShortMessage (int port,byte b1, byte b2,byte b3) throws Exception
 	{
 //		System.out.println("writeShortMessage port = "+port+" b1="+b1+" b2="+b2+" b3= "+b3);
 		if (mShortMessagePaquetList == null)
@@ -346,7 +377,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
          */
         public boolean isSupported() throws Exception {
         // TODO: Implement real functionality here
-        return true;
+		return true;
         }
 
 	// **************  interface MIDIReadProc *****************************

@@ -23,10 +23,6 @@ public abstract class MidiWrapper {
 	//public abstract void setInputDeviceNum(int port)throws Exception;
 	//FIXME Made public so that PrefsDialog can call it until we straighten this mess out - emenaker 2003.03.12
         //public abstract void setOutputDeviceNum(int port)throws Exception;
-	public abstract void writeLongMessage (int port,byte []sysex)throws Exception;
-	public abstract void writeLongMessage (int port,byte []sysex,int size)throws Exception;
-	public abstract void writeShortMessage(int port, byte b1, byte b2)throws Exception;
-	public abstract void writeShortMessage (int port,byte b1, byte b2,byte b3)throws Exception;
 	public abstract int getNumInputDevices()throws Exception; // FIXME Probably shouldn't throw an exception. Why not just return zero? emenaker 2003.03.12
 	public abstract int getNumOutputDevices()throws Exception; // FIXME Probably shouldn't throw an exception. Why not just return zero? emenaker 2003.03.12
 	public abstract String getInputDeviceName(int port)throws Exception;
@@ -79,6 +75,10 @@ public abstract class MidiWrapper {
 			core.PatchEdit.midiMonitor.log(s);
 	}
 	*/
+
+	//
+	//	MIDI Output
+	//
 	/**
 	 * This allows you to send JavaSound-compatible MidiMessage objects. - emenaker 2003.03.22
 	 *
@@ -86,18 +86,52 @@ public abstract class MidiWrapper {
 	 * @param msg The midi message
 	 * @throws Exception
 	 */
-	public void send(int port, MidiMessage msg) throws Exception {
-		writeMessage(port, msg);
-	}
+	public abstract void send(int port, MidiMessage msg) throws Exception;
 
-	public void writeMessage(int port, MidiMessage msg) throws Exception {
-		if (msg instanceof ShortMessage) {
-			writeShortMessage(port, (ShortMessage) msg);
-		} else {
-			writeLongMessage(port, (SysexMessage) msg);
+	// MIDI out utility routines.
+	public void writeLongMessage(int port, byte[] sysex, int size) throws Exception {
+		if (size <= 3) { // Is this really necessary?
+			switch(size) {
+			case 1:
+				writeShortMessage(port,
+						  (int) (sysex[0] & 0xff), 0, 0);
+				return;
+			case 2:
+				writeShortMessage(port,
+						  (int) (sysex[0] & 0xff),
+						  (int) (sysex[1] & 0xff), 0);
+				return;
+			case 3:
+				writeShortMessage(port,
+						  (int) (sysex[0] & 0xff),
+						  (int) (sysex[1] & 0xff),
+						  (int) (sysex[2] & 0xff));
+				return;
+			default:
+				throw new Exception();
+			}
 		}
+		// System Exclusive Message
+		SysexMessage msg = new SysexMessage ();
+		msg.setMessage(sysex, size);
+		send(port, msg);
 	}
 
+	public void writeLongMessage(int port, byte[] sysex) throws Exception {
+		writeLongMessage(port, sysex, sysex.length);
+	}
+
+	public void writeShortMessage(int port, int status, int d1) throws Exception {
+		writeShortMessage(port, status, d1, 0);
+	}
+
+	public void writeShortMessage(int port, int status, int d1, int d2) throws Exception {
+		ShortMessage msg = new ShortMessage();
+		msg.setMessage(status, d1, d2);
+		send(port, msg);
+	}
+
+	/*
 	public void writeLongMessage(int port, SysexMessage msg) throws Exception {
 		int size = msg.getLength();
 		byte[] sysex = msg.getMessage();
@@ -121,7 +155,11 @@ public abstract class MidiWrapper {
 			break;
 		}
 	}
+	*/
 
+	//
+	//	MIDI Input
+	//
 	/**
 	 * get a MidiMessage from a MIDI port <code>port</code>.
 	 *

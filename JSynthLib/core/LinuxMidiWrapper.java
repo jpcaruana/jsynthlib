@@ -96,10 +96,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		}
 	}
 
-	//FIXME: Never call this even though its public, I need to
-	//call it from prefsDialog to work around a JavaMIDI bug
-	//though.
-	public  void setInputDeviceNum (int port) {
+	private void setInputDeviceNum (int port) {
 		if (port == currentInPort) return;
 		currentInPort=port;
 		/*
@@ -118,9 +115,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		keyboardThread.start();
 	}
 
-	//FIXME Made public so that PrefsDialog can call it until we
-	//straighten this mess out - emenaker 3/12/2003
-	public void setOutputDeviceNum (int port) {
+	private void setOutputDeviceNum (int port) {
 		if (port == currentOutPort)
 			return;
 		currentOutPort=port;
@@ -135,8 +130,11 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		*/
 	}
 
-	public  void writeLongMessage (int port,byte []sysex,int length) throws IOException {
+	public void send(int port, MidiMessage msg) throws IOException {
 		setOutputDeviceNum (port);
+		byte[] sysex = msg.getMessage();
+		int length = msg.getLength();
+
 		if (outStream[port]!=null) {
 			final int BUFSIZE = 250;
 			//final int BUFSIZE = 0;
@@ -159,7 +157,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			}
 		}
 	}
-
+	/*
 	public void writeShortMessage (int port, byte b1, byte b2) throws IOException {
 		setOutputDeviceNum (port);
 		outStream[port].write (b1);
@@ -174,7 +172,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		outStream[port].write (b3);
 		outStream[port].flush ();
 	}
-
+	*/
 	public  int getNumInputDevices () {
 		return midiDevList.size ();
 	}
@@ -273,11 +271,11 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		} catch (Exception e) {
 		}
 	}
-
+	/*
 	public  void writeLongMessage (int port,byte []sysex) throws IOException {
 		writeLongMessage (port,sysex,sysex.length);
 	}
-
+	*/
 	public String getWrapperName() {
 		return("GNU/Linux");
 	}

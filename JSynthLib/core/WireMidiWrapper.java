@@ -116,8 +116,7 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 	close();
     }
 
-    //FIXME Made public so that PrefsDialog can call it until we straighten this mess out - emenaker 2003.03.12
-    public void setInputDeviceNum (int port)  {
+    private void setInputDeviceNum (int port)  {
 	try {
 	    if ((port==PatchEdit.appConfig.getFaderPort()) && (fader!=null)) {
 		MidiDevice srcDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)sourceInfoVector.get (port));
@@ -151,6 +150,13 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 	currentOutport=port;
     }
     */
+
+    public void send(int port, MidiMessage msg) {
+        //setOutputDeviceNum(port);
+        output.send(msg, -1);
+	MidiUtil.logOut(port, msg);
+    }
+    /*
     public  void writeLongMessage (int port,byte []sysex)
 	throws InvalidMidiDataException {
 	writeLongMessage (port,sysex,sysex.length);
@@ -207,7 +213,7 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 	msg.setMessage ((int) (b1 & 0xff), (int) (b2 & 0xff), (int) (b3 & 0xff));
 	output.send (msg,-1);
     }
-
+    */
     public  int getNumInputDevices () {
 	return sourceInfoVector.size ();
     }

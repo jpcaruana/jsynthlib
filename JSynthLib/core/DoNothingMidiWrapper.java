@@ -6,14 +6,15 @@ public class DoNothingMidiWrapper extends MidiWrapper {
 	public void init (int inport, int outport) throws Exception {}
 	public  DoNothingMidiWrapper() throws Exception {}
 	//TODO Change this back to non-public once PrefsDialog is moved out of core.* - emenaker 2003.03.12
-	public void setInputDeviceNum(int port)throws Exception {}
+// 	public void setInputDeviceNum(int port)throws Exception {}
 	//TODO Change this back to non-public once PrefsDialog is moved out of core.* - emenaker 2003.03.12
-	public void setOutputDeviceNum(int port)throws Exception {}
-	public  void writeLongMessage (int port,byte []sysex)throws Exception {}
-	public  void writeLongMessage (int port,byte []sysex,int size)throws Exception {} 
-	public  void writeShortMessage(int port, byte b1, byte b2)throws Exception {}
-	public  void writeShortMessage (int port,byte b1, byte b2,byte b3)throws Exception {}
-	public  int getNumInputDevices()throws Exception{return 1;}
+// 	public void setOutputDeviceNum(int port)throws Exception {}
+ 	public void send(int port, MidiMessage msg) throws Exception {}
+// 	public  void writeLongMessage (int port,byte []sysex)throws Exception {}
+// 	public  void writeLongMessage (int port,byte []sysex,int size)throws Exception {}
+// 	public  void writeShortMessage(int port, byte b1, byte b2)throws Exception {}
+// 	public  void writeShortMessage (int port,byte b1, byte b2,byte b3)throws Exception {}
+ 	public  int getNumInputDevices()throws Exception{return 1;}
 	public  int getNumOutputDevices()throws Exception{return 1;}
 	public  String getInputDeviceName(int port)throws Exception{return "No Devices";}
 	public  String getOutputDeviceName(int port)throws Exception{return "No Devices";}
@@ -27,3 +28,4 @@ public class DoNothingMidiWrapper extends MidiWrapper {
 	}
 	public void close() {}
 }
+//(setq c-basic-offset 8)

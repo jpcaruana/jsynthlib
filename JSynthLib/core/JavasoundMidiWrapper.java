@@ -110,7 +110,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
         close();
     }
 
-    /*TODO protected*/public  void setInputDeviceNum(int port) {
+    private void setInputDeviceNum(int port) {
         try {
             if ((port==PatchEdit.appConfig.getFaderPort()) && (fader!=null)) {
                 MidiDevice srcDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(port));
@@ -134,8 +134,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
             ErrorMsg.reportError("Error","Wire MIDI is flipping out.",e);}
     }
 
-    /*TODO protected*/public  void setOutputDeviceNum(int port)
-	throws MidiUnavailableException {
+    private void setOutputDeviceNum(int port) throws MidiUnavailableException {
         if (currentOutport!=port) {
             //output.close ();
             MidiDevice destDevice=MidiSystem.getMidiDevice((MidiDevice.Info)destinationInfoVector.get(port));
@@ -147,6 +146,11 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
         currentOutport=port;
     }
 
+    public void send(int port, MidiMessage msg) throws MidiUnavailableException {
+        setOutputDeviceNum(port);
+        output.send(msg, -1);
+    }
+    /*
     public  void writeLongMessage(int port,byte []sysex)
 	throws InvalidMidiDataException, MidiUnavailableException {
         writeLongMessage(port,sysex,sysex.length);
@@ -191,39 +195,6 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 		MidiUtil.logOut(port, msg);
 	    }
 	}
-	/*
-	// original code
-	byte [] tmpArray=new byte[255];
-        //msg.setMessage(sysex,size);
-        for (int i=0 ;i<sysex.length;i+=250) {
-            if (i==0) {
-                if (((i+250))<sysex.length) {
-                    System.arraycopy(sysex,i,tmpArray,0,250);
-                }
-                else {
-                    System.arraycopy(sysex,i,tmpArray,0,(sysex.length%250));
-                }
-                if (((i+250))<sysex.length)
-                    msg.setMessage(tmpArray,250);
-                else
-                    msg.setMessage(tmpArray,sysex.length%250);
-            }
-            else {
-                if (((i+250))<sysex.length) {
-                    tmpArray[0]=(byte)0xF7;System.arraycopy(sysex,i,tmpArray,1,250);
-                }
-                else {
-                    tmpArray[0]=(byte)0xF7;System.arraycopy(sysex,i,tmpArray,1,sysex.length%250);
-                }
-                if (((i+250))<sysex.length)
-                    msg.setMessage(tmpArray,251);
-                else
-                    msg.setMessage(tmpArray,(sysex.length%250)+1);
-            }
-            logMidi(port,false,sysex,size);
-            output.send(msg,-1);
-        }
-    */
     }
     public  void writeShortMessage(int port, byte b1, byte b2)
 	throws InvalidMidiDataException, MidiUnavailableException {
@@ -237,6 +208,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	msg.setMessage ((int) (b1 & 0xff), (int) (b2 & 0xff), (int) (b3 & 0xff));
         output.send(msg,-1);
     }
+    */
 
     public  int getNumInputDevices() {
         return sourceInfoVector.size();

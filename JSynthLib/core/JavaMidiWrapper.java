@@ -169,7 +169,10 @@ System.out.println("setOutputPort("+port+")   was "+currentOutPort);
 		}
 		currentOutPort=port;
 	}
-
+	public void send(int port, MidiMessage msg) throws Exception {
+		ErrorMsg.reportError("Error!", "JavaMidiWrapper.send is not implemented yet.");
+	}
+    /*
 	public  void writeLongMessage (int port,byte []sysex) throws Exception {
 		setOutputDeviceNum(port);
 		javaMidiPort.writeLongMessage(sysex,sysex.length,0);
@@ -189,7 +192,7 @@ System.out.println("setOutputPort("+port+")   was "+currentOutPort);
 		setOutputDeviceNum(port);
 		javaMidiPort.writeShortMessage(b1,b2,b3);
 	}
-
+    */
 	public  int getNumInputDevices() throws Exception{return javaMidiPort.getNumDevices(MidiPort.MIDIPORT_INPUT);}
 
 	public  int getNumOutputDevices()throws Exception {return javaMidiPort.getNumDevices(MidiPort.MIDIPORT_OUTPUT);}

@@ -1239,8 +1239,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 				    Clipboard = ((PatchEditorFrame) desktop.getSelectedFrame()).p;
 
 				if (msg.getStatus() == SysexMessage.SYSTEM_EXCLUSIVE) {
-				    PatchEdit.MidiOut.writeLongMessage(Clipboard.getDevice().getPort(),
-								       (SysexMessage) msg);
+				    PatchEdit.MidiOut.send(Clipboard.getDevice().getPort(),
+							   (SysexMessage) msg);
 				} else {
 				    ShortMessage smsg = (ShortMessage) msg;
 				    int cmd = smsg.getCommand();
@@ -1256,7 +1256,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 					    smsg.setMessage(cmd, Clipboard.getDevice().getChannel() - 1,
 							    smsg.getData1(), smsg.getData2());
 					}
-					PatchEdit.MidiOut.writeShortMessage(Clipboard.getDevice().getPort(), smsg);
+					PatchEdit.MidiOut.send(Clipboard.getDevice().getPort(), smsg);
 				    }
 				}
 				PatchEdit.Clipboard = p; // restore Clipboard
