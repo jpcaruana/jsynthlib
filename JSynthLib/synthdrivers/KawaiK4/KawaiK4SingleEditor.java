@@ -92,7 +92,8 @@ class KawaiK4SingleEditor extends PatchEditorFrame
 // Common Pane
   gbc.weightx=5;
   JPanel cmnPane=new JPanel();
-  cmnPane.setLayout(new GridBagLayout());	 gbc.weightx=0;   							         
+  cmnPane.setLayout(new GridBagLayout());	 gbc.weightx=0;   	      
+  setLongestLabel("Volume "); 
    addWidget(cmnPane,new PatchNameWidget(" Name  ",patch),0,0,2,1,0);
 // gbc.weightx=1;
    addWidget(cmnPane,new ScrollBarWidget("Volume",patch,0,100,0,new K4Model(patch,10),new K4Sender(10)),0,1,5,1,1);
@@ -101,7 +102,8 @@ class KawaiK4SingleEditor extends PatchEditorFrame
 							                 "TWIN","DOUBLE"}),0,3,2,1,3);
    addWidget(cmnPane,new ComboBoxWidget("Poly Mode",patch,new K4Model(patch,13,12),new K4Sender(14),new String []{"POLY 1",
 						                 "POLY 2","SOLO 1","SOLO 2"}),2,3,2,1,4);		     
-  
+
+  setLongestLabel("Mod Wheel Depth");   
    addWidget(cmnPane,new ScrollBarWidget("Pitchbend Depth",patch,0,12,0,new K4Model(patch,15,15),new K4Sender(18)),0,4,4,1,5);
    addWidget(cmnPane,new ScrollBarWidget("Mod Wheel Depth",patch,0,100,-50,new K4Model(patch,17),new K4Sender(21)),0,5,5,1,6);
    addWidget(cmnPane,new ComboBoxWidget("Mod Wheel ->",patch,new K4Model(patch,15,48),new K4Sender(19),new String []{"VIB",
@@ -120,6 +122,7 @@ class KawaiK4SingleEditor extends PatchEditorFrame
 //Vibrato Pane
   JPanel vibPane=new JPanel();
   vibPane.setLayout(new GridBagLayout());	   							          
+  setLongestLabel("Pressure to Depth"); 
  addWidget(vibPane,new ScrollBarWidget("Depth",patch,0,100,-50,new K4Model(patch,23),new K4Sender(27)),0,0,5,1,9);
  gbc.weightx=0;
   addWidget(vibPane,new ScrollBarWidget("Speed",patch,0,100,0,new K4Model(patch,16),new K4Sender(20)),0,1,5,1,10);
@@ -157,7 +160,7 @@ class KawaiK4SingleEditor extends PatchEditorFrame
   scrollPane.add(bndPane,gbc); 
 
    JTabbedPane oscPane=new JTabbedPane();
-   
+   setLongestLabel("Vel to Cutoff"); 
    for (int i=0;i<4;i++)
    {     
      JPanel panel = new JPanel();

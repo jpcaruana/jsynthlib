@@ -26,6 +26,9 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     /** A list of widget added by addWidget method. */
     protected ArrayList widgetList = new ArrayList();
 
+    /** For Alignment, a size to scrollbar labels, zero disables*/
+    protected int forceLabelWidth=0;
+
     /**
      * Information about BankEditorFrame which created this
      * PatchEditor frame (if applicable) so we can update that frame
@@ -249,7 +252,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
 	    widget.setSliderNum(slidernum);
 	    if (widget instanceof ScrollBarWidget)
-		sliderList.add(((ScrollBarWidget) widget).slider);
+		{
+		    sliderList.add(((ScrollBarWidget) widget).slider);
+		    ((ScrollBarWidget)widget).setForceLabelWidth(forceLabelWidth);
+		}
 	    if (widget instanceof VertScrollBarWidget)
 		sliderList.add(((VertScrollBarWidget) widget).slider);
 	    if (widget instanceof ScrollBarLookupWidget)
@@ -477,4 +483,22 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     /** A hook called when the frame is deactivated. */
     protected void lostFocus() {
     }
+
+
+    /** Tells JSynthLib what the longest Label you plan to add in this
+     *  set of Widgets is. This will make sure that sliders are lined up
+     *  with each other horizontally. Using this is optional and will
+     *  result in sliders that are aligned horizontally for asthetic
+     *  reasons. Editors can call this more than once to create multiple
+     *  aligned sets of sliders rather than align everything in the entire
+     *  editor to one length.
+     */
+
+    public void setLongestLabel(String s)
+    {	
+	JLabel j = new JLabel(s);
+	Dimension d = j.getPreferredSize();	
+	forceLabelWidth=(int)d.getWidth();
+    }
+
 }

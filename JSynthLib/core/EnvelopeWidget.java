@@ -334,7 +334,9 @@ public class EnvelopeWidget extends SysexWidget {
 		    if (nodes[i].minX != nodes[i].maxX) {
 			if (i == dragNodeIdx) {
 			    values[j].setText(new Integer(nodes[i].ofsX.get()).toString());
-			    break; // hiroo
+			    //break; // hiroo
+			    //bk: this break here is wrong, code below might
+			    //improperly not execute.
 			}
 			j++;
 		    }

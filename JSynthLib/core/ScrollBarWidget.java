@@ -15,6 +15,9 @@ public class ScrollBarWidget extends SysexWidget {
     /** JSlider widget */
     public JSlider slider;	// accessed by PatchEditorFrame and some drivers
 
+    /**Set Label Width explicitly to? zero disables*/
+    protected int forceLabelWidth=0;
+      
     /** Constructor for setting up the ScrollBarWidget.
      * @param l Label for the Widget
      * @param p The patch, which is edited
@@ -48,8 +51,10 @@ public class ScrollBarWidget extends SysexWidget {
     protected void setup() {
         setLayout(new BorderLayout());
         add(getJLabel(), BorderLayout.WEST);
-
-        slider = new JSlider(JSlider.HORIZONTAL,
+	
+        
+	
+	slider = new JSlider(JSlider.HORIZONTAL,
 			     getValueMin(), getValueMax(), getValue());
         slider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
@@ -81,5 +86,21 @@ public class ScrollBarWidget extends SysexWidget {
 
     public void setEnabled(boolean e) {
         slider.setEnabled(e);
+    }
+
+    public void setForceLabelWidth(int i)
+    {
+	forceLabelWidth=i;
+
+	if (forceLabelWidth>0)
+	    {
+		Dimension d = getJLabel().getPreferredSize();
+		d.setSize(forceLabelWidth,d.getHeight()+3);
+		getJLabel().setPreferredSize(d);
+	        d = getJLabel().getMinimumSize();
+		d.setSize(forceLabelWidth,d.getHeight()+1);
+		getJLabel().setMinimumSize(d);
+				
+	    }
     }
 }
