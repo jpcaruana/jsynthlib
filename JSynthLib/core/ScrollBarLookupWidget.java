@@ -25,23 +25,37 @@ public class ScrollBarLookupWidget extends SysexWidget {
     protected JTextField text;
     /** JSlider widget */
     protected JSlider slider;
+    /** width of label widget */
+    protected int labelWidth;
 
     /** Constructor for setting up the ScrollBarLookupWidget.
-     * @param l Label for the Widget
-     * @param p The patch, which is edited
+     * @param label Label for the Widget
+     * @param patch The patch, which is edited
      * @param min Minimum value
      * @param max Maximum value
-     * @param ofs a <code>ParamModel</code> instance.
-     * @param s sysexSender for transmitting the value at editing the parameter
-     * @param o array of label string for each value.
+     * @param labelWidth width of label. If negative value, the width
+     * will be determined by label strings.
+     * @param pmodel a <code>ParamModel</code> instance.
+     * @param sender sysexSender for transmitting the value at editing
+     * the parameter
+     * @param options array of label string for each value.
      */
-    public ScrollBarLookupWidget(String l, Patch p, int min, int max,
-				 ParamModel ofs, SysexSender s, String[] o) {
-	super(l, p, min, max, ofs, s);
-	options = o;
+    public ScrollBarLookupWidget(String label, Patch patch, int min, int max,
+				 int labelWidth,
+				 ParamModel pmodel, SysexSender sender,
+				 String[] options) {
+	super(label, patch, min, max, pmodel, sender);
+	this.options = options;
+	this.labelWidth = labelWidth;
 
 	createWidgets();
 	layoutWidgets();
+    }
+
+    public ScrollBarLookupWidget(String label, Patch patch, int min, int max,
+				 ParamModel pmodel, SysexSender sender,
+				 String[] options) {
+	this(label, patch, min, max, -1, pmodel, sender, options);
     }
 
     protected void createWidgets() {
@@ -54,6 +68,15 @@ public class ScrollBarLookupWidget extends SysexWidget {
 	    });
 	text = new JTextField(options[getValue()], 4);
 	text.setEditable(false);
+
+	if (labelWidth > 0) {
+	    Dimension d = getJLabel().getPreferredSize();
+	    d.setSize(labelWidth, d.getHeight() + 3);
+	    getJLabel().setPreferredSize(d);
+	    d = getJLabel().getMinimumSize();
+	    d.setSize(labelWidth, d.getHeight() + 1);
+	    getJLabel().setMinimumSize(d);
+	}
     }
 
     /** invoked when the slider is moved. */
