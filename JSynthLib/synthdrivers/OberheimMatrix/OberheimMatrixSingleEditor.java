@@ -411,9 +411,8 @@ MtxModel(patch,104),new ModSender(patch,0),source);
    if (Utility.getOSName().equals("Linux")) // Does J2SE 1.4 still require this?
    {
      ErrorMsg.reportStatus("Matrix1000Editor:  Linux Detected-- adding 30 pixels to window height to compensate for Sun/JRE bug");
-      Dimension rv = new Dimension();
-      rv=getSize(rv);
-      reshape(getX(),getY(),rv.width,rv.height+30);
+      Dimension rv = getSize();
+      setSize(rv.width, rv.height + 30);
    }
    show();
 
