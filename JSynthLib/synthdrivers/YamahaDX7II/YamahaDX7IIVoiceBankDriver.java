@@ -474,7 +474,7 @@ public class YamahaDX7IIVoiceBankDriver extends BankDriver
       sysex[singleSize-1]=(byte)0xF7;
  
 
-      Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+      Patch p = new Patch(getDeviceNum(),sysex);        // single sysex
       PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
 
       return p;
@@ -493,8 +493,8 @@ public class YamahaDX7IIVoiceBankDriver extends BankDriver
     sysex[05]=(byte)0x00;
     sysex[trimSize-1]=(byte)0xF7;
 
-    Patch v = new Patch(DX7IIConstants.INIT_VOICE);
-    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+    Patch v = new Patch(getDeviceNum(),DX7IIConstants.INIT_VOICE);     // single sysex
+    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());   // bank sysex
 
     for (int i=0;i<numPatches;i++)
         putPatch(p,v,i);

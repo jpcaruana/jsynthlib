@@ -183,7 +183,7 @@ public class YamahaDX7IIPerformanceBankDriver extends BankDriver
         sysex[16+i]=(byte)(bank.sysex[getPatchStart(patchNum)+i]);
       }
 
-      Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+      Patch p = new Patch(getDeviceNum(),sysex);        // single sysex
       PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
       return p;
     }catch (Exception e) {ErrorMsg.reportError(manufacturer+" "+model,"Error in "+getDriverName(),e);return null;}
@@ -212,8 +212,8 @@ public class YamahaDX7IIPerformanceBankDriver extends BankDriver
     sysex[trimSize-1]=(byte)0xf7;
 
 
-    Patch v = new Patch(DX7IIConstants.INIT_PERFORMANCE);
-    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+    Patch v = new Patch(getDeviceNum(),DX7IIConstants.INIT_PERFORMANCE);       // single sysex
+    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());   // bank sysex
     for (int i=0;i<numPatches;i++)
         putPatch(p,v,i);
     calculateChecksum(p);

@@ -183,7 +183,7 @@ public class YamahaDX7IIMicroTuningBankDriver extends BankDriver
         sysex[16+i]=(byte)(bank.sysex[getPatchStart(patchNum)+12+i]);
       }
 
-      Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+      Patch p = new Patch(getDeviceNum(),sysex);        // single sysex
       PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
 
       return p;
@@ -200,8 +200,8 @@ public class YamahaDX7IIMicroTuningBankDriver extends BankDriver
     sysex[ 3]=(byte)0x7e;
     sysex[trimSize-1]=(byte)0xF7;
 
-    Patch v = new Patch(DX7IIConstants.INIT_MICRO_TUNING);
-    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+    Patch v = new Patch(getDeviceNum(),DX7IIConstants.INIT_MICRO_TUNING);      // single sysex
+    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());   // bank sysex
 
     for (int i=0;i<numPatches;i++)
         putPatch(p,v,i);
