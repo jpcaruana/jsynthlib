@@ -18,11 +18,18 @@ import core.*;
 */
 public class YamahaFS1RBankEditor extends BankEditorFrame implements PatchBasket
 { 
+    {
+	preferredScrollableViewportSize = new Dimension(100, 100);
+	autoResizeMode = JTable.AUTO_RESIZE_OFF;
+	preferredColumnWidth = 130;
+    }
+
     public YamahaFS1RBankEditor (Patch p)
     {
 		super(p);
     }
     
+    /*
     protected void InitBankEditorFrame ()
     {
         //...Create the GUI and put it in the window...
@@ -205,7 +212,7 @@ public class YamahaFS1RBankEditor extends BankEditorFrame implements PatchBasket
         
         //Set the window's location.
     }
-    
+    */
 
 	/**
 		Edit a patch without select it. This allow the performance to edit
