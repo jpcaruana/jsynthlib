@@ -287,27 +287,30 @@ public class RolandJV80SystemSetupEditor extends PatchEditorFrame {
 		return panel;
     }
     
- 	static class JVSender extends SysexSender {
-	    int offset;
-	    // retrieve default from patch
-		public JVSender(int offset) {
-		    super("F041@@461200000000**00F7");
-		    this.offset = offset;
-		}
-		
+    static class JVSender extends SysexSender {
+        int offset;
+
+        // retrieve default from patch
+        public JVSender(int offset) {
+            super("F041@@461200000000**00F7");
+            this.offset = offset;
+        }
+
         protected byte[] generate(int value) {
             byte[] data = super.generate(value);
             data[JV80Constants.ADDR4_IDX] = (byte) offset;
             JV80Constants.calculateChecksum(data, 1);
             return data;
         }
-	}
-	class JVModel extends ParamModel {
-	    final static int DATA_OFFSET = 9;
-	    JVModel(Patch p, int offset) {
-	        super(p, DATA_OFFSET + offset);
-	    }
-	}
+    }
+
+    class JVModel extends ParamModel {
+        final static int DATA_OFFSET = 9;
+
+        JVModel(Patch p, int offset) {
+            super(p, DATA_OFFSET + offset);
+        }
+    }
 
 }
 
