@@ -93,10 +93,10 @@ public class JSLFrame {
         //proxy.moveToDefaultLocation();
         int x, y, yofs = 0;
         int xsep = 30;
-        int ysep = JSLDesktop.getYDecoration();
+        int ysep = useIFrames ? 30 : JSLDesktop.getYDecoration();
         Dimension d = JSLDesktop.getSize();
 
-        JFrame tb = JSLDesktop.getToolBar().getJFrame();
+        JFrame tb = useIFrames ? null : JSLDesktop.getToolBar().getJFrame();
         if (tb != null && tb.getLocation().getY() < 100)
             yofs = (int) (tb.getLocation().getY() - ysep + tb.getSize()
                     .getHeight());
