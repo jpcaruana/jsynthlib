@@ -1,4 +1,10 @@
 package core;
+
+import java.util.ArrayList;
+
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
+
 /*
  * Generates a patch with random combinations of the patches for a
  * driver in a library.
@@ -8,49 +14,56 @@ package core;
  * seperating functionality from GUI code, something I didn't do when
  * I first started JSynthLib.
  */
-/* XXX: How do we make this work with IPatches instead of Patches?
- *      Does this need to be a method of IPatch or Driver or something?
- */
  /**
  * @author bklock
  * @version $Id$
  * @see CrossBreedDialog
  */
-public class CrossBreeder {
+class CrossBreeder {
     /** The patch we are working on. */
-    private Patch p;
+    private IPatch patch;
     /** The patch library we are working on. */
-    private PatchBasket library;
+    private ArrayList lib;
+    /** The number of patches in the patch library */
+    private int libSize;
 
-    public void generateNewPatch(PatchBasket library) {
-        this.library = library;
-        try {
-	    Patch father = getRandomPatch();
-	    Driver drv = (Driver)father.getDriver();
-	    byte[] sysex = new byte[father.sysex.length];
-	    p = new Patch(sysex, drv);
-	    ErrorMsg.reportStatus("num : " + father.sysex.length + ", " + sysex.length);
-	    for (int i = 0; i < father.sysex.length; i++) {
-		Patch source;
-		// look for a patch with same Driver and enough length
-		do {
-		    source = getRandomPatch();
-		} while (source.getDriver() != drv || source.sysex.length <= i);
-		p.sysex[i] = source.sysex[i];
-	    }
-	    ErrorMsg.reportStatus("patch : " + father + ", " + p);
-	    p.calculateChecksum();
-	} catch (Exception e) {
-	    ErrorMsg.reportError("Error", "Internal Error", e);
-	}
+    void generateNewPatch(PatchBasket library) {
+        lib = library.getPatchCollection();
+        libSize = lib.size();
+
+        // Choose the base patch.
+        // XXX Users may want to specify the base patch.
+        IPatch base = getRandomPatch(); 
+        ErrorMsg.reportStatus("base : " + base);
+        int sysexSize = (base.getByteArray()).length;
+        ErrorMsg.reportStatus("length : " + sysexSize);
+        IDriver drv = (IDriver) base.getDriver();
+
+        byte[] dsysex = new byte[sysexSize];
+        dsysex[0] = (byte) SysexMessage.SYSTEM_EXCLUSIVE;
+        for (int i = 1; i < sysexSize - 1; i++) {
+            IPatch source;
+            byte[] ssysex;
+            // look for a patch with the same Driver and enough length
+            do {
+                source = getRandomPatch();
+                ssysex = source.getByteArray();
+            } while (source.getDriver() != drv || ssysex.length - 1 < i);
+            dsysex[i] = ssysex[i];
+        }
+        dsysex[dsysex.length - 1] = (byte) ShortMessage.END_OF_EXCLUSIVE; // EOX
+
+        patch = (drv.createPatch(dsysex))[0];
+        ErrorMsg.reportStatus("done : " + patch);
     }
 
-    public IPatch getCurrentPatch() {
-	return p;
+    IPatch getCurrentPatch() {
+	return patch;
     }
 
-    private Patch getRandomPatch() {
-	int num = (int) (Math.random() * library.getPatchCollection().size());
-	return (Patch) (library.getPatchCollection().get(num));
+    private IPatch getRandomPatch() {
+	int num = (int) (Math.random() * libSize);
+	//ErrorMsg.reportStatus("num : " + num + " / " + libSize);
+	return (IPatch) lib.get(num);
     }
 }
