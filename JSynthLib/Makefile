@@ -1,5 +1,5 @@
 #
-# Makefile created at Wed Jan  5 11:33:24 2005, by mmake
+# Makefile created at Thu Jan 13 22:49:18 2005, by mmake
 #
 
 # Programs (with common options):
@@ -25,7 +25,7 @@ MODE_FILES      = 444
 MODE_DIRS       = 2755
 
 # Build programs
-JAVAC           = jikes
+JAVAC           = javac
 JAVADOC         = javadoc
 JAR             = jar
 
@@ -129,6 +129,7 @@ PACKAGES = \
 	synthdrivers.KorgX3 \
 	synthdrivers.Line6BassPod \
 	synthdrivers.Line6Pod20 \
+	synthdrivers.MIDIboxFM \
 	synthdrivers.MIDIboxSID \
 	synthdrivers.NordLead \
 	synthdrivers.NovationNova1 \
@@ -173,6 +174,7 @@ JAVADOC_PACKAGES = $(PACKAGES)
 
 # Resource packages
 RESOURCES = \
+	synthdrivers.MIDIboxFM.images \
 	synthdrivers.YamahaDX7.images \
 	synthdrivers.YamahaFS1R.images
 
@@ -485,6 +487,7 @@ synthdrivers.KorgWavestation : $(call PACKAGE_OBJS,synthdrivers.KorgWavestation)
 synthdrivers.KorgX3 : $(call PACKAGE_OBJS,synthdrivers.KorgX3)
 synthdrivers.Line6BassPod : $(call PACKAGE_OBJS,synthdrivers.Line6BassPod)
 synthdrivers.Line6Pod20 : $(call PACKAGE_OBJS,synthdrivers.Line6Pod20)
+synthdrivers.MIDIboxFM : $(call PACKAGE_OBJS,synthdrivers.MIDIboxFM)
 synthdrivers.MIDIboxSID : $(call PACKAGE_OBJS,synthdrivers.MIDIboxSID)
 synthdrivers.NordLead : $(call PACKAGE_OBJS,synthdrivers.NordLead)
 synthdrivers.NovationNova1 : $(call PACKAGE_OBJS,synthdrivers.NovationNova1)
