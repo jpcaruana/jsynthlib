@@ -82,7 +82,7 @@ final class Actions {
 				   //| EN_NEW_SCENE
 				   //| EN_NEXT_FADER
 				   //| EN_OPEN
-				   | EN_PASTE
+				   //| EN_PASTE : 'paste' needs special handling
 				   | EN_PLAY
 				   //| EN_PREFS
 				   | EN_REASSIGN
@@ -324,23 +324,27 @@ final class Actions {
     }
 
     static void createPopupMenu() {
-	    // create popup menu
+        // create popup menu
         menuPatchPopup = new JPopupMenu();
         menuPatchPopup.add(playAction);
         menuPatchPopup.add(editAction);
         menuPatchPopup.addSeparator();
 
-        menuPatchPopup.add(reassignAction);
-        menuPatchPopup.add(storeAction);
         menuPatchPopup.add(sendAction);
         menuPatchPopup.add(sendToAction);
+        menuPatchPopup.add(storeAction);
         menuPatchPopup.addSeparator();
 
-        menuPatchPopup.add(cutAction);
+        menuPatchPopup.add(reassignAction);
+        menuPatchPopup.addSeparator();
+
         menuPatchPopup.add(copyAction);
+        menuPatchPopup.add(cutAction);
         menuPatchPopup.add(pasteAction);
-	    menuPatchPopup.addSeparator();
-	    menuPatchPopup.add(uploadAction);
+        menuPatchPopup.add(deleteAction);
+        menuPatchPopup.addSeparator();
+
+        menuPatchPopup.add(uploadAction);
     }
 
     /** show popup menu for patch. */
@@ -349,18 +353,18 @@ final class Actions {
             createPopupMenu();
         }
 
-	    menuPatchPopup.show(tbl, x, y);
+        menuPatchPopup.show(tbl, x, y);
     }
 
     static JToolBar createToolBar() {
-	    // create tool bar
+        // create tool bar
         JToolBar toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(500, 35));
         toolBar.setFloatable(true);
 
         toolBar.add(createToolBarButton(newAction, "New", "New Library"));
         toolBar.add(createToolBarButton(openAction, "Open", "Open Library"));
-	    toolBar.add(createToolBarButton(saveAction, "Save", "Save Library"));
+        toolBar.add(createToolBarButton(saveAction, "Save", "Save Library"));
 
         toolBar.addSeparator();
 
@@ -368,7 +372,7 @@ final class Actions {
         toolBar.add(createToolBarButton(cutAction, "Cut", "Cut Patch"));
         toolBar.add(createToolBarButton(pasteAction, "Paste", "Paste Patch"));
         toolBar.add(createToolBarButton(importAction, "Import", "Import Patch"));
-	toolBar.add(createToolBarButton(exportAction, "Export", "Export Patch"));
+        toolBar.add(createToolBarButton(exportAction, "Export", "Export Patch"));
 
         toolBar.addSeparator();
 
@@ -378,7 +382,8 @@ final class Actions {
 
         toolBar.addSeparator();
 
-        toolBar.add(createToolBarButton(nextFaderAction, "Next", "Go to Next Fader Bank"));
+        toolBar.add(createToolBarButton(nextFaderAction, "Next",
+                "Go to Next Fader Bank"));
 
         return toolBar;
     }
@@ -544,22 +549,29 @@ final class Actions {
 
     /** This one saves a Library to Disk */
     static void saveFrame() {
-	File fn = null;
 	try {
-	    JSLFrame oFrame = JSLDesktop.getSelectedFrame();
+	    AbstractLibraryFrame oFrame = (AbstractLibraryFrame) JSLDesktop.getSelectedFrame();
 	    if (oFrame.getTitle().startsWith("Unsaved ")) {
-		fn = showSaveDialog();
-		if (fn == null)
-		    return;
-	    }
-	    if (oFrame instanceof LibraryFrame) {
-		saveFrame((LibraryFrame) oFrame, fn);
-	    } else if (oFrame instanceof SceneFrame) {
-		saveFrame((SceneFrame) oFrame, fn);
+	        File fn = showSaveDialog();
+		if (fn != null)
+		    oFrame.save(fn);
+	    } else {
+	        oFrame.save();
 	    }
 	} catch (Exception e) {
 	    ErrorMsg.reportError("Error", "Unable to Save Library", e);
-	    return;
+	}
+    }
+
+    /** Save and specify a file name */
+    private static void saveFrameAs() {
+	try {
+	    AbstractLibraryFrame oFrame = (AbstractLibraryFrame) JSLDesktop.getSelectedFrame();
+	    File fn = showSaveDialog();
+	    if (fn != null)
+	        oFrame.save(fn);
+	} catch (Exception ex) {
+	    ErrorMsg.reportError("Error", "Unable to Save Library", ex);
 	}
     }
 
@@ -588,38 +600,6 @@ final class Actions {
 		    == JOptionPane.NO_OPTION)
 		return null;
 	return file;
-    }
-
-    /** Save and specify a file name */
-    private static void saveFrameAs() {
-	try {
-	    JSLFrame oFrame = JSLDesktop.getSelectedFrame();
-	    File fn = showSaveDialog();
-	    if (fn == null)
-		return;
-	    if (oFrame instanceof LibraryFrame) {
-		saveFrame((LibraryFrame) oFrame, fn);
-	    } else if (oFrame instanceof SceneFrame) {
-		saveFrame((SceneFrame) oFrame, fn);
-	    }
-	} catch (Exception ex) {
-	    ErrorMsg.reportError("Error", "Unable to Save Library", ex);
-	    return;
-	}
-    }
-
-    private static void saveFrame(LibraryFrame lf, File file) throws Exception {
-	if (file == null)
-	    lf.save();
-	else
-	    lf.save(file);
-    }
-
-    private static void saveFrame(SceneFrame sf, File file) throws Exception {
-	if (file == null)
-	    sf.save();
-	else
-	    sf.save(file);
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -874,11 +854,6 @@ final class Actions {
 	}
     }
 
-    //------ Start phil@muqus.com
-    //=====================================================================
-    // Sub Class: GetAction
-    //=====================================================================
-
     private static class GetAction extends AbstractAction {
 	//-----------------------------------------------------------------
 	// Constructor: GetAction
@@ -898,7 +873,6 @@ final class Actions {
 	}
 
     } // End SubClass: GetAction
-    //------ End phil@muqus.com
 
     private static class UploadAction extends AbstractAction {
 	public UploadAction(Map mnemonics) {
