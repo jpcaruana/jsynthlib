@@ -35,7 +35,13 @@ public class YamahaDX5Strings extends DX7FamilyStrings
 		"\n\n"+
 		"GENERAL INFORMATION"+
 		"\n==================="+
-		"\n- DEVICE DRIVER"+
+		"\n\n!!! Attention !!!"+
+		"\nThis is just a experimental driver yet."+
+		"\nI'm still missing some further information, which are not part of the MIDI SysEx specification,"+
+		" especially practical experience from DX5 users to improve the usability."+
+		"\nFor daily use the TX7 driver might be easier to use. But some DX5 related parameters of the"+
+		" performance editor are only accessible by this driver."+
+		"\n\n- DEVICE DRIVER"+
 		"\nFunctions which are not part of the described patches are not supported by this driver."+
 		"\n\n"+
 		"At this time only the direction JSynthLib->DX5 is working. If a parameter is changed on"+
@@ -52,10 +58,14 @@ public class YamahaDX5Strings extends DX7FamilyStrings
                 "\nAny feedback about bugs are welcome."+
 		"\nAlso comments and proposals of improvements will be helpful to improve this driver."+
 		"\n\n"+
+		"- CREDITS"+
+		"\nThanks to Stefan Kratzer and his \"Yamaha DX1 worldwide Information center\" Website"+
+		" (http://www.kratzer.at/DXindex.htm) for providing needed information."+
+		"\n\n"+
 		"- TODO"+
-		"\nTo extend my driver family to the models DX1 and DX5 I'm looking for the MIDI specification of these"+
-		" models. The access of the two internal \"DX7\"s as well as the complete specification of the"+
-		" performance patch are unknown."+
+		"\nTo extend my driver family to the models DX1 I'm also looking for further information and help of"+
+		" a DX1 user. The access of the two internal \"DX7\"s via MIDI as well as the complete specification of the"+
+		" performance bank patch are still unknown."+
 		"\n\n"+
 		"To extend my driver family to the model TX216/TX816 in a satisfying manner some major changes are"+
 		" necessary for the JSynthLib architecture. But since the TF1 modul of the TX216/TX816 is compatible"+
