@@ -20,11 +20,10 @@
 <html>
 <head>
 <title>JSynthLib Programmer's Guide</title>
-<link REV="made" HREF="mailto:jsynthlib@overwhelmed.org">
+<link REV="made" HREF="mailto:jsynthlib-dev@yahoogroups.com">
 </head>
 
 <body bgcolor="#E5ED9D" text="Black" link="#3D75B4" vlink="#315480" alink="Red" leftmargin=40 topmargin=40>
-JSynthLib Programmer's Guide.
 
 <font face="Verdana,arial,helvetica" size="-1">
 
@@ -40,7 +39,7 @@ Go to <a href="documentation.html">JSynthLib User's Guide</a>.
     <li>Using JavaDoc
     <li>Proper Use of Access Control Modifier
   </ol>
-  <li><a href="#compiling">How to Compile Files Checked Out from CVS</a>
+  <li><a href="#compiling">How to Compile Files and Check Out from CVS</a>
   <li><a href="#writing">Writing the driver</a>
   <ol type="a">
     <li><a href="#wri_intro">Introduction</a>
@@ -121,54 +120,61 @@ This is a project to which many people are joining to.
 Readability of code is very important.<p>
 
 
-<h2><a name="compiling" href="#toc">II. How to Compile Files Checked Out from CVS</a></h2>
+<h2><a name="compiling" href="#toc">II. How to Compile Files and Check Out from CVS</a></h2>
 
-Although the source code for each version of JSynthLib is included in
-the JSynthLib distribution, you may wish to download the latest
-version of the source code to get any improvements made after the
-latest release.
-
-The source can be downloaded via CVS from JSynthLib's Sourceforge.net page by going
-<a href="#cvssite">here</a>.<p>
-
-After downloading via CVS, you need to copy
-<ul>
-  <li><kbd>wireprovidor</kbd> directory (folder),
-  <li><kbd>WireNative.dll</kbd>,
-  <li><kbd>jmidi</kbd> directory and
-  <li><kbd>MidiPort.dll</kbd>
-</ul>
-from the latest JSynthLib distribution.<p>
-
-Windows and Linux users need to download pseudo MacOSX classes (com.apple.jar)
-from <a href="#yahoofiles">here</a> and
-extract the files as;
+JSynthlib distribution includes source code.  First extract files from
+the jar file.
 
 <pre>
-jar xvf com.apple.jar
+mkdir JSynthlib
+cd JSynthLib
+jar xf ../JSynthLib-XXX.jar
 </pre>
 
-When native MIDI support by Java (JavaSound) become stable on all
-platforms which JSynthLib supports, we don't need this pseudo
-class. (NOTE: If you are using the latest JSynthLib from CVS and set
-<var>PatchEdit.newMidiAPI</var> to <var>true</var>, you don't have to
-copy the files from JSynthLib distribution nor need pseudo MacOSX
-classes.)<p>
+You can compile them by the following steps.
 
-Now you should be able to compile source code as follows;
 <pre>
+rm core/MacOSXMidiWrapper.java  # This file will be deleted after 0.19 release
 javac core/*.java
-javac synthdrivers/*/*.java
 javac synthdrivers/*/*/*.java
+javac synthdrivers/*/*.java
 javac *.java
 </pre>
 
-Linux users can also use the following method:
+You may also use the following method:
 <pre>
 find . -name "*java" > js
 javac @js
 </pre>
 
+And Makefile and ANT build file are included.  You may compile
+JSynthLib by simply typing;
+
+<pre>
+make all
+</pre>
+or
+<pre>
+ant
+</pre>
+
+Although the source code for each version of JSynthLib is included in
+the JSynthLib distribution, you may wish to download the latest
+version of the source code to get any improvements made after the
+latest release.  We sometimes have to change API to make JSynthLib
+better. Your driver developed for the released JSynthlib may be
+required some changes for the latest version.
+
+You can downloaded the latest source code via CVS from SourceForge CVS
+server.
+
+<pre>
+cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/jsynthlib login 
+cvs -z3 -d:pserver:anonymous@cvs.sf.net:/cvsroot/jsynthlib co JSynthLib
+</pre>
+
+For more detail go to CVS page on <a href="#cvssite">JSynthLib's
+Sourceforge.net site</a>.
 
 <h2><a name="writing" href="#toc">III. Writing the Driver</a></h2>
 
@@ -176,7 +182,8 @@ javac @js
 
 Alright, so you've got JSynthLib and like what it does. The problem is
 that it doesn't support one of the synthesizers you own. You drop a
-line to <a href="mailto:jsynthlib@overwhelmed.org">jsynthlib@overwhelmed.org</a>
+line to <a href="mailto:jsynthlib-dev@yahoogroups.com">JSynthLib
+mailing list</a>
 to find out if anyone is working on
 adding support for that synth and find out that no one is. You decide
 to volunteer to add support. Triumphantly you let us know your
@@ -198,7 +205,7 @@ consuming, but is probably even easier than writing librarian
 support. I've spent anywhere between 3 or 4 hours (working on the
 DR660 Editor) up to 5 days (working on the Matrix 1000 editor). If you
 run into any trouble, you can email
-<a href="mailto:jsynthlib@overwhelmed.org">jsynthlib@overwhelmed.org</a> for
+<a href="mailto:jsynthlib-dev@yahoogroups.com">JSynthLib mailing list</a> for
 help.
 
 <h4>III.a.2. What do I need in order to add support for a new
