@@ -864,4 +864,8 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     public boolean supportsPatch(StringBuffer patchString, IPatch p) {
         return supportsPatch(patchString, (Patch) p);
     }
+
+    public void trimSysex(IPatch pk) {
+        trimSysex((Patch) pk);
+    }
 }
