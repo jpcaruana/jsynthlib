@@ -98,7 +98,6 @@ public class JSLDesktop {
 	}
 	public JMenu createWindowMenu() {
 	    JMenu menuWindow = new JMenu("Window");
-	    menuWindow.add(PatchEdit.synthAction);
 	    if (!MacUtils.isMac()) {
 		menuWindow.add(PatchEdit.prefsAction);
 		menuWindow.setMnemonic(KeyEvent.VK_W);

@@ -17,28 +17,27 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
 import javax.swing.table.TableColumn;
-////TODO import org.jsynthlib.midi.*;
 
 /**
  * @author ???
  * @version $Id$
  */
-public class SynthConfigDialog extends JDialog {
+public class SynthConfigPanel extends ConfigPanel {
     private JTable table;
     private JTable table2;
     private MidiScan midiScan;
 
-    public SynthConfigDialog (JFrame parent) {
-        super(parent, "Synthesizer Configuration", true);
-        JPanel container = new JPanel ();
-        container.setLayout (new BorderLayout ());
+    public SynthConfigPanel(AppConfig appConfig) {
+        super(appConfig);
+	setLayout(new core.ColumnLayout());
 
+	// create synth table
         SynthTableModel dataModel = new SynthTableModel ();
         JTable table = new JTable (dataModel);
         table2 = table;
         table.setPreferredScrollableViewportSize (new Dimension (650, 150));
         JScrollPane scrollpane = new JScrollPane (table);
-        container.add (scrollpane, BorderLayout.CENTER);
+        add (scrollpane/*, BorderLayout.CENTER*/);
 
         TableColumn column = null;
         column = table.getColumnModel ().getColumn (0);
@@ -60,6 +59,7 @@ public class SynthConfigDialog extends JDialog {
         column = table.getColumnModel ().getColumn (4);
         column.setPreferredWidth (75);
 
+	// create buttons
         JPanel buttonPanel = new JPanel ();
         buttonPanel.setLayout (new FlowLayout (FlowLayout.CENTER));
         // BUTTON ADDED BY GERRIT GEHNEN
@@ -95,36 +95,7 @@ public class SynthConfigDialog extends JDialog {
 	    });
         buttonPanel.add (detail);
 
-        JButton ok = new JButton ("Close");
-        ok.addActionListener (new ActionListener () {
-		public void actionPerformed (ActionEvent e) {
-		    OKPressed ();
-		}
-	    });
-        buttonPanel.add (ok);
-
-        getRootPane ().setDefaultButton (ok);
-
-        container.add (buttonPanel, BorderLayout.SOUTH);
-        getContentPane ().add (container);
-        pack ();
-        centerDialog ();
-    }
-
-    private void centerDialog () {
-        Dimension screenSize = this.getToolkit ().getScreenSize ();
-        Dimension size = this.getSize ();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
-        size.height = size.height / 2;
-        size.width = size.width / 2;
-        int y = screenSize.height - size.height;
-        int x = screenSize.width - size.width;
-        this.setLocation (x, y);
-    }
-
-    private void OKPressed () {
-	this.setVisible (false);
+        add (buttonPanel);
     }
 
     private void removePressed () {
@@ -199,7 +170,7 @@ public class SynthConfigDialog extends JDialog {
         ProgressMonitor pm = new ProgressMonitor (null,
 						  "Scanning for SupportedSynthesizers",
 						  "Initializing Midi Devices", 0, 100);
-        midiScan = new MidiScan ((SynthTableModel) table.getModel (), pm, this);
+        midiScan = new MidiScan((SynthTableModel) table.getModel (), pm, null);
 
         midiScan.start ();
 	//PatchEdit.appConfig.reassignDeviceDriverNums();
@@ -207,4 +178,19 @@ public class SynthConfigDialog extends JDialog {
         ((SynthTableModel) table.getModel ()).fireTableDataChanged ();
     }
     // END OF METHOD ADDED BY GERRIT GEHNEN
+
+    // ConfigPanel interface methods
+    public void init() {
+    }
+
+    public void commitSettings() {
+    }
+
+    protected final String getDefaultPanelName() {
+	return("Synth Driver");
+    }
+
+    protected final String getDefaultNamespace() {
+	return("synth");
+    }
 }

@@ -54,7 +54,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     static MonitorAction monitorAction;
     static TransferSceneAction transferSceneAction;
-    static SynthAction synthAction;
     static PrefsAction prefsAction;
     static ExitAction exitAction;
     static UploadAction uploadAction;
@@ -134,16 +133,10 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	// Add the configuration panels to the prefsDialog
         prefsDialog.addPanel(new GeneralConfigPanel(appConfig));
 	prefsDialog.addPanel(new DirectoryConfigPanel(appConfig));
-
-	MidiConfigPanel midiConfigPanel = null;
-	midiConfigPanel = new MidiConfigPanel(appConfig);
-	//midiConfigPanel.addDriverChangeListener(this);
-	prefsDialog.addPanel(midiConfigPanel);
-
+	prefsDialog.addPanel(new MidiConfigPanel(appConfig));
 	// FaderBoxConfigPanel() have to be called after MidiIn is initialized.
-	FaderBoxConfigPanel faderbox = new FaderBoxConfigPanel(appConfig);
-	prefsDialog.addPanel(faderbox);
-
+	prefsDialog.addPanel(new FaderBoxConfigPanel(appConfig));
+	prefsDialog.addPanel(new SynthConfigPanel(appConfig));
 	prefsDialog.addPanel(new NoteChooserConfigPanel(appConfig));
 	prefsDialog.addPanel(new RepositoryConfigPanel(appConfig));
 	// Create preference dialog window and initialize each config
@@ -186,7 +179,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         extractAction		= new ExtractAction(mnemonics);
 
 	prefsAction		= new PrefsAction(mnemonics);
-	synthAction		= new SynthAction(mnemonics);
 	monitorAction		= new MonitorAction(mnemonics);
 
         aboutAction		= new AboutAction(mnemonics);
@@ -1205,37 +1197,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
             prefsDialog.show();
         }
     }
-
-    static class SynthAction extends AbstractAction {
-        public SynthAction(Map mnemonics) {
-            super("Synths...", null);
-	    mnemonics.put(this, new Integer('S'));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-	    SynthConfigDialog scd = new SynthConfigDialog(PatchEdit.getInstance());
-	    scd.show();
-        }
-    }
-
-    /*
-      noteChooserDialog got replaced by NoteChooserConfigPanel - emenaker 2003.03.17
-
-      class NoteChooserAction extends AbstractAction
-      {
-      public NoteChooserAction(Map mnemonics)
-      {
-      super("Choose Note",null);
-      mnemonics.put(this, new Integer('C'));
-      }
-
-      public void actionPerformed(ActionEvent e)
-      {
-      noteChooserDialog.show();
-      }
-
-      }
-    */
 
     static class CrossBreedAction extends AbstractAction {
         public CrossBreedAction(Map mnemonics) {

@@ -33,7 +33,6 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 
     public JSLWindowMenu() {
 	super("Window");
-	add(PatchEdit.synthAction);
 	if (!MacUtils.isMac()) {
 	    add(PatchEdit.prefsAction);
 	    setMnemonic(KeyEvent.VK_W);
