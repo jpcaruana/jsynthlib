@@ -3,6 +3,7 @@ package core;
 import java.io.*;
 import javax.swing.*;
 import java.util.*;
+import javax.sound.midi.*;
 
 import com.apple.component.*;
 import com.apple.audio.midi.*;
@@ -20,7 +21,7 @@ import com.apple.audio.*;
  * @author Denis Queffeulou mailto:dqueffeulou@free.fr
  * @version $Id$
  */
-public class MacOSXMidiWrapper extends MidiWrapper 
+public class MacOSXMidiWrapper extends MidiWrapper
 	implements MIDICompletionProc
 {
 	private static List mInputNames = new ArrayList();
@@ -30,27 +31,27 @@ public class MacOSXMidiWrapper extends MidiWrapper
 	private static int mNumOutputs;
 
 	private static MIDIClient mClient;
-	
+
 	/** device output */
 	private MIDIOutputPort mOutput;
-	
+
 	/** all inputs */
 	private MIDIInputPort mInputs[];
 
 	/** contains List of MIDIData by port (MIDIInputPort) */
 	private Map mReceivedDataMap = new Hashtable();
-	
-	/** when init done... */		
-	private boolean mInitDone = false;	
-	
-	
-	/** MIDI paquet for channel messages , it seems important for 
+
+	/** when init done... */
+	private boolean mInitDone = false;
+
+
+	/** MIDI paquet for channel messages , it seems important for
 		handling the controller device data smoothy to create only one and reuse it
-		because allocate takes too much time 
-		*/	
+		because allocate takes too much time
+		*/
 	private MIDIPacketList mShortMessagePaquetList;
-	
-	
+
+
 	public MacOSXMidiWrapper() throws Exception {
 		if (mClient == null)
 		{
@@ -59,16 +60,16 @@ public class MacOSXMidiWrapper extends MidiWrapper
 			loadDevicesNames();
 		}
 	}
-	 
-	public void init (int inport, int outport) throws Exception 
+
+	public void init (int inport, int outport) throws Exception
 	{
 		mInputs = new MIDIInputPort[mNumInputs];
-		
+
 		// device input
 		mInputs[inport] = mClient.inputPortCreate(new CAFString(getInputDeviceName(inport)), new ReadProcImpl());
 		MIDIEndpoint oIn = MIDISetup.getSource(inport);
 		mInputs[inport].connectSource(oIn);
-		
+
 		// device output
 		mOutput = mClient.outputPortCreate(new CAFString(getInputDeviceName(outport)));
 
@@ -78,8 +79,8 @@ public class MacOSXMidiWrapper extends MidiWrapper
 	public String getWrapperName() {
 		return("Mac OS/X");
 	}
-	
-	
+
+
 	/**
 		Init for input read proc. Puts MIDIInputPort in mInputs.
 	*/
@@ -88,9 +89,9 @@ public class MacOSXMidiWrapper extends MidiWrapper
 		// controller device
 		mInputs[inport] = mClient.inputPortCreate(new CAFString(getInputDeviceName(inport)), new ReadProcImpl());
 		MIDIEndpoint oInContr = MIDISetup.getSource(inport);
-		mInputs[inport].connectSource(oInContr);			
+		mInputs[inport].connectSource(oInContr);
 	}
-	
+
 
 	public void setInputDeviceNum (int port) throws Exception
 	{
@@ -113,7 +114,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 		{
 			writeShortMessage (port, sysex[0], sysex[1]);
 		}
-		else 
+		else
 		if (length == 3)
 		{
 			writeShortMessage (port, sysex[0], sysex[1], sysex[2]);
@@ -122,16 +123,16 @@ public class MacOSXMidiWrapper extends MidiWrapper
 		{
 			// send sysex
 			MIDIEndpoint oOut = MIDISetup.getDestination(port);
-//				MIDIData oData = MIDIData.newMIDIPacketData(length); 
-			MIDIData oData = MIDIData.newMIDIRawData(length); 
-			
-/* la fonction a l'air de marcher mais l'objet cree ne doit pas etre correct 
+//				MIDIData oData = MIDIData.newMIDIPacketData(length);
+			MIDIData oData = MIDIData.newMIDIRawData(length);
+
+/* la fonction a l'air de marcher mais l'objet cree ne doit pas etre correct
 			oData.copyFromArray(4, mSysex, 0, mLength);
-*/				
+*/
 			int oTab[] = new int[length];
 			for (int i = 0; i < length; i++)
 			{
-				oTab[i] = (int)sysex[i];
+				oTab[i] = (int) (sysex[i] & 0xFF);
 			}
 			oData.addRawData(oTab);
 			MIDISysexSendRequest oSysex = new MIDISysexSendRequest(oOut, oData);
@@ -145,7 +146,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 		writeLongMessage(port, sysex, sysex.length);
 	}
 
-	
+
 	public void writeShortMessage (int port, byte b1, byte b2) throws Exception
 	{
 		writeShortMessage(port, b1, b2, (byte)0);
@@ -167,8 +168,8 @@ public class MacOSXMidiWrapper extends MidiWrapper
 		MIDIEndpoint oOut = MIDISetup.getDestination(port);
 		mOutput.send(oOut, mShortMessagePaquetList);
 	}
-	
-	
+
+
 	public int getNumInputDevices () throws Exception
 	{
 		if (!mInitDone)
@@ -211,7 +212,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 			inputInit(port);
 		}
 		else
-		{	
+		{
 			List oList = (List)mReceivedDataMap.get(mInputs[port]);
 			if (oList != null)
 			{
@@ -225,7 +226,8 @@ public class MacOSXMidiWrapper extends MidiWrapper
 		return 0;
 	}
 
-	/** get the older data packet received */ 
+	/** get the older data packet received */
+	/*
 	public int readMessage (int port,byte []sysex,int maxSize) throws Exception
 	{
 //		List oList = (List)mReceivedDataMap.get(getInputDeviceName(port));
@@ -243,8 +245,49 @@ public class MacOSXMidiWrapper extends MidiWrapper
 		}
 		return 0;
 	}
+	*/
+	MidiMessage getMessage (int port) throws InvalidMidiDataException {
+		// pop the oldest message
+		List oList = (List)mReceivedDataMap.get(mInputs[port]);
+		if (oList == null || oList.size() == 0)
+			throw new InvalidMidiDataException("Illegal MIDI input message");
+		// get the older packet
+		byte[] oData = (byte[])oList.remove(0);
+// 		System.out.println("readMessage port="+port+" len = "+oData.length);
 
-	public void close() 
+		MidiMessage msg;
+		if ((int) (oData[0] & 0XFF) == SysexMessage.SYSTEM_EXCLUSIVE
+		    || (int) (oData[0] & 0xFF) == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE) {
+			msg = (MidiMessage) new SysexMessage();
+			((SysexMessage) msg).setMessage(oData, oData.length);
+		} else {
+			msg = (MidiMessage) new ShortMessage();
+			switch (oData.length) {
+			case 1:
+				((ShortMessage) msg).setMessage((int) (oData[0] & 0xff));
+				break;
+			case 2:
+				((ShortMessage) msg).setMessage((int) (oData[0] & 0xff),
+								(int) (oData[1] & 0xff),
+								0);
+				break;
+			case 3:
+				((ShortMessage) msg).setMessage((int) (oData[0] & 0xff),
+								(int) (oData[1] & 0xff),
+								(int) (oData[2] & 0xff));
+				break;
+			default:
+				throw new InvalidMidiDataException("Status = "
+								   + (int) (oData[0] & 0xFF)
+								   + ", length = "
+								   + oData.length);
+			}
+		}
+		logMidi(port, true, msg);
+		return msg;
+	}
+
+	public void close()
 	{
 //		System.out.println("close");
 	}
@@ -288,11 +331,11 @@ public class MacOSXMidiWrapper extends MidiWrapper
 	}
 
 	// **************  interface MIDICompletionProc *****************************
-	
+
 	/**
 	 * Called on end of sysex sending
 	 */
-	public void execute(MIDISysexSendRequest request) 
+	public void execute(MIDISysexSendRequest request)
 	{
 //		System.out.println("SYSEX sent IN");
 //		System.out.println("SYSEX sent OUT");
@@ -310,18 +353,18 @@ public class MacOSXMidiWrapper extends MidiWrapper
         // TODO: Implement real functionality here
         return true;
         }
-        
+
 	// **************  interface MIDIReadProc *****************************
-	
+
 	/**
 	 * Read method
 	 */
 	class ReadProcImpl implements MIDIReadProc
-	{	
+	{
 		/**
 			Sysex are received in several parts. I put them in a list
 			read by readMessage.
-		*/	
+		*/
 		public void execute(MIDIInputPort port, MIDIEndpoint srcEndPoint, MIDIPacketList list)
 		{
 			try
@@ -342,7 +385,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 					oData.copyToArray(0,oArray, 0, oData.getMIDIDataLength());
                                       	// Rib Rdb (ribrdb@yahoo.com)
  					// Filter out realtime messages
- 					ByteArrayOutputStream os = 
+ 					ByteArrayOutputStream os =
  					  new ByteArrayOutputStream(256);
  					for (int q=0; q<oArray.length; q++)
  					  if ( (oArray[q] & 0x80) != 0x80 ||
@@ -361,3 +404,4 @@ public class MacOSXMidiWrapper extends MidiWrapper
 	}
 
 }
+//(setq c-basic-offset 8)

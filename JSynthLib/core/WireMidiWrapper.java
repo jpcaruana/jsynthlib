@@ -2,23 +2,23 @@
 package core; //TODO org.jsynthlib.midi;
 import javax.sound.midi.*;
 import java.util.*;
-import core.*; // FIXME Eventually, core.* will go away.
+// import core.*; // FIXME Eventually, core.* will go away.
 
 public class WireMidiWrapper extends MidiWrapper implements Receiver {
-    int currentOutport;
-    int currentInport;
-    int faderPort;
-    MidiDevice.Info mdi[];
-    Vector sourceInfoVector;
-    Vector destinationInfoVector;
-    MidiDevice sourceDevice;
-    MidiDevice destinationDevice;
-    Transmitter input=null;
-    Transmitter fader=null;
-    Receiver output=null;
-    MidiDevice md;
-    List list = Collections.synchronizedList (new LinkedList ());
-    boolean initialized;
+    private int currentOutport;
+    private int currentInport;
+    private int faderPort;
+    private MidiDevice.Info[] mdi;
+    private Vector sourceInfoVector;
+    private Vector destinationInfoVector;
+    private MidiDevice sourceDevice;
+    private MidiDevice destinationDevice;
+    private Transmitter input=null;
+    private Transmitter fader=null;
+    private Receiver output=null;
+    private MidiDevice md;
+    private List list = Collections.synchronizedList (new LinkedList ());
+    private boolean initialized;
 
     public WireMidiWrapper() throws Exception {}
 
@@ -33,13 +33,14 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 
 	sourceInfoVector=new Vector ();
 	destinationInfoVector=new Vector ();
+// 	ErrorMsg.reportStatus("WireMidiWrapper.init" + sourceInfoVector + ", " + inport + ", " + outport);
 
 	mdi=MidiSystem.getMidiDeviceInfo ();
 
 	// This loop populates the InfoVectors with MidiDeviceInfo objects that are NOT
 	// from the built-in JavaSound system
 	for (int i=0;i<mdi.length;i++) {
-// 	    try {
+//  	    try {
 	    md=MidiSystem.getMidiDevice (mdi[i]);
 
 	    if (md.getMaxReceivers ()!=0) {
@@ -51,20 +52,20 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 		if ((mdi[i].getClass ().toString ().indexOf ("com.sun.media.sound")<0))
 		    sourceInfoVector.add (mdi[i]);
 	    }
-// 	    } catch (Exception e) {
-// 	        ErrorMsg.reportError("Error","Something really strange happened during initialization?",e);
-// 	        e.printStackTrace();
-// 	    }
+//  	} catch (Exception e) {
+//  	    ErrorMsg.reportError("Error","Something really strange happened during initialization?",e);
+//  	    e.printStackTrace();
+//  	}
 	}
 	if(destinationInfoVector.size()==0) {
-	    System.err.println("No output ports");
+	    ErrorMsg.reportStatus("No output ports");
 	    ErrorMsg.reportError("Error","No Midi output ports were found\nIs WireProvider installed?");
 	    output=null;
 	    initialized = false;
 	    return;
 	}
 	if(sourceInfoVector.size()==0) {
-	    System.err.println("No input ports");
+	    ErrorMsg.reportStatus("No input ports");
 	    ErrorMsg.reportError("Error","No Midi input ports were found\nIs WireProvider installed?");
 	    input=null;
 	    fader=null;
@@ -83,7 +84,7 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 	    input=null;
 	    initialized = false;
 	    ErrorMsg.reportError("Error","No Midi ports avaliable\nIs WireProvider installed?",e);
-	    e.printStackTrace();
+// 	    e.printStackTrace();
         }
 	if (faderPort!=inport) {
 	    sourceDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(faderPort));
@@ -95,6 +96,9 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 
     //this gets called whenever a midimessage arrives at input
     public void send (MidiMessage msg,long l) {
+        if (msg instanceof ShortMessage
+            && ((ShortMessage) msg).getStatus() == ShortMessage.ACTIVE_SENSING)
+                return;
 	//System.out.println("MidiWrapper:Got Message length "+msg.getLength());
 	list.add (msg);
     }
@@ -110,7 +114,7 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
     }
 
     //FIXME Made public so that PrefsDialog can call it until we straighten this mess out - emenaker 2003.03.12
-    public void setInputDeviceNum (int port)throws Exception {
+    public void setInputDeviceNum (int port)  {
 	try {
 	    if ((port==PatchEdit.appConfig.getFaderPort()) && (fader!=null)) {
 		MidiDevice srcDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)sourceInfoVector.get (port));
@@ -118,122 +122,161 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 		return;
 	    };
 	    if (currentInport!=port) {
-		input.setReceiver (null);
+ 		input.setReceiver (null);
 		input.close ();
-		MidiDevice srcDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)sourceInfoVector.get (port));
+// 		ErrorMsg.reportStatus(sourceInfoVector + ", " + port);
+ 		MidiDevice srcDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)sourceInfoVector.get (port));
 		input=srcDevice.getTransmitter ();
 		input.setReceiver (this);
 	    }
 	    currentInport=port;
 	} catch (Exception e) {
-	    e.printStackTrace ();
+// 	    e.printStackTrace ();
 	    ErrorMsg.reportError ("Error","Wire MIDI is flipping out.",e);
 	}
     }
 
     //FIXME Made public so that PrefsDialog can call it until we straighten this mess out - emenaker 2003.03.12
-    public void setOutputDeviceNum (int port)throws Exception
+    /*
+    public void setOutputDeviceNum (int port) throws MidiUnavailableException
     {
-	if (currentOutport!=port)
-	    {
-		output.close ();
-		MidiDevice destDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)destinationInfoVector.get (port));
-		output=destDevice.getReceiver ();
-	    }
+	if (currentOutport!=port) {
+	    output.close ();
+	    MidiDevice destDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)destinationInfoVector.get (port));
+	    output=destDevice.getReceiver ();
+	}
 	currentOutport=port;
     }
-
-    public  void writeLongMessage (int port,byte []sysex)throws Exception {
+    */
+    public  void writeLongMessage (int port,byte []sysex)
+	throws InvalidMidiDataException {
 	writeLongMessage (port,sysex,sysex.length);
     }
 
-    public  void writeLongMessage (int port,byte []sysex,int size)throws Exception {
-	//System.out.println("WireMidiWrapper:Writing to port "+port);
-	setOutputDeviceNum (port);
-	byte [] tmpArray=new byte[255];
-	if (size==2) {
-	    writeShortMessage (port,sysex[0],sysex[1]);
-	    return;
-	}
-	if (size==3) {
-	    writeShortMessage (port,sysex[0],sysex[1],sysex[2]);
-	    return;
-	}
+    public  void writeLongMessage (int port,byte []sysex,int size)
+	throws InvalidMidiDataException {
+        //setOutputDeviceNum(port);
+        if (size==2) {
+            writeShortMessage(port,sysex[0],sysex[1]);
+            return;
+        }
+        if (size==3) {
+            writeShortMessage(port,sysex[0],sysex[1],sysex[2]);
+            return;
+        }
 
+	// System Exclusive Message
 	SysexMessage msg = new SysexMessage ();
-	//msg.setMessage(sysex,size);
-	for (int i=0 ;i<sysex.length;i+=250) {
-	    if (i==0) {
-		if (((i+250))<sysex.length) {
-		    System.arraycopy (sysex,i,tmpArray,0,250);
+	//final int BUFSIZE = 250;
+	final int BUFSIZE = 0;
+	if (BUFSIZE == 0) {
+	    msg.setMessage(sysex, size);
+	    logMidi(port, false, sysex, size);
+	    output.send(msg, -1);
+	} else {
+	    byte[] tmpArray = new byte[BUFSIZE + 1];
+	    for (int i = 0; size > 0; i += BUFSIZE, size -= BUFSIZE) {
+		int s = Math.min(size, BUFSIZE);
+// 		ErrorMsg.reportStatus("writeLongMessage: size = " + size + ", s = " + s);
+		if (i == 0) {
+		    System.arraycopy(sysex, i, tmpArray, 0, s);
+		    msg.setMessage(tmpArray, s);
 		} else {
-		    System.arraycopy (sysex,i,tmpArray,0,(sysex.length%250));
+		    tmpArray[0] = (byte) SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
+		    System.arraycopy(sysex, i, tmpArray, 1, s);
+		    msg.setMessage(tmpArray, ++s);
 		}
-		if (((i+250))<sysex.length)
-		    msg.setMessage(tmpArray,250);
-		else
-		    msg.setMessage (tmpArray,sysex.length%250);
-	    } else {
-		if (((i+250))<sysex.length) {
-		    tmpArray[0]=(byte)0xF7;
-		    System.arraycopy (sysex,i,tmpArray,1,250);
-		} else {
-		    tmpArray[0]=(byte)0xF7;
-		    System.arraycopy (sysex,i,tmpArray,1,sysex.length%250);
-		}
-		if (((i+250))<sysex.length)
-		    msg.setMessage(tmpArray,251);
-		else
-		    msg.setMessage(tmpArray,(sysex.length%250)+1);
+		logMidi(port, false, tmpArray, s);
+		output.send(msg, -1);
 	    }
-	    logMidi(port,false,sysex,size);
-	    output.send (msg,-1);
 	}
     }
 
-    public  void writeShortMessage (int port, byte b1, byte b2)throws Exception {
+    public  void writeShortMessage (int port, byte b1, byte b2)
+	throws InvalidMidiDataException {
 	writeShortMessage (port,b1,b2,(byte)0);
     }
 
-    public  void writeShortMessage (int port,byte b1, byte b2,byte b3)throws Exception {
-	setOutputDeviceNum (port);
+    public  void writeShortMessage (int port,byte b1, byte b2,byte b3)
+	throws InvalidMidiDataException {
+	//setOutputDeviceNum (port);
 	ShortMessage msg=new ShortMessage ();
-	msg.setMessage ((int)b1,(int)b2,(int)b3);
+	msg.setMessage ((int) (b1 & 0xff), (int) (b2 & 0xff), (int) (b3 & 0xff));
 	output.send (msg,-1);
     }
 
-    public  int getNumInputDevices ()throws Exception {
+    public  int getNumInputDevices () {
 	return sourceInfoVector.size ();
     }
 
-    public  int getNumOutputDevices ()throws Exception {
+    public  int getNumOutputDevices () {
 	return destinationInfoVector.size ();
     }
 
-    public  String getInputDeviceName (int port)throws Exception {
+    public  String getInputDeviceName (int port) {
 	return ((MidiDevice.Info)(sourceInfoVector.get (port))).getName ().substring (5);
     }
 
-    public  String getOutputDeviceName (int port)throws Exception {
+    public  String getOutputDeviceName (int port) {
 	return ((MidiDevice.Info)(destinationInfoVector.get(port))).getName().substring(5);
     }
 
-    public  int messagesWaiting (int port)throws Exception {
-	setInputDeviceNum (port);return list.size ();
+    public  int messagesWaiting (int port) {
+	setInputDeviceNum (port);
+	return list.size();
     }
 
+    public void clearMidiInBuffer(int port) {
+	while (!list.isEmpty())
+	    list.remove(0);
+    }
+
+    /*
     public  int readMessage (int port,byte []sysex,int maxSize)throws Exception {
-	setInputDeviceNum (port);
-	MidiMessage msg = (MidiMessage) list.get (0);
-	list.remove (0);
-	if (msg.getMessage ()[0]==-9) {
-	    System.arraycopy (msg.getMessage (),1,sysex,0,msg.getLength ()-1);
-	    logMidi(port,true,sysex,msg.getLength()-1);
-	    return msg.getLength ()-1;
+	setInputDeviceNum(port); // Is this necessary?
+
+	// pop the oldest message
+	MidiMessage msg = (MidiMessage) list.get(0);
+	list.remove(0);
+//   	logMidi("readMessage:\n");
+//   	logMidi(port, true, msg.getMessage(), msg.getLength());
+
+	int offset, size;
+	if (msg.getMessage()[0] == (byte) SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE
+	    && msg.getLength() != 1) {
+	    // If the 1st byte is 0xf0 and it's not END_OF_EXCLUSIVE, skip it.
+	    offset = 1;
+	    size = msg.getLength() - 1;
+	} else {
+	    offset = 0;
+	    size = msg.getLength();
 	}
-	System.arraycopy (msg.getMessage (),0,sysex,0,msg.getLength ());
-	logMidi(port,true,sysex,msg.getLength());
-	return msg.getLength ();
+
+	if (size > maxSize) {
+	    // push back the remaining message into the 'list'.
+	    byte[] b = new byte[size - maxSize + 1];
+	    b[0] = (byte) SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
+	    System.arraycopy(msg.getMessage(), maxSize + offset, b, 1, b.length - 1);
+	    SysexMessage msgRemained = new SysexMessage();
+	    msgRemained.setMessage(b, b.length);
+	    list.add(0, msgRemained);
+
+	    size = maxSize;
+	}
+	// copy to sysex
+//  	logMidi("readMessage: size=" + size + ", offset=" + offset +"\n");
+	System.arraycopy(msg.getMessage (), offset, sysex, 0, size);
+	logMidi(port, true, sysex, size);
+	return size;
+    }
+    */
+    MidiMessage getMessage (int port) {
+	setInputDeviceNum(port);
+
+	// pop the oldest message
+	MidiMessage msg = (MidiMessage) list.remove(0);
+	logMidi(port, true, msg);
+	return msg;
     }
 
     public String getWrapperName() {

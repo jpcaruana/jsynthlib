@@ -8,22 +8,25 @@ package core; //TODO org.jsynthlib.midi;
 import java.io.*;
 import javax.swing.*;
 import java.util.*;
+import javax.sound.midi.*;
 
 public class LinuxMidiWrapper extends MidiWrapper {
-	int faderInPort;
-	volatile int currentInPort;
-	volatile int currentOutPort;
-	byte[] midiBuffer;
-	int writePos;
-	int readPos;
-	/*static*/ OutputStream []outStream;
-	/*static*/ InputStream []inStream;
-	/*static*/ ArrayList midiDevList = new ArrayList();
+	private int faderInPort;
+	private volatile int currentInPort;
+	private volatile int currentOutPort;
+// 	private byte[] midiBuffer;
+// 	private int writePos;
+// 	private int readPos;
+	private /*static*/ OutputStream []outStream;
+	private /*static*/ InputStream []inStream;
+	private /*static*/ ArrayList midiDevList = new ArrayList();
 	// Thread thread;
-	byte lastStatus;
-	boolean sysEx=false;
-	final int bufferSize=1024;
-	InputThread keyboardThread;
+// 	private byte lastStatus;
+// 	private boolean sysEx=false;
+// 	private final int bufferSize=1024;
+	private InputThread keyboardThread;
+	// should be array of List
+	private List list = Collections.synchronizedList (new LinkedList ());
 
 	// This used to be the unnamed "static" method that got run when the overall
 	// application ran. Now, it's the default constructor... so it only gets run
@@ -50,7 +53,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 	// This used to be the constructor with (int,int) params
 	// I needed to change the (int,int) constructor to some non-constructor thing, because I neede to
 	// have an instance of every eligible midi wrapper ahead of time. - emenaker 2003.03.12
-	public void init(int inport, int outport) throws Exception {
+	public void init(int inport, int outport) {
 		// loadDeviceNames ();
 		currentOutPort=outport;
 		currentInPort=inport;
@@ -65,9 +68,9 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		outStream[outport] = new BufferedOutputStream (outStream[outport] ,4100);
 		*/
 		System.out.println("LinuxMidiWrapper Ctor inport "+inport+" outport "+outport);
-		midiBuffer = new byte[bufferSize];
-		writePos=0;
-		readPos=0;
+// 		midiBuffer = new byte[bufferSize];
+// 		writePos=0;
+// 		readPos=0;
 		keyboardThread = new InputThread();
 		// thread = new Thread(keyboardThread);
 		keyboardThread.start();
@@ -80,7 +83,8 @@ public class LinuxMidiWrapper extends MidiWrapper {
 	}
 	*/
 
-	private /*static*/ void loadDeviceNames() throws Exception {
+	private /*static*/ void loadDeviceNames()
+	throws FileNotFoundException, IOException {
 		String line;
 		try {
 			FileReader fileReader = new FileReader("linuxdevices.conf");
@@ -88,15 +92,15 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			while ((line = lineNumberReader.readLine())!=null) {
 				midiDevList.add(line);
 			}
-		} catch (Exception e) {
-			throw new Exception("Unable to read from 'linuxdevices.conf'");
+		} catch (FileNotFoundException e) {
+			throw new FileNotFoundException("Unable to read from 'linuxdevices.conf'");
 		}
 	}
 
 	//FIXME: Never call this even though its public, I need to
 	//call it from prefsDialog to work around a JavaMIDI bug
 	//though.
-	public  void setInputDeviceNum (int port) throws Exception {
+	public  void setInputDeviceNum (int port) {
 		if (port == currentInPort) return;
 		currentInPort=port;
 		/*
@@ -110,14 +114,14 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		*/
 		// thread.stop() is deprecated. I switched this to thread.stopRunning
 		keyboardThread.stopRunning();
-		readPos=writePos;
+// 		readPos=writePos;
 // 		thread = new Thread(keyboardThread);
 		keyboardThread.start();
 	}
 
 	//FIXME Made public so that PrefsDialog can call it until we
 	//straighten this mess out - emenaker 3/12/2003
-	public void setOutputDeviceNum (int port) throws Exception {
+	public void setOutputDeviceNum (int port) {
 		if (port == currentOutPort)
 			return;
 		currentOutPort=port;
@@ -132,7 +136,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		*/
 	}
 
-	public  void writeLongMessage (int port,byte []sysex,int length) throws Exception {
+	public  void writeLongMessage (int port,byte []sysex,int length) throws IOException {
 		setOutputDeviceNum (port);
 		if (outStream[port]!=null) {
 			outStream[port].write (sysex,0,length);
@@ -141,14 +145,14 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		}
 	}
 
-	public void writeShortMessage (int port, byte b1, byte b2) throws Exception {
+	public void writeShortMessage (int port, byte b1, byte b2) throws IOException {
 		setOutputDeviceNum (port);
 		outStream[port].write (b1);
 		outStream[port].write (b2);
 		outStream[port].flush ();
 	}
 
-	public void writeShortMessage (int port,byte b1, byte b2,byte b3) throws Exception {
+	public void writeShortMessage (int port,byte b1, byte b2,byte b3) throws IOException {
 		setOutputDeviceNum (port);
 		outStream[port].write (b1);
 		outStream[port].write (b2);
@@ -156,27 +160,34 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		outStream[port].flush ();
 	}
 
-	public  int getNumInputDevices () throws Exception {
+	public  int getNumInputDevices () {
 		return midiDevList.size ();
 	}
 
-	public  int getNumOutputDevices ()throws Exception {
+	public  int getNumOutputDevices () {
 		return midiDevList.size ();
 	}
 
-	public  String getInputDeviceName (int port)throws Exception {
+	public  String getInputDeviceName (int port) {
 		return (String)midiDevList.get (port);
 	}
 
-	public  String getOutputDeviceName (int port)throws Exception {
+	public  String getOutputDeviceName (int port) {
 		return (String)midiDevList.get (port);
 	}
 
-	public  int messagesWaiting (int port)throws Exception {
+	public  int messagesWaiting (int port) {
 		setInputDeviceNum (port);
-		if (readPos!=writePos) return 1; else return 0;
+// 		if (readPos!=writePos) return 1; else return 0;
+		return list.size();
 	}
 
+	public void clearMidiInBuffer(int port) {
+		while (!list.isEmpty())
+			list.remove(0);
+	}
+
+	/*
 	public  int readMessage (int port,byte []sysex,int maxSize) throws Exception {
 		byte statusByte;
 		int msgLen=0;
@@ -228,6 +239,16 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		logMidi(port,true,sysex,msgLen);
 		return msgLen;
 	}
+	*/
+
+	MidiMessage getMessage (int port) {
+		setInputDeviceNum(port);
+
+		// pop the oldest message
+		MidiMessage msg = (MidiMessage) list.remove(0);
+		logMidi(port, true, msg);
+		return msg;
+	}
 
 	public void close() {
 		keyboardThread.stopRunning();
@@ -238,7 +259,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		}
 	}
 
-	public  void writeLongMessage (int port,byte []sysex)throws Exception {
+	public  void writeLongMessage (int port,byte []sysex) throws IOException {
 		writeLongMessage (port,sysex,sysex.length);
 	}
 
@@ -276,24 +297,126 @@ public class LinuxMidiWrapper extends MidiWrapper {
 
 		public void run () {
 			Thread thisThread=Thread.currentThread();
-			byte i;
+			int c;
 
 			while (InputMidi==thisThread) {
+				if (inStream[currentInPort]==null)
+					break;
 				try {
-					if (inStream[currentInPort]==null)
-						break;
-
-					// read() blocks execution
-					i=(byte)inStream[currentInPort].read ();
-					if ((i!=-1)&&(i!=-2)&&(i!=0xFE) && (i!=0xF8)) {    //Ignore Active Sensing & Timing
-						midiBuffer[writePos]=i;writePos++;
-						writePos%=bufferSize;
+					c = inStream[currentInPort].read();
+					// read() does not block as documented.
+					if (c == -1) {
+					    Thread.sleep(10);
+					    continue;
 					}
+					// Ignore Active Sensing & Timing
+					if (c == ShortMessage.ACTIVE_SENSING
+					    || c == ShortMessage.TIMING_CLOCK
+					    || c == ShortMessage.SYSTEM_RESET)
+						continue;
+					addToList(c);
 				} catch (Exception ex) {
-					System.out.println ("Error");
+					ErrorMsg.reportError("Error", "MIDI input error", ex);
 				}
 			}
 		}
+
+		/**
+		 * make a MidiMessage object and add it to input list.
+		 *
+		 * @author Hiroo Hayashi
+		 * @see "MIDI 1.0 Detailed Specification, Page A-3"
+		 * @See javax.sound.midi.SystemMessage
+		 */
+		boolean thirdByte = false;
+		int runningStatus = 0;
+		int data1;
+		final int BUFSIZE = 1024;
+		byte[] buf = new byte[BUFSIZE];	// sysex data buffer
+		int size;	// Sysex data size
+
+		private void addToList(int c) throws InvalidMidiDataException {
+		    MidiMessage msg;
+		    if ((c & 0x80) == 0x80) {
+			// status byte
+			if ((c & 0xf8) == 0xf8 // System Real Time Message
+			    || c == ShortMessage.TUNE_REQUEST) {
+			    // 0 byte message
+			    msg = (MidiMessage) new ShortMessage();
+			    ((ShortMessage) msg).setMessage(c);
+			    list.add(msg);
+			} else if (c == SysexMessage.SYSTEM_EXCLUSIVE) {
+			    buf[0] = (byte) c;
+			    size = 1;
+			} else if (c == ShortMessage.END_OF_EXCLUSIVE
+				   && runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
+			    byte[] d = new byte[size + 1];
+			    System.arraycopy(buf, 0, d, 0, size);
+			    d[size++] = (byte) c;
+			    msg = (MidiMessage) new SysexMessage();
+			    ((SysexMessage) msg).setMessage(d, size);
+			    list.add(msg);
+			}
+			if ((c & 0xf8) != 0xf8) {
+			    // System Real Time Message
+			    // should not affect runningStatus nor thirdByte
+			    runningStatus = c;
+			    thirdByte = false;
+			}
+		    } else {
+			// data byte
+			if (thirdByte) {
+			    thirdByte = false;
+			    msg = (MidiMessage) new ShortMessage();
+			    ((ShortMessage) msg).setMessage(runningStatus, data1, c);
+			    list.add(msg);
+			} else if (runningStatus == 0) {
+			    ;	// ignore
+			} else if (runningStatus < ShortMessage.PROGRAM_CHANGE
+				   || (runningStatus >= ShortMessage.PITCH_BEND
+				       && runningStatus < SysexMessage.SYSTEM_EXCLUSIVE)) {
+			    // 2 byte message
+			    thirdByte = true;
+			    data1 = c;
+			} else if (runningStatus == ShortMessage.SONG_POSITION_POINTER) {
+			    // 2 byte message
+			    runningStatus = 0;
+			    thirdByte = true;
+			    data1 = c;
+			} else if (runningStatus >= ShortMessage.PROGRAM_CHANGE
+				   && runningStatus < ShortMessage.PITCH_BEND) {
+			    // 1 byte message
+			    msg = (MidiMessage) new ShortMessage();
+			    ((ShortMessage) msg).setMessage(runningStatus, data1, 0);
+			    list.add(msg);
+			} else if (runningStatus == ShortMessage.MIDI_TIME_CODE
+				   || runningStatus == ShortMessage.SONG_SELECT) {
+			    // 1 byte message
+			    runningStatus = 0;
+			    msg = (MidiMessage) new ShortMessage();
+			    ((ShortMessage) msg).setMessage(runningStatus, data1, 0);
+			    list.add(msg);
+			} else if (runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
+			    buf[size++] = (byte) c;
+			    if (size == buf.length) {
+				// Sysex data buffer is full
+				byte[] d = new byte[size];
+				System.arraycopy(buf, 0, d, 0, size);
+				msg = (MidiMessage) new SysexMessage();
+				((SysexMessage) msg).setMessage(d, size);
+				list.add(msg);
+				// See SysexMessage document.
+				buf[0] = (byte) SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
+				size = 1;
+			    }
+			} else {
+			    // f4 (undef), f5 (undef), f6 (Tune Request), f7 (EOX)
+			    runningStatus = 0;
+			    // ignore Status
+			}
+		    }
+		}
+
 		/**
 		 * Tells the InputThread to stop polling the midi input port
 		 * We need this if we are to stop using thread.stop(), which is deprecated  - emenaker 2003.03.12
@@ -305,3 +428,4 @@ public class LinuxMidiWrapper extends MidiWrapper {
 	}
 }
 //(setq c-basic-offset 8)
+//(setq c-basic-offset 4)
