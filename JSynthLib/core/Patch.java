@@ -35,6 +35,27 @@ public class Patch extends Object implements Serializable,Transferable
         ChooseDriver ();
     }
     
+  /**
+   * Constructor - The device number is known, but not the driver number
+   * @param dev The known device number
+   * @param gsysex The MIDI SysEx message
+   */
+   public Patch (int deviceNum, byte[] gsysex)
+     {
+         comment = new StringBuffer ();
+         date= new StringBuffer ();
+         author= new StringBuffer ();
+         sysex= gsysex;
+ 	this.deviceNum= deviceNum;
+        ChooseDriver(deviceNum);
+     }
+
+ /**
+   * Constructor - Device and driver number are known
+   * @param gsysex The MIDI SysEx message
+   * @param deviceNum The known device number
+   * @param driverNum The known driver number
+   */
    public Patch (byte[] gsysex, int deviceNum, int driverNum)
      {
          comment = new StringBuffer ();
@@ -65,6 +86,15 @@ public class Patch extends Object implements Serializable,Transferable
         ChooseDriver ();
     }
     
+   /**
+   * Constructor - all parameters are known
+   * @param gsysex The MIDI SysEx message
+   * @param deviceNum The known device number
+   * @param driverNum The known driver number
+   * @param gdate A comment
+   * @param gauthor Another comment
+   * @param gcomment A last comment 
+   */
      public Patch (byte[] gsysex, int deviceNum, int driverNum, String gdate, String gauthor, String gcomment)
      {
          this.comment = new StringBuffer (gcomment);
@@ -75,6 +105,31 @@ public class Patch extends Object implements Serializable,Transferable
  	this.driverNum= driverNum;
      }
     
+    /**
+     * Which driver of a device with known device number supports this patch
+     * @param deviceNum The known device number
+     */
+     public void ChooseDriver(int deviceNum)
+    {
+        this.deviceNum = deviceNum;
+        Device dev = (Device)PatchEdit.appConfig.getDevice(deviceNum);
+        StringBuffer patchString=this.getPatchHeader();
+        
+        for (int j=0;j<dev.driverList.size ();j++)
+        {
+          // iterating over all Drivers of the given device
+          if (((Driver)dev.driverList.get (j)).supportsPatch (patchString,this))
+          {
+            this.driverNum=j;
+            getDriver().trimSysex(this);
+            return;
+          }
+        }
+        // Unkown patch, try to guess at least the manufacturer
+        comment=new StringBuffer("Probably a "+LookupManufacturer.get(sysex[1],sysex[2],sysex[3])+" Patch, Size: "+sysex.length);
+        
+    }
+   
     public void ChooseDriver ()
     {
         Device dev;
