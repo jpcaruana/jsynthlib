@@ -1,5 +1,6 @@
 package core;
 import javax.swing.*;
+import javax.sound.midi.*;
 import java.util.*;
 import java.io.Serializable;
 
@@ -71,6 +72,11 @@ public abstract class Device implements Serializable, Storable {
      */
     private int deviceID = -1;
 
+    /** The input MIDI Device. */
+    private JSLMidiDevice midiIn;
+    /** The output MIDI Device. */
+    private JSLMidiDevice midiOut;
+
     /**
      * The MIDI input port number, where the cable <B>to</B> the
      * device is connected.
@@ -102,8 +108,8 @@ public abstract class Device implements Serializable, Storable {
 	// DeviceListWriter calls this constructor
 	if (PatchEdit.appConfig != null) {
 	    // set default MIDI port number
-	    inPort = PatchEdit.appConfig.getInitPortIn();
-	    port = PatchEdit.appConfig.getInitPortOut();
+	    setInPort(PatchEdit.appConfig.getInitPortIn());
+	    setPort(PatchEdit.appConfig.getInitPortOut());
 	}
     }
 
@@ -133,8 +139,8 @@ public abstract class Device implements Serializable, Storable {
 	// DeviceListWriter calls this constructor
 	if (PatchEdit.appConfig != null) {
 	    // set default MIDI port number
-	    inPort = PatchEdit.appConfig.getInitPortIn();
-	    port = PatchEdit.appConfig.getInitPortOut();
+	    setInPort(PatchEdit.appConfig.getInitPortIn());
+	    setPort(PatchEdit.appConfig.getInitPortOut());
 	}
     }
 
@@ -269,6 +275,10 @@ public abstract class Device implements Serializable, Storable {
         Iterator iter = driverList.iterator();
         while (iter.hasNext ())
             ((Driver) iter.next()).setPort(port);
+	if (PatchEdit.newMidiAPI && PatchEdit.MidiOut != null) {
+	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) PatchEdit.MidiOut;
+	    setMidiOut(jw.getOutputDevice(port));
+	}
     }
 
     /**
@@ -281,6 +291,10 @@ public abstract class Device implements Serializable, Storable {
         Iterator iter = driverList.iterator();
         while (iter.hasNext())
             ((Driver) iter.next()).setInPort(inPort);
+	if (PatchEdit.newMidiAPI && PatchEdit.MidiIn != null) {
+	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) PatchEdit.MidiIn;
+	    setMidiIn(jw.getInputDevice(port));
+	}
     }
 
     // Getters/Setters, etc for Drivers
@@ -354,6 +368,32 @@ public abstract class Device implements Serializable, Storable {
 	return PatchEdit.appConfig.getDeviceIndex(this);
     }
 
+    public JSLMidiDevice getMidiIn() {
+	return midiIn;
+    }
+    public void setMidiIn(JSLMidiDevice midiIn) {
+	this.midiIn = midiIn;
+    }
+    public JSLMidiDevice getMidiOut() {
+	return midiIn;
+    }
+    private Receiver rcvr;
+    public void setMidiOut(JSLMidiDevice midiOut) {
+	this.midiOut = midiOut;
+	// Do we need a separate method?
+	if (rcvr != null)	// close previous Receiver
+	    rcvr.close();
+	try {
+	    rcvr = midiOut.getReceiver();
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportError("Error", "setMidiOut: ", e);
+	}
+    }
+
+    public void send(MidiMessage message) {
+	rcvr.send(message, -1);
+    }
+
     // For storable interface
     /**
      * Get the names of properties that should be stored and loaded.
@@ -362,10 +402,17 @@ public abstract class Device implements Serializable, Storable {
     public Set storedProperties() {
 	final String[] storedPropertyNames = {
 	    "inPort", "synthName", "port", "channel",
-// 	    "driver",		// Is "driver" necessary?
+	    "deviceID"
 	};
-	HashSet set = new HashSet();
-	set.addAll(Arrays.asList(storedPropertyNames));
+	final String[] storedPropertyNamesNew = {
+	    "inPort", "synthName", "port", "channel",
+	    "deviceID", "midiIn", "midiOut"
+	};
+	TreeSet set = new TreeSet();
+	if (PatchEdit.newMidiAPI)
+	    set.addAll(Arrays.asList(storedPropertyNamesNew));
+	else
+	    set.addAll(Arrays.asList(storedPropertyNames));
 	return set;
     }
 
