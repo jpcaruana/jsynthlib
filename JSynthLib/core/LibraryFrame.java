@@ -398,6 +398,10 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
     {
         int i;
         int offset=0;
+        
+        if (ImportMidiFile.doImport(file))
+          return;
+        
         FileInputStream fileIn= new FileInputStream(file);
         byte [] buffer =new byte [(int)file.length()];
 
