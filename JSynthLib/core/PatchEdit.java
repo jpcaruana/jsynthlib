@@ -1185,7 +1185,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
             try {
 		NewPatchDialog np = new NewPatchDialog(PatchEdit.getInstance());
 		np.setVisible(true);
-		((PatchBasket) JSLDesktop.getSelectedFrame()).PastePatch(np.getNewPatch());
+		Patch p = np.getNewPatch();
+		if (p != null)
+		    ((PatchBasket) JSLDesktop.getSelectedFrame()).PastePatch(p);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to create this new patch.", ex);
 	    }
