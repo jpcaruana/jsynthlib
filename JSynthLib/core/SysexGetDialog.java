@@ -343,6 +343,7 @@ public class SysexGetDialog extends JDialog {
       // N.B. Do not enable patch selection for banks
       patchNumComboBox.setEnabled(!(myDrvAssign.driver instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
     }
+      }
   } // End InnerClass: DriverActionListener
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -477,6 +478,8 @@ public class SysexGetDialog extends JDialog {
     }
   } // End InnerClass: DriverCellRenderer
 
+
+ /**
   * We need to remember the original deviceNum variable of the Device and the Device itself.
   * Each deviceAssignment Object contains a List of driverAssignments which remembers
   * the original driverNum resp. driver.
