@@ -91,7 +91,7 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         sysex[1]=(byte)0x42;
         sysex[2]=(byte)(0x30+channel-1);
         sysex[3]=(byte)0x28;
-        sysex[4]=(byte)0x40;
+        sysex[4]=(byte)0x49;
         sysex[5]=(byte)0; /*bankNum*/
         sysex[6]=(byte)0; /*patchNum*/
         sysex[1084]=(byte)0xF7;
