@@ -364,7 +364,7 @@ public class SysexGetDialog extends JDialog {
       try {
         while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0) {
 	  // create list of SysexMessage instead of mearging into sysex array. !!!FIXIT!!!
-          SysexMessage msg = (SysexMessage) PatchEdit.MidiIn.readMessage(inPort);
+          SysexMessage msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(inPort);
 	  byte[] buffer = msg.getMessage();
           int size = msg.getLength();
 //  	  ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + size);

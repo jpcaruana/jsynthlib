@@ -113,7 +113,7 @@ public class MidiScan extends  Thread {
 			    SysexMessage msg;
 			    try {
 // 				msg = (SysexMessage) inarray[i].readMessage(i, 10);
-				msg = (SysexMessage) PatchEdit.MidiIn.readMessage(i, 10);
+				msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(i, 10);
 			    } catch (MidiWrapper.TimeoutException e) {
 				continue;
 			    }
