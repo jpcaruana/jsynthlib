@@ -71,10 +71,10 @@ public class Patch extends Object implements Serializable,Transferable
                patchString.append (intg.toHexString (sysex[i]&0xff));
             }
         StringBuffer driverString=new StringBuffer ();
-        for ( int i2 =0;i2<PatchEdit.deviceList.size (); i2++)
+        for ( int i2 =0;i2<PatchEdit.appConfig.deviceCount (); i2++)
         {
             // Outer Loop, iterating over all installed devices
-            dev=(Device)PatchEdit.deviceList.get (i2);
+            dev=(Device)PatchEdit.appConfig.getDevice (i2);
             for (int j=0;j<dev.driverList.size ();j++)
             {
                 // Inner Loop, iterating over all Drivers of a device
@@ -104,7 +104,7 @@ public class Patch extends Object implements Serializable,Transferable
         //      System.out.println ("isDataFlavorSupported "+driverNum);
         if( p1.equals (
         new DataFlavor (getDriver().getClass (),getDriver().toString ())
-        //new DataFlavor (((Device)PatchEdit.deviceList.get (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.deviceList.get (driverNum)).driverList.get (driverNum).toString ())
+        //new DataFlavor (((Device)PatchEdit.appConfig.getDevice (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.appConfig.getDevice (driverNum)).driverList.get (driverNum).toString ())
         ) )
         {
             return true;
@@ -116,7 +116,7 @@ public class Patch extends Object implements Serializable,Transferable
     {
         //      System.out.println ("getTransferDataFlavors "+driverNum);
         DataFlavor[] df=new DataFlavor[1];
-//        df[0]= new DataFlavor (((Device)PatchEdit.deviceList.get (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.deviceList.get (driverNum)).driverList.get (driverNum).toString ());
+//        df[0]= new DataFlavor (((Device)PatchEdit.appConfig.getDevice (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.appConfig.getDevice (driverNum)).driverList.get (driverNum).toString ());
           df[0]= new DataFlavor (getDriver().getClass (),getDriver().toString ());
         
         return df;
@@ -134,9 +134,9 @@ public class Patch extends Object implements Serializable,Transferable
             patchString.append (Integer.toHexString (sysex[k]));
         }
         
-        for (int k=0;k<PatchEdit.deviceList.size ();k++)
+        for (int k=0;k<PatchEdit.appConfig.deviceCount ();k++)
         { // Do it for all converters. They should be at the beginning of the driver list!
-            dev=(Device)PatchEdit.deviceList.get (k);
+            dev=(Device)PatchEdit.appConfig.getDevice (k);
             for (int j=0;j<dev.driverList.size ();j++)
             {
                 if (!(dev.driverList.get (j) instanceof Converter))

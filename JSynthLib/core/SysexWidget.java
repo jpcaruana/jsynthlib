@@ -58,7 +58,7 @@ public class SysexWidget extends JPanel
             {
                 //paramModel.set (valueCurr);
                 PatchEdit.MidiOut.writeLongMessage (
-                ((Device)PatchEdit.deviceList.get (patch.deviceNum)).getPort (),sysexString.generate (valueCurr));
+                ((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getPort (),sysexString.generate (valueCurr));
             }catch (Exception e)
             {ErrorMsg.reportStatus (e);}
         }
@@ -76,7 +76,7 @@ public class SysexWidget extends JPanel
     {
         if (sysexString!=null) // If there is no Sysex-Sender avaliable, don't initialize it
         {
-            sysexString.channel=(byte)((Device)PatchEdit.deviceList.get (patch.deviceNum)).getChannel();
+            sysexString.channel=(byte)((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getChannel();
         }
     }
 }

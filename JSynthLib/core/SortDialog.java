@@ -140,8 +140,8 @@ public class SortDialog extends JDialog
             }
             else if (field==3)
             {
-                   s1=((Device)(PatchEdit.deviceList.get(((Patch)a1).deviceNum))).getSynthName();
-                   s2=((Device)(PatchEdit.deviceList.get(((Patch)a2).deviceNum))).getSynthName();
+                   s1=((Device)(PatchEdit.appConfig.getDevice(((Patch)a1).deviceNum))).getSynthName();
+                   s2=((Device)(PatchEdit.appConfig.getDevice(((Patch)a2).deviceNum))).getSynthName();
 //                ((Driver)(PatchEdit.DriverList.get (((Patch)a1).driverNum))).getSynthName ();
 //                s2=((Driver)(PatchEdit.DriverList.get (((Patch)a2).driverNum))).getSynthName ();
             }

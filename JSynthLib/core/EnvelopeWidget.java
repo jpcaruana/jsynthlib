@@ -78,9 +78,9 @@ public class EnvelopeWidget extends SysexWidget
                     values[j].setText (new Integer (value).toString ());
                     try
                     {
-                        nodes[i].senderX.channel=(byte)((Device)PatchEdit.deviceList.get (patch.deviceNum)).getChannel();
+                        nodes[i].senderX.channel=(byte)((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getChannel();
                         PatchEdit.MidiOut.writeLongMessage (
-                        ((Device)PatchEdit.deviceList.get (patch.deviceNum)).getPort(),nodes[i].senderX.generate (nodes[i].ofsX.get ()));
+                        ((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getPort(),nodes[i].senderX.generate (nodes[i].ofsX.get ()));
                     }
                     catch (Exception e1)
                     {
@@ -98,9 +98,9 @@ public class EnvelopeWidget extends SysexWidget
                     values[j].setText (new Integer (value).toString ());
                     try
                     {
-                        nodes[i].senderY.channel=(byte)((Device)PatchEdit.deviceList.get (patch.deviceNum)).getChannel();
+                        nodes[i].senderY.channel=(byte)((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getChannel();
                         PatchEdit.MidiOut.writeLongMessage (
-                        ((Device)PatchEdit.deviceList.get (patch.deviceNum)).getPort(),nodes[i].senderY.generate (nodes[i].ofsY.get ()));
+                        ((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getPort(),nodes[i].senderY.generate (nodes[i].ofsY.get ()));
                     }
                     catch (Exception e1)
                     {
@@ -257,17 +257,17 @@ public class EnvelopeWidget extends SysexWidget
                 if (nodes[dragNode].senderX!=null)
                     try
                     {
-                        nodes[dragNode].senderX.channel=(byte)((Device)PatchEdit.deviceList.get (patch.deviceNum)).getChannel();
+                        nodes[dragNode].senderX.channel=(byte)((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getChannel();
                         PatchEdit.MidiOut.writeLongMessage (
-                        ((Device)PatchEdit.deviceList.get (patch.deviceNum)).getPort(),nodes[dragNode].senderX.generate (nodes[dragNode].ofsX.get ()));
+                        ((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getPort(),nodes[dragNode].senderX.generate (nodes[dragNode].ofsX.get ()));
                     }catch (Exception e1)
                     {ErrorMsg.reportStatus (e1);}
                     if (nodes[dragNode].senderY!=null)
                         try
                         {
-                            nodes[dragNode].senderY.channel=(byte)((Device)PatchEdit.deviceList.get (patch.deviceNum)).getChannel();
+                            nodes[dragNode].senderY.channel=(byte)((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getChannel();
                             PatchEdit.MidiOut.writeLongMessage (
-                            ((Device)PatchEdit.deviceList.get (patch.deviceNum)).getPort(), nodes[dragNode].senderY.generate (nodes[dragNode].ofsY.get ()));
+                            ((Device)PatchEdit.appConfig.getDevice (patch.deviceNum)).getPort(), nodes[dragNode].senderY.generate (nodes[dragNode].ofsY.get ()));
                         }catch (Exception e2)
                         {ErrorMsg.reportStatus (e2);}
                         

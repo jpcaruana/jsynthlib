@@ -15,18 +15,29 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 public class NoteChooserDialog extends JDialog {
-   int note;
-   int velocity;
-   int delay;
-    final JTextField t1 =new JTextField(new Integer(note).toString(),5); 
-    final JTextField t2 =new JTextField(new Integer(velocity).toString(),5);
-    final JTextField t3 =new JTextField(new Integer(delay).toString(),5);
-    final JSlider s1 = new JSlider(JSlider.HORIZONTAL,0,120,note);
-    final JSlider s2 = new JSlider(JSlider.HORIZONTAL,0,127,velocity);
-    final JSlider s3 = new JSlider(JSlider.HORIZONTAL,0,2000,delay);
+    // AppConfig object used to store actual config values
+    private final AppConfig appConfig;
+
+	//int note;
+	//int velocity;
+	//int delay;
+    final JTextField t1 =new JTextField("0",5); 
+    final JTextField t2 =new JTextField("0",5);
+    final JTextField t3 =new JTextField("0",5);
+    final JSlider s1 = new JSlider(JSlider.HORIZONTAL,0,120, 0); //note
+    final JSlider s2 = new JSlider(JSlider.HORIZONTAL,0,127, 0); //velocity
+    final JSlider s3 = new JSlider(JSlider.HORIZONTAL,0,2000, 0); //delay
     final String [] noteName = new String [] {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};   
-  public NoteChooserDialog(JFrame Parent) {
+
+    /**
+     * Constructor
+     * @param Parent the parent JFrame
+     * @param pAppConfig the application config object
+     */
+  public NoteChooserDialog(JFrame Parent, AppConfig pAppConfig) {
         super(Parent,"Note Chooser",false);
+		this.appConfig = pAppConfig;
+
         JPanel container= new JPanel();
         container.setLayout (new BorderLayout());
         JPanel p4 = new JPanel();
@@ -55,17 +66,20 @@ public class NoteChooserDialog extends JDialog {
 
         s1.addChangeListener(new ChangeListener() {
 	                     public void stateChanged(ChangeEvent e) {
-         	               note=s1.getValue();
+							 int note = s1.getValue();
+         	               appConfig.setNote(note);
    		               t1.setText(noteName[note%12]+note/12); 
                               }});
         s2.addChangeListener(new ChangeListener() {
 	                     public void stateChanged(ChangeEvent e) {
-         	               velocity=s2.getValue();
+							 int velocity = s2.getValue();
+         	               appConfig.setVelocity(velocity);
 			       t2.setText(new Integer(velocity).toString()); 
 	                     }});
         s3.addChangeListener(new ChangeListener() {
 	                     public void stateChanged(ChangeEvent e) {
-         	               delay=s3.getValue();
+         	               int delay=s3.getValue();
+						   appConfig.setDelay(delay);
 			       t3.setText(new Integer(delay).toString()); 
 	                     }});
     
@@ -87,6 +101,9 @@ public class NoteChooserDialog extends JDialog {
    public void show()
    {
        super.show();
+	   int note = appConfig.getNote();
+	   int velocity = appConfig.getVelocity();
+	   int delay = appConfig.getDelay();
        t1.setText(noteName[note%12]+note/12); 
        t2.setText(new Integer(velocity).toString()); 
        t3.setText(new Integer(delay).toString()); 

@@ -102,8 +102,8 @@ void generatePressed()
    crossBreeder.generateNewPatch();
    Patch p=crossBreeder.getCurrentPatch();
    try {
-   l1.setText("Patch Type: "+ ((Device)(PatchEdit.deviceList.get(p.deviceNum))).getManufacturerName()+" "+
-   ((Device)(PatchEdit.deviceList.get(p.deviceNum))).getModelName()+" "+
+   l1.setText("Patch Type: "+ ((Device)(PatchEdit.appConfig.getDevice(p.deviceNum))).getManufacturerName()+" "+
+   ((Device)(PatchEdit.appConfig.getDevice(p.deviceNum))).getModelName()+" "+
    PatchEdit.getDriver(p.deviceNum,p.driverNum).patchType);
    play();
    } catch (Exception e) {/*already taken care off-- we just don't want this thrown any farther*/}

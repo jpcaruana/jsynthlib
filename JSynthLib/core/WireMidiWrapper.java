@@ -22,7 +22,7 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver
   {
     currentInport=inport;
     currentOutport=outport;
-    faderPort=PatchEdit.prefsDialog.faderPort;
+    faderPort=PatchEdit.appConfig.getFaderPort();
     
     sourceInfoVector=new Vector ();
     destinationInfoVector=new Vector ();
@@ -92,7 +92,7 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver
   {
     try
     {
-      if ((port==PatchEdit.prefsDialog.faderPort) && (fader!=null))
+      if ((port==PatchEdit.appConfig.getFaderPort()) && (fader!=null))
       {
         MidiDevice srcDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)sourceInfoVector.get (port));
         fader=srcDevice.getTransmitter ();

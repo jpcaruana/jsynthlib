@@ -76,9 +76,9 @@ public class SysexGetDialog extends JDialog {
 
     //----- Populate the combo boxes
   Device dev; 
-       for (int i=0;i<PatchEdit.deviceList.size ();i++)
+       for (int i=0;i<PatchEdit.appConfig.deviceCount();i++)
             {
-                dev=(Device)PatchEdit.deviceList.get (i);
+                dev=(Device)PatchEdit.appConfig.getDevice(i);
                 for (int j=0;j<dev.driverList.size ();j++)
                 {
                     if (!(Converter.class.isInstance (dev.driverList.get (j))))

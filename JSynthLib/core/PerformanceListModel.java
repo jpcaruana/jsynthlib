@@ -38,7 +38,7 @@ class PerformanceListModel extends javax.swing.table.AbstractTableModel implemen
      
      public Object getValueAt(int row, int col) {
          Performance myPerformance=(Performance)performanceList.get(row);
-         if (col==0) return ((Device)PatchEdit.deviceList.get(myPerformance.getPatch().deviceNum)).getSynthName();
+         if (col==0) return ((Device)PatchEdit.appConfig.getDevice(myPerformance.getPatch().deviceNum)).getSynthName();
          if (col==1) return PatchEdit.getDriver(myPerformance.getPatch().deviceNum,myPerformance.getPatch().driverNum).getPatchType();
          if (col==2) return PatchEdit.getDriver(myPerformance.getPatch().deviceNum,myPerformance.getPatch().driverNum).getPatchName(myPerformance.getPatch());
          if (col==3) return PatchEdit.getDriver(myPerformance.getPatch().deviceNum,myPerformance.getPatch().driverNum).bankNumbers[myPerformance.getBankNumber()];
@@ -71,7 +71,7 @@ class PerformanceListModel extends javax.swing.table.AbstractTableModel implemen
          changed=true;
          Performance myPerformance=(Performance)performanceList.get(row);
          if (col==0) {
-             ((Device)PatchEdit.deviceList.get(myPerformance.getPatch().deviceNum)).setSynthName((String)value);
+             PatchEdit.appConfig.getDevice(myPerformance.getPatch().deviceNum).setSynthName((String)value);
          }
          if (col==1) {
              // don't allow to change the Patch Type

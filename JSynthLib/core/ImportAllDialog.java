@@ -223,8 +223,8 @@ public class ImportAllDialog extends JDialog
             }
             else if (field==3)
             {
-                s1=((Device)(PatchEdit.deviceList.get (((Patch)a1).deviceNum))).getSynthName ();
-                s2=((Device)(PatchEdit.deviceList.get (((Patch)a2).deviceNum))).getSynthName ();
+                s1=((Device)(PatchEdit.appConfig.getDevice (((Patch)a1).deviceNum))).getSynthName ();
+                s2=((Device)(PatchEdit.appConfig.getDevice (((Patch)a2).deviceNum))).getSynthName ();
             }
             else
             {
@@ -247,7 +247,7 @@ public class ImportAllDialog extends JDialog
         final String[] columnNames =
         {"Include?",
          "Driver"};
-         Boolean [] includeDevice = new Boolean[PatchEdit.deviceList.size ()];
+         Boolean [] includeDevice = new Boolean[PatchEdit.appConfig.deviceCount ()];
          
          public ImportModel ()
          {super(); for (int i=0;i<includeDevice.length;i++) includeDevice[i]=new Boolean (true);}
@@ -257,7 +257,7 @@ public class ImportAllDialog extends JDialog
          }
          public int getRowCount ()
          {
-             return PatchEdit.deviceList.size ();
+             return PatchEdit.appConfig.deviceCount ();
          }
          
          public String getColumnName (int col)
@@ -267,7 +267,7 @@ public class ImportAllDialog extends JDialog
          
          public Object getValueAt (int row, int col)
          {
-             Device myDevice=(Device)PatchEdit.deviceList.get (row);
+             Device myDevice=(Device)PatchEdit.appConfig.getDevice (row);
              if (col==1) return myDevice.getManufacturerName ()+" "+myDevice.getModelName ()/*+" "+myDriver.getPatchType ()*/;
              else return includeDevice[row];
          }

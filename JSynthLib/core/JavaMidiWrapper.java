@@ -19,8 +19,8 @@ public class JavaMidiWrapper extends MidiWrapper
    javaMidiPort=new MidiPort(inport,outport);
    currentInPort=inport; currentOutPort=outport;
    
-   if ((currentInPort!=PatchEdit.prefsDialog.faderPort) && (PatchEdit.prefsDialog.faderEnable))
-   {faderMidiPort=new MidiPort(PatchEdit.prefsDialog.faderPort,outport);
+   if ((currentInPort!=PatchEdit.appConfig.getFaderPort()) && (PatchEdit.appConfig.getFaderEnable()))
+   {faderMidiPort=new MidiPort(PatchEdit.appConfig.getFaderPort(),outport);
    try{faderMidiPort.open();} catch (Exception e) {JOptionPane.showMessageDialog(null, "Unable to Initialize MIDI IN/OUT! \nMidi Transfer will be unavailable this session.\n The MidiOut Driver you have chosen for initialization is not a multi client driver.\n Either chose a multi-client driver, or disable faders under Config->Preferences->Faders.\n Then Restart. .","Error", JOptionPane.ERROR_MESSAGE);};
   };
    try{javaMidiPort.open();} catch (Exception e) {JOptionPane.showMessageDialog(null, "Unable to Initialize MIDI IN/OUT! \nMidi Transfer will be unavailable this session.\n Try changing initialization ports under Config->Preferences->MIDI and restarting.","Error",JOptionPane.ERROR_MESSAGE);};
@@ -76,13 +76,13 @@ public class JavaMidiWrapper extends MidiWrapper
   public  String getOutputDeviceName(int port)throws Exception {return javaMidiPort.getDeviceName(MidiPort.MIDIPORT_OUTPUT,port);}
   public  int messagesWaiting(int port)throws Exception
   {
-   if (port==PatchEdit.prefsDialog.faderPort) return (faderMidiPort.messagesWaiting());
+   if (port==PatchEdit.appConfig.getFaderPort()) return (faderMidiPort.messagesWaiting());
    setInputDeviceNum(port);
    return javaMidiPort.messagesWaiting();
   }
   public  int readMessage(int port,byte []sysex,int maxSize) throws Exception
   {
-   if (port==PatchEdit.prefsDialog.faderPort) return (faderMidiPort.readMessage(sysex,maxSize));
+   if (port==PatchEdit.appConfig.getFaderPort()) return (faderMidiPort.readMessage(sysex,maxSize));
    setInputDeviceNum(port);
    return(javaMidiPort.readMessage(sysex,maxSize));
   }

@@ -16,7 +16,7 @@ public class PatchEdit extends JFrame
 {
     public static JDesktopPane desktop;
     //    public static ArrayList DriverList = new ArrayList ();
-    public static ArrayList deviceList = new ArrayList ();
+    //public static ArrayList deviceList = new ArrayList ();
     public static Patch Clipboard;
     public static MidiWrapper MidiOut;
     public static MidiWrapper MidiIn;
@@ -25,6 +25,7 @@ public class PatchEdit extends JFrame
     
     public static int currentPort;
     public static PrefsDialog prefsDialog;
+	public static AppConfig appConfig;
     public static NoteChooserDialog noteChooserDialog;
     public static WaitDialog waitDialog;
     public static javax.swing.Timer echoTimer;
@@ -66,8 +67,9 @@ public class PatchEdit extends JFrame
         super("JSynthLib");
         instance = this;              // phil@muqus.com (so can pop-up windows with PatchEdit as the         
         boolean loadPrefsSuccessfull,loadDriverSuccessfull;
-        prefsDialog=new PrefsDialog (PatchEdit.this);
-        noteChooserDialog = new NoteChooserDialog (PatchEdit.this);
+		this.appConfig = new AppConfig();
+        prefsDialog=new PrefsDialog (this, this.appConfig);
+        noteChooserDialog = new NoteChooserDialog (PatchEdit.this, this.appConfig);
         
         loadPrefsSuccessfull=loadPrefs ();
         loadDriverSuccessfull=loadMidiDriver ();
@@ -426,7 +428,7 @@ public class PatchEdit extends JFrame
     {
         JFileChooser fc2=new JFileChooser ();
         javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("PatchEdit Library Files",".patchlib");
-        fc2.setCurrentDirectory (new File (prefsDialog.libPath));
+        fc2.setCurrentDirectory (new File (appConfig.getLibPath()));
         fc2.addChoosableFileFilter (type1);
         fc2.setFileFilter (type1);
         int returnVal = fc2.showSaveDialog (PatchEdit.this);
@@ -472,26 +474,8 @@ public class PatchEdit extends JFrame
     {
         try
         {
-            FileOutputStream f = new FileOutputStream ("PatchEdit.config");
-            ObjectOutputStream s = new ObjectOutputStream (f);
-            s.writeObject (deviceList);
-            s.writeObject (prefsDialog.libPath);
-            s.writeObject (prefsDialog.sysexPath);
-            s.writeObject (new Integer (prefsDialog.initPortIn));
-            s.writeObject (new Integer (prefsDialog.initPortOut));
-            s.writeObject (new Integer (noteChooserDialog.note));
-            s.writeObject (new Integer (noteChooserDialog.velocity));
-            s.writeObject (new Integer (noteChooserDialog.delay));
-            s.writeObject (new Integer (prefsDialog.masterController));
-            s.writeObject (new Boolean (prefsDialog.faderEnable));
-            s.writeObject (new Integer (prefsDialog.faderPort));
-            s.writeObject (prefsDialog.faderController);
-            s.writeObject (prefsDialog.faderChannel);
-            s.writeObject (new Integer (prefsDialog.lookAndFeel));
-            s.writeObject (new Integer (prefsDialog.midiPlatform));
-            s.flush ();
-            s.close ();
-            f.close ();
+			// Save the appconfig
+			this.appConfig.store();
         } catch(Exception e)
         {ErrorMsg.reportError ("Error", "Unable to Save Preferences",e);}
     }
@@ -499,62 +483,48 @@ public class PatchEdit extends JFrame
     //And this one loads the settings on start up.
     public boolean loadPrefs ()
     {
-        prefsDialog.initPortIn=0;
-        prefsDialog.initPortOut=0;
-        prefsDialog.libPath="";
-        prefsDialog.sysexPath="";
-        noteChooserDialog.note=60;
-        noteChooserDialog.velocity=100;
-        noteChooserDialog.delay=500;
-        FileInputStream f=null;
-        ObjectInputStream s=null;;
+        appConfig.setInitPortIn(0);
+        appConfig.setInitPortOut(0);
+        appConfig.setLibPath("");
+        appConfig.setSysexPath("");
+        appConfig.setNote(60);
+		appConfig.setVelocity(100);
+		appConfig.setDelay(500);
+
         try
         {
-            f = new FileInputStream ("PatchEdit.config");
-            s = new ObjectInputStream (f);
-            deviceList=(ArrayList)s.readObject ();
-            prefsDialog.libPath=(String)s.readObject ();
-            prefsDialog.sysexPath=(String)s.readObject ();
-            prefsDialog.initPortIn=((Integer)s.readObject ()).intValue ();
-            prefsDialog.initPortOut=((Integer)s.readObject ()).intValue ();
-            noteChooserDialog.note=((Integer)s.readObject ()).intValue ();
-            noteChooserDialog.velocity=((Integer)s.readObject ()).intValue ();
-            noteChooserDialog.delay=((Integer)s.readObject ()).intValue ();
-            prefsDialog.masterController=((Integer)s.readObject ()).intValue ();
-            prefsDialog.faderEnable=((Boolean)s.readObject ()).booleanValue ();
-            prefsDialog.faderPort=((Integer)s.readObject ()).intValue ();
-            prefsDialog.faderController=((int[])s.readObject ());
-            prefsDialog.faderChannel=((int[])s.readObject ());
-            prefsDialog.lookAndFeel=((Integer)s.readObject ()).intValue ();
-            prefsDialog.midiPlatform=((Integer)s.readObject ()).intValue ();
-            s.close ();
-            f.close ();
-            return true;
+			// Load the appconfig
+			this.appConfig.load();
+			return true;
         } catch(Exception e)
-	{ 
-         deviceList.add (new synthdrivers.Generic.GenericDevice());
-         return false;
+		{
+			return false;
         }
+		finally {
+			if (this.appConfig.deviceCount()==0) {
+				appConfig.addDevice (new synthdrivers.Generic.GenericDevice());
+			}
+		}
     }
     
     // This code loads the midi driver specified in the preferences.
     boolean loadMidiDriver ()
     {
         
-        if (prefsDialog.initPortIn<0) prefsDialog.initPortIn=0;
-        if (prefsDialog.initPortOut<0) prefsDialog.initPortOut=0;
-        if (prefsDialog.faderPort<0) prefsDialog.faderPort=0;
-        if (prefsDialog.masterController<0) prefsDialog.masterController=0;
+        if (appConfig.getInitPortIn()<0) appConfig.setInitPortIn(0);
+        if (appConfig.getInitPortOut()<0) appConfig.setInitPortOut(0);
+        if (appConfig.getFaderPort()<0) appConfig.setFaderPort(0);
+        if (appConfig.getMasterController()<0) appConfig.setMasterController(0);
         
         
         try
         {
-            switch (prefsDialog.midiPlatform)
+            switch (appConfig.getMidiPlatform())
             {
                 case 0: MidiOut=new DoNothingMidiWrapper (0,0); break;
-                case 2: MidiOut=new WireMidiWrapper (prefsDialog.initPortIn,prefsDialog.initPortOut); break;
-                case 3: MidiOut=new LinuxMidiWrapper (prefsDialog.initPortIn,prefsDialog.initPortOut); break;
-//                case 4: MidiOut=new MacOSXMidiWrapper (prefsDialog.initPortIn,prefsDialog.initPortOut); break;
+                case 2: MidiOut=new WireMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
+                case 3: MidiOut=new LinuxMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
+//                case 4: MidiOut=new MacOSXMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
             }
             MidiIn=MidiOut;
         } catch (Exception e)
@@ -563,44 +533,44 @@ public class PatchEdit extends JFrame
             return false;
             
         }
-        if (prefsDialog.midiPlatform!=1) return true;
+        if (appConfig.getMidiPlatform()!=1) return true;
         
         // Ugly Special Case code for Initializing JavaMIDI, which is very picky about initializing.
         
         try
         {
-            MidiOut=new  JavaMidiWrapper (prefsDialog.initPortIn,prefsDialog.initPortOut);
-            currentPort=prefsDialog.initPortOut;
+            MidiOut=new  JavaMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut());
+            currentPort=appConfig.getInitPortOut();
         }
         catch (Exception e6)
         {
             ErrorMsg.reportError ("Error!","Unable to Initialize MIDI IN/OUT! \nMidi Transfer will be unavailable this session.\nChange the Initialization Port Settings under Preferences and restart.",e6);
             try
             {
-                prefsDialog.faderPort=1;
+                appConfig.setFaderPort(1);
                 MidiOut=new JavaMidiWrapper (1,1);
                 currentPort=1;
             }
             catch (Exception e7)
             {
                 try
-                {prefsDialog.faderPort=2;MidiOut=new
+                {appConfig.setFaderPort(2);MidiOut=new
                  JavaMidiWrapper (2,2);currentPort=2; } catch (Exception e8)
                  {
                      try
-                     {prefsDialog.faderPort=3;MidiOut=new
+                     {appConfig.setFaderPort(3);MidiOut=new
                       JavaMidiWrapper (4,4);currentPort=3; } catch (Exception e9)
                       {
                           try
-                          {prefsDialog.faderPort=3;MidiOut=new
+                          {appConfig.setFaderPort(3);MidiOut=new
                            JavaMidiWrapper (5,5);currentPort=3; } catch (Exception e10)
                            {
                                try
-                               {prefsDialog.faderPort=3;MidiOut=new
+                               {appConfig.setFaderPort(3);MidiOut=new
                                 JavaMidiWrapper (6,6);currentPort=3; } catch (Exception e11)
                                 {
                                     try
-                                    {prefsDialog.faderPort=3;MidiOut=new
+                                    {appConfig.setFaderPort(3);MidiOut=new
                                      JavaMidiWrapper (7,7);currentPort=3; } catch (Exception e12)
                                      {
                                      }}}}}}
@@ -790,7 +760,7 @@ public class PatchEdit extends JFrame
             JFileChooser fc3=new JFileChooser ();
             javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
             fc3.addChoosableFileFilter (type1);
-            fc3.setCurrentDirectory (new File (prefsDialog.sysexPath));
+            fc3.setCurrentDirectory (new File (appConfig.getSysexPath()));
             fc3.setFileFilter (type1);
             int returnVal = fc3.showSaveDialog (PatchEdit.this);
             if (returnVal == JFileChooser.APPROVE_OPTION)
@@ -851,7 +821,7 @@ public class PatchEdit extends JFrame
             JFileChooser fc2=new JFileChooser ();
             javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
             fc2.addChoosableFileFilter (type1);
-            fc2.setCurrentDirectory (new File (prefsDialog.sysexPath));
+            fc2.setCurrentDirectory (new File (appConfig.getSysexPath()));
             fc2.setFileFilter (type1);
             int returnVal = fc2.showOpenDialog (PatchEdit.this);
             if (returnVal == JFileChooser.APPROVE_OPTION)
@@ -924,7 +894,7 @@ public class PatchEdit extends JFrame
         {
             JFileChooser fc=new JFileChooser ();
             javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("PatchEdit Library Files",new String[] {".patchlib",".perflib"});
-            fc.setCurrentDirectory (new File (prefsDialog.libPath));
+            fc.setCurrentDirectory (new File (appConfig.getLibPath()));
             fc.addChoosableFileFilter (type1);
             fc.setFileFilter (type1);
             int returnVal = fc.showOpenDialog (PatchEdit.this);
@@ -1034,7 +1004,7 @@ public class PatchEdit extends JFrame
                 javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
                 fc2.addChoosableFileFilter (type1);
                 fc2.setFileFilter (type1);
-                fc2.setCurrentDirectory (new File (prefsDialog.sysexPath));
+                fc2.setCurrentDirectory (new File (appConfig.getSysexPath()));
                 fc2.setFileSelectionMode (JFileChooser.DIRECTORIES_ONLY);
                 fc2.setDialogTitle ("Choose Directory to Import All Files From");
                 int returnVal = fc2.showOpenDialog (PatchEdit.this);
@@ -1245,13 +1215,13 @@ public class PatchEdit extends JFrame
                     //FIXME there is a bug in the javaMIDI classes so this routine gets the inputmessages from the faderbox as well as the
                     // master controller. I cant figure out a way to fix it so let's just handle them here.
                     
-                    if ((prefsDialog.faderEnable) &(PatchEdit.MidiIn.messagesWaiting (prefsDialog.masterController)>0))
+                    if ((appConfig.getFaderEnable()) &(PatchEdit.MidiIn.messagesWaiting (appConfig.getMasterController())>0))
                         for (int i=0;i<33;i++) newFaderValue[i]=255;
-                    while (PatchEdit.MidiIn.messagesWaiting (prefsDialog.masterController)>0)
+                    while (PatchEdit.MidiIn.messagesWaiting (appConfig.getMasterController())>0)
                     {
                         int size; 
                         int port;
-                        size=PatchEdit.MidiIn.readMessage (prefsDialog.masterController,buffer,128);
+                        size=PatchEdit.MidiIn.readMessage (appConfig.getMasterController(),buffer,128);
                         p=PatchEdit.Clipboard;
                         if ((desktop.getSelectedFrame () instanceof PatchBasket)&&(!(desktop.getSelectedFrame () instanceof PatchEditorFrame)))
                         {
@@ -1263,13 +1233,13 @@ public class PatchEdit extends JFrame
                         else 
                             Clipboard=((PatchEditorFrame)desktop.getSelectedFrame ()).p;
                         //   port=(PatchEdit.deviceList.get (Clipboard.deviceNum)).
-                        port=((Device) (PatchEdit.deviceList.get (Clipboard.deviceNum))).getPort();
-                        if ((prefsDialog.faderEnable)&(desktop.getSelectedFrame () instanceof PatchEditorFrame) && (buffer[0]&0xF0) == 0xB0)
+                        port=appConfig.getDevice(Clipboard.deviceNum).getPort();
+                        if ((appConfig.getFaderEnable())&(desktop.getSelectedFrame () instanceof PatchEditorFrame) && (buffer[0]&0xF0) == 0xB0)
                             sendFaderMessage (buffer[0],buffer[1],buffer[2]);
                         else
                         {
                             if (((buffer[0] & 0xF0) > 0x70) && ((buffer[0] & 0xF0) <0xF0 ))
-                                buffer[0]=(byte)((buffer[0] & 0xF0) +((Device) (PatchEdit.deviceList.get (Clipboard.deviceNum))).getChannel()-1);
+                                buffer[0]=(byte)((buffer[0] & 0xF0) +appConfig.getDevice(Clipboard.deviceNum).getChannel()-1);
                             PatchEdit.MidiOut.writeLongMessage (port,buffer,size);
                         }
                         PatchEdit.Clipboard=p;
@@ -1290,7 +1260,7 @@ public class PatchEdit extends JFrame
         byte i=0;
         while (i<33)
         {
-            if ((prefsDialog.faderController[i]==controller) & (prefsDialog.faderChannel[i]==channel))
+            if ((appConfig.getFaderController(i)==controller) & (appConfig.getFaderChannel(i)==channel))
             {((PatchEditorFrame)desktop.getSelectedFrame ()).faderMoved (i,value);   break;}
             i++;
         }
@@ -1304,7 +1274,7 @@ public class PatchEdit extends JFrame
     
     public static Driver getDriver (int deviceNumber, int driverNumber)
     {
-        return ((Driver)((Device)(deviceList.get (deviceNumber))).driverList.get (driverNumber));
+        return (Driver)appConfig.getDevice(deviceNumber).driverList.get(driverNumber);
     }
     
 }

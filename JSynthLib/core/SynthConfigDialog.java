@@ -151,7 +151,7 @@ public class SynthConfigDialog extends JDialog
         if (JOptionPane.showConfirmDialog (null,"Are you sure?","Remove Device?",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
 	try
         {
-            PatchEdit.deviceList.remove (table2.getSelectedRow ());
+            PatchEdit.appConfig.removeDevice(table2.getSelectedRow ());
             revalidateLibraries();
 	  ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
             table2.repaint ();
@@ -162,7 +162,7 @@ public class SynthConfigDialog extends JDialog
     {
         table=table2; 
         if ((table2.getSelectedRow ()==-1)) return;
-        ((Device)(PatchEdit.deviceList.get(table2.getSelectedRow()))).showDetails();  
+        ((Device)(PatchEdit.appConfig.getDevice(table2.getSelectedRow()))).showDetails();  
         ((SynthTableModel)table.getModel ()).fireTableDataChanged ();  
     }
     

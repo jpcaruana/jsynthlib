@@ -32,8 +32,8 @@ public class NewPatchDialog extends JDialog {
         try {
             container.add(myLabel, BorderLayout.NORTH);
             final JComboBox cb =new JComboBox();
-            for (int i=0;i<PatchEdit.deviceList.size();i++) {
-                dev=(Device)PatchEdit.deviceList.get(i);
+            for (int i=0;i<PatchEdit.appConfig.deviceCount();i++) {
+                dev=(Device)PatchEdit.appConfig.getDevice(i);
                 for (int j=0;j<dev.driverList.size();j++) {
                     if (!(Converter.class.isInstance(dev.driverList.get(j)))){
                         
@@ -63,8 +63,8 @@ public class NewPatchDialog extends JDialog {
             done.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     int index=0;
-                    for (int i=0;i<PatchEdit.deviceList.size();i++) {
-                        final Device dev=(Device)PatchEdit.deviceList.get(i);
+                    for (int i=0;i<PatchEdit.appConfig.deviceCount();i++) {
+                        final Device dev=(Device)PatchEdit.appConfig.getDevice(i);
                         for (int j=0;j<dev.driverList.size();j++) {
                             System.out.println("checking "+PatchEdit.getDriver(i,j).toString()+" "+cb.getSelectedIndex()+" "+index);
                             if ((cb.getSelectedIndex()==index)&&(!(Converter.class.isInstance(dev.driverList.get(j))))) {
@@ -76,7 +76,7 @@ public class NewPatchDialog extends JDialog {
                                  System.out.println(i+ "&" + j);
                                     PatchEdit.Clipboard=PatchEdit.getDriver(i,j).createNewPatch();
                                     setVisible(false);
-                                    i=PatchEdit.deviceList.size();
+                                    i=PatchEdit.appConfig.deviceCount();
                                     break;
                                 }
                                 catch (Exception ex) {

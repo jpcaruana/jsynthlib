@@ -121,8 +121,8 @@ public class MidiScan extends  Thread {
                                             try {
                                                 // Check, wether the driver is already in the list
                                                 boolean dontadd=false;
-                                                for (int checkloop=0;checkloop<PatchEdit.deviceList.size();checkloop++) {
-                                                    Device checkDevice=(Device)PatchEdit.deviceList.get(checkloop);
+                                                for (int checkloop=0;checkloop<PatchEdit.appConfig.deviceCount();checkloop++) {
+                                                    Device checkDevice=(Device)PatchEdit.appConfig.getDevice(checkloop);
                                                     
                                                     if ((se.getManufacturerName().equals(checkDevice.getManufacturerName()))&&(se.getModelName().equals(checkDevice.getModelName()))) {
                                                         dontadd=true; // Oh, its already there....
@@ -136,7 +136,7 @@ public class MidiScan extends  Thread {
                                                     useDevice.setChannel(channel+1);
                                                     if (pb!=null) pb.setNote("Found "+se.getManufacturerName()+" "+se.getModelName());
                                                     
-                                                    PatchEdit.deviceList.add(useDevice );
+                                                    PatchEdit.appConfig.addDevice(useDevice );
                                                     
                                                 }
                                             } catch (Exception e)

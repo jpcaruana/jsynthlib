@@ -44,7 +44,7 @@ class PatchListModel extends AbstractTableModel implements AbstractPatchListMode
      public Object getValueAt (int row, int col)
      {
          Patch myPatch=(Patch)PatchList.get (row);
-         if (col==0) return ((Device)PatchEdit.deviceList.get (myPatch.deviceNum)).getSynthName ();
+         if (col==0) return ((Device)PatchEdit.appConfig.getDevice (myPatch.deviceNum)).getSynthName ();
          if (col==1) return PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).getPatchType ();
          if (col==2) return PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).getPatchName (myPatch);
          if (col==3) return myPatch.date;

@@ -38,13 +38,13 @@ class SynthTableModel extends AbstractTableModel
      public String getColumnName (int col)
      { return columnNames[col];}
      public int getRowCount ()
-     { return PatchEdit.deviceList.size ();}
+     { return PatchEdit.appConfig.deviceCount ();}
      public Class getColumnClass (int c)
      {return getValueAt (0, c).getClass ();}
      public Object getValueAt (int row, int col)
      {
          
-         Device myDevice=(Device)PatchEdit.deviceList.get (row);
+         Device myDevice=(Device)PatchEdit.appConfig.getDevice (row);
          
          if (col==0) return myDevice.getSynthName ();
          if (col==1) return myDevice.getManufacturerName ()+" "+myDevice.getModelName ();
@@ -77,28 +77,28 @@ class SynthTableModel extends AbstractTableModel
      public void setValueAt (Object value, int row, int col)
      {
          if (col==0)
-             ((Device)PatchEdit.deviceList.get (row)).setSynthName ((String)value);
+             ((Device)PatchEdit.appConfig.getDevice (row)).setSynthName ((String)value);
          if (col==2)
              try
              {
-                 ((Device)PatchEdit.deviceList.get (row)).setInPort (new Integer (Integer.parseInt (((String)value).substring (0,2))).intValue ());
+                 ((Device)PatchEdit.appConfig.getDevice (row)).setInPort (new Integer (Integer.parseInt (((String)value).substring (0,2))).intValue ());
              }
              catch (Exception e)
              {
-                 ((Device)PatchEdit.deviceList.get (row)).setInPort(new Integer (Integer.parseInt (((String)value).substring (0,1))).intValue ());
+                 ((Device)PatchEdit.appConfig.getDevice (row)).setInPort(new Integer (Integer.parseInt (((String)value).substring (0,1))).intValue ());
              }
       if (col==3)
              try
              {
-                 ((Device)PatchEdit.deviceList.get (row)).setPort (new Integer (Integer.parseInt (((String)value).substring (0,2))).intValue ());
+                 ((Device)PatchEdit.appConfig.getDevice (row)).setPort (new Integer (Integer.parseInt (((String)value).substring (0,2))).intValue ());
              }
              catch (Exception e)
              {
-                 ((Device)PatchEdit.deviceList.get (row)).setPort(new Integer (Integer.parseInt (((String)value).substring (0,1))).intValue ());
+                 ((Device)PatchEdit.appConfig.getDevice (row)).setPort(new Integer (Integer.parseInt (((String)value).substring (0,1))).intValue ());
              }
       
           if (col==4)
-                 ((Device)PatchEdit.deviceList.get (row)).setChannel(((Integer)value).intValue ());
+                 ((Device)PatchEdit.appConfig.getDevice (row)).setChannel(((Integer)value).intValue ());
              fireTableCellUpdated (row, col);
              
      }

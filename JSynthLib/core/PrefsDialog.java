@@ -17,26 +17,29 @@ import java.awt.*;
 import java.io.*;
 public class PrefsDialog extends JDialog
 {
-    String libPath=null;
-    String sysexPath=null;
-    int    initPortOut=0;
-    int    initPortIn=0;
-    int    masterController=0;
-    int    faderPort=0;
+	// AppConfig object used to store actual config values
+	private AppConfig appConfig = null;
+
+    //private String libPath=null;
+    //private String sysexPath=null;
+    //int    initPortOut=0;
+    //int    initPortIn=0;
+    //int    masterController=0;
+    //int    faderPort=0;
     int    faderPortWas=0;
-    int    faderController[]=new int[33];
-    int    faderChannel[]=new int[33];
-    int    lookAndFeel=0;
-    int    midiPlatform=0;
-    boolean faderEnable;
+    //int    faderController[]=new int[33];
+    //int    faderChannel[]=new int[33];
+    //int    lookAndFeel=0;
+    //int    midiPlatform=0;
+    //boolean faderEnable;
     UIManager.LookAndFeelInfo [] installedLF;
-    final JTextField t1=new JTextField (libPath,20);
-    final JTextField t2=new JTextField (sysexPath,20);
-    JComboBox cb1;
-    JComboBox cb2;
-    JComboBox cb3;
-    JComboBox cb4;
-    JComboBox cb5;
+    final JTextField t1=new JTextField (null,20);
+    final JTextField t2=new JTextField (null,20);
+    JComboBox cb1 = new JComboBox();
+    JComboBox cb2 = new JComboBox();
+    JComboBox cb3 = new JComboBox();
+    JComboBox cb4 = new JComboBox();
+    JComboBox cb5 = new JComboBox();
     JComboBox cbController;
     JComboBox cbChannel;
     JCheckBox enabledBox;
@@ -44,16 +47,23 @@ public class PrefsDialog extends JDialog
     JList lb1;
     int currentFader=0;
     JFrame p;
-    public PrefsDialog (JFrame Parent)
+
+	/**
+	 * Constructor
+	 * @param Parent the parent JFrame
+	 * @param appConfig the application config object
+	 */
+    public PrefsDialog (JFrame Parent, AppConfig appConfig)
     {
         super(Parent,"User Preferences",true);
         p=Parent;
+		this.appConfig = appConfig;
     }
     public void init ()
     {
         installedLF =  UIManager.getInstalledLookAndFeels ();
         try
-        {UIManager.setLookAndFeel (installedLF[lookAndFeel].getClassName ());}catch (Exception e)
+        {UIManager.setLookAndFeel (installedLF[appConfig.getLookAndFeel()].getClassName ());}catch (Exception e)
         {};
         JPanel container= new JPanel ();
         container.setLayout (new BorderLayout ());
@@ -92,27 +102,27 @@ public class PrefsDialog extends JDialog
         // setSize(400,300);
         pack ();
         centerDialog ();
-        faderPortWas=faderPort;
+        faderPortWas=appConfig.getFaderPort();
     }
     public void show ()
     {
         
-        t1.setText (libPath);
-        t2.setText (sysexPath);
+        t1.setText (appConfig.getLibPath());
+        t2.setText (appConfig.getSysexPath());
         try
         {
-            cb1.setSelectedIndex (initPortOut);
-            cb2.setSelectedIndex (initPortIn);
-            cb3.setSelectedIndex (masterController);
-            cb4.setSelectedIndex (faderPort);
-            cb5.setSelectedIndex (lookAndFeel);
+            cb1.setSelectedIndex (appConfig.getInitPortOut());
+            cb2.setSelectedIndex (appConfig.getInitPortIn());
+            cb3.setSelectedIndex (appConfig.getMasterController());
+            cb4.setSelectedIndex (appConfig.getFaderPort());
+            cb5.setSelectedIndex (appConfig.getLookAndFeel());
         }catch (Exception e)
         {ErrorMsg.reportError ("Warning","Values for MidiPorts are out of range!",e);}
-        cbPlatform.setSelectedIndex (midiPlatform);
-        cbController.setSelectedIndex (faderController[lb1.getSelectedIndex ()]);
-        cbChannel.setSelectedIndex (faderChannel[lb1.getSelectedIndex ()]);
+        cbPlatform.setSelectedIndex (appConfig.getMidiPlatform());
+        cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
+        cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
         
-        enabledBox.setSelected (faderEnable);
+        enabledBox.setSelected (appConfig.getFaderEnable());
         super.show ();
     }
     
@@ -135,14 +145,14 @@ public class PrefsDialog extends JDialog
             {
                 JFileChooser fc=new JFileChooser ();
                 fc.setFileSelectionMode (JFileChooser.DIRECTORIES_ONLY);
-                fc.setCurrentDirectory (new File (libPath));
+                fc.setCurrentDirectory (new File (appConfig.getLibPath()));
                 fc.setDialogTitle ("Choose Default Directory");
                 int returnVal = fc.showOpenDialog (null);
                 if (returnVal == JFileChooser.APPROVE_OPTION)
                 {
                     File file = fc.getSelectedFile ();
-                    libPath=file.getAbsolutePath ();
-                    t1.setText (libPath);
+                    appConfig.setLibPath(file.getAbsolutePath());
+                    t1.setText (appConfig.getLibPath());
                 }
             }
         });
@@ -152,14 +162,14 @@ public class PrefsDialog extends JDialog
             {
                 JFileChooser fc=new JFileChooser ();
                 fc.setFileSelectionMode (JFileChooser.DIRECTORIES_ONLY);
-                fc.setCurrentDirectory (new File (sysexPath));
+                fc.setCurrentDirectory (new File (appConfig.getSysexPath()));
                 fc.setDialogTitle ("Choose Default Directory");
                 int returnVal = fc.showOpenDialog (null);
                 if (returnVal == JFileChooser.APPROVE_OPTION)
                 {
                     File file = fc.getSelectedFile ();
-                    sysexPath=file.getAbsolutePath ();
-                    t2.setText (sysexPath);
+                    appConfig.setSysexPath(file.getAbsolutePath());
+                    t2.setText (appConfig.getSysexPath());
                 }
             }
         });
@@ -195,8 +205,8 @@ public class PrefsDialog extends JDialog
                 if (e.getStateChange ()==e.SELECTED)
                 {
                     ((PatchEdit)p).unloadMidiDriver ();
-                    midiPlatform=((JComboBox)e.getSource ()).getSelectedIndex ();
-                    //System.out.println("MakeCard2:stateChanged to "+midiPlatform);
+                    appConfig.setMidiPlatform(((JComboBox)e.getSource ()).getSelectedIndex ());
+                    //System.out.println("MakeCard2:stateChanged to "+appConfig.getMidiPlatform());
                 
                     ((PatchEdit)p).loadMidiDriver ();
                     setPortCombos ((JPanel)((JComboBox)e.getSource ()).getParent ());
@@ -236,11 +246,17 @@ public class PrefsDialog extends JDialog
             cb3.removeAllItems ();
             for (int j=0; j< PatchEdit.MidiIn.getNumInputDevices ();j++)
                 cb3.addItem (j+": "+PatchEdit.MidiOut.getInputDeviceName (j));
-            cb1.setSelectedIndex (initPortOut);
-            cb2.setSelectedIndex (initPortIn);
-            cb3.setSelectedIndex (masterController);
-            cb4.setSelectedIndex (faderPort);
-            cb5.setSelectedIndex (lookAndFeel);
+            cb4.removeAllItems ();
+            for (int j=0; j< PatchEdit.MidiIn.getNumInputDevices ();j++)
+				cb4.addItem (j+": "+PatchEdit.MidiIn.getInputDeviceName (j));
+			cb5.removeAllItems ();
+			for (int j=0; j< installedLF.length;j++)
+				cb5.addItem (installedLF[j].getName ());
+            cb1.setSelectedIndex (appConfig.getInitPortOut());
+            cb2.setSelectedIndex (appConfig.getInitPortIn());
+            cb3.setSelectedIndex (appConfig.getMasterController());
+            cb4.setSelectedIndex (appConfig.getFaderPort());
+            cb5.setSelectedIndex (appConfig.getLookAndFeel());
 
         } catch (Exception e)
         {ErrorMsg.reportStatus (e);}
@@ -289,10 +305,10 @@ public class PrefsDialog extends JDialog
       {
           public void valueChanged (ListSelectionEvent e)
           {
-              faderController[currentFader]=cbController.getSelectedIndex ();
-              faderChannel[currentFader]=cbChannel.getSelectedIndex ();
-              cbController.setSelectedIndex (faderController[lb1.getSelectedIndex ()]);
-              cbChannel.setSelectedIndex (faderChannel[lb1.getSelectedIndex ()]);
+              appConfig.setFaderController(currentFader, cbController.getSelectedIndex());
+              appConfig.setFaderChannel(currentFader, cbChannel.getSelectedIndex());
+              cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
+              cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
               currentFader=lb1.getSelectedIndex ();
           }
       });
@@ -367,58 +383,62 @@ public class PrefsDialog extends JDialog
     
     void OKPressed ()
     {
-        initPortIn=cb2.getSelectedIndex ();
-        initPortOut=cb1.getSelectedIndex ();
-        masterController=cb3.getSelectedIndex ();
-        faderPort=cb4.getSelectedIndex ();
-        if ((lookAndFeel!=cb5.getSelectedIndex ())|| (midiPlatform!=cbPlatform.getSelectedIndex ()))
+        appConfig.setInitPortIn(cb2.getSelectedIndex());
+        appConfig.setInitPortOut(cb1.getSelectedIndex());
+        appConfig.setMasterController(cb3.getSelectedIndex());
+        appConfig.setFaderPort(cb4.getSelectedIndex());
+        if ((appConfig.getLookAndFeel()!=cb5.getSelectedIndex ())|| (appConfig.getMidiPlatform()!=cbPlatform.getSelectedIndex ()))
             JOptionPane.showMessageDialog (null, "You must exit and restart the program for your changes to take effect","Changing L&F / Platform", JOptionPane.INFORMATION_MESSAGE);
-        lookAndFeel=cb5.getSelectedIndex ();
-        midiPlatform=cbPlatform.getSelectedIndex ();
+        appConfig.setLookAndFeel(cb5.getSelectedIndex());
+        appConfig.setMidiPlatform(cbPlatform.getSelectedIndex());
         
-        if (faderPort!=faderPortWas)
+        if (appConfig.getFaderPort()!=faderPortWas)
         {
             //FIXME: This is not portable to other MIDI libraries--working around strange JavaMIDI bugs
             try
-            {((JavaMidiWrapper)(PatchEdit.MidiIn)).faderMidiPort.setDeviceNumber (MidiPort.MIDIPORT_INPUT,faderPort);
-             PatchEdit.MidiIn.setInputDeviceNum (faderPort);
-             PatchEdit.MidiIn.setInputDeviceNum (masterController);
+            {((JavaMidiWrapper)(PatchEdit.MidiIn)).faderMidiPort.setDeviceNumber (MidiPort.MIDIPORT_INPUT,appConfig.getFaderPort());
+             PatchEdit.MidiIn.setInputDeviceNum (appConfig.getFaderPort());
+             PatchEdit.MidiIn.setInputDeviceNum (appConfig.getMasterController());
              JOptionPane.showMessageDialog (null, "You must exit and restart the program for this change to take effect","Changing Fader Port", JOptionPane.INFORMATION_MESSAGE);
              
             }catch (Exception e)
             {}
-            faderPortWas=faderPort;
+            faderPortWas=appConfig.getFaderPort();
         }
-        faderController[currentFader]=cbController.getSelectedIndex ();
-        faderChannel[currentFader]=cbChannel.getSelectedIndex ();
-        faderEnable=enabledBox.isSelected ();
+        appConfig.setFaderController(currentFader, cbController.getSelectedIndex());
+        appConfig.setFaderChannel(currentFader, cbChannel.getSelectedIndex());
+        appConfig.setFaderEnable(enabledBox.isSelected());
         this.setVisible (false);
     }
     
     void PresetPC1600x ()
     {
-        faderController[0]=128; faderChannel[0]=16;
+        appConfig.setFaderController(0,128); appConfig.setFaderChannel(0,16);
         for (int i=1;i<17;i++)
-        {faderController[i]=24; faderChannel[i]=i-1;}
+        {appConfig.setFaderController(i,24); appConfig.setFaderChannel(i, i-1);}
         for (int i=17;i<33;i++)
-        {faderController[i]=25; faderChannel[i]=i-17;}
-        cbController.setSelectedIndex (faderController[lb1.getSelectedIndex ()]);
-        cbChannel.setSelectedIndex (faderChannel[lb1.getSelectedIndex ()]);
+        {appConfig.setFaderController(i,25); appConfig.setFaderChannel(i, i-17);}
+        cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
+        cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
     }
     
     void PresetKawaiK5000 ()
     {
-        faderController[0]=1; faderChannel[0]=0;
+        appConfig.setFaderController(0,1); appConfig.setFaderChannel(0,0);
         for (int i=1;i<17;i++)
-        {faderChannel[i]=0;}
+        {appConfig.setFaderChannel(i,0);}
         for (int i=17;i<33;i++)
-        {faderController[i]=128; faderChannel[i]=16;}
-        faderController[1]=16;faderController[2]=18;faderController[3]=74;faderController[4]=73;
-        faderController[5]=17;faderController[6]=19;faderController[7]=77;faderController[8]=78;
-        faderController[9]=71;faderController[10]=75;faderController[11]=76;faderController[12]=72;
-        faderController[13]=80;faderController[14]=81;faderController[15]=82;faderController[16]=83;
+        {appConfig.setFaderController(i,128); appConfig.setFaderChannel(i,16);}
+        appConfig.setFaderController(1,16);appConfig.setFaderController(2,18);
+		appConfig.setFaderController(3,74);appConfig.setFaderController(4,73);
+        appConfig.setFaderController(5,17);appConfig.setFaderController(6,19);
+		appConfig.setFaderController(7,77);appConfig.setFaderController(8,78);
+        appConfig.setFaderController(9,71);appConfig.setFaderController(10,75);
+		appConfig.setFaderController(11,76);appConfig.setFaderController(12,72);
+        appConfig.setFaderController(13,80);appConfig.setFaderController(14,81);
+		appConfig.setFaderController(15,82);appConfig.setFaderController(16,83);
         
-        cbController.setSelectedIndex (faderController[lb1.getSelectedIndex ()]);
-        cbChannel.setSelectedIndex (faderChannel[lb1.getSelectedIndex ()]);
+        cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
+        cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
     }
 }
