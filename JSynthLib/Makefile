@@ -1,5 +1,5 @@
 #
-# Makefile created at Tue Mar 30 22:25:09 2004, by mmake
+# Makefile created at Tue Jun 22 23:09:10 2004, by mmake
 #
 
 # Programs (with common options):
@@ -106,55 +106,55 @@ endif
 
 # Packages we should compile
 PACKAGES = \
-	synthdrivers.KawaiK4 \
+	synthdrivers.YamahaTX81z \
+	synthdrivers.YamahaDX5 \
+	synthdrivers.YamahaFS1R \
+	synthdrivers.CasioCZ1000 \
 	synthdrivers.YamahaDX7II \
-	synthdrivers.RolandXV5080 \
-	synthdrivers.KorgX3 \
-	synthdrivers.EmuProteusMPS \
 	synthdrivers.BossDR660 \
-	midiprovider.LinuxCharDev.LinuxCharDevMidiProvider \
-	synthdrivers.RolandTD6 \
+	synthdrivers.KawaiK4 \
+	synthdrivers.YamahaDX7 \
+	synthdrivers.AlesisA6 \
+	synthdrivers.AccessVirus \
+	synthdrivers.KorgER1 \
+	synthdrivers.YamahaDX100 \
+	synthdrivers.KorgX3 \
+	synthdrivers.AlesisDMPro \
+	com.dreamfabric \
+	core \
+	synthdrivers.EmuProteusMPS \
+	org.jsynthlib.jsynthlib \
+	synthdrivers.SCIProphet600 \
+	synthdrivers.RolandXV5080 \
+	synthdrivers.EnsoniqESQ1 \
+	synthdrivers.OberheimMatrix \
+	synthdrivers.NordLead \
+	synthdrivers.MIDIboxSID \
+	synthdrivers.NovationNova1 \
 	synthdrivers.Generic \
 	synthdrivers.RolandMKS50 \
-	org.jsynthlib.jsynthlib \
-	synthdrivers.OberheimMatrix \
-	synthdrivers.SCIProphet600 \
-	synthdrivers.YamahaTX7 \
-	synthdrivers.YamahaFS1R \
-	synthdrivers.MIDIboxSID \
-	synthdrivers.YamahaTG33 \
-	synthdrivers.CasioCZ1000 \
-	synthdrivers.YamahaTX802 \
-	synthdrivers.PeaveyPC1600 \
-	synthdrivers.YamahaMotif \
-	synthdrivers.AccessVirus \
-	com.dreamfabric \
-	synthdrivers.NordLead \
-	synthdrivers.EnsoniqESQ1 \
-	synthdrivers.NovationNova1 \
-	core \
-	synthdrivers.YamahaDX7 \
-	com.apple.eawt \
-	synthdrivers.AlesisQS \
-	synthdrivers.YamahaDX100 \
-	synthdrivers.AlesisA6 \
+	synthdrivers.YamahaDX7.common \
 	synthdrivers.YamahaDX7s \
 	synthdrivers.KorgWavestation \
+	synthdrivers.YamahaTX802 \
+	synthdrivers.PeaveyPC1600 \
+	synthdrivers.WaldorfPulse \
+	synthdrivers.YamahaTG33 \
+	synthdrivers.YamahaMotif \
+	com.apple.eawt \
+	synthdrivers.RolandTD6 \
+	synthdrivers.YamahaTX7 \
 	synthdrivers.KawaiK5000 \
-	synthdrivers.EnsoniqVFX \
-	synthdrivers.YamahaDX7.common \
-	synthdrivers.KorgER1 \
-	synthdrivers.YamahaTX81z
+	synthdrivers.AlesisQS \
+	synthdrivers.EnsoniqVFX
 
 
 # All packages that can be recursively be compiled.
 ALL_PACKAGES = \
-	midiprovider \
-	com \
-	org \
 	com.apple \
+	org \
 	org.jsynthlib \
-	midiprovider.LinuxCharDev \
+	com \
 	synthdrivers \
 	$(PACKAGES)
 
@@ -166,8 +166,7 @@ JAVADOC_PACKAGES = $(PACKAGES)
 # Resource packages
 RESOURCES = \
 	synthdrivers.YamahaFS1R.images \
-	synthdrivers.YamahaDX7.images \
-	doc.api-docs.resources
+	synthdrivers.YamahaDX7.images
 
 
 # Directories with shell scripts
@@ -261,9 +260,10 @@ endef
 .PHONY: all jar install uninstall doc clean depend tags bundle help $(ALL_PACKAGES)
 
 help:
-	@echo "Usage: make {all|jar|bundle|install|uninstall|doc|clean|depend|tags|PACKAGE_NAME}"
+	@echo "Usage: make {all|jar|srcjar|bundle|install|uninstall|doc|clean|depend|tags|PACKAGE_NAME}"
 	@echo "	all: build all classes"
 	@echo "	jar: build jar file"
+	@echo "	srcjar: build source jar file"
 	@echo "	bundle: build OS X app bundle"
 	@echo "	install: install classes into $(CLASS_DIR)"
 	@echo "		jar into $(JAR_DIR)"
@@ -303,8 +303,11 @@ jar:
 	@echo "No jar file defined"
 endif
 
+SRC_JAR_FILE := $(basename $(JAR_FILE))-src$(suffix $JAR_FILE)
+
 # Source jar target
-$(basename $(JAR_FILE))-src$(suffix $JAR_FILE): $(JAVA_SRC) $(RESOURCE_OBJS)
+srcjar : $(SRC_JAR_FILE)
+$(SRC_JAR_FILE): $(JAVA_SRC) $(RESOURCE_OBJS)
 	$(FIND) $(TOPLEVEL) $(JAR_OBJS: .class=.java) -print | $(XARGS) \
 	$(JAR) $(JAR_FLAGS) $@
 
@@ -446,11 +449,50 @@ ifneq ($(DEPEND),)
 endif
 
 #package targets
-midiprovider : $(call PACKAGE_OBJS,midiprovider)
-com : $(call PACKAGE_OBJS,com)
-org : $(call PACKAGE_OBJS,org)
 com.apple : $(call PACKAGE_OBJS,com.apple)
+org : $(call PACKAGE_OBJS,org)
 org.jsynthlib : $(call PACKAGE_OBJS,org.jsynthlib)
-midiprovider.LinuxCharDev : $(call PACKAGE_OBJS,midiprovider.LinuxCharDev)
+com : $(call PACKAGE_OBJS,com)
 synthdrivers : $(call PACKAGE_OBJS,synthdrivers)
+synthdrivers.YamahaTX81z : $(call PACKAGE_OBJS,synthdrivers.YamahaTX81z)
+synthdrivers.YamahaDX5 : $(call PACKAGE_OBJS,synthdrivers.YamahaDX5)
+synthdrivers.YamahaFS1R : $(call PACKAGE_OBJS,synthdrivers.YamahaFS1R)
+synthdrivers.CasioCZ1000 : $(call PACKAGE_OBJS,synthdrivers.CasioCZ1000)
+synthdrivers.YamahaDX7II : $(call PACKAGE_OBJS,synthdrivers.YamahaDX7II)
+synthdrivers.BossDR660 : $(call PACKAGE_OBJS,synthdrivers.BossDR660)
+synthdrivers.KawaiK4 : $(call PACKAGE_OBJS,synthdrivers.KawaiK4)
+synthdrivers.YamahaDX7 : $(call PACKAGE_OBJS,synthdrivers.YamahaDX7)
+synthdrivers.AlesisA6 : $(call PACKAGE_OBJS,synthdrivers.AlesisA6)
+synthdrivers.AccessVirus : $(call PACKAGE_OBJS,synthdrivers.AccessVirus)
+synthdrivers.KorgER1 : $(call PACKAGE_OBJS,synthdrivers.KorgER1)
+synthdrivers.YamahaDX100 : $(call PACKAGE_OBJS,synthdrivers.YamahaDX100)
+synthdrivers.KorgX3 : $(call PACKAGE_OBJS,synthdrivers.KorgX3)
+synthdrivers.AlesisDMPro : $(call PACKAGE_OBJS,synthdrivers.AlesisDMPro)
+com.dreamfabric : $(call PACKAGE_OBJS,com.dreamfabric)
+core : $(call PACKAGE_OBJS,core)
+synthdrivers.EmuProteusMPS : $(call PACKAGE_OBJS,synthdrivers.EmuProteusMPS)
+org.jsynthlib.jsynthlib : $(call PACKAGE_OBJS,org.jsynthlib.jsynthlib)
+synthdrivers.SCIProphet600 : $(call PACKAGE_OBJS,synthdrivers.SCIProphet600)
+synthdrivers.RolandXV5080 : $(call PACKAGE_OBJS,synthdrivers.RolandXV5080)
+synthdrivers.EnsoniqESQ1 : $(call PACKAGE_OBJS,synthdrivers.EnsoniqESQ1)
+synthdrivers.OberheimMatrix : $(call PACKAGE_OBJS,synthdrivers.OberheimMatrix)
+synthdrivers.NordLead : $(call PACKAGE_OBJS,synthdrivers.NordLead)
+synthdrivers.MIDIboxSID : $(call PACKAGE_OBJS,synthdrivers.MIDIboxSID)
+synthdrivers.NovationNova1 : $(call PACKAGE_OBJS,synthdrivers.NovationNova1)
+synthdrivers.Generic : $(call PACKAGE_OBJS,synthdrivers.Generic)
+synthdrivers.RolandMKS50 : $(call PACKAGE_OBJS,synthdrivers.RolandMKS50)
+synthdrivers.YamahaDX7.common : $(call PACKAGE_OBJS,synthdrivers.YamahaDX7.common)
+synthdrivers.YamahaDX7s : $(call PACKAGE_OBJS,synthdrivers.YamahaDX7s)
+synthdrivers.KorgWavestation : $(call PACKAGE_OBJS,synthdrivers.KorgWavestation)
+synthdrivers.YamahaTX802 : $(call PACKAGE_OBJS,synthdrivers.YamahaTX802)
+synthdrivers.PeaveyPC1600 : $(call PACKAGE_OBJS,synthdrivers.PeaveyPC1600)
+synthdrivers.WaldorfPulse : $(call PACKAGE_OBJS,synthdrivers.WaldorfPulse)
+synthdrivers.YamahaTG33 : $(call PACKAGE_OBJS,synthdrivers.YamahaTG33)
+synthdrivers.YamahaMotif : $(call PACKAGE_OBJS,synthdrivers.YamahaMotif)
+com.apple.eawt : $(call PACKAGE_OBJS,com.apple.eawt)
+synthdrivers.RolandTD6 : $(call PACKAGE_OBJS,synthdrivers.RolandTD6)
+synthdrivers.YamahaTX7 : $(call PACKAGE_OBJS,synthdrivers.YamahaTX7)
+synthdrivers.KawaiK5000 : $(call PACKAGE_OBJS,synthdrivers.KawaiK5000)
+synthdrivers.AlesisQS : $(call PACKAGE_OBJS,synthdrivers.AlesisQS)
+synthdrivers.EnsoniqVFX : $(call PACKAGE_OBJS,synthdrivers.EnsoniqVFX)
 
