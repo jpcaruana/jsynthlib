@@ -15,21 +15,21 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 	private static final int DEFAULT_VELOCITY = 100;
 	private static final int DEFAULT_DELAY = 500;
 
-	int note;
-	int velocity;
-	int delay;
-    final JTextField t1 =new JTextField("0",5); 
-    final JTextField t2 =new JTextField("0",5);
-    final JTextField t3 =new JTextField("0",5);
-    final JSlider s1 = new JSlider(JSlider.HORIZONTAL,0,120, 0); //note
-    final JSlider s2 = new JSlider(JSlider.HORIZONTAL,0,127, 0); //velocity
-    final JSlider s3 = new JSlider(JSlider.HORIZONTAL,0,2000, 0); //delay
-    final String [] noteName = new String [] {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};   
+	private int note;
+	private int velocity;
+	private int delay;
+	private final JTextField t1 =new JTextField("0",5); 
+	private final JTextField t2 =new JTextField("0",5);
+	private final JTextField t3 =new JTextField("0",5);
+	private final JSlider s1 = new JSlider(JSlider.HORIZONTAL,0,120, 0); //note
+	private final JSlider s2 = new JSlider(JSlider.HORIZONTAL,0,127, 0); //velocity
+	private final JSlider s3 = new JSlider(JSlider.HORIZONTAL,0,2000, 0); //delay
+	private final String [] noteName = new String [] {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"};   
 
-    /**
-     * Constructor
-     * @param appConfig the application config object
-     */
+	/**
+	 * Constructor
+	 * @param appConfig the application config object
+	 */
 	public NoteChooserConfigPanel(core.AppConfig appConfig) {
 		super(appConfig);
 
@@ -125,4 +125,3 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 		}
 	}
 }
-

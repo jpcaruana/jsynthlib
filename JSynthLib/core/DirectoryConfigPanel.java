@@ -12,8 +12,8 @@ import java.io.*;
  */
 
 public class DirectoryConfigPanel extends ConfigPanel {
-	final JTextField t1=new JTextField (null,20);
-	final JTextField t2=new JTextField (null,20);
+	private final JTextField t1=new JTextField (null,20);
+	private final JTextField t2=new JTextField (null,20);
 
 	public DirectoryConfigPanel(core.AppConfig appConfig) {
 		super(appConfig);
