@@ -211,13 +211,13 @@ public abstract class MidiWrapper {
 		    throw new InvalidMidiDataException(getInputDeviceName(port));
 		int len = msg.getLength();
 		if (firstMsg) {
+		    buffer = msg.getMessage();
+		    totalLen = len;
 		    if (msg.getStatus() != SysexMessage.SYSTEM_EXCLUSIVE)
 			if (ignoreShortMessage)
 			    continue;
 			else
 			    return msg;
-		    buffer = msg.getMessage();
-		    totalLen = len;
 		    if (buffer[totalLen - 1] == (byte) ShortMessage.END_OF_EXCLUSIVE)
 			return msg;
 		    firstMsg = false;
