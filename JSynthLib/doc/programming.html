@@ -208,7 +208,7 @@ You can compile them by the following steps.
 
 <pre>
     # On Windows use semicolon (;) instead of colon (:).
-    javac -classpath '.:Groovy.jar:asm.jar' org/jsynthlib/*/*/*.java org/jsynthlib/*/*.java
+    javac -classpath '.:groovy.jar.jar' org/jsynthlib/*/*/*.java org/jsynthlib/*/*.java
     javac core/*.java
     javac synthdrivers/*/*/*.java synthdrivers/*/*.java
     javac *.java
@@ -218,7 +218,7 @@ You may also use the following method:
 <pre>
     find . -name '*.java' | grep -v midiprovider/ > js
     # On Windows use semicolon (;) instead of colon (:).
-    javac -classpath '.:Groovy.jar:asm.jar' @js
+    javac -classpath '.:groovy.jar' @js
 </pre>
 
 And Makefile and ANT build file are included.  You may compile
@@ -247,7 +247,7 @@ are in your path for easy access.
 resultant files, you must launch JSynthLib using;
 <pre>
     # On Windows use semicolon (;) instead of colon (:).
-    java -classpath '.:Groovy.jar:asm.jar' JSynthLib -D 3
+    java -classpath '.:groovy.jar' JSynthLib -D 3
 </pre>
 instead of <kbd>java -jar JSynthLib.jar</kbd>. Otherwise you just run
 the old .jar file and none of your alterations get used.  The command
@@ -1353,7 +1353,7 @@ Here is the setting I'm using for Eclipse 3.0.
 <kbd>midiprovider/**</kbd> onto <kbd>Exclusion patterns:</kbd>.
 
 <li> On <kbd>Project->Java Build Path->Library</kbd> tab, add
-<kbd>groovy.jar</kbd> and <kbd>asm.jar</kbd>.
+<kbd>groovy.jar</kbd>.
 
 <li> For using the Javadocs for the JDK (e.g. the "J2SE 5.0 Documentation") go to
 <kbd>Preferences->Java->Installed JREs->Edit->Javadoc URL</kbd> set to
