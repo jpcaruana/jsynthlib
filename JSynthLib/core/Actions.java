@@ -520,6 +520,8 @@ final class Actions {
         	try {
             	frame.open(file);
             } catch (Exception e) {
+            	frame = new SceneFrame(file);
+
                 try {
                 	frame.open(file);
 	            } catch (Exception e1) {
