@@ -86,8 +86,15 @@ public class AppConfig implements Storable {
 			// Load the appconfig
 			load();
 			return true;
+		} catch (FileNotFoundException e) {
+		    // When JSynthLib.properties does not exist (the very
+		    // first invoke), setMidiPlafform is not called.
+		    if (midiWrapper == null) // probably 'true'
+			setMidiPlatform(0); // DoNothingMidiWrapper
+		    return false;
 		} catch (Exception e) {
-			return false;
+		    ErrorMsg.reportStatus("loadPrefs: " + e);
+		    return false;
 		} finally {
 			if (deviceCount() == 0) {
 				addDevice(new synthdrivers.Generic.GenericDevice());
