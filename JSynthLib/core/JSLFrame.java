@@ -89,7 +89,26 @@ public class JSLFrame {
 
     JSLFrameProxy getProxy() { return proxy; }
 
-    public void moveToDefaultLocation() { proxy.moveToDefaultLocation(); }
+    public void moveToDefaultLocation() {
+        //proxy.moveToDefaultLocation();
+        int x, y, yofs = 0;
+        int xsep = 30;
+        int ysep = JSLDesktop.getYDecoration();
+        Dimension d = JSLDesktop.getSize();
+
+        JFrame tb = JSLDesktop.getToolBar().getJFrame();
+        if (tb != null && tb.getLocation().getY() < 100)
+            yofs = (int) (tb.getLocation().getY() - ysep + tb.getSize()
+                    .getHeight());
+        x = (xsep * frame_count) % (int) (d.getWidth() - getSize().getWidth());
+        if (x < 0)
+            x = 0;
+        y = yofs + (ysep * frame_count)
+                % (int) (d.getHeight() - getSize().getHeight() - yofs);
+        if (y < 0)
+            y = yofs + ysep;
+        setLocation(x, y);
+    }
 
     public boolean canImport(DataFlavor[] flavors) {
 	return false;
@@ -126,7 +145,7 @@ public class JSLFrame {
 	public void removeJSLFrameListener(JSLFrameListener l);
 	public void setPreferredSize(Dimension d);
 	public boolean isSelected();
-	public void moveToDefaultLocation();
+	//public void moveToDefaultLocation();
     }
 
     class JSLIFrame extends JInternalFrame implements JSLFrameProxy,
@@ -226,9 +245,6 @@ public class JSLFrame {
 	}
 	public void removeJSLFrameListener(JSLFrameListener l) {
 	    listeners.remove(l);
-	}
-	public void moveToDefaultLocation() {
-	    setLocation(30*frame_count, 30*frame_count);
 	}
     }
     class JSLJFrame extends JFrame implements JSLFrameProxy,
@@ -366,26 +382,6 @@ public class JSLFrame {
 		new WindowEvent(this,
 				WindowEvent.WINDOW_ACTIVATED, null);
 	    processWindowEvent(we);
-	}
-	public void moveToDefaultLocation() {
-	    int x, y, yofs = 0;
-	    int xsep = 30;
-	    int ysep = JSLDesktop.getYDecoration();
-	    Dimension d = JSLDesktop.getSize();
-
-	    JFrame tb = JSLDesktop.getToolBar().getJFrame();
-	    if (tb != null && tb.getLocation().getY() < 100)
-		yofs = (int)
-		    (tb.getLocation().getY() - ysep + tb.getSize().getHeight());
-	    x = (xsep*frame_count) %
-		(int)(d.getWidth() - getSize().getWidth());
-	    if (x < 0)
-		x = 0;
-	    y = yofs + (ysep*frame_count)
-		% (int)(d.getHeight() - getSize().getHeight() - yofs);
-	    if (y < 0)
-		y = yofs + ysep;
-	    setLocation(x,y);
 	}
     }
 }
