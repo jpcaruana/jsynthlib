@@ -12,7 +12,7 @@ public class CAMidiDeviceProvider extends MidiDeviceProvider {
 
   private static MIDIClient client = null;
   private static MIDIOutputPort output;
-  private static HashMap deviceMap = new HashMap(20);
+  private static HashMap deviceMap = new LinkedHashMap(20);
   private static NotificationReciever nproc = null;
 
   public CAMidiDeviceProvider() throws CAException {

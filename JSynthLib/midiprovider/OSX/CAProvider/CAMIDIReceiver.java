@@ -5,10 +5,12 @@ import com.apple.audio.util.*;
 import com.apple.audio.CAException;
 
 import javax.sound.midi.*;
+import java.util.*;
 
-class CAMIDIReceiver implements Receiver {
+class CAMIDIReceiver implements Receiver, MIDICompletionProc {
   private MIDIEndpoint dest;
   private MIDIPacketList plist = null;
+  private Set sendRequests = new HashSet();
 
   CAMIDIReceiver (MIDIEndpoint ep) {
     dest = ep;
@@ -54,10 +56,14 @@ class CAMIDIReceiver implements Receiver {
 	  data.addRawData(m.getMessage());
 	}
 	MIDISysexSendRequest req = new MIDISysexSendRequest(dest, data);
-	req.send(null);
+	req.send(this);
+	sendRequests.add(req);
       }
     } catch (CAException e) {
       e.printStackTrace();
     }
+  }
+  public void execute(MIDISysexSendRequest req) {
+      sendRequests.remove(req);
   }
 }
