@@ -2,19 +2,19 @@
 <!-- $Id$ -->
 <!--
   convention
-    kbd:	for command line, filename
-    var:	variable, method name
+    kbd:        for command line, filename
+    var:        variable, method name
 
     Use structured text instead of B, I, or TT
 
-    EM:		Indicates emphasis. 
-    STRONG:	Indicates stronger emphasis. 
-    CITE: 	Contains a citation or a reference to other sources. 
-    DFN: 	Indicates that this is the defining instance of the enclosed term. 
-    CODE:	Designates a fragment of computer code.
-    SAMP:	Designates sample output from programs, scripts, etc. 
-    KBD: 	Indicates text to be entered by the user. 
-    VAR: 	Indicates an instance of a variable or program argument. 
+    EM:         Indicates emphasis. 
+    STRONG:     Indicates stronger emphasis. 
+    CITE:       Contains a citation or a reference to other sources. 
+    DFN:        Indicates that this is the defining instance of the enclosed term. 
+    CODE:       Designates a fragment of computer code.
+    SAMP:       Designates sample output from programs, scripts, etc. 
+    KBD:        Indicates text to be entered by the user. 
+    VAR:        Indicates an instance of a variable or program argument. 
 -->
 
 <html>
@@ -205,7 +205,7 @@ You can compile them by the following steps.
     javac core/*.java
     javac synthdrivers/*/*/*.java synthdrivers/*/*.java
     # On Windows use semicolon (;) instead of colon (:).
-    javac -classpath '.:Groovy.jar' org/jsynthlib/*/*/*.java org/jsynthlib/*/*.java
+    javac -classpath '.:Groovy.jar:asm.jar' org/jsynthlib/*/*/*.java org/jsynthlib/*/*.java
     javac *.java
 </pre>
 
@@ -228,7 +228,7 @@ or
 
 If you are using <a href="http://www.eclipse.org/">Eclipse</a>, enable
 the auto-compile feature.  Eclipse compiles necessary files in
-background every time you save file.<p>
+background every time you save a file.<p>
 
 
 Next, open up a Command Prompt or shell set to 50 row display and set
@@ -241,11 +241,11 @@ are in your path for easy access.
 resultant files, you must launch JSynthLib using;
 <pre>
     # On Windows use semicolon (;) instead of colon (:).
-    java -classpath '.:Groovy.jar:asm.jar' JSynthLib 2
+    java -classpath '.:Groovy.jar:asm.jar' JSynthLib -D 3
 </pre>
 instead of <kbd>java -jar JSynthLib.jar</kbd>. Otherwise you just run
 the old .jar file and none of your alterations get used.  The command
-line option '2' gives you various debug messages from ErrorMsg class.
+line option '-D 3' gives you various debug messages from ErrorMsg class.
 The messages help you.<p>
 
 Although the source code for each version of JSynthLib is included in
@@ -322,7 +322,7 @@ synthesizer?</h4>
    work. I wrote a significant part of the JSynthLib core code using
    EDIT.COM which comes with Windows. More recently, I've switched to
    <a href="#jedit">jEdit</a>, a Java based emacs-like
-   programmer's editor with syntax highlighting and bracket matching.
+   programmer's editor with syntax highlighting and bracket matching.<p>
 
    Some of the most active developers of this project started using <a
    href="http://www.eclipse.org/">Eclipse</a>.  It knows Java syntax
@@ -336,8 +336,6 @@ synthesizer?</h4>
    value.
 </ol>
 
-Don't forget editing the first line.
-
 <h4>III.a.3. Who owns the copyright to the code I contribute to
 JSynthLib?<br></h4>
 
@@ -348,27 +346,29 @@ JSynthLib, but in addition to releasing it under the GNU Public
 License, you can do whatever else you want with it.  Put the following
 lines at the top of <strong>each</strong> file.
 <pre>
-/*
- * Copyright 20XX Your Name
- *
- * This file is part of JSynthLib.
- *
- * JSynthLib is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published
- * by the Free Software Foundation; either version 2 of the License,
- * or(at your option) any later version.
- *
- * JSynthLib is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JSynthLib; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA
- */
+    /*
+     * Copyright 20XX Your Name
+     *
+     * This file is part of JSynthLib.
+     *
+     * JSynthLib is free software; you can redistribute it and/or modify
+     * it under the terms of the GNU General Public License as published
+     * by the Free Software Foundation; either version 2 of the License,
+     * or(at your option) any later version.
+     *
+     * JSynthLib is distributed in the hope that it will be useful, but
+     * WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     * General Public License for more details.
+     *
+     * You should have received a copy of the GNU General Public License
+     * along with JSynthLib; if not, write to the Free Software
+     * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+     * USA
+     */
 </pre>
+
+Don't forget editing the first line.
 
 <h3><a name="layout" href="#toc">III.b. The Layout of JSynthLib</a></h3>
 
@@ -409,9 +409,9 @@ Don't enter that directory and just type;
 
 You can make API document by executing;
 <pre>
-javadoc -locale en_US -breakiterator -quiet -d doc/API -use -author -version -overview doc/programming.html core/*.java
+    javadoc -locale en_US -breakiterator -quiet -d doc/api_docs -use -author -version -overview doc/programming.html core/*.java
 </pre>
-View <strong>doc/API/index.html</strong> with your favorite browser.
+View <kbd>doc/api_docs/index.html</kbd> with your favorite browser.
 This document is on the top page with hyperlinks to class, interface,
 and member definitions.
 
@@ -426,37 +426,42 @@ informations for your synthesizer, for example synth model name, MIDI
 port assigned, etc.  And it has a list of drivers (Single Driver, Bank
 Driver, and/or Converter) described below.
 
-<dt>Single Driver <dd>A class implements ISingleDriver interface.  It
-provides routines to support a single patch data, a set of MIDI system
-exclusive messages of a sound data, etc.<p>
+<dt>Single Patch <dd>Single Patch is a set of MIDI system exclusive
+messages of a sound data, etc.
 
-A Single Driver allows JSynthLib to detect a patch data for the
-synthesizer, to communicate with the synthesizer.  Once this is
-written, JSynthLib will have Librarian support for your synthesizer.<p>
+<dt>Single Driver <dd>Single Driver provides routines to support a
+Single Patch.<p>
+
+A Single Driver extends IPatchDriver class and allows JSynthLib to
+detect a patch data for the synthesizer, to communicate with the
+synthesizer.  Once this is written, JSynthLib will have Librarian
+support for your synthesizer.<p>
 
 A Single Driver optionally can have a Single Editor invoked by
 IPatchDriver.editPatch() method.
 
-<dt>Bank Driver <dd>A class implements IBankDriver interface.  It
-provides routines to support a bank patch (bulk dump patch), a bank of
-single patches.<p>
+<dt>Bank Patch <dd>Bank Patch (bulk dump patch) is a bank of single
+patches.<p>
 
-A Bank Driver allows JSynthLib to combine a single patch into a bank
-patch and to extract a single patch from a bank patch. While this
-functionality isn't strictly necessary, it is nice to have if your
-synth supports bulk dump patch.<p>
+<dt>Bank Driver <dd>Bank Driver provides routines to support a Bank
+Patch.<p>
+
+A Bank Driver extends IPatchDriver and allows JSynthLib to combine a
+single patch into a bank patch and to extract a single patch from a
+bank patch. While this functionality isn't strictly necessary, it is
+nice to have if your synth supports bulk dump patch.<p>
 
 A Bank Driver can have a Bank Patch Editor.  But you don't have to
 take care of it because usually the default editor can be used.
 
-<dt>Converter <dd>A class implements IConverter interface.  This is a
+<dt>Converter <dd>A driver implements IConverter interface.  This is a
 special driver.  Converter simply converts a patch, which is imported
 from a file or MIDI input, into it's associated with to another
 format. Most of synthdrivers don't use this.
 
 <dt>Single Editor <dd>This is the fun part. This is a graphical
 representation of the synthesizers internals which allows parameters
-to be changed and edited.  It is invoked by a Single Driver.
+to be changed and edited.  It is invoked by a ISinglePatch.edit method.
 </dl>
 
 A Synth Driver communicates with JSynthLib core by using the following
@@ -465,14 +470,13 @@ interfaces.
 Device class (required)
 
 IDriver interface
-  IPatchDriver interface extends IDriver
-    ISingleDriver interface extends IPatchDriver (required)
-    IBankDriver interface extends IPatchDriver (optional)
-  IConverter interface extends IDriver (optional)
-</pre>
+  IPatchDriver interface extends IDriver (required)
+  IConverter interface (optional)
 
-A patch data is contained by a class implementing IPatch interface.
-JSynthLib core access it via IPatch interface.
+IPatch interface
+  ISinglePatch interface extends IPatch (required)
+  IBankPatch interface extends IPatch (optional)
+</pre>
 
 All what you have to do is to implement java classes which implements
 one of these interfaces.  Of course you don't have to write whole
@@ -483,13 +487,15 @@ Most of the current synthdrivers extend the following classes;
 <pre>
 Device class
 
-Driver class implements ISingleDriver
-BankDriver class implements IBankDriver (optional)
+Driver class implements IPatchDriver
+BankDriver class implements IPatchDriver (optional)
 Converter class implements IConverter (optional)
+
+Patch class implements ISinglePatch and IBankPatch
 </pre>
 
-and use Patch class implements IPatch interface.  (Actually the
-interfaces above was just introduced on JSynthLib-0.20 release.)
+Actually the interfaces described above was just introduced in the
+JSynthLib-0.20 release.
 
 <h3><a name="wri_device" href="#toc">III.e. Writing a Device class</a></h3>
 
@@ -511,19 +517,19 @@ All what you have to do is to define two constructors. Here is from
 <pre>
     /** Constructor for DeviceListWriter. */
     public KawaiK4Device() {
-	super("Kawai", "K4/K4R", "F07E..0602400000040000000000f7",
-	      INFO_TEXT, "Brian Klock & Gerrit Gehnen");
+        super("Kawai", "K4/K4R", "F07E..0602400000040000000000f7",
+              INFO_TEXT, "Brian Klock & Gerrit Gehnen");
     }
 
     /** Constructor for for actual work. */
     public KawaiK4Device(Preferences prefs) {
-	this();
-	this.prefs = prefs;
+        this();
+        this.prefs = prefs;
 
         addDriver(new KawaiK4BulkConverter());
         addDriver(new KawaiK4SingleDriver());
         addDriver(new KawaiK4BankDriver());
-	// ... other drivers
+        // ... other drivers
     }
 </pre>
 
@@ -565,8 +571,9 @@ drivers :)
 <h3><a name="wri_single" href="#toc">III.f. Writing a Single Driver</a></h3>
 
 This section describe how to write a Single Driver by extending Driver
-class.  Keep in mind that what you are doing is to implement methods
-of ISingleDriver interface.
+class which is for Patch class.  Keep in mind that what you are doing
+is to implement methods of IPatchDriver interface and methods which
+Patch class requires.
 
 <h4>III.f.1. Create a File</h4>
 
@@ -670,10 +677,10 @@ Here is a part of RolandTD6Device Constructor;
 <pre>
     public RolandTD6Device(Preferences prefs) {
         ...
-	// add drivers
-	TD6SingleDriver singleDriver = new TD6SingleDriver();
-	addDriver(singleDriver);
-	addDriver(new TD6BankDriver(singleDriver));
+        // add drivers
+        TD6SingleDriver singleDriver = new TD6SingleDriver();
+        addDriver(singleDriver);
+        addDriver(new TD6BankDriver(singleDriver));
     }
 </pre>
 
@@ -836,26 +843,26 @@ can therefore be moved in only one direction. Here is an example:
 
 <pre>
     EnvelopeWidget.Node[] nodes = new EnvelopeWidget.Node[] {
-	new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-	new EnvelopeWidget.Node(0, 100,
-				new K4Model(patch, 30 + i), 0, 0, null, 0, false,
-				new K4Sender(34, i), null, "Dly", null),
-	new EnvelopeWidget.Node(0, 100,
-				new K4Model(patch, 62 + i), 100, 100, null, 25, false,
-				new K4Sender(45, i), null, "A", null),
-	new EnvelopeWidget.Node(0, 100,
-				new K4Model(patch, 66 + i), 0, 100,
-				new K4Model(patch, 70 + i), 25, false,
-				new K4Sender(46, i),
-				new K4Sender(47, i), "D", "S"),
-	new EnvelopeWidget.Node(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
-	new EnvelopeWidget.Node(0, 100,
-				new K4Model(patch, 74 + i), 0, 0, null, 0, false,
-				new K4Sender(48, i), null, "R", null),
+        new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+        new EnvelopeWidget.Node(0, 100,
+                                new K4Model(patch, 30 + i), 0, 0, null, 0, false,
+                                new K4Sender(34, i), null, "Dly", null),
+        new EnvelopeWidget.Node(0, 100,
+                                new K4Model(patch, 62 + i), 100, 100, null, 25, false,
+                                new K4Sender(45, i), null, "A", null),
+        new EnvelopeWidget.Node(0, 100,
+                                new K4Model(patch, 66 + i), 0, 100,
+                                new K4Model(patch, 70 + i), 25, false,
+                                new K4Sender(46, i),
+                                new K4Sender(47, i), "D", "S"),
+        new EnvelopeWidget.Node(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
+        new EnvelopeWidget.Node(0, 100,
+                                new K4Model(patch, 74 + i), 0, 0, null, 0, false,
+                                new K4Sender(48, i), null, "R", null),
     };
     addWidget(panel,
-	      new EnvelopeWidget("DCA Envelope", patch, nodes),
-	      0, 0, 3, 5, 33);
+              new EnvelopeWidget("DCA Envelope", patch, nodes),
+              0, 0, 3, 5, 33);
 </pre>
 
 As you can see, the Envelope Widget takes a label, followed by
@@ -934,17 +941,17 @@ the YamahaTX81z Editor:
 
 <pre>
     class VcedSender extends SysexSender {
-      int parameter;
-      byte[] b = new byte [7];
-      public VcedSender(int param) {
-        parameter = param;
-        b[0] = (byte) 0xF0; b[1] = (byte) 0x43;
-	b[3] = (byte) 0x12; b[4] = (byte) parameter; b[6] = (byte) 0xF7;
-      }
-      public byte[] generate (int value) {
-       b[2] = (byte) (16 + channel - 1); b[5] = (byte) value;
-	return b;
-      }
+        int parameter;
+        byte[] b = new byte [7];
+        public VcedSender(int param) {
+            parameter = param;
+            b[0] = (byte) 0xF0; b[1] = (byte) 0x43;
+            b[3] = (byte) 0x12; b[4] = (byte) parameter; b[6] = (byte) 0xF7;
+        }
+        public byte[] generate (int value) {
+            b[2] = (byte) (16 + channel - 1); b[5] = (byte) value;
+            return b;
+        }
     }
 </pre>
 
@@ -979,28 +986,28 @@ Model. Here's an example from the KawaiK4 Editor:
 
 <pre>
     class K4Model extends ParamModel {
-      public int bitmask;
-      public int mult;
-      public K4Model(Patch p, int o) {
-	ofs = o + 8; patch = p; bitmask = 255; mult = 1;
-      }
-      public K4Model(Patch p, int o, int b) {
-	ofs = o + 8; patch = p; bitmask = b;
-	if ((bitmask&  1) ==   1) mult =   1; else
-	if ((bitmask&  2) ==   2) mult =   2; else
-	if ((bitmask&  4) ==   4) mult =   4; else
-	if ((bitmask&  8) ==   8) mult =   8; else
-	if ((bitmask& 16) ==  16) mult =  16; else
-	if ((bitmask& 32) ==  32) mult =  32; else
-	if ((bitmask& 64) ==  64) mult =  64; else
-	if ((bitmask&128) == 128) mult = 128;
-      }
-      public void set(int i) {
-	patch.sysex[ofs] = (byte) ((i*mult) + (patch.sysex[ofs]&(~bitmask)));
-      }
-      public int get() {
-	return ((patch.sysex[ofs]&bitmask)/mult);
-      }
+        public int bitmask;
+        public int mult;
+        public K4Model(Patch p, int o) {
+            ofs = o + 8; patch = p; bitmask = 255; mult = 1;
+        }
+        public K4Model(Patch p, int o, int b) {
+            ofs = o + 8; patch = p; bitmask = b;
+            if ((bitmask&  1) ==   1) mult =   1; else
+            if ((bitmask&  2) ==   2) mult =   2; else
+            if ((bitmask&  4) ==   4) mult =   4; else
+            if ((bitmask&  8) ==   8) mult =   8; else
+            if ((bitmask& 16) ==  16) mult =  16; else
+            if ((bitmask& 32) ==  32) mult =  32; else
+            if ((bitmask& 64) ==  64) mult =  64; else
+            if ((bitmask&128) == 128) mult = 128;
+        }
+        public void set(int i) {
+            patch.sysex[ofs] = (byte) ((i*mult) + (patch.sysex[ofs]&(~bitmask)));
+        }
+        public int get() {
+            return ((patch.sysex[ofs]&bitmask)/mult);
+        }
     }
 </pre>
 
