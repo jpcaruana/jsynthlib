@@ -61,19 +61,23 @@ public class Strut extends Widget{
   public Constraints getConstraints() { return constraints; }
   public void setX( int x ) {
     constraints.setX(Spring.constant( x ));
-    updateBounds();
+    setBounds(x,getY(),getWidth(),getHeight());
+    //updateBounds();
   }
   public void setY( int y ) {
     constraints.setY(Spring.constant( y ));
-    updateBounds();
+    setBounds(getX(),y, getWidth(), getHeight());
+    //updateBounds();
   }
   public void setWidth( int width ) {
     constraints.setWidth(Spring.constant( width ));
-    updateBounds();
+    setBounds(getX(),getY(),width, getHeight());
+    //updateBounds();
   }
   public void setHeight( int height ) {
     constraints.setHeight(Spring.constant( height ));
-    updateBounds();
+    setBounds(getX(),getY(),getWidth(),height);
+    //updateBounds();
   }
   private void updateBounds() {
     setBounds(new Rectangle(getX(), getY(), getWidth(), getHeight()));
@@ -93,11 +97,17 @@ public class Strut extends Widget{
   }
   public String preinitialize() { return null; }
 */
+  public int getCX() {
+      return constraints.getX().getValue();
+  }
+  public int getCY() {
+      return constraints.getY().getValue();
+  }
 	protected void writeContent(XMLWriter xml) throws SAXException {
 		xml.setAttribute("type", "absolute");
 		xml.startElement("position");
-		xml.writeProperty("x", getX());
-		xml.writeProperty("y", getY());
+		xml.writeProperty("x", getCX());
+		xml.writeProperty("y", getCY());
 		xml.endElement("position");
 		
 		xml.startElement("size");

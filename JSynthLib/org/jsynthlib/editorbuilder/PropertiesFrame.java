@@ -164,7 +164,7 @@ public class PropertiesFrame extends JFrame implements ActionListener,
 
       x = new JTextField();
       setMaxSize(x);
-      x.setText("" + ((Strut)selection).getX());
+      x.setText("" + ((Strut)selection).getCX());
       x.addActionListener(this);
       row.add(x);
 
@@ -176,7 +176,7 @@ public class PropertiesFrame extends JFrame implements ActionListener,
 
       y = new JTextField();
       setMaxSize(y);
-      y.setText("" + ((Strut)selection).getY());
+      y.setText("" + ((Strut)selection).getCY());
       y.addActionListener(this);
       row.add(y);
 
@@ -282,12 +282,12 @@ public class PropertiesFrame extends JFrame implements ActionListener,
 	  try {
 	      ((Strut)selection).setX(Integer.parseInt(x.getText()));
 	  } catch (Exception ex) {}
-	  x.setText("" + ((Strut)selection).getX());
+	  x.setText("" + ((Strut)selection).getCX());
       } else if (source == y) {
 	  try {
 	      ((Strut)selection).setY(Integer.parseInt(y.getText()));
 	  } catch (Exception ex) {}
-	  y.setText("" + ((Strut)selection).getY());
+	  y.setText("" + ((Strut)selection).getCY());
       } else if (source == width) {
 	  try {
 	      ((Strut)selection).setWidth(Integer.parseInt(width.getText()));
