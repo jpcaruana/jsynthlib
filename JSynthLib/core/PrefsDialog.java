@@ -79,9 +79,9 @@ public class PrefsDialog extends JDialog {
 	    JTabbedPane jtp = new JTabbedPane ();
 
 	    // Add all ConfigPanels to tabs - emenaker
-	    Enumeration enum = configpanels.elements();
-	    while (enum.hasMoreElements()) {
-		ConfigPanel cp = (ConfigPanel) enum.nextElement();
+	    Enumeration e = configpanels.elements();
+	    while (e.hasMoreElements()) {
+		ConfigPanel cp = (ConfigPanel) e.nextElement();
 		cp.init();
 		jtp.addTab(cp.getPanelName(), cp);
 	    }
@@ -178,9 +178,9 @@ public class PrefsDialog extends JDialog {
      */
     private void commitChanges () {
 	// Tell every ConfigPanel to save their settings to appConfig. - emenaker 2003.03.12
-	Enumeration enum = configpanels.elements();
-	while (enum.hasMoreElements()) {
-	    ((ConfigPanel) enum.nextElement()).commitSettings();
+	Enumeration e = configpanels.elements();
+	while (e.hasMoreElements()) {
+	    ((ConfigPanel) e.nextElement()).commitSettings();
 	}
     }
 

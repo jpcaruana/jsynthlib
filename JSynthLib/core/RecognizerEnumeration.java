@@ -17,7 +17,7 @@ import java.util.Vector;
  */
 public class RecognizerEnumeration extends Object {
     static  Vector synthis;
-    private Enumeration enum;
+    private Enumeration e;
 
     static {
         MyClassLoader loader;
@@ -55,19 +55,19 @@ public class RecognizerEnumeration extends Object {
 
     /** Creates new RecognizerVector */
     public RecognizerEnumeration () {
-        enum=synthis.elements ();
+        e=synthis.elements ();
     }
 
     /** Resets the Enumeration-Pointer to the first element */
     public void reset () {
-        enum=synthis.elements ();
+        e=synthis.elements ();
     }
 
     public boolean hasMoreElements () {
-        return enum.hasMoreElements ();
+        return e.hasMoreElements ();
     }
 
     public Device nextElement () {
-        return (Device) enum.nextElement ();
+        return (Device) e.nextElement ();
     }
 }
