@@ -245,5 +245,13 @@ abstract public class Device implements Serializable, Storable
 		// do nothing
 	}
 
+        /** Getter for property inquiryID.
+         * @return Value of property inquiryID.
+         *
+         */
+        public java.lang.String getInquiryID() {
+            return inquiryID;
+        }        
 
+        
 }

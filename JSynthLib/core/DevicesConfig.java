@@ -5,6 +5,7 @@
  * expected to be in /synthdrivers.properties in the jar file or
  * elsewhere on the path.
  * @author Zellyn Hunter (zellyn@zellyn.com)
+ * @version $Id$
  */
 
 package core;
@@ -25,6 +26,8 @@ public class DevicesConfig {
 	private Properties deviceProps = new Properties();
 	/* ArrayList of device names */
 	private ArrayList deviceNames = new ArrayList();
+        /* Properties representing the ID-Strings and device names */
+        private Properties deviceIDProps = new Properties();
 
 	/**
 	 * Main method for debugging - print out all configured Devices
@@ -82,6 +85,23 @@ public class DevicesConfig {
 					this.deviceNames.add(deviceName);
 				}
 			}
+                        if (propName.startsWith(Constants.PROP_PREFIX_ID_STRING)) {
+				String deviceKey = propName.substring(
+					Constants.PROP_PREFIX_ID_STRING.length());
+				String deviceName = configProps.getProperty(Constants.PROP_PREFIX_DEVICE_NAME+deviceKey);
+				String IDString = configProps.getProperty(
+					Constants.PROP_PREFIX_ID_STRING + deviceKey);
+
+				if ((deviceName==null) || (IDString==null)) {
+					ErrorMsg.reportError("Failed loading Devices",
+										 "Config file inconsistency found "
+										 + "for '" + deviceKey + "' ID string");
+				}
+				else {
+					deviceIDProps.setProperty(IDString,deviceName);
+					//this.deviceNames.add(deviceName);
+				}
+			}
 		}
 		Collections.sort(this.deviceNames);
 	}
@@ -95,6 +115,9 @@ public class DevicesConfig {
 		return (String[])this.deviceNames.toArray(retVal);
 	}
 
+        public Enumeration IDStrings() {
+            return deviceIDProps.keys();
+        }
 	/**
 	 * Given a device name, return its class name
 	 * @param deviceName the name of the device
@@ -103,6 +126,13 @@ public class DevicesConfig {
 	public String classNameForDevice(String deviceName) {
 		return this.deviceProps.getProperty(deviceName);
 	}
+        
+        public Device classForIDString(String IDString)
+        {
+            Device device=null;
+            String deviceName=this.deviceIDProps.getProperty(IDString);
+           return this.classForDevice(deviceName);
+	}   
 
 	/**
 	 * Given a device name, return an instance of its class

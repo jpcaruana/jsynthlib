@@ -20,6 +20,10 @@ public class Constants {
 	public static String PROP_PREFIX_DEVICE_NAME = "deviceName.";
 	/** Device properties class prefix */
 	public static String PROP_PREFIX_DEVICE_CLASS = "deviceClass.";
+        /** ID properties prefix */
+        public static String PROP_PREFIX_ID_STRING = "inquriyID.";
+        /** manufacturer name prefix */
+        public static String PROP_PREFIX_MANUFACTURER = "manufacturer.";
 
 	/** Number of faders */
 	public static int NUM_FADERS = 33;

@@ -1,7 +1,6 @@
 /*
  * MidiScan.java
  *
- * Created on 1. Oktober 2000, 12:27
  */
 package core;
 
@@ -11,8 +10,8 @@ import java.util.*;
 import javax.swing.table.AbstractTableModel;
 /**
  *
- * @author Gerrit Gehnen <Gerrit.Gehnen@gmx.de>
- * @version 0.1
+ * @author Gerrit Gehnen
+ * @version $Id$
  */
 
 public class MidiScan extends  Thread {
@@ -27,8 +26,8 @@ public class MidiScan extends  Thread {
     public byte channel=0;
     
     private javax.swing.JDialog parent;
-    RecognizerEnumeration synthisenum;
-    
+    Enumeration synthisenum;
+    private DevicesConfig devconf;
     /** Creates new MidiScan
      * @param m
      * @param pb  */
@@ -36,7 +35,8 @@ public class MidiScan extends  Thread {
         model=m;
         this.pb=pb;
         this.parent=parent;
-        synthisenum=new RecognizerEnumeration();
+        devconf=new DevicesConfig();
+        
     }
     
     public MidiScan(SynthTableModel m) {
@@ -50,7 +50,7 @@ public class MidiScan extends  Thread {
         
         int maxin=0,maxout=0;	// Counters for Loops
         MidiWrapper inarray[];
-        Device se;
+        String se;
         boolean found=false;
         boolean anyUnkown=false;
         String report=new String();
@@ -99,6 +99,7 @@ public class MidiScan extends  Thread {
                             
                             if (sysexSize>0) {
                                 sleep(100);
+                                synthisenum=devconf.IDStrings();//=new RecognizerEnumeration();
                                 //int msgsize=inarray[i].readMessage (i,answerData,answerData.length);
                                 msgsize=sysexSize;
                                 //System.out.println ("msgSize "+msgsize);
@@ -111,11 +112,11 @@ public class MidiScan extends  Thread {
                                         responseString.append(Integer.toHexString(0xff&answerData[k]));
                                     }
                                     //  System.out.println ("ResponseString "+responseString);
-                                    synthisenum.reset();
+                                    // synthisenum.reset();
                                     while (synthisenum.hasMoreElements()) {
-                                        se=synthisenum.nextElement();
+                                        se=(String)synthisenum.nextElement();
                                         // System.out.println ("Checking "+se.getManufacturerName ()+" "+se.getModelName ());
-                                        if (se.checkInquiry(responseString)) {
+                                        if (checkInquiry(responseString,se)) {
                                             // System.out.print ("  Found!: ");
                                             // System.out.println (se.getManufacturerName ()+" "+se.getModelName ());
                                             try {
@@ -123,18 +124,18 @@ public class MidiScan extends  Thread {
                                                 boolean dontadd=false;
                                                 for (int checkloop=0;checkloop<PatchEdit.appConfig.deviceCount();checkloop++) {
                                                     Device checkDevice=(Device)PatchEdit.appConfig.getDevice(checkloop);
-                                                    
-                                                    if ((se.getManufacturerName().equals(checkDevice.getManufacturerName()))&&(se.getModelName().equals(checkDevice.getModelName()))) {
+                                                    if (checkDevice.toString().equalsIgnoreCase(devconf.classForIDString(se).toString())){
+                                                        //if ((se.getManufacturerName().equals(checkDevice.getManufacturerName()))&&(se.getModelName().equals(checkDevice.getModelName()))) {
                                                         dontadd=true; // Oh, its already there....
                                                     }
                                                 }
                                                 if (!dontadd) // add it only, if it is not in the list
                                                 {
-                                                    Device useDevice=(Device)se.getClass().newInstance();
+                                                    Device useDevice=devconf.classForIDString(se);
                                                     useDevice.setPort(j);
                                                     useDevice.setInPort(i);
                                                     useDevice.setChannel(channel+1);
-                                                    if (pb!=null) pb.setNote("Found "+se.getManufacturerName()+" "+se.getModelName());
+                                                    if (pb!=null) pb.setNote("Found "+useDevice.getManufacturerName()+" "+useDevice.getModelName());
                                                     
                                                     PatchEdit.appConfig.addDevice(useDevice );
                                                     
@@ -194,6 +195,13 @@ public class MidiScan extends  Thread {
         }
     }
     
+    public boolean checkInquiry(StringBuffer patchString,String inquiryID) {
+        StringBuffer inquiryString=new StringBuffer(inquiryID);
+        if (inquiryString.length()>patchString.length()) return false;
+        for (int j=0;j<inquiryString.length();j++)
+            if (inquiryString.charAt(j)=='*') inquiryString.setCharAt(j,patchString.charAt(j));
+        return (inquiryString.toString().equalsIgnoreCase(patchString.toString().substring(0,inquiryString.length())));
+    }
     public void close() {
         
     }
