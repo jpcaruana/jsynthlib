@@ -32,14 +32,14 @@ public class Line6BassPodBankDriver extends BankDriver
     }
     
     /** Returns the offset of the start of the patch in nibblized (non-native) bytes.*/
-    public int getPatchStart(int patchNum)
+    private int getPatchStart(int patchNum)
     {
         int start=(Constants.SIGL_SIZE / 2 * patchNum);
         start+=Constants.BDMP_HDR_SIZE;  //sysex header
         return start;
     }
     
-    public String getPatchName(Patch p,int patchNum) {
+    protected String getPatchName(Patch p,int patchNum) {
         int nameStart=getPatchStart(patchNum);
         nameStart+=Constants.PATCH_NAME_START; //offset of name in patch data
         char c[] = new char[patchNameSize];
@@ -50,7 +50,7 @@ public class Line6BassPodBankDriver extends BankDriver
         return new String(c);
     }
     
-    public void setPatchName(Patch p,int patchNum, String name)
+    protected void setPatchName(Patch p,int patchNum, String name)
     {
         patchNameStart=getPatchStart(patchNum);
         patchNameStart+=Constants.PATCH_NAME_START; //offset of name in patch data
@@ -64,7 +64,7 @@ public class Line6BassPodBankDriver extends BankDriver
         } catch (UnsupportedEncodingException ex) {return;}
     }
 
-    public void putPatch(Patch bank, Patch p, int patchNum)  // Tested??  // Retest with new version of Core.*
+    protected void putPatch(Patch bank, Patch p, int patchNum)  // Tested??  // Retest with new version of Core.*
     { 
         if (!canHoldPatch(p)) {
             JOptionPane.showMessageDialog
@@ -77,7 +77,7 @@ public class Line6BassPodBankDriver extends BankDriver
         System.arraycopy(p.sysex, Constants.PDMP_HDR_SIZE, bank.sysex, getSysexStart(patchNum),Constants.SIGL_SIZE);
     }
     
-    public Patch getPatch(Patch bank, int patchNum)
+    protected Patch getPatch(Patch bank, int patchNum)
     {
         byte [] sysex=new byte[Constants.SIGL_SIZE + Constants.PDMP_HDR_SIZE + 1];
         System.arraycopy(Constants.SIGL_DUMP_HDR_BYTES, 0, sysex, 0, Constants.PDMP_HDR_SIZE);
@@ -94,7 +94,7 @@ public class Line6BassPodBankDriver extends BankDriver
     }
     
     /** Returns the offset of the start of the patch in nibblized (native) bytes.*/
-    public int getSysexStart(int patchNum)
+    private int getSysexStart(int patchNum)
     {
         int start=(Constants.SIGL_SIZE * patchNum);
         start+=Constants.BDMP_HDR_SIZE;  //sysex header
@@ -102,7 +102,7 @@ public class Line6BassPodBankDriver extends BankDriver
     }
         
     /** Creates a new bank patch..*/
-    public Patch createNewPatch()
+    protected Patch createNewPatch()
     {
         byte [] sysex = new byte[Constants.BDMP_HDR_SIZE + (Constants.SIGL_SIZE * Constants.PATCHES_PER_BANK) + 1];
         System.arraycopy(Constants.BANK_DUMP_HDR_BYTES, 0, sysex, 0, Constants.BDMP_HDR_SIZE);
@@ -120,7 +120,7 @@ public class Line6BassPodBankDriver extends BankDriver
                                     new SysexHandler.NameValue("bankNum", bankNum << 1)));
     }
     
-    public void storePatch (Patch p, int bankNum,int patchNum)
+    protected void storePatch (Patch p, int bankNum,int patchNum)
     {
         Patch[] thisPatch = new Patch[Constants.PATCHES_PER_BANK];
         for (int progNbr=0; progNbr<Constants.PATCHES_PER_BANK; progNbr++) {

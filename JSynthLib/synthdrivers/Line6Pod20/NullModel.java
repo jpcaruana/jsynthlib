@@ -13,7 +13,7 @@ import core.*;
 /** Dummy do-nothing model. This model is used for the Global Wah on/off setting.
 Pod supports a CC number for Wah on off but it's not represented in the Sysex record.*/
 class NullModel extends ParamModel {
-    public NullModel() {} 
+    NullModel() {} 
     public void set(int i) {}
     public int get() {return 0;}
 }

@@ -14,7 +14,7 @@ import java.awt.*;
 import javax.swing.border.*;
 
 public class Line6BassPodSingleEditor extends PatchEditorFrame {
-    static int pgmDumpheaderSize;
+    static final int pgmDumpheaderSize = Constants.PDMP_HDR_SIZE;
     static final String[] ampModel = {
         "Tube Preamp",
         "Session",
@@ -91,6 +91,10 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
         "Bypass"
     };    
     
+    static final int[] cabTranslate = {
+        11, 9, 8, 0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10
+    };
+    
     static final int[] effectTranslate = {
         11, 9, 8, 0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10
     };
@@ -100,20 +104,19 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
         "Post-Amp"
     };
     
-    JPanel line6EditPanel;
-    JPanel leftEditPanel;
-    JPanel rightEditPanel;
-    JPanel effParmsPanel;
+    private JPanel line6EditPanel;
+    private JPanel leftEditPanel;
+    private JPanel rightEditPanel;
+    private JPanel effParmsPanel;
     
-    JLabel modelDesc;
+    private JLabel modelDesc;
     
-    ComboBoxWidget patchSelector;
-    HideableKnobWidget midSweepKnob;
+    private ComboBoxWidget patchSelector;
+    private HideableKnobWidget midSweepKnob;
     
-    public Line6BassPodSingleEditor(Patch patch)
+    Line6BassPodSingleEditor(Patch patch)
     {
         super ("Line 6 Bass POD Single Editor",patch);   
-        pgmDumpheaderSize = 9;
         line6EditPanel = new JPanel();
         line6EditPanel.setLayout(new BoxLayout(line6EditPanel, BoxLayout.X_AXIS));
         scrollPane.add(line6EditPanel,gbc);
@@ -471,7 +474,7 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
     // Classes and and methods to support selecting amp models and showing and hiding
     // various controls in the Amp Settings pane
     class CCAmpModelSender extends CCSender {
-        public CCAmpModelSender(int param) {
+        private CCAmpModelSender(int param) {
             super(param);
         }
         
@@ -482,7 +485,7 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
     }
 
     class AmpModelModel extends ParamModel {
-        public AmpModelModel(Patch p,int o) {
+        private AmpModelModel(Patch p,int o) {
             super(p, o);
         }
         
@@ -512,29 +515,29 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
     
     // Classes and methods to support selecting cabinets
     class CCCabTypeSender extends CCSender {
-        public CCCabTypeSender(int param) {
+        private CCCabTypeSender(int param) {
             super(param);
         }
         
         public void send(IPatchDriver driver, int value) {
-            super.send(driver, Constants.CAB_TRANSLATE[value]);
+            super.send(driver, cabTranslate[value]);
         }
     }
     
     class CabTypeModel extends ParamModel {
-        public CabTypeModel(Patch p,int o) {
+        private CabTypeModel(Patch p,int o) {
             super(p, o);
         }
         
         public void set(int i) {
-            PatchBytes.setSysexByte(patch, 9, ofs, (byte)Constants.CAB_TRANSLATE[i]);
+            PatchBytes.setSysexByte(patch, 9, ofs, (byte)cabTranslate[i]);
         }
         
         public int get() {
             int i = (int)PatchBytes.getSysexByte(patch.sysex, 9, ofs);
             int j;
-            for (j = 0; j < Constants.CAB_TRANSLATE.length; j++) {
-                if (i == Constants.CAB_TRANSLATE[j]) {
+            for (j = 0; j < cabTranslate.length; j++) {
+                if (i == cabTranslate[j]) {
                     break;
                 }
             }
@@ -545,7 +548,7 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
     // Classes and methods to support selecting effects combos and displaying
     // the correct effects controls in the effects pane
     class CCEffectSender extends CCSender {
-        public CCEffectSender(int param) {
+        private CCEffectSender(int param) {
             super(param);
         }
         
@@ -556,7 +559,7 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
     }
 
     class EffectModel extends ParamModel {
-        public EffectModel(Patch p,int o) {
+        private EffectModel(Patch p,int o) {
             super(p, o);
         }
         

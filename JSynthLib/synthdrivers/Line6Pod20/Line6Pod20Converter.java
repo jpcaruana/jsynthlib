@@ -29,7 +29,8 @@ public class Line6Pod20Converter extends Converter{
     /**
     Constructor for 
      */
-    public Line6Pod20Converter() {
+    //    public Line6Pod20Converter() {
+    Line6Pod20Converter() {
         super(Constants.CONVERTER_NAME, Constants.AUTHOR);
         
         this.sysexID = Constants.CONV_SYSEX_MATCH_ID;
@@ -116,11 +117,11 @@ public class Line6Pod20Converter extends Converter{
         }
     } 
     
-    public byte[] convertToProgramPatch (byte[] sysex) {
+    private byte[] convertToProgramPatch (byte[] sysex) {
         int newSysexLength = sysex.length + 1;
         byte newSysex[] = new byte[newSysexLength];
         System.arraycopy(Constants.SIGL_DUMP_HDR_BYTES, 0, newSysex, 0, Constants.PDMP_HDR_SIZE);
         System.arraycopy(sysex, Constants.EDMP_HDR_SIZE, newSysex, Constants.PDMP_HDR_SIZE, newSysexLength - Constants.PDMP_HDR_SIZE);
         return newSysex;
     }
-}
+    }

@@ -22,11 +22,11 @@ class DelayFineSpeedModel extends ParamModel {
     private int maxCC;
     private int maxSysex;
     
-    public DelayFineSpeedModel(Patch p, int o) {
+    DelayFineSpeedModel(Patch p, int o) {
         this(p, o, 1, 1);
     }
     
-    public DelayFineSpeedModel(Patch p, int o, int maxCC, int maxSysex) {
+    DelayFineSpeedModel(Patch p, int o, int maxCC, int maxSysex) {
         super(p, o);
         this.maxCC = maxCC;
         this.maxSysex = maxSysex;

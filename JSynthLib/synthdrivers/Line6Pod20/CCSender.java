@@ -5,7 +5,6 @@
 //  Created by Jeff Weber on 9/6/04.
 //  Copyright 2004 __MyCompanyName__. All rights reserved.
 //
-
 package synthdrivers.Line6Pod20;
 
 import core.*;
@@ -18,19 +17,19 @@ class CCSender extends SysexSender implements SysexWidget.ISender {
     private int multiplier;
     private boolean reverse = false;
     
-    public CCSender(int param) {
+    CCSender(int param) {
         this(param, 1, false);
     }
     
-    public CCSender(int param, boolean reverse) {
+    CCSender(int param, boolean reverse) {
         this(param, 1, reverse);
     }
     
-    public CCSender(int param, int multiplier) {
+    CCSender(int param, int multiplier) {
         this(param, multiplier, false);
     }
     
-    public CCSender(int param, int multiplier, boolean reverse) {
+    CCSender(int param, int multiplier, boolean reverse) {
         this.param = param;
         this.multiplier = multiplier;
         this.reverse = reverse;

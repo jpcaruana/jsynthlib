@@ -13,7 +13,7 @@ import core.*;
 /** Hideable version of the KnobWidget*/
 class HideableKnobWidget extends KnobWidget {
     
-    public HideableKnobWidget(String l, Patch p, int min, int max, int base, ParamModel ofs, SysexSender s) {
+    HideableKnobWidget(String l, Patch p, int min, int max, int base, ParamModel ofs, SysexSender s) {
         super(l, p, min, max, base, ofs, s);
     }
     

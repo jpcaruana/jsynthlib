@@ -33,17 +33,17 @@ public class Line6Pod20SingleDriver extends Driver {
         super(patchType, authors);
     }
     
-    public void calculateChecksum(Patch p)
+    protected void calculateChecksum(Patch p)
     {
         // Pod doesn't use checksum
     }
     
-    public static void calculateChecksum(Patch p, int start, int end, int ofs)
+    protected static void calculateChecksum(Patch p, int start, int end, int ofs)
     {
         // Pod doesn't use checksum
     }
     
-    public String getPatchName(Patch p) {
+    protected String getPatchName(Patch p) {
         char c[] = new char[patchNameSize];
         for (int i = 0; i < patchNameSize; i++) {
             c[i] = (char)PatchBytes.getSysexByte(p.sysex, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart);
@@ -51,7 +51,7 @@ public class Line6Pod20SingleDriver extends Driver {
         return new String(c);
     }
     
-    public void setPatchName(Patch p, String name) {
+    protected void setPatchName(Patch p, String name) {
         byte nameByte[] = name.getBytes();
         int i;
         for (i = 0; i < Math.min(name.length(), patchNameSize); i++) {
@@ -61,7 +61,7 @@ public class Line6Pod20SingleDriver extends Driver {
             PatchBytes.setSysexByte(p, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart, (byte)0x20);
         }
     }
-    public void sendPatch (Patch p)
+    protected void sendPatch (Patch p)
     {
         byte[] saveSysex = p.sysex;  //Save the patch to a temp save area
         
@@ -77,7 +77,7 @@ public class Line6Pod20SingleDriver extends Driver {
     }
     
     // Sends a patch to a set location in the user bank
-    public void storePatch(Patch p, int bankNum, int patchNum)
+    protected void storePatch(Patch p, int bankNum, int patchNum)
     {
         int progNum = bankNum * 4 + patchNum;
         p.sysex[0] = (byte)0xF0;
@@ -91,7 +91,7 @@ public class Line6Pod20SingleDriver extends Driver {
     
     // Pod does not "Play" patches, so the playPatch method is not used
     // We're using it here for test purposes only.
-    public void playPatch(Patch p)
+    protected void playPatch(Patch p)
     {
         if (ErrorMsg.debug >= 2) {
             System.out.println(getPatchName(p));
@@ -105,7 +105,7 @@ public class Line6Pod20SingleDriver extends Driver {
         JOptionPane.showMessageDialog(frame, Constants.PLAY_CMD_MSG);
     }
     
-    public Patch createNewPatch()
+    protected Patch createNewPatch()
     {
         Patch p = new Patch(Constants.NEW_SYSEX, this);
         setPatchName(p, "NewPatch        ");
@@ -133,7 +133,7 @@ public class Line6Pod20SingleDriver extends Driver {
      }
      */
     
-    public JSLFrame editPatch(Patch p)
+    protected JSLFrame editPatch(Patch p)
     {
         return new Line6Pod20SingleEditor((Patch)p);
     }

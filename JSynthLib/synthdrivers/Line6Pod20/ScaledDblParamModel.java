@@ -18,15 +18,15 @@ class ScaledDblParamModel extends ParamModel {
     private int maxSysex;
     private boolean reverse = false;
     
-    public ScaledDblParamModel(Patch p, int o) {
+    ScaledDblParamModel(Patch p, int o) {
         this(p, o, 0, 1, 0, 1, false);
     }
     
-    public ScaledDblParamModel(Patch p, int o, int maxCC, int maxSysex) {
+    ScaledDblParamModel(Patch p, int o, int maxCC, int maxSysex) {
         this(p, o, 0, maxCC, 0, maxSysex, false);
     }
     
-    public ScaledDblParamModel(Patch p, int o, int minCC, int maxCC, int minSysex, int maxSysex, boolean reverse) {
+    ScaledDblParamModel(Patch p, int o, int minCC, int maxCC, int minSysex, int maxSysex, boolean reverse) {
         super(p, o);
         this.reverse = reverse;
         this.minCC = minCC;

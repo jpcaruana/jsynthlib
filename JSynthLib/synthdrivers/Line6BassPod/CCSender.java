@@ -17,15 +17,15 @@ class CCSender extends SysexSender implements SysexWidget.ISender {
     private int multiplier;
     private boolean reverse = false;
     
-    public CCSender(int param) {
+    CCSender(int param) {
         this(param, 1, false);
     }
     
-    public CCSender(int param, boolean reverse) {
+    CCSender(int param, boolean reverse) {
         this(param, 1, reverse);
     }
     
-    public CCSender(int param, int multiplier) {
+    CCSender(int param, int multiplier) {
         this(param, multiplier, false);
     }
     

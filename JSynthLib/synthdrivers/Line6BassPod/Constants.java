@@ -147,10 +147,4 @@ final class Constants {
         (byte)0x00, (byte)0x02, (byte)0x00, (byte)0x02, (byte)0x00, (byte)0x02, (byte)0x00, (byte)0x02,
         (byte)0x00, (byte)0xF7
     };
-    
-    // Constants for Line6BassPodSingleEditor
-    /** Cabinet Type Parameter Translation*/
-    static final int[] CAB_TRANSLATE = {
-        11, 9, 8, 0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10
-    };
 }

@@ -20,15 +20,15 @@ class DelayCoarseSpeedModel extends ParamModel {
     private boolean reverse = false;
     private int scaleFactor;
     
-    public DelayCoarseSpeedModel(Patch p, int o) {
+    DelayCoarseSpeedModel(Patch p, int o) {
         this(p, o, 0, 1, 0, 1, false);
     }
     
-    public DelayCoarseSpeedModel(Patch p, int o, int maxCC, int maxSysex) {
+    DelayCoarseSpeedModel(Patch p, int o, int maxCC, int maxSysex) {
         this(p, o, 0, maxCC, 0, maxSysex, false);
     }
     
-    public DelayCoarseSpeedModel(Patch p, int o, int minCC, int maxCC, int minSysex, int maxSysex, boolean reverse) {
+    DelayCoarseSpeedModel(Patch p, int o, int minCC, int maxCC, int minSysex, int maxSysex, boolean reverse) {
         super(p, o);
         this.reverse = reverse;
         this.minCC = minCC;

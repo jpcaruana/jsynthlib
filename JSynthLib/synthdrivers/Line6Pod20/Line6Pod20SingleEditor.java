@@ -14,7 +14,7 @@ import java.awt.*;
 import javax.swing.border.*;
 
 public class Line6Pod20SingleEditor extends PatchEditorFrame {
-    static int pgmDumpheaderSize;
+    static final int pgmDumpheaderSize = Constants.PDMP_HDR_SIZE;
     static final String[] ampModel = {
         "Tube Preamp", 
         "Line 6 Clean", 
@@ -146,22 +146,21 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         "Swell"
     };
     
-    JPanel line6EditPanel;
-    JPanel leftEditPanel;
-    JPanel rightEditPanel;
-    JPanel effParmsPanel;
+    private JPanel line6EditPanel;
+    private JPanel leftEditPanel;
+    private JPanel rightEditPanel;
+    private JPanel effParmsPanel;
     
-    JLabel modelDesc;
+    private JLabel modelDesc;
     
-    ComboBoxWidget patchSelector;
-    HideableKnobWidget drive2Knob;
-    HideableKnobWidget presenceKnob;
-    CheckBoxWidget brightSwitch;
+    private ComboBoxWidget patchSelector;
+    private HideableKnobWidget drive2Knob;
+    private HideableKnobWidget presenceKnob;
+    private CheckBoxWidget brightSwitch;
     
-    public Line6Pod20SingleEditor(Patch patch)
+    Line6Pod20SingleEditor(Patch patch)
     {
         super ("Line 6 POD 2.0 Single Editor",patch);   
-        pgmDumpheaderSize = 9;
         line6EditPanel = new JPanel();
         line6EditPanel.setLayout(new BoxLayout(line6EditPanel, BoxLayout.X_AXIS));
         scrollPane.add(line6EditPanel,gbc);
@@ -440,7 +439,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
     // Classes and methods to support selecting amp models and showing and hiding
     // various controls in the Amp Settings pane
     class CCAmpModelSender extends CCSender {
-        public CCAmpModelSender(int param) {
+        private CCAmpModelSender(int param) {
             super(param);
         }
         
@@ -451,7 +450,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
     }
     
     class AmpModelModel extends ParamModel {
-        public AmpModelModel(Patch p,int o) {
+        private AmpModelModel(Patch p,int o) {
             super(p, o);
         }
         
@@ -469,7 +468,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
     }
     
     private void setCtrlVisibility(int value) {
-        final boolean[] drive2KnobVisible = {
+        boolean[] drive2KnobVisible = {
             //0    1      2      3      4     5      6      7
             false, false, false, false, true, false, false, false,
             //8    9      10     11     12     13     14     15
@@ -480,7 +479,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
             false, false, false, false, false, false, false, false
         };
         
-        final boolean[] presenceKnobVisible = {
+        boolean[] presenceKnobVisible = {
             //0    1      2      3      4     5      6      7
             true,  true,  true,  true,  true, false, true , false,
             //8    9      10     11     12     13     14     15
@@ -491,7 +490,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
             true,  true,  true,  true,  true,  true,  true,  true
         };
         
-        final boolean[] brightSwitchVisible = {
+        boolean[] brightSwitchVisible = {
             //0    1      2      3      4     5      6      7
             false, true,  true,  true,  true, false, false, false,
             //8    9      10     11     12     13     14     15
@@ -510,7 +509,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
     // Classes and methods to support selecting effects combos and displaying
     // the correct effects controls in the effects pane
     class CCEffectSender extends CCSender {
-        public CCEffectSender(int param) {
+        private CCEffectSender(int param) {
             super(param);
         }
         
@@ -521,7 +520,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
     }
     
     class EffectModel extends ParamModel {
-        public EffectModel(Patch p,int o) {
+        private EffectModel(Patch p,int o) {
             super(p, o);
         }
         

@@ -16,15 +16,15 @@ class ScaledParamModel extends ParamModel {
     private int maxSysex;
     private boolean reverse = false;
     
-    public ScaledParamModel(Patch p, int o) {
+    ScaledParamModel(Patch p, int o) {
         this(p, o, 1, 1);
     }
     
-    public ScaledParamModel(Patch p, int o, int maxCC, int maxSysex) {
+    ScaledParamModel(Patch p, int o, int maxCC, int maxSysex) {
         this(p, o, maxCC, maxSysex, false);
     }
     
-    public ScaledParamModel(Patch p, int o, int maxCC, int maxSysex, boolean reverse) {
+    ScaledParamModel(Patch p, int o, int maxCC, int maxSysex, boolean reverse) {
         super(p, o);
         this.maxCC = maxCC;
         this.maxSysex = maxSysex;
