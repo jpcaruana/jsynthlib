@@ -37,10 +37,11 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     // have an instance of every eligible midi wrapper ahead of time. - emenaker 2003.03.12
     public void init(int inport, int outport) throws /*DriverInitializationException,*/ MidiUnavailableException {
         initialized = false;
+	/*
         currentInport=inport;
         currentOutport=outport;
         faderPort=PatchEdit.appConfig.getFaderPort();
-
+	*/
         sourceInfoVector=new Vector();
         destinationInfoVector=new Vector();
 // 	ErrorMsg.reportStatus("WireMidiWrapper.init" + sourceInfoVector + ", " + inport + ", " + outport);
@@ -48,9 +49,9 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
 
         for (int i=0;i<mdi.length;i++) {
-            try {
+//             try {
 		MidiDevice md = MidiSystem.getMidiDevice(mdi[i]);
-                md.open(); // This can really throw an MidiUnavailableException on my System
+                //md.open(); // This can really throw an MidiUnavailableException on my System
 
                 if (md.getMaxReceivers()!=0) {
 // 		    ErrorMsg.reportStatus("is possible Destination");
@@ -60,14 +61,14 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 // 		    ErrorMsg.reportStatus("is possible Source");
                     sourceInfoVector.add(mdi[i]);
                 }
-            }
-            catch (MidiUnavailableException e) {} // Ignore, can happen.....
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+// 	    } catch (MidiUnavailableException e) { // Ignore, can happen.....
+// 	    } catch (Exception e) {
+// 		e.printStackTrace();
+// 	    }
         }
 
-        MidiDevice destDevice=MidiSystem.getMidiDevice((MidiDevice.Info)destinationInfoVector.get(outport));
+	/*
+        Mididevice destDevice=MidiSystem.getMidiDevice((MidiDevice.Info)destinationInfoVector.get(outport));
         //destDevice.open();
         output=destDevice.getReceiver();
 
@@ -81,6 +82,9 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
             fader=sourceDevice.getTransmitter();
             fader.setReceiver(this);
         }
+	*/
+	setInputDeviceNum(inport);
+	setOutputDeviceNum(outport);
         initialized = true;
     }
 
@@ -94,14 +98,15 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     }
 
     public void close() {
-        if (input!=null) {input.setReceiver(null); /*input.close();*/}
-        if (fader!=null) {fader.setReceiver(null); /*fader.close();*/}
-        /*   if (output!=null) { output.close();}*/
+        if (input!=null) {/*input.setReceiver(null);*/ input.close();} //???
+        if (fader!=null) {/*fader.setReceiver(null);*/ fader.close();} //???
+	if (output!=null) { output.close();}
 	MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
         for (int i=0;i<mdi.length;i++) {
 	    try {
 		MidiDevice md = MidiSystem.getMidiDevice(mdi[i]);
-		md.close();
+		if (md.isOpen())
+		    md.close();
 	    } catch (MidiUnavailableException e) {
 		;		// ignore
 	    }
@@ -121,29 +126,36 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
             }
 
             if (currentInport!=port) {
-                input.setReceiver(null);
+		if (input != null)
+		    //input.setReceiver(null); // ???
+		    input.close();
                 // input.close();
 // 		ErrorMsg.reportStatus(sourceInfoVector + ", " + port);
                 MidiDevice srcDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(port));
-                // srcDevice.open();
+		if (!srcDevice.isOpen())
+		    srcDevice.open();
                 input=srcDevice.getTransmitter();
                 input.setReceiver(this);
+		currentInport=port;
+		ErrorMsg.reportStatus("Inport: " + srcDevice.getDeviceInfo().getName()
+				      + " is Open: " + srcDevice.isOpen());
             }
-            currentInport=port;
         } catch (Exception e) {
-// 	    e.printStackTrace();
             ErrorMsg.reportError("Error","Wire MIDI is flipping out.",e);
+ 	    //e.printStackTrace();
 	}
     }
 
     private void setOutputDeviceNum(int port) throws MidiUnavailableException {
         if (currentOutport!=port) {
-            //output.close();
+	    if (output != null)
+		output.close();
             MidiDevice destDevice=MidiSystem.getMidiDevice((MidiDevice.Info)destinationInfoVector.get(port));
-            output=destDevice.getReceiver();
-            if (destDevice.isOpen()) // !!!FIXIT!!!
+            if (!destDevice.isOpen())
                 destDevice.open();
-            ErrorMsg.reportStatus("Outport: "+destDevice.getDeviceInfo().getName()+" is Open: "+destDevice.isOpen());
+            output=destDevice.getReceiver();
+            ErrorMsg.reportStatus("Outport: " + destDevice.getDeviceInfo().getName()
+				  + " is Open: " + destDevice.isOpen());
 	    currentOutport=port;
         }
     }
@@ -204,12 +216,49 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	    list.remove(0);
     }
 
-    MidiMessage getMessage(int port) {
+    MidiMessage getMessage(int port)
+	throws InvalidMidiDataException {
 	setInputDeviceNum(port);
 
 	// pop the oldest message
 	MidiMessage msg = (MidiMessage) list.remove(0);
+
+	// Javasound 1.4.2 returns com.sun.media.sound.FastShortMessage object.
+	// We cannot use
+	//   "msg instanceof com.sun.media.sound.FastShortMessage"
+	// since we don't have the class.
+	if (msg.getClass().toString().equals("class com.sun.media.sound.FastShortMessage"))
+	    msg = (MidiMessage) conv(msg);
+
 	MidiUtil.logIn(port, msg);
+	return msg;
+    }
+
+    /**
+     * Convert a <code>com.sun.media.sound.FastShortMessage</code>
+     * object to a <code>ShortMessage</code> object.
+     */
+    private ShortMessage conv(MidiMessage mm)
+	throws InvalidMidiDataException {
+	ShortMessage m = (ShortMessage) mm;
+	ShortMessage msg = new ShortMessage();
+	int c = m.getStatus();
+	switch (c < 0xf0 ? c & 0xf0 : c) {
+	case 0x80: case 0x90: case 0xa0: case 0xb0:
+	case 0xe0: case 0xf2:
+	    msg.setMessage(c, m.getData1(), m.getData2());
+	    break;
+	case 0xc0: case 0xd0: case 0xf1: case 0xf3:
+	    msg.setMessage(c, m.getData1(), 0);
+	    break;
+	case 0xf4: case 0xf5: case 0xf6: case 0xf7:
+	case 0xf8: case 0xf9: case 0xfa: case 0xfb:
+	case 0xfc: case 0xfd: case 0xfe: case 0xff:
+	    msg.setMessage(c);
+	    break;
+	default:
+	    throw new InvalidMidiDataException();
+	}
 	return msg;
     }
 
