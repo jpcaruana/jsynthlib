@@ -31,21 +31,27 @@ import java.util.prefs.Preferences;
  * @version $Id$
  */
 public class TG100Constants {
-	public static final byte SYSEX_START_BYTE			= (byte) 0xF0;
-	public static final byte SYSEX_END_BYTE				= (byte) 0xF7;
-	public static final int  SYSEX_HEADER_OFFSET		= 8;
+    public static final byte SYSEX_START_BYTE           = (byte) 0xF0;
+    public static final byte SYSEX_END_BYTE             = (byte) 0xF7;
+    public static final int  SYSEX_HEADER_OFFSET        = 8;
+    
+    public static final String SYSEX_ID                 = "F043**27";
 
-	public static final int PATCH_SIZE			= 105;
-	public static final int PATCH_NAME_SIZE		= 8;
-	public static final int PATCH_NAME_START	= 23;
-	
-	public static final int CHECKSUM_START		= 4;
-	public static final int CHECKSUM_END		= 102;
-	public static final int CHECKSUM_OFFSET		= 103;
-	
-	// Every patch is 0x60 (96 in decimal) bytes long
-	public static final int SYSEX_SINGLE_VOICE_SIZE = 96;
-	public static final byte SYSEX_VOICE_START_ADDRESS2 = (byte) 0x03;
-	public static final byte SYSEX_VOICE_START_ADDRESS3 = (byte) 0x10;
-	
+    public static final int PATCH_SIZE          = 105;
+    public static final int PATCH_NAME_SIZE     = 8;
+    public static final int PATCH_NAME_START    = 23;
+    public static final int PATCH_NUMBER_LENGTH = 64;
+            
+    public static final int ALL_DUMP_SIZE       = 8266;
+    public static final int ALL_DUMP_OFFSET     = 562;
+    
+    public static final int CHECKSUM_START      = 4;
+    public static final int CHECKSUM_END        = 102;
+    public static final int CHECKSUM_OFFSET     = 103;
+    
+    // Every patch is 0x60 (96 in decimal) bytes long
+    public static final int SYSEX_SINGLE_VOICE_SIZE = 96;
+    public static final byte SYSEX_VOICE_START_ADDRESS2 = (byte) 0x03;
+    public static final byte SYSEX_VOICE_START_ADDRESS3 = (byte) 0x10;
+    
 }

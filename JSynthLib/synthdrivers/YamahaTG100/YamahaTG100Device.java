@@ -66,6 +66,8 @@ public class YamahaTG100Device extends Device {
 
         this.prefs = prefs;
 
-        addDriver (new YamahaTG100SingleDriver ());
+        addDriver(new YamahaTG100AllConverter() );
+        addDriver(new YamahaTG100SingleDriver() );
+        addDriver(new YamahaTG100BankDriver() );
     }   
 }
