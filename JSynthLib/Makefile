@@ -1,5 +1,5 @@
 #
-# Makefile created at Thu Jan 13 22:49:18 2005, by mmake
+# $Id: Makefile,v 1.11 2005-02-01 06:28:10 jbackhaus Exp $
 #
 
 # Programs (with common options):
@@ -19,7 +19,7 @@ INSTALL_PROG    = $(INSTALL) -m $(MODE_PROGS)
 INSTALL_FILE    = $(INSTALL) -m $(MODE_FILES)
 INSTALL_DIR     = $(INSTALL) -m $(MODE_DIRS) -d
 
-# Install modes 
+# Install modes
 MODE_PROGS      = 555
 MODE_FILES      = 444
 MODE_DIRS       = 2755
@@ -30,7 +30,7 @@ JAVADOC         = javadoc
 JAR             = jar
 
 # Build flags
-JAVAC_FLAGS     = 
+JAVAC_FLAGS     =
 JAVADOC_FLAGS   = -version -author
 JAR_FLAGS       = cvf0
 JIKES_DEP_FLAG	= +M
@@ -38,7 +38,7 @@ JIKES_DEP_FLAG	= +M
 # ------------------------------------------------------------------- #
 
 # Prefix for every install directory
-PREFIX		= 
+PREFIX		=
 
 # Where to start installing the class files. Set this to an empty value
 #  if you dont want to install classes
@@ -62,18 +62,18 @@ SCRIPT_DIR	= $(PREFIX)bin
 # ------------------------------------------------------------------- #
 
 # The name of the jar file to install
-JAR_FILE        = 
+JAR_FILE        =
 
-# 
-# The VERSION variable below should be set to a value 
-# that will be tested in the .xjava code and Info.plist. 
-# 
+#
+# The VERSION variable below should be set to a value
+# that will be tested in the .xjava code and Info.plist.
+#
 VERSION		= CHANGE_ME
 
 # ------------------------------------------------------------------- #
 
 # The name of the OS X Application Bundle to install
-BUNDLE_FILE	= 
+BUNDLE_FILE	=
 
 # Folder containing App Bundle resources (Info.plist, *.icns, etc.)
 BUNDLE_RESOURCE_DIR = misc/macosx
@@ -137,11 +137,13 @@ PACKAGES = \
 	synthdrivers.PeaveyPC1600 \
 	synthdrivers.QuasimidiQuasar \
 	synthdrivers.RolandGP16 \
+	synthdrivers.RolandJV80 \
 	synthdrivers.RolandMKS50 \
 	synthdrivers.RolandMT32 \
 	synthdrivers.RolandTD6 \
 	synthdrivers.RolandXV5080 \
 	synthdrivers.SCIProphet600 \
+	synthdrivers.WaldorfMW2 \
 	synthdrivers.WaldorfPulse \
 	synthdrivers.YamahaDX100 \
 	synthdrivers.YamahaDX5 \
@@ -175,12 +177,13 @@ JAVADOC_PACKAGES = $(PACKAGES)
 # Resource packages
 RESOURCES = \
 	synthdrivers.MIDIboxFM.images \
+	synthdrivers.RolandJV80.images \
 	synthdrivers.YamahaDX7.images \
 	synthdrivers.YamahaFS1R.images
 
 
 # Directories with shell scripts
-SCRIPTS = 
+SCRIPTS =
 
 # ------------------------------------------------------------------- #
 
@@ -257,7 +260,7 @@ endef
 
 %.jar: $(JAVA_OBJS) $(RESOURCE_OBJS)
 	$(FIND) $(TOPLEVEL) $(JAR_OBJS) -print | $(XARGS) \
-	$(JAR) $(JAR_FLAGS) $(JAR_FILE) 
+	$(JAR) $(JAR_FLAGS) $(JAR_FILE)
 
 %.u: %.java
 	$(JAVAC) $(JIKES_DEP_FLAG) $<
@@ -361,7 +364,7 @@ bundle:
 endif
 
 
-# Install target for Classes and Resources 
+# Install target for Classes and Resources
 ifneq ($(strip $(CLASS_DIR)),)
 install:: $(JAVA_OBJS)
 	@echo "===> [Installing classes in $(CLASS_DIR)] "
@@ -416,7 +419,7 @@ install:: $(SCRIPT_OBJS)
 	$(INSTALL_DIR) $(SCRIPT_DIR) $(check-exit)
 	$(foreach file, $(SCRIPT_OBJS), \
 		$(INSTALL_PROG) $(file) $(SCRIPT_DIR) $(check-exit))
-uninstall:: 
+uninstall::
 	@echo "===> [Removing shell-scripts from $(SCRIPT_DIR)] "
 	$(foreach file, $(SCRIPT_OBJS), \
 		$(RM) $(SCRIPT_DIR)/$(file) $(check-exit))
@@ -430,7 +433,7 @@ endif
 
 
 # Tag target
-tags:	
+tags:
 	@echo "Tagging"
 	$(ETAGS) $(filter-out $(XJAVA_OBJS), $(JAVA_SRC)) $(XJAVA_SRC)
 
@@ -439,7 +442,7 @@ tags:
 # Various cleanup routines
 clean::
 	$(FIND) . \( -name '*~' -o -name '*.class' \) -print | \
-	$(XARGS) $(RM) 
+	$(XARGS) $(RM)
 	$(FIND) . -name '*.u' -print | $(XARGS) $(RM)
 
 ifneq ($(strip $(XJAVA_SRC)),)
@@ -495,11 +498,13 @@ synthdrivers.OberheimMatrix : $(call PACKAGE_OBJS,synthdrivers.OberheimMatrix)
 synthdrivers.PeaveyPC1600 : $(call PACKAGE_OBJS,synthdrivers.PeaveyPC1600)
 synthdrivers.QuasimidiQuasar : $(call PACKAGE_OBJS,synthdrivers.QuasimidiQuasar)
 synthdrivers.RolandGP16 : $(call PACKAGE_OBJS,synthdrivers.RolandGP16)
+synthdrivers.RolandJV80 : $(call PACKAGE_OBJS,synthdrivers.RolandJV80)
 synthdrivers.RolandMKS50 : $(call PACKAGE_OBJS,synthdrivers.RolandMKS50)
 synthdrivers.RolandMT32 : $(call PACKAGE_OBJS,synthdrivers.RolandMT32)
 synthdrivers.RolandTD6 : $(call PACKAGE_OBJS,synthdrivers.RolandTD6)
 synthdrivers.RolandXV5080 : $(call PACKAGE_OBJS,synthdrivers.RolandXV5080)
 synthdrivers.SCIProphet600 : $(call PACKAGE_OBJS,synthdrivers.SCIProphet600)
+synthdrivers.WaldorfMW2 : $(call PACKAGE_OBJS,synthdrivers.WaldorfMW2)
 synthdrivers.WaldorfPulse : $(call PACKAGE_OBJS,synthdrivers.WaldorfPulse)
 synthdrivers.YamahaDX100 : $(call PACKAGE_OBJS,synthdrivers.YamahaDX100)
 synthdrivers.YamahaDX5 : $(call PACKAGE_OBJS,synthdrivers.YamahaDX5)

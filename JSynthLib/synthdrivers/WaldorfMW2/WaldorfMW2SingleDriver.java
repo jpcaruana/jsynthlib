@@ -1,76 +1,133 @@
-// Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
+/*
+ * Copyright 2005 Joachim Backhaus
+ *
+ * This file is part of JSynthLib.
+ *
+ * JSynthLib is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * JSynthLib is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with JSynthLib; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA
+ */
 
 package synthdrivers.WaldorfMW2;
 
-import core.*;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+
 import javax.swing.JOptionPane;
 
-public class WaldorfMW2SingleDriver extends Driver
-{
+import core.Driver;
+import core.DriverUtil;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.Patch;
+import core.PatchEdit;
+import core.SysexHandler;
 
-    public WaldorfMW2SingleDriver()
-    {
-        super("Single Program", "Joachim Backhaus");
-        sysexID = "F03E0E**10";
-        sysexRequestDump = new SysexHandler("F0 3E 0E @@ 00 *BB* *NN* *XSUM* F7");
-        patchNameStart = 247;
-        patchNameSize = 16;
-        deviceIDoffset = 3;
+/** 
+ * Driver for Microwave 2 / XT / XTK single programs
+ *
+ * @author Joachim Backhaus
+ * @version $Id$
+ */
+public class WaldorfMW2SingleDriver extends Driver {
+
+    public WaldorfMW2SingleDriver() {
+        super("Single program", "Joachim Backhaus");
+
+        this.sysexID = MW2Constants.SYSEX_ID + "10";
+
+        this.sysexRequestDump = new SysexHandler( "F0 3E 0E @@ 00 *BB* *NN* *XSUM* F7" );
+
+        this.patchNameStart = MW2Constants.PATCH_NAME_START;
+        this.patchNameSize = MW2Constants.PATCH_NAME_SIZE;
+        this.deviceIDoffset = MW2Constants.DEVICE_ID_OFFSET;
+
         checksumStart = 5;
         checksumEnd = 262;
         checksumOffset = 263;
-        bankNumbers = (new String[] {
-            "A", "B"
-        });
-        patchNumbers = DriverUtil.generateNumbers(1, 128, "#");
-        patchSize = 265;
+
+        this.bankNumbers = new String[] { "A", "B" };
+
+        this.patchNumbers = DriverUtil.generateNumbers(1, 128, "#");
+
+        // Patch size (265 Bytes)
+        this.patchSize = MW2Constants.PATCH_SIZE;
     }
 
-    public Patch createNewPatch()
-    {
-        byte abyte0[] = new byte[265];
-        try
-        {
-            InputStream inputstream = getClass().getResourceAsStream("mw2_default.syx");
-            inputstream.read(abyte0);
-            inputstream.close();
-        }
-        catch(Exception exception)
-        {
-            System.err.println("Unable to find mw2_default.syx using hardcoded default.");
-            abyte0[0] = -16;
-            abyte0[1] = 62;
-            abyte0[2] = 14;
-            abyte0[3] = 0;
-            abyte0[4] = 16;
-            abyte0[5] = 32;
-            abyte0[6] = 0;
-            abyte0[263] = 0;
-            abyte0[264] = -9;
-        }
-        return new Patch(abyte0, this);
+    public Patch createNewPatch() {
+		byte[] sysex  = new byte[MW2Constants.PATCH_SIZE];
+		Patch p;
+
+        try {
+			java.io.InputStream fileIn = getClass().getResourceAsStream(MW2Constants.DEFAULT_SYSEX_FILENAME);
+			fileIn.read(sysex);
+			fileIn.close();
+			p = new Patch(sysex, this);
+
+		} catch (Exception e) {
+			System.err.println("Unable to find " + MW2Constants.DEFAULT_SYSEX_FILENAME + " using hardcoded default.");
+
+			sysex[0] = MW2Constants.SYSEX_START_BYTE;
+			sysex[1] = (byte) 0x3E; // Waldorf Electronics GmbH ID
+			sysex[2] = (byte) 0x0E; // Microwave 2 ID
+			sysex[3] = (byte) 0x00; // Device ID
+			sysex[4] = (byte) 0x10; // Sound Dump
+			sysex[5] = (byte) 0x20; // Location (use Edit Buffer)
+			sysex[6] = (byte) 0x00; // Location (use Edit Buffer)
+
+			sysex[263] = (byte) 0x00; // Checksum
+			sysex[264] = MW2Constants.SYSEX_END_BYTE;
+
+			p = new Patch(sysex, this);
+			setPatchName(p, "New program");
+			calculateChecksum(p);
+		}
+
+		return p;
     }
 
-    public void requestPatchDump(int i, int j)
-    {
-        if(sysexRequestDump == null)
-        {
-            JOptionPane.showMessageDialog(PatchEdit.getInstance(), "The " + toString() + " driver does not support patch getting.\n\n" + "Please start the patch dump manually...", "Get Patch", 2);
-        } else
-        {
-            core.SysexHandler.NameValue anamevalue[] = {
-                new core.SysexHandler.NameValue("BB", i), new core.SysexHandler.NameValue("NN", j), new core.SysexHandler.NameValue("XSUM", (byte)(i + j) & 0x7f)
+	/**
+    * Request the dump of a single program
+    *
+    * @param bankNum    The bank number (0 = A, 1 = B)
+    * @param patchNum   The number of the requested single program
+    */
+    public void requestPatchDump(int bankNum, int patchNum) {
+
+        if (sysexRequestDump == null) {
+            JOptionPane.showMessageDialog
+                (PatchEdit.getInstance(),
+                 "The " + toString()
+                 + " driver does not support patch getting.\n\n"
+                 + "Please start the patch dump manually...",
+                 "Get Patch", JOptionPane.WARNING_MESSAGE);
+        }
+        else {
+            SysexHandler.NameValue[] nameValues = {
+                new SysexHandler.NameValue("BB", bankNum ),
+                new SysexHandler.NameValue("NN", patchNum ),
+                new SysexHandler.NameValue("XSUM", ((byte)(bankNum + patchNum)) & 0x7F )
             };
-            send(sysexRequestDump.toSysexMessage(getDeviceID(), anamevalue));
-            try
-            {
-                Thread.sleep(50L);
+
+            send(sysexRequestDump.toSysexMessage(getDeviceID(), nameValues) );
+
+            try {
+                // Wait a little bit so that everything is in the correct sequence
+                Thread.sleep(50);
+            } catch (Exception ex) {
+                // Ignore these exceptions
             }
-            catch(Exception exception) { }
         }
     }
 }
+

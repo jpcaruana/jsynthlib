@@ -1,29 +1,70 @@
-// Decompiled by Jad v1.5.8f. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
+/*
+ * Copyright 2005 Joachim Backhaus
+ *
+ * This file is part of JSynthLib.
+ *
+ * JSynthLib is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * JSynthLib is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with JSynthLib; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA
+ */
 
 package synthdrivers.WaldorfMW2;
 
 import core.Device;
+
 import java.util.prefs.Preferences;
 
-// Referenced classes of package synthdrivers.WaldorfMW2:
-//            WaldorfMW2SingleDriver
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class WaldorfMW2Device extends Device
-{
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-    public WaldorfMW2Device()
-    {
-        super("Waldorf", "Microwave 2/XT/XTK", "F07E06023E0E00............F7", "Microwave 2 / XT / XTK", "Joachim Backhaus");
+/**
+ * Device class for Microwave 2 / XT / XTK
+ *
+ * @author  Joachim Backhaus
+ * @version $Id$
+ */
+public class WaldorfMW2Device extends Device {
+    private static final String INFO_TEXT
+    = "Microwave 2 / XT / XTK";    
+
+    /**
+    * Constructor for DeviceListWriter.
+    */
+    public WaldorfMW2Device() {
+        super(  "Waldorf",
+                "Microwave 2/XT/XTK",
+                "F07E06023E0E00............F7",
+                INFO_TEXT,
+                "Joachim Backhaus");
     }
 
-    public WaldorfMW2Device(Preferences preferences)
-    {
+
+    /**
+    * Constructor for the actual work.
+    *
+    * @param prefs  The Preferences for this device
+    */
+    public WaldorfMW2Device(Preferences prefs) {
         this();
-        prefs = preferences;
+
+        this.prefs = prefs;
+
         addDriver(new WaldorfMW2SingleDriver());
     }
-
-    private static final String INFO_TEXT = "Microwave 2 / XT / XTK";
 }
