@@ -11,12 +11,19 @@ public abstract class YamahaMotifSingleDriver extends Driver
   String parameter_base_address;
   String defaults_filename = null;
 
+  public YamahaMotifSingleDriver() {
+    super("Single", "Rib Rdb");
+  }
+  public YamahaMotifSingleDriver(String patchType, String authors) {
+    super(patchType, authors);
+  }
+
   protected void yamaha_init() {
-    manufacturer="Yamaha";
+    /*manufacturer="Yamaha";
     model="Motif 6/7/8";
-    id="Motif";
+    id="Motif";*/
     sysexID="F0430*6B00000E"+base_address+"**";
-    inquiryID="F07E7F06024300417*040000007FF7";
+    //inquiryID="F07E7F06024300417*040000007FF7";
     sysexRequestDump=new SysexHandler("F0 43 @@ 6B 0E " + base_address+ " ** F7");
        
     for (int i=0;i<patchNumbers.length; i++) {
@@ -81,7 +88,8 @@ public abstract class YamahaMotifSingleDriver extends Driver
     }
     // Send each message separately so it doesn't get screwed up by the 
     // midi wrapper.
-    YamahaMotifSysexUtility.splitAndSendBulk( p.sysex, port, channel - 1 );
+    YamahaMotifSysexUtility.splitAndSendBulk( p.sysex, getPort(),
+					      getChannel() - 1 );
     // Put header back so that it will be recognized.
     p.sysex[YamahaMotifSysexUtility.ADDRESS_OFFSET + 1] = 
       Byte.parseByte(base_address, 16);
@@ -92,9 +100,10 @@ public abstract class YamahaMotifSingleDriver extends Driver
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = sysexRequestDump.toByteArray((byte)(channel+32),patchNum);
+    byte[] sysex = sysexRequestDump.toByteArray((byte)(getChannel()+32),
+						patchNum);
         
-    SysexHandler.send(port, sysex);
+    SysexHandler.send(getPort(), sysex);
   }
   // Stolen from the KawaiK5000ADDSingleDriver
   // I probably should use some other method to do this, but I'm lazy.
@@ -104,8 +113,7 @@ public abstract class YamahaMotifSingleDriver extends Driver
       byte [] buffer =new byte [patchSize];
       fileIn.read(buffer);
       fileIn.close();
-      Patch p=new Patch(buffer);
-      p.ChooseDriver();
+      Patch p=new Patch(buffer, this);
       return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
   }

@@ -154,7 +154,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       // Add an action listener to update the name, or do one ourselves.
       //panel = Box.createHorizontalBox();
       //c.add(panel);
-      addWidget(panel, new PatchNameWidget(p, "Name"),slidercount++);
+      addWidget(panel, new PatchNameWidget("Name", p),slidercount++);
       //addHGlue();
       //panel = Box.createHorizontalBox();
       //c.add(panel);
