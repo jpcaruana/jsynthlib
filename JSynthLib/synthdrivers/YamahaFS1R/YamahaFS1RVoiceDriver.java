@@ -114,6 +114,7 @@ public class YamahaFS1RVoiceDriver extends Driver
 		id = "FS1R";
 		authors="Denis Queffeulou";
 		sysexID = "F043005E0460**00";
+
 //   inquiryID="F07E**06020F0200*************F7";
 		patchSize = PATCH_AND_HEADER_SIZE;
 		patchNameStart = PATCHNAME_OFFSET;	
@@ -149,6 +150,7 @@ public class YamahaFS1RVoiceDriver extends Driver
 //		System.out.println("setPatchNum = "+patchNum);
 		updateSysexRequest();
     }
+
 
     /**
 		Send a voice in current performance part.
@@ -233,7 +235,7 @@ public class YamahaFS1RVoiceDriver extends Driver
 		oPatch.ChooseDriver();
 		return oPatch;
 	}
-	
+
 	static void initPatch(byte[] sysex, int aOffset) {
 		for (int i = 0; i < PATCH_AND_HEADER_SIZE; i++) {
 			sysex[aOffset+i] = mInitVoice[i];
@@ -259,4 +261,6 @@ public class YamahaFS1RVoiceDriver extends Driver
 		return new YamahaFS1RVoiceEditor(p, aPart, aBankNumber);
 	}
 }
+
+
 
