@@ -838,18 +838,8 @@ will use.  You can also change the GUI style, MDI (Multiple Document
 Interface: everything in single window) or SDI (Single Document
 Interface: each frame has its own window).
 
-<!--
-You can also change the Platform on which you are running
-JSynthLib. Note that there are two different options for
-MS-Windows. This is because JSynthLib provides two different methods
-to communicate with MIDI devices under Windows. I recommend using the
-WireProvider option.  It seems to work well and can transfer large
-sysex messages. The JavaMIDI option is included in case WireProvider
-does not work on your set up. If this is the case, you should e-mail
-in a bug report, and use JavaMIDI for now.
--->
-
-<li>In the <b>Directory</b> tab, you can set the default directory from which
+<li>In the <b>Directory</b> tab, you can set the default library file
+which is opened at start up time and the default directory from which
 JSynthLib will attempt to load and save files. The <b>library path</b>
 determines where the <kbd>.patchlib</kbd> files are loaded and
 saved. The <b>sysex path</b> is used by the import and export commands.
@@ -865,10 +855,6 @@ want them left alone for some other program to use. Most MIDI port
 drivers allow more than one program to use the port, but not
 all. These parameters just give you the most control possible.
 
-<p><b>MIDI Loopback Test</b> button brings up a dialog to do
-diagnostic test of your MIDI port.
-<!-- add more description -->
-
 <p>The <b>Master Controller Port</b> determines which MIDI port JSynthLib
 will watch for Notes being played. If notes are played (for example
 from a MIDI keyboard or MIDI sequencer) on this port, JSynthLib will echo them to
@@ -878,6 +864,18 @@ foreground and having a patch selected). This allows you more
 controlling auditioning patches than just using the "play" command. If
 you have no master controller or don't want to use one, disable
 <b>Enable Master Controller</b> check box.
+
+<p><b>MIDI Output Buffer Size</b> specifies MIDI message size. If
+zero, a whole MIDI System Exclusive message is passed to lower MIDI
+driver. Otherwise the message is divided into several MIDI System
+Exclusive message whose size is specified by this. Every time each
+message is passed to low MIDI driver, time specified <b>MIDI Output
+Delay</b> is inserted.  Use these options only when your lower MIDI
+driver or your MIDI interface has problem.
+
+<p><b>MIDI Loopback Test</b> button brings up a dialog to do
+diagnostic test of your MIDI port.
+<!-- add more description -->
 
 <li>The <b>Fader Box</b> tab allows you to configure your fader box if you want to
 use one. A fader box can be useful when editing patches, see the

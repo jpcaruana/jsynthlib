@@ -468,29 +468,48 @@ public final class MidiUtil {
     }
 
     /**
-     * MIDI Output buffer size.  If set to '0', Whole Sysex data is
-     * sent in one packet.  Set '0' unless you have problem.
-     */
-    private static final int BUFSIZE = 0;
-
-    /**
-     * Send a <code>MidiMessage</code>.  If BUFSIZE is non-zero, data
-     * size will be limited to the size.
+     * Send a <code>MidiMessage</code>. Whole message is passed to lower MIDI driver.
+     * @param rcv MIDI Receiver
+     * @param msg MIDI Message
+     * @throws MidiUnavailableException
+     * @throws InvalidMidiDataException
      */
     public static void send(Receiver rcv, MidiMessage msg)
 	throws MidiUnavailableException, InvalidMidiDataException {
+        rcv.send(msg, -1);
+        log("XMIT: ", msg);
+    }
+
+    /**
+     * Send a <code>MidiMessage</code>. A Sysex Message is divided into
+     * several Sysex Messages whose size is <code>bufSize</code>.
+     * 
+     * @param rcv
+     *            MIDI Receiver
+     * @param msg
+     *            MIDI Message
+     * @param bufSize
+     *            MIDI message size. If zero, whole MIDI message is passed to
+     *            lower MIDI driver.
+     * @param delay
+     *            delay (msec) after every MIDI message transfer.
+     * @throws MidiUnavailableException
+     * @throws InvalidMidiDataException
+     */
+    public static void send(Receiver rcv, MidiMessage msg, int bufSize, int delay)
+	throws MidiUnavailableException, InvalidMidiDataException {
 	int size = msg.getLength();
 
-	if (BUFSIZE == 0 || size <= BUFSIZE) {
+	if (bufSize == 0 || size <= bufSize) {
 	    rcv.send(msg, -1);
 	    log("XMIT: ", msg);
 	} else {
 	    // divide large System Exclusive Message into multiple
 	    // small messages.
 	    byte[] sysex = msg.getMessage();
-	    byte[] tmpArray = new byte[BUFSIZE + 1];
-	    for (int i = 0; size > 0; i += BUFSIZE, size -= BUFSIZE) {
-		int s = Math.min(size, BUFSIZE);
+	    byte[] tmpArray = new byte[bufSize + 1];
+	    for (int i = 0; size > 0; i += bufSize, size -= bufSize) {
+		int s = Math.min(size, bufSize);
 
 		if (i == 0) {
 		    System.arraycopy(sysex, i, tmpArray, 0, s);
@@ -502,6 +521,11 @@ public final class MidiUtil {
 		}
 		rcv.send(msg, -1);
 		log("XMIT: ", msg);
+                try {
+                    Thread.sleep(delay);
+                } catch (Exception e) {
+                    // do nothing
+                }
 	    }
 	}
     }

@@ -115,7 +115,8 @@ public class MidiScan extends Thread {
                 
                 // send Inquiry ID Sysex Message
                 try {
-                    MidiUtil.send(rcvr, inqMsg);
+                    MidiUtil.send(rcvr, inqMsg, 
+                            AppConfig.getMidiOutBufSize(), AppConfig.getMidiOutDelay());
                 } catch (MidiUnavailableException e) {
                     ErrorMsg.reportStatus(e);
                     continue;

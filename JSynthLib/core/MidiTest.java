@@ -104,7 +104,7 @@ public class MidiTest implements Runnable {
 		}
 
 		// Send it
-		MidiUtil.send(rcvr, msg);
+		MidiUtil.send(rcvr, msg, AppConfig.getMidiOutBufSize(), AppConfig.getMidiOutDelay());
 
 		try {
 			// 1 sec =~ 4KB sysex data

@@ -72,23 +72,20 @@ public abstract class Device /*implements Serializable, Storable*/ {
     private final String infoText;
     /** Authors of the device driver. */
     private final String authors;
-    /** The synthName is your personal naming of the device. */
-    //private String synthName;
-    /** The channel the user assigns to this driver. */
-    //private int channel = 1;
-    /** The device ID. */
-    //private int deviceID = -1;
 
-    /** The MIDI output port number. */
-    //private int port = -1;
     /** set to true when initialization of MIDI output is done. */
     private boolean initPort = false;
     /** MIDI output Receiver */
     private Receiver rcvr;
-    /** The MIDI input port number. */
-    //private int inPort = -1;
     /** set to true when initialization of MIDI input is done. */
     private boolean initInPort = false;
+    /**
+     * MIDI message size. If zero, whole MIDI message is passed to lower MIDI
+     * driver.
+     */
+    private int midiOutBufSize = 0;
+    /** delay (msec) after every MIDI message transfer. */
+    private int midiOutDelay = 0;
 
     /** The List for all available drivers of this device. */
     private ArrayList driverList = new ArrayList ();
@@ -274,10 +271,33 @@ public abstract class Device /*implements Serializable, Storable*/ {
 	initPort = true;
     }
 
-    /** send MidiMessage to MIDI output. Called by Driver.send(). */
+    /**
+     * If the target MIDI device cannot handle a whole Sysex message and
+     * requires to divide the Sysex Message into several small messages, use
+     * this method.
+     * 
+     * @param bufSize
+     *            MIDI message size. If zero, whole MIDI message is passed to
+     *            lower MIDI driver.
+     * @param delay
+     *            delay (msec) after every MIDI message transfer.
+     */
+    protected final void setMidiBufSize(int bufSize, int delay) {
+        midiOutBufSize = bufSize;
+        midiOutDelay = delay;
+    }
+
+    /**
+     * send MidiMessage to MIDI output. Called by Driver.send().
+     */
     public final void send(MidiMessage message) {
 	try {
-	    MidiUtil.send(rcvr, message);
+	    if (midiOutBufSize == 0 && AppConfig.getMidiOutBufSize() == 0)
+	        MidiUtil.send(rcvr, message);
+	    else
+	        MidiUtil.send(rcvr, message,
+	                Math.min(midiOutBufSize, AppConfig.getMidiOutBufSize()),
+	                Math.max(midiOutDelay, AppConfig.getMidiOutDelay()));
 	} catch (MidiUnavailableException e) {
 	    ErrorMsg.reportStatus(e);
 	} catch (InvalidMidiDataException e) {

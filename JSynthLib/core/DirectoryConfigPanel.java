@@ -2,6 +2,8 @@ package core;
 
 import javax.swing.*;
 
+import core.Actions.ExtensionFilter;
+
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,12 +20,13 @@ import java.io.*;
 
 class DirectoryConfigPanel extends ConfigPanel {
     {
-	panelName = "Directories";
-	nameSpace = "directories";
+	panelName = "File & Directories";
+	nameSpace = "fileAndDirectories";
     }
 
-    private final JTextField t1 = new JTextField(null, 35);
-    private final JTextField t2 = new JTextField(null, 35);
+    private final JTextField tFile = new JTextField(null, 35);
+    private final JTextField tLib  = new JTextField(null, 35);
+    private final JTextField tSyx  = new JTextField(null, 35);
 
     DirectoryConfigPanel(PrefsDialog parent) {
 	super(parent);
@@ -33,27 +36,35 @@ class DirectoryConfigPanel extends ConfigPanel {
 
 	c.gridx = 0; c.gridy = 0; c.gridwidth = 3; c.fill = GridBagConstraints.HORIZONTAL;
 	c.insets = new Insets(10, 0, 0, 0);
-	p.add(new JLabel("Default Directories:"), c);
+	p.add(new JLabel("Default File and Directories:"), c);
+	c.gridwidth = 1;
+	JButton b;
 
-	t1.setEditable(false);
-	t2.setEditable(false);
-
-	c.gridx = 0; c.gridy++; c.gridwidth = 1;
-	p.add(new JLabel("Patch Library Path:"), c);
+	// default library file
+	c.gridx = 0; c.gridy++;
+	p.add(new JLabel("Default Library File:"), c);
 	c.gridx = 1;
-	p.add(t1, c);
+	p.add(tFile, c);
 
-	JButton b = new JButton("Browse");
+	b = new JButton("Browse...");
 	b.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    CompatibleFileDialog fc = new CompatibleFileDialog();
-		    fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		    if (t1.getText() != null)
-			fc.setSelectedFile(new File(t1.getText()));
-		    fc.showDialog(PatchEdit.getInstance(),
-				  "Choose Default Patch Library Directory");
+		    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		    if (tFile.getText() != null)
+			fc.setSelectedFile(new File(tFile.getText()));
+		    // set filter
+		    String lext = LibraryFrame.FILE_EXTENSION;
+	            ExtensionFilter filter = new ExtensionFilter(
+	                    "JSynthLib Library Files (*" + lext + ")",
+	                    new String[] { lext });
+	            fc.addChoosableFileFilter(filter);
+	            fc.setFileFilter(filter);
+
+	            fc.showDialog(PatchEdit.getInstance(),
+				  "Choose Default Library File");
 		    if (fc.getSelectedFile() != null) {
-			t1.setText(fc.getSelectedFile().getPath());
+			tFile.setText(fc.getSelectedFile().getPath());
 			setModified(true);
 		    }
 		}
@@ -61,21 +72,49 @@ class DirectoryConfigPanel extends ConfigPanel {
 	c.gridx = 2;
 	p.add(b, c);
 
+	// default library path
 	c.gridx = 0; c.gridy++;
-	p.add(new JLabel("Sysex File Path:"), c);
+	p.add(new JLabel("Patch Library Path:"), c);
 	c.gridx = 1;
-	p.add(t2, c);
-	b = new JButton("Browse");
+	p.add(tLib, c);
+
+	b = new JButton("Browse...");
 	b.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    CompatibleFileDialog fc = new CompatibleFileDialog();
 		    fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		    if (t2.getText() != null)
-			fc.setSelectedFile(new File(t2.getText()));
+		    if (tLib.getText() != null)
+			fc.setSelectedFile(new File(tLib.getText()));
+
+		    fc.showDialog(PatchEdit.getInstance(),
+				  "Choose Default Patch Library Directory");
+		    if (fc.getSelectedFile() != null) {
+			tLib.setText(fc.getSelectedFile().getPath());
+			setModified(true);
+		    }
+		}
+	    });
+	c.gridx = 2;
+	p.add(b, c);
+
+	// default Sysex Path
+	c.gridx = 0; c.gridy++;
+	p.add(new JLabel("Sysex File Path:"), c);
+	c.gridx = 1;
+	p.add(tSyx, c);
+
+	b = new JButton("Browse...");
+	b.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    CompatibleFileDialog fc = new CompatibleFileDialog();
+		    fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		    if (tSyx.getText() != null)
+			fc.setSelectedFile(new File(tSyx.getText()));
+
 		    fc.showDialog(PatchEdit.getInstance(),
 				  "Choose Default Sysex File Directory");
 		    if (fc.getSelectedFile() != null) {
-			t2.setText(fc.getSelectedFile().getPath());
+			tSyx.setText(fc.getSelectedFile().getPath());
 			setModified(true);
 		    }
 		}
@@ -84,16 +123,22 @@ class DirectoryConfigPanel extends ConfigPanel {
 	p.add(b, c);
 
 	add(p, BorderLayout.CENTER);
+
+	tFile.setEditable(false);
+	tLib.setEditable(false);
+	tSyx.setEditable(false);
     }
 
     void init() {
-	t1.setText(AppConfig.getLibPath());
-	t2.setText(AppConfig.getSysexPath());
+	tFile.setText(AppConfig.getDefaultLibrary());
+	tLib.setText(AppConfig.getLibPath());
+	tSyx.setText(AppConfig.getSysexPath());
     }
 
     void commitSettings() {
-	AppConfig.setLibPath(t1.getText());
-	AppConfig.setSysexPath(t2.getText());
+	AppConfig.setDefaultLibrary(tFile.getText());
+	AppConfig.setLibPath(tLib.getText());
+	AppConfig.setSysexPath(tSyx.getText());
 	setModified(false);
     }
 }

@@ -72,10 +72,17 @@ public final class PatchEdit  {
         // user can play a MIDI Keyboard and make pretty music
 	masterInEnable(AppConfig.getMasterInEnable());
 
+	// open default library frame.
+	String fname = AppConfig.getDefaultLibrary();
+	if (!fname.equals("")) {
+	    ErrorMsg.reportStatus("default lib: " + fname);
+	    Actions.openFrame(new File(fname));
+	}
+	
 	// open library frame specified on the command line argument.
 	Iterator it = fileList.iterator();
 	while (it.hasNext()) {
-	    String fname = (String) it.next();
+	    fname = (String) it.next();
 	    ErrorMsg.reportStatus("file name: " + fname);
 	    Actions.openFrame(new File(fname));
 	}

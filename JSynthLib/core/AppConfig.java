@@ -4,6 +4,8 @@
  * of data from display code.  Persistent values are keeped by using
  * <code>java.util.prefs.Preferences</code>.
  * @author Zellyn Hunter (zellyn@zellyn.com)
+ * @author Rib Rob
+ * @author Hiroo Hayashi
  * @version $Id$
  */
 
@@ -102,23 +104,29 @@ public final class AppConfig {
 
     // Simple getters and setters
 
-    /** Getter for libPath */
+    /** Getter for libPath for library/scene file. */
     static String getLibPath() { return prefs.get("libPath", "."); }
-    /** Setter for libPath */
+    /** Setter for libPath for library/scene file. */
     static void setLibPath(String libPath) { prefs.put("libPath", libPath); }
 
-    /** Getter for libPath */
+    /** Getter for XML Path */
     static String getXMLpaths() { return prefs.get("XMLpaths", ""); }
-    /** Setter for libPath */
+    /** Setter for XML Path */
     static void setXMLpaths(String libPath) { prefs.put("XMLpaths", libPath); }
 
-    /** Getter for sysexPath */
+    /** Getter for sysexPath for import/export Sysex Message. */
     static String getSysexPath() { return prefs.get("sysexPath", "."); }
-    /** Setter for sysexPath */
+    /** Setter for sysexPath for import/export Sysex Message. */
     static void setSysexPath(String sysexPath) {
         prefs.put("sysexPath", sysexPath);
     }
 
+    /** Getter for default library which is open at start-up. */
+    static String getDefaultLibrary() { return prefs.get("defaultLib", ""); }
+    /** Setter for default library which is open at start-up. */
+    static void setDefaultLibrary(String file) {
+        prefs.put("defaultLib", file);
+    }
 
     /** Getter for sequencerEnable */
     static boolean getSequencerEnable() { return prefs.getBoolean("sequencerEnable",false); }
@@ -261,6 +269,16 @@ public final class AppConfig {
     static void setMasterController(int masterController) {
         prefs.putInt("masterController", masterController);
     }
+
+    /** Getter for MIDI Output Buffer size. */
+    static int getMidiOutBufSize() { return  prefs.getInt("midiOutBufSize", 0); }
+    /** Setter for MIDI Output Buffer size. */
+    static void setMidiOutBufSize(int size) { prefs.putInt("midiOutBufSize", size); }
+
+    /** Getter for MIDI Output delay time (msec). */
+    static int getMidiOutDelay() { return  prefs.getInt("midiOutDelay", 0); }
+    /** Setter for MIDI Output delay time (msec). */
+    static void setMidiOutDelay(int msec) { prefs.putInt("midiOutDelay", msec); }
 
     /**
      * Getter for faderEnable. Returns false if MIDI input is
