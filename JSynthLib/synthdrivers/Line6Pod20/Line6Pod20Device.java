@@ -24,9 +24,9 @@ package synthdrivers.Line6Pod20;
 import core.Device;
 import java.util.prefs.Preferences;
 
-/**
-*
-* Device file for Line6 Pod 2.0
+/** Device file for Line6 Pod
+* 
+* @author Jeff Weber
 */
 public class Line6Pod20Device extends Device
 {

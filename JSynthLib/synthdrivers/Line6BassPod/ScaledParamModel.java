@@ -23,20 +23,53 @@ package synthdrivers.Line6BassPod;
 
 import core.*;
 
-/** Scalable ParamModel--to allow different max values for CC and Sysex*/
+/** Scalable ParamModel--to allow different max values for CC and Sysex.
+*
+* @author Jeff Weber
+*/
 class ScaledParamModel extends ParamModel {
+    /** The maximum CC value that will be used for the control. This is used
+    * when calculating a scaling factor. The scaling factor is calculated as 
+    * maxSysex / maxCC.
+    */
     private int maxCC;
+
+    /** The maximum sysex value that will be used for the control. This is used
+    * when calculating a scaling factor. The scaling factor is calculated as 
+    * maxSysex / maxCC.
+    */
     private int maxSysex;
+    
+    /** Reverses the range of values sent by the sysexWidget over the range
+        * 127 to 0. A value of true causes the range to be reversed.
+        */
     private boolean reverse = false;
     
+    /** Constructs a ScaledParamModel. Patch p is the reference to the patch
+        * containing the sysex record. int o is the offset into the sysex record
+        * in non-nibblized bytes, not including the header bytes. */
     ScaledParamModel(Patch p, int o) {
         this(p, o, 1, 1);
     }
     
+    /** Constructs a ScaledParamModel. Patch p is the reference to the patch
+        * containing the sysex record. int o is the offset into the sysex record
+        * in non-nibblized bytes, not including the header bytes. int maxCC is
+        * the maximum CC value that will be sent by the control. int maxSysex
+        * is the maximum sysex value represented the control in the sysex record.
+        */
     ScaledParamModel(Patch p, int o, int maxCC, int maxSysex) {
         this(p, o, maxCC, maxSysex, false);
     }
     
+    /** Constructs a ScaledParamModel. Patch p is the reference to the patch
+        * containing the sysex record. int o is the offset into the sysex record
+        * in non-nibblized bytes, not including the header bytes. int maxCC is
+        * the maximum CC value that will be sent by the control. int maxSysex
+        * is the maximum sysex value represented the control in the sysex record.
+        * boolean reverse reverses the range of values sent by the sysexWidget
+        * over the range 127 to 0. A value of true causes the range to be reversed.
+        */
     ScaledParamModel(Patch p, int o, int maxCC, int maxSysex, boolean reverse) {
         super(p, o);
         this.maxCC = maxCC;
@@ -44,6 +77,9 @@ class ScaledParamModel extends ParamModel {
         this.reverse = reverse;
     }
     
+    /** Scales the value of i according maxSysex and sets the sysex value at
+        * offset ofs to the result. Also reverses the value over the range if
+        * reverse is true. */
     public void set(int i) {
         if (reverse) {
             i = (maxSysex - i);
@@ -51,6 +87,8 @@ class ScaledParamModel extends ParamModel {
         PatchBytes.setSysexByte(patch, 9, ofs, (byte)(i * maxSysex / maxCC));
     }
     
+    /** Returns the value at offset ofs, scaled according to maxCC and maxSysex.
+        Also reverses the value over the range if reverse is true. */
     public int get() {
         int returnValue = (int)PatchBytes.getSysexByte(patch.sysex, 9, ofs) * maxCC / maxSysex;
         return returnValue;

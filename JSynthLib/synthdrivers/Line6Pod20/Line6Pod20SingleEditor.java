@@ -26,8 +26,18 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 
+/** Line6 Program Patch Editor
+* 
+* @author Jeff Weber
+*/
 public class Line6Pod20SingleEditor extends PatchEditorFrame {
+    /** Size of program patch header--9 bytes.
+    */
     static final int pgmDumpheaderSize = Constants.PDMP_HDR_SIZE;
+    
+    /** Array of strings representing the names of all amp models for the Line6
+    * Pod.
+    */
     static final String[] ampModel = {
         "Tube Preamp", 
         "Line 6 Clean", 
@@ -63,6 +73,9 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         "Line 6 Insane"
     };
     
+    /** Array of strings representing the descriptions of all amp models for
+        * the Line6 Pod.
+        */
     static final String[] ampModelDesc = {
         "Tube Instrument Preamp", 
         "Line 6 21st Century Clean", 
@@ -98,6 +111,9 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         "Way too many hours of shredding"
     };
     
+    /** Array of strings representing the descriptions of all cabinet models
+        * for the Line6 Pod.
+        */
     static final String[] cabType = {
         "1x8 '60 Fender Tweed Champ",
         "1x12 '52 Fender Tweed Deluxe",
@@ -117,6 +133,9 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         "No Cabinet Emulation"
     };
     
+    /** Array of strings representing the descriptions of all effect models for
+        * the Line6 Pod.
+        */
     static final String[] effectType = {
         "Compressor",
         "Tremolo",
@@ -136,19 +155,30 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         "Bypass"
     }; 
     
+    /** Array of integers representing the mapping of effect models to CC
+        * message values. 
+        */
     static final int[] effectTranslate = {
         11, 9, 8, 0, 1, 3, 2, 6, 7, 4, 12, 13, 15, 5, 14, 10
     };
     
+    /** Array of integers representing the mapping of effect models to their
+        * respective panels within the editor. 
+        */
     static final int[] effPaneAssignment = {
         1, 2, 3, 3, 4, 4, 5, 6, 1, 3, 3, 4, 4, 2, 7, 6
     };
     
+    /** Array of strings representing the two possible locations of the volume
+        * pedal (pre-amp or post amp).
+        */    
     static final String[] volPedLoc = {
         "Pre-tube",
         "Post-Tube"
     };
     
+    /** Array of strings representing the names of all the effects panels.
+        */    
     static final String[] effParmsPane = {
         "Compressor",
         "Tremolo",
@@ -159,18 +189,40 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         "Swell"
     };
     
+    /** A reference to the edit panel object. */
     private JPanel line6EditPanel;
+
+    /** A reference to the left edit panel object. */
     private JPanel leftEditPanel;
+
+    /** A reference to the right edit panel object. */
     private JPanel rightEditPanel;
+
+    /** A reference to the effect parameters edit panel object. */
     private JPanel effParmsPanel;
     
+    /** A JLabel used to display the currently selected amp model.*/
     private JLabel modelDesc;
     
+    /** A reference to the combo box used to select the amp model.*/
     private ComboBoxWidget patchSelector;
+
+    /** A reference to the drive 2 knob widget which is only shown for the
+        * Line6 Layer amp model.
+        */
     private HideableKnobWidget drive2Knob;
+
+    /** A reference to the presence knob widget which is hidden for some amp 
+        * models.
+        */
     private HideableKnobWidget presenceKnob;
+
+    /** A reference to the mid bright swithc  check box widget which is hidden
+        * for some amp models.
+        */
     private CheckBoxWidget brightSwitch;
     
+    /** Constructs a Line6Pod20SingleEditor for the selected patch.*/
     Line6Pod20SingleEditor(Patch patch)
     {
         super ("Line 6 POD 2.0 Single Editor",patch);   
@@ -196,14 +248,15 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         show();
     }
     
+    /** Adds the patch name panel to the left edit panel.
+        */
     private void addPatchNamePanel(JPanel parentPanel, Patch patch) {
         JPanel patchNamePanel = new JPanel();
         parentPanel.add(patchNamePanel);
         addWidget(patchNamePanel, new PatchNameWidget("Program Name ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,1,1,1);
-        //  JLabel spacer = new JLabel("                                                              ");
-        //  patchNamePanel.add(spacer);
     }
     
+    /** Adds the amp select panel. */
     private void addAmpPane(JPanel parentPanel, Patch patch) {
         JPanel modelPane = new JPanel();
         modelPane.setLayout(new BoxLayout(modelPane, BoxLayout.Y_AXIS));
@@ -259,6 +312,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         ampPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Preamp",TitledBorder.CENTER,TitledBorder.CENTER));
     }
     
+    /** Adds the stompbox panel.*/
     private void addStompBoxPane(JPanel parentPanel, Patch patch) {
         JPanel stompBoxPane=new JPanel();
         stompBoxPane.setLayout(new BoxLayout(stompBoxPane, BoxLayout.X_AXIS));
@@ -296,6 +350,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         volPedPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Volume Pedal",TitledBorder.CENTER,TitledBorder.CENTER));
     }
     
+    /** Adds the effects panel.*/
     private void addEffectsPanel(JPanel parentPanel, Patch patch) {
         JPanel effectsPanel = new JPanel();
         effectsPanel.setLayout(new BoxLayout(effectsPanel, BoxLayout.Y_AXIS));
@@ -307,6 +362,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         parentPanel.add(effectsPanel);
     }
     
+    /** Creates the different panels for each of the effects configurations.*/
     private void createCards(JPanel parentPanel, Patch patch) {
         // Panel 1--Compressor
         JPanel panel1 = new JPanel();
@@ -346,6 +402,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         parentPanel.add(panel7, effParmsPane[6]);
     }
     
+    /** Sets up the compressor panel.*/
     private void setupCompressorPanel(JPanel parentPanel, Patch patch) {
         parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.Y_AXIS));
         JPanel btnPanel = new JPanel();
@@ -353,6 +410,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         addWidget(btnPanel, new ComboBoxWidget("Compression Ratio", patch, new ScaledParamModel(patch,48 + pgmDumpheaderSize),new CCSender(42, 25),new String[] {"None", "1.4:1", "2:1", "3:1", "6:1", "Inf:1"}), 0,0,1,1,6);
     }
     
+    /** Sets up the tremelo panel.*/
     private void setupTremeloPanel(JPanel parentPanel, Patch patch) {
         parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.Y_AXIS));
         JPanel btnPanel = new JPanel();
@@ -360,10 +418,11 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         addWidget(btnPanel, new CheckBoxWidget("Tremolo Enable", patch, new ScaledParamModel(patch, 4 + pgmDumpheaderSize), new CCSender(50, 127)),0,0,1,1,-7);
         JPanel parmsPanel = new JPanel();
         parentPanel.add(parmsPanel);
-        addWidget(parmsPanel,new KnobWidget("Speed", patch, 6, 127, 0, new ScaledDblParamModel(patch,48 + pgmDumpheaderSize, 6, 127, 150, 3175, true),new CCSender(58, 6, true)),6,0,1,1,24);
+        addWidget(parmsPanel,new KnobWidget("Speed", patch, 6, 127, 0, new ScaledDblParamModel(patch,48 + pgmDumpheaderSize, 6, 127, 150, 3175, true),new CCSender(58, true, 6)),6,0,1,1,24);
         addWidget(parmsPanel,new KnobWidget("Depth", patch, 0, 127, 0,    new ScaledParamModel(patch,50 + pgmDumpheaderSize),new CCSender(59)),6,0,1,1,25);
     }
     
+    /** Sets up the chorus panel.*/
     private void setupChorusPanel(JPanel parentPanel, Patch patch) {
         parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.Y_AXIS));
         JPanel btnPanel = new JPanel();
@@ -372,11 +431,12 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         JPanel parmsPanel = new JPanel();
         parentPanel.add(parmsPanel);
         addWidget(parmsPanel,new KnobWidget("Predelay", patch, 0, 127,0,new ScaledDblParamModel(patch,53 + pgmDumpheaderSize, 127, 774),        new CCSender(54)),6,0,1,1,26);
-        addWidget(parmsPanel,new KnobWidget("Speed",    patch, 4, 127,0,new ScaledDblParamModel(patch,48 + pgmDumpheaderSize, 4, 127, 200, 6350, true), new CCSender(51, 4, true)),6,0,1,1,27);
+        addWidget(parmsPanel,new KnobWidget("Speed",    patch, 4, 127,0,new ScaledDblParamModel(patch,48 + pgmDumpheaderSize, 4, 127, 200, 6350, true), new CCSender(51, true, 4)),6,0,1,1,27);
         addWidget(parmsPanel,new KnobWidget("Depth",    patch, 0, 127,0,new ScaledDblParamModel(patch,50 + pgmDumpheaderSize, 127, 312),       new CCSender(52)),6,0,1,1,28);
         addWidget(parmsPanel,new KnobWidget("Feedback", patch, 0, 127,0,   new ScaledParamModel(patch,52 + pgmDumpheaderSize),                 new CCSender(53)),6,0,1,1,29);
     }
     
+    /** Sets up the flanger panel.*/
     private void setupFlangerPanel(JPanel parentPanel, Patch patch) {
         parentPanel.setLayout(new BoxLayout(parentPanel, BoxLayout.Y_AXIS));
         JPanel btnPanel = new JPanel();
@@ -385,7 +445,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         JPanel parmsPanel = new JPanel();
         parentPanel.add(parmsPanel);
         addWidget(parmsPanel,new KnobWidget("Predelay", patch, 0, 127,0,new ScaledDblParamModel(patch,53 + pgmDumpheaderSize, 127, 774),        new CCSender(54)),6,0,1,1,30);
-        addWidget(parmsPanel,new KnobWidget("Speed",    patch, 4, 127,0,new ScaledDblParamModel(patch,48 + pgmDumpheaderSize, 4, 127, 200, 6350, true), new CCSender(51, 4, true)),6,0,1,1,31);
+        addWidget(parmsPanel,new KnobWidget("Speed",    patch, 4, 127,0,new ScaledDblParamModel(patch,48 + pgmDumpheaderSize, 4, 127, 200, 6350, true), new CCSender(51, true, 4)),6,0,1,1,31);
         addWidget(parmsPanel,new KnobWidget("Depth",    patch, 0, 127,0,new ScaledDblParamModel(patch,50 + pgmDumpheaderSize, 127, 312),       new CCSender(52)),6,0,1,1,32);
         addWidget(parmsPanel,new KnobWidget("Feedback", patch, 0, 127,0,   new ScaledParamModel(patch,52 + pgmDumpheaderSize),                 new CCSender(53)),6,0,1,1,33);
     }
@@ -406,11 +466,12 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         addWidget(parmsPanel,new KnobWidget("Depth", patch, 0, 127,0,new ScaledParamModel(patch,47 + pgmDumpheaderSize, 127, 63),new CCSender(1)),6,0,1,1,36);
     }
     
+    /** Sets up the swell panel.*/
     private void setupSwellPanel(JPanel parentPanel, Patch patch) {
         addWidget(parentPanel,new KnobWidget("Attack Time", patch, 0, 127,0,new ScaledParamModel(patch,48 + pgmDumpheaderSize, 127, 63),new CCSender(49)),6,0,1,1,37);
     }
     
-    //
+    /** Sets up the reverb panel.*/
     private void addReverbPanel(JPanel parentPanel, Patch patch) {
         JPanel reverbPanel = new JPanel();
         reverbPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Reverb",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -431,6 +492,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         addWidget(parmPanel,new KnobWidget("Level",   patch, 0, 127, 0,new ScaledParamModel(patch,43 + pgmDumpheaderSize, 127, 63),new CCSender(18)),6,0,1,1,42);
     }
     
+    /** Sets up the delay panel.*/
     private void addDelayPanel(JPanel parentPanel, Patch patch) {
         JPanel delayPanel = new JPanel();
         delayPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Delay",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -449,29 +511,46 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         addWidget(parmPanel,new KnobWidget("Level",    patch, 0, 127,0,new ScaledParamModel(patch,36 + pgmDumpheaderSize, 127, 63),new CCSender(34)),6,0,1,1,46);
     }
     
-    // Classes and methods to support selecting amp models and showing and hiding
-    // various controls in the Amp Settings pane
+    /** CCSender class for amp model. The behavior is the same as the CCSender
+        *  class except that the send method will also call the setCtrlVisibility
+        *  method, which determines if the mid sweep knob should be visible or not.
+        */
     class CCAmpModelSender extends CCSender {
+        /** Constructs a CCAmpModelSender. */
         private CCAmpModelSender(int param) {
             super(param);
         }
         
+        /** Sends the CC message for the amp model and calls the setCtrlVisibility
+        * method, which determines if the mid sweep knob should be visible or not.
+        */
         public void send(IPatchDriver driver, int value) {
             setCtrlVisibility(value);            
             super.send(driver, value);
         }
     }
     
+    /** ParamModel class for amp model. Gets and sets the amp model value in the
+        * sysex record. Also the get method calls the setCtrlVisibility method,
+        * which determines if the mid sweep knob should be visible or not.
+        */
     class AmpModelModel extends ParamModel {
+        /** Constructs an AmpModelModel. */
         private AmpModelModel(Patch p,int o) {
             super(p, o);
         }
         
+        /** Updates the sysex record for the amp model parameter.
+        */
         public void set(int i) {
             PatchBytes.setSysexByte(patch, 9, ofs, (byte)i);
             modelDesc.setText(ampModelDesc[i]);
         }
         
+        /** Gets the amp model parameter value from the sysex record and calls
+        * the setCtrlVisibility method, which determines if the mid sweep knob
+        * should be visible or not.
+        */
         public int get() {
             int i = (int)PatchBytes.getSysexByte(patch.sysex, 9, ofs);
             modelDesc.setText(ampModelDesc[i]);
@@ -480,6 +559,10 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         }
     }
     
+    /** Sets the drive 2 knob, the presence knob, and the bright switch to
+        * visible or not, depending upon the amp model
+        * selected by the user.
+        */
     private void setCtrlVisibility(int value) {
         boolean[] drive2KnobVisible = {
             //0    1      2      3      4     5      6      7
@@ -519,29 +602,45 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         brightSwitch.setVisible(brightSwitchVisible[value]);
     }
     
-    // Classes and methods to support selecting effects combos and displaying
-    // the correct effects controls in the effects pane
+    /** CCSender class for effect model. Translates the value sent by the 
+        * comboboxWidget to the CC numbers for the effect parameter.
+        */
     class CCEffectSender extends CCSender {
+        /** Constructs a CCEffectSender. */
         private CCEffectSender(int param) {
             super(param);
         }
         
+        /** Translates the value sent by the comboBoxWidget to the CC parameter
+        * for the effect model and sends the CC message.
+        */
         public void send(IPatchDriver driver, int value) {
             setEffectPane(value);
             super.send(driver, effectTranslate[value]);
         }
     }
     
+    /** ParamModel class for effect model. Gets and sets the effect model
+        * value in the sysex record. Also handles the translation of the values
+        * between the CC values and the comboBoxWidget.
+        */
     class EffectModel extends ParamModel {
+        /** Constructs a EffectModel. */
         private EffectModel(Patch p,int o) {
             super(p, o);
         }
         
+        /** Updates the sysex record for the effect model parameter. Converts
+        * the comboBoxWidget value to a valid effect model CC value.
+        */
         public void set(int i) {
-            super.set(effectTranslate[i]); 
+//            super.set(effectTranslate[i]); 
             PatchBytes.setSysexByte(patch, 9, ofs, (byte)effectTranslate[i]);
         }
         
+        /** Gets the effect type value from the sysex record and translates it
+        * to the comboBoxWidget value.
+        */
         public int get() {
             int i = (int)PatchBytes.getSysexByte(patch.sysex, 9, ofs);
             int j;
@@ -555,6 +654,7 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         }
     }
     
+    /** Displays the effects panel for the selected effect. */
     private void setEffectPane(int value) {
         CardLayout cl = (CardLayout)(effParmsPanel.getLayout());
         cl.show(effParmsPanel, effParmsPane[effPaneAssignment[value]-1]);

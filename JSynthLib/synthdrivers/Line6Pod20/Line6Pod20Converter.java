@@ -24,26 +24,20 @@ package synthdrivers.Line6Pod20;
 import core.*;
 
 
-/**
-* Removes "Garbage Data" from Line6 response to dump request and extracts desired patch.
- * 
- * When responding to a sysex data dump request, the PODs sometimes send a single sysex message and sometimes
- * they send a block of multiple messages along with garbage data (the behavior is unpredictable). The last
- * valid sysex message message sent is always the one we are interested in but it can be preceded or succeeded
- * with other garbage data. Searching for F0 and F7 isn't always enough because sometimes the garbage data starts
- * with an F0 (with no F7) or sometimes it ends with an F7 with no F0 at the beginning. This converter will attempt
- * to parse out the last POD patch and validate it. If the block of data sent by the POD contains a valid POD patch
- * (program, edit buffer, or bank), the Converter will strip away all the unneeded data and replace the patch with
- * a new one containing only the POD sysex data we are interested in.
- * 
- * @author Jeff Weber
- */
+/** Removes "Garbage Data" from Line6 response to dump request and extracts desired patch.
+* 
+* When responding to a sysex data dump request, the PODs sometimes send a single sysex message and sometimes
+* they send a block of multiple messages along with garbage data (the behavior is unpredictable). The last
+* valid sysex message message sent is always the one we are interested in but it can be preceded or succeeded
+* with other garbage data. This converter will attempt to parse out the last Pod patch in the block and discard
+* the rest of the data. It will work with any of the three patch types (program, edit buffer, or bank).
+* This converter will also convert an edit buffer patch to a normal program patch.
+* 
+* @author Jeff Weber
+*/
 public class Line6Pod20Converter extends Converter{
     
-    /**
-    Constructor for 
-     */
-    //    public Line6Pod20Converter() {
+    /** Constructor for Line6Pod20Converter */
     Line6Pod20Converter() {
         super(Constants.CONVERTER_NAME, Constants.AUTHOR);
         
@@ -53,9 +47,14 @@ public class Line6Pod20Converter extends Converter{
         //this.deviceIDoffset = 0;
     }
     
-    /**
+    /** Extracts the last valid patch in a Line6 dump request and validates it.
+    * Note that supportsPatch does not convert the patch. It only attempts to
+    * parse out the last patch of a block of data and compare the header to the
+    * Line6 header bytes. The job of actually converting the patch is handled by
+    * extractPatch. If supportsPatch returns true, JSynthLib Core will call
+    * extractPatch.
     */
-    // If supportsPatch returns true, extractPatch will get called. If it returns false, extractPatch will not get called.
+    // 
     // if block of data contains (as the last valid line6 patch) a program patch or a bank patch--
     // (Not testing for edit buffer patch here because if it is, it still needs to be converted.)
     public boolean supportsPatch (String patchString, byte[] sysex) {
@@ -71,9 +70,10 @@ public class Line6Pod20Converter extends Converter{
         }
     }
     
-    /**
-    * Extracts desired patch(program, edit buffer, or bank)
-     */
+    /** Extracts a Line6 patch from a Line6 patch dump response (block of data).
+    * Calls parseSysex to do the extraction. If the extracted patch is an edit
+    * buffer patch, calls convertToProgramPatch.
+    */
     public Patch[] extractPatch(Patch p) {
     	byte[] sysex = parseSysex(p.getByteArray());
         if (sysex[6] == (byte)0x01) {  // Is this an edit buffer patch?
@@ -89,6 +89,11 @@ public class Line6Pod20Converter extends Converter{
         return newPatchArray;
     }    
     
+    /** Attempts to parse a Line6 patch (program, edit buffer, or bank) from 
+    * a Line6 response to a dump request. If parseSysex cannot find a valid
+    * Line6 patch within the block of data, it returns the original block of
+    * data, unchanged.
+    */
     private byte[] parseSysex(byte[] sysex) {
         int patchLength = sysex.length;
         byte[] l6Sysex = new byte[sysex.length];
@@ -131,6 +136,11 @@ public class Line6Pod20Converter extends Converter{
         }
     } 
     
+    /** Converts a Line6 Edit Buffer patch to a Line6 program patch.
+    * Any time an edit buffer patch is received from a Line6 device it is
+    * converted to a program patch. From that point on it is handled like
+    * any other program patch.
+    */
     private byte[] convertToProgramPatch (byte[] sysex) {
         int newSysexLength = sysex.length + 1;
         byte newSysex[] = new byte[newSysexLength];
@@ -138,4 +148,4 @@ public class Line6Pod20Converter extends Converter{
         System.arraycopy(sysex, Constants.EDMP_HDR_SIZE, newSysex, Constants.PDMP_HDR_SIZE, newSysexLength - Constants.PDMP_HDR_SIZE);
         return newSysex;
     }
-    }
+}

@@ -21,6 +21,10 @@
 
 package synthdrivers.Line6Pod20;
 
+/** Constants class for Line6Pod20
+* 
+* @author Jeff Weber
+*/
 final class Constants {
     
     /** Manufacturer of device*/

@@ -20,14 +20,21 @@
  */
 
 package synthdrivers.Line6Pod20;
-
 import core.*;
 import javax.swing.*;
 
+/** Line6 Single Driver. Used for Line6 program patch.
+*
+* @author Jeff Weber
+*/
 public class Line6Pod20SingleDriver extends Driver {
     
+    /** Single Program Dump Request
+    */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.SIGL_DUMP_REQ_ID); //Program Patch Dump Request
     
+    /** Constructs a Line6Pod20SingleDriver.
+    */
     public Line6Pod20SingleDriver()
     {
         super(Constants.SIGL_PATCH_TYP_STR, Constants.AUTHOR);
@@ -41,21 +48,30 @@ public class Line6Pod20SingleDriver extends Driver {
         patchNumbers = Constants.PRGM_PATCH_LIST;
     }
     
+    /** Constructs a Line6Pod20SingleDriver. Called by Line6Pod20EdBufDriver
+        */
     public Line6Pod20SingleDriver(String patchType, String authors)
     {
         super(patchType, authors);
     }
     
+    /** Null method. Line6 devices do not use checksum.
+        */
     protected void calculateChecksum(Patch p)
     {
         // Pod doesn't use checksum
     }
     
+    /** Null method. Line6 devices do not use checksum.
+        */
     protected static void calculateChecksum(Patch p, int start, int end, int ofs)
     {
         // Pod doesn't use checksum
     }
     
+    /** Gets the name of the program patch.
+        * Patch p is the target program patch.
+        */
     protected String getPatchName(Patch p) {
         char c[] = new char[patchNameSize];
         for (int i = 0; i < patchNameSize; i++) {
@@ -64,6 +80,10 @@ public class Line6Pod20SingleDriver extends Driver {
         return new String(c);
     }
     
+    /** Sets the name of the program patch.
+        * Patch p is the target program patch. String name
+        * contains the name to be assigned to the patch.
+        */
     protected void setPatchName(Patch p, String name) {
         byte nameByte[] = name.getBytes();
         int i;
@@ -74,6 +94,10 @@ public class Line6Pod20SingleDriver extends Driver {
             PatchBytes.setSysexByte(p, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart, (byte)0x20);
         }
     }
+    
+    /** Converts a single program patch to an edit buffer patch and sends it to
+        * the edit buffer. Patch p is the patch to be sent.
+        */
     protected void sendPatch (Patch p)
     {
         byte[] saveSysex = p.sysex;  //Save the patch to a temp save area
@@ -89,7 +113,10 @@ public class Line6Pod20SingleDriver extends Driver {
         p.sysex = saveSysex;  //Restore the patch from the temp save area
     }
     
-    // Sends a patch to a set location in the user bank
+    /** Sends a a single program patch to a set patch location in the device.
+        * bankNum is a user bank number in the range 0 to 9.
+        * patchNum is a patch number within the bank, in the range 0 to 3.
+        */
     protected void storePatch(Patch p, int bankNum, int patchNum)
     {
         int progNum = bankNum * 4 + patchNum;
@@ -102,8 +129,9 @@ public class Line6Pod20SingleDriver extends Driver {
         }
     }
     
-    // Pod does not "Play" patches, so the playPatch method is not used
-    // We're using it here for test purposes only.
+    /** Presents a dialog instructing the user to play his instrument.
+        * Line6 Pod devices do not "Play" patches, so a dialog is presented instead.
+        */
     protected void playPatch(Patch p)
     {
         if (ErrorMsg.debug >= 2) {
@@ -118,6 +146,8 @@ public class Line6Pod20SingleDriver extends Driver {
         JOptionPane.showMessageDialog(frame, Constants.PLAY_CMD_MSG);
     }
     
+    /** Creates a new program patch with default values.
+        */
     protected Patch createNewPatch()
     {
         Patch p = new Patch(Constants.NEW_SYSEX, this);
@@ -125,11 +155,15 @@ public class Line6Pod20SingleDriver extends Driver {
         return p;
     }
     
-    // Even though, from an operational standpoint, the POD has nine banks (numbered 1 through 9) of
-    // four patches each (numbered A, B, C, and D), internally there is only a single bank of 36 patch
-    // locations, referenced by program change numbers 0-35. By assigning the numbers 0 through 8 for
-    // the banks and 0 through 3 for the patches, the conversion is as follows:
-    //                      program number = (bank number * 4) + patch number 
+    /** Requests a dump of a single program patch.
+        * Even though, from an operational standpoint, the POD has nine banks
+        * (numbered 1 through 9) of four patches each (numbered A, B, C, and D),
+        * internally there is only a single bank of 36 patch locations,
+        * referenced by program change numbers 0-35. By assigning the numbers 0
+        * through 8 for the banks and 0 through 3 for the patches,
+        * the conversion is as follows:
+        * program number = (bank number * 4) + patch number 
+        */
     public void requestPatchDump(int bankNum, int patchNum) {
         int progNum = bankNum * 4 + patchNum;
         send(SYS_REQ.toSysexMessage(getChannel(),
@@ -146,6 +180,8 @@ public class Line6Pod20SingleDriver extends Driver {
      }
      */
     
+    /** Opens an edit window on the specified patch.
+        */
     protected JSLFrame editPatch(Patch p)
     {
         return new Line6Pod20SingleEditor((Patch)p);

@@ -23,13 +23,17 @@ package synthdrivers.Line6BassPod;
 
 import core.*;
 
-/** Hideable version of the KnobWidget*/
+/** Hideable version of the KnobWidget.
+*
+* @author Jeff Weber
+*/
 class HideableKnobWidget extends KnobWidget {
-    
+    /** Constructs a HideableKnobWidget.*/
     HideableKnobWidget(String l, Patch p, int min, int max, int base, ParamModel ofs, SysexSender s) {
         super(l, p, min, max, base, ofs, s);
     }
-    
+
+    /** Sets the HideableKnobWidget to visible or invisible according to visibleFlag.*/
     public void setVisible(boolean visibleFlag) {
         mKnob.setVisible(visibleFlag);
         this.getJLabel().setVisible(visibleFlag);

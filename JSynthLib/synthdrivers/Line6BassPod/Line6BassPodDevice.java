@@ -24,10 +24,10 @@ package synthdrivers.Line6BassPod;
 import core.Device;
 import java.util.prefs.Preferences;
 
-/**
-*
- * Device file for Line6 Bass Pod
- */
+/** Device file for Line6 Pod
+* 
+* @author Jeff Weber
+*/
 public class Line6BassPodDevice extends Device
 {
     /** Constructor for DeviceListWriter. */

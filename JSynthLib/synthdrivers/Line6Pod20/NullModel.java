@@ -24,9 +24,15 @@ package synthdrivers.Line6Pod20;
 import core.*;
 
 /** Dummy do-nothing model. This model is used for the Global Wah on/off setting.
-Pod supports a CC number for Wah on off but it's not represented in the Sysex record.*/
+* Pod supports a CC number for Wah on off but it's not represented in the Sysex record.
+*
+* @author Jeff Weber
+*/
 class NullModel extends ParamModel {
+    /** Constructs aNullModel.*/
     NullModel() {} 
+    /** Null method for NullModel.*/
     public void set(int i) {}
+    /** Null method for NullModel.*/
     public int get() {return 0;}
 }
