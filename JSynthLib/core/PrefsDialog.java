@@ -190,6 +190,10 @@ public class PrefsDialog extends JDialog {
      * can exit without saving changes. - emenaker 2003.03.14
      */
     private void exit() {
+	// Work around Mac OS X multiple modal dialog bug.
+	try {
+	    Thread.sleep(30);
+	} catch (Exception e){}
 	this.setVisible (false);
     }
 }
