@@ -88,7 +88,8 @@ public class CasioCZ1000Device extends Device
         this.prefs = prefs;
         addDriver(new CasioCZ1000SingleDriver());
         addDriver(new CasioCZ1000RcvConverter());
-        // CZ has no bank features.
+        // CZ has no bank features, but we need this to import from disk.
+        addDriver(new CasioCZ1000BankDriver());
     }
     
     /** Return custom config panel. */
