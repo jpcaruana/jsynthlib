@@ -95,12 +95,11 @@ class LibraryFrame extends AbstractLibraryFrame {
     void deleteDuplicates() {
         Collections.sort(myModel.getList(), new SysexSort());
         int numDeleted = 0;
-        IPatch p, q;
         Iterator it = myModel.getList().iterator();
-        p = (IPatch) it.next();
+        byte[] p = ((IPatch) it.next()).getByteArray();
         while (it.hasNext()) {
-            q = (IPatch) it.next();
-            if (Arrays.equals(p.getByteArray(), q.getByteArray())) {
+            byte[] q = ((IPatch) it.next()).getByteArray();
+            if (Arrays.equals(p, q)) {
                 it.remove();
                 numDeleted++;
             } else

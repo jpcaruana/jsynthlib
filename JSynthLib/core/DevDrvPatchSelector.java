@@ -23,6 +23,7 @@ public class DevDrvPatchSelector extends JDialog {
     private int driverNum;
     protected int patchNum;
     protected IPatch p;
+    private byte[] sysex;
     private String patchString;
 
     private JLabel myLabel;
@@ -53,6 +54,7 @@ public class DevDrvPatchSelector extends JDialog {
 
         // initialising some variables
         p            = patch;
+        sysex        = patch.getByteArray();
         patchNum     = patchnum;
         patchString  = p.getPatchHeader();
 
@@ -83,7 +85,7 @@ public class DevDrvPatchSelector extends JDialog {
             for (int j=0, m=0; j<device.driverCount();j++) {
 	        IDriver driver = device.getDriver(j);
 	        if ((driver.isSingleDriver() || driver.isBankDriver())
-	                && (driver.supportsPatch(patchString, p.getByteArray()))) {
+	                && (driver.supportsPatch(patchString, sysex))) {
 	            if (newDevice) {	// only one entry for each supporting device
 	    		deviceComboBox.addItem(device);
 	    		newDevice = false;
@@ -181,7 +183,7 @@ public class DevDrvPatchSelector extends JDialog {
             for (int i = 0; i < device.driverCount(); i++) {
 	        IDriver driver = device.getDriver(i);
                 if ((driver.isSingleDriver() || driver.isBankDriver())
-	                && driver.supportsPatch(patchString, p.getByteArray())) {
+	                && driver.supportsPatch(patchString, sysex)) {
                     driverComboBox.addItem (driver);
                     nDriver++;
 	        }
