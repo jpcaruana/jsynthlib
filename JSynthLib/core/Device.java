@@ -1,8 +1,16 @@
 package core;
-import javax.swing.*;
-import javax.sound.midi.*;
-import java.util.*;
-//import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * Device class defines some informations for your synthsizer, such as
@@ -21,7 +29,7 @@ import java.util.*;
  * @version $Id$
  * @see Driver
  */
-public class Device implements /*Serializable,*/ Storable {
+public class Device /*implements Serializable, Storable*/ {
     /** The company which made the Synthesizer. */
     private String manufacturerName;
     /**
