@@ -36,12 +36,13 @@ public class AccessVirusDevice extends Device /*implements ItemListener*/ {
 	super ("Access","Virus",null,DRIVER_INFO,"Kenneth L. Martinez");
 	setDeviceID(17);	// default Device ID
         //avConfig = new AccessVirusConfig();
-        Driver drv;
+        //Driver drv;
+	/*
         JOptionPane.showMessageDialog(PatchEdit.getInstance(),
         DRIVER_INFO, "Access Virus Driver Release Notes",
         JOptionPane.WARNING_MESSAGE
         );
-
+	*/
         addDriver(new VirusProgBankDriver());
         addDriver(new VirusProgSingleDriver());
         addDriver(new VirusMultiBankDriver());

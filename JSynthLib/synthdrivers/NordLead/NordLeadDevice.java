@@ -41,13 +41,13 @@ public class NordLeadDevice extends Device implements ItemListener {
   public NordLeadDevice() {
     super ("Nord","Lead",null,DRIVER_INFO,"Kenneth L. Martinez");
     setSynthName("NL1-2");
-    Driver drv;
-    
+    //Driver drv;
+    /*
     JOptionPane.showMessageDialog(PatchEdit.getInstance(),
       DRIVER_INFO, "Nord Lead Driver Release Notes",
       JOptionPane.WARNING_MESSAGE
     );
-    
+    */
     addDriver(new NLPatchBankDriver());
     addDriver(new NLPatchSingleDriver());
     addDriver(new NLDrumBankDriver());

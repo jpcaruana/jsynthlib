@@ -19,9 +19,11 @@ public class SCIProphet600Device extends Device {
 
     addDriver(new P600ProgBankDriver());
     addDriver(new P600ProgSingleDriver());
+    /*
     JOptionPane.showMessageDialog(PatchEdit.getInstance(),
       DRIVER_INFO, "Prophet-600 Driver Release Notes",
       JOptionPane.WARNING_MESSAGE
     );
+    */
   }
 }
