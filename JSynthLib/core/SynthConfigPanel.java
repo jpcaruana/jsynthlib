@@ -226,95 +226,104 @@ class SynthConfigPanel extends ConfigPanel {
     }
 
     private class TableModel extends AbstractTableModel {
-	private final String[] columnNames = {
-	    "Synth ID",
-	    "Device",
-	    "MIDI In Port",
-	    "MIDI Out Port",
-	    "Channel #",
-	    "Device ID"
-	};
+		private final String[] columnNames = {
+		    "Synth ID",
+		    "Device",
+		    "MIDI In Port",
+		    "MIDI Out Port",
+		    "Channel #",
+		    "Device ID"
+		};
 
-	TableModel() {
-	}
-
-	public int getColumnCount() {
-	    return columnNames.length;
-	}
-	public String getColumnName(int col) {
-	    return columnNames[col];
-	}
-	public int getRowCount() {
-	    return AppConfig.deviceCount();
-	}
-	public Class getColumnClass(int c) {
-	    return getValueAt(0, c).getClass();
-	}
-	public Object getValueAt(int row, int col) {
-	    Device myDevice = (Device) AppConfig.getDevice(row);
-
-	    switch (col) {
-	    case SYNTH_NAME:
-		return myDevice.getSynthName();
-	    case DEVICE:
-		return (myDevice.getManufacturerName()
-			+ " " + myDevice.getModelName());
-	    case MIDI_IN:
-		if (MidiUtil.isInputAvailable()) {
-		    int port = multiMIDI ?
-			myDevice.getInPort() : AppConfig.getInitPortIn();
-		    return MidiUtil.getInputMidiDeviceInfo(port).getName();
-		} else {
-		    return "not available";
+		TableModel() {
 		}
-	    case MIDI_OUT:
-		if (MidiUtil.isOutputAvailable()) {
-		    int port = multiMIDI ?
-			myDevice.getPort() : AppConfig.getInitPortOut();
-		    return MidiUtil.getOutputMidiDeviceInfo(port).getName();
-		} else {
-		    return "not available";
+
+		public int getColumnCount() {
+		    return columnNames.length;
 		}
-	    case MIDI_CHANNEL:
-		return new Integer(myDevice.getChannel());
-	    case MIDI_DEVICE_ID:
-		return new Integer(myDevice.getDeviceID());
-	    default:
-		return null;
-	    }
-	}
+		public String getColumnName(int col) {
+		    return columnNames[col];
+		}
+		public int getRowCount() {
+		    return AppConfig.deviceCount();
+		}
+		public Class getColumnClass(int c) {
+		    return getValueAt(0, c).getClass();
+		}
+		public Object getValueAt(int row, int col) {
+		    Device myDevice = (Device) AppConfig.getDevice(row);
 
-	public boolean isCellEditable(int row, int col) {
-	    //Note that the data/cell address is constant,
-	    //no matter where the cell appears onscreen.
-	    return (col == SYNTH_NAME
-		    || (col == MIDI_IN && multiMIDI)
-		    || (col == MIDI_OUT && multiMIDI)
-		    || col == MIDI_CHANNEL
-		    || col == MIDI_DEVICE_ID);
-	}
+		    switch (col) {
+			    case SYNTH_NAME:
+					return myDevice.getSynthName();
+			    case DEVICE:
+					return (myDevice.getManufacturerName()
+						+ " " + myDevice.getModelName());
+			    case MIDI_IN:
+					if (MidiUtil.isInputAvailable()) {
+						try {
+						    int port = multiMIDI ?
+							myDevice.getInPort() : AppConfig.getInitPortIn();
+						    return MidiUtil.getInputMidiDeviceInfo(port).getName();
+						}
+						catch(Exception ex) {
+							return "not available";
+						}
+					} else {
+					    return "not available";
+					}
+			    case MIDI_OUT:
+					if (MidiUtil.isOutputAvailable()) {
+						try {
+						    int port = multiMIDI ?
+							myDevice.getPort() : AppConfig.getInitPortOut();
+						    return MidiUtil.getOutputMidiDeviceInfo(port).getName();
+						} catch(Exception ex) {
+							return "not available";
+						}
+					} else {
+					    return "not available";
+					}
+			    case MIDI_CHANNEL:
+					return new Integer(myDevice.getChannel());
+			    case MIDI_DEVICE_ID:
+					return new Integer(myDevice.getDeviceID());
+			    default:
+					return null;
+		    }
+		}
 
-	public void setValueAt(Object value, int row, int col) {
-	    Device dev = (Device) AppConfig.getDevice(row);
-	    switch (col) {
-	    case SYNTH_NAME:
-		dev.setSynthName((String) value);
-		break;
-	    case MIDI_IN:
-		dev.setInPort(MidiUtil.getInPort((MidiDevice.Info) value));
-		break;
-	    case MIDI_OUT:
-		dev.setPort(MidiUtil.getOutPort((MidiDevice.Info) value));
-		break;
-	    case MIDI_CHANNEL:
-		dev.setChannel(((Integer) value).intValue());
-		break;
-	    case MIDI_DEVICE_ID:
-		dev.setDeviceID(((Integer) value).intValue());
-		break;
-	    }
-	    fireTableCellUpdated(row, col); // really required???
-	}
+		public boolean isCellEditable(int row, int col) {
+		    //Note that the data/cell address is constant,
+		    //no matter where the cell appears onscreen.
+		    return (col == SYNTH_NAME
+			    || (col == MIDI_IN && multiMIDI)
+			    || (col == MIDI_OUT && multiMIDI)
+			    || col == MIDI_CHANNEL
+			    || col == MIDI_DEVICE_ID);
+		}
+
+		public void setValueAt(Object value, int row, int col) {
+		    Device dev = (Device) AppConfig.getDevice(row);
+		    switch (col) {
+		    case SYNTH_NAME:
+			dev.setSynthName((String) value);
+			break;
+		    case MIDI_IN:
+			dev.setInPort(MidiUtil.getInPort((MidiDevice.Info) value));
+			break;
+		    case MIDI_OUT:
+			dev.setPort(MidiUtil.getOutPort((MidiDevice.Info) value));
+			break;
+		    case MIDI_CHANNEL:
+			dev.setChannel(((Integer) value).intValue());
+			break;
+		    case MIDI_DEVICE_ID:
+			dev.setDeviceID(((Integer) value).intValue());
+			break;
+		    }
+		    fireTableCellUpdated(row, col); // really required???
+		}
     }
 
     /*
