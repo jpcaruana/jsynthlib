@@ -29,7 +29,7 @@ import javax.swing.UIManager;
  */
 public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
-    public Patch p;	    // accessed by YamahaFS1RPerformanceEditor
+    protected Patch p;
     /** Note that calling addWidget() method may change the value of this. */
     protected GridBagConstraints gbc;
     /** Scroll Pane for the editor frame. */
@@ -52,12 +52,12 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * PatchEditor frame (if applicable) so we can update that frame
      * with the edited data on close.
      */
-    public  BankEditorFrame bankFrame = null; // accessed by YamahaFS1RBankEditor
+    protected BankEditorFrame bankFrame = null; // used by YamahaFS1RPerformanceEditor.java
 
     /** Bank of fader.  Set by faderMoved method. */
-    int faderBank;
+    private int faderBank;
     /** Numfer of fader banks.  Set by show method. */
-    int numFaderBanks;
+    private int numFaderBanks;
 
     /**
      * This is a copy of the patch when we started editing (in case
@@ -269,6 +269,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	    widgetList.add(widget);
 
 	    widget.setSliderNum(slidernum);
+	    // This may be removed
 	    if (widget instanceof ScrollBarWidget)
 		((ScrollBarWidget)widget).setForceLabelWidth(forceLabelWidth);
 	    /*
@@ -374,6 +375,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     /** only for backward compatibility */
+    // remove this when PatchEdit.sendFaderMessage is deleted.
     void faderMoved(byte fader, byte value) {
 	faderMoved((int) fader, (int) value);
     }
@@ -429,7 +431,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	}
     }
 
-    void faderHighlight() {
+    private void faderHighlight() {
 	for (int i = 0; i < widgetList.size(); i++) {
 	    SysexWidget w = (SysexWidget) widgetList.get(i);
 	    if (w.getLabel() != null) {
@@ -447,6 +449,11 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 		w.getJLabel().repaint();
 	    }
 	}
+    }
+
+    void nextFader() {
+	faderBank = (faderBank + 1) % numFaderBanks;
+	faderHighlight();
     }
 
     /**
@@ -512,6 +519,12 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     protected void lostFocus() {
     }
 
+    /**
+     * return the Patch which is edited.
+     */
+    public Patch getPatch() {
+	return p;
+    }
 
     /** Tells JSynthLib what the longest Label you plan to add in this
      *  set of Widgets is. This will make sure that sliders are lined up
@@ -520,13 +533,13 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      *  reasons. Editors can call this more than once to create multiple
      *  aligned sets of sliders rather than align everything in the entire
      *  editor to one length.
+     * @deprecated use the constructor of ScrollBarWidet with
+     * labelWidth parameter.
      */
-
     public void setLongestLabel(String s)
-    {	
+    {
 	JLabel j = new JLabel(s);
-	Dimension d = j.getPreferredSize();	
+	Dimension d = j.getPreferredSize();
 	forceLabelWidth=(int)d.getWidth();
     }
-
 }
