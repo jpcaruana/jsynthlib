@@ -61,6 +61,7 @@ class AlesisQSProgramEditor extends PatchEditorFrame
     }
 
     JTabbedPane soundPane=new JTabbedPane();
+
     for (int i=0; i< 4; i++)
     {
         int controlIdx=0;
@@ -78,43 +79,20 @@ class AlesisQSProgramEditor extends PatchEditorFrame
         gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1;
         panel.add(voicePane, gbc);
 
-        controlPanel levelPane=new levelPanel(patch,i);
-        gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
-        panel.add(levelPane, gbc);
-
-        controlPanel pitchPane=new pitchPanel(patch,i);
-        gbc.gridx=0;gbc.gridy=2;gbc.gridwidth=1;gbc.gridheight=2;
-        panel.add(pitchPane, gbc);
-
-        JPanel filterPane=new filterPanel(patch, i);
-        gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=1;gbc.gridheight=2;
-        panel.add(filterPane, gbc);
-
-        JPanel amplitudePane=new amplitudePanel(patch, i);
-        gbc.gridx=0;gbc.gridy=6;gbc.gridwidth=1;gbc.gridheight=1;
-        panel.add(amplitudePane, gbc);
-
         JPanel rangePane=new rangePanel(patch, i);
-        gbc.gridx=0;gbc.gridy=7;gbc.gridwidth=1;gbc.gridheight=1;
+        gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
         panel.add(rangePane, gbc);
 
-        // 76.	Sound pitch env attack	12	0	0	0	99	7	53:0-52:2
-        JPanel pitchEnvPane=new envelopePanel("Pitch envelope", patch, i, 12, 53, 0);
-        gbc.gridx=1;gbc.gridy=2;gbc.gridwidth=2;gbc.gridheight=2;
-        panel.add(pitchEnvPane, gbc);
+        controlPanel levelPane=new levelPanel(patch,i);
+        gbc.gridx=1;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=2;
+        panel.add(levelPane, gbc);
 
-        // 87.	Sound filter env attack	13	0	0	0	99	7	60:5-59:7
-        JPanel filtEnvPane=new envelopePanel("Filter envelope", patch, i, 13, 60, 5);
-        gbc.gridx=1;gbc.gridy=4;gbc.gridwidth=2;gbc.gridheight=2;
-        panel.add(filtEnvPane, gbc);
-
-        // 98.	Sound amp env attack	14	0	0	0	99	7	68:2-67:4
-        JPanel ampEnvPane=new envelopePanel("Amplitude envelope", patch, i, 14, 68, 2);
-        gbc.gridx=1;gbc.gridy=6;gbc.gridwidth=2;gbc.gridheight=2;
-        panel.add(ampEnvPane, gbc);
+        modifierPanel modifiers = new modifierPanel(patch, i);
+        gbc.gridx=0;gbc.gridy=2;gbc.gridwidth=2;gbc.gridheight=1;
+        panel.add(modifiers, gbc);
 
         modPanel modPane = new modPanel(patch, i);
-        gbc.gridx=0;gbc.gridy=8;gbc.gridwidth=3;gbc.gridheight=1;
+        gbc.gridx=0;gbc.gridy=3;gbc.gridwidth=2;gbc.gridheight=1;
         panel.add(modPane, gbc);
 
     }
@@ -355,6 +333,78 @@ class AlesisQSProgramEditor extends PatchEditorFrame
 
   }
 
+
+  /** A panel containing controls for pitch, filter and amplitude
+    */
+  class modifierPanel extends JTabbedPane {
+    /**
+     * Create panel
+     * @param snd Sound number (0-3)
+     */
+    public modifierPanel(Patch p, int snd) {
+
+        //setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        //                           "Modifiers",TitledBorder.CENTER,
+        //                           TitledBorder.CENTER));
+
+        // Pitch tab
+        JPanel pitch = new JPanel();
+        pitch.setLayout(new GridBagLayout());
+        addTab("Pitch", pitch);
+
+        JPanel pitchPane = new pitchPanel(p, snd);
+        gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=2;gbc.gridheight=1;
+        pitch.add(pitchPane, gbc);
+
+        // 76.	Sound pitch env attack	12	0	0	0	99	7	53:0-52:2
+        JPanel pitchEnvPane=new envelopePanel("Pitch envelope", p, snd, 12, 53, 0);
+        gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
+        pitch.add(pitchEnvPane, gbc);
+
+        JPanel pitchLfoPane=new lfoPanel("Pitch LFO", p, snd, 9, 36, 6);
+        gbc.gridx=1;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
+        pitch.add(pitchLfoPane, gbc);
+
+        // Filter tab
+        JPanel filter = new JPanel();
+        filter.setLayout(new GridBagLayout());
+        addTab("Filter", filter);
+
+        JPanel filterPane=new filterPanel(p, snd);
+        gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=2;gbc.gridheight=1;
+        filter.add(filterPane, gbc);
+
+        // 87.	Sound filter env attack	13	0	0	0	99	7	60:5-59:7
+        JPanel filtEnvPane=new envelopePanel("Filter envelope", p, snd, 13, 60, 5);
+        gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
+        filter.add(filtEnvPane, gbc);
+
+        JPanel filtLfoPane=new lfoPanel("Filter LFO", p, snd, 10, 42, 0);
+        gbc.gridx=1;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
+        filter.add(filtLfoPane, gbc);
+
+        // Amplitude tab
+
+        JPanel amp = new JPanel();
+        amp.setLayout(new GridBagLayout());
+        addTab("Amplitude", amp);
+
+        JPanel amplitudePane=new amplitudePanel(p, snd);
+        gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=2;gbc.gridheight=1;
+        amp.add(amplitudePane, gbc);
+
+        // 98.	Sound amp env attack	14	0	0	0	99	7	68:2-67:4
+        JPanel ampEnvPane=new envelopePanel("Amplitude envelope", p, snd, 14, 68, 2);
+        gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
+        amp.add(ampEnvPane, gbc);
+
+        JPanel ampLfoPane=new lfoPanel("Amplitude LFO", p, snd, 11, 47, 2);
+        gbc.gridx=1;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
+        amp.add(ampLfoPane, gbc);
+
+    }
+  }
+
   /**
    * Create a panel containing envelope controls
    * for pitch, filter and amplitude envelopes
@@ -440,6 +490,65 @@ class AlesisQSProgramEditor extends PatchEditorFrame
         addWidget(this,new ScrollBarWidget("Velocity modulation",p,-99,99,0,
                                             new SoundModel(p,snd,8,59,6,-99),new ProgSender(snd,12,2,3)),
                                             0,++yPos,3,1,controlIdx++);
+
+    }
+
+  }
+
+  class lfoPanel extends controlPanel {
+    /**
+     * Create panel
+     * @param name Title of pane   55. Sound pitch lfo waveform 9 0 0 0 6 3 36:6-36:4
+     * @param snd Sound number (0-3)
+     * @param Func Function number for direct parameter editing
+     * @param msByte Starting byte of first parameter (waveform)
+     * @param msBit Starting bit of waveform parameter
+     */
+    public lfoPanel(String name, Patch p, int snd, int Func, int msByte, int msBit) {
+        super(name);
+        int ofs = (msByte-36)*8 + msBit - 6;
+        int controlIdx=0, yPos=0;
+
+        // 55. Sound pitch lfo waveform 9 0 0 0 6 3 36:6-36:4
+        addWidget(this,new ComboBoxWidget("Shape",p,
+                                           new SoundModel(p,snd,3,36,6+ofs),new ProgSender(snd,Func,0,0),
+                                           new String [] {"Sine", "Triangle", "Square",
+                                                          "Up Saw", "Down Saw", "Random +/-",
+                                                          "Noise", "Random +"}),
+                                           0,yPos,1,1,controlIdx++);
+
+        // 58. Sound pitch lfo trigger 9 0 3 0 3 2 38:6-38:5
+        addWidget(this,new ComboBoxWidget("Trigger",p,
+                                           new SoundModel(p,snd,2,38,6+ofs),new ProgSender(snd,Func,0,3),
+                                           new String [] {"Mono", "Poly", "Key Mono", "Key Poly"}),
+                                           1,yPos,1,1,controlIdx++);
+
+        // 56. Sound pitch lfo speed 9 0 1 0 99 7 37:5-36:7
+        addWidget(this,new ScrollBarWidget("Speed",p,0,99,0,
+                                            new SoundModel(p,snd,7,35,5+ofs),new ProgSender(snd,Func,0,1)),
+                                            0,++yPos,2,1,controlIdx++);
+
+
+        // 57. Sound pitch lfo delay 9 0 2 0 99 7 38:4-37:6
+        addWidget(this,new ScrollBarWidget("Delay",p,0,99,0,
+                                            new SoundModel(p,snd,7,38,4+ofs),new ProgSender(snd,Func,0,2)),
+                                            0,++yPos,2,1,controlIdx++);
+
+
+        // 59. Sound pitch lfo level 9 1 0 0 99 7 39:5-38:7
+        addWidget(this,new ScrollBarWidget("Level",p,0,99,0,
+                                            new SoundModel(p,snd,7,39,5+ofs),new ProgSender(snd,Func,1,0)),
+                                            0,++yPos,2,1,controlIdx++);
+
+        // 60. Sound pitch lfo mod wheel mod 9 1 1 -99 199 8 40:5-39:6
+        addWidget(this,new ScrollBarWidget("Modwheel Depth",p,-99,99,0,
+                                            new SoundModel(p,snd,8,40,5+ofs,-99),new ProgSender(snd,Func,1,1)),
+                                            0,++yPos,2,1,controlIdx++);
+
+        // 61. Sound pitch lfo aftertouch mod 9 1 2 -99 199 8 41:5-40:6
+        addWidget(this,new ScrollBarWidget("Aftertouch Depth",p,-99,99,0,
+                                            new SoundModel(p,snd,8,41,5+ofs,-99),new ProgSender(snd,Func,1,2)),
+                                            0,++yPos,2,1,controlIdx++);
 
     }
 
