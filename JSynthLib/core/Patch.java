@@ -115,7 +115,7 @@ public class Patch extends Object
         author  = new StringBuffer();
         comment = new StringBuffer();
         sysex = gsysex;
-        ChooseDriver();
+        chooseDriver();
     }
 
     /**
@@ -133,7 +133,7 @@ public class Patch extends Object
         comment = new StringBuffer();
 	sysex = gsysex;
  	this.deviceNum = deviceNum;
-        ChooseDriver(deviceNum);
+        chooseDriver(deviceNum);
     }
 
     /**
@@ -165,7 +165,7 @@ public class Patch extends Object
         comment = new StringBuffer();
         sysex = new byte[gsysex.length - offset];
         System.arraycopy(gsysex, offset, sysex, 0, gsysex.length - offset);
-        ChooseDriver();
+        chooseDriver();
     }
 
     // The following two constructores are obsoleted by introducing
@@ -185,7 +185,7 @@ public class Patch extends Object
         this.date = new StringBuffer(gdate);
         this.author = new StringBuffer(gauthor);
         this.sysex = gsysex;
-        ChooseDriver();
+        chooseDriver();
     }
     */
 
@@ -217,7 +217,7 @@ public class Patch extends Object
      * @param deviceNum The known device number
      * @see Driver#supportsPatch
      */
-    private void ChooseDriver(int deviceNum) {
+    private void chooseDriver(int deviceNum) {
         this.deviceNum = deviceNum;
         StringBuffer patchString = this.getPatchHeader();
 
@@ -238,7 +238,7 @@ public class Patch extends Object
     }
 
     /**
-     * Set <code>deviceNum</code> and <code>driverNum</code> by
+     * Set <code>deviceNum</code> and <code>driverNum</code> field by
      * guessing from <code>sysex</code> by using
      * <code>Driver.suportsPatch</code> method.<p>
      *
@@ -255,7 +255,19 @@ public class Patch extends Object
      *      p.ChooseDriver(); // !!!verbose!!!
      * </pre>
      */
-    public void ChooseDriver() { // should be chooseDriver()
+    //@deprecated Use proper constructor of Patch.
+    public void ChooseDriver() {
+	chooseDriver();
+    }
+
+    /**
+     * Set <code>deviceNum</code> and <code>driverNum</code> field by
+     * guessing from <code>sysex</code> by using
+     * <code>Driver.suportsPatch</code> method.
+     * @return <code>true</code> if a driver is found,
+     * <code>false</code> otherwise.
+     */
+    boolean chooseDriver() {
         //Integer intg = new Integer(0);
         //StringBuffer driverString = new StringBuffer();
         StringBuffer patchString = this.getPatchHeader();
@@ -269,7 +281,7 @@ public class Patch extends Object
 		    driverNum = idrv;
 		    deviceNum = idev;
                     getDriver().trimSysex(this);
-                    return;
+                    return true;
                 }
             }
         }
@@ -279,6 +291,7 @@ public class Patch extends Object
         comment = new StringBuffer("Probably a "
 				   + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
 				   + " Patch, Size: " + sysex.length);
+	return false;
     }
 
     /** Getter for property date. */
@@ -314,11 +327,25 @@ public class Patch extends Object
     /** Return Device for this patch. */
     public Device getDevice() {
 	return PatchEdit.appConfig.getDevice(deviceNum);
+// 	return driver.getDevice();
     }
 
     /** Return Driver for this patch. */
     public Driver getDriver() {
 	return PatchEdit.getDriver(deviceNum, driverNum);
+// 	return driver;
+    }
+
+    /** Set driver. */
+    void setDriver(Driver driver) {
+	if (driver == null) {
+	    deviceNum = 0;
+	    driverNum = 0;
+	} else {
+	    deviceNum = driver.getDeviceNum();
+	    driverNum = driver.getDriverNum();
+	}
+//  	this.driver = (driver == null) ? PatchEdit.nullDriver : driver;
     }
 
     // Transferable interface methods
@@ -438,11 +465,13 @@ public class Patch extends Object
     public String toString() {
 	StringBuffer buf = new StringBuffer();
 	buf.append("[" + deviceNum + "," + driverNum + "] ");
+	/*
 	for (int i = 0; i < sysex.length; i++) {
 	    if ((int) (sysex[i] & 0xff) < 0x10)
 		buf.append("0");
 	    buf.append(Integer.toHexString((int) (sysex[i] & 0xff)) + " ");
 	}
+	*/
 	return buf.toString();
     }
 }
