@@ -1,7 +1,6 @@
 package synthdrivers.EnsoniqVFX;
 import core.Driver;
 import core.ErrorMsg;
-import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
 
