@@ -30,7 +30,7 @@ package core;
  *
  * @author <a href ="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
- * @see synthdrivers/RolandTD6/Instrument.java
+ * @see synthdrivers.RolandTD6.Instrument
  */
 
 public interface TreeNodes {

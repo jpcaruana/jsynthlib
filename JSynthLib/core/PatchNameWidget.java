@@ -13,8 +13,8 @@ public class PatchNameWidget extends SysexWidget {
     /**
      * Creates a new <code>PatchNameWidget</code> instance.
      *
-     * @param l a label text.
-     * @param p a <code>Patch</code>, which is edited.
+     * @param label a label text.
+     * @param patch a <code>Patch</code>, which is edited.
      * @see SysexWidget
      */
     public PatchNameWidget(String label, Patch patch) {

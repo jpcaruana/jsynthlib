@@ -9,7 +9,7 @@ public class LabelWidget extends SysexWidget {
     /**
      * Creates a new <code>LabelWidget</code> instance.
      *
-     * @param l a label text.
+     * @param label a label text.
      * @see SysexWidget
      */
     public LabelWidget(String label) {

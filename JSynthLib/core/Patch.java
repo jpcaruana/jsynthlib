@@ -34,7 +34,7 @@ public class Patch extends Object implements Serializable, Transferable {
 
     /**
      * Constructor - The device number is known, but not the driver number
-     * @param dev The known device number
+     * @param deviceNum The known device number
      * @param gsysex The MIDI SysEx message
      */
     public Patch(int deviceNum, byte[] gsysex) {

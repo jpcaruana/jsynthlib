@@ -40,7 +40,7 @@ import javax.swing.tree.*;
  *
  * @author <a href ="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
- * @see synthdriver/RolandTD6/TD6SingleEditor.java
+ * @see synthdriver.RolandTD6.TD6SingleEditor
  */
 public class TreeWidget extends SysexWidget {
     private JTree tree;
@@ -190,7 +190,7 @@ public class TreeWidget extends SysexWidget {
      * Select a tree node specified by <code>n</code>.
      *
      * @param n an <code>int</code> value specifing a tree node.
-     * @see TreeNodes.getIndices methods.
+     * @see TreeNodes#getIndices methods.
      */
     protected void setSelection(int n) {
 	TreePath path = getTreePath(treeNodes.getIndices(n));
@@ -204,7 +204,7 @@ public class TreeWidget extends SysexWidget {
      *
      * @param n an <code>int</code> value specifing a tree node.
      * @return an <code>Object</code> value
-     * @see TreeNodes.getIndices methods.
+     * @see TreeNodes#getIndices methods.
      */
     public Object getNode(int n) {
 	return getNode(treeNodes.getIndices(n));
