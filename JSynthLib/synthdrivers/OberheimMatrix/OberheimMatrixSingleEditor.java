@@ -83,7 +83,7 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   addWidget(dco2Pane,new ScrollBarWidget("Pulse Width",patch,0,63,0,new MtxModel(patch,16),new MtxSender(13)),0,2,7,1,7);
   addWidget(dco2Pane,new CheckBoxWidget("Pulse",patch,new BitModel(patch,18,0),new BitSender(patch,16,18)),0,3,1,1,-4);
   addWidget(dco2Pane,new CheckBoxWidget("Wave",patch,new BitModel(patch,18,1),new BitSender(patch,16,18)),2,3,1,1,-5);
-  addWidget(dco2Pane,new CheckBoxWidget("Click",patch,new MtxModel(patch,24),new VcedSender(19)),4,3,1,1,-6);
+  addWidget(dco2Pane,new CheckBoxWidget("Click",patch,new MtxModel(patch,24),new MtxSender(19)),4,3,1,1,-6);
   addWidget(dco2Pane,new CheckBoxWidget("Noise",patch,new BitModel(patch,18,2),new BitSender(patch,16,18)),6,3,1,1,-7);
   addWidget(dco2Pane,new ScrollBarWidget("Detune",patch,0,62,-31,new DetuneModel(patch,19),new DetuneSender(12)),0,4,7,1,8);
   addWidget(dco2Pane,new ComboBoxWidget("Sync Mode",patch,new MtxModel(patch,25),new MtxSender(2),new String []
