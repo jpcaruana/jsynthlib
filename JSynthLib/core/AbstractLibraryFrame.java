@@ -96,7 +96,8 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     }
 
     abstract PatchTableModel createTableModel();
-    abstract void setupColumns(final JTable table);
+    /** Before calling this method, table and myModel is setup. */
+    abstract void setupColumns();
     abstract void frameActivated();
     abstract void enableActions();
 
@@ -134,7 +135,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         table.setTransferHandler(pth);
         table.setDragEnabled(true);
 
-        setupColumns(table);
+        setupColumns();
 
         table.getModel().addTableModelListener(new TableModelListener() {
             public void tableChanged(TableModelEvent e) {

@@ -45,7 +45,7 @@ class LibraryFrame extends AbstractLibraryFrame {
         return new PatchListModel(false);
     }
 
-    void setupColumns(final JTable table) {
+    void setupColumns() {
         TableColumn column = null;
         column = table.getColumnModel().getColumn(SYNTH);
         column.setPreferredWidth(50);

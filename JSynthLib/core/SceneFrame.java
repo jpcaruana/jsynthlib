@@ -54,8 +54,8 @@ class SceneFrame extends AbstractLibraryFrame {
         return new SceneListModel(false);
     }
 
-    void setupColumns(final JTable table) {
-        SceneTableCellEditor rowEditor = new SceneTableCellEditor(table);
+    void setupColumns() {
+        SceneTableCellEditor rowEditor = new SceneTableCellEditor();
 
         TableColumn column = null;
         column = table.getColumnModel().getColumn(SYNTH);
@@ -349,13 +349,8 @@ class SceneFrame extends AbstractLibraryFrame {
     private class SceneTableCellEditor implements TableCellEditor,
             TableModelListener {
         private TableCellEditor editor, defaultEditor;
-
         private JComboBox box;
-
-        private JTable table;
-
         private int oldrow = -1;
-
         private int oldcol = -1;
 
         /**
@@ -364,10 +359,9 @@ class SceneFrame extends AbstractLibraryFrame {
          * @see TableCellEditor
          * @see DefaultCellEditor
          */
-        public SceneTableCellEditor(JTable table) {
-            this.table = table;
+        public SceneTableCellEditor() {
             defaultEditor = new DefaultCellEditor(new JTextField());
-            this.table.getModel().addTableModelListener(this);
+            table.getModel().addTableModelListener(this);
         }
 
         public Component getTableCellEditorComponent(JTable table,
