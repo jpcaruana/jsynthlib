@@ -18,7 +18,13 @@ import javax.swing.event.HyperlinkListener;
 
 public class DocumentationWindow extends JDialog
 {
-    DocumentationWindow() {
+    /**
+     * Open a viewer window for a document.
+     * @param contentType Content type of the document.
+     * @param url URL of the document.
+     * @see JEditorPane
+     */
+    DocumentationWindow(String contentType, String url) {
         super(PatchEdit.getInstance(),"JSynthLib Documentation Viewer",false);
         JPanel container= new JPanel();
         container.setLayout (new BorderLayout());
@@ -27,18 +33,21 @@ public class DocumentationWindow extends JDialog
 	    public void hyperlinkUpdate (HyperlinkEvent e) {
 		if (e.getEventType()==HyperlinkEvent.EventType.ACTIVATED) {
 		    if ((e.getDescription()).startsWith("#")) {
-		    // Link of the same file
+			// Link of the same file
 		        try{
 			    jt.myScrollToReference(e.getDescription());
 			} catch (Exception e2){
 			    ErrorMsg.reportError("Error",e.getDescription().toString(),e2);
 			}
 		    } else {
-	  	    // Link to other file
+			// Link to other file
 			try {
 		            jt.setPage(e.getURL());
 			} catch (UnknownHostException uhe) {
-			    JOptionPane.showMessageDialog(getContentPane(),"Unknown Host \""+e.getURL()+"\". Maybe you're not online.");
+			    JOptionPane.showMessageDialog
+				(getContentPane(),
+				 "Unknown Host \"" + e.getURL()
+				 + "\". Maybe you're not online.");
 			} catch (Exception e3) {
 			    ErrorMsg.reportError("Error",e.getURL().toString(),e3);
 			}
@@ -50,41 +59,49 @@ public class DocumentationWindow extends JDialog
 	pane.getViewport().add(jt);
 
 	getContentPane().add (pane, BorderLayout.CENTER);
-	 pane.getVerticalScrollBar ().addAdjustmentListener (new AdjustmentListener () {
+	pane.getVerticalScrollBar ().addAdjustmentListener (new AdjustmentListener () {
             public void adjustmentValueChanged (AdjustmentEvent e) {
 		    jt.repaint ();
             }
         });
-	try {
-            jt.setContentType("text/html");
+ 	try {
+            jt.setContentType(contentType);
 	    //FileInputStream in = new FileInputStream("doc/documentation.html");
 	    //jt.read(in,(new HTMLEditorKit()).createDefaultDocument());//new HTMLDocument());
-	    try {
-		jt.setPage(new java.net.URL("jar:file:JSynthLib-"
-					    + PatchEdit.VERSION
-					    + ".jar!/doc/documentation.html"));
-	    } catch (java.util.zip.ZipException e) {
-		jt.setPage(new java.net.URL("file:./doc/documentation.html"));
+	    if (url.startsWith("file:")) {
+		try {
+		    // try jar file first
+		    jt.setPage(new java.net.URL("jar:file:JSynthLib-"
+						+ PatchEdit.VERSION
+						+ ".jar!/"
+						+ url.substring(5)));
+		} catch (java.util.zip.ZipException e) {
+		    jt.setPage(new java.net.URL(url));
+		}
+	    } else {
+		jt.setPage(new java.net.URL(url));
 	    }
-            jt.setCaretPosition(0);
-	    jt.setEditable(false);
+	} catch (java.net.MalformedURLException e) {
+	    ErrorMsg.reportError("Error","Wrong URL",e);
+	} catch (java.io.IOException e) {
+	    ErrorMsg.reportError("Error","Error opening documentation",e);
+	}
 
-            JButton ok = new JButton("Close");
-            ok.addActionListener(new ActionListener() {
+	jt.setCaretPosition(0);
+	jt.setEditable(false);
+
+	JButton ok = new JButton("Close");
+	ok.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
                     OKPressed();
 		}
 	    });
-            getContentPane().add(ok,BorderLayout.SOUTH);
-	    getRootPane().setDefaultButton(ok);
-            setSize(500,400);
+	getContentPane().add(ok,BorderLayout.SOUTH);
+	getRootPane().setDefaultButton(ok);
+	setSize(500,400);
 
-	    //pane.getVerticalScrollBar().setValue(pane.getVerticalScrollBar().getMinimum());
-	    centerDialog();
-	} catch (Exception e) {
-	    ErrorMsg.reportError("Error","Error opening documentation",e);
-	}
-
+	//pane.getVerticalScrollBar().setValue(pane.getVerticalScrollBar().getMinimum());
+	centerDialog();
     }
 
     protected void centerDialog() {
