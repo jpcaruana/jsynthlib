@@ -1,6 +1,7 @@
 package core;
 import java.io.*;
 import javax.swing.*;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 import java.text.*;
 // import java.util.Set;
@@ -8,37 +9,46 @@ import java.text.*;
 // import java.util.Arrays;
 
 /**
- * This is the base class for all Drivers.
+ * This is the base class for all Drivers.<p>
+ *
+ * Compatibility Note: The following fields are now
+ * <code>private</code>.  Use setter/getter method to access them.
+ * <pre>
+ *	device, patchType, authors
+ * </pre>
+ * Compatibility Note: The following fields are now obsoleted.  Use a
+ * getter method to access them.  The getter method queries parent
+ * Device object.
+ * <pre>
+ *	deviceNum, driverNum,
+ *	channel, port, inPort, manufacturer, model, inquiryID, id
+ * </pre>
+ *
  * @author Brian Klock
  * @version $Id$
  */
 public class Driver extends Object /*implements Serializable, Storable*/ {
     /**
      * Which device does this driver go with?
-     * @deprecated Use the getter method.
      */
-    // can be private
-    protected Device device;
+    private Device device;
 
     // deviceNum and driverNum are set by
     // PatchEdit.appConfig.reassignDeviceDriverNums method.
     /** Which deviceNum does the device of this driver goes with? */
-    private int deviceNum;
+    //private int deviceNum;
     /** Which driverNum does the device of this driver goes with? */
-    private int driverNum;
+    //private int driverNum;
 
     /**
      * The patch type. eg. "Single", "Bank", "Drumkit", etc.
-     * @deprecated Use the getter method.
      */
-    // This can be "private static final".
-    protected String patchType;
+    private String patchType;
+
     /**
      * The names of the authors of this driver.
-     * @deprecated Use the getter method.
      */
-    // This can be "private static final".
-    protected String authors;
+    private String authors;
 
     /*
      * The following fields are used by default methods defined in
@@ -144,42 +154,35 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      */
     /**
      * The channel the user assigns to this driver.
-     * @deprecated Use the getter method.
      */
-    protected int channel = 1;
+    //private int channel = 1;
 
     /**
      * The MIDI Out port the user assigns to this driver.
-     * @deprecated Use the getter method.
      */
-    protected int port;
+    //private int port;
     /**
      * The MIDI In port the user assigns to this driver.
-     * @deprecated Use the getter method.
      */
-    protected int inPort;	// phil@muqus.com
+    //private int inPort;	// phil@muqus.com
     /**
      * The company which made the Synthesizer
-     * @deprecated Use the getter method.
      */
-    protected String manufacturer;
+    //private String manufacturer;
     /**
      * The models supported by this driver eg TG33/SY22
-     * @deprecated Use the getter method.
      */
-    protected String model;
+    //private String model;
     /**
      * The response to the Universal Inquiry Message.  It can have
      * wildcards (*). It can be up to 16 bytes
-     * @deprecated Use the getter method.
      */
     // ADDED BY GERRIT GEHNEN
-    protected String inquiryID;
+    //private String inquiryID;
     /**
      * A Shorthand alias for the Synth this driver supports (eg TG33,K5k)
-     * @deprecated Use getSynthName() method.
      */
-    protected String id;
+    //private String id;
 
     /**
      * Creates a new <code>Driver</code> instance.
@@ -198,6 +201,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @deprecated Use Driver(String, String).
      */
     public Driver() {
+	/*
         sysexID = "MATCHNONE";
 	inquiryID = "NONE";
         authors = "Brian Klock";
@@ -210,6 +214,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         for (int i = 0; i < 128; i++)
 	    patchNumbers[i] = String.valueOf(i);
         bankNumbers = new String[] {"0"};
+	*/
     }
 
     //
@@ -227,9 +232,11 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Setter for property <code>deviceNum</code>.
      * Don't use this. Only for backward compatibility.
      */
+    /*
     void setDeviceNum(int deviceNum) {
 	this.deviceNum = deviceNum;
     }
+    */
     /**
      * Getter for property <code>deviceNum</code>.<p>
      * This method will be deprecated.
@@ -246,9 +253,11 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Setter for property <code>driverNum</code>.
      * Don't use this. Only for backward compatibility.
      */
+    /*
     void setDriverNum(int driverNum) {
 	this.driverNum = driverNum;
     }
+    */
     /**
      * Getter for property <code>driverNum</code>.<p>
      * This method will be deprecated.
@@ -256,7 +265,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * <code>new Patch(sysex, getDeviceNum(), getDriverNum())</code>.
      */
     protected int getDriverNum() {
-//  	return this.driverNum;
  	return device.driverList.indexOf(this);
     }
     /** Getter for property <code>patchType</code>. */
@@ -273,22 +281,26 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
     /** Setter for property <code>port</code>. */
     // remove when 'port' becomes 'private'.
+    /*
     public void setPort(int port) { // 'public' for storable interface
         this.port = port;
 	//device.setPort(port);
     }
+    */
     /** Getter for property <code>port</code>. */
     public int getPort() {	// called by bank driver
 	return device.getPort();
     }
     /** Setter for property <code>inPort</code>. */
     // remove this method when 'inPort' becomes 'private'.
+    /*
     public void setInPort(int inPort) { // 'public' for storable interface
         this.inPort = inPort;
 	//device.setInPort(inPort);
     }
+    */
     /** Getter for property <code>inPort</code>. */
-    public int getInPort() {	// 'public' for storable interface
+    protected int getInPort() {	// was 'public' for storable interface
 	return device.getInPort();
     }
     /** Getter for property <code>device.manufacturerName</code>. */
@@ -304,15 +316,16 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	return device.getSynthName();
     }
     /** Getter for property <code>device.channel</code>. */
-    public int getChannel() {	// called by bank driver
-	return channel;
-        //return device.channel;
+    public int getChannel() { // called by bank driver
+        return device.getChannel();
     }
     /** Setter for property <code>device.channel</code>. */
     // remove this method when 'channel' becomes 'private'.
+    /*
     public void setChannel(int channel) { // called by Device and for storable interface
         this.channel = channel;
     }
+    */
     /** Getter for property <code>device.deviceID</code>. */
     protected int getDeviceID() {
 	return device.getDeviceID();
@@ -546,9 +559,9 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     protected void setPatchNum(int patchNum) {
         try {
 	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, channel - 1,
+	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, getChannel() - 1,
 			   patchNum, 0); // Program Number
-	    PatchEdit.MidiOut.send(port, msg);
+	    send(msg);
 	} catch (Exception e) {
 	}
     }
@@ -557,14 +570,14 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     protected void setBankNum(int bankNum) {
         try {
 	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.CONTROL_CHANGE, channel - 1,
+	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
 			   0x00, //  Bank Select (MSB)
 			   bankNum / 128); // Bank Number (MSB)
-	    PatchEdit.MidiOut.send(port, msg);
-	    msg.setMessage(ShortMessage.CONTROL_CHANGE, channel - 1,
+	    send(msg);
+	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
 			   0x20, //  Bank Select (LSB)
 			   bankNum % 128); // Bank Number (MSB)
-	    PatchEdit.MidiOut.send(port, msg);
+	    send(msg);
 	} catch (Exception e) {
 	}
     }
@@ -597,7 +610,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         if (deviceIDoffset > 0)	// set channel (device ID)
 	    p.sysex[deviceIDoffset] = (byte) (device.getDeviceID() - 1);
         try {
-	    PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
+	    send(p.sysex);
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
 	}
@@ -617,7 +630,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	setPatchNum(patchNum);
 
 	try {
-	    PatchEdit.MidiIn.clearMidiInBuffer(inPort);
+	    clearMidiInBuffer();
 	} catch (Exception ex) {
 	    ErrorMsg.reportError("Error", "Error Clearing MIDI In buffer.", ex);
 	}
@@ -629,7 +642,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 		 + "Please start the patch dump manually...",
 		 "Get Patch", JOptionPane.WARNING_MESSAGE);
 	} else
-	    sysexRequestDump.send(port, (byte) channel,
+	    sysexRequestDump.send(getPort(), (byte) getChannel(),
 				  new NameValue("bankNum", bankNum),
 				  new NameValue("patchNum", patchNum));
     }
@@ -642,20 +655,36 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 // 	    sendPatch(p);
 	    Thread.sleep(100);
 	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.NOTE_ON, channel - 1,
+	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
 			   PatchEdit.appConfig.getNote(),
 			   PatchEdit.appConfig.getVelocity());
-	    PatchEdit.MidiOut.send(port, msg);
+	    send(msg);
 
 	    Thread.sleep(PatchEdit.appConfig.getDelay());
 
-	    msg.setMessage(ShortMessage.NOTE_ON, channel - 1,
+	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
 			   PatchEdit.appConfig.getNote(),
 			   0);	// expecting running status
-	    PatchEdit.MidiOut.send(port, msg);
+	    send(msg);
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
 	}
+    }
+
+    // MIDI in/out mothods to encapsulate lower MIDI layer
+    /** Send ShortMessage to MIDI outport. */
+    protected final void send(MidiMessage msg) throws Exception {
+	PatchEdit.MidiOut.send(getPort(), msg);
+    }
+
+    /** Send Sysex byte array data to MIDI outport. */
+    protected final void send(byte[] sysex) throws Exception {
+	PatchEdit.MidiOut.writeLongMessage(getPort(), sysex);
+    }
+
+    /** clear MIDI input buffer */
+    protected final void clearMidiInBuffer() throws Exception {
+	PatchEdit.MidiIn.clearMidiInBuffer(getInPort());
     }
 
     // For storable interface
