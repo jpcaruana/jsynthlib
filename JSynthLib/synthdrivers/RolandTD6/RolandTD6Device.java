@@ -36,7 +36,7 @@ import java.awt.event.*;
  */
 public final class RolandTD6Device extends Device {
   /** Array of all pads including inactive ones. */
-   PadInfo[] padinfo = {
+    private PadInfo[] padinfo = {
     //				offset,	DT pad, DT active,active
     new PadInfo("Kick",		0x100,	false,	false,	true),
     new PadInfo("Snare",	0x300,	true,	false,	true),

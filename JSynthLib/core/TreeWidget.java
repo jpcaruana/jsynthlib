@@ -32,6 +32,10 @@ import javax.swing.tree.*;
  *
  * A SysexWidget implementing JTree component.
  *
+ * This widget is still under development. The inferface may be
+ * changed. If you would like to use this in you driver, contact the
+ * author.  It will save your time.
+ *
  * Created: Sun Jun 22 13:53:35 2003
  *
  * @author <a href="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
