@@ -342,8 +342,7 @@ public class RolandJV80PatchEditor extends PatchEditorFrame {
 	    }
 	    scrollPane.add(panel);
 
-		pack();
-		show();
+	    pack();
     }
 
     JPanel buildPortamento(Patch patch) {

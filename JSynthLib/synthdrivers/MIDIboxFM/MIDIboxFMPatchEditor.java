@@ -634,7 +634,6 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 
 
 	pack();
-	show();
     }
 
 

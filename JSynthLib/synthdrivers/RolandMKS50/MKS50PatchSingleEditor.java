@@ -103,7 +103,6 @@ class MKS50PatchSingleEditor extends PatchEditorFrame
     scrollPane.add(leftPane, gbc);
 
     pack();
-    show();
   }
 }
 

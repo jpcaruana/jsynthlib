@@ -299,7 +299,6 @@ public class DX7FamilyPerformanceIIIEditor extends PatchEditorFrame
 		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
 		scrollPane.add(perfPane,gbc);
 		pack();
-		show();
 	}
 
 

@@ -404,6 +404,5 @@ class KawaiK4MultiEditor extends PatchEditorFrame {
 	scrollPane.add(secPane, gbc);
 
 	pack();
-	show();
     }
 }

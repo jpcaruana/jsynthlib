@@ -414,8 +414,6 @@ MtxModel(patch,104),new ModSender(patch,0),source);
       Dimension rv = getSize();
       setSize(rv.width, rv.height + 30);
    }
-   show();
-
 }
 
     class ModTableModel extends AbstractTableModel {

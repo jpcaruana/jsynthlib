@@ -404,7 +404,6 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
         scrollPane.add(partialPane, gbc);
 
         pack();
-        show();
     }
 
     private int getLabelWidth(String s) {

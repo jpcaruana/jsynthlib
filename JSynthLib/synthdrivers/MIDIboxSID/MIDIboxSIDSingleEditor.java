@@ -521,7 +521,6 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 
 
 	pack();
-	show();
     }
 
 

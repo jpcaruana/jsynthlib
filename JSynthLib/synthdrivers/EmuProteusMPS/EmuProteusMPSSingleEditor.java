@@ -469,9 +469,6 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
    gbc.weightx=5;
    scrollPane.add(tabPane,gbc);
    pack();
-   show();
-
-
   }
 }
 

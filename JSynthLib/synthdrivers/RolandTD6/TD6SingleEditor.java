@@ -109,7 +109,6 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	tabbedPane.addTab("Effect", effectPane);
 
 	pack();
-	show();
     }
 
     //   pad pattern off,1-250

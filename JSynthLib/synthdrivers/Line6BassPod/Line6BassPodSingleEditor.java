@@ -191,7 +191,6 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
         addCompressPanel(rightEditPanel, patch);
         
         pack();
-        show();
     }
     
     /** Adds the patch name panel to the left edit panel.

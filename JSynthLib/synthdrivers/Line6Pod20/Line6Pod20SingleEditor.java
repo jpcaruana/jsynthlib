@@ -245,7 +245,6 @@ public class Line6Pod20SingleEditor extends PatchEditorFrame {
         addDelayPanel(rightEditPanel, patch);
         
         pack();
-        show();
     }
     
     /** Adds the patch name panel to the left edit panel.

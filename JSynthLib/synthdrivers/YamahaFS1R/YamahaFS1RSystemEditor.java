@@ -35,7 +35,6 @@ class YamahaFS1RSystemEditor extends PatchEditorFrame
 		scrollPane.add(oMasterPane,gbc);
 	
 		pack();
-		show();	
   }
 
 static class FS1RSender extends SysexSender

@@ -352,7 +352,6 @@ class KorgX3SingleEditor extends PatchEditorFrame
     // show tab
     scrollPane.add(tabPane, gbc);
     pack();
-    show();
   }
 }
 

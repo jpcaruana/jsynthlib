@@ -155,7 +155,6 @@ public class DX7FamilyFractionalScalingEditor extends PatchEditorFrame
 
 		scrollPane.add(microPane,gbc);
 		pack();
-		show();
 
 		PatchEdit.hideWaitDialog();	// Okay, the editor frame is ready
 	}

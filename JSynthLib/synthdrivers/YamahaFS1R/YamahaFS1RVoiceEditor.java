@@ -163,7 +163,6 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 			oTabs.add(buildUnvoicedWindow(op), "U "+op);
 		}
 		pack();
-		show();
 	}
 
 	/**

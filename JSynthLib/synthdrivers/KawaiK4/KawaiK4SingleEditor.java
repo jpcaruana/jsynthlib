@@ -484,7 +484,6 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	gbc.gridx = 10; gbc.gridy = 0; gbc.gridwidth = 5; gbc.gridheight = 9;
 	scrollPane.add(dcfPane, gbc);
 	pack();
-	show();
     }
 
     private int getLabelWidth(String s) {

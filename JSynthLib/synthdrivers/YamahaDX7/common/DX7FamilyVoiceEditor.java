@@ -448,7 +448,6 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		gbc.gridx=0;gbc.gridy=10;gbc.gridwidth=7;gbc.gridheight=18;
 		scrollPane.add(oscPane,gbc);
 		pack();
-		show();
 	}
 
 

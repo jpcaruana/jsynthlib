@@ -69,7 +69,6 @@ public class RolandJV80SystemSetupEditor extends PatchEditorFrame {
 
 		scrollPane.add(systemPane, gbc);
 		pack();
-		show();
     }
     
     JPanel buildReceiveSwitches(Patch patch) {

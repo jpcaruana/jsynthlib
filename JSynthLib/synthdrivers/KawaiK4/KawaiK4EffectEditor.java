@@ -399,6 +399,5 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         scrollPane.add(outputPane8, gbc);
 
         pack();
-        show();
     }
 }

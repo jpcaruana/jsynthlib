@@ -46,7 +46,6 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
         scrollPane.setLayout(new GridLayout(0,1));
         addTrigPane(patch);
         pack();
-        show();
     }
     
     /** Adds the System Info pane.

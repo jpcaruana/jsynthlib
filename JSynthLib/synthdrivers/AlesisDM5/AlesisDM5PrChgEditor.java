@@ -49,7 +49,6 @@ public class AlesisDM5PrChgEditor extends PatchEditorFrame {
             addWidgets(scrollPane, patch, i);
         }
         pack();
-        show();
     }
     
     /** Adds ComboBoxes to the AlesisDM5PrChgEditor for the selected patch.

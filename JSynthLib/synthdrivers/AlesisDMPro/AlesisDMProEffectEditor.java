@@ -238,8 +238,6 @@ class AlesisDMProEffectEditor extends PatchEditorFrame {
                   new AlesisDMProFXSender(4, 3)), 2, 1, 2, 1, 29);
 
         pack();
-        show();
-
     }
 
 

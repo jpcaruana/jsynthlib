@@ -273,7 +273,6 @@ public class DX7FamilyAdditionalVoiceEditor extends PatchEditorFrame
 		voiceTabPane.addTab("Controllers",ctrlPane);
 		scrollPane.add(voiceTabPane);
 		pack();
-		show();
 	}
 
 

@@ -138,6 +138,36 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
             });
     }
 	
+    public void setVisible(boolean b) {
+        if (b) {
+            numFaderBanks = getNumFaderBank();
+            ErrorMsg.reportStatus("PatchEditorFrame.show(): Num Fader Banks = "
+                                  + numFaderBanks);
+            faderHighlight();
+
+            // resize if frame size is bigger than screen size 
+            Dimension screenSize = PatchEdit.getDesktop().getSize();
+            Dimension frameSize = this.getSize();
+            ErrorMsg.reportStatus("PatchEditorFrame.show(): scrollPane size = " + scrollPane.getSize() + ", frame size = " + frameSize);
+            
+            if (frameSize.height > screenSize.height) {
+                // Add necessary place for the vertical Scrollbar
+                frameSize.width += scroller.getVerticalScrollBar().getPreferredSize().width;
+                this.setSize(frameSize.width, screenSize.height);
+            }
+            if (frameSize.width > screenSize.width) {
+                // Add necessary place for the horizontal Scrollbar.
+                frameSize.height += scroller.getHorizontalScrollBar().getPreferredSize().height;
+                // If the entire frame doen't fit in the window, then
+                // rescale it to fit.
+                if (frameSize.height > screenSize.height)
+                    frameSize.height = screenSize.height;
+                this.setSize(screenSize.width, frameSize.height);
+            }
+        }
+        super.setVisible(b);
+    }
+
     /**
      * Called when the frame is closed. Default ask for keep changes. May be
      * redefined in sub-classes.
@@ -544,40 +574,6 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
         return (high / 16) + 1;
     }
 
-    public void show() {        // override a method of JSLFrame
-        numFaderBanks = getNumFaderBank();
-        ErrorMsg.reportStatus("PatchEditorFrame.show(): Num Fader Banks = "
-                              + numFaderBanks);
-        faderHighlight();
-
-        // resize if frame size is bigger than screen size 
-        Dimension screenSize = PatchEdit.getDesktop().getSize();
-        Dimension frameSize = this.getSize();
-        ErrorMsg.reportStatus("PatchEditorFrame.show(): scrollPane size = " + scrollPane.getSize() + ", frame size = " + frameSize);
-        
-        if (frameSize.height > screenSize.height) {
-            // Add necessary place for the vertical Scrollbar
-            frameSize.width += scroller.getVerticalScrollBar().getPreferredSize().width;
-            this.setSize(frameSize.width, screenSize.height);
-        }
-        if (frameSize.width > screenSize.width) {
-            // Add necessary place for the horizontal Scrollbar.
-            frameSize.height += scroller.getHorizontalScrollBar().getPreferredSize().height;
-            // If the entire frame doen't fit in the window, then
-            // rescale it to fit.
-            if (frameSize.height > screenSize.height)
-                frameSize.height = screenSize.height;
-            this.setSize(screenSize.width, frameSize.height);
-        }
-        super.show();
-    }
-
-    public void setVisible(boolean b) {
-        if (b)
-            show();
-        super.setVisible(b);
-    }
-
     /**
      * Let bankeditorframe set information about itself when it
      * creates a patch editor frame.
@@ -623,4 +619,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
         Dimension d = j.getPreferredSize();
         forceLabelWidth=(int)d.getWidth();
     }
+    /** @deprecated use setVisible(). */
+    public void show() {
+        
+   }
 }

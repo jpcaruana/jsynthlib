@@ -34,8 +34,6 @@ public class JSLFrame {
 	    proxy = new JSLIFrame(this);
 	else
 	    proxy = new JSLJFrame(this);
-//	if (JSLDesktop.getInstance() != null)
-//	    JSLDesktop.registerFrame(this);
     }
     /**
      * Creates a JSLFrame with the specified title, resizability, closability,
@@ -48,8 +46,6 @@ public class JSLFrame {
 				  iconifiable);
 	else
 	    proxy = new JSLJFrame(this, s);
-//	if (JSLDesktop.getInstance() != null)
-//	    JSLDesktop.registerFrame(this);
     }
 
     /** set parent JSLDesktop.  Called by JSLDesktop.add method. */
@@ -102,8 +98,9 @@ public class JSLFrame {
     /**
      * If the internal frame is not visible, brings the internal frame to the
      * front, makes it visible, and attempts to select it.
+     * @deprecated use setVisible().
      */
-    public void show() { proxy.show(); }
+    //public void show() { proxy.show(); }
     /** Causes subcomponents of this frame to be laid out at their preferred size. */
     public void pack() { proxy.pack(); }
     /** Makes this frame invisible, unselected, and closed. */
@@ -177,7 +174,7 @@ public class JSLFrame {
 	public Dimension getSize(Dimension rv);
 	public Dimension getMinimumSize();
 	public void pack();
-	public void show();
+	//public void show();
 	public void dispose();
 	public int getX();
 	public int getY();
@@ -192,7 +189,6 @@ public class JSLFrame {
 	public boolean isShowing();
 	public boolean isIcon();
 	public boolean isClosing();
-	//public void moveToDefaultLocation();
     }
 
     /** use JInternalFrame for MDI (Multiple Document Interface) mode. */

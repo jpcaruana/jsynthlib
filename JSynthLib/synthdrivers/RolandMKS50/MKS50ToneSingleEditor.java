@@ -169,7 +169,6 @@ class MKS50ToneSingleEditor extends PatchEditorFrame
     rightPane.add(cmnPane, gbc);
 
     pack();
-    show();
   }
 }
 

@@ -229,7 +229,6 @@ class KawaiK4DrumsetEditor extends PatchEditorFrame {
         scrollPane.add(keyPane, gbc);
 
         pack();
-        show();
     }
 
     class K4DrumWaveModel extends ParamModel {

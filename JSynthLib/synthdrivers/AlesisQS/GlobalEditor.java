@@ -196,6 +196,5 @@ class GlobalEditor extends PatchEditorFrame
 		// Add the panel to the scrollpane
 		scrollPane.add(panel, gbc);
 		pack();
-		show();
 	}
 }

@@ -261,6 +261,5 @@ class MIDIboxFMEnsEditor extends PatchEditorFrame
 	scrollPane.add(IPanel,gbc);
 
 	pack();
-	show();
     }
 }

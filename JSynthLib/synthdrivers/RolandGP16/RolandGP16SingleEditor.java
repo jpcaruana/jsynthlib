@@ -455,7 +455,6 @@ class RolandGP16SingleEditor extends PatchEditorFrame
      
   
   pack();
-  show();
   }
 
 /** Helper function for initialising the expression min/max levels. See ExpLevScrollBar for comments.*/

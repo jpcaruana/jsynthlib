@@ -271,7 +271,6 @@ public class DX7FamilyPerformanceIIEditor extends PatchEditorFrame
 
 		scrollPane.add(cmnPane,gbc);
 		pack();
-		show();
 
 		PatchEdit.hideWaitDialog();	// Okay, the editor frame is ready
 	}

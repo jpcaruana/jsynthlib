@@ -84,7 +84,6 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         addMainPanel(patch);
         this.patch = patch;
         pack();
-        show();
     }
     
     /** Adds the main panel to the editor. The main panel contains all the other

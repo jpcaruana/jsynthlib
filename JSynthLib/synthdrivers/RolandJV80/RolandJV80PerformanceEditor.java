@@ -83,7 +83,7 @@ public class RolandJV80PerformanceEditor extends PatchEditorFrame {
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         scrollPane.add(buildParts(patch), gbc);
         
-	    pack(); show();
+        pack();
     }
     
     JPanel buildChorus(Patch patch) {

@@ -133,9 +133,6 @@ class YamahaTX81zSingleEditor extends PatchEditorFrame
  gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=6;gbc.gridheight=5;
  scrollPane.add(oscPane,gbc);
    pack();
-   show();
-
-
   }
 }
 

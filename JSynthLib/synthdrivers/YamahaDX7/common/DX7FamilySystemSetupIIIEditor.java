@@ -218,7 +218,6 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
 		scrollPane.add(systemPane,gbc);
 		pack();
-		show();
 
 		PatchEdit.hideWaitDialog();	// Okay, the editor frame is ready
 	}

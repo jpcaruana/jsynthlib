@@ -110,9 +110,6 @@ class AlesisQSProgramEditor extends PatchEditorFrame
     gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=6;gbc.gridheight=2;
     scrollPane.add(soundPane,gbc);
     pack();
-    show();
-
-
   }
 
   class controlPanel extends JPanel {

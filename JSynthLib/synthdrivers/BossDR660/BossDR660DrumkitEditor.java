@@ -155,9 +155,6 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
   drumPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Drum Setting",TitledBorder.CENTER,TitledBorder.CENTER));
   scrollPane.add(drumPane,gbc);
    pack();
-   show();
-
-
   }
 
 class BankSender extends SysexSender

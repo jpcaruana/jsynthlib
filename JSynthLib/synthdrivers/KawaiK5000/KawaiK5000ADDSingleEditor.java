@@ -162,7 +162,6 @@ class KawaiK5000ADDSingleEditor extends PatchEditorFrame
      }
 
    pack();
-   show();
  }
 
 public JPanel createSourcePanel(int src)

@@ -50,7 +50,6 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
             addTrigPane(patch, i+6);
         }
         pack();
-        show();
     }
     
     /** Creates a panel in the editor window for a single external trigger.

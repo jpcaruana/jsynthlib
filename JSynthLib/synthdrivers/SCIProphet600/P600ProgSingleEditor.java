@@ -186,7 +186,6 @@ class P600ProgSingleEditor extends PatchEditorFrame {
     rightPane.add(cmnPane, gbc);
 
     pack();
-    show();
   }
 }
 

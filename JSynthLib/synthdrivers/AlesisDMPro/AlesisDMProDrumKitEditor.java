@@ -162,7 +162,6 @@ class AlesisDMProDrumKitEditor extends PatchEditorFrame
    }
 
     pack();
-    show();
   }
 
   //Inner class

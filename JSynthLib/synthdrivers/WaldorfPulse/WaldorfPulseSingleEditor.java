@@ -109,7 +109,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
 
         initTab1(patch);
 
-        show();
+        pack();
     }
 
 

@@ -132,7 +132,6 @@ public class DX7FamilyMicroTuningEditor extends PatchEditorFrame
 
 		scrollPane.add(microPane,gbc);
 		pack();
-		show();
 
 		PatchEdit.hideWaitDialog();	// Okay, the editor frame is ready
 	}
