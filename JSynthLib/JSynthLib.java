@@ -1,5 +1,5 @@
 /* JSynthLib - a Universal Synthesizer / Patch Editor in Java
-   Copyright (C) 2000  Brian Klock
+   Copyright (C) 2000-2002  Brian Klock et al.
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
