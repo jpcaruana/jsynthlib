@@ -90,7 +90,6 @@ public class KawaiK4DrumsetDriver extends Driver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-	clearMidiInBuffer();
         send(SYS_REQ.toSysexMessage(getChannel(),
 				    new NameValue("bankNum", (bankNum << 1) + 1)));
     }

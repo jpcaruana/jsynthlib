@@ -112,7 +112,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
         System.arraycopy(p.sysex, i * 2350, tmp, 0, 2350);
         tmp[6] = (byte)bankNum;
         tmp[7] = (byte)i; // program #
-        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
+        send(tmp);
         Thread.sleep(15);
       }
       PatchEdit.waitDialog.hide();

@@ -80,7 +80,7 @@ public class NLPatchBankDriver extends BankDriver {
         tmp[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
-        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
+        send(tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();

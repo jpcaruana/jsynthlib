@@ -20,22 +20,22 @@ public class BossDR660DrumkitDriver extends Driver
    patchNumbers=new String[] {"0","1","2","3","4","5","6","7",
                               "8","9","10","11","12","13","14","15",
                               "16","17","18","19","20","21","22","23",
-                              "24","25","26","27","28","29","30","31", 
-			      "32","33","34","35","36","37","38"};   
+                              "24","25","26","27","28","29","30","31",
+			      "32","33","34","35","36","37","38"};
    xvrt = new int[] {0,8,16,24,25,32,40,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,
                                85,86,87,88,89,90,91,92,93,94,95};
    }
  public void setPatchNum(int patchNum)
   {
-    try {       
-         
-        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0xC0+(getChannel()-1)),(byte)xvrt[patchNum]);
+    try {
+
+        send(0xC0 + (getChannel()-1), xvrt[patchNum]);
 	Thread.sleep(150);
-    } catch (Exception e) {};    
-  }			      
-   
+    } catch (Exception e) {};
+  }
+
  public void calculateChecksum (Patch p)
-   { for (int i=0;i<55;i++) 
+   { for (int i=0;i<55;i++)
 	   {calculateChecksum(p,23*i+5,23*i+20,23*i+21);
 	    p.sysex[i*23+2]=((byte)(getChannel()-1));
 	   }
@@ -47,8 +47,8 @@ public class BossDR660DrumkitDriver extends Driver
      p.sysex[1355+2]=((byte)(getChannel()-1));
      calculateChecksum(p,1369+5,1369+15,1369+16);
      p.sysex[1369+2]=((byte)(getChannel()-1));
-     
-   }                  
+
+   }
 
   public void calculateChecksum(Patch p,int start,int end,int ofs)
   {
@@ -60,14 +60,14 @@ public class BossDR660DrumkitDriver extends Driver
     p.sysex[ofs]=(byte)(p.sysex[ofs]^127);
     p.sysex[ofs]=(byte)(p.sysex[ofs]+1);
     p.sysex[ofs]=(byte)(p.sysex[ofs]%128);
-   
+
   }
    public void sendPatch (Patch p)
    { setPatchNum(0);
      sendPatchWorker (p);
      try {Thread.sleep(25);}catch (Exception e){};
  //    setPatchNum(0);
-   } 
+   }
 
  public void storePatch (Patch p, int bankNum,int patchNum)
   {
@@ -76,7 +76,7 @@ public class BossDR660DrumkitDriver extends Driver
    sendPatchWorker(p);
    try {Thread.sleep(25);} catch(Exception e) {};
    setPatchNum(patchNum);
- 
+
   }
  public void setBankNum(int bankNum)
   {
@@ -86,23 +86,23 @@ public class BossDR660DrumkitDriver extends Driver
      try {
 
         sendPatch(p);
-        Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x90+(getChannel()-1)),(byte)36,(byte)127);
-        Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x80+(getChannel()-1)),(byte)36,(byte)0);
-        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x90+(getChannel()-1)),(byte)42,(byte)127);
-        Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x80+(getChannel()-1)),(byte)42,(byte)0);
-       PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x90+(getChannel()-1)),(byte)38,(byte)127);
-        Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x80+(getChannel()-1)),(byte)38,(byte)0);
-       PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x90+(getChannel()-1)),(byte)46,(byte)127);
-        Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x80+(getChannel()-1)),(byte)46,(byte)0); 
-     } catch (Exception e){ErrorMsg.reportError("Error","Unable to Play Drums",e);}       
+        Thread.sleep(100);
+        send((0x90+(getChannel()-1)),36,127);
+        Thread.sleep(100);
+        send((0x80+(getChannel()-1)),36,0);
+        send((0x90+(getChannel()-1)),42,127);
+        Thread.sleep(100);
+        send((0x80+(getChannel()-1)),42,0);
+	send((0x90+(getChannel()-1)),38,127);
+        Thread.sleep(100);
+        send((0x80+(getChannel()-1)),38,0);
+	send((0x90+(getChannel()-1)),46,127);
+        Thread.sleep(100);
+        send((0x80+(getChannel()-1)),46,0);
+     } catch (Exception e){ErrorMsg.reportError("Error","Unable to Play Drums",e);}
   }
 public Patch createNewPatch()
-  { 
+  {
   try {
     InputStream fileIn= getClass().getResourceAsStream("BossDR660Drumkit.new");
     byte [] buffer =new byte [1387];

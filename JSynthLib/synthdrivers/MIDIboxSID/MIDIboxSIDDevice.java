@@ -6,7 +6,7 @@
  * date:    2002-11-30
  * @version $Id$
  *
- * Copyright (C) 2002  Thorsten.Klose@gmx.de   
+ * Copyright (C) 2002  Thorsten.Klose@gmx.de
  *                     http://www.uCApps.de
  *
  * This program is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@ import java.util.*;
 import java.awt.*;
 import java.lang.Integer.*;
 import java.awt.event.*;
+import javax.sound.midi.*;
 
 import synthdrivers.MIDIboxSID.MIDIboxSIDSlowSender;
 
@@ -57,13 +58,13 @@ public class MIDIboxSIDDevice extends Device
         "   o note that the channel and device number will be saved in a non-volatile memory and don't\n"+
 	"     have to be set again after the next power-on";
 
-	
+
     /** Creates new MIDIboxSIDDevice */
     public MIDIboxSIDDevice ()
     {
 	super ("MIDIbox","SID","F000007E46000FF7",infoText,"Thorsten Klose");
         setSynthName("MIDIbox SID");
-	
+
         addDriver(new MIDIboxSIDSingleDriver());
         addDriver(new MIDIboxSIDBankDriver());
     }
@@ -75,7 +76,7 @@ public class MIDIboxSIDDevice extends Device
 	GridBagConstraints c = new GridBagConstraints();
 
 	panel.setLayout(gridbag);
-	c.anchor = GridBagConstraints.WEST; 
+	c.anchor = GridBagConstraints.WEST;
 
 	c.gridx=0;c.gridy=0;c.gridwidth=9;c.gridheight=1;c.weightx=1;c.anchor=c.WEST;c.fill=c.HORIZONTAL;
 	panel.add(new JLabel("                                                  "),c);
@@ -86,7 +87,7 @@ public class MIDIboxSIDDevice extends Device
 	String[] deviceNumbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" };
 	JComboBox synthList = new JComboBox(deviceNumbers);
 	synthList.setSelectedItem(java.lang.Integer.toString(getChannel()));
-	synthList.addActionListener(new ActionListener() 
+	synthList.addActionListener(new ActionListener()
 	    {
 		public void actionPerformed(ActionEvent e) {
 		    JComboBox cb = (JComboBox)e.getSource();
@@ -99,7 +100,7 @@ public class MIDIboxSIDDevice extends Device
 
 	JButton send_button = new JButton("<< SEND >>");
 
-	send_button.addActionListener(new ActionListener() 
+	send_button.addActionListener(new ActionListener()
 	    {
 		public void actionPerformed(ActionEvent e) {
 		    reconfigureDeviceID();
@@ -116,20 +117,33 @@ public class MIDIboxSIDDevice extends Device
 	MIDIboxSIDSlowSender SlowSender = new MIDIboxSIDSlowSender();
 
 	for(int i=0; i<16; ++i) {
-	    byte change_id_buffer[]= { 
+	    byte change_id_buffer[]= {
 		(byte)0xf0, (byte)0x00, (byte)0x00, (byte)0x7e, (byte)0x46,
 		(byte)i, (byte)0x0d,
 		(byte)0x03, (byte)0x00, (byte)(getChannel()-1), (byte)0xf7
 	    };
-	    SlowSender.sendSysEx(getPort(), change_id_buffer, 10);
+	    //SlowSender.sendSysEx(getPort(), change_id_buffer, 10);
+	    sendSysEx(change_id_buffer, 10);
 	}
 
-	byte change_channel_buffer[]= { 
+	byte change_channel_buffer[]= {
 	    (byte)0xf0, (byte)0x00, (byte)0x00, (byte)0x7e, (byte)0x46,
 	    (byte)(getChannel()-1), (byte)0x0d,
 	    (byte)0x02, (byte)0x00, (byte)(getChannel()-1), (byte)0xf7
 	};
-	SlowSender.sendSysEx(getPort(), change_channel_buffer, 10);
+	//SlowSender.sendSysEx(getPort(), change_channel_buffer, 10);
+	sendSysEx(change_channel_buffer, 10);
+    }
+
+    private void sendSysEx(byte[] buf, int delay) {
+	SysexMessage m = new SysexMessage();
+	try {
+	    m.setMessage(buf, buf.length);
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+	send(m);
+	try { Thread.sleep(delay); } catch (Exception e) {};
     }
 }
 

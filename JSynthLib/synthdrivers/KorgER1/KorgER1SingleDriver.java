@@ -64,7 +64,7 @@ public class KorgER1SingleDriver extends Driver
         p.sysex[2]=(byte)(0x30 + getChannel() - 1);
         try
         {
-            PatchEdit.MidiOut.writeLongMessage (getPort(),p.sysex);
+            send(p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
         
@@ -84,7 +84,7 @@ public class KorgER1SingleDriver extends Driver
         sysex[7] = (byte)0xF7;
         try
         {
-            PatchEdit.MidiOut.writeLongMessage (getPort(),sysex);
+            send(sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
         
@@ -96,7 +96,7 @@ public class KorgER1SingleDriver extends Driver
         
         try
         {
-            PatchEdit.MidiOut.writeLongMessage (getPort(),p.sysex);
+            send(p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
     }
@@ -127,7 +127,7 @@ public class KorgER1SingleDriver extends Driver
         
         try
         {
-            PatchEdit.MidiOut.writeShortMessage (getPort(),(byte)(0xC0+(getChannel()-1)),(byte)patchNum);
+            send(0xC0+(getChannel()-1), patchNum);
         } catch (Exception e)
         {};
     }

@@ -112,7 +112,7 @@ public class AlesisA6MixBankDriver extends BankDriver
         System.arraycopy(p.sysex, i * 1180, tmp, 0, 1180);
         tmp[6] = (byte)bankNum;
         tmp[7] = (byte)i; // mix #
-        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
+        send(tmp);
         Thread.sleep(15);
       }
       PatchEdit.waitDialog.hide();

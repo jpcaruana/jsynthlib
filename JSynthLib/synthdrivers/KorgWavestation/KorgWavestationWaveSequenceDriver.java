@@ -40,7 +40,7 @@ public class KorgWavestationWaveSequenceDriver extends Driver {
         p.sysex[05]=(byte)bankNum;
         
         try {
-            PatchEdit.MidiOut.writeLongMessage(getPort(),p.sysex);
+            send(p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
         
@@ -50,7 +50,7 @@ public class KorgWavestationWaveSequenceDriver extends Driver {
         p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
         
         try {
-            PatchEdit.MidiOut.writeLongMessage(getPort(),p.sysex);
+            send(p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
     }

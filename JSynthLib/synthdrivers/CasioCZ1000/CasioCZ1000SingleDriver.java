@@ -60,7 +60,7 @@ public class CasioCZ1000SingleDriver extends Driver
         // need to convert to a "patch dump and write" format
         try {Thread.sleep(100); } catch (Exception e){}
         try {       
-            PatchEdit.MidiOut.writeLongMessage(getPort(),patchtowrite.sysex);
+            send(patchtowrite.sysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
         try {Thread.sleep(100); } catch (Exception e){}
         setBankNum(bankNum);
@@ -77,7 +77,7 @@ public class CasioCZ1000SingleDriver extends Driver
         newsysex[6] = (byte)(0x60); // 0x60 is edit buffer location
         Patch patchtowrite = new Patch(newsysex, this);
         try {       
-            PatchEdit.MidiOut.writeLongMessage(getPort(),newsysex);
+            send(newsysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
     }
 
@@ -116,7 +116,7 @@ public class CasioCZ1000SingleDriver extends Driver
     {
         // we only support internal memory now (add 0x20 to patchnum) since we can't write on preset or cartridge
         try {       
-            PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0xC0+(getChannel()-1)),(byte)(0x20+patchNum));
+            send(0xC0 + (getChannel()-1), 0x20 + patchNum);
         } catch (Exception e) {};    
     }
 }

@@ -128,7 +128,6 @@ public class TD6BankDriver extends BankDriver {
 
     // bankNum nor patchNum are not used.
     public void requestPatchDump(int bankNum, int patchNum) {
-	clearMidiInBuffer();
 	send(SYS_REQ.toSysexMessage(getDeviceID()));
     }
 

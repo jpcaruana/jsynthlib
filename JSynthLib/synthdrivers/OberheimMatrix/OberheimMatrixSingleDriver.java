@@ -52,8 +52,12 @@ public void calculateChecksum(Patch p,int start,int end,int ofs)
  
   public void setBankNum(int bankNum)
   {
-        try{  PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x10,(byte)0x06,(byte)0x0A,
-	  (byte)bankNum,(byte)0xF7});} catch (Exception e) {}
+        try {
+	    send(new byte[] {
+		(byte)0xF0,(byte)0x10,(byte)0x06,(byte)0x0A,
+		(byte)bankNum,(byte)0xF7
+	    });
+	} catch (Exception e) {}
   }
   public void storePatch (Patch p, int bankNum,int patchNum)
   {   

@@ -47,9 +47,12 @@ public void calculateChecksum(Patch p,int start,int end,int ofs)
  
   public void setBankNum(int bankNum)
   {
-       
-	  try{  PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x10,(byte)0x06,(byte)0x0A,
-	  (byte)bankNum,(byte)0xF7});} catch (Exception e) {}
+      try{
+	  send(new byte[] {
+	      (byte)0xF0,(byte)0x10,(byte)0x06,(byte)0x0A,
+	      (byte)bankNum,(byte)0xF7
+	  });
+      } catch (Exception e) {}
   }
   public void storePatch (Patch p, int bankNum,int patchNum)
   {   
@@ -130,7 +133,7 @@ public void putPatch(Patch bank,Patch p,int patchNum)
        for (int i=0;i<100;i++) 
        {
        System.arraycopy(p.sysex,275*i,tmp,0,275);
-       PatchEdit.MidiOut.writeLongMessage(getPort(),tmp);
+       send(tmp);
        Thread.sleep(15);
        }
     }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}

@@ -113,12 +113,6 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
 				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.REQUEST_VOICE_STRING);
-
-			try {
-				PatchEdit.MidiIn.clearMidiInBuffer(getInPort());
-			} catch (Exception ex) {
-				ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
-			}
 		}
 	}
 

@@ -88,7 +88,7 @@ public abstract class YamahaMotifSingleDriver extends Driver
     }
     // Send each message separately so it doesn't get screwed up by the 
     // midi wrapper.
-    YamahaMotifSysexUtility.splitAndSendBulk( p.sysex, getPort(),
+    YamahaMotifSysexUtility.splitAndSendBulk( p.sysex, this,
 					      getChannel() - 1 );
     // Put header back so that it will be recognized.
     p.sysex[YamahaMotifSysexUtility.ADDRESS_OFFSET + 1] = 

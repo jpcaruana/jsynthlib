@@ -75,7 +75,9 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	for(int i=0; i<128; ++i) {
 	    Patch ps = getPatch(p, i);
 	    System.out.println("Sending Patch #" + i);
-	    SlowSender.sendSysEx(p.getDriver().getPort(), ps.sysex, 500);
+	    //SlowSender.sendSysEx(p.getDriver().getPort(), ps.sysex, 500);
+	    send(ps.sysex);
+	    try { Thread.sleep(500); } catch (Exception e) {};
 	}
     }
 

@@ -82,7 +82,7 @@ public class P600ProgSingleDriver extends Driver {
                           //  delay between them (otherwise P600 may not process properly)
       sendPatch(p2);  // kludge to send midi pgm change without modifying super.playPatch
       Thread.sleep (50);
-      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xC0 + getChannel() - 1), (byte)99);
+      send(0xC0 + getChannel() - 1, 99);
       Thread.sleep (50);
       super.playPatch(p2);
     } catch (Exception e) {

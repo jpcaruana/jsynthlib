@@ -103,7 +103,7 @@ public class VirusMultiBankDriver extends BankDriver {
         tmp[BANK_NUM_OFFSET] = (byte)1;
         tmp[PATCH_NUM_OFFSET] = (byte)i; // multi #
         calculateChecksum(tmp, checksumStart, checksumEnd,checksumOffset);
-        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
+        send(tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();

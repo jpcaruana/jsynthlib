@@ -99,7 +99,6 @@ public class KawaiK4EffectDriver extends Driver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-	clearMidiInBuffer();
         send(SYS_REQ.toSysexMessage(getChannel(),
 				    new NameValue("bankNum", (bankNum << 1) + 1),
 				    new NameValue("patchNum", patchNum)));

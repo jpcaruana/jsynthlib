@@ -112,7 +112,7 @@ public class VirusProgBankDriver extends BankDriver {
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
         calculateChecksum(tmp, checksumStart, checksumEnd,checksumOffset);
-        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
+        send(tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();

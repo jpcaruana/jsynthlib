@@ -201,7 +201,7 @@ public class MKS50PatchBankDriver extends BankDriver
         System.arraycopy(p.sysex, 266*i, tmp, 0, 266);
         if (deviceIDoffset > 0)
           tmp[deviceIDoffset] = (byte)(getChannel()-1);
-        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
+        send(tmp);
         Thread.sleep(15);
       }
     }

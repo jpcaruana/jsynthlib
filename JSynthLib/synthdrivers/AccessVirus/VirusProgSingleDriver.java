@@ -133,7 +133,7 @@ public class VirusProgSingleDriver extends Driver {
   protected void sendPatchWorker(Patch p) {
     p.sysex[deviceIDoffset] = (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId() - 1);
     try {
-      PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
+      send(p.sysex);
     } catch (Exception e) {
       ErrorMsg.reportStatus (e);
     }

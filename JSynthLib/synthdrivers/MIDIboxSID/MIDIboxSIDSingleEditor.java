@@ -475,7 +475,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	    {
 		System.out.println("Wavetable Field changed: " + i);
 	        p.sysex[8+0x80+i] = cooked_dump[i];
-		SlowSender.sendParameter(p.getDriver().getPort(), p.getDriver().getChannel(), 0x80+i, cooked_dump[i], 10);
+		SlowSender.sendParameter(p.getDriver(), 0x80+i, cooked_dump[i], 10);
 	    }
 	}
     }

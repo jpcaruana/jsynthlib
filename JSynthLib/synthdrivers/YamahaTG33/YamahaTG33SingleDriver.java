@@ -40,11 +40,11 @@ public void storePatch (Patch p, int bankNum,int patchNum)
    try{
 
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x09,(byte)0xF7});
+   send(new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x09,(byte)0xF7});
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x03,(byte)0xF7});
+   send(new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x03,(byte)0xF7});
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x04,(byte)0xF7});
+   send(new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x04,(byte)0xF7});
    }catch (Exception e){ErrorMsg.reportError("Error","Unable to Store Patch",e);}
   }
 public Patch createNewPatch()

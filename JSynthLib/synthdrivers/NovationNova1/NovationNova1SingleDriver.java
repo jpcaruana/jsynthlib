@@ -28,7 +28,7 @@ public class NovationNova1SingleDriver extends Driver
     {
 	super ("Single","Yves Lefebvre");
         sysexID="F000202901210*0009";
-        sysexRequestDump=new SysexHandler("F0 00 20 29 01 21 @@ 03 F7"); 
+        sysexRequestDump=new SysexHandler("F0 00 20 29 01 21 @@ 03 F7");
 	patchSize=296;
         patchNameStart=9;
         patchNameSize=16;
@@ -74,17 +74,17 @@ public class NovationNova1SingleDriver extends Driver
     }
 
     public void sendPatch (Patch p)
-    { 
+    {
         if( NovationNova1PatchSender.bShowMenu == true )
         {
             NovationNova1PatchSender.deviceIDoffset = deviceIDoffset;
             NovationNova1PatchSender.channel = getChannel();
-            NovationNova1PatchSender nps= new NovationNova1PatchSender(null,p,getPort());
+            NovationNova1PatchSender nps= new NovationNova1PatchSender(null,p,this);
             nps.show();
         }
         else
         {
-            sendPatchWorker(p); 
+            sendPatchWorker(p);
         }
     }
 
@@ -99,25 +99,25 @@ public class NovationNova1SingleDriver extends Driver
         System.arraycopy(NovationNova1InitPatch.initpatch,0,sysex,0,296);
         sysex[6]=(byte)(getChannel()-1);
         Patch p = new Patch(sysex, this);
-        calculateChecksum(p);	 
+        calculateChecksum(p);
         return p;
     }
 
     //public JSLFrame editPatch(Patch p)
     // {
-    //     
+    //
     // }
 
     public void setBankNum(int bankNum)
     {
-        try 
-        {               
-            PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0xB0+(getChannel()-1)),(byte)0x20,(byte)(bankNum+5));
-        }catch (Exception e) {};    
+        try
+        {
+            send(0xB0+(getChannel()-1), 0x20, bankNum+5);
+        }catch (Exception e) {};
     }
 }
 
-class NovationNova1PatchSender extends JDialog 
+class NovationNova1PatchSender extends JDialog
 {
     public static boolean bShowMenu = true;
     public Patch localPatch;
@@ -125,17 +125,17 @@ class NovationNova1PatchSender extends JDialog
     public static int channel = 0;
 
     // The Midi Out Port the user assigns
-    public int localPort;
+    public Driver localDriver;
 
 
-    public NovationNova1PatchSender(JFrame Parent,Patch p, int port) 
+    public NovationNova1PatchSender(JFrame Parent,Patch p, Driver driver)
     {
         super(Parent,"Nova1 Patch Sender",true);
 
         byte [] newsysex = new byte[296];
         localPatch = new Patch(newsysex);
         System.arraycopy(p.sysex,0,localPatch.sysex,0,296);
-        localPort = port;
+        localDriver = driver;
 
         JPanel container= new JPanel();
         container.setLayout (new BorderLayout());
@@ -217,7 +217,7 @@ class NovationNova1PatchSender extends JDialog
         centerDialog();
     }
 
-    protected void centerDialog() 
+    protected void centerDialog()
     {
         Dimension screenSize = this.getToolkit().getScreenSize();
         Dimension size = this.getSize();
@@ -231,31 +231,31 @@ class NovationNova1PatchSender extends JDialog
     }
 
 
-    void ProgPressed() 
+    void ProgPressed()
     {
         this.setVisible(false);
         if (deviceIDoffset>0) localPatch.sysex[deviceIDoffset]=(byte)(channel-1);
-        try 
-        {       
-            PatchEdit.MidiOut.writeLongMessage(localPort,localPatch.sysex);
+        try
+        {
+            localDriver.send(localPatch.sysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
         return;
     }
 
     void SendPatchToPerfBufferPart(int partnumber)
     {
-    
+
         localPatch.sysex[8] = (byte)(partnumber-1);
         if (deviceIDoffset>0) localPatch.sysex[deviceIDoffset]=(byte)(channel-1);
-        try 
-        {       
-            PatchEdit.MidiOut.writeLongMessage(localPort,localPatch.sysex);
+        try
+        {
+            localDriver.send(localPatch.sysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
         return;
     }
 }
 
-class infoPannel extends JDialog 
+class infoPannel extends JDialog
 {
     public infoPannel(JFrame Parent)
     {
@@ -299,10 +299,10 @@ class infoPannel extends JDialog
         setSize(400,180);
 
         centerDialog();
-          
+
     }
 
-    protected void centerDialog() 
+    protected void centerDialog()
     {
         Dimension screenSize = this.getToolkit().getScreenSize();
         Dimension size = this.getSize();

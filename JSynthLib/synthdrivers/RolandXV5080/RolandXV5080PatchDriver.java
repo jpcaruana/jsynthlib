@@ -101,9 +101,9 @@ public class RolandXV5080PatchDriver extends Driver {
   public void setBankNum(int bankNum) {
     try {
       // BnH 00H mmH  n=MIDI channel number, mm=85
-      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x00, (byte)87);
+      send(0xB0+(getChannel()-1), 0x00, 87);
       // BnH 00H llH  n=MIDI channel number, ll=00H
-      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x20, (byte)0);
+      send(0xB0+(getChannel()-1), 0x20, 0);
     } catch (Exception e) {};
   }
 

@@ -132,7 +132,6 @@ public class KawaiK4BankDriver extends BankDriver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-	clearMidiInBuffer();
         send(SYS_REQ.toSysexMessage(getChannel(),
 				    new NameValue("bankNum", bankNum << 1)));
     }

@@ -109,7 +109,7 @@ public class NLPatchSingleDriver extends Driver {
   protected void mySendPatch(Patch p) {
     p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
     try {
-      PatchEdit.MidiOut.writeLongMessage(getPort(), p.sysex);
+      send(p.sysex);
     } catch (Exception e) {
       ErrorMsg.reportStatus (e);
     }

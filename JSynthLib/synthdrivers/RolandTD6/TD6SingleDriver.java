@@ -128,7 +128,6 @@ public final class TD6SingleDriver extends Driver {
 	    calculateChecksum(p, 6, size - 3, size - 2);
 // 	    p.sysex[size - 2] = calcChkSum(tmpSysex, 6, size - 3);
 	    try {
-		//PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
 		send(p.sysex);
 	    } catch (Exception e) {
 		ErrorMsg.reportStatus(e);
@@ -223,7 +222,6 @@ public final class TD6SingleDriver extends Driver {
      * @param patchNum drum kit number (0: drum kit 1, ..., 98: drum kit 99)
      */
     public void requestPatchDump(int bankNum, int patchNum) {
-	clearMidiInBuffer();
 	// checksum depends on drum kit number (patchNum).
 	int checkSum = -(0x41 + patchNum) & 0x7f;
 	send(SYS_REQ.toSysexMessage(getDeviceID(),

@@ -34,16 +34,17 @@ import java.awt.event.*;
 
 public class MIDIboxSIDSlowSender
 {
-    public void sendSysEx(int port, byte[] buffer, int delay)
+    public void sendSysEx(Driver driver, byte[] buffer, int delay)
     {
 	try {
-	    PatchEdit.MidiOut.writeLongMessage(port, buffer);
+	    //PatchEdit.MidiOut.writeLongMessage(port, buffer);
+	    driver.send(buffer);
 	} catch(Exception ex) { ex.printStackTrace(); ErrorMsg.reportStatus(ex); }
 
 	try { Thread.sleep(delay); } catch (Exception e) {};
     }
 
-    public void sendParameter(int port, int channel, int parameter, byte value, int delay)
+    public void sendParameter(Driver driver, int parameter, byte value, int delay)
     {
 	byte[]b = new byte[11];
 
@@ -52,13 +53,13 @@ public class MIDIboxSIDSlowSender
 	b[2] = (byte)0x00;
 	b[3] = (byte)0x7e;
 	b[4] = (byte)0x46;
-	b[5] = (byte)(channel-1);
+	b[5] = (byte)(driver.getChannel()-1);
 	b[6] = (byte)0x06;
 	b[7] = (byte)(parameter >= 0x80 ? 0x01 : 0x00);
 	b[8] = (byte)(parameter & 0x7f);
 	b[9] = value;
 	b[10] = (byte)0xF7;
 
-	sendSysEx(port, b, delay);
+	sendSysEx(driver, b, delay);
     }
 }

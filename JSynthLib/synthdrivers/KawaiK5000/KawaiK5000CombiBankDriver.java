@@ -48,9 +48,9 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
   public void setBankNum(int bankNum) {
     try {
       // BnH 00H mmH  n=MIDI channel number, mm=65H
-      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x00, (byte)0x65);
+      send(0xB0+(getChannel()-1), 0x00, 0x65);
       // BnH 00H llH  n=MIDI channel number, ll=00H
-      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x20, (byte)0);
+      send(0xB0+(getChannel()-1), 0x20, 0);
     } catch (Exception e) {};
   }
 

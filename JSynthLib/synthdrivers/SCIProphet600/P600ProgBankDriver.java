@@ -70,7 +70,7 @@ public class P600ProgBankDriver extends BankDriver {
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
         tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
-        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
+        send(tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();
