@@ -95,10 +95,10 @@ public class JSLFrame {
      * visible.
      */
     public boolean isVisible() { return proxy.isVisible(); }
-    /**
+    /*
      * If the internal frame is not visible, brings the internal frame to the
      * front, makes it visible, and attempts to select it.
-     * @deprecated use setVisible().
+     * !!!This is deprecated. Use setVisible().!!!
      */
     //public void show() { proxy.show(); }
     /** Causes subcomponents of this frame to be laid out at their preferred size. */
