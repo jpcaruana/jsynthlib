@@ -11,16 +11,22 @@ package core; //TODO org.jsynthlib.midi;
 import javax.sound.midi.*;
 import java.util.*;
 
-public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
+public class JavasoundMidiWrapper extends MidiWrapper/* implements Receiver*/ {
     private int currentOutport = -1;
     private int currentInport = -1;
     private int faderPort;
     private Vector sourceInfoVector;
     private Vector destinationInfoVector;
+    /**
+     * This Vector contains a list of devices, which can receive messages from
+     * the outside. It is needed to manage multiple input queues, esp. for the
+     * MidiScanner
+     */
+    private Vector sourceDeviceVector;
     private Transmitter input=null;
     private Transmitter fader=null;
-    private Receiver output=null;
-    private List list = Collections.synchronizedList(new LinkedList());
+    private Receiver output=null;    
+//    private List list = Collections.synchronizedList(new LinkedList());
     private boolean initialized;
     /**
      * MIDI Output buffer size.  If set to '0', Whole Sysex data is
@@ -44,6 +50,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	*/
         sourceInfoVector=new Vector();
         destinationInfoVector=new Vector();
+        sourceDeviceVector=new Vector();
 // 	ErrorMsg.reportStatus("WireMidiWrapper.init" + sourceInfoVector + ", " + inport + ", " + outport);
 
 	MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
@@ -60,6 +67,8 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
                 if (md.getMaxTransmitters()!=0) {
 // 		    ErrorMsg.reportStatus("is possible Source");
                     sourceInfoVector.add(mdi[i]);
+                    sourceDeviceVector.add(new JSLMidiDevice(md));
+                    
                 }
 // 	    } catch (MidiUnavailableException e) { // Ignore, can happen.....
 // 	    } catch (Exception e) {
@@ -88,15 +97,21 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
         initialized = true;
     }
 
-    //this gets called whenever a midimessage arrives at input
-    public void send(MidiMessage msg,long l) {
+/*  No more needed, because the devices in the sourceDeviceVector are the
+ *  receivers
+ 
+ //this gets called whenever a midimessage arrives at input
+
+      public void send(MidiMessage msg,long l) {
+     }
 	// ignore System Real Time Message
 	if ((msg.getStatus() & 0xf8) == 0xf8)
 	    return;
 	//ErrorMsg.reportStatus("MidiWrapper:Got Message length "+msg.getLength());
         list.add(msg);
     }
-
+*/
+ 
     public void close() {
         if (input!=null) {/*input.setReceiver(null);*/ input.close();} //???
         if (fader!=null) {/*fader.setReceiver(null);*/ fader.close();} //???
@@ -138,11 +153,12 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 		    input.close();
                 // input.close();
 // 		ErrorMsg.reportStatus(sourceInfoVector + ", " + port);
-                MidiDevice srcDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(port));
-		if (!srcDevice.isOpen())
+//                MidiDevice srcDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(port));
+		 MidiDevice srcDevice=(JSLMidiDevice)sourceDeviceVector.get(port);
+        if (!srcDevice.isOpen())
 		    srcDevice.open();
                 input=srcDevice.getTransmitter();
-                input.setReceiver(this);
+//                input.setReceiver(this);
 		currentInport=port;
 		ErrorMsg.reportStatus("Inport: " + srcDevice.getDeviceInfo().getName()
 				      + " is Open: " + srcDevice.isOpen());
@@ -217,12 +233,14 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     }
 
     public  int messagesWaiting(int port) {
-        setInputDeviceNum(port);
-        return list.size();
+        //setInputDeviceNum(port);
+        return ((JSLMidiDevice)sourceDeviceVector.get(port)).messagesWaiting();
+        //return list.size();
     }
 
     public void clearMidiInBuffer(int port) {
-	list.clear();
+        ((JSLMidiDevice)sourceDeviceVector.get(port)).clearMidiInBuffer();
+	//list.clear();
     }
 
     MidiMessage getMessage(int port)
@@ -230,7 +248,9 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	setInputDeviceNum(port);
 
 	// pop the oldest message
-	MidiMessage msg = (MidiMessage) list.remove(0);
+    
+	//MidiMessage msg = (MidiMessage) list.remove(0);
+	MidiMessage msg = (MidiMessage) ((JSLMidiDevice)sourceDeviceVector.get(port)).getMessage();
 	MidiUtil.logIn(port, msg);
 	// for java 1.4.2 bug
 	msg = (MidiMessage) MidiUtil.fixShortMessage(msg);

@@ -27,6 +27,8 @@ import javax.sound.midi.*;
 import java.util.*;
 //import core.Storable;
 
+// $Id$
+
 /**
  * JSLMidiDevice.java
  *
@@ -241,7 +243,7 @@ public class JSLMidiDevice implements MidiDevice, Storable {
 	return sysexmsg;
     }
 
-    private int messagesWaiting() {
+    int messagesWaiting() {
         return list.size();
     }
 
@@ -249,8 +251,7 @@ public class JSLMidiDevice implements MidiDevice, Storable {
 	list.clear();
     }
 
-    private MidiMessage getMessage()
-	throws InvalidMidiDataException {
+    MidiMessage getMessage() throws InvalidMidiDataException {
 	// pop the oldest message
 	MidiMessage msg = (MidiMessage) list.remove(0);
 
