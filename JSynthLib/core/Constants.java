@@ -7,7 +7,7 @@ package core;
  */
 public class Constants {
     /** JSynthLib version number */
-    static final String VERSION = "0.20.0";
+    static final String VERSION = "0.21-alpha";
 
     /** Devices Config properties file name */
     public static final String RESOURCE_NAME_DEVICES_CONFIG =
