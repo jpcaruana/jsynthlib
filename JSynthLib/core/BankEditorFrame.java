@@ -324,7 +324,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	PatchEdit.reassignAction.setEnabled(false); // not available yet!
 	PatchEdit.playAction.setEnabled(b);
 	PatchEdit.storeAction.setEnabled(b);
-	
+
 	// All entries are of the same type, so we can check the first one....
 	if (b) {
 	    Patch myPatch = ((Patch) myModel.getPatchAt(0, 0));
@@ -345,6 +345,10 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
     // Enable pasting
     public boolean canImport(java.awt.datatransfer.DataFlavor[] flavors) {
-	return checkSelected() && pth.canImport(table, flavors);
+	// changed by Hiroo July 5th, 2004
+// 	return checkSelected() && pth.canImport(table, flavors);
+	return (table.getSelectedRowCount() != 0
+		&& table.getSelectedColumnCount() != 0
+		&& pth.canImport(table, flavors));
     }
 }
