@@ -365,7 +365,7 @@ public class YamahaTX802PerformanceBankDriver extends BankDriver
       }
 
 
-      Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+      Patch p = new Patch(getDeviceNum(),sysex);        // single sysex
       PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
 
       return p;
@@ -382,8 +382,8 @@ public class YamahaTX802PerformanceBankDriver extends BankDriver
     sysex[ 3]=(byte)0x7E;
     sysex[trimSize-1]=(byte)0xF7;
 
-    Patch v = new Patch(TX802Constants.INIT_PERFORMANCE);
-    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+    Patch v = new Patch(getDeviceNum(),TX802Constants.INIT_PERFORMANCE);       // single sysex
+    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());   // bank sysex
 
     for (int i=0;i<numPatches;i++)
        putPatch(p,v,i);
