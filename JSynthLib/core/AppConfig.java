@@ -227,7 +227,7 @@ public class AppConfig implements Storable {
 	// initialize selected MIDI wrapper
 	ErrorMsg.reportStatus("Initializing driver:" + mw.toString());
 	try {
-	    if (!PatchEdit.newMidiAPI())
+	    if (!PatchEdit.newMidiAPI)
 		mw.init(getInitPortIn(), getInitPortOut());
 
 	    this.midiPlatform = midiPlatform;
