@@ -93,7 +93,7 @@ ErrorMsg.reportStatus("PatchGridModel");
      * @param col  */
     public void setPatchAt(Patch p,int row,int col)
     {
-        bankDriver.putPatch(bankData,p,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
+        bankDriver.checkAndPutPatch(bankData,p,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
         fireTableCellUpdated (row, col);
     }
     /**
