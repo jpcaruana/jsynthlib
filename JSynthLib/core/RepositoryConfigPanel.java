@@ -15,8 +15,7 @@ import javax.swing.JTextField;
 public class RepositoryConfigPanel extends ConfigPanel {
 	private final JTextField t1=new JTextField (null,20);
 	private final JTextField t2=new JTextField (null,20);
-    //private final JPasswordField t3=new JPasswordField (null,20);
-	private final JTextField t3=new JTextField (null,20);
+	private final JPasswordField t3=new JPasswordField (null,20);
 
 	public RepositoryConfigPanel(core.AppConfig appConfig) {
 		super(appConfig);
@@ -35,7 +34,7 @@ public class RepositoryConfigPanel extends ConfigPanel {
 		p2.add (t2);
 		p3.add(l3);
 		p3.add(t3);
-       
+
 		add (l0);
 		add (l00);
 		add (p1);
@@ -57,7 +56,7 @@ public class RepositoryConfigPanel extends ConfigPanel {
 		t2.setText (appConfig.getRepositoryUser());
 		t3.setText (appConfig.getRepositoryPass());
 	}
-	
+
 	/**
 	* This is the opposite of init(). The implementing class should
 	* copy all GUI settings to internal data elements (and also
@@ -66,10 +65,9 @@ public class RepositoryConfigPanel extends ConfigPanel {
 	public void commitSettings() {
 		appConfig.setRepositoryURL(t1.getText());
 		appConfig.setRepositoryUser(t2.getText());
-		//appConfig.setRepositoryPass(new String(t3.getPassword()));
-		appConfig.setRepositoryPass(t3.getText());
+		appConfig.setRepositoryPass(new String(t3.getPassword()));
 	}
-	
+
 	/**
 	* This should return the name that should go on the tab (if using a tabbed config dialog).
 	* Otherwise, it could be used for a frame title, etc. However, this can be overridden by
@@ -85,9 +83,4 @@ public class RepositoryConfigPanel extends ConfigPanel {
 	protected String getDefaultNamespace() {
 		return("repository");
 	}
-
-	 
-
-	
-
 }
