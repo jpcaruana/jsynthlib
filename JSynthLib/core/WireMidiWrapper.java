@@ -3,6 +3,9 @@ package core;
 import javax.sound.midi.*;
 import java.util.*;
 
+/**
+ * @version $Id$
+ */
 public class WireMidiWrapper extends MidiWrapper implements Receiver
 {
   int currentOutport;
@@ -206,4 +209,11 @@ ErrorMsg.reportError ("Error","Wire MIDI is flipping out.",e);}
      logMidi(port,true,sysex,msg.getLength());
     return msg.getLength ();
   }
+
+  public boolean isSupported() {
+    // TODO: Implement real functionality here
+    return true;
+  }
+
+  
 }

@@ -767,14 +767,17 @@ public class PatchEdit extends JFrame
             putValue (Action.MNEMONIC_KEY, new Integer ('E'));
             setEnabled (false);
         }
-        public void actionPerformed (ActionEvent e)
-        {
-            try
-            {
+        public void actionPerformed (ActionEvent e){
+          Worker w = new Worker();
+ 	  w.setDaemon(true);
+ 	  w.start();
+ 	}
+       class Worker extends Thread {
+ 	public void run () {
+ 	  try {
                 JInternalFrame frm=
                 ((PatchBasket)desktop.getSelectedFrame ()).EditSelectedPatch ();
-                if (frm!=null)
-                {
+ 	    if (frm!=null) {
                     frm.setVisible (true);
                     desktop.add (frm);
                     if (frm instanceof PatchEditorFrame)
@@ -790,9 +793,13 @@ public class PatchEdit extends JFrame
                     } catch (java.beans.PropertyVetoException ex)
                     {}
                 }
-            } catch (Exception ex)
-            {ErrorMsg.reportError ("Error", "Library holding Patch to Edit must be the focused Window.",ex);};
-        }
+ 
+ 	  } 
+           catch (Exception ex){
+               ErrorMsg.reportError ("Error", "Library holding Patch to Edit must be the focused Window.",ex);
+           };
+         }
+    }
     }
     
     
@@ -1279,8 +1286,8 @@ public class PatchEdit extends JFrame
                         p=PatchEdit.Clipboard;
                         if ((desktop.getSelectedFrame () instanceof PatchBasket)&&(!(desktop.getSelectedFrame () instanceof PatchEditorFrame)))
                         {
-                            if ((desktop.getSelectedFrame () instanceof LibraryFrame ) &
-                            ((LibraryFrame)((desktop.getSelectedFrame ()))).table.getSelectedRowCount ()==0)
+                            if ((desktop.getSelectedFrame () instanceof LibraryFrame ))
+                                if (((LibraryFrame)((desktop.getSelectedFrame ()))).table.getSelectedRowCount ()==0)
                                 break;
                             ((PatchBasket)desktop.getSelectedFrame ()).CopySelectedPatch ();
                         }

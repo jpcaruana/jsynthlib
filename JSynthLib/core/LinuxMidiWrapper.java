@@ -222,6 +222,19 @@ public class LinuxMidiWrapper extends MidiWrapper
    public  void writeLongMessage (int port,byte []sysex)throws Exception
   {writeLongMessage (port,sysex,sysex.length);}   
     
+   /** This method should return true, if this wrapper is
+    * supported on the actual platform (a wrapper for
+    * MacOSX should return true only on Mac's with OSX
+    * etc.)
+    * @return true, if wrapper is supported, false if wrapper is not supported at this
+    * platform.
+    *
+    */
+   public boolean isSupported() throws Exception {
+       // TODO: Implement real functionality here
+       return true;
+   }
+   
     private class InputThread implements Runnable
     {
         public void run ()

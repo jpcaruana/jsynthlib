@@ -19,6 +19,7 @@ import com.apple.audio.*;
  * Midi wrapper for MacOS X.2
  * This version is not X.1 compatible. Get the older version.
  * @author Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @version $Id$
  */
 public class MacOSXMidiWrapper extends MidiWrapper 
 	implements MIDICompletionProc
@@ -297,6 +298,19 @@ public class MacOSXMidiWrapper extends MidiWrapper
 //		System.out.println("SYSEX sent OUT");
 	}
 
+        /** This method should return true, if this wrapper is
+         * supported on the actual platform (a wrapper for
+         * MacOSX should return true only on Mac's with OSX
+         * etc.)
+         * @return true, if wrapper is supported, false if wrapper is not supported at this
+         * platform.
+         *
+         */
+        public boolean isSupported() throws Exception {
+        // TODO: Implement real functionality here
+        return true;
+        }
+        
 	// **************  interface MIDIReadProc *****************************
 	
 	/**
@@ -326,6 +340,16 @@ public class MacOSXMidiWrapper extends MidiWrapper
 					MIDIData oData = oPkt.getData();
 					byte[] oArray = new byte[oData.getMIDIDataLength()];
 					oData.copyToArray(0,oArray, 0, oData.getMIDIDataLength());
+                                      	// Rib Rdb (ribrdb@yahoo.com)
+ 					// Filter out realtime messages
+ 					ByteArrayOutputStream os = 
+ 					  new ByteArrayOutputStream(256);
+ 					for (int q=0; q<oArray.length; q++)
+ 					  if ( (oArray[q] & 0x80) != 0x80 ||
+ 					       (oArray[q] & 0x7F) < 0x78 )
+ 					    os.write(oArray[q]);
+ 					oArray = os.toByteArray();
+					// End ribrdb@yahoo.com
 					oList.add(oArray);
 				}
 			}

@@ -3,11 +3,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
+/**
+ * @version $Id$
+ */
 public class VertScrollBarWidget extends ScrollBarWidget
 {
   int base;
   JTextField text;
-  JSlider slider;
+  public JSlider slider;
   
   public VertScrollBarWidget(String l,Patch p,int min, int max,int b,ParamModel ofs,SysexSender s)
   {super(l,p,min,max,b,ofs,s);}

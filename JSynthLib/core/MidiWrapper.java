@@ -1,5 +1,8 @@
 // Create a subclass of this in order to support a new platform. These are the functions you must implement.
 package core;
+/**
+ * @version $Id$
+ */
 abstract public class MidiWrapper
 {
   public  MidiWrapper (int inport, int outport) throws Exception {}
@@ -21,6 +24,14 @@ abstract public class MidiWrapper
     if ((PatchEdit.midiMonitor!=null) && PatchEdit.midiMonitor.isVisible())
 	    PatchEdit.midiMonitor.log(port,in,sysex,length);
   }
+  /** This method should return true, if this wrapper is
+   * supported on the actual platform (a wrapper for
+   * MacOSX should return true only on Mac's with OSX
+   * etc.)
+   * @return true, if wrapper is supported, false if wrapper is not supported at this
+   * platform.
+   */  
+  public abstract boolean isSupported() throws Exception;
   public void close() {}
   
   
