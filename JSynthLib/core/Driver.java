@@ -48,7 +48,7 @@ public class Driver extends Object implements Serializable
     /**The size of the patch this Driver supports (or 0 for variable)*/
     public int patchSize;
     /** The size of the patch for trimming purposes - see trimSysex()-method */
-    private int trimSize=0;
+    protected int trimSize=0;
     /**Number of sysex messages in patch dump*/
     public int numSysexMsgs;    
     
@@ -133,10 +133,10 @@ public class Driver extends Object implements Serializable
                 
             }
         }
-        //System.out.println("Manufacturer:"+manufacturer+" Model:"+model+" Patch Type:"+patchType);
-        //System.out.println("Comp.String: "+compareString);
-        //System.out.println("DriverString:"+driverString);
-        //System.out.println("PatchString: "+patchString);
+        System.out.println("Manufacturer:"+manufacturer+" Model:"+model+" Patch Type:"+patchType);
+        System.out.println("Comp.String: "+compareString);
+        System.out.println("DriverString:"+driverString);
+        System.out.println("PatchString: "+patchString);
         return (compareString.toString ().equalsIgnoreCase (patchString.toString ().substring (0,driverString.length ())));
     }
     
