@@ -28,6 +28,8 @@ import java.awt.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import java.awt.event.*;
+import javax.sound.midi.ShortMessage;
+
 
 /** Alesis DM5 Single Drumset Editor
 * 
@@ -91,7 +93,7 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         JPanel triggerPanel = new JPanel();        
         triggerPanel.setLayout(new BoxLayout(triggerPanel, BoxLayout.Y_AXIS));
 //        triggerPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"triggerPanel",TitledBorder.CENTER,TitledBorder.CENTER));
-        triggerPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Trigger Parameters",TitledBorder.CENTER,TitledBorder.CENTER));
+        triggerPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Trigger Note Assignments",TitledBorder.CENTER,TitledBorder.CENTER));
         panel.add(triggerPanel,gbc);        
         addTriggerWidgets(patch, triggerPanel);
 
@@ -144,8 +146,8 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         if (!sl.getValueIsAdjusting()) {
             setPacketModels(noteVal);
         }
-    }    
-
+    }
+    
     private void setPacketModels(int noteValue) {
         selectedNoteSender.send(patch.getDriver(), noteValue);
         
@@ -223,10 +225,6 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     
     private void addParmWidgets(Patch patch, JPanel panel) {
         notePacketModel[2] = new PacketModel(patch, 36+4, BitModel.CRSE_TUNE_MASK);
-//        sysexWidget[2] = new ScrollBarLookupWidget("Coarse Tune", patch, 0, 7, -1,
-//                                                   notePacketModel[2],
-//                                                   new NRPNSender(NRPNSender.NOTE_COARSE_TUNE, new int [] {28, 42, 56, 71, 85, 99, 113, 127}),
-//                                                   new String[] {"-4", "-3", "-2", "-1", "0", "1", "2", "3"});
         sysexWidget[2] = new CoarseTuneScrollBarLookupWidget("Coarse Tune", 
                                                              patch, 0, 7, -1,
                                                              notePacketModel[2],
@@ -239,7 +237,6 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
 	    });
         
         notePacketModel[3] = new PacketModel(patch, 36+3, BitModel.FINE_TUNE_MASK);
-//        sysexWidget[3] = new ScrollBarWidget("Fine Tune",
         sysexWidget[3] = new FineTuneScrollBarLookupWidget("Fine Tune",
                                                            patch, 0, 99, 0,
                                                            notePacketModel[3],
@@ -295,7 +292,39 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
                                             new NRPNSender(NRPNSender.NOTE_GROUP, 3),
                                             new String[] {"Multi", "Single", "Group 1", "Group 2"});
         addWidget(panel, sysexWidget[7], ctrlBase++, 0, 1, 1, widgetCount++);
+        
+        JButton playButton = new JButton("Play Note");
+        panel.add(playButton);        
+        playButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                playPreviewNote();
+            }
+	    });
     }
+    
+    private void playPreviewNote() {
+        int selNoteVal = selectedNoteWidget.getValue();
+        Driver driver = (Driver)patch.getDriver();
+        int noteVal = rootNoteWidget.getValue() + selNoteVal;
+        try {
+            Thread.sleep(10);
+            ShortMessage msg = new ShortMessage();
+            msg.setMessage(ShortMessage.NOTE_ON, driver.getChannel() - 1,
+                           noteVal,
+                           AppConfig.getVelocity());
+            driver.send(msg);
+            
+            Thread.sleep(10);
+            
+            msg.setMessage(ShortMessage.NOTE_ON, driver.getChannel() - 1,
+                           noteVal,
+                           0);	// expecting running status
+            driver.send(msg);
+        } catch (Exception e) {
+            ErrorMsg.reportStatus(e);
+        }
+    }
+    
     
     private void addTriggerWidgets(Patch patch, JPanel panel) {
         rootNoteWidget = new DM5ScrollBarLookupWidget("Root Note", patch, 0, 67, -1,
