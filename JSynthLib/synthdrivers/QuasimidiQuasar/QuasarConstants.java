@@ -39,15 +39,15 @@ public class QuasarConstants {
 	public static final int QUASAR_PATCH_NAME_SIZE		= 8;
 	public static final int QUASAR_PATCH_NAME_START		= 214;
 
-	/** 
-	* Offset for the "real" performance parameters 
+	/**
+	* Offset for the "real" performance parameters
 	*/
 	public static final int QUASAR_SYSEX_PERFORMANCE_OFFSET	= 0x05;
-	/** 
-	* Offset for the temporary parameters 
+	/**
+	* Offset for the temporary parameters
 	*/
 	public static final int QUASAR_SYSEX_TEMPORARY_OFFSET	= 0x01;
-	/** 
+	/**
 	* The SysEx ID for the Quasimidi Quasar
 	*/
 	public static final String QUASAR_SYSEX_ID				= "F03F**2044";
@@ -61,7 +61,7 @@ public class QuasarConstants {
 		"F0 3F @@ 20 52 *perfNumber* 04 00 00 18 F7 ", // Request performance part 4 parameter
 		"F0 3F @@ 20 52 *perfNumber* 05 00 00 08 F7 "  // Request performance name
 	};
-	
+
 	/** Performance numbers go from 00 to 99 */
 	public static final String[] QUASAR_PATCH_NUMBERS   = {
 		"00" , "01", "02", "03", "04", "05", "06", "07", "08", "09",
@@ -75,4 +75,114 @@ public class QuasarConstants {
 		"80" , "81", "82", "83", "84", "85", "86", "87", "88", "89",
 		"90" , "91", "92", "93", "94", "95", "96", "97", "98", "99",
 	};
+
+	/** The effects for FX1 */
+	public static final String[] QUASAR_FX1_EFFECTS   = {
+		"Room", "Small Room", "Warm Room", "Chamber", "Chamber 2",
+		"Plate 1", "Plate 2", "Hall", "Large Hall", "Cathedral",
+		"Gated Reverb 1", "Gated Reverb 2", "Gated Reverb 3", "Duck Reverb",
+		"Early Reflections 1", "Early Reflections 2", "Early Reflections 3", "Early Reflections 4",
+		"Raindrops", "Long Delay", "Duck Delay", "HQ Delay", "Bypass"
+	};
+
+	/** The effects for FX2 */
+	public static final String[] QUASAR_FX2_EFFECTS   = {
+		"Chorus 1", "Chorus 2", "Chorus 3",
+		"Flanger 1", "Flanger 2",
+		"Phaser 1", "Phaser 2",
+		"Rotary & Overdrive", "Rotor 2", "Rotor 3", "Rotor 4",
+		"Vibrato", "Panning", "Tremolo",
+		"Short Delay", "Long Delay", "Cross Delay",
+		"Ping Pong", "Gated Delay", "Duck Delay",
+		"Special FX", "Equalizer", "WahWah+Ov",
+		"Auto WahWah", "Warm Overdrive", "Distortion",
+		"Ring Modulation", "Vocoder",
+		"HQ Delay", "Bypass"
+	};
+
+	public static final String[] QUASAR_PERFORMANCE_MODES   = {
+		"Single", // Only Part 13 is used
+		"Double", // Only Parts 13 & 14  are used
+		"Layer 3", // Parts 13 - 15 layered
+		"Layer 4",
+		"Split 1+1", // Performance value parameter is used as split key parameter
+		"Split 1+2",
+		"Split 1+3",
+		"Split 2+2",
+		"Split 2+1",
+		"Split 3+1",
+		// Performance value parameter is used as velocity parameter
+		// (Parts 13 is played below this value, Part 14 above)
+		"DynSplit",
+		// Same as "DynSplit" but using Parts 13/14 & 15/16
+		"DynSplit2",
+		"Ensemble",
+		"SndRotate",
+		"UpVocSolo",
+		"Unisono" // Performance value parameter is used as detune parameter
+	};
+	
+	/**
+	* Velocity curve
+	* 00 Lin
+	* 01 Lin-
+	* 02 Lin+
+	* 03 Exp-
+	* 04 Ex--
+	* 05 Exp+
+	* 06 Ex++
+	* 07 Fix
+	* 08 -Lin
+	* 09 -Lin-
+	* 0A -Lin+
+	* 0B -Exp-
+	* 0C -Ex--
+	* 0D -Exp+
+	* 0E -Ex++ */
+	public static final String[] QUASAR_VELOCITY_CURVES   = {
+		"Lin", "Lin-", "Lin+", "Exp-", "Ex--", "Exp+", "Ex++", "Fix",
+		"-Lin", "-Lin-", "-Lin+", "-Exp", "-Ex--", "-Exp+", "-Ex++"
+	};
+	
+	public static final String[] QUASAR_MASTER_VELOCITY_CURVES   = {
+		"Lin", "Lin-", "Lin+", "Exp-", "Ex--", "Exp+", "Ex++", "Fix"
+	};
+
+	/**
+	* Panorama
+	* 00 off
+	* 01 7L
+	* 02 6L
+	* 03 5L
+	* 04 4L
+	* 05 3L
+	* 06 2L
+	* 07 1L
+	* 08 C
+	* 09 1R
+	* 0A 2R
+	* 0B 3R
+	* 0C 4R
+	* 0D 5R
+	* 0E 6R
+	* 0F 7R
+	* 10 Rnd
+	* 11 Key
+	* 12 Yek
+	* 13 Dyn
+	* 14 Nyd */	        	   
+	public static final String[] QUASAR_PANORAMA   = {
+		"off",
+		"Left 7", "Left 6", "Left 5", "Left 4", "Left 3", "Left 2", "Left 1",
+		"Center",
+		"Right 1", "Right 2", "Right 3", "Right 4", "Right 5", "Right 6", "Right 7",
+		"Random", "KEY", "YEK", "DYN", "NYD"
+	};
+
+	public static final String[] QUASAR_TRACKMODE   = {
+		"muted", "poly", "mono"
+	};
+
+	public static final String QUASAR_SWITCH_OFF   = "off";
+	public static final String QUASAR_SWITCH_ON    = "on";
 }
