@@ -15,17 +15,9 @@ package core;
 public class SysexStoreDialog extends DevDrvPatchSelector {
 
     /**
-     * Constructor with standard default patchNumber=0
-     * @param patch The Patch to store
-     */
-    public SysexStoreDialog (IPatch patch) {
-        this(patch,0);
-    }
-
-    /**
-     * Constructor with choosable default patchNumber
-     * @param patch The Patch to store
-     * @param patchnum The default patchNumber
+     * Constructor with choosable default patchNumber.
+     * @param patch The Patch to store.
+     * @param patchnum The default patchNumber selected in the patch Combobox.
      */
     public SysexStoreDialog (IPatch patch, int patchnum) {
         super(patch,patchnum,"Store Sysex Data","Store...");
