@@ -22,25 +22,47 @@
 package synthdrivers.QuasimidiQuasar;
 
 import core.*;
+
+import java.util.prefs.Preferences;
 /**
+ * Device class for the Quasimidi Quasar
  *
  * @author  Joachim Backhaus
  * @version $Id$
  */
 public class QuasimidiQuasarDevice extends Device {
-    /** Creates new QuasimidiQuasarDevice */
+	private static final String INFO_TEXT
+    = "Currently only supporting the librarian features for single perfomances and performance banks.";
+    
+    /**
+    * Constructor for DeviceListWriter.
+    */
     public QuasimidiQuasarDevice () {
-        manufacturerName = "Quasimidi";
-        modelName = "Quasar";
-        synthName = "Quasar";
-        infoText = "Currently only supporting the librarian features for single perfomances"
-        	+ " and performance banks.";
-        inquiryID = "F07E**06023F20**************F7";
-        
-        QuasimidiQuasarSingleDriver quasarSingleDriver = new QuasimidiQuasarSingleDriver();
-        
-        addDriver(quasarSingleDriver);        
-        addDriver(new QuasimidiQuasarBankDriver(quasarSingleDriver));        
+    	super(	"Quasimidi",
+    			"Quasar",
+        		"F07E**06023F20**************F7",
+        		INFO_TEXT,
+        		"Joachim Backhaus");
+
+        // synthName isn't used anymore (since 0.19)
+        // synthName = "Quasar";
+    }
+
+
+    /**
+    * Constructor for the actual work.
+    *
+    * @param prefs	The Preferences for this device
+    */
+    public QuasimidiQuasarDevice (Preferences prefs) {
+    	this();
+
+    	this.prefs = prefs;
+
+		QuasimidiQuasarSingleDriver quasarSingleDriver = new QuasimidiQuasarSingleDriver();
+
+        addDriver(quasarSingleDriver);
+        addDriver(new QuasimidiQuasarBankDriver(quasarSingleDriver));
     }
 
 }

@@ -30,27 +30,7 @@ import java.io.*;
  * @author Joachim Backhaus
  * @version $Id$
  */
-public class QuasimidiQuasarSingleDriver extends Driver {
-
-	public final static byte SYSEX_START_BYTE		= (byte) 0xF0;
-	public final static byte SYSEX_END_BYTE			= (byte) 0xF7;
-	public final static int SYSEX_HEADER_OFFSET		= 8;
-
-	public final static int QUASAR_PATCH_SIZE   = 223;
-
-	public final static int QUASAR_SYSEX_PERFORMANCE_OFFSET   = 0x05;
-	// Offset for the temporary parameters
-	public final static int QUASAR_SYSEX_TEMPORARY_OFFSET   = 0x01;
-
-	public final static String[] QUASAR_SYSEX_PERFORMANCE_REQUEST   = {
-		"F0 3F @@ 20 52 *perfNumber* 00 00 00 41 F7 ", // Request performance common parameter
-		"F0 3F @@ 20 52 *perfNumber* 01 00 00 18 F7 ", // Request performance part 1 parameter
-		"F0 3F @@ 20 52 *perfNumber* 02 00 00 18 F7 ", // Request performance part 2 parameter
-		"F0 3F @@ 20 52 *perfNumber* 03 00 00 18 F7 ", // Request performance part 3 parameter
-		"F0 3F @@ 20 52 *perfNumber* 04 00 00 18 F7 ", // Request performance part 4 parameter
-		"F0 3F @@ 20 52 *perfNumber* 05 00 00 08 F7 "  // Request performance name
-	};
-
+public class QuasimidiQuasarSingleDriver extends Driver {	
 
 	/*
 	* The Quasar sends only all 100 RAM performances (22300 Bytes)
@@ -59,48 +39,39 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 	* The pure performance needs only 223 Bytes
 	*/
 	public QuasimidiQuasarSingleDriver() {
-		this.authors = "Joachim Backhaus";
-		this.manufacturer = "Quasimidi";
-		this.model = "Quasar";
-		this.patchType = "Single Performance";
-		this.id = "Quasar";
+		super("Single Performance", "Joachim Backhaus");				
 
-		this.sysexID = "F03F**2044";
+		this.sysexID = QuasarConstants.QUASAR_SYSEX_ID;
 
 		// This one is never really used, just a dummy to prevent the "this synth doesn't support patch request" dialog
-		this.sysexRequestDump = new SysexHandler( QuasimidiQuasarSingleDriver.QUASAR_SYSEX_PERFORMANCE_REQUEST[0] );
+		this.sysexRequestDump = new SysexHandler( QuasarConstants.QUASAR_SYSEX_PERFORMANCE_REQUEST[0] );
 
-		this.patchNameStart = 214;
-		this.patchNameSize = 8;
+		this.patchNameStart = QuasarConstants.QUASAR_PATCH_NAME_START;
+		this.patchNameSize = QuasarConstants.QUASAR_PATCH_NAME_SIZE;
 		this.deviceIDoffset = 2;
 
 		// "Temporary" is a fake bank! Otherwise the selection of patch numbers doesn't work
 		this.bankNumbers = new String[] { "RAM", "Temporary" };
 
-		this.patchNumbers = new String[100];
-		// Performance numbers go from 00 to 99
-		for (int count = 0; count < patchNumbers.length; count++) {
-			if(count < 10) {
-				patchNumbers[count] = "0" + String.valueOf(count);
-			}
-			else {
-				patchNumbers[count] = String.valueOf(count);
-			}
-		}
+		this.patchNumbers = QuasarConstants.QUASAR_PATCH_NUMBERS;		
 
 		// Patch size is variable (644 Bytes for manual dump from device, 223 Bytes for trimmed dump).
 		// Using 223 as this can be easily requested
-		this.patchSize = QuasimidiQuasarSingleDriver.QUASAR_PATCH_SIZE;
+		//this.patchSize = QuasarConstants.QUASAR_PATCH_SIZE;
+		this.patchSize = 0;
 		
-		int trimSize = QuasimidiQuasarSingleDriver.QUASAR_PATCH_SIZE;
+		int trimSize = QuasarConstants.QUASAR_PATCH_SIZE;
     }
 
-    public void calculateChecksum(Patch p,int start,int end,int ofs) {
-        // no checksum
+    /**
+	* The Quasar uses no checksum therefore this method is empty
+	*/
+    public void calculateChecksum(Patch p) {
+        // no checksum, do nothing
     }
 
     public void storePatch(Patch p, int bankNum, int patchNum) {
-    	int performanceOffset = patchNum + QuasimidiQuasarSingleDriver.QUASAR_SYSEX_PERFORMANCE_OFFSET;
+    	int performanceOffset = patchNum + QuasarConstants.QUASAR_SYSEX_PERFORMANCE_OFFSET;
 
         // Set the performance number
         p.sysex[5]   = (byte) performanceOffset;
@@ -116,9 +87,11 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 		setPatchNum(patchNum);
     }
 
-    // Send the current performance to the temporary place
+    /** 
+    * Send the current performance to the temporary place
+    */
     public void sendPatch (Patch p) {
-    	int performanceOffset = QuasimidiQuasarSingleDriver.QUASAR_SYSEX_TEMPORARY_OFFSET;
+    	int performanceOffset = QuasarConstants.QUASAR_SYSEX_TEMPORARY_OFFSET;
 
         // Set the performance number
         p.sysex[5]   = (byte) performanceOffset;
@@ -137,9 +110,22 @@ public class QuasimidiQuasarSingleDriver extends Driver {
         sendPatchWorker(p);
     }
 
+	/**
+	* Request the dump of a single Performance
+	*
+	* @param bankNum	Ignored
+	* @param patchNum	The number of the Performance which is requested
+	*/
     public void requestPatchDump(int bankNum, int patchNum) {
 
 		if (sysexRequestDump == null) {
+			JOptionPane.showMessageDialog
+		(PatchEdit.getInstance(),
+		 "The " + toString()
+		 + " driver does not support patch getting.\n\n"
+		 + "Please start the patch dump manually...",
+		 "Get Patch", JOptionPane.WARNING_MESSAGE);
+			/*
 			JOptionPane.showMessageDialog(PatchEdit.instance,
 				"The " + getDriverName() + " driver does not support patch getting.\n\nPlease start the patch dump manually...",
 				"Get Patch",
@@ -152,18 +138,22 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 					PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
 			} catch (Exception ex) {
 				ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
-			}
+			}*/
 		}
 		else {
-			//"F03F**2052**********F7" is the format for requests
-
-			for(int count = 0; count < QuasimidiQuasarSingleDriver.QUASAR_SYSEX_PERFORMANCE_REQUEST.length; count++) {
-				this.sysexRequestDump = new SysexHandler( QuasimidiQuasarSingleDriver.QUASAR_SYSEX_PERFORMANCE_REQUEST[count] );
-
+						
+			for(int count = 0; count < QuasarConstants.QUASAR_SYSEX_PERFORMANCE_REQUEST.length; count++) {
+				this.sysexRequestDump = new SysexHandler( QuasarConstants.QUASAR_SYSEX_PERFORMANCE_REQUEST[count] );
+				
+				send(sysexRequestDump.toSysexMessage(super.getDeviceID(),
+						 new NameValue("perfNumber", patchNum + QuasarConstants.QUASAR_SYSEX_PERFORMANCE_OFFSET)
+						 							)
+					);
+/*
 				sysexRequestDump.send(
 					port, (byte)channel,
-					new NameValue("perfNumber", patchNum + QuasimidiQuasarSingleDriver.QUASAR_SYSEX_PERFORMANCE_OFFSET)
-				);
+					)
+				);*/
 
 				try {
 					// Wait a little bit so that everything is in the correct sequence
@@ -175,8 +165,14 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 		}
 	}
 
+	/**
+	* Set the name of the Performance 
+	*
+	* @param p		The patch which stores the SysEx bytes
+	* @param name	The name of the Performance
+	*/
 	public void setPatchName(Patch p, String name) {
-        if (patchNameSize==0) {
+        if (patchNameSize == 0) {
         	ErrorMsg.reportError ("Error", "The Driver for this patch does not support Patch Name Editing.");
 			return;
         }
@@ -197,7 +193,7 @@ public class QuasimidiQuasarSingleDriver extends Driver {
     
     /**
     * Trims 644 Byte sysex files to the 223 Bytes this driver uses
-    */
+    
 	public int trimSysex(Patch p) {
 		if (trimSize > 0) {
 			if (p.sysex.length == 644) {
@@ -207,27 +203,27 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 				System.arraycopy(p.sysex, 25, sysex, 206, 17);
 				// starting at 2Ah (= 42): Temporary common parameters: 74 Bytes
 				System.arraycopy(p.sysex, 42, sysex, 0, 74);
-				// starting at 200h (=512): Part 13: 33 Byte
+				// starting at 200h (=512): Part 13: 33 Bytes
 				System.arraycopy(p.sysex, 512, sysex, 74, 33);
-				// starting at 221h (=545): Part 14: 33 Byte
+				// starting at 221h (=545): Part 14: 33 Bytes
 				System.arraycopy(p.sysex, 545, sysex, 107, 33);
-				// starting at 242h (=578): Part 15: 33 Byte
+				// starting at 242h (=578): Part 15: 33 Bytes
 				System.arraycopy(p.sysex, 578, sysex, 140, 33);
-				// starting at 263h (=611): Part 16: 33 Byte
+				// starting at 263h (=611): Part 16: 33 Bytes
 				System.arraycopy(p.sysex, 611, sysex, 173, 33);
 				
 				p.sysex = sysex;
 			}
 		}
 		return p.sysex.length;
-	}
+	}*/
 
     public Patch createNewPatch() {
 		return createNewPatch(0);
 	}
 
 	final public Patch createNewPatch(int performanceNumber) {
-		return createNewPatch(performanceNumber, QuasimidiQuasarSingleDriver.QUASAR_SYSEX_TEMPORARY_OFFSET);
+		return createNewPatch(performanceNumber, QuasarConstants.QUASAR_SYSEX_TEMPORARY_OFFSET);
 	}
 
     final public Patch createNewPatch(int performanceNumber, int sysexOffset) {
@@ -240,9 +236,9 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 		/*
 		* Standard dump to device header
 		*/
-        sysex[0] = QuasimidiQuasarSingleDriver.SYSEX_START_BYTE;
+        sysex[0] = QuasarConstants.SYSEX_START_BYTE;
         sysex[1] = (byte) 0x3F;
-        sysex[2] = (byte) 0x00; // Device number
+        sysex[2] = (byte) super.getDeviceID(); // Device number
         sysex[3] = (byte) 0x20;
         sysex[4] = (byte) 0x44;
         /*
@@ -337,7 +333,7 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 		/*
 		* End of performance common parameters
 		*/
-		sysex[offset + 24] = QuasimidiQuasarSingleDriver.SYSEX_END_BYTE;
+		sysex[offset + 24] = QuasarConstants.SYSEX_END_BYTE;
 
 		// 74 Bytes so far ((offset = 49) + 24 + 1)
         offset += 24 + 1;
@@ -347,7 +343,7 @@ public class QuasimidiQuasarSingleDriver extends Driver {
         	/*
 			* Standard dump to device header
 			*/
-	        sysex[offset + 0] = QuasimidiQuasarSingleDriver.SYSEX_START_BYTE;
+	        sysex[offset + 0] = QuasarConstants.SYSEX_START_BYTE;
 	        sysex[offset + 1] = (byte) 0x3F;
 	        sysex[offset + 2] = (byte) 0x00;
 	        sysex[offset + 3] = (byte) 0x20;
@@ -391,7 +387,7 @@ public class QuasimidiQuasarSingleDriver extends Driver {
 	        /*
 			* End of performance part parameter
 			*/
-			sysex[offset + 24] = QuasimidiQuasarSingleDriver.SYSEX_END_BYTE;
+			sysex[offset + 24] = QuasarConstants.SYSEX_END_BYTE;
 
 			offset += 24 + 1;
         } // End of for loop for performance part parameters
@@ -402,7 +398,7 @@ public class QuasimidiQuasarSingleDriver extends Driver {
         /*
 		* Standard dump to device header
 		*/
-        sysex[offset + 0] = QuasimidiQuasarSingleDriver.SYSEX_START_BYTE;
+        sysex[offset + 0] = QuasarConstants.SYSEX_START_BYTE;
         sysex[offset + 1] = (byte) 0x3F;
         sysex[offset + 2] = (byte) 0x00;
         sysex[offset + 3] = (byte) 0x20;
@@ -426,13 +422,13 @@ public class QuasimidiQuasarSingleDriver extends Driver {
         /*
 		* End of performance name
 		*/
-		sysex[offset + 16] = QuasimidiQuasarSingleDriver.SYSEX_END_BYTE;
+		sysex[offset + 16] = QuasarConstants.SYSEX_END_BYTE;
 
 		// 17 Bytes
 		// 206 Bytes + 17 Bytes = 223 Bytes
 
         Patch p = new Patch(sysex);
-        p.ChooseDriver();
+//        p.ChooseDriver();
         return p;
     }
 }
