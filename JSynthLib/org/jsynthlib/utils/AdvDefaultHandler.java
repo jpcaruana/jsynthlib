@@ -43,7 +43,7 @@ public class AdvDefaultHandler extends DefaultHandler {
     private String delegate_tag;
     private AdvDefaultHandler delegate;
     private int depth = 0;
-    private File base_path;
+    protected File base_path;
     
     /**
      * Constructor with no delegate handler.
