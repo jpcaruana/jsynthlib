@@ -372,7 +372,13 @@ public final class MidiUtil {
 
     /**
      * Converts a byte array into an array of SysexMessages.  Each
-     * SysexMessage must be terminated by END_OF_EXCLUSIVE.
+     * SysexMessage must be terminated by END_OF_EXCLUSIVE.<p>
+     *
+     * This method is provided to keep compatibility with the old MIDI
+     * layer which handled MIDI data in byte array.  It is more
+     * efficient to create SysexMessages directly because a synth
+     * driver knows the start index and length of each Sysex data in
+     * an array.
      */
     public static SysexMessage[] byteArrayToSysexMessages(byte[] d)
 	throws InvalidMidiDataException {
