@@ -51,14 +51,18 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     static ImportAllAction importAllAction;
     static NewPatchAction newPatchAction;
     static CrossBreedAction crossBreedAction;
-    static DocsAction docsAction;
+
     static MonitorAction monitorAction;
-    static NewSceneAction newSceneAction;
     static TransferSceneAction transferSceneAction;
     static SynthAction synthAction;
     static PrefsAction prefsAction;
     static ExitAction exitAction;
     static UploadAction uploadAction;
+
+    private static DocsAction docsAction;
+    private static LicenseAction licenseAction;
+    private static HomePageAction homePageAction;
+    private static NewSceneAction newSceneAction;
     private static NextFaderAction nextFaderAction;
     private static NewAction newAction;
     private static OpenAction openAction;
@@ -69,7 +73,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     private static PrefsDialog prefsDialog;
     private static SearchDialog searchDialog;
     private static WaitDialog waitDialog;
-    private static DocumentationWindow documentationWindow;
+    private static DocumentationWindow docWin;
+    private static DocumentationWindow licWin;
+    private static DocumentationWindow hpWin;
     private static JPopupMenu menuPatchPopup;
 
     private static Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -185,6 +191,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
         aboutAction		= new AboutAction(mnemonics);
         docsAction		= new DocsAction(mnemonics);
+        licenseAction		= new LicenseAction(mnemonics);
+        homePageAction		= new HomePageAction(mnemonics);
 
         nextFaderAction		= new NextFaderAction(mnemonics);
 	uploadAction		= new UploadAction(mnemonics);
@@ -294,6 +302,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	mnemonics.put(menuHelp, new Integer(KeyEvent.VK_H));
 	mi = menuHelp.add(docsAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, 0));
+	// J2SE 1.4.2 is not ready for HTML of www.jsynthlib.org site
+	//mi = menuHelp.add(homePageAction);
+	mi = menuHelp.add(licenseAction);
 	if (!MacUtils.isMac())
 	    menuHelp.add(aboutAction);
         menuBar.add(menuHelp);
@@ -599,18 +610,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         //frame.setVisible(true);
     }
     */
-    /*
-     * This used to be loadMidiDriver() but it is now a callback
-     * method that gets notified by MidiConfigPanel if the user
-     * changes midi drivers. Initialization of the drivers is now
-     * handled by the drivers themselves. - emenaker 2003.03.12
-     * @param driver The new MidiWrapper
-     */
-    /*
-    public void midiDriverChanged(MidiWrapper driver) {
-	MidiIn = MidiOut = driver;
-    }
-    */
+
     /** @deprecated Don't use this. */
     public static Driver getDriver(int deviceNumber, int driverNumber) {
 	if (appConfig == null)
@@ -646,7 +646,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		(null,
 		 "JSynthLib Version " + VERSION
 		 + "\nCopyright (C) 2000-04 Brian Klock et al.\n"
-		 + "See the file 'LICENSE.TXT' for more info.",
+		 + "See 'Help -> License' for more info.",
 		 "About JSynthLib", JOptionPane.INFORMATION_MESSAGE);
 	    return;
 	}
@@ -1275,9 +1275,45 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
         public void actionPerformed(ActionEvent e) {
 	    try {
-		if (documentationWindow == null)
-		    documentationWindow = new DocumentationWindow();
-		documentationWindow.show();
+		if (docWin == null)
+		    docWin = new DocumentationWindow("text/html", "file:doc/documentation.html");
+		docWin.show();
+	    } catch (Exception ex) {
+		ErrorMsg.reportError("Error", "Unable to show Documentation)", ex);
+	    }
+        }
+    }
+
+    static class LicenseAction extends AbstractAction {
+        public LicenseAction(Map mnemonics) {
+	    super("License", null);
+	    setEnabled(true);
+	    mnemonics.put(this, new Integer('L'));
+        }
+        public void actionPerformed(ActionEvent e) {
+	    try {
+		if (licWin == null)
+		    licWin = new DocumentationWindow("text/plain", "file:license.txt");
+		licWin.show();
+	    } catch (Exception ex) {
+		ErrorMsg.reportError("Error", "Unable to show Documentation)", ex);
+	    }
+        }
+    }
+
+    static class HomePageAction extends AbstractAction {
+        public HomePageAction(Map mnemonics) {
+	    super("JSynthLib Home Page", null);
+	    setEnabled(true);
+	    mnemonics.put(this, new Integer('P'));
+        }
+        public void actionPerformed(ActionEvent e) {
+	    try {
+		if (hpWin == null)
+		    // www.gnu.org is simple enough for J2SE 1.4.2.
+		    //hpWin = new DocumentationWindow("text/html", "http://www.gnu.org/");
+		    hpWin = new DocumentationWindow("text/html", "http://www.jsynthlib.org/");
+		hpWin.show();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to show Documentation)", ex);
 	    }
