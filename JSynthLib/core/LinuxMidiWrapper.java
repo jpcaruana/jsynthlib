@@ -136,7 +136,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		int length = msg.getLength();
 
 		if (outStream[port]!=null) {
-			final int BUFSIZE = 250;
+			final int BUFSIZE = 256;
 			//final int BUFSIZE = 0;
 
 			if (BUFSIZE == 0) {
