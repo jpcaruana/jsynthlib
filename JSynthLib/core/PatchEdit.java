@@ -499,25 +499,30 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     // And this one saves a Library to Disk
     protected void saveFrame ()
     {
-        LibraryFrame libFrame;
         try
         {
-            libFrame=(LibraryFrame)desktop.getSelectedFrame ();
-            if (libFrame.getTitle ().startsWith ("Unsaved Library"))
-            {saveFrameAs ();return;}
-            libFrame.save ();
-        } catch (Exception e)
+			Object oFrame = desktop.getSelectedFrame ();
+			if (oFrame instanceof LibraryFrame)
+			{
+				LibraryFrame libFrame=(LibraryFrame)oFrame;
+				if (libFrame.getTitle ().startsWith ("Unsaved Library"))
+				{saveFrameAs ();return;}
+				libFrame.save ();
+			}
+			else
+			if (oFrame instanceof SceneFrame)
+			{
+				SceneFrame sceneFrame=(SceneFrame)desktop.getSelectedFrame ();
+				if (sceneFrame.getTitle ().startsWith ("Unsaved "))
+				{saveFrameAs ();return;}
+				sceneFrame.save ();
+			}
+        } 
+		catch (Exception e)
         {
-        SceneFrame sceneFrame;
-        try
-        {
-            sceneFrame=(SceneFrame)desktop.getSelectedFrame ();
-            if (sceneFrame.getTitle ().startsWith ("Unsaved "))
-            {saveFrameAs ();return;}
-            sceneFrame.save ();
-        } catch (Exception e2)               {
-        ErrorMsg.reportError ("Error", "Unable to Save Library",e2);return;}
-    }
+			ErrorMsg.reportError ("Error", "Unable to Save Library",e);
+			return;
+		}
     }
     // Save and specify a file name
     protected void saveFrameAs ()
