@@ -37,15 +37,15 @@ public class ScrollBarLookupWidget extends SysexWidget {
         layoutWidgets();
     }
     /** Constructor for setting up the ScrollBarLookupWidget.
+     * 
      * @param label Label for the Widget
      * @param patch The patch, which is edited
-     * @param min Minimum value
-     * @param max Maximum value
-     * @param labelWidth width of label. If negative value, the width
-     * will be determined by label strings.
+     * @param min minimum value
+     * @param max maximum value
+     * @param labelWidth width of the label. If the value is negative, the width
+     * will be determined by the label strings.
      * @param pmodel a <code>ParamModel</code> instance.
-     * @param sender sysexSender for transmitting the value at editing
-     * the parameter
+     * @param sender sysexSender for transmitting the value at editing the parameter
      * @param options array of label string for each value.
      */
     public ScrollBarLookupWidget(String label, IPatch patch, int min, int max,
@@ -60,10 +60,38 @@ public class ScrollBarLookupWidget extends SysexWidget {
 	layoutWidgets();
     }
 
+    /** Constructor for setting up the VertScrollBarLookupWidget.<br>
+     * The width of the label will be determined by the label strings.
+     * 
+     * @param label label for the Widget
+     * @param patch the patch, which is edited
+     * @param min minimum value
+     * @param max maximum value
+     * @param pmodel a <code>ParamModel</code> instance.
+     * @param sender sysexSender for transmitting the value at editing the parameter
+     * @param options array of label strings for each value.
+     */
     public ScrollBarLookupWidget(String label, IPatch patch, int min, int max,
 				 IParamModel pmodel, ISender sender,
 				 String[] options) {
 	this(label, patch, min, max, -1, pmodel, sender, options);
+    }
+    
+    /** Constructor for setting up the ScrollBarLookupWidget.<br>
+     * The width of the label will be determined by the label strings.<br>
+     * The minimum value is set to 0 and the maximum value to the length
+     * of the options array.
+     * 
+     * @param label label for the Widget
+     * @param patch the patch, which is edited     
+     * @param pmodel a <code>ParamModel</code> instance.
+     * @param sender sysexSender for transmitting the value at editing the parameter
+     * @param options array of label strings for each value.
+     */
+    public ScrollBarLookupWidget(String label, IPatch patch,
+                 IParamModel pmodel, ISender sender,
+                 String[] options) {
+        this(label, patch, 0, options.length, -1, pmodel, sender, options);
     }
 
     protected void createWidgets() {
