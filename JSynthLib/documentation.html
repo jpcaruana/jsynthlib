@@ -510,10 +510,8 @@ as a starting point because its the most simple driver.<br>
 <br>
        <i> Step 2: Tell the core program about your driver.<br></i>
 <br>
-Edit the file called \synthdrivers.properties. This is the only file in the core JSynthLib program that you will have to edit. Eventually I hope to write autodetection code so that this isn't necessary, but right now it is. Near the top of the files are a bunch of &quot;import&quot; lines, add one for your synthesizer.<br>
-Next add an entry with your synthesizer's name and class to the properties file<br>
-Just write it exactly like the ones for the other drivers. If you plan to do a bank driver too, add that<br>
-line in also, otherwise leave that line out. The entry will look like this:<br>
+Edit the file called \synthdrivers.properties. This is the only file in the core JSynthLib program that you will have to edit. Add an entry with your synthesizer's name and class to the properties file<br>
+Just write it exactly like the ones for the other drivers. The entry will look like this:<br>
 <br>
 deviceName.OberheimMatrix1000=Oberheim Matrix 1000 Driver<br>
 deviceClass.OberheimMatrix1000=synthdrivers.OberheimMatrix.OberheimMatrix1000Device<br>
