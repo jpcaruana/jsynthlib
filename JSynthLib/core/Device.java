@@ -17,11 +17,10 @@ import java.io.Serializable;
  * @version
  */
 
-abstract public class Device implements Serializable, Storable
-{
+abstract public class Device implements Serializable, Storable {
     /** The List for all available drivers of this device
      */    
-    public ArrayList driverList=new ArrayList ();
+    public ArrayList driverList = new ArrayList ();
     private ListIterator li;
     
     protected String manufacturerName;
@@ -35,7 +34,7 @@ abstract public class Device implements Serializable, Storable
     protected int inPort;
     protected int port;   //outport
     /**The channel the user assigns to this driver*/
-    protected int channel=1;
+    protected int channel = 1;
     
     /** Holds value of property synthName. */
     protected String synthName;
@@ -52,29 +51,25 @@ abstract public class Device implements Serializable, Storable
     
     
     /** Creates new Device */
-    public Device ()
-    {
-        inquiryID="NONE";
-	infoText="There is no information about this Device.";
+    public Device () {
+        inquiryID = "NONE";
+	infoText = "There is no information about this Device.";
 	inPort = PatchEdit.appConfig.getInitPortIn();
 	port = PatchEdit.appConfig.getInitPortOut();
     }
     
-    public String getManufacturerName ()
-    {
+    public String getManufacturerName () {
         return manufacturerName;
     }
     
-    public  String getModelName ()
-    {
+    public  String getModelName () {
         return modelName;
     }
     
-    protected void addDriver (Driver driver)
-    {
+    protected void addDriver (Driver driver) {
         driver.setChannel (channel);
         driver.setPort (port);
-        driver.inPort=inPort;        
+        driver.inPort = inPort;        
         driverList.add (driver);
 	driver.setDevice(this);
     }
@@ -83,28 +78,25 @@ abstract public class Device implements Serializable, Storable
      * Bulk converters must be added before simple drivers!
      * @param driver
      */    
-    protected void addDriver (int index,Driver driver)
-    {
+    protected void addDriver (int index, Driver driver) {
         driver.setChannel (channel);
         driver.setPort (port);
         
-        driverList.add (index,driver);
+        driverList.add (index, driver);
     }
     
     
     /** Getter for property synthName.
      * @return Value of property synthName.
      */
-    public String getSynthName ()
-    {
+    public String getSynthName () {
         return synthName;
     }
     
     /** Setter for property synthName.
      * @param synthName New value of property synthName.
      */
-    public void setSynthName (String synthName)
-    {
+    public void setSynthName (String synthName) {
         this.synthName = synthName;
     }
     
@@ -113,114 +105,105 @@ abstract public class Device implements Serializable, Storable
      * @param patchString
      * @return true if the patchString matches the ID of the device
      */
-    public boolean checkInquiry (StringBuffer patchString)
-    {
-        StringBuffer inquiryString=new StringBuffer (inquiryID);
-     if (inquiryString.length ()>patchString.length ()) return false;   
-     for (int j=0;j<inquiryString.length ();j++)
-            if (inquiryString.charAt (j)=='*') inquiryString.setCharAt (j,patchString.charAt (j));
-        return (inquiryString.toString ().equalsIgnoreCase (patchString.toString ().substring (0,inquiryString.length ())));
+    public boolean checkInquiry (StringBuffer patchString) {
+        StringBuffer inquiryString = new StringBuffer (inquiryID);
+	if (inquiryString.length () > patchString.length())
+	    return false;   
+	for (int j = 0; j < inquiryString.length(); j++)
+            if (inquiryString.charAt(j) == '*')
+		inquiryString.setCharAt(j, patchString.charAt(j));
+        return (inquiryString.toString().equalsIgnoreCase(patchString.toString().substring(0, inquiryString.length())));
     }
     
     /** Getter for property port.
      * @return Value of property port.
      */
-    public int getPort ()
-    {
+    public int getPort () {
         return port;
     }
-    public int getInPort ()
-    {
+    public int getInPort () {
         return inPort;
     }
     
     /** Setter for property port.
      * @param port New value of property port.
      */
-    public void setPort (int port)
-    {
+    public void setPort (int port) {
         Iterator iter;
         this.port = port;
-        iter=driverList.iterator ();
-        while(iter.hasNext ())
-            ((Driver)iter.next ()).setPort (port);
+        iter = driverList.iterator();
+        while (iter.hasNext ())
+            ((Driver) iter.next()).setPort(port);
     }
-    public void setInPort (int inPort)
-    {
+    public void setInPort (int inPort) {
         Iterator iter;
         this.inPort = inPort;
-        iter=driverList.iterator ();
-        while(iter.hasNext ())
-            ((Driver)iter.next ()).inPort=inPort;
+        iter = driverList.iterator();
+        while (iter.hasNext())
+            ((Driver) iter.next()).inPort = inPort;
     }
     
     /** Getter for property channel.
      * @return Value of property channel.
      */
-    public int getChannel ()
-    {
+    public int getChannel () {
         return channel;
     }
     
     /** Setter for property channel.
      * @param channel New value of property channel.
      */
-    public void setChannel (int channel)
-    {
+    public void setChannel (int channel) {
         Iterator iter;
         this.channel = channel;
-        iter=driverList.iterator ();
-        while(iter.hasNext ())
-        {
-            ((Driver)iter.next ()).setChannel (channel);            
+        iter = driverList.iterator();
+        while (iter.hasNext()) {
+	    ((Driver) iter.next()).setChannel(channel);            
         }
     }
 
      /** Getter for Devic eName.
       * @return String of Device Name with inPort and Channel
       */
-    public String getDeviceName()
-    {
-      try
-      {
+    public String getDeviceName() {
+	try {
         return getManufacturerName() + " " + getModelName() + " <" + getSynthName() +
- 		 ">  -  MIDI In Port: " + PatchEdit.MidiOut.getInputDeviceName(getInPort()) + "  -  MIDI Channel: " + getChannel() ;
-      }
-      catch (Exception e)
-      {
+		">  -  MIDI In Port: " + PatchEdit.MidiOut.getInputDeviceName(getInPort()) +
+		"  -  MIDI Channel: " + getChannel();
+	} catch (Exception e) {
         return getManufacturerName() + " " + getModelName() + ": " + getSynthName();
       }
     }
  
-
-   public void showDetails()
-   {
+    public void showDetails() {
         DeviceDetailsDialog ddd = new DeviceDetailsDialog(this);
 	ddd.show();   
    }
-   public JPanel config()
-   {
-      JPanel panel= new JPanel();
+
+    public JPanel config() {
+	JPanel panel = new JPanel();
       panel.add(new JLabel("This Device has no configuration options."));
       return panel;
    }
 
 
-
-
-
 	// Getters/Setters, etc for Drivers 
 
 	/** Indexed getter for driverList elements */
-	public Driver getDriver(int i) { return (Driver)this.driverList.get(i); };
+    public Driver getDriver(int i) {
+	return (Driver) this.driverList.get(i);
+    }
+
 	/** Indexed setter for driverList elements */
 	public Driver setDriver(int i, Driver drv) {
-		return (Driver)this.driverList.set(i, drv);
-	};
+	return (Driver) this.driverList.set(i, drv);
+    }
+
 	/** Getter for driverList */
 	public Driver[] getDriver() {
-		return (Driver[])this.driverList.toArray(new Driver[0]);
-	};
+	return (Driver[]) this.driverList.toArray(new Driver[0]);
+    }
+
 	/** setter for driverList */
 	public void setDriver(Driver[] drivers) {
 		ArrayList newList = new ArrayList();
@@ -230,20 +213,18 @@ abstract public class Device implements Serializable, Storable
 
 	//already defined above
 	///** Adder for driverList elements */
-	//public boolean addDriver(Driver driver) { return this.driverList.add(driver); };
+    //public boolean addDriver(Driver driver) { return this.driverList.add(driver); }
+
 	/** Remover for driverList elements */
-	public Driver removeDriver(int i) { return (Driver)this.driverList.remove(i); };
+    public Driver removeDriver(int i) {
+	return (Driver) this.driverList.remove(i);
+    }
 	/** Size query for driverList */
-	public int driverCount() { return this.driverList.size(); };
-
-
-
-
-
-
+    public int driverCount() {
+	return this.driverList.size();
+    }
 
 	// For storable interface
-
 	/**
 	 * Get the names of properties that should be stored and loaded.
 	 * @return a Set of field names
@@ -276,5 +257,4 @@ abstract public class Device implements Serializable, Storable
         public String toString() {
 	    return getDeviceName();
 	}
-        
 }

@@ -1,18 +1,7 @@
-//This is a datatype used by EnvelopeWidget. It stores information about a single node (point) in the Widget 
+/* This is a datatype used by EnvelopeWidget. It stores information
+   about a single node (point) in the Widget */
 package core;
 
-public class EnvelopeNode
-{
-  public final static int SAME=5000;
-  int minX; int minY; int maxX; int maxY; ParamModel ofsX; ParamModel ofsY;
-  SysexSender senderX; SysexSender senderY;
-  boolean invertX;int baseY;
-  String nameX; String nameY;
-  public EnvelopeNode(int minx, int maxx,ParamModel ofsx, int miny, int maxy, ParamModel ofsy,int basey,boolean invertx, SysexSender x, SysexSender y,String namex, String namey)
-   { baseY=basey;minX=minx;maxX=maxx;minY=miny;maxY=maxy;ofsX=ofsx;ofsY=ofsy;senderX=x;senderY=y;nameX=namex;nameY=namey;invertX=invertx;}
-   
- 
-}
 /* When Constructing an Envelope Node, here's the meaning of the parameters passed to the constructor:
 minx- The minimum value permitted by the Synth-Parameter which rides the X-Axis of the Node
 maxx -The maximum value   ""            ""                        ""               ""
@@ -30,3 +19,37 @@ namex, name y, the names of the parameters riding each access
 related parameter
 **Using EnvelopeNode.SAME for MinY-MaxY means that the height remains at whatever the previous node was at
 */
+public class EnvelopeNode {
+    public final static int SAME=5000;
+    int minX;
+    int minY;
+    int maxX;
+    int maxY;
+    ParamModel ofsX;
+    ParamModel ofsY;
+    SysexSender senderX;
+    SysexSender senderY;
+    boolean invertX;
+    int baseY;
+    String nameX;
+    String nameY;
+
+    public EnvelopeNode(int minx, int maxx,ParamModel ofsx,
+			int miny, int maxy, ParamModel ofsy,
+			int basey,boolean invertx,
+			SysexSender x, SysexSender y,
+			String namex, String namey) {
+	baseY = basey;
+	minX = minx;
+	maxX = maxx;
+	minY = miny;
+	maxY = maxy;
+	ofsX = ofsx;
+	ofsY = ofsy;
+	senderX = x;
+	senderY = y;
+	nameX = namex;
+	nameY = namey;
+	invertX = invertx;
+    }
+}

@@ -12,27 +12,26 @@ public class PatchNameWidget extends SysexWidget {
   JTextField name;
   String label;
  
-    public PatchNameWidget(Patch p,String n) {
-        patch=p;
-        label=n;
+    public PatchNameWidget(Patch p, String n) {
+        patch = p;
+        label = n;
         setup();
     }
     
     public void setup() {
  // super.setup();  
   setLayout(new BorderLayout());
-        add(new JLabel(label),BorderLayout.WEST);
-        name=new JTextField(((Driver)(PatchEdit.getDriver(patch.deviceNum,patch.driverNum))).getPatchName(patch),
-        ((Driver)(PatchEdit.getDriver(patch.deviceNum,patch.driverNum))).patchNameSize );
+        add(new JLabel(label), BorderLayout.WEST);
+        name = new JTextField(((Driver) (PatchEdit.getDriver(patch.deviceNum, patch.driverNum))).getPatchName(patch),
+			      ((Driver) (PatchEdit.getDriver(patch.deviceNum, patch.driverNum))).patchNameSize);
     name.addFocusListener(new FocusListener() {
-   public void focusGained(FocusEvent e) {}
+		public void focusGained(FocusEvent e) {
+		}
             public void focusLost(FocusEvent e) {
-  ((Driver)(PatchEdit.getDriver(patch.deviceNum,patch.driverNum))).setPatchName(patch,name.getText());
+		    ((Driver) (PatchEdit.getDriver(patch.deviceNum, patch.driverNum))).setPatchName(patch, name.getText());
             }
 	   });
-        add(name,BorderLayout.EAST);
+        add(name, BorderLayout.EAST);
   }
 
 }
-
-
