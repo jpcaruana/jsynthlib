@@ -24,7 +24,7 @@ package synthdrivers.BehringerFCB1010;
 import core.*;
 
 
-/** Removes "Garbage Data" from Alesis response to dump request and extracts desired patch.
+/** Removes "Garbage Data" from response to dump request and extracts desired patch.
 * 
 * When responding to a sysex data dump request, the FCB1010 sometimes sends a single sysex message and sometimes
 * it sends a block of multiple messages along with garbage data (the behavior is unpredictable). The last
@@ -34,7 +34,7 @@ import core.*;
 * 
 * @author Jeff Weber
 */
-public class FCB1010Converter extends Converter {
+class FCB1010Converter extends Converter {
     
     /** Constructor for FCB1010Converter */
     FCB1010Converter() {
@@ -46,10 +46,10 @@ public class FCB1010Converter extends Converter {
         //this.deviceIDoffset = 0;
     }
     
-    /** Extracts the last valid patch in a Alesis dump request and validates it.
+    /** Extracts the last valid patch in a dump request and validates it.
     * Note that supportsPatch does not convert the patch. It only attempts to
     * parse out the last patch of a block of data and compare the header to the
-    * Alesis header bytes. The job of actually converting the patch is handled by
+    * header bytes. The job of actually converting the patch is handled by
     * extractPatch. If supportsPatch returns true, JSynthLib Core will call
     * extractPatch.
     */
@@ -66,10 +66,8 @@ public class FCB1010Converter extends Converter {
     }
     
     /** Part of the logic for the overridden supportsPatch method. Checks the
-    * the sysex record against the defined headers for each of the DM5 patch
-    * types and returns true if there is a match. This is a more thorough check
-    * than the isFCBPatch method, in that it checks the whole header, including
-    * the opcode byte.
+    * the sysex record against the defined header for the FCB1010
+    * and returns true if there is a match.
     */
     private boolean thisSupportsPatch(byte[] sysex) {
         if (isFCBPatch(sysex,0)) {
@@ -83,7 +81,7 @@ public class FCB1010Converter extends Converter {
         }
     }
     
-    /** Extracts a Alesis patch from a Alesis patch dump response (block of data).
+    /** Extracts a patch from a patch dump response (block of data).
     * Calls parseSysex to do the extraction.
     */
     public Patch[] extractPatch(Patch p) {
@@ -130,8 +128,7 @@ public class FCB1010Converter extends Converter {
     }
     
     /**Checks the first 6 bytes of the patch header and returns true if the 
-    * patch is any of the five DM5 patch types. This is a generic check that
-    * does not include the opcode byte.
+    * patch is a FCB1010 patch.
     */
     private boolean isFCBPatch(byte[] patchBytes, int offset) {
         boolean isFCBSysex = true;

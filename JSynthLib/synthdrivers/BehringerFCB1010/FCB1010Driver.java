@@ -26,18 +26,11 @@ import core.*;
 *
 * @author Jeff Weber
 */
-public class FCB1010Driver extends Driver {
+class FCB1010Driver extends Driver {
+
     /** FCB1010 Dump Request
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.FCB1010_DUMP_REQ_ID); //FCB1010 Dump Request
-    
-    /** Sysex program dump byte array representing a new FCB1010 patch
-    */
-    private static final byte NEW_SYSEX[] =
-    {
-        (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x13, (byte)0x00, (byte)0x00, (byte)0x4C,
-        (byte)0x00, (byte)0x00, (byte)0xF7
-    };
     
     /** Constructs a FCB1010Driver.
         */

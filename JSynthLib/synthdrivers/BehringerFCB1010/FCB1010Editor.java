@@ -34,26 +34,30 @@ import javax.swing.border.*;
  */
 public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
     
-    /** Bank Numbers
+    /** The list of bank numbers displayed in the Bank comboxBox on the Presets
+    * panel of the editor.
     */
     private static final String[] BANK_NUMS = new String[] { 
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
     };
     
-    /** Preset Numbers
+    /** The list of preset numbers displayed in the Preset comboBox on the Presets
+    * panel of the editor.
     */
     private static final String[] PRESET_NUMS = new String[] { 
         "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
     };
     
-    /** MIDI Channel Numbers
+    /** The list of MIDI channel numbers displayed in all the ComboBoxWidgets on
+        * the Global Settings panel of the editor.
         */
     private static final String[] MIDI_CHANNELS = new String[] { 
         "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"
     };
     
-    /** Program change numbers.
-    */
+    /** The list of program change numbers displayed in all the Program Change ComboBoxWidgets
+        * on the Presets panel of the editor.
+        */
     private static final String[] PRG_CHG_NUMS = new String[] { 
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
         "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31",
@@ -67,19 +71,19 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
     
     /** Action Command for Bank and Preset Select Comboboxes
         */
-    private static final String selectPresetActionCmd = "Select Preset";
+    private static final String SELECT_PRESET_ACTION_CMD = "Select Preset";
     
     /** Action Command for Copy Preset Button
         */
-    private static final String copyPresetActionCmd = "Copy Preset";
+    private static final String COPY_PRESET_ACTION_CMD = "Copy Preset";
 
     /** Action Command for Copy Bank Button
         */
-    private static final String copyBankActionCmd = "Copy Bank";
+    private static final String COPY_BANK_ACTION_CMD = "Copy Bank";
 
     /** Action Command for Paste Button
         */
-    private static final String pasteActionCmd= "Paste";
+    private static final String PASTE_ACTION_CMD = "Paste";
     
     
     /** Length of a single preset in bytes */
@@ -92,21 +96,40 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         */
     private JButton pasteButton = null;
 
+    /** Variable used to assign fader numbers to all widgets except CheckBoxWidgets.
+        */
     private int posFaderNum = 1;
+
+    /** Variable used to assign fader numbers to CheckBoxWidgets only.
+        */
     private int negFaderNum = -1;
     
+    /** Array used to hold all ControlGroupModels for Program Changes
+        */
     private ControlGroupModel[] pcGroupModel = new ControlGroupModel[5];
     
+    /** Array used to hold all ControlGroupModels for Control Changes
+        */
     private ControlGroupModel[] ccGroupModel = new ControlGroupModel[2];
     
+    /** Array used to hold all ControlGroupModels for Expression Pedals
+        */
     private ControlGroupModel[] expGroupModel = new ControlGroupModel[2];
     
+    /** Variable used to hold the ControlGroupModels for Note Control
+        */
     private ControlGroupModel noteGroupModel = null;
     
+    /** A reference to the JComboBox for bank select.
+        */
     private JComboBox bankSelect;
+
+    /** A reference to the JComboBox for preset select.
+        */
     private JComboBox presetSelect;
     
-    /** Local scrap used to store data for Copy Preset or Copy Patch*/
+    /** Local scrap used to store data for Copy Preset or Copy Patch
+        */
     private byte[] localScrap = null;
     
     /** Constructs a FCB1010Editor for the selected patch.
@@ -135,7 +158,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         pack();
     }
     
-    /** Adds the preset select panel to the selected panel for the selected patch.
+    /** Adds the preset select panel to the given panel for the given patch.
     */
     private void addSelectPanel(Patch patch, JPanel panel) {
         JPanel selectPanel = new JPanel();        
@@ -149,7 +172,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         selectPanel.add(bankLabel);
         
         bankSelect = new JComboBox(BANK_NUMS);
-        bankSelect.setActionCommand(selectPresetActionCmd);
+        bankSelect.setActionCommand(SELECT_PRESET_ACTION_CMD);
         selectPanel.add(bankSelect);
         bankSelect.addActionListener(this);
         
@@ -159,14 +182,14 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         selectPanel.add(presetLabel);
         
         presetSelect = new JComboBox(PRESET_NUMS);
-        presetSelect.setActionCommand(selectPresetActionCmd);
+        presetSelect.setActionCommand(SELECT_PRESET_ACTION_CMD);
         selectPanel.add(presetSelect);
         presetSelect.addActionListener(this);
         
         selectPanel.add(new JLabel(""));
     }
  
-    /** Adds the copy/paste buttons to the selected panel for the selected patch.
+    /** Adds the copy/paste buttons to the given panel for the given patch.
         */
     private void addCopyPastePanel(Patch patch, JPanel panel) {
         JPanel copyPastePanel = new JPanel();        
@@ -174,32 +197,34 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         panel.add(copyPastePanel);
         
         JButton copyPresetButton = new JButton("Copy Single Preset");
-        copyPresetButton.setActionCommand(copyPresetActionCmd);
+        copyPresetButton.setActionCommand(COPY_PRESET_ACTION_CMD);
         copyPresetButton.addActionListener(this);
         copyPastePanel.add(copyPresetButton);
         
         JButton copyBankButton = new JButton("Copy Entire Bank");
-        copyBankButton.setActionCommand(copyBankActionCmd);
+        copyBankButton.setActionCommand(COPY_BANK_ACTION_CMD);
         copyBankButton.addActionListener(this);
         copyPastePanel.add(copyBankButton);
         
         copyPastePanel.add(new JLabel("       "));
         
         pasteButton = new JButton("Paste");
-        pasteButton.setActionCommand(pasteActionCmd);
+        pasteButton.setActionCommand(PASTE_ACTION_CMD);
         pasteButton.setEnabled(false);
         pasteButton.addActionListener(this);
         copyPastePanel.add(pasteButton);
     }
     
+    /** Handles ActionEvents for the preset select combo box and the copy and
+        * paste buttons.*/
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals(selectPresetActionCmd)) {
+        if(e.getActionCommand().equals(SELECT_PRESET_ACTION_CMD)) {
             SelectedPresetModel.setPreset(bankSelect.getSelectedIndex(), presetSelect.getSelectedIndex());
-        } else if(e.getActionCommand().equals(copyPresetActionCmd)) {
+        } else if(e.getActionCommand().equals(COPY_PRESET_ACTION_CMD)) {
             doCopyPreset(p);
-        } else if(e.getActionCommand().equals(copyBankActionCmd)) {
+        } else if(e.getActionCommand().equals(COPY_BANK_ACTION_CMD)) {
             doCopyBank(p);
-        } else if(e.getActionCommand().equals(pasteActionCmd)) {
+        } else if(e.getActionCommand().equals(PASTE_ACTION_CMD)) {
             doPaste(p);
         }
     }
@@ -235,7 +260,9 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
 //        System.out.println("  " + (Utility.hexDump(localScrap, 0, -1, 16)));
     }
     
-    /** Pastes the local scrap into the currently selected bank or preset.
+    /** Pastes the local scrap into the currently selected bank or preset. If
+        * the local scrap contains a single preset, the preset is pasted. If the
+        * local scrap contains an entire bank, the bank is pasted.
         */
     private void doPaste(ISinglePatch p) {
         int startPos = 0;
@@ -264,7 +291,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         } 
     }
 
-    /** Adds the parameters panel to the selected panel for the selected patch.
+    /** Adds the parameters panel to the given panel for the given patch.
         */
     private void addParmsPanel(Patch patch, JPanel panel) {
         JPanel parmPanel = new JPanel();        
@@ -277,7 +304,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         addExpPdlPanel(patch, parmPanel);
     }
     
-    /** Adds the program change panel to the selected panel for the selected patch.
+    /** Adds the program change panel to the given panel for the given patch.
         */
     private void addProgChgPanel(Patch patch, JPanel panel) {
         JPanel progChgPanel = new JPanel();        
@@ -290,7 +317,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         } 
     }
     
-    /** Adds a program change widget to the selected panel for the selected patch.
+    /** Adds a program change widget to the given panel for the given patch.
         */
     private void addProgChgWidgets(Patch patch, JPanel panel, int pcGroupIx) {
         JPanel progChgPanel = new JPanel();        
@@ -322,7 +349,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         pcGroupModel[pcGroupIx] = new ControlGroupModel(onOffWidget, cbWidget);
     }
     
-    /** Adds the control change panel to the selected panel for the selected patch.
+    /** Adds the control change panel to the given panel for the given patch.
         */
     private void addCntlChgPanel(Patch patch, JPanel panel) {
         JPanel midPanel = new JPanel();        
@@ -344,7 +371,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         addSwitchWidgets(patch, midPanel);
     }
     
-    /** Adds CC and Value labels to the selected panel for the selected patch.
+    /** Adds CC and Value labels to the given panel for the given patch.
         */
     private void addCntlChgLabels(Patch patch, JPanel panel) {
         JPanel cntlChgPanel = new JPanel();        
@@ -359,7 +386,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         cntlChgPanel.add(valLabel);
     }
     
-    /** Adds a control change widgets to the selected panel for the selected patch.
+    /** Adds a control change widgets to the given panel for the given patch.
         */
     private void addCntlChgWidgets(Patch patch, JPanel panel, int ccGroupIx) {
         JPanel cntlChgPanel = new JPanel();        
@@ -399,7 +426,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         ccGroupModel[ccGroupIx] = new ControlGroupModel(onOffWidget, cbWidget);
     }
     
-    /** Adds a switch widgets to the selected panel for the selected patch.
+    /** Adds a switch widgets to the given panel for the given patch.
         */
     private void addSwitchWidgets(Patch patch, JPanel panel) {
         JPanel switchPanel = new JPanel();        
@@ -426,7 +453,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
                   negFaderNum--);
     }
 
-    /** Adds the expression pedals panel to the selected panel for the selected patch.
+    /** Adds the expression pedals panel to the given panel for the given patch.
         */
     private void addExpPdlPanel(Patch patch, JPanel panel) {
         JPanel rtPanel = new JPanel();        
@@ -448,7 +475,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         addNoteCtrlWidgets(patch, rtPanel);
     }
     
-    /** Adds Controller, Minimum and Maximum labels to the selected panel for the selected patch.
+    /** Adds Controller, Minimum and Maximum labels to the given panel for the given patch.
         */
     private void addExpPdlLabels(Patch patch, JPanel panel) {
         JPanel expPdlPanel = new JPanel();        
@@ -466,7 +493,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         expPdlPanel.add(maxLabel);
     }
     
-    /** Adds a control change widgets to the selected panel for the selected patch.
+    /** Adds a control change widgets to the given panel for the given patch.
         */
     private void addExpPdlWidgets(Patch patch, JPanel panel, int expGroupIx) {
         JPanel expPdlPanel = new JPanel();        
@@ -515,7 +542,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         expGroupModel[expGroupIx] = new ControlGroupModel(onOffWidget, cbWidget);
 }
     
-    /** Adds a noteCtrl widgets to the selected panel for the selected patch.
+    /** Adds a noteCtrl widgets to the given panel for the given patch.
         */
     private void addNoteCtrlWidgets(Patch patch, JPanel panel) {
         JPanel noteCtrlPanel = new JPanel();        
@@ -546,7 +573,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         noteGroupModel = new ControlGroupModel(onOffWidget, cbWidget);
     }
     
-    /** Adds the global panel to the selected panel for the selected patch.
+    /** Adds the global panel to the given panel for the given patch.
         */
     private JPanel addGlobalPanel(Patch patch, JPanel panel) {
         final String[] ccString = new String[] { 

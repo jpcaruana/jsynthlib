@@ -24,25 +24,33 @@ package synthdrivers.BehringerFCB1010;
 import core.*;
 import java.awt.event.*;
 
-/** Class ControlGroupModel used to enable disable the state of a group of
-* ComboxBoxWidgets associated with a CheckBoxWidget.
+/** Class ControlGroupModel associates a group of ComboBoxWidgets to a single
+* CheckBoxWidget and handles enabling/disabling the state of all of the ComboBoxWidgets
+* in the group based on the state of the associated CheckBoxWidget.
 *
 * @author Jeff Weber
 */
 class ControlGroupModel implements ItemListener {
+    /***/
     private ComboBoxWidget[] cbWidget;
-    private ParamModel onOffPModel;
-    
+
+    /** Constructs a ControlGroupModel given a single CheckBoxWidget and list of
+    * ComboBoxWidgets.*/
     ControlGroupModel(CheckBoxWidget onOffWidget, ComboBoxWidget[] cbWidget) {
         this.cbWidget = cbWidget;
         onOffWidget.addEventListener(this);
         setEnabled(onOffWidget.getValue() == 1);
     }
     
+    /** Detects the state of the CheckBoxWidget and calls the ControlGroupModel.setEnabled
+        * method.*/
     public void itemStateChanged(ItemEvent e) {
         this.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
     }
     
+    /** Sets all of the ComboBoxWidgets in the group to enabled or disabled based
+        * on the value of boolean enabled.
+        */
     private void setEnabled(boolean enabled) {
         for (int i = 0; i < cbWidget.length; i++) {
             cbWidget[i].setEnabled(enabled);
