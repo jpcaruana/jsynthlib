@@ -1,21 +1,40 @@
 <?xml version="1.0"?>
-
-<!-- 
+<!--
+ * This file is part of JSynthLib.
+ *
+ * JSynthLib is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * JSynthLib is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with JSynthLib; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA
+-->
+<!--
 	Ant build file for JSynthLib.
-	
-	Use 'ant -p' to see the available targets for this build file.
-	For using different defaults (e.g. for build.compiler, version), define 
-	the specific properties in a file called 'build.properties'  or at 
 
-	Remko Troncon <remko@ulyssis.org> 
+	Use 'ant -p' to see the available targets for this build file.
+	For using different defaults (e.g. for build.compiler, version), define
+	the specific properties in a file called 'build.properties'  or at
+
+	Remko Troncon <remko@ulyssis.org>
+
+	Version: $Id $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
 
 	<description>  JSynthLib: A universal synth librarian  </description>
-
+		
 	<!-- User-defined properties -->
-	<property file="build.properties"/>
+	<property file="build.properties"/>		
 
 	<!-- Defaults -->
 	<property name="src" location="."/>
@@ -23,7 +42,11 @@
 	<property name="api_docs" location="doc/api-docs"/>
 	<property name="build" location="build"/>
 	<property name="dist"  location="dist"/>
+	<property name="synthdrivers"  location="${build}/synthdrivers"/>
 	
+	<property name="synth"  value="**"/>
+	<property name="deprecation"  value="off"/>
+
 	<!-- Conditions -->
 	<condition property="isMacOS"> <os family="mac"/> </condition>
 	<condition property="isWindows"> <os family="windows"/> </condition>
@@ -33,10 +56,10 @@
 	<target name="init">
 		<!-- Create timestamp -->
 		<tstamp/>
-		
+
 		<!-- Create build dir -->
 		<mkdir dir="${build}"/>
-		
+
 		<!-- Set version number -->
 		<property name="version" value="${DSTAMP}cvs"/>
 		<filter token="version" value="${version}"/>
@@ -45,10 +68,10 @@
 
 
 	<!-- Building -->
-	<target name="build" depends="init" 
+	<target name="build" depends="init"
 			description="Build the complete package">
 		<!-- Compile -->
-		<javac srcdir="${src}" destdir="${build}">
+		<javac srcdir="${src}" destdir="${build}" deprecation="${deprecation}">
 			<include name="**/*.java"/>
 			<exclude name="core/MacOSXMidiWrapper.java" unless="isMacOS"/>
 			<exclude name="midiprovider/**/*.java"/>
@@ -75,15 +98,17 @@
 		</javadoc>
 	</target>
 
+	<target name="doc" depends="api_docs"/>
+
 
 	<!-- Distribution -->
 	<target name="dist" depends="init,build,api_docs"
 			description="Create package distribution files (jar, sources, ...)">
 		<mkdir dir="${dist}"/>
-		
+
 		<!-- Create JAR -->
-		<jar jarfile="${dist}/${ant.project.name}-${version}.jar" 
-			 basedir="${build}" 
+		<jar jarfile="${dist}/${ant.project.name}-${version}.jar"
+			 basedir="${build}"
 			 excludes="core/DeviceListWriter.class,JSynthLib.properties,
 					   linuxdevices.conf">
 			<manifest>
@@ -94,7 +119,7 @@
 				  forceoverwrite="yes" fileext=".md5"/>
 
 		<!-- Create sources bundle -->
-		<tar destfile="${dist}/${ant.project.name}-${version}.tar.gz" 
+		<tar destfile="${dist}/${ant.project.name}-${version}.tar.gz"
 			 compression="gzip" casesensitive="yes" longfile="gnu">
 			<tarfileset dir="." prefix="${ant.project.name}-${version}/">
 				<!-- Base files -->
@@ -103,18 +128,18 @@
 				<include name="synthdrivers.properties"/>
 				<include name="${docs}"/>
 				<include name="build.xml"/>
-				
+
 				<!-- Junk -->
 				<exclude name="${api_docs}/**"/>
 			</tarfileset>
 		</tar>
 		<checksum file="${dist}/${ant.project.name}-${version}.tar.gz"
 				  forceoverwrite="yes" fileext=".md5"/>
-		
+
 		<!-- Create API docs bundle -->
-		<tar destfile="${dist}/${ant.project.name}-${version}-api.tar.gz" 
+		<tar destfile="${dist}/${ant.project.name}-${version}-api.tar.gz"
 			 compression="gzip" casesensitive="yes" longfile="gnu">
-			<tarfileset dir="${api_docs}" 
+			<tarfileset dir="${api_docs}"
 						prefix="${ant.project.name}-${version}-api"/>
 		</tar>
 	</target>
@@ -122,17 +147,31 @@
 
 	<!-- Run -->
 	<target name="run" description="Run the application" depends="init,build">
-		<java classname="JSynthLib" dir="${build}" fork="true"/>	
+		<java classname="JSynthLib" dir="${build}" fork="true"/>
 	</target>
+
+
+	<!-- Run with debug level 2 -->
+	<target name="run-debug" description="Run the application" depends="init,build">
+		<java classname="JSynthLib" dir="${build}" fork="true">
+			<arg value="2"/>
+		</java>
+	</target>
+
+	<target name="rd" depends="run-debug"/>
 	
-	
+
 	<!-- Update driver information -->
-	<target name="update-drivers" 
+	<target name="update-drivers"
 			description="Update synth drivers information" depends="init,build">
 		<delete file="${build}/synthdrivers.properties"/>
-		<java classname="core.DeviceListWriter" dir="${build}" fork="true"/>	
+		<java classname="core.DeviceListWriter" dir="${build}" fork="true">
+			<arg value="2"/>
+		</java>
 		<copy todir="${src}" file="${build}/synthdrivers.properties" />
 	</target>
+
+	<target name="ud" depends="update-drivers"/>
 
 
 	<!-- Cleanup -->
@@ -141,5 +180,57 @@
 		<delete dir="${api_docs}"/>
 		<delete dir="${build}"/>
 	</target>
+
+	<!-- Cleanup synthdrivers -->
+	<target name="clean-synthdrivers" description="Cleanup the synth driver .class files">
+		<delete>
+			<fileset dir="${synthdrivers}" includes="${synth}/**/*.class"/>
+		</delete>
+	</target>
+	
+	<target name="cs" depends="clean-synthdrivers"/>
+
+	<!-- ==================== Administrative targets  ======================= -->
+	<target name="build-core" depends="clean-synthdrivers,build"/>
+	<target name="bc" depends="build-core"/>
+	
+	<target name="clean-build" depends="clean,build"/>
+	<target name="cb" depends="clean-build"/>
+
+	<target name="all" depends="clean,dist"/>
+
+	<!-- =============================== Help =============================== -->
+	<target name="targets">
+		<echo>
+ANT build targets
+
+The following targets are available:
+
+  all                  Cleanup first and create everything (docs, dists ...)
+  clean                Cleanup all generated files
+  api_docs             Generate API documentation
+  doc                  Short form of "api_docs"
+  build                Build JSynthLib
+  build-core           First "clean-synthdrivers" and then "build"
+                         Same alternative option as with "clean-synthdrivers"
+  bc                   Short form of "build-core"
+  clean-build          First "clean" and then "build"
+  cb                   Short form of "clean-build"
+  clean-synthdrivers   Clean all synthdrivers
+                         You can alternatively specify a synthdriver e.g. "KawaiK4":
+                         ant -Dsynth=KawaiK4 clean-synthdrivers
+                         or
+                         ant clean-synthdrivers -Dsynth=KawaiK4
+  cs                   Short form of "cs"
+  dist                 Create package distribution files (jar, sources, ...)
+  run                  Run the application
+  run-debug            Run the application with debug level 2
+  rd                   Short form of "run-debug"
+  update-drivers       Update synth drivers information with debug level 2
+  ud                   Short form of "update-drivers"  
+		</echo>
+	</target>
+
+	<target name="help" depends="targets" description="Help for this build file"/>
 
 </project>
