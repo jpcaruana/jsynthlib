@@ -5,24 +5,30 @@ package core;
  * 
  * @author ribrdb
  */
-public interface IBankDriver extends IPatchDriver{
-    /*
-     * @deprecated Use BankDriver(String, String, int, int).
-     */public abstract int getNumPatches();
+public interface IBankDriver extends IPatchDriver {
+    /** returns the number of patches the bank holds.. */
+    public abstract int getNumPatches();
 
-    /** Getter for property <code>numColumns</code>. */
+    /** returns number of columns in bank editor frame. */
     public abstract int getNumColumns();
 
-    // stub methods to convert IPatch -> Patch.
+    /**
+     * Check a patch if it is for the bank patch and put it into the
+     * bank.
+     */
     public abstract void checkAndPutPatch(IPatch bankData, IPatch p,
-            int selectedPatchNum);
+            int patchNum);
 
-    public abstract void deletePatch(IPatch bankData, int selectedPatchNum);
+    /** Delete a patch. */
+    public abstract void deletePatch(IPatch bankData, int patchNum);
 
-    public abstract IPatch getPatch(IPatch bankData, int selectedPatchNum);
+    /** Gets a patch from the bank, converting it as needed. */
+    public abstract IPatch getPatch(IPatch bankData, int patchNum);
 
-    public abstract String getPatchName(IPatch bankData, int i);
+    /** Get the name of the patch at the given number <code>patchNum</code>. */
+    public abstract String getPatchName(IPatch bankData, int patchNum);
 
+    /** Set the name of the patch at the given number <code>patchNum</code>. */
     public abstract void setPatchName(IPatch bankData, int patchNum,
             String string);
 }

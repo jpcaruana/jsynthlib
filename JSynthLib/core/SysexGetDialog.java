@@ -314,20 +314,16 @@ public class SysexGetDialog extends JDialog {
       int bankNum  = bankNumComboBox.getSelectedIndex();
       int patchNum = patchNumComboBox.getSelectedIndex();
       inPort = driver.getInPort();
-
       ErrorMsg.reportStatus("SysexGetDialog | port: " + inPort
 			    + " | bankNum: " + bankNum + " | patchNum: " + patchNum);
-
-      //----- Clear MidiIn buffer
-      MidiUtil.clearSysexInputQueue(inPort);
 
       //----- Start timer and request dump
       myLabel.setText("Getting sysex dump...");
       // patchsize value is similiar to expected transmission time *3
-      timeOut=(long)driver.getPatchSize();
+      timeOut = (long) driver.getPatchSize();
       sysexSize = 0;
-      queue = new ArrayList();	// clear queue
-      MidiUtil.clearSysexInputQueue(driver.getInPort());
+      queue = new ArrayList();
+      MidiUtil.clearSysexInputQueue(inPort);	// clear MIDI input buffer
       timer.start();
       driver.requestPatchDump(bankNum, patchNum);
     }

@@ -1,6 +1,8 @@
 package core;
 import java.awt.Insets;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.SysexMessage;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -227,7 +229,7 @@ public abstract class SysexWidget extends JPanel {
     }
 
     /**
-     * Send System Exclusive message of the value to a MIDI port using
+     * Send a System Exclusive message of the value to a MIDI port using
      * SysexSender <code>s</code>.  An extended class calls this when
      * widget state is chagned.<p>
      * This method does not do min/max range check.  It is caller's
@@ -237,7 +239,14 @@ public abstract class SysexWidget extends JPanel {
     protected void sendSysex(SysexSender s, int v) {
         if (s != null) { // do it only if there is a sysex-sender available
 	    s.channel = (byte) device.getDeviceID();
-	    driver.send(s.generate(v));
+	    byte[] sysex = s.generate(v); 
+	    SysexMessage m = new SysexMessage();
+	    try {
+                m.setMessage(sysex, sysex.length);
+            } catch (InvalidMidiDataException e) {
+                ErrorMsg.reportStatus(e);
+            }
+	    driver.send(m);
         }
     }
 

@@ -18,16 +18,22 @@ public class PatchNameWidget extends SysexWidget {
      * Creates a new <code>PatchNameWidget</code> instance.
      * @param label a label text.
      * @param patch a <code>Patch</code>, which is edited.
-     * @param patchNameSize TODO
      */
     public PatchNameWidget(String label, IPatch patch) {
+        // FIXME define ISingleDriver.getPatchNameSize()
         this(label, patch, ((Driver)patch.getDriver()).patchNameSize);
     }
 
-    public PatchNameWidget(String label, IPatch patch, int _patchNameSize) {
+    /**
+     * Creates a new <code>PatchNameWidget</code> instance.
+     * @param label a label text.
+     * @param patch a <code>Patch</code>, which is edited.
+     * @param patchNameSize maximum length of patch name
+     */
+    public PatchNameWidget(String label, IPatch patch, int patchNameSize) {
         super(label, patch, null, null);
         
-        patchNameSize = _patchNameSize;
+        this.patchNameSize = patchNameSize;
         createWidgets();
         layoutWidgets();
     }

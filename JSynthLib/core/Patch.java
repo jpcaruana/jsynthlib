@@ -1,4 +1,5 @@
 package core;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
@@ -7,26 +8,28 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
 
 /**
- * A class for MIDI System Exclusive Message patch data.<p>
- *
- * There are many kinds of constructors.  Driver can use one of
- * the follows (in preferred order).
+ * A class for MIDI System Exclusive Message patch data.
+ * <p>
+ * 
+ * There are many kinds of constructors. Driver can use one of the follows (in
+ * preferred order).
  * <ol>
- * <li> <code>Patch(byte[], Driver)</code>
- * <li> <code>Patch(byte[], Device)</code>
- * <li> <code>Patch(byte[])</code>
+ * <li><code>Patch(byte[], Driver)</code>
+ * <li><code>Patch(byte[], Device)</code>
+ * <li><code>Patch(byte[])</code>
  * </ol>
- *
- * Use <code>Patch(byte[], Driver)</code> form if possible.  The
- * latter two constructors <b>guesses</b> the proper driver by using
- * the <code>Driver.supportsPatch</code> method.  It is not efficient.<p>
- *
- * Use <code>Patch(byte[])</code> only when you have no idea about
- * either Driver or Device for which your Patch is.  If you know that
- * the patch you are creating does not correspond to any driver, use
- * <code>Patch(byte[], (Driver) null)</code>, since it is much more
- * efficient than <code>Patch(byte[])</code>.
- *
+ * 
+ * Use <code>Patch(byte[], Driver)</code> form if possible. The latter two
+ * constructors <b>guesses </b> the proper driver by using the
+ * <code>Driver.supportsPatch</code> method. It is not efficient.
+ * <p>
+ * 
+ * Use <code>Patch(byte[])</code> only when you have no idea about either
+ * Driver or Device for which your Patch is. If you know that the patch you are
+ * creating does not correspond to any driver, use
+ * <code>Patch(byte[], (Driver) null)</code>, since it is much more efficient
+ * than <code>Patch(byte[])</code>.
+ * 
  * @author ???
  * @version $Id$
  * @see Driver#supportsPatch
@@ -40,104 +43,120 @@ public class Patch implements IPatch {
      */
     public byte[] sysex;
 
-    // 'String' is better.  But 'StringBuffer' is used to keep
+    // 'String' is better. But 'StringBuffer' is used to keep
     // the compatibility for serialized files
     /** "Field 1" comment. */
     private StringBuffer date;
+
     /** "Field 2" comment. */
     private StringBuffer author;
+
     /** "Comment" comment. */
     private StringBuffer comment;
 
-    // not used.  What's this?
+    // not used. What's this?
     // I belive this is used by java to maintain backwords compatabl
     static final long serialVersionUID = 2220769917598497681L;
 
     /**
-     * Constructor - Driver is known.  This is often used by a Single
-     * Driver and its subclass.
-     * @param gsysex The MIDI SysEx message.
-     * @param driver a <code>Driver</code> instance.  If
-     * <code>null</code>, a null driver (Generic Driver) is used.
+     * Constructor - Driver is known. This is often used by a Single Driver and
+     * its subclass.
+     * 
+     * @param gsysex
+     *            The MIDI SysEx message.
+     * @param driver
+     *            a <code>Driver</code> instance. If <code>null</code>, a
+     *            null driver (Generic Driver) is used.
      */
     public Patch(byte[] gsysex, Driver driver) {
-        date    = new StringBuffer();
-        author  = new StringBuffer();
+        date = new StringBuffer();
+        author = new StringBuffer();
         comment = new StringBuffer();
-	sysex   = gsysex;
- 	setDriver(driver);
+        sysex = gsysex;
+        setDriver(driver);
     }
 
     /**
-     * Constructor - Device is known but Driver is not.  This is often
-     * used by a Bank Driver and its subclass.
-     * @param gsysex The MIDI SysEx message.
-     * @param device a <code>Device</code> instance.
+     * Constructor - Device is known but Driver is not. This is often used by a
+     * Bank Driver and its subclass.
+     * 
+     * @param gsysex
+     *            The MIDI SysEx message.
+     * @param device
+     *            a <code>Device</code> instance.
      */
     public Patch(byte[] gsysex, Device device) {
-        date    = new StringBuffer();
-        author  = new StringBuffer();
+        date = new StringBuffer();
+        author = new StringBuffer();
         comment = new StringBuffer();
-	sysex   = gsysex;
+        sysex = gsysex;
         chooseDriver(device);
     }
 
     /**
-     * Constructor - Either Device nor Driver is not known.  Consider using
+     * Constructor - Either Device nor Driver is not known. Consider using
      * <code>Patch(byte[], Driver)</code> or <code>Patch(byte[],
-     * Device)</code>.  If you know that the patch you are creating
-     * does not correspond to any driver, use <code>Patch(byte[],
-     * (Driver) null)</code>, since it is much more efficient than
-     * this.
-     * @param gsysex The MIDI SysEx message.
+     * Device)</code>.
+     * If you know that the patch you are creating does not correspond to any
+     * driver, use <code>Patch(byte[],
+     * (Driver) null)</code>, since it is
+     * much more efficient than this.
+     * 
+     * @param gsysex
+     *            The MIDI SysEx message.
      */
     public Patch(byte[] gsysex) {
-        date    = new StringBuffer();
-        author  = new StringBuffer();
+        date = new StringBuffer();
+        author = new StringBuffer();
         comment = new StringBuffer();
-        sysex   = gsysex;
+        sysex = gsysex;
         chooseDriver();
     }
 
     /**
      * Constructor - only sysex is known.
-     * @param gsysex The MIDI SysEx message.
-     * @param offset offset address in <code>gsysex</code>.
+     * 
+     * @param gsysex
+     *            The MIDI SysEx message.
+     * @param offset
+     *            offset address in <code>gsysex</code>.
      */
     // called by LibraryFrame and SceneFrame
     Patch(byte[] gsysex, int offset) {
-        date    = new StringBuffer();
-        author  = new StringBuffer();
+        date = new StringBuffer();
+        author = new StringBuffer();
         comment = new StringBuffer();
-        sysex   = new byte[gsysex.length - offset];
+        sysex = new byte[gsysex.length - offset];
         System.arraycopy(gsysex, offset, sysex, 0, gsysex.length - offset);
         chooseDriver();
     }
 
     /**
-     * Set <code>driverNum</code> by guessing from <code>sysex</code>
-     * by using <code>Driver.suportsPatch</code> method.
-     * @param dev The known device
+     * Set <code>driverNum</code> by guessing from <code>sysex</code> by
+     * using <code>Driver.suportsPatch</code> method.
+     * 
+     * @param dev
+     *            The known device
      * @see Driver#supportsPatch
      */
     private boolean chooseDriver(Device dev) {
         StringBuffer patchString = getPatchHeader();
 
         for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-	    // iterating over all Drivers of the given device
-	    IPatchDriver drv = (IPatchDriver)dev.getDriver(idrv);
-	    if (drv.supportsPatch(patchString, this)) {
-		drv.trimSysex(this);
-		setDriver(drv);
-		return true;
-	    }
+            // iterating over all Drivers of the given device
+            IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
+            if (drv.supportsPatch(patchString, this)) {
+                drv.trimSysex(this);
+                setDriver(drv);
+                return true;
+            }
         }
         // Unkown patch, try to guess at least the manufacturer
         comment = new StringBuffer("Probably a "
-				   + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
-				   + " Patch, Size: " + sysex.length);
-	setDriver(AppConfig.getNullDriver());
-	return false;
+                + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
+                + " Patch, Size: " + sysex.length);
+        setDriver(AppConfig.getNullDriver());
+        return false;
     }
 
     public boolean chooseDriver() {
@@ -147,76 +166,78 @@ public class Patch implements IPatch {
 
         for (int idev = 0; idev < PatchEdit.appConfig.deviceCount(); idev++) {
             // Outer Loop, iterating over all installed devices
-	    Device dev = AppConfig.getDevice(idev);
-	    for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-		IPatchDriver drv = (IPatchDriver)dev.getDriver(idrv);
+            Device dev = AppConfig.getDevice(idev);
+            for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
+                IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
                 // Inner Loop, iterating over all Drivers of a device
-		if (drv.supportsPatch(patchString, this)) {
+                if (drv.supportsPatch(patchString, this)) {
                     drv.trimSysex(this);
                     setDriver(drv);
-		    return true;
+                    return true;
                 }
             }
         }
         // Unkown patch, try to guess at least the manufacturer
         comment = new StringBuffer("Probably a "
-				   + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
-				   + " Patch, Size: " + sysex.length);
-	setDriver(AppConfig.getNullDriver());
-	return false;
+                + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
+                + " Patch, Size: " + sysex.length);
+        setDriver(AppConfig.getNullDriver());
+        return false;
     }
 
     public String getDate() {
-	return date.toString();
+        return date.toString();
     }
 
     public void setDate(String date) {
-	this.date = new StringBuffer(date);
+        this.date = new StringBuffer(date);
     }
 
     public String getAuthor() {
-	return author.toString();
+        return author.toString();
     }
 
     public void setAuthor(String author) {
-	this.author = new StringBuffer(author);
+        this.author = new StringBuffer(author);
     }
 
     public String getComment() {
-	return comment.toString();
+        return comment.toString();
     }
 
     public void setComment(String comment) {
-	this.comment = new StringBuffer(comment);
+        this.comment = new StringBuffer(comment);
     }
 
     public Device getDevice() {
-	return driver.getDevice();
+        return driver.getDevice();
     }
 
     public IPatchDriver getDriver() {
-	return driver;
+        return driver;
     }
 
     public void setDriver(IPatchDriver driver) {
-  	this.driver = (driver == null) ? AppConfig.getNullDriver() : (Driver)driver;
+        this.driver = (driver == null) ? AppConfig.getNullDriver()
+                : (Driver) driver;
     }
 
     public byte[] getByteArray() {
-    		return sysex;
+        return sysex;
     }
-    
-	public SysexMessage[] getMessages() {
-		try {
-			return MidiUtil.byteArrayToSysexMessages(sysex);
-		} catch (InvalidMidiDataException ex) {
-			return null;
-		}
-	}
+
+    public SysexMessage[] getMessages() {
+        try {
+            return MidiUtil.byteArrayToSysexMessages(sysex);
+        } catch (InvalidMidiDataException ex) {
+            return null;
+        }
+    }
+
     // Transferable interface methods
 
     public Object getTransferData(DataFlavor p1)
-	throws UnsupportedFlavorException, IOException {
+            throws UnsupportedFlavorException, IOException {
         return this;
     }
 
@@ -235,93 +256,100 @@ public class Patch implements IPatch {
 
     // Clone interface method
     public Object clone() {
-	try {
-	    Patch p = (Patch) super.clone();
-	    p.sysex = (byte[]) sysex.clone();
-	    return p;
-	} catch (CloneNotSupportedException e) {
-	    // Cannot happen -- we support clone, and so do arrays
-	    throw new InternalError(e.toString());
-	}
+        try {
+            Patch p = (Patch) super.clone();
+            p.sysex = (byte[]) sysex.clone();
+            return p;
+        } catch (CloneNotSupportedException e) {
+            // Cannot happen -- we support clone, and so do arrays
+            throw new InternalError(e.toString());
+        }
     }
+
     // end of Clone interface method
 
     // called by ImportAllDialog, ImportMidiFile, SysexGetDialog,
     // LibraryFrame, and SceneFrame.
     public IPatch[] dissect() {
-	IPatch[] patarray;
-	Device dev = getDevice();
-    search:
-	{
-	    StringBuffer patchString = this.getPatchHeader();
+        IPatch[] patarray;
+        Device dev = getDevice();
+        search: {
+            StringBuffer patchString = this.getPatchHeader();
 
-	    for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-		IDriver drv = dev.getDriver(idrv);
-		if ((drv instanceof Converter)
-		    && drv.supportsPatch(patchString, this)) {
-		    patarray = ((Converter) drv).extractPatch(this);
-		    if (patarray != null)
-			break search; // found!
-		}
-	    }
-	    // No conversion. Try just the original patch....
-	    return new IPatch[] {this};
-	}
-	// Conversion was sucessfull, we have at least one
-	// converted patch assign the original deviceNum and
-	// individual driverNum to each patch of patarray
-	for (int i = 0; i < patarray.length; i++) {
-	    StringBuffer patchString = patarray[i].getPatchHeader();
-	    for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {
-		IPatchDriver drv = (IPatchDriver)dev.getDriver(jdrv);
-		if (drv.supportsPatch(patchString, patarray[i]))
-		    patarray[i].setDriver(drv);
-	    }
-	}
-	return patarray;
+            for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
+                IDriver drv = dev.getDriver(idrv);
+                if ((drv instanceof Converter)
+                        && drv.supportsPatch(patchString, this)) {
+                    patarray = ((Converter) drv).extractPatch(this);
+                    if (patarray != null)
+                        break search; // found!
+                }
+            }
+            // No conversion. Try just the original patch....
+            return new IPatch[] { this };
+        }
+        // Conversion was sucessfull, we have at least one
+        // converted patch assign the original deviceNum and
+        // individual driverNum to each patch of patarray
+        for (int i = 0; i < patarray.length; i++) {
+            StringBuffer patchString = patarray[i].getPatchHeader();
+            for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {
+                IPatchDriver drv = (IPatchDriver) dev.getDriver(jdrv);
+                if (drv.supportsPatch(patchString, patarray[i]))
+                    patarray[i].setDriver(drv);
+            }
+        }
+        return patarray;
     }
 
     /**
-     * Return a hexadecimal string for Driver.supportsPatch at most 16
-     * byte sysex data.
+     * Return a hexadecimal string for Driver.supportsPatch at most 16 byte
+     * sysex data.
+     * 
      * @see Driver#supportsPatch
      */
     public StringBuffer getPatchHeader() {
-	StringBuffer patchstring = new StringBuffer("F0");
+        StringBuffer patchstring = new StringBuffer("F0");
 
-	// Some Sysex Messages are shorter than 16 Bytes!
-// 	for (int i = 1; (sysex.length < 16) ? i < sysex.length : i < 16; i++) {
-	for (int i = 1; i < Math.min(16, sysex.length); i++) {
-	    if ((int) (sysex[i] & 0xff) < 0x10)
-		patchstring.append("0");
-	    patchstring.append(Integer.toHexString((int) (sysex[i] & 0xff)));
-	}
-	return patchstring;
+        // Some Sysex Messages are shorter than 16 Bytes!
+        // 	for (int i = 1; (sysex.length < 16) ? i < sysex.length : i < 16; i++)
+        // {
+        for (int i = 1; i < Math.min(16, sysex.length); i++) {
+            if ((int) (sysex[i] & 0xff) < 0x10)
+                patchstring.append("0");
+            patchstring.append(Integer.toHexString((int) (sysex[i] & 0xff)));
+        }
+        return patchstring;
     }
 
     /**
-     * Dump byte data array.  Only for debugging.
-     *
+     * Dump byte data array. Only for debugging.
+     * 
      * @return string like "[2,3] f0 a3 00"
      */
     public String toString() {
-	StringBuffer buf = new StringBuffer();
-	buf.append("[" + driver + "] "
-		   + Utility.hexDumpOneLine(sysex, 0, -1, 20));
-	return buf.toString();
+        StringBuffer buf = new StringBuffer();
+        buf.append("[" + driver + "] "
+                + Utility.hexDumpOneLine(sysex, 0, -1, 20));
+        return buf.toString();
     }
-    
+
     public String getName() {
-    		return driver.getPatchName(this);
+        return driver.getPatchName(this);
     }
-    
+
     public void setName(String s) {
-    		driver.setPatchName(this, s);
+        driver.setPatchName(this, s);
     }
-	public void useSysexFromPatch(IPatch ip) {
-		byte[] s = ip.getByteArray();
-		if (s.length != sysex.length)
-			throw new IllegalArgumentException();
-		sysex = s;
-	}
+
+    public void calculateChecksum() {
+        driver.calculateChecksum(this);
+    }
+
+    public void useSysexFromPatch(IPatch ip) {
+        byte[] s = ip.getByteArray();
+        if (s.length != sysex.length)
+            throw new IllegalArgumentException();
+        sysex = s;
+    }
 }

@@ -5,7 +5,7 @@ package core;
  * patches it's associated with to another format. The Driver
  * supporting the new Driver format must come later in the Driver
  * Chain.
- * @see Device#addDriver(Driver)
+ * @see Device#addDriver(IDriver)
  * @author ???
  * @version $Id$
  */

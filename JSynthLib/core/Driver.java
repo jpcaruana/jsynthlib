@@ -385,6 +385,7 @@ public class Driver implements ISingleDriver {
      * @param end end offset
      * @param ofs offset of the checksum data
      */
+    // XXX This is not 'static' to keep compatibility.
     protected void calculateChecksum(Patch patch, int start, int end, int ofs) {
         CalculateChecksum(patch, start, end, ofs);
     }
@@ -424,7 +425,6 @@ public class Driver implements ISingleDriver {
      * Check if this driver supports creating a new patch.
      * By default it uses reflection to test if the method createNewPatch
      * is declared in the subclass of Driver.
-     * @return
      */
     public boolean canCreatePatch() {
         try {
@@ -618,13 +618,6 @@ public class Driver implements ISingleDriver {
     }
 
     //----- Start phil@muqus.com
-    /**
-     * Request MIDI synth to send a patch dump.  If
-     * <code>sysexRequestDump</code> is not <code>null</code>, a
-     * request dump message is sent.  Otherwise a dialog
-     * window will prompt users.
-     * @see SysexHandler
-     */
     public void requestPatchDump(int bankNum, int patchNum) {
 	//clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
 	setBankNum(bankNum);
@@ -853,11 +846,11 @@ public class Driver implements ISingleDriver {
      * patch to a correct size. Useful for files containg more than one
      * bank for example. Some drivers are incompatible with this method
      * so it reqires explicit activation with the trimSize variable.
-     * @param p the patch, which should be trimmed to the right size
+     * @param patch the patch, which should be trimmed to the right size
      * @return the size of the (modified) patch
      */
-    public void trimSysex(IPatch pk) {
-        trimSysex((Patch) pk);
+    public void trimSysex(IPatch patch) {
+        trimSysex((Patch) patch);
     }
     public IPatch createPatch(byte[] sysex) {
         return new Patch(sysex, this);
