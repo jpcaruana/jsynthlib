@@ -22,10 +22,9 @@
 package synthdrivers.AlesisDM5;
 
 import core.*;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.InvalidMidiDataException;
 
-class TrigSender implements SysexWidget.ISender {
+class TrigSender extends NRPNSender implements SysexWidget.ISender {
     final static int TR_V_CURVE        = 1;
     final static int TR_NOTE_NBR       = 2;
     final static int TR_GAIN           = 3;
@@ -40,14 +39,11 @@ class TrigSender implements SysexWidget.ISender {
     
     private final static int MAX_TRIG_NUM = 11;
     private static int LAST_TRIG_NUM = 99;
-    private int param;
     private int trigNum;
-    private int max;
     
     public TrigSender(int trigNum, int param, int max) {
+        super(param, max);
         this.trigNum = trigNum;
-        this.param = param;
-        this.max = max;
     }
     
     public void send(IPatchDriver driver, int value) {
@@ -68,15 +64,9 @@ class TrigSender implements SysexWidget.ISender {
         
         try {
             driver.send(newControlChange(driver, NRPN_LSB, param));  // Command to select the parameter
-            driver.send(newControlChange(driver, DATA_ENTRY_MSB, value * 127 / max));  // Set the value of the parameter
+            driver.send(newControlChange(driver, DATA_ENTRY_MSB, ccMap[value]));  // Set the NRPN value using the table
         } catch (InvalidMidiDataException e) {
             ErrorMsg.reportStatus(e);
         }
-    }
-    
-    private ShortMessage newControlChange(IPatchDriver driver, int controlNumber, int value) throws InvalidMidiDataException {
-        ShortMessage ccMessage = new ShortMessage();
-        ccMessage.setMessage(ShortMessage.CONTROL_CHANGE, driver.getDevice().getChannel() - 1, controlNumber, value);
-        return ccMessage;
     }
 }
