@@ -116,24 +116,25 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                                                      "Revert to Original",
                                                      "Place Changed Version on Clipboard"
                     };
-                    int choice = JOptionPane.CLOSED_OPTION;
-                    while (choice == JOptionPane.CLOSED_OPTION)
+                    int choice;
+                    do {
                         choice = JOptionPane.showOptionDialog
                             ((Component) null,
                              "What do you wish to do with the changed copy of the Patch?",
                              "Save Changes?",
                              JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE,
                              null, choices, choices[0]);
+                    } while (choice == JOptionPane.CLOSED_OPTION);
                     if (choice == 0) { // "Keep Changes"
                         if (bankFrame != null)
                             bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
-                        return;
+                    } else {
+                        if (choice == 2) // "Place Changed Version on Clipboard"
+                            //put on clipboard but don't 'return' just yet
+                            copySelectedPatch();
+                        //restore backup
+                        p.useSysexFromPatch(originalPatch);
                     }
-                    if (choice == 2) // "Place Changed Version on Clipboard"
-                        //put on clipboard but don't 'return' just yet
-                        copySelectedPatch();
-                    p.useSysexFromPatch(originalPatch);
-                    //restore backup
                 }
 
                 public void JSLFrameOpened(JSLFrameEvent e) {

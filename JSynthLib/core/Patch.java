@@ -218,7 +218,7 @@ public class Patch implements IPatch {
     }
 
     public void setDriver(IPatchDriver driver) {
-        this.driver = (driver == null) ? AppConfig.getNullDriver()
+        this.driver = (driver == null) ? (Driver) AppConfig.getNullDriver()
                 : (Driver) driver;
     }
 

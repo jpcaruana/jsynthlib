@@ -383,7 +383,7 @@ final public class AppConfig {
      * Returns null driver of Generic Device.  It is used when proper
      * driver is not found.
      */
-    static Driver getNullDriver() {
-	return (Driver)getDevice(0).getDriver(0);
+    static IPatchDriver getNullDriver() {
+	return (IPatchDriver) getDevice(0).getDriver(0);
     }
 }
