@@ -38,7 +38,7 @@ import javax.sound.midi.InvalidMidiDataException;
 * 
 * @author Jeff Weber
 */
-public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ActionListener {
+public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     /** Size of program patch header--7 bytes.
     */
     static final int headerSize = Constants.HDR_SIZE;
@@ -139,11 +139,10 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ActionList
         panel.add(selectedNoteWidgetPanel,gbc);
         
         ScrollBarLookupWidget selNote = new ScrollBarLookupWidget("Selected Note", patch, 0, 60, 0,
-                                                   null,
-                                                   new NRPNSender(NRPNSender.PREVIEW_NOTE, NRPNSender.CC_MAP_0_60),
-                                                   getNoteNames(36, 61));
+                                                                  null,
+                                                                  new NRPNSender(NRPNSender.PREVIEW_NOTE, NRPNSender.CC_MAP_0_60),
+                                                                  getNoteNames(36, 61));
         addWidget(panel, selNote, ctrlBase++, 0, 1, 1, widgetCount++);
-//        selNote.addEventListener(this);
         selNote.addEventListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 selNoteChanged(e);
@@ -208,40 +207,39 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ActionList
         notePacketModel[0] = new PacketModel(patch, 36+1, BitModel.BANK_MASK);
         sysexWidget[0] = new ComboBoxWidget("Family", patch,
                                             notePacketModel[0],
-                                            new DummySender(0, 3, 99),
-                                            new String[] {"0--Kick", "1--Snare", "2--Tom", "3--Hi-Hat", "4--Cymbal", "5--Percussion", "6--Effects", "7--Random"});
+                                            new NRPNSender(NRPNSender.NOTE_BANK, 7),
+                                            new String[] {
+                                                "0--Kick      ", 
+                                                "1--Snare     ",
+                                                "2--Tom       ",
+                                                "3--Hi-Hat    ",
+                                                "4--Cymbal    ",
+                                                "5--Percussion",
+                                                "6--Effects   ",
+                                                "7--Random    "
+                                            });
         addWidget(panel, sysexWidget[0], ctrlBase++, 0, 1, 1, widgetCount++);
-        ((ComboBoxWidget)sysexWidget[0]).addEventListener(this);
+        ((ComboBoxWidget)sysexWidget[0]).addEventListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                familyChanged(e);
+            }
+	    });
 
         notePacketModel[1] = new PacketModel(patch, 36+2, BitModel.DRUM_MASK);
+        int bankIndex = sysexWidget[0].getValue();
+        int listMax = DM5SoundList.DRUM_NAME[bankIndex].length - 1;
         sysexWidget[1] = new UpdateableComboBoxWidget("Drum Sound", patch,
-                                            notePacketModel[1],
-                                            new DummySender(0, 3, 99),
-                                            DM5SoundList.DRUM_NAME[sysexWidget[0].getValue()]);
+                                                      notePacketModel[1],
+                                                      new NRPNSender(NRPNSender.NOTE_SOUND, listMax),
+//                                                      new DummySender(0, 93, 0),
+                                                      DM5SoundList.DRUM_NAME[bankIndex]);
         addWidget(panel, sysexWidget[1], ctrlBase++, 0, 1, 1, widgetCount++);
-//        ((UpdateableComboBoxWidget)sysexWidget[1]).cb.setMinimumSize(new Dimension(146, 27));
-//        ((UpdateableComboBoxWidget)sysexWidget[1]).cb.setMaximumSize(new Dimension(146, 27));
-//        ((UpdateableComboBoxWidget)sysexWidget[1]).cb.setSize(146, 27);
-//        Dimension dim = ((UpdateableComboBoxWidget)sysexWidget[1]).cb.getSize();
-//        System.out.println("Width = " + dim.getWidth() + "   Height = " + dim.getHeight());
     }
 
-    public void actionPerformed(ActionEvent e) {
+    public void familyChanged(ActionEvent e) {
         JComboBox cb = (JComboBox)e.getSource();
         int selectedIndex = cb.getSelectedIndex();
-//        System.out.println("ActionEvent on ComboBox 0");
-//        System.out.println("Running in thread " + Thread.currentThread().getName());
-//        Dimension dim = ((UpdateableComboBoxWidget)sysexWidget[1]).cb.getSize();
-//        System.out.println("Width = " + dim.getWidth() + "   Height = " + dim.getHeight());
-
-        int newValue = notePacketModel[1].get();
-        int newMax = DM5SoundList.DRUM_NAME[selectedIndex].length - 1;
-        ((UpdateableComboBoxWidget)sysexWidget[1]).updateComboBoxWidgetList(DM5SoundList.DRUM_NAME[selectedIndex]);
-//        ((UpdateableComboBoxWidget)sysexWidget[1]).cb.setSize(146, 27);
-//        System.out.println("New Value is " + newValue + ", max value is " + newMax);
-        ((ComboBoxWidget)sysexWidget[1]).setMax(newMax);
-        ((ComboBoxWidget)sysexWidget[1]).setValue(Math.min(newValue, newMax));
-//        System.out.println("ActionEvent on ComboBox 0 has been processed");
+        ((UpdateableComboBoxWidget)sysexWidget[1]).updateComboBoxWidgetList(selectedIndex);
     }
     
     private void addParmWidgets(Patch patch, JPanel panel) {
@@ -355,17 +353,32 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ActionList
     }
     
     class UpdateableComboBoxWidget extends ComboBoxWidget {
+        IParamModel UCBWModel;
+        NRPNSender UCBWSender;
         /** <code>min</code> is set to 0. */
         UpdateableComboBoxWidget(String label, IPatch patch,
                                  IParamModel pmodel, ISender sender, Object [] options) {
             super(label, patch, 0, pmodel, sender, options);
+            UCBWModel = pmodel;
+            UCBWSender = (NRPNSender)sender;
         }
         
-        void updateComboBoxWidgetList(String[] list) {
+        void updateComboBoxWidgetList(int selectedIndex) {
+            int newValue = UCBWModel.get();
+            int newMax = DM5SoundList.DRUM_NAME[selectedIndex].length - 1;
+
+            UCBWSender.setMax(newMax);
+            
+            String[] list = DM5SoundList.DRUM_NAME[selectedIndex];
+            
             cb.removeAllItems();
             for (int i = 0; i < list.length; i++) {
                 cb.addItem(list[i]);
             }
+
+            System.out.println("New Value is " + newValue + ", max value is " + newMax + "##");
+            setMax(newMax);
+            setValue(Math.min(newValue, newMax));
         }
     }
     
@@ -600,6 +613,10 @@ class NRPNSender implements SysexWidget.ISender {
         this.ccMap = null;
     }
     
+    public void setMax(int max) {
+        this.max = max;
+    }
+    
     public void send(IPatchDriver driver, int value) {
         try {
             driver.send(newControlChange(driver, NRPN_MSB, 0));  // Send NRPN MSB
@@ -612,6 +629,10 @@ class NRPNSender implements SysexWidget.ISender {
         } catch (InvalidMidiDataException e) {
             ErrorMsg.reportStatus(e);
         }
+
+        try {
+            Thread.sleep (50);
+        } catch (Exception e) {}
     }
     
     private ShortMessage newControlChange(IPatchDriver driver, int controlNumber, int value) throws InvalidMidiDataException {
