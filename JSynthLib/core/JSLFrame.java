@@ -66,6 +66,7 @@ public class JSLFrame {
     public int getX() { return proxy.getX(); }
     public int getY() { return proxy.getY(); }
     public void reshape(int a, int b, int c, int d) { proxy.reshape(a,b,c,d); }
+    public boolean isSelected() { return proxy.isSelected(); }
     // This is probably naughty.
     public JSLDesktop getDesktopPane() { return PatchEdit.desktop; }
     public JSLFrameListener[] getJSLFrameListeners() {
@@ -113,6 +114,7 @@ public class JSLFrame {
 	public JSLFrameListener[] getJSLFrameListeners();
 	public void removeJSLFrameListener(JSLFrameListener l);
 	public void setPreferredSize(Dimension d);
+	public boolean isSelected();
     }
 
     private class JSLIFrame extends JInternalFrame implements JSLFrameProxy,
@@ -334,6 +336,10 @@ public class JSLFrame {
 	    listeners.remove(l);
 	}
 	public void setPreferredSize(Dimension d) {}
+	// Pretend to be selected if switched to toolbar from this frame.
+	public boolean isSelected() {
+	    return isActive() || lastselection == this;
+	}
     }
 }
 

@@ -129,14 +129,16 @@ public class JSLDesktop {
 	    toolbar = new JSLFrame("JSynthLib",false,false,false,false);
 	}
 	public void setupInitialMenuBar(JToolBar tb) {
-	    selected = invisible.getJFrame();
-	    selected.setJMenuBar(PatchEdit.createMenuBar());
-	    selected.setSize(0,0);
-	    //selected.setLocation(0,0x7FFFFFFF);
-	    selected.pack();
-	    selected.setVisible(true);
-	    //selected.addWindowListener(this);
-		
+	    if (invisible != null) {
+		selected = invisible.getJFrame();
+		selected.setJMenuBar(PatchEdit.createMenuBar());
+		selected.setSize(0,0);
+		//selected.setLocation(0,0x7FFFFFFF);
+		selected.pack();
+		selected.setVisible(true);
+		//selected.addWindowListener(this);
+	    }
+
 	    //registerFrame(toolbar);
 	    toolbar.setJMenuBar(PatchEdit.createMenuBar());
 	    tb.setFloatable(false);
