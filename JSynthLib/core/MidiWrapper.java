@@ -140,16 +140,38 @@ public abstract class MidiWrapper {
 	abstract MidiMessage getMessage(int port) throws InvalidMidiDataException;
 
 	/**
-	 * This allows you to read a JavaSound-compatible MidiMessage object. It automatically detects
-	 * if it's a SysexMessage or ShortMessage and returns the appropriate object. - emenaker 2003.03.22
-	 * Returns null If a MIDI message cannot read in one second.
+	 * This allows you to read a JavaSound-compatible MidiMessage
+	 * object. It automatically detects if it's a SysexMessage or
+	 * ShortMessage and returns the appropriate object.
+	 *
+	 * Throw TimeoutException if a MIDI message cannot read in the
+	 * time specified by <code>timeout</code>.
 	 *
 	 * @param port The port to read from
+	 * @param timeout timeout count (millisecond)
 	 * @return MidiMessage object read from the port.
 	 * @throws Exception
 	 */
+	// emenaker 2003.03.22
+	public MidiMessage readMessage(int port, long timeout) throws Exception {
+		return readMessage(port, timeout, false);
+	}
+
+	/** Causes timeout after 1 second. */
 	public MidiMessage readMessage(int port) throws Exception {
-		return readMessage(port, 1000); // 1 second
+		return readMessage(port, 1000, false); // 1 second
+	}
+
+	/**
+	 * This returns only SysexMessage.  ShortMessages are discarded.
+	 */
+	public SysexMessage readSysexMessage(int port, long timeout) throws Exception {
+		return (SysexMessage) readMessage(port, timeout, true);
+	}
+
+	/** Causes timeout after 1 second. */
+	public SysexMessage readSysexMessage(int port) throws Exception {
+		return (SysexMessage) readMessage(port, 1000, true); // 1 second
 	}
 
 	/**
@@ -161,16 +183,17 @@ public abstract class MidiWrapper {
 	 * message even when lower API places place the data in one or
 	 * more SysexMessages.
 	 *
-	 * Returns null If a MIDI message cannot read in the time
-	 * specified by <code>timeout</code>.
+	 * Throw TimeoutException if a MIDI message cannot read in the
+	 * time specified by <code>timeout</code>.
 	 *
 	 * @param port The port to read from
 	 * @param timeout timeout count (in millisecond)
+	 * @param ignoreShortMessage ignore ShortMessage
 	 * @return MidiMessage object read from the port.
 	 * @throws Exception
 	 */
 	// original comment was added by emenaker 2003.03.22
-	public MidiMessage readMessage(int port, long timeout)
+	private MidiMessage readMessage(int port, long timeout, boolean ignoreShortMessage)
 	    throws TimeoutException, InvalidMidiDataException, Exception {
 	    long start = System.currentTimeMillis();
 	    byte [] buffer = {};
@@ -189,7 +212,10 @@ public abstract class MidiWrapper {
 		int len = msg.getLength();
 		if (firstMsg) {
 		    if (msg.getStatus() != SysexMessage.SYSTEM_EXCLUSIVE)
-			return msg; // 'continue' may be better? Hiroo
+			if (ignoreShortMessage)
+			    continue;
+			else
+			    return msg;
 		    buffer = msg.getMessage();
 		    totalLen = len;
 		    if (buffer[totalLen - 1] == (byte) ShortMessage.END_OF_EXCLUSIVE)
