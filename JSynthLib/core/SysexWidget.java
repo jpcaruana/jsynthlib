@@ -256,9 +256,8 @@ public abstract class SysexWidget extends JPanel {
      * <p>
      * This method does not update the widget state nor do min/max range check.
      * It is caller's responsibility to do that.
-     * XXX: Should be private once EnvelopeWidget is updated.
      */
-    // for ExnvelopeWidget
+    // now used by EnvelopeWidget only
     protected void sendSysex(ISender sender, int value) {
         if (sender != null) { // do it only if there is a sysex-sender available
             sender.send(driver, value);
