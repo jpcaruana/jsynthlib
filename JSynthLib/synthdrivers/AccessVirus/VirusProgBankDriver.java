@@ -5,15 +5,16 @@ package synthdrivers.AccessVirus;
 import core.*;
 import javax.swing.*;
 
+/**
+ * @version $Id$
+ * @author Kenneth L. Martinez
+ */
 public class VirusProgBankDriver extends BankDriver {
   static final int BANK_NUM_OFFSET = 7;
   static final int PATCH_NUM_OFFSET = 8;
   static final int NUM_IN_BANK = 128;
-  AccessVirusConfig avConfig;
- 
+  
   public VirusProgBankDriver() {
-//  public VirusProgBankDriver(AccessVirusConfig avc) {
-//    avConfig = avc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Access";
     model = "Virus";
@@ -112,7 +113,7 @@ public class VirusProgBankDriver extends BankDriver {
       PatchEdit.waitDialog.show();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
-        tmp[deviceIDoffset] = (byte)(avConfig.getDeviceId() - 1);
+        tmp[deviceIDoffset] = (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
         calculateChecksum(tmp, checksumStart, checksumEnd,checksumOffset);
@@ -140,25 +141,9 @@ public class VirusProgBankDriver extends BankDriver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(avConfig.getDeviceId()),
+    sysexRequestDump.send(port, (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()),
       new NameValue("bankNum", bankNum + 1)
     );
-  }
-  
-  /** Getter for property avConfig.
-   * @return Value of property avConfig.
-   *
-   */
-  public synthdrivers.AccessVirus.AccessVirusConfig getAvConfig() {
-      return avConfig;
-  }
-  
-  /** Setter for property avConfig.
-   * @param avConfig New value of property avConfig.
-   *
-   */
-  public void setAvConfig(synthdrivers.AccessVirus.AccessVirusConfig avConfig) {
-      this.avConfig = avConfig;
   }
   
 }

@@ -6,6 +6,10 @@ import core.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Properties;
+import java.util.Arrays;
+import java.util.Set;
+
 
 public class NordLeadDevice extends Device implements ItemListener {
   static final String DRIVER_INFO =
@@ -27,9 +31,12 @@ public class NordLeadDevice extends Device implements ItemListener {
   String channels[] = { "1", "2", "3", "4", "5", "6", "7", "8",
     "9", "10", "11", "12", "13", "14", "15", "16"
   };
-  NordLeadConfig nlConfig;
+
   JComboBox channelList;
 
+  /** Holds value of property globalChannel. */
+  private int globalChannel;
+  
   /** Creates new NordLead */
   public NordLeadDevice() {
     manufacturerName = "Nord";
@@ -39,44 +46,19 @@ public class NordLeadDevice extends Device implements ItemListener {
     infoText = DRIVER_INFO;
     Driver drv;
     
-    nlConfig = new NordLeadConfig();
-
     JOptionPane.showMessageDialog(PatchEdit.instance,
       DRIVER_INFO, "Nord Lead Driver Release Notes",
       JOptionPane.WARNING_MESSAGE
     );
     
-    drv=new NLPatchBankDriver();
-    ((NLPatchBankDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-       
-    drv=new NLPatchSingleDriver();
-    ((NLPatchSingleDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-    
-    drv=new NLDrumBankDriver();
-    ((NLDrumBankDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-    
-    drv=new NLDrumSingleDriver();
-    ((NLDrumSingleDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-        
-    drv=new NLPerfBankDriver();
-    ((NLPerfBankDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-        
-    drv=new NLPerfSingleDriver();
-    ((NLPerfSingleDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-        
-    drv=new NL2PerfBankDriver();
-    ((NL2PerfBankDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-        
-    drv=new NL2PerfSingleDriver();
-    ((NL2PerfSingleDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
+    addDriver(new NLPatchBankDriver());
+    addDriver(new NLPatchSingleDriver());
+    addDriver(new NLDrumBankDriver());
+    addDriver(new NLDrumSingleDriver());
+    addDriver(new NLPerfBankDriver());
+    addDriver(new NLPerfSingleDriver());
+    addDriver(new NL2PerfBankDriver());
+    addDriver(new NL2PerfSingleDriver());
     }
 
   public JPanel config() {
@@ -85,7 +67,7 @@ public class NordLeadDevice extends Device implements ItemListener {
     panel.add(new JLabel("Select Nord Lead Global Channel"));
     channelList = new JComboBox(channels);
     channelList.setMaximumSize(new Dimension(150, 25));
-    channelList.setSelectedIndex(nlConfig.getGlobalChannel() - 1);
+    channelList.setSelectedIndex(getGlobalChannel() - 1);
     channelList.addItemListener(this);
     panel.add(channelList);
     return panel;
@@ -96,7 +78,42 @@ public class NordLeadDevice extends Device implements ItemListener {
       return;
     }
     if (e.getItemSelectable() == channelList) {
-      nlConfig.setGlobalChannel(channelList.getSelectedIndex() + 1);
+      setGlobalChannel(channelList.getSelectedIndex() + 1);
     }
+  }
+  
+  /** Getter for property globalChannel.
+   * @return Value of property globalChannel.
+   *
+   */
+  public int getGlobalChannel() {
+      return this.globalChannel;
+  }
+  
+  /** Setter for property globalChannel.
+   * @param globalChannel New value of property globalChannel.
+   *
+   */
+  public void setGlobalChannel(int globalChannel) {
+      this.globalChannel = globalChannel;
+  }
+  
+  /**
+   * Get the names of properties that should be stored and loaded.
+   * @return a Set of field names
+   */
+  public Set storedProperties()
+  {
+    final String[] storedPropertyNames = {"globalChannel"};
+    Set set = super.storedProperties();
+    set.addAll(Arrays.asList(storedPropertyNames));
+    return set;
+  }
+
+  /**
+   * Method that will be called after loading
+   */
+  public void afterRestore()
+  {
   }
 }

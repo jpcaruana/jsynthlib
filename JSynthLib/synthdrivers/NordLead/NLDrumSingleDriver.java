@@ -148,11 +148,8 @@ public class NLDrumSingleDriver extends Driver {
     (byte)0x03, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x00, (byte)0x00, (byte)0x00,
     (byte)0x00, (byte)0x00, (byte)0x04, (byte)0x00, (byte)0x04, (byte)0x00, (byte)0xF7
   };
-  NordLeadConfig nlConfig;
-
+ 
   public NLDrumSingleDriver() {
-  //public NLDrumSingleDriver(NordLeadConfig nlc) {
-  //  nlConfig = nlc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Nord";
     model = "Lead";
@@ -222,7 +219,7 @@ public class NLDrumSingleDriver extends Driver {
   }
 
   protected void sendPatchWorker(Patch p) {
-    p.sysex[deviceIDoffset] = (byte)(nlConfig.getGlobalChannel() - 1);
+    p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
     try {
       PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
     } catch (Exception e) {
@@ -233,26 +230,11 @@ public class NLDrumSingleDriver extends Driver {
   public void requestPatchDump(int bankNum, int patchNum) {
     setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
     setPatchNum(patchNum + 99); // select drum sound, then get data from edit buffer
-    sysexRequestDump.send(port, (byte)(nlConfig.getGlobalChannel()),
+    sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", 10), new NameValue("patchNum", 0)
     );
   }
   
-  /** Getter for property nlConfig.
-   * @return Value of property nlConfig.
-   *
-   */
-  public synthdrivers.NordLead.NordLeadConfig getNlConfig() {
-      return nlConfig;
-  }
-  
-  /** Setter for property nlConfig.
-   * @param nlConfig New value of property nlConfig.
-   *
-   */
-  public void setNlConfig(synthdrivers.NordLead.NordLeadConfig nlConfig) {
-      this.nlConfig = nlConfig;
-  }
   
 }
 

@@ -9,11 +9,8 @@ public class NLDrumBankDriver extends BankDriver {
   static final int BANK_NUM_OFFSET = 4;
   static final int PATCH_NUM_OFFSET = 5;
   static final int NUM_IN_BANK = 10;
-  NordLeadConfig nlConfig;
-
-    public NLDrumBankDriver() {
-//    public NLDrumBankDriver(NordLeadConfig nlc) {
-//    nlConfig = nlc;
+  
+  public NLDrumBankDriver() {
     manufacturer = "Nord";
     model = "Lead";
     patchType = "Drum Bank";
@@ -88,7 +85,7 @@ public class NLDrumBankDriver extends BankDriver {
       PatchEdit.waitDialog.show();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
-        tmp[deviceIDoffset] = (byte)(nlConfig.getGlobalChannel() - 1);
+        tmp[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)(i + 99); // program #
         PatchEdit.MidiOut.writeLongMessage(port, tmp);
@@ -118,7 +115,7 @@ public class NLDrumBankDriver extends BankDriver {
     for (int i = 0; i < NUM_IN_BANK; i++) {
       setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
       setPatchNum(i + 99); // select drum sound, then get data from edit buffer
-      sysexRequestDump.send(port, (byte)(nlConfig.getGlobalChannel()),
+      sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", 10),
         new NameValue("patchNum", 0)
       );
@@ -129,22 +126,6 @@ public class NLDrumBankDriver extends BankDriver {
         ErrorMsg.reportError("Error", "Unable to request Patch " + i);
       }
     }
-  }
-  
-  /** Getter for property nlConfig.
-   * @return Value of property nlConfig.
-   *
-   */
-  public synthdrivers.NordLead.NordLeadConfig getNlConfig() {
-      return nlConfig;
-  }
-  
-  /** Setter for property nlConfig.
-   * @param nlConfig New value of property nlConfig.
-   *
-   */
-  public void setNlConfig(synthdrivers.NordLead.NordLeadConfig nlConfig) {
-      this.nlConfig = nlConfig;
   }
   
 }
