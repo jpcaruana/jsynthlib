@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.JOptionPane;
 import javax.swing.JInternalFrame;
-import javax.swing.JFileChooser;
 import javax.swing.*;
 import java.util.*;
 import java.awt.event.*;
@@ -88,17 +87,16 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 
                 if (getTitle().startsWith("Unsaved Library"))
                 {
-                    JFileChooser fc2=new JFileChooser();
-                    javax.swing.filechooser.FileFilter type1 = new ExtensionFilter("PatchEdit Library Files",".patchlib");
+                    FileDialog fc2=new FileDialog(PatchEdit.instance);
+                    FilenameFilter type1 = new ExtensionFilter("PatchEdit Library Files",".patchlib");
                     
-                    fc2.addChoosableFileFilter(type1);
-                    fc2.setFileFilter(type1);
+                    fc2.setFilenameFilter(type1);
+		    fc2.setDirectory (PatchEdit.appConfig.getLibPath());
+		    fc2.show();
                     
-                    int returnVal = fc2.showSaveDialog(null);
-                    
-                    if (returnVal == JFileChooser.APPROVE_OPTION)
+                    if (fc2.getDirectory() == null || fc2.getFile() == null)
                     {
-                        File file = fc2.getSelectedFile();
+		      File file = new File(fc2.getDirectory(), fc2.getFile());
                         
                         try
                         {

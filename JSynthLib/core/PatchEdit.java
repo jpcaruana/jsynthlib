@@ -7,11 +7,14 @@ package core;
 import java.io.File;
 import javax.swing.*;
 import java.util.*;
-import javax.swing.filechooser.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import javax.sound.midi.*;
+
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
+
 //TODO import /*TODO org.jsynthlib.*/midi.*;
 public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     public static JDesktopPane desktop;
@@ -140,28 +143,30 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     // This sets up the Menubar as well as the main right-click Popup menu and the toolbar
     protected JMenuBar createMenus ()
     {
+        HashMap mnemonics = new HashMap();
+        int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
         JMenuBar menuBar = new JMenuBar ();
         JMenu menuLib = new JMenu ("Library");
-        menuLib.setMnemonic (KeyEvent.VK_L);
+	mnemonics.put( menuLib, new Integer( KeyEvent.VK_L ) );
         
-        NewAction newAction=new NewAction ();
+        NewAction newAction=new NewAction ( mnemonics );
         menuLib.add (newAction);
         menuLib.getItem (menuLib.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_N, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_N, mask));
         
-        OpenAction openAction=new OpenAction ();
+        OpenAction openAction=new OpenAction ( mnemonics );
         menuLib.add (openAction);
         menuLib.getItem (menuLib.getItemCount ()-1).setAccelerator (
 
-        KeyStroke.getKeyStroke (KeyEvent.VK_O, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_O, mask));
         
-        saveAction=new SaveAction ();
+        saveAction=new SaveAction ( mnemonics );
         menuLib.add (saveAction);
         menuLib.getItem (menuLib.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_S, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_S, mask));
         
         menuSaveAs = new JMenuItem ("Save As");
-        menuSaveAs.setMnemonic (KeyEvent.VK_A);
+	mnemonics.put( menuSaveAs, new Integer( KeyEvent.VK_A) );
         menuSaveAs.addActionListener (new ActionListener ()
         {
             public void actionPerformed (ActionEvent e)
@@ -172,96 +177,100 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         menuSaveAs.setEnabled (false);
         menuLib.add (menuSaveAs);
         
-        menuLib.add (new JSeparator ());
-        newSceneAction=new NewSceneAction();
+        menuLib.addSeparator();
+        newSceneAction=new NewSceneAction( mnemonics );
         menuLib.add(newSceneAction);
         
-        transferSceneAction=new TransferSceneAction();
+        transferSceneAction=new TransferSceneAction( mnemonics );
         menuLib.add(transferSceneAction);
-        menuLib.add (new JSeparator ());
+        menuLib.addSeparator();
         
-        sortAction=new SortAction ();
+        sortAction=new SortAction ( mnemonics );
         menuLib.add (sortAction);
         
-        searchAction=new SearchAction ();
+        searchAction=new SearchAction ( mnemonics );
         menuLib.add (searchAction);
         
-        dupAction=new DeleteDuplicatesAction ();
+        dupAction=new DeleteDuplicatesAction ( mnemonics );
         menuLib.add (dupAction);
-        menuLib.add (new JSeparator ());
-        ExitAction exitAction=new ExitAction ();
-        menuLib.add (exitAction);
+        menuLib.addSeparator();
+        final ExitAction exitAction=new ExitAction ( mnemonics );
+        if (!MacUtils.isMac())
+	  menuLib.add (exitAction);
         menuBar.add (menuLib);
         
         JMenu menuPatch = new JMenu ("Patch");
-        menuPatch.setMnemonic (KeyEvent.VK_P);
-        copyAction=new CopyAction ();
+	mnemonics.put( menuPatch, new Integer(KeyEvent.VK_P) );
+        copyAction=new CopyAction ( mnemonics );
         menuPatch.add (copyAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_C, KeyEvent.CTRL_MASK));
-        cutAction=new CutAction ();
+        KeyStroke.getKeyStroke (KeyEvent.VK_C, mask));
+        cutAction=new CutAction ( mnemonics );
         menuPatch.add (cutAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_X, KeyEvent.CTRL_MASK));
-        pasteAction=new PasteAction ();
+        KeyStroke.getKeyStroke (KeyEvent.VK_X, mask));
+        pasteAction=new PasteAction ( mnemonics );
         menuPatch.add (pasteAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_V, KeyEvent.CTRL_MASK));
-        deleteAction=new DeleteAction ();
+        KeyStroke.getKeyStroke (KeyEvent.VK_V, mask));
+        deleteAction=new DeleteAction ( mnemonics );
         menuPatch.add (deleteAction);
-        menuPatch.add (new JSeparator ());
-        importAction=new ImportAction ();
+        menuPatch.addSeparator();
+        importAction=new ImportAction ( mnemonics );
         menuPatch.add (importAction);
-        exportAction=new ExportAction ();
+        exportAction=new ExportAction ( mnemonics );
         menuPatch.add (exportAction);
-        importAllAction=new ImportAllAction ();
+        importAllAction=new ImportAllAction ( mnemonics );
         menuPatch.add (importAllAction);
-        menuPatch.add (new JSeparator ());
-        sendAction=new SendAction ();
+        menuPatch.addSeparator();
+        sendAction=new SendAction ( mnemonics );
         menuPatch.add (sendAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_T, KeyEvent.CTRL_MASK));
-        sendToAction=new SendToAction ();
+        KeyStroke.getKeyStroke (KeyEvent.VK_T, mask));
+        sendToAction=new SendToAction ( mnemonics );
         menuPatch.add (sendToAction);       
-        storeAction=new StoreAction ();
+        storeAction=new StoreAction ( mnemonics );
         menuPatch.add (storeAction);
-        receiveAction=new GetAction();
+        receiveAction=new GetAction( mnemonics );
         menuPatch.add(receiveAction);                     // phil@muqus.com
 
-        menuPatch.add (new JSeparator ());
-        playAction=new PlayAction ();
+        menuPatch.addSeparator();
+        playAction=new PlayAction ( mnemonics );
         menuPatch.add (playAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_P, KeyEvent.CTRL_MASK));
-        editAction=new EditAction ();
+        KeyStroke.getKeyStroke (KeyEvent.VK_P, mask));
+        editAction=new EditAction ( mnemonics );
         menuPatch.add (editAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_E, KeyEvent.CTRL_MASK));
-        menuPatch.add (new JSeparator ());
-        reassignAction=new ReassignAction();
+        KeyStroke.getKeyStroke (KeyEvent.VK_E, mask));
+        menuPatch.addSeparator();
+        reassignAction=new ReassignAction( mnemonics );
  	menuPatch.add (reassignAction);
-        crossBreedAction=new CrossBreedAction ();
+        crossBreedAction=new CrossBreedAction ( mnemonics );
         menuPatch.add (crossBreedAction);
-        newPatchAction=new NewPatchAction ();
+        newPatchAction=new NewPatchAction ( mnemonics );
         menuPatch.add (newPatchAction);
-        extractAction=new ExtractAction ();
+        extractAction=new ExtractAction ( mnemonics );
         menuPatch.add (extractAction);
         menuBar.add (menuPatch);
         
-        JMenu menuConfig = new JMenu ("Config");
-        menuConfig.setMnemonic (KeyEvent.VK_C);
-        PrefsAction prefsAction=new PrefsAction ();
-        menuConfig.add (prefsAction);
-        // NoteChooserAction noteChooserAction=new NoteChooserAction ();
-        // menuConfig.add (noteChooserAction); -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
+	final PrefsAction prefsAction=new PrefsAction ( mnemonics );
 
-        menuBar.add (menuConfig);
+	if (!MacUtils.isMac()) {
+	  JMenu menuConfig = new JMenu ("Config");
+	  mnemonics.put( menuConfig, new Integer( KeyEvent.VK_C) );
+	  menuConfig.add (prefsAction);
+	  // NoteChooserAction noteChooserAction=new NoteChooserAction ();
+	  // menuConfig.add (noteChooserAction); -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
+
+	  menuBar.add (menuConfig);
+	}
 
 		// Moved "Synths" and "Midi Monitor" to a "Window" menu - emenaker 2003.03.24        
 		JMenu menuWindow = new JMenu ("Window");
-		menuWindow.setMnemonic (KeyEvent.VK_C);
+		mnemonics.put (menuWindow, new Integer(KeyEvent.VK_C));
 		JMenuItem menuSynths = new JMenuItem ("Synths");
-		menuSynths.setMnemonic (KeyEvent.VK_S);
+		mnemonics.put (menuSynths, new Integer(KeyEvent.VK_S));
 		menuSynths.addActionListener (new ActionListener ()
 		{
 			public void actionPerformed (ActionEvent e)
@@ -272,39 +281,30 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		}
 		);
 		menuWindow.add (menuSynths);
-		MonitorAction monitorAction=new MonitorAction ();
+		monitorAction=new MonitorAction ( mnemonics );
 		menuWindow.add (monitorAction);
 
 		menuBar.add (menuWindow);
         
         JMenu menuHelp = new JMenu ("Help");
-        menuHelp.setMnemonic (KeyEvent.VK_H);
-        JMenuItem menuAbout = new JMenuItem ("About");
-        menuAbout.setMnemonic (KeyEvent.VK_A);
+	mnemonics.put( menuHelp, new Integer(KeyEvent.VK_H) );
+        final AboutAction aboutAction = new AboutAction( mnemonics );
        
-  
-        menuAbout.addActionListener (new ActionListener ()
-        {
-            public void actionPerformed (ActionEvent e)
-            {
-                JOptionPane.showMessageDialog (null, "JSynthLib Version 0.18\nCopyright (C) 2000-02 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info","About JSynthLib", JOptionPane.INFORMATION_MESSAGE);return;
-            }
-        }
-        );
-        menuHelp.add (menuAbout);
-        docsAction = new DocsAction();
+	if (!MacUtils.isMac())
+	  menuHelp.add (aboutAction);
+        docsAction = new DocsAction( mnemonics );
 	menuHelp.add(docsAction);
         menuBar.add (menuHelp);
         
         menuPatchPopup=new JPopupMenu ();
         menuPatchPopup.add (playAction);
         menuPatchPopup.add (editAction);
-        menuPatchPopup.add (new JSeparator ());
+        menuPatchPopup.addSeparator();
         menuPatchPopup.add (reassignAction);
         menuPatchPopup.add (storeAction);
         menuPatchPopup.add (sendAction);
         menuPatchPopup.add (sendToAction);
-        menuPatchPopup.add (new JSeparator ());
+        menuPatchPopup.addSeparator();
         menuPatchPopup.add (cutAction);
         menuPatchPopup.add (copyAction);
         menuPatchPopup.add (pasteAction);
@@ -360,7 +360,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         b.setIcon (loadIcon ("images/Edit24.gif"));
         b.setText (null);
         toolBar.addSeparator ();
-        NextFaderAction nextFaderAction = new NextFaderAction ();
+        NextFaderAction nextFaderAction = new NextFaderAction ( mnemonics );
         b=toolBar.add (nextFaderAction);
         b.setToolTipText ("Go to Next Fader Bank");
         b.setIcon (loadIcon ("images/Forward24.gif"));
@@ -375,8 +375,69 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         getContentPane ().add (toolBar,BorderLayout.NORTH);
         toolBar.setVisible (true); //necessary as of kestrel
         
+
+	if (!MacUtils.isMac())
+	  setMnemonics( mnemonics );
+	MacUtils.init( new ApplicationAdapter () {
+	    public void handleAbout(ApplicationEvent e) {
+	      final ActionEvent event = 
+		new ActionEvent(e.getSource(),0,"About");
+	      // opens dialog, so I think we need to do this to avoid deadlock
+	      SwingUtilities.invokeLater(new Runnable () {
+		  public void run () {
+		    try {
+		      aboutAction.actionPerformed(event);
+		    } catch (Exception e) {}
+		  }
+		});
+	      e.setHandled(true);
+	    }
+	    public void handleOpenFile(ApplicationEvent e) {
+	      final File file = new File(e.getFilename());
+	      SwingUtilities.invokeLater(new Runnable () {
+		  public void run () {
+		    try {
+		      openFrame(file);
+		    } catch (Exception e) {}
+		  }
+		});
+	      e.setHandled(true);
+	    }
+	    public void handlePreferences(ApplicationEvent e) {
+	      e.setHandled(true);
+	      final ActionEvent event = 
+		new ActionEvent(e.getSource(),0,"Preferences");
+	      SwingUtilities.invokeLater(new Runnable () {
+		  public void run () {
+		    try {
+		      prefsAction.actionPerformed(event);
+		    } catch (Exception e) {}
+		  }
+		});
+	    }
+	    public void handleQuit(ApplicationEvent e) {
+	      exitAction.actionPerformed(new ActionEvent(e.getSource(),0,
+							 "Exit"));
+	      e.setHandled(true);
+	    }
+	  } );
         return menuBar;
     }
+    // This sets up the mnemonics
+    protected void setMnemonics ( Map mnemonics ) 
+    {
+      Iterator it = mnemonics.keySet().iterator();
+      Object key, value;
+      while ( it.hasNext() ) {
+	key = it.next();
+	value = mnemonics.get(key);
+	if (key instanceof JMenuItem)
+	  ( (JMenuItem) key ).setMnemonic( ( (Integer) value ).intValue() );
+	else if (key instanceof Action)
+	  ( (Action) key ).putValue(Action.MNEMONIC_KEY, value);
+      }
+    }
+
     // This creates a new [empty] Library Window
     protected void createFrame ()
     {
@@ -460,41 +521,52 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     // Save and specify a file name
     protected void saveFrameAs ()
     {
-        JFileChooser fc2=new JFileChooser ();
-        javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("PatchEdit Library Files",".patchlib");
-        fc2.setCurrentDirectory (new File (appConfig.getLibPath()));
-        fc2.addChoosableFileFilter (type1);
-        fc2.setFileFilter (type1);
-        int returnVal = fc2.showSaveDialog (PatchEdit.this);
-        if (returnVal == JFileChooser.APPROVE_OPTION)
-        {
-            File file = fc2.getSelectedFile ();
-            try
-            {
-                if (desktop.getSelectedFrame ()==null)
-                {ErrorMsg.reportError ("Error", "Unable to Save Library. Library to save must be focused");
-                }
-                else
-                {
-                    if (!file.getName ().toUpperCase ().endsWith (".PATCHLIB"))
-                        file=new File (file.getPath ()+".patchlib");
-                    if (file.isDirectory ())
-                    { ErrorMsg.reportError ("Error", "Can not Save over a Directory");
-                      return;
-                    }
-                    if (file.exists ())
-                        if (JOptionPane.showConfirmDialog (null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-                    try {
-                    ((LibraryFrame)desktop.getSelectedFrame ()).save (file);
-                       } catch (Exception pr)
-                       {
-                         ((SceneFrame)desktop.getSelectedFrame()).save(file);
-                       }
-                }
-            } catch (Exception ex)
-            {ErrorMsg.reportError ("Error", "Unable to Save Library",ex);}
+        FileDialog fc2=new FileDialog (PatchEdit.this);
+	fc2.setMode(fc2.SAVE);
+        FilenameFilter type1 = new ExtensionFilter ("PatchEdit Library Files",".patchlib");
+        fc2.setFilenameFilter (type1);
+	File file = null;
+	try {
+	  try {
+	    file = ((LibraryFrame)desktop.getSelectedFrame ()).filename;
+	  } catch (Exception e) {
+	    file = ((SceneFrame)desktop.getSelectedFrame()).filename;
+	  }
+	  fc2.setDirectory(file.getParent());
+	  fc2.setFile(file.getName());
+	} catch (Exception e) {
+	  fc2.setDirectory (appConfig.getLibPath());
+	  fc2.setFile("Untitled.patchlib");
+	}
+	fc2.show();
+	if (fc2.getFile() == null)
+	  return;
+	file = new File(fc2.getDirectory(), fc2.getFile());
+	try
+	  {
+	    if (desktop.getSelectedFrame ()==null)
+	      {ErrorMsg.reportError ("Error", "Unable to Save Library. Library to save must be focused");
+	      }
+	    else
+	      {
+		if (!file.getName ().toUpperCase ().endsWith (".PATCHLIB"))
+		  file=new File (file.getPath ()+".patchlib");
+		if (file.isDirectory ())
+		  { ErrorMsg.reportError ("Error", "Can not Save over a Directory");
+		    return;
+		  }
+		if (file.exists ())
+		  if (JOptionPane.showConfirmDialog (null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
+		try {
+		  ((LibraryFrame)desktop.getSelectedFrame ()).save (file);
+		} catch (Exception pr)
+		  {
+		    ((SceneFrame)desktop.getSelectedFrame()).save(file);
+		  }
+	      }
+	  } catch (Exception ex)
+	  {ErrorMsg.reportError ("Error", "Unable to Save Library",ex);}
             
-        }
     }
     // Generally the app is started by running JSynthLib, so the following few lines are not necessary, but I won't delete
     // them just yet.
@@ -548,17 +620,28 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	*/
 	public void midiDriverChanged(MidiWrapper driver) {
 		MidiIn = MidiOut = driver;
-    }
-    
+	}
+
     
 /* Now we start with the various action classes. Each of these preforms one of the menu commands and are called either from
    the menubar, popup menu or toolbar.*/
     
+     public class AboutAction extends AbstractAction
+     {
+       public AboutAction( Map mnemonics ) {
+	 super("About"); 
+	 mnemonics.put( this, new Integer ('A'));
+       }
+       public void actionPerformed (ActionEvent e)
+       {
+	 JOptionPane.showMessageDialog (null, "JSynthLib Version 0.18\nCopyright (C) 2000-02 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info","About JSynthLib", JOptionPane.INFORMATION_MESSAGE);return;
+       }
+     }
      public class ReassignAction extends AbstractAction
      {
-         public ReassignAction ()
+         public ReassignAction ( Map mnemonics )
          {super ("Reassign",null);
-          //putValue (Action.MNEMONIC_KEY, new Integer ('R'));
+          // mnemonics.put( this, new Integer ('R'));
           setEnabled (false);
          }
          public void actionPerformed (ActionEvent e)
@@ -573,9 +656,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class PlayAction extends AbstractAction
     {
-        public PlayAction ()
+        public PlayAction ( Map mnemonics )
         {super ("Play",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('P'));
+	  mnemonics.put( this, new Integer ('P'));
          setEnabled (false);
         }
         public void actionPerformed (ActionEvent e)
@@ -590,10 +673,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class StoreAction extends AbstractAction
     {
-        public StoreAction ()
+        public StoreAction ( Map mnemonics )
         {
             super ("Store",null);
-            putValue (Action.MNEMONIC_KEY, new Integer ('R'));
+	    mnemonics.put( this, new Integer ('R'));
             setEnabled (false);
         }
         public void actionPerformed (ActionEvent e)
@@ -608,10 +691,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class SendAction extends AbstractAction
     {
-        public SendAction ()
+        public SendAction ( Map mnemonics )
         {
             super ("Send",null);
-            putValue (Action.MNEMONIC_KEY, new Integer ('S'));
+	    mnemonics.put( this, new Integer ('S'));
             setEnabled (false);
         }
         public void actionPerformed (ActionEvent e)
@@ -626,10 +709,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
      public class SendToAction extends AbstractAction
      {
-         public SendToAction ()
+         public SendToAction ( Map mnemonics )
          {
              super ("Send to...",null);
-             //putValue (Action.MNEMONIC_KEY, new Integer ('S'));
+             // mnemonics.put( this, new Integer ('S'));
              setEnabled (false);
          }
          public void actionPerformed (ActionEvent e)
@@ -644,11 +727,11 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
      
     public class DeleteAction extends AbstractAction
     {
-        public DeleteAction ()
+        public DeleteAction ( Map mnemonics )
         {
             super ("Delete",null);
             setEnabled (false);
-            putValue (Action.MNEMONIC_KEY, new Integer ('D'));
+	    mnemonics.put( this, new Integer ('D'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -663,11 +746,11 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class CopyAction extends AbstractAction
     {
-        public CopyAction ()
+        public CopyAction ( Map mnemonics )
         {
             super ("Copy",null);
             setEnabled (false);
-            putValue (Action.MNEMONIC_KEY, new Integer ('C'));
+	    mnemonics.put( this, new Integer ('C'));
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -681,11 +764,11 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class CutAction extends AbstractAction
     {
-        public CutAction ()
+        public CutAction ( Map mnemonics )
         {
             super ("Cut",null);
             setEnabled (false);
-            putValue (Action.MNEMONIC_KEY, new Integer ('T'));
+	    mnemonics.put( this, new Integer ('T'));
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -700,11 +783,11 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class PasteAction extends AbstractAction
     {
-        public PasteAction ()
+        public PasteAction ( Map mnemonics )
         {
             super ("Paste",null);
             setEnabled (false);
-            putValue (Action.MNEMONIC_KEY, new Integer ('P'));
+	    mnemonics.put( this, new Integer ('P'));
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -718,10 +801,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class EditAction extends AbstractAction
     {
-        public EditAction ()
+        public EditAction ( Map mnemonics )
         {
             super ("Edit",null);
-            putValue (Action.MNEMONIC_KEY, new Integer ('E'));
+	    mnemonics.put( this, new Integer ('E'));
             setEnabled (false);
         }
         public void actionPerformed (ActionEvent e){
@@ -762,32 +845,37 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class ExportAction extends AbstractAction
     {
-        public ExportAction ()
+        public ExportAction ( Map mnemonics )
         {super ("Export",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('O'));
+	  mnemonics.put( this, new Integer ('O'));
          setEnabled (false);
         }
         public void actionPerformed (ActionEvent e)
         {
-            JFileChooser fc3=new JFileChooser ();
-            javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
-            fc3.addChoosableFileFilter (type1);
-            fc3.setCurrentDirectory (new File (appConfig.getSysexPath()));
-            fc3.setFileFilter (type1);
-            int returnVal = fc3.showSaveDialog (PatchEdit.this);
-            if (returnVal == JFileChooser.APPROVE_OPTION)
-            {
-                File file = fc3.getSelectedFile ();
-                try
+            FileDialog fc3=new FileDialog (PatchEdit.this);
+	    fc3.setMode(fc3.SAVE);
+            FilenameFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
+            fc3.setDirectory (appConfig.getSysexPath());
+            fc3.setFilenameFilter (type1);
+	    fc3.show();
+	    if (fc3.getFile() == null)
+	      return;
+	    File file = new File (fc3.getDirectory(), fc3.getFile());
+	      try
                 {
                     if (desktop.getSelectedFrame ()==null)
                     {ErrorMsg.reportError ("Error", "Patch to export must be hilighted\n in the currently focuses Library");}
-                    else
-                        ((PatchBasket)desktop.getSelectedFrame ()).ExportPatch (file);
+                    else {
+		      if (!file.getName ().toUpperCase ().endsWith (".SYX"))
+			file=new File (file.getPath ()+".syx");
+		      if (file.exists ())
+			if (JOptionPane.showConfirmDialog (null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
+
+		      ((PatchBasket)desktop.getSelectedFrame ()).ExportPatch (file);
+		    }
                 } catch (IOException ex)
                 {ErrorMsg.reportError ("Error", "Unable to Save Exported Patch",ex);}
             }
-        }
     }
     
 //------ Start phil@muqus.com
@@ -801,9 +889,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 // Constructor: GetAction
 //----------------------------------------------------------------------------------------------------------------------
 
-    public GetAction() {
+    public GetAction( Map mnemonics ) {
       super ("Get",null);
-      putValue(Action.MNEMONIC_KEY, new Integer('G'));
+      mnemonics.put( this, new Integer('G'));
       setEnabled(false);
     }
 
@@ -825,24 +913,25 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
     public class ImportAction extends AbstractAction
     {
-        public ImportAction ()
+        public ImportAction ( Map mnemonics )
         {super ("Import",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('I'));
+	  mnemonics.put( this, new Integer ('I'));
          setEnabled (false);
         }
         public void actionPerformed (ActionEvent e)
         {
-            JFileChooser fc2=new JFileChooser ();
-            javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
-            javax.swing.filechooser.FileFilter type2 = new ExtensionFilter ("MIDI Files" ,".mid");	// core.ImportMidiFile extracts Sysex Messages from MidiFile
-            fc2.addChoosableFileFilter (type1);
-            fc2.addChoosableFileFilter (type2);
-            fc2.setCurrentDirectory (new File (appConfig.getSysexPath()));
-            fc2.setFileFilter (type1);
-            int returnVal = fc2.showOpenDialog (PatchEdit.this);
-            if (returnVal == JFileChooser.APPROVE_OPTION)
-            {
-                File file = fc2.getSelectedFile ();
+            FileDialog fc2=new FileDialog (PatchEdit.this);
+	    fc2.setMode(fc2.LOAD);
+            FilenameFilter type1 = new ExtensionFilter ("Sysex Files",
+						    new String[]{".syx"
+								 ,".mid"});
+	    // core.ImportMidiFile extracts Sysex Messages from MidiFile
+            fc2.setDirectory ( appConfig.getSysexPath());
+            fc2.setFilenameFilter (type1);
+	    fc2.show();
+	    if (fc2.getFile() == null)
+	      return;
+	    File file = new File(fc2.getDirectory(), fc2.getFile());
                 try
                 {
                     if (desktop.getSelectedFrame ()==null)
@@ -855,23 +944,22 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
             };
             
-        }
     }
     
     public class NewAction extends AbstractAction
     {
-        public NewAction ()
+        public NewAction ( Map mnemonics )
         {super ("New",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('N'));
+	  mnemonics.put( this, new Integer ('N'));
         }
         public void actionPerformed (ActionEvent e)
-        {createFrame ();}
+      {System.out.println(UIManager.get("MenuItemUI"));createFrame ();}
 
     }
 
     public class NewSceneAction extends AbstractAction
     {
-        public NewSceneAction ()
+        public NewSceneAction ( Map mnemonics )
         {
             super ("New Scene",null);
         }
@@ -885,10 +973,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
    public class TransferSceneAction extends AbstractAction
     {
-        public TransferSceneAction ()
+        public TransferSceneAction ( Map mnemonics )
         {
             super ("Transfer Scene",null);
-            //putValue (Action.MNEMONIC_KEY, new Integer ('S'));
+            // mnemonics.put( this, new Integer ('S'));
             setEnabled (false);
         }
         public void actionPerformed (ActionEvent e)
@@ -902,31 +990,30 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class OpenAction extends AbstractAction
     {
-        public OpenAction ()
+        public OpenAction ( Map mnemonics )
         {super ("Open",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('O'));
+	  mnemonics.put( this, new Integer ('O'));
         }
         public void actionPerformed (ActionEvent e)
         {
-            JFileChooser fc=new JFileChooser ();
-            javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("PatchEdit Library Files",new String[] {".patchlib",".scenelib"});
-            fc.setCurrentDirectory (new File (appConfig.getLibPath()));
-            fc.addChoosableFileFilter (type1);
-            fc.setFileFilter (type1);
-            int returnVal = fc.showOpenDialog (PatchEdit.this);
-            if (returnVal == JFileChooser.APPROVE_OPTION)
-            {
-                File file = fc.getSelectedFile ();
-                openFrame (file);
-            }
+            FileDialog fc=new FileDialog (PatchEdit.this);
+	    fc.setMode(fc.LOAD);
+            FilenameFilter type1 = new ExtensionFilter ("PatchEdit Library Files",new String[] {".patchlib",".scenelib"});
+            fc.setDirectory (appConfig.getLibPath());
+            fc.setFilenameFilter (type1);
+	    fc.show();
+	    if (fc.getFile() == null)
+	      return;
+	    File file = new File(fc.getDirectory(), fc.getFile());
+	    openFrame (file);
         }
     }
     public class SaveAction extends AbstractAction
     {
-        public SaveAction ()
+        public SaveAction ( Map mnemonics )
         {super ("Save",null);
          setEnabled (false);
-         putValue (Action.MNEMONIC_KEY, new Integer ('S'));
+	 mnemonics.put( this, new Integer ('S'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -936,9 +1023,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class ExitAction extends AbstractAction
     {
-        public ExitAction ()
+        public ExitAction ( Map mnemonics )
         {super ("Exit",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('X'));
+	  mnemonics.put( this, new Integer ('X'));
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -949,9 +1036,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class ExtractAction extends AbstractAction
     {
-        public ExtractAction ()
+        public ExtractAction ( Map mnemonics )
         {super ("Extract",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('E'));
+	  mnemonics.put( this, new Integer ('E'));
          setEnabled (false);
         }
         
@@ -966,10 +1053,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class SortAction extends AbstractAction
     {
-        public SortAction ()
+        public SortAction ( Map mnemonics )
         {super ("Sort",null);
          setEnabled (false);
-         putValue (Action.MNEMONIC_KEY, new Integer ('R'));
+	 mnemonics.put( this, new Integer ('R'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -985,10 +1072,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class SearchAction extends AbstractAction
     {
-        public SearchAction ()
+        public SearchAction ( Map mnemonics )
         {super ("Search",null);
          setEnabled (false);
-         putValue (Action.MNEMONIC_KEY, new Integer ('E'));
+	 mnemonics.put( this, new Integer ('E'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -1005,27 +1092,25 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class ImportAllAction extends AbstractAction
     {
-        public ImportAllAction ()
+        public ImportAllAction ( Map mnemonics )
         {
             super ("ImportAll",null);
             setEnabled (false);
-            putValue (Action.MNEMONIC_KEY, new Integer ('A'));
+	    mnemonics.put( this, new Integer ('A'));
         }
         
         public void actionPerformed (ActionEvent e)
         {
             try
             {
-                JFileChooser fc2=new JFileChooser ();
-                javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
-                fc2.addChoosableFileFilter (type1);
-                fc2.setFileFilter (type1);
-                fc2.setCurrentDirectory (new File (appConfig.getSysexPath()));
-                fc2.setFileSelectionMode (JFileChooser.DIRECTORIES_ONLY);
-                fc2.setDialogTitle ("Choose Directory to Import All Files From");
-                int returnVal = fc2.showOpenDialog (PatchEdit.this);
-                if (returnVal != JFileChooser.APPROVE_OPTION) return;
-                File file = fc2.getSelectedFile ();
+	        FolderDialog fc2=new FolderDialog (PatchEdit.this, "Choose Import All Directory");
+                FilenameFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
+                fc2.setFilenameFilter (type1);
+                fc2.setDirectory (appConfig.getSysexPath());
+		fc2.show();
+		if (fc2.getDirectory() == null)
+		  return;
+                File file = new File(fc2.getDirectory());
                 
                 ImportAllDialog sd = new ImportAllDialog (PatchEdit.this,file);
                 sd.show ();
@@ -1035,10 +1120,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class DeleteDuplicatesAction extends AbstractAction
     {
-        public DeleteDuplicatesAction ()
+        public DeleteDuplicatesAction ( Map mnemonics )
         {super ("Delete Dups",null);
          setEnabled (false);
-         putValue (Action.MNEMONIC_KEY, new Integer ('D'));
+	 mnemonics.put( this, new Integer ('D'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -1072,11 +1157,11 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class NewPatchAction extends AbstractAction
     {
-        public NewPatchAction ()
+        public NewPatchAction ( Map mnemonics )
         {
             super ("New",null);
             setEnabled (false);
-            putValue (Action.MNEMONIC_KEY, new Integer ('N'));
+	    mnemonics.put( this, new Integer ('N'));
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -1095,10 +1180,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class PrefsAction extends AbstractAction
     {
-        public PrefsAction ()
+        public PrefsAction ( Map mnemonics )
         {
             super ("Preferences",null);
-            putValue (Action.MNEMONIC_KEY, new Integer ('P'));
+	    mnemonics.put( this, new Integer ('P'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -1111,10 +1196,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
         class NoteChooserAction extends AbstractAction
     {
-        public NoteChooserAction ()
+        public NoteChooserAction ( Map mnemonics )
         {
             super ("Choose Note",null);
-            putValue (Action.MNEMONIC_KEY, new Integer ('C'));
+	    mnemonics.put( this, new Integer ('C'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -1137,10 +1222,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class CrossBreedAction extends AbstractAction
     {
-        public CrossBreedAction ()
+        public CrossBreedAction ( Map mnemonics )
         {super ("Cross Breed",null);
          setEnabled (false);
-         putValue (Action.MNEMONIC_KEY, new Integer ('B'));
+	 mnemonics.put( this, new Integer ('B'));
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -1154,9 +1239,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class NextFaderAction extends AbstractAction
     {
-        public NextFaderAction ()
+        public NextFaderAction ( Map mnemonics )
         {super ("Go to Next Fader Bank",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('F'));
+	  mnemonics.put( this, new Integer ('F'));
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -1167,10 +1252,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class DocsAction extends AbstractAction
     {
-        public DocsAction ()
+        public DocsAction ( Map mnemonics )
         {super ("Documentation",null);
          setEnabled (true);
-         putValue (Action.MNEMONIC_KEY, new Integer ('D'));
+	 mnemonics.put( this, new Integer ('D'));
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -1184,10 +1269,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class MonitorAction extends AbstractAction
     {
-        public MonitorAction ()
+        public MonitorAction ( Map mnemonics )
         {super ("MIDI Monitor",null);
          setEnabled (true);
-         putValue (Action.MNEMONIC_KEY, new Integer ('D'));
+	 mnemonics.put( this, new Integer ('D'));
         }
         public void actionPerformed (ActionEvent e)
         {

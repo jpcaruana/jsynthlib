@@ -7,8 +7,8 @@ public class YamahaMotifNormalVoiceDriver extends YamahaMotifSingleDriver
 {
 
    public YamahaMotifNormalVoiceDriver() {
-     // This is a hack until getting built in voices is supported.
      authors = "Rib Rdb (ribrdb at yahoo.com)";
+     // This is a hack until getting built in voices is supported.
      bankNumbers =new String[] {"User","User"};
      patchNumbers = new String[128];
      defaults_filename = "normal.syx";

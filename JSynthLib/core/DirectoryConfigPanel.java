@@ -28,14 +28,13 @@ public class DirectoryConfigPanel extends ConfigPanel {
 		JButton b1=new JButton ("Browse");
 		b1.addActionListener (new ActionListener () {
 			public void actionPerformed (ActionEvent e) {
-				JFileChooser fc=new JFileChooser ();
-				fc.setFileSelectionMode (JFileChooser.DIRECTORIES_ONLY);
-				fc.setCurrentDirectory (new File (getLibPath()));
-				fc.setDialogTitle ("Choose Default Directory");
-				int returnVal = fc.showOpenDialog (null);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile ();
-					setLibPath(file.getAbsolutePath());
+  			        FolderDialog fc =
+				  new FolderDialog(PatchEdit.instance,
+						   "Choose Default Directory");
+				fc.setDirectory (getLibPath());
+				fc.show();
+				if (fc.getDirectory() != null) {
+					setLibPath(fc.getDirectory());
 					t1.setText (getLibPath());
 				}
 			}
@@ -43,14 +42,13 @@ public class DirectoryConfigPanel extends ConfigPanel {
 		JButton b2=new JButton ("Browse");
 		b2.addActionListener (new ActionListener () {
 			public void actionPerformed (ActionEvent e) {
-				JFileChooser fc=new JFileChooser ();
-				fc.setFileSelectionMode (JFileChooser.DIRECTORIES_ONLY);
-				fc.setCurrentDirectory (new File (getSysexPath()));
-				fc.setDialogTitle ("Choose Default Directory");
-				int returnVal = fc.showOpenDialog (null);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile ();
-					setSysexPath(file.getAbsolutePath());
+  			        FolderDialog fc =
+				  new FolderDialog(PatchEdit.instance,
+						   "Choose Default Directory");
+				fc.setDirectory (getSysexPath());
+				fc.show();
+				if (fc.getDirectory() != null) {
+					setSysexPath(fc.getDirectory());
 					t2.setText (getSysexPath());
 				}
 			}

@@ -1,7 +1,7 @@
 package core;
 import java.io.File;
-import javax.swing.filechooser.*;
-  public class ExtensionFilter extends FileFilter {
+import java.io.FilenameFilter;
+public class ExtensionFilter implements FilenameFilter {
     private String exts[];
     private String desc;
     public ExtensionFilter (String desc, String exts) {
@@ -11,21 +11,13 @@ import javax.swing.filechooser.*;
       this.desc = desc;
       this.exts = (String[])exts.clone();
     }
-    public boolean accept (File file) {
-      if (file.isDirectory()) {
-         return true;
-      }
-      int count = exts.length;
-      String path = file.getAbsolutePath();
-      for (int i =0;i < count;i++) {
+    public boolean accept (File dir, String name) {
+      for (int i =0;i < exts.length;i++) {
         String ext = exts[i];
-        if (path.toUpperCase().endsWith(ext.toUpperCase()) && (path.charAt(path.length()-ext.length()) == '.')) {
+        if (name.toUpperCase().endsWith(ext.toUpperCase()) && (name.charAt(name.length()-ext.length()) == '.')) {
           return true;
         }
       }
       return false;
     }		
-    public String getDescription() {
-      return (desc == null ? exts[0] : desc);
-    }
  }

@@ -76,16 +76,16 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                 if (JOptionPane.showConfirmDialog(null,"This Scene may contain unsaved data.\nSave before closing?","Unsaved Data",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
                 
                 if (getTitle().startsWith("Unsaved Scene")) {
-                    javax.swing.JFileChooser fc2=new javax.swing.JFileChooser();
-                    javax.swing.filechooser.FileFilter type1 = new ExtensionFilter("PatchEdit Scene Files",".scenelib");
+                    java.awt.FileDialog fc2=new java.awt.FileDialog(PatchEdit.instance);
+                    java.io.FilenameFilter type1 = new ExtensionFilter("PatchEdit Scene Files",".scenelib");
+                    fc2.setMode(fc2.SAVE);
+		    fc2.setFile("Untitled.scenelib");
+                    fc2.setFilenameFilter(type1);
                     
-                    fc2.addChoosableFileFilter(type1);
-                    fc2.setFileFilter(type1);
+		    fc2.show();
                     
-                    int returnVal = fc2.showSaveDialog(null);
-                    
-                    if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
-                        File file = fc2.getSelectedFile();
+                    if (fc2.getFile() != null) {
+		        File file = new File(fc2.getDirectory(),fc2.getFile());
                         
                         try {
                             if (!file.getName().toUpperCase().endsWith(".SCENELIB"))

@@ -73,17 +73,13 @@ public class SysexGetDialog extends JDialog {
     //----- Create the combo boxes
     driverComboBox = new JComboBox();
     driverComboBox.addActionListener(new DriverActionListener());
-    driverComboBox.setRenderer(new DriverCellRenderer());
 
     deviceComboBox = new JComboBox();
     deviceComboBox.addActionListener(new DeviceActionListener());
-    deviceComboBox.setRenderer(new DeviceCellRenderer());
 
     bankComboBox = new JComboBox();
-    bankComboBox.setRenderer(new ComboCellRenderer());
 
     patchNumComboBox = new JComboBox();
-    patchNumComboBox.setRenderer(new ComboCellRenderer());
 
     //----- First Populate the Device/Driver List with all Device/Driver combinations except converters
        for (int i=0;i<PatchEdit.appConfig.deviceCount();i++)
@@ -299,9 +295,10 @@ public class SysexGetDialog extends JDialog {
  
       if (myDevAssign != null)
        {
-        for (int j=0;j<myDevAssign.driverAssignmentList.size ();j++)
+	 ArrayList driverAssignmentList = myDevAssign.getDriverAssignmentList();
+	 for (int j=0;j<driverAssignmentList.size ();j++)
          {
-          driverComboBox.addItem( (driverAssignment)myDevAssign.driverAssignmentList.get(j) );
+	   driverComboBox.addItem( (driverAssignment)driverAssignmentList.get(j) );
          }
        }
  
@@ -325,23 +322,23 @@ public class SysexGetDialog extends JDialog {
       patchNumComboBox.removeAllItems();
 
       if (myDrvAssign != null) {
-        if (myDrvAssign.driver.bankNumbers.length > 1) {
-          for (int i = 0 ; i < myDrvAssign.driver.bankNumbers.length ; i++) {
-            bankComboBox.addItem(myDrvAssign.driver.bankNumbers[i]);
+        if (myDrvAssign.getDriver().bankNumbers.length > 1) {
+          for (int i = 0 ; i < myDrvAssign.getDriver().bankNumbers.length ; i++) {
+            bankComboBox.addItem(myDrvAssign.getDriver().bankNumbers[i]);
         }
 
 
 
-        if (myDrvAssign.driver.patchNumbers.length > 1) {
-          for (int i = 0 ; i < myDrvAssign.driver.patchNumbers.length ; i++) {
-            patchNumComboBox.addItem(myDrvAssign.driver.patchNumbers[i]);
+	  if (myDrvAssign.getDriver().patchNumbers.length > 1) {
+          for (int i = 0 ; i < myDrvAssign.getDriver().patchNumbers.length ; i++) {
+            patchNumComboBox.addItem(myDrvAssign.getDriver().patchNumbers[i]);
           }
         }
       }
 
       bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
       // N.B. Do not enable patch selection for banks
-      patchNumComboBox.setEnabled(!(myDrvAssign.driver instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
+      patchNumComboBox.setEnabled(!(myDrvAssign.getDriver() instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
     }
       }
   } // End InnerClass: DriverActionListener
@@ -365,10 +362,10 @@ public class SysexGetDialog extends JDialog {
 
   public class GetActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-      device    = (Device) ((deviceAssignment)deviceComboBox.getSelectedItem()).device;
-      driver    = (Driver) ((driverAssignment)driverComboBox.getSelectedItem()).driver;
-      deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).deviceNum;
-      driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).driverNum;
+      device    = (Device) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDevice();
+      driver    = (Driver) ((driverAssignment)driverComboBox.getSelectedItem()).getDriver();
+      deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDeviceNum();
+      driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).getDriverNum();
       bankNum = bankComboBox.getSelectedIndex();
       patchNum = patchNumComboBox.getSelectedIndex();
 
@@ -417,113 +414,6 @@ public class SysexGetDialog extends JDialog {
       }
     }
   } // End InnerClass: SysexGetTimer
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// InnerClass: ComboCellRenderer
-//----------------------------------------------------------------------------------------------------------------------
-
-  class ComboCellRenderer extends JLabel implements ListCellRenderer {
-    public ComboCellRenderer() {
-      setOpaque(true);
-    }
-
-    public Component getListCellRendererComponent (
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus
-      ) {
-
-      setText(value == null ? "" : value.toString());
-      setBackground(isSelected ? Color.red : Color.white);
-      setForeground(isSelected ? Color.white : Color.black);
-      return this;
-    }
-  } // End InnerClass: ComboCellRenderer
-
-//----------------------------------------------------------------------------------------------------------------------
-// InnerClass: DeviceCellRenderer
-//----------------------------------------------------------------------------------------------------------------------
- 
-   class DeviceCellRenderer extends ComboCellRenderer {
-     public Component getListCellRendererComponent (
-         JList list,
-         Object value,
-         int index,
-         boolean isSelected,
-         boolean cellHasFocus
-       ) {
- 
-       super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-       setText(value == null ? "" : ((deviceAssignment)value).device.getDeviceName());
-       return this;
-     }
-   } // End InnerClass: DeviceCellRenderer
- 
-//----------------------------------------------------------------------------------------------------------------------
-// InnerClass: DriverCellRenderer
-//----------------------------------------------------------------------------------------------------------------------
-
-  class DriverCellRenderer extends ComboCellRenderer {
-    public Component getListCellRendererComponent (
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus
-      ) {
-
-      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-      setText(value == null ? "" : ((driverAssignment)value).driver.getPatchType());
-      return this;
-    }
-  } // End InnerClass: DriverCellRenderer
-
-
- /**
-  * We need to remember the original deviceNum variable of the Device and the Device itself.
-  * Each deviceAssignment Object contains a List of driverAssignments which remembers
-  * the original driverNum resp. driver.
-  *
-  * @see driverAssignment
-  */
-  class deviceAssignment
-  {
-    protected int       deviceNum;
-    protected Device    device;
-    protected ArrayList driverAssignmentList = new ArrayList();
-
-    deviceAssignment(int deviceNum, Device device)
-    {
-      this.deviceNum = deviceNum;
-      this.device    = device;
-    }
-
-    void add(int driverNum, Driver driver)
-    {
-      this.driverAssignmentList.add(new driverAssignment(driverNum, driver));
-    }
-  }
-
-
- /**
-  * We need to remember the original driverNum variable of the Driver.
-  *
-  * @see deviceAssignment
-  */
-  class driverAssignment
-  {
-    protected int    driverNum;
-    protected Driver driver;
-
-    driverAssignment(int driverNum, Driver driver)
-    {
-      this.driverNum = driverNum;
-      this.driver    = driver;
-    }
-  }
 
 } // End Class: SysexGetDialog
 

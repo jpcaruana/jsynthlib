@@ -67,17 +67,13 @@ public class SysexStoreDialog extends JDialog {
     //----- Create the combo boxes
     driverComboBox = new JComboBox();
     driverComboBox.addActionListener(new DriverActionListener());
-    driverComboBox.setRenderer(new DriverCellRenderer());
 
     deviceComboBox = new JComboBox();
     deviceComboBox.addActionListener(new DeviceActionListener());
-    deviceComboBox.setRenderer(new DeviceCellRenderer());
 
     bankComboBox = new JComboBox();
-    bankComboBox.setRenderer(new ComboCellRenderer());
 
     patchNumComboBox = new JComboBox();
-    patchNumComboBox.setRenderer(new ComboCellRenderer());
 
     //----- Populate the combo boxes only with devices, which supports the patch
     for (int i=0, n=0;i<PatchEdit.appConfig.deviceCount();i++)
@@ -245,66 +241,6 @@ public class SysexStoreDialog extends JDialog {
       bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
       // N.B. Do not enable patch selection for banks
       patchNumComboBox.setEnabled(!(driver instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
-    }
-  }
-
-
- /**
-  * New standard renderer for ComboBoxes
-  */
-  class ComboCellRenderer extends JLabel implements ListCellRenderer {
-    public ComboCellRenderer() {
-      setOpaque(true);
-    }
-
-    public Component getListCellRendererComponent (
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus
-      ) {
-
-      setText(value == null ? "" : value.toString());
-      setBackground(isSelected ? Color.red : Color.white);
-      setForeground(isSelected ? Color.white : Color.black);
-      return this;
-    }
-  }
-
- /**
-  * Special renderer for Device ComboBox to display the valid DeviceName
-  */
-  class DeviceCellRenderer extends ComboCellRenderer {
-    public Component getListCellRendererComponent (
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus
-      ) {
-
-      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-      setText(value == null ? "" : ((Device)value).getDeviceName());
-      return this;
-    }
-  }
-
- /**
-  * Special renderer for Driver ComboBox to display the valid PatchType
-  */
-  class DriverCellRenderer extends ComboCellRenderer {
-    public Component getListCellRendererComponent (
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus
-      ) {
-
-      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-      setText(value == null ? "" : ((Driver)value).getPatchType());
-      return this;
     }
   }
 }

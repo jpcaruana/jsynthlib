@@ -24,8 +24,10 @@ public class JSynthLib
 {
 
     public static void main(String[] args) {
-        if (args.length==0) ErrorMsg.debug=0; 
-	  else ErrorMsg.debug=(new Integer(args[0])).intValue();
+        ErrorMsg.debug = 0;
+	if (args.length > 0) try {
+	  ErrorMsg.debug=Integer.parseInt(args[0]);
+	} catch (NumberFormatException e) {}
 	PatchEdit frame = new PatchEdit();
         frame.setVisible(true);
    }

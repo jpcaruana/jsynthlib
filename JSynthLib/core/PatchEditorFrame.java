@@ -218,11 +218,20 @@ public void faderHighlight()
       SysexWidget w;
       for (int i=0; i<widgetList.size();i++)
      { w=(SysexWidget)widgetList.get(i);
-	if (w.jlabel!=null){
-	     if (((Math.abs(w.sliderNum-1) & 240))==faderBank*16) 
-		     w.jlabel.setForeground(new Color(75,75,100)); else w.jlabel.setForeground(new Color(102,102,153));
-	             w.jlabel.repaint();}
-       
+	if (w.jlabel!=null) {
+	  if (((Math.abs(w.sliderNum-1) & 240))==faderBank*16) {
+	    Color c = UIManager.getColor("controlText");
+	    if (c == null)
+	      c = new Color(75,75,100);
+	    w.jlabel.setForeground(c);
+	  } else {
+	    Color c = UIManager.getColor("textInactiveText");
+	    if (c == null)
+	      c = new Color(102,102,153);
+	    w.jlabel.setForeground(c);
+	  }
+	  w.jlabel.repaint();
+	}
      }
   }
 

@@ -271,5 +271,8 @@ abstract public class Device implements Serializable, Storable
             return inquiryID;
         }        
 
+        public String toString() {
+	    return getDeviceName();
+	}
         
 }

@@ -438,6 +438,7 @@ public void choosePatch (Patch p, int patchNum)
 		// do nothing
 	}
      
-     
-     
+        public String toString() {
+	    return getPatchType();
+	}
 }

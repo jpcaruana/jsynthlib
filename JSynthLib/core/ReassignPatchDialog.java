@@ -57,10 +57,8 @@ public class ReassignPatchDialog extends JDialog {
     //----- Create the combo boxes
     deviceComboBox = new JComboBox();
     deviceComboBox.addActionListener(new DeviceActionListener());
-    deviceComboBox.setRenderer(new DeviceCellRenderer());
 
     driverComboBox = new JComboBox();
-    driverComboBox.setRenderer(new DriverCellRenderer());
 
     boolean newDevice=true;
     //----- First Populate the Device/Driver List with Device/Driver. which supports the patch
@@ -177,8 +175,8 @@ public class ReassignPatchDialog extends JDialog {
   class ReassignActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 
-      p.deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).deviceNum;
-      p.driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).driverNum;
+      p.deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDeviceNum();
+      p.driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).getDriverNum();
 
       setVisible(false);
       dispose();
@@ -199,121 +197,19 @@ public class ReassignPatchDialog extends JDialog {
 
       if (myDevAssign != null)
       {
-        for (int j=0;j<myDevAssign.driverAssignmentList.size ();j++)
+	ArrayList driverAssignmentList = myDevAssign.getDriverAssignmentList();
+        for (int j=0;j<driverAssignmentList.size ();j++)
         {
-	  myDrvAssign = (driverAssignment)myDevAssign.driverAssignmentList.get(j);
+	  myDrvAssign = (driverAssignment)driverAssignmentList.get(j);
 
-          if ( !(Converter.class.isInstance (myDrvAssign.driver) ) &&
-		( myDrvAssign.driver.supportsPatch(patchString,p)) )  
+          if ( !(Converter.class.isInstance (myDrvAssign.getDriver()) ) &&
+	       ( myDrvAssign.getDriver().supportsPatch(patchString,p)) )  
               driverComboBox.addItem(myDrvAssign);
         }
       }
       driverComboBox.setSelectedIndex(driverNum);	// the original driver is the default
 
       driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
-    }
-  }
-
-
- /**
-  * New standard renderer for ComboBoxes
-  */
-  class ComboCellRenderer extends JLabel implements ListCellRenderer {
-    public ComboCellRenderer() {
-      setOpaque(true);
-    }
-
-    public Component getListCellRendererComponent (
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus
-      ) {
-
-      setText(value == null ? "" : value.toString());
-      setBackground(isSelected ? Color.red : Color.white);
-      setForeground(isSelected ? Color.white : Color.black);
-      return this;
-    }
-  }
-
- /**
-  * Special renderer for Device ComboBox to display the valid DeviceName
-  */
-  class DeviceCellRenderer extends ComboCellRenderer {
-    public Component getListCellRendererComponent (
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus
-      ) {
-
-      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-      setText(value == null ? "" : ((deviceAssignment)value).device.getDeviceName());
-      return this;
-    }
-  }
-
- /**
-  * Special renderer for Driver ComboBox to display the valid PatchType
-  */
-  class DriverCellRenderer extends ComboCellRenderer {
-    public Component getListCellRendererComponent (
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus
-      ) {
-
-      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-      setText(value == null ? "" : ((driverAssignment)value).driver.getPatchType());
-      return this;
-    }
-  }
-
- /**
-  * We need to remember the original deviceNum variable of the Device and the Device itself.
-  * Each deviceAssignment Object contains a List of driverAssignments which remembers
-  * the original driverNum resp. driver. Maybe more than on driver supports the patch.
-  *
-  * @see driverAssignment
-  */
-  class deviceAssignment
-  {
-    protected int deviceNum;
-    protected Device device;
-    protected ArrayList driverAssignmentList = new ArrayList();
-
-    deviceAssignment(int deviceNum, Device device)
-    {
-      this.deviceNum = deviceNum;
-      this.device    = device;
-    }
-
-    void add(int driverNum, Driver driver)
-    {
-      this.driverAssignmentList.add(new driverAssignment(driverNum, driver));
-    }
-  }
-
-
- /**
-  * We need to remember the original driverNum variable of the Driver.
-  *
-  * @see deviceAssignment
-  */
-  class driverAssignment
-  {
-    protected int driverNum;
-    protected Driver driver;
-
-    driverAssignment(int driverNum, Driver driver)
-    {
-      this.driverNum = driverNum;
-      this.driver    = driver;
     }
   }
 
