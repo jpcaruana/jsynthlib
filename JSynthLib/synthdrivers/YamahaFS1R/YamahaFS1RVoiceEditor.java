@@ -28,12 +28,12 @@ import javax.swing.table.TableColumn;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.JSLDesktop;
 import core.JSLFrame;
 import core.KnobLookupWidget;
 import core.KnobWidget;
 import core.ParamModel;
 import core.Patch;
+import core.PatchEdit;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.SpinnerWidget;
@@ -178,7 +178,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oHelp.addActionListener(new ActionListener() {
 			public void actionPerformed (ActionEvent e) {
 				JSLFrame oHelpWin = new HelpWindow();
-				JSLDesktop.add(oHelpWin);
+				PatchEdit.getDesktop().add(oHelpWin);
 				oHelpWin.setVisible(true);
 			}}
 		);

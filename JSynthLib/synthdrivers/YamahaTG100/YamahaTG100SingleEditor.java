@@ -60,7 +60,7 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 
         setSize(500, 600);
 		pack();
-		setVisible(true);
+		//setVisible(true);
     }
 
     /**

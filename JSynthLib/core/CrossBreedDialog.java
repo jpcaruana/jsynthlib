@@ -49,7 +49,7 @@ public class CrossBreedDialog extends JDialog {
         keep.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    PatchBasket library = (PatchBasket) JSLDesktop
+                    PatchBasket library = (PatchBasket) PatchEdit.getDesktop()
                             .getSelectedFrame();
                     IPatch q = crossBreeder.getCurrentPatch();
                     library.pastePatch(q);
@@ -86,8 +86,7 @@ public class CrossBreedDialog extends JDialog {
     }
 
     void generatePressed() {
-        crossBreeder.generateNewPatch((PatchBasket) JSLDesktop
-                .getSelectedFrame());
+        crossBreeder.generateNewPatch((PatchBasket) PatchEdit.getDesktop().getSelectedFrame());
         IPatch p = crossBreeder.getCurrentPatch();
         l1.setText("Patch Type: " + p.getDevice().getManufacturerName() + " "
                 + p.getDevice().getModelName() + " " + p.getType());

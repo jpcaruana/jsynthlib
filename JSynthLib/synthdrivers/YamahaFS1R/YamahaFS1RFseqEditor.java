@@ -18,10 +18,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import core.ComboBoxWidget;
-import core.JSLDesktop;
 import core.JSLFrame;
 import core.KnobWidget;
 import core.Patch;
+import core.PatchEdit;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.SpinnerWidget;
@@ -49,7 +49,7 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		scrollPane.add(buildHeaderWindow());
 		
 		pack();
-		setVisible(true);	
+		//setVisible(true);	
 	}
 
 	private Container buildHeaderWindow() {
@@ -83,9 +83,9 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		oGraphButton.addActionListener(new ActionListener() {
                     public void actionPerformed (ActionEvent e) {
                         JSLFrame oWin = new FSeqGraphWindow();
-						JSLDesktop.add(oWin);
+                        PatchEdit.getDesktop().add(oWin);
                         oWin.setVisible(true);
-						oWin.moveToFront();
+                        oWin.moveToFront();
                     }}
 		);
 		oPanel4.add(oGraphButton);

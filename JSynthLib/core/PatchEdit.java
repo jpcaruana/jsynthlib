@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 public final class PatchEdit  {
     static DevicesConfig devConfig;
 
+    private static JSLDesktop desktop;
     private static PrefsDialog prefsDialog;
     private static WaitDialog waitDialog;
 
@@ -46,10 +47,9 @@ public final class PatchEdit  {
 	Actions.createActions();
 
 	// Set up the GUI.
-	JSLDesktop desktop = new JSLDesktop("JSynthLib", 
-	        AppConfig.getGuiStyle() == AppConfig.GUI_MDI,
-	        Actions.createToolBar(),
-	        Actions.exitAction);
+	JSLDesktop.setGUIMode(AppConfig.getGuiStyle() == AppConfig.GUI_MDI);
+	desktop = new JSLDesktop("JSynthLib", Actions.createToolBar(),
+                Actions.exitAction);
 
 	// Show dialog for the 1st invokation.
 	//This is no longer normal. Maybe we shouldn't save prefs if this happens (could be difficult)
@@ -62,11 +62,11 @@ public final class PatchEdit  {
 	Actions.createPopupMenu();
 
 	// set up Preference Dialog Window
-	prefsDialog = new PrefsDialog(JSLDesktop.getSelectedWindow());
+	prefsDialog = new PrefsDialog(desktop.getSelectedWindow());
 
         //Set up a silly little dialog we can pop up for the user to
         //gawk at while we do time consuming work later on.
-        waitDialog = new WaitDialog(JSLDesktop.getSelectedWindow());
+        waitDialog = new WaitDialog(desktop.getSelectedWindow());
 
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music
@@ -97,7 +97,10 @@ public final class PatchEdit  {
     }
 
     public static JFrame getInstance() {
-	return JSLDesktop.getSelectedWindow();
+	return desktop.getSelectedWindow();
+    }
+    public static JSLDesktop getDesktop() {
+        return desktop;
     }
 
     // Generally the app is started by running JSynthLib, so the

@@ -57,7 +57,6 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
                 true, //closable
                 true, //maximizable
                 true); //iconifiable
-
         TYPE = type;
         this.pth = pth;
 
@@ -94,9 +93,6 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
 
         //...Then set the window size or call pack...
         setSize(600, 300);
-
-        //Set the window's location.
-        moveToDefaultLocation();
     }
 
     abstract PatchTableModel createTableModel();
@@ -162,7 +158,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
                 return;
 
             // close Patch/Bank Editor editing a patch in this frame.
-            JSLFrame[] jList = JSLDesktop.getAllFrames();
+            JSLFrame[] jList = PatchEdit.getDesktop().getAllFrames();
             for (int j = 0; j < jList.length; j++) {
                 if (jList[j] instanceof BankEditorFrame) {
                     for (int i = 0; i < myModel.getRowCount(); i++)

@@ -201,6 +201,9 @@ final class Actions {
 
     /** This sets up the Menubar. Called from JSLDesktop. */
     static JMenuBar createMenuBar() {
+        return createMenuBar(PatchEdit.getDesktop());
+    }
+    static JMenuBar createMenuBar(JSLDesktop desktop) {
 	JMenuItem mi;
         HashMap mnemonics = new HashMap();
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -291,7 +294,7 @@ final class Actions {
 	    });
 
 	// create "Window" menu
-	JMenu menuWindow = JSLDesktop.createWindowMenu();
+	JMenu menuWindow = desktop.createWindowMenu();
 	menuBar.add(menuWindow);
 
 	// create "Help" menu
@@ -499,8 +502,9 @@ final class Actions {
 
     /** This creates a new empty Library/Scene Window */
     private static void createLibraryFrame(AbstractLibraryFrame frame) {
+        PatchEdit.getDesktop().add(frame);
+        frame.moveToDefaultLocation();
         frame.setVisible(true);
-        JSLDesktop.add(frame);
         try {
 	    frame.setSelected(true);
 	} catch (PropertyVetoException e) {
@@ -536,11 +540,12 @@ final class Actions {
             System.err.println("File Does Not Exist:\n" + file.getAbsolutePath() );
             return;
         }
+        PatchEdit.getDesktop().add(frame);
+        frame.moveToDefaultLocation();
 
         PatchEdit.hideWaitDialog();
 
         frame.setVisible(true);
-        JSLDesktop.add(frame);
         try {
             frame.setSelected(true);
         } catch (PropertyVetoException e) {
@@ -551,7 +556,7 @@ final class Actions {
     /** This one saves a Library to Disk */
     static void saveFrame() {
 	try {
-	    AbstractLibraryFrame oFrame = (AbstractLibraryFrame) JSLDesktop.getSelectedFrame();
+	    AbstractLibraryFrame oFrame = (AbstractLibraryFrame) getSelectedFrame();
 	    if (oFrame.getTitle().startsWith("Unsaved ")) {
 	        File fn = showSaveDialog(oFrame);
 		if (fn != null)
@@ -567,7 +572,7 @@ final class Actions {
     /** Save and specify a file name */
     private static void saveFrameAs() {
 	try {
-	    AbstractLibraryFrame oFrame = (AbstractLibraryFrame) JSLDesktop.getSelectedFrame();
+	    AbstractLibraryFrame oFrame = (AbstractLibraryFrame) getSelectedFrame();
 	    File fn = showSaveDialog(oFrame);
 	    if (fn != null)
 	        oFrame.save(fn);
@@ -602,6 +607,9 @@ final class Actions {
 	return file;
     }
 
+    private static PatchBasket getSelectedFrame() {
+        return (PatchBasket) PatchEdit.getDesktop().getSelectedFrame();
+    }
     ////////////////////////////////////////////////////////////////////////
     /*
      * Now we start with the various action classes. Each of these
@@ -633,7 +641,7 @@ final class Actions {
 	}
 	public void actionPerformed(ActionEvent e) {
 	    try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).reassignSelectedPatch();
+		getSelectedFrame().reassignSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to Reassign must be highlighted in the focused Window.", ex);
 	    }
@@ -648,7 +656,7 @@ final class Actions {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).playSelectedPatch();
+		getSelectedFrame().playSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to Play must be highlighted in the focused Window.", ex);
 	    }
@@ -663,7 +671,7 @@ final class Actions {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).storeSelectedPatch();
+		getSelectedFrame().storeSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to Store must be highlighted in the focused Window.", ex);
 	    }
@@ -678,7 +686,7 @@ final class Actions {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).sendSelectedPatch();
+		getSelectedFrame().sendSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to Send must be highlighted in the focused Window.", ex);
 	    }
@@ -693,7 +701,7 @@ final class Actions {
 	}
 	public void actionPerformed(ActionEvent e) {
 	    try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).sendToSelectedPatch();
+		getSelectedFrame().sendToSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to 'Send to...' must be highlighted in the focused Window.", ex);
 	    }
@@ -709,7 +717,7 @@ final class Actions {
 
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).deleteSelectedPatch();
+		getSelectedFrame().deleteSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to delete must be hilighted\nin the focused Window.", ex);
 	    }
@@ -724,7 +732,7 @@ final class Actions {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).copySelectedPatch();
+		getSelectedFrame().copySelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to copy must be highlighted\nin the focused Window.", ex);
 	    }
@@ -739,8 +747,8 @@ final class Actions {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).copySelectedPatch();
-		((PatchBasket) JSLDesktop.getSelectedFrame()).deleteSelectedPatch();
+		getSelectedFrame().copySelectedPatch();
+		getSelectedFrame().deleteSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to cut must be hilighted\nin the focused Window.", ex);
 	    }
@@ -755,14 +763,14 @@ final class Actions {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).pastePatch();
+		getSelectedFrame().pastePatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Library to Paste into must be the focused Window.", ex);
 	    }
         }
 	public void setEnabled(boolean b) {
 	    try {
-		JSLFrame f = JSLDesktop.getSelectedFrame();
+		JSLFrame f = PatchEdit.getDesktop().getSelectedFrame();
 		b = b && f.canImport(cb.getContents(this).getTransferDataFlavors());
 		super.setEnabled(b);
 	    } catch (Exception ex) {
@@ -786,10 +794,11 @@ final class Actions {
 	    public void run() {
 		try {
 		    JSLFrame frm =
-			((PatchBasket) JSLDesktop.getSelectedFrame()).editSelectedPatch();
+			getSelectedFrame().editSelectedPatch();
 		    if (frm != null) {
+			PatchEdit.getDesktop().add(frm);
+		        frm.moveToDefaultLocation();
 			frm.setVisible(true);
-			JSLDesktop.add(frm);
 			// hack for old Java bug
 			/*
 			if (frm instanceof PatchEditorFrame)
@@ -832,7 +841,7 @@ final class Actions {
 		return;
 	    File file = fc3.getSelectedFile();
 	    try {
-		if (JSLDesktop.getSelectedFrame() == null) {
+		if (getSelectedFrame() == null) {
 		    ErrorMsg.reportError("Error",
 					 "Patch to export must be hilighted\n"
 					 + "in the currently focuses Library");
@@ -846,7 +855,7 @@ final class Actions {
 							  JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 			    return;
 
-		    ((PatchBasket) JSLDesktop.getSelectedFrame()).exportPatch(file);
+		    getSelectedFrame().exportPatch(file);
 		}
 	    } catch (IOException ex) {
 		ErrorMsg.reportError("Error", "Unable to Save Exported Patch", ex);
@@ -907,10 +916,10 @@ final class Actions {
 		return;
 	    File file = fc2.getSelectedFile();
 	    try {
-		if (JSLDesktop.getSelectedFrame() == null) {
+		if (getSelectedFrame() == null)
 		    ErrorMsg.reportError("Error", "Library to Import Patch\n into Must be in Focus");
-		} else
-		    ((PatchBasket) JSLDesktop.getSelectedFrame()).importPatch(file);
+		else
+		    getSelectedFrame().importPatch(file);
 	    } catch (IOException ex) {
 		ErrorMsg.reportError("Error", "Unable to Load Sysex Data", ex);
 	    }
@@ -945,7 +954,7 @@ final class Actions {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((SceneFrame) JSLDesktop.getSelectedFrame()).sendScene();
+		((SceneFrame) getSelectedFrame()).sendScene();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Scene Library must be the selected window.", ex);
 	    }
@@ -1020,7 +1029,7 @@ final class Actions {
 
         public void actionPerformed(ActionEvent e) {
             try {
-		((AbstractLibraryFrame) JSLDesktop.getSelectedFrame()).extractSelectedPatch();
+		((AbstractLibraryFrame) getSelectedFrame()).extractSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Can not Extract (Maybe its not a bank?)", ex);
 	    }
@@ -1104,7 +1113,7 @@ final class Actions {
 		return;
 	    PatchEdit.showWaitDialog("Deleting duplicates...");
             try {
-		((LibraryFrame) JSLDesktop.getSelectedFrame()).deleteDuplicates();
+		((LibraryFrame) getSelectedFrame()).deleteDuplicates();
 	    } catch (Exception ex) {
 	        PatchEdit.hideWaitDialog();
 		ErrorMsg.reportError("Error", "Library to Delete Duplicates in must be Focused", ex);
@@ -1126,7 +1135,7 @@ final class Actions {
 		np.setVisible(true);
 		IPatch p = np.getNewPatch();
 		if (p != null)
-		    ((PatchBasket) JSLDesktop.getSelectedFrame()).pastePatch(p);
+		    getSelectedFrame().pastePatch(p);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to create this new patch.", ex);
 	    }
@@ -1166,9 +1175,9 @@ final class Actions {
 	    mnemonics.put(this, new Integer('F'));
         }
         public void actionPerformed(ActionEvent e) {
-            if (!(JSLDesktop.getSelectedFrame() instanceof PatchEditorFrame))
+            if (!(getSelectedFrame() instanceof PatchEditorFrame))
 		return;
-            PatchEditorFrame pf = (PatchEditorFrame) JSLDesktop.getSelectedFrame();
+            PatchEditorFrame pf = (PatchEditorFrame) getSelectedFrame();
             pf.nextFader();
 	    return;
         }
@@ -1180,9 +1189,9 @@ final class Actions {
 	    //mnemonics.put(this, new Integer('F'));
         }
         public void actionPerformed(ActionEvent e) {
-            if (!(JSLDesktop.getSelectedFrame() instanceof PatchEditorFrame))
+            if (!(getSelectedFrame() instanceof PatchEditorFrame))
 		return;
-            PatchEditorFrame pf = (PatchEditorFrame) JSLDesktop.getSelectedFrame();
+            PatchEditorFrame pf = (PatchEditorFrame) getSelectedFrame();
             pf.prevFader();
 	    return;
         }

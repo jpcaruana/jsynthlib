@@ -7,35 +7,36 @@ import java.util.*;
 // TODO: Lines marked with XXX are JSynthLib dependent code. They must be removed to
 // make this class a generic class.
 /**
- * A virtual JDesktopPane class which supports both MDI (using JInternalFrame)
- * and SDI (using JFrame) mothods. In MDI mode JDesktopPane is used. In SDI mode
- * a ToolBar window is created and JDesktopPane methods are emulated. For the
- * details of each method, refer the documentation of JDesktopPane.
+ * A virtual JDesktopPane class which supports both MDI (Multiple Document
+ * Interface: using JInternalFrame) and SDI (Single Document Interface: using
+ * JFrame) mothods. In MDI mode JDesktopPane is used. In SDI mode a ToolBar
+ * window is created and JDesktopPane methods are emulated. For the details of
+ * each method, refer the documentation of JDesktopPane.
  * 
  * @see JDesktopPane
  * @see JSLFrame
  * @author Rib Rdb
  */
 public class JSLDesktop {
-    private static JSLDesktopProxy proxy;
-    protected static JFrame selected = null;
+    private JSLDesktopProxy proxy;
+    protected JFrame selected = null;
     // not used now
-    static AbstractAction toolBarAction = new AbstractAction ("Tool Bar") {
+    AbstractAction toolBarAction = new AbstractAction ("Tool Bar") {
 	    public void actionPerformed(ActionEvent e) {
-		JSLDesktop.showToolBar();
+		showToolBar();
 	    }
 	};
-    private static Boolean in_fake_activation = Boolean.FALSE;
+    private Boolean in_fake_activation = Boolean.FALSE;
     //private static Boolean in_get_instance = Boolean.FALSE;
-    private static int xdecoration = 0, ydecoration = 0;
-    private static JSLDesktop instance = null;
-    private static boolean useMDI;
-    private static Action exitAction;
+    private int xdecoration = 0, ydecoration = 0;
+    //private JSLDesktop instance = null;
+    private Action exitAction;
+    /** @see #setGUIMode(boolean) */
+    private static boolean useMDI = true;
 
     /** Creates a new JSLDesktop. */
-    protected JSLDesktop(String title, boolean useMDI, JToolBar tb, Action exitAction) {
-        JSLDesktop.useMDI = useMDI;
-        JSLDesktop.exitAction = exitAction;
+    protected JSLDesktop(String title, JToolBar tb, Action exitAction) {
+        this.exitAction = exitAction;
 	if (useMDI) {
 	    proxy = new JSLJDesktop(title, tb);
 	    ((JSLJDesktop) proxy).setupInitialMenuBar(tb);
@@ -44,13 +45,26 @@ public class JSLDesktop {
 	    ((JSLFakeDesktop) proxy).setupInitialMenuBar(tb);
 	}
 //	setupInitialMenuBar(tb);
-	instance = this;
+//	instance = this;
+    }
+
+    /**
+     * Select GUI mode. This method must be called before the first JSLDesktop
+     * constructor call. If this method is not call, MDI is used.
+     * 
+     * @param useMDI
+     *            if true MDI (single window mode) is used, otherwise SDI
+     *            (multiple window mode) is used.
+     */
+    public static void setGUIMode(boolean useMDI) {
+        JSLDesktop.useMDI = useMDI;
     }
     static boolean useMDI() {
         return useMDI;
     }
 
-    static JSLDesktop getInstance() {
+    /** @deprecated don't use this. */
+    JSLDesktop getInstance() {
 //	if (instance == null) {
 //	    synchronized (in_get_instance) {
 //		if (!in_get_instance.booleanValue()) {
@@ -60,49 +74,52 @@ public class JSLDesktop {
 //		}
 //	    }
 //	}
-	return instance;
+	return this; // now this method is useless
     }
     // JDesktopPane compatible methods
     /** Returns all JInternalFrames currently displayed in the desktop. */
-    public static JSLFrame[] getAllFrames() { return proxy.getAllJSLFrames(); }
+    public JSLFrame[] getAllFrames() { return proxy.getAllJSLFrames(); }
     /**
      * Returns the currently active JSLFrame, or null if no JSLFrame is
      * currently active.
      */
-    public static JSLFrame getSelectedFrame() { return proxy.getSelectedJSLFrame(); }
+    public JSLFrame getSelectedFrame() { return proxy.getSelectedJSLFrame(); }
     /** Returns the size of this component in the form of a Dimension object. */
-    public static Dimension getSize() { return proxy.getSize(); }
+    public Dimension getSize() { return proxy.getSize(); }
 
     // original (non-JDesktopPane compatible) methods
     /**
      * In MDI mode returns the root JFrame created. In SDI mode returns the
      * current active JFrame including Toolbar frame.
      */
-    public static JFrame getSelectedWindow() { return selected; }
+    public JFrame getSelectedWindow() { return selected; }
     /**
      * Creates the Window Menu which is depenent on MDI/SDI mode. called by
      * Actions.createMenuBar().
      */
-    public static JMenu createWindowMenu() { return proxy.createWindowMenu(); }
+    public JMenu createWindowMenu() { return proxy.createWindowMenu(); }
     /**  */
     //private static void setupInitialMenuBar(JToolBar tb) { proxy.setupInitialMenuBar(tb); }
 
-    /** add frame in MDI mode. registerFrame() is called in SDI mode. */
-    public static void add(JSLFrame f) { proxy.add(f); }
+    /** add a JSLFrame under this JSLDesktop control. */
+    public void add(JSLFrame f) {
+        f.add(this); // let JSLFrame know his parent
+        proxy.add(f); 
+    }
     /** add frame in SDI mode. Do nothing in MDI mode. */
     //static void registerFrame(JSLFrame f) { proxy.registerFrame(f); }
     /**  */
-    static JFrame getLastSelectedWindow() { return proxy.getLastSelectedWindow(); }
+    JFrame getLastSelectedWindow() { return proxy.getLastSelectedWindow(); }
     /**  */
-    static JSLFrame getToolBar() { return proxy.getToolBar(); }
+    JSLFrame getToolBar() { return proxy.getToolBar(); }
     /**  */
-    static JSLFrame getInvisible() { return proxy.getInvisible(); }
+    JSLFrame getInvisible() { return proxy.getInvisible(); }
     /**  */
-    static int getXDecoration() { return xdecoration; }
+    int getXDecoration() { return xdecoration; }
     /**  */
-    static int getYDecoration() { return ydecoration; }
+    int getYDecoration() { return ydecoration; }
     /**  */
-    private static void showToolBar() { proxy.showToolBar(); }
+    private void showToolBar() { proxy.showToolBar(); }
 
     private interface JSLDesktopProxy {
         JSLFrame[] getAllJSLFrames();
@@ -144,7 +161,7 @@ public class JSLDesktop {
 	    putClientProperty("JDesktopPane.dragMode", "outline");
 	    c.add(this, BorderLayout.CENTER);
 
-	    selected.setJMenuBar(Actions.createMenuBar()); // XXX
+	    selected.setJMenuBar(Actions.createMenuBar(JSLDesktop.this));
 	    selected.setVisible(true);
 	}
 	public JMenu createWindowMenu() {
@@ -207,7 +224,7 @@ public class JSLDesktop {
 	private void setupInitialMenuBar(JToolBar tb) {
 	    if (invisible != null) { // MacUtils.isMac()
 		selected = invisible.getJFrame();
-		selected.setJMenuBar(Actions.createMenuBar()); // XXX
+		selected.setJMenuBar(Actions.createMenuBar(JSLDesktop.this)); // XXX
 		selected.setSize(0,0);
 		selected.setUndecorated(true);
 		//selected.setLocation(0,0x7FFFFFFF);
@@ -216,9 +233,8 @@ public class JSLDesktop {
 		//selected.addWindowListener(this);
 	    }
 
-	    registerFrame(toolbar);
 	    //toolbar.addJSLFrameListener(this);
-	    toolbar.setJMenuBar(Actions.createMenuBar()); // XXX
+	    toolbar.setJMenuBar(Actions.createMenuBar(JSLDesktop.this)); // XXX
 	    tb.setFloatable(false);
 	    toolbar.getContentPane().add(tb);
 	    toolbar.pack();
@@ -228,12 +244,14 @@ public class JSLDesktop {
 	    xdecoration = (int)(ts.getWidth() - gs.getWidth());
 	    ydecoration = (int)(ts.getHeight() - gs.getHeight());
 	    toolbar.setLocation(xdecoration/2, ydecoration);
+
+	    add(toolbar);
 	    toolbar.setVisible(true);
 	    JSLFrame.resetFrameCount();
 	}
 	public JSLFrame getInvisible() { return invisible; }
 	public JMenu createWindowMenu() {
-	    JSLWindowMenu wm = new JSLWindowMenu();
+	    JSLWindowMenu wm = new JSLWindowMenu(JSLDesktop.this);
 	    windowMenus.add(wm);
 	    Iterator it = windows.iterator();
 	    while (it.hasNext()) {
@@ -242,7 +260,8 @@ public class JSLDesktop {
 	    wm.setSelectedWindow(selected);
 	    return wm;
 	}
-	private void registerFrame(JSLFrame f) {
+//	private void registerFrame(JSLFrame f) {
+	public void add(JSLFrame f) {
 	    if (windows.contains(f))
 		return;
 	    if (f.getProxy() instanceof JFrame) {
@@ -253,23 +272,27 @@ public class JSLDesktop {
 		    ((JSLWindowMenu)it.next()).add(jf);
 		}
 		windows.add(f);
-		jf.setJMenuBar(Actions.createMenuBar()); // XXX
+		jf.setJMenuBar(Actions.createMenuBar(JSLDesktop.this)); // XXX
 		//ErrorMsg.reportStatus("isVisible = " + jf.isVisible());
 		// Without the next line, menu bar does not show up sometimes. Why?
 		jf.setVisible(true);
 	    }
 	}
-	public void add(JSLFrame f) { registerFrame(f); }
+//	public void add(JSLFrame f) { registerFrame(f); }
 	public Dimension getSize() {
 	    return Toolkit.getDefaultToolkit().getScreenSize();
 	}
 	public JSLFrame getSelectedJSLFrame() {
-	    try {
-		if (selected == toolbar.getJFrame())
-		    return last_selected.getJSLFrame();
-		return ((JSLFrame.JSLFrameProxy)selected).getJSLFrame();
-	    } catch (Exception e) { return null; }
-	}
+	    if (selected == null)
+	        return null;
+	    else if (selected == toolbar.getJFrame())
+                if (last_selected != null)
+                    return last_selected.getJSLFrame();
+                else
+                    return null;
+            else
+                return ((JSLFrame.JSLFrameProxy) selected).getJSLFrame();
+        }
 	public JSLFrame[] getAllJSLFrames() {
 	    JSLFrame[] a = new JSLFrame[windows.size()];
 	    Iterator it = windows.iterator();
@@ -311,7 +334,7 @@ public class JSLDesktop {
                 last_selected = null;
             }
 	    selected = f.getJFrame();
-	    showState(f, "selected");
+	    showState(f, "selected : " + selected);
 	}
 	public void JSLFrameClosing(JSLFrameEvent e) {
 	    JSLFrame f = e.getJSLFrame();

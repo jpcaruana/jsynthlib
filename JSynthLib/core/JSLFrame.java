@@ -22,8 +22,10 @@ import java.awt.datatransfer.DataFlavor;
  */
 public class JSLFrame {
     protected JSLFrameProxy proxy;
+    /** parent JSLDesktop. */
+    private JSLDesktop desktop;
 
-    // only for JSLJFrame
+    // only for JSLJFrame.
     private static JFrame lastselection = null;
     private static int frame_count = 0;
     /**
@@ -53,6 +55,11 @@ public class JSLFrame {
 //	if (JSLDesktop.getInstance() != null)
 //	    JSLDesktop.registerFrame(this);
 	frame_count++;
+    }
+
+    /** set parent JSLDesktop.  Called by JSLDesktop.add method. */
+    void add(JSLDesktop d) {
+        desktop = d;
     }
     
     // JInternalFrame compatible methods
@@ -120,8 +127,7 @@ public class JSLFrame {
     /** Returns whether this Window is closing. */
     public boolean isClosing() { return proxy.isClosing(); }
     /** Convenience method that searches the ancestor hierarchy for a JDesktop instance. */
-    // This is probably naughty.
-    public JSLDesktop getDesktopPane() { return JSLDesktop.getInstance(); }
+    public JSLDesktop getDesktopPane() { return desktop; }
     /** Adds the specified listener to receive frame events from this frame. */
     public void addJSLFrameListener(JSLFrameListener l) {
 	proxy.addJSLFrameListener(l);
@@ -143,10 +149,10 @@ public class JSLFrame {
         //proxy.moveToDefaultLocation();
         int x, y, yofs = 0;
         int xsep = 30;
-        int ysep = JSLDesktop.useMDI() ? 30 : JSLDesktop.getYDecoration();
-        Dimension d = JSLDesktop.getSize();
+        int ysep = JSLDesktop.useMDI() ? 30 : desktop.getYDecoration();
+        Dimension d = desktop.getSize();
 
-        JFrame tb = JSLDesktop.useMDI() ? null : JSLDesktop.getToolBar().getJFrame();
+        JFrame tb = JSLDesktop.useMDI() ? null : desktop.getToolBar().getJFrame();
         if (tb != null && tb.getLocation().getY() < 100)
             yofs = (int) (tb.getLocation().getY() - ysep + tb.getSize()
                     .getHeight());
@@ -359,7 +365,7 @@ public class JSLFrame {
 		    JMenuBar mb = getJMenuBar();
 		    setJMenuBar(null);
 
-		    JSLDesktop.getInvisible().getJFrame().requestFocus();
+		    desktop.getInvisible().getJFrame().requestFocus();
 		    requestFocus();
 		}
 	    }
@@ -451,10 +457,10 @@ public class JSLFrame {
 	public boolean isSelected() {
 	    //return isActive() || lastselection == this;
 	    //JSLDesktop d = JSLDesktop.getInstance();
-	    JFrame f = JSLDesktop.getSelectedWindow();
+	    JFrame f = desktop.getSelectedWindow();
 	    return (f == this)
-		|| (f == JSLDesktop.getToolBar().getJFrame()
-		    && JSLDesktop.getLastSelectedWindow() == this);
+		|| (f == desktop.getToolBar().getJFrame()
+		    && desktop.getLastSelectedWindow() == this);
 	}
 	public boolean isIcon() {
 	    return (getExtendedState() & Frame.ICONIFIED) != 0;

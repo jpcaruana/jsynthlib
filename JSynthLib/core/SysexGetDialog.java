@@ -156,7 +156,7 @@ public class SysexGetDialog extends JDialog {
         IPatch[] patarray = driver.createPatches(msgs);
 
         try {
-            PatchBasket frame = (PatchBasket) JSLDesktop.getSelectedFrame();
+            PatchBasket frame = (PatchBasket) PatchEdit.getDesktop().getSelectedFrame();
             for (int i = 0; i < patarray.length; i++) {
                 frame.pastePatch(patarray[i]);
             }

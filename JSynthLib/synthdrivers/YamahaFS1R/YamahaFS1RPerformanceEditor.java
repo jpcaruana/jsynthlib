@@ -23,11 +23,11 @@ import javax.swing.border.TitledBorder;
 import core.BankEditorFrame;
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.JSLDesktop;
 import core.JSLFrameEvent;
 import core.JSLFrameListener;
 import core.KnobWidget;
 import core.Patch;
+import core.PatchEdit;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.SpinnerWidget;
@@ -91,7 +91,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		oTabs.add(buildCommonWindow(), "Common");
 		oTabs.add(new MatrixWindow(patch), "Matrix");
 		oTabs.add(new FseqWindow(patch), "Fseq");	
-		oTabs.add((new EffectsWindow((Patch)p)).buildEffectsWindow(), "Effects");	
+		oTabs.add((new EffectsWindow(patch)).buildEffectsWindow(), "Effects");	
 		for (int i = 1; i <= 4; i++) {
 			oTabs.add(buildPartWindow(i), "Part "+i);
 		}
@@ -99,7 +99,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		setSize(800, 600);
 
 		pack();
-		setVisible(true);
+		//setVisible(true);
 	}
 
 	protected void frameOpened()
@@ -117,11 +117,11 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 				Patch oPatch = null;
 				if (mVoicesInEdit[oPart] != null) {
 					// voice currently in editing
-					oPatch = (Patch)mVoicesInEdit[oPart].getPatch();
+					oPatch = (Patch) mVoicesInEdit[oPart].getPatch();
 				}
 				else 
 				{
-					oPatch = (Patch)YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+mVoiceSelector[oPart].getValue());
+					oPatch = YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor) bankFrame).getBankPatch(), 128+mVoiceSelector[oPart].getValue());
 				}
 				//System.out.println("SEND VOICE "+oPart+" "+mVoiceSelector[oPart].getValue());
 				YamahaFS1RVoiceDriver.getInstance().sendPatch (oPatch, oPart+1);
@@ -312,7 +312,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 					{
 						// envoi sysex de la voice interne selectionnee
 						JComboBox oCB = (JComboBox)e.getSource();
-						Patch oPatch = (Patch)YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+oCB.getSelectedIndex());
+						Patch oPatch = YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor) bankFrame).getBankPatch(), 128+oCB.getSelectedIndex());
 						YamahaFS1RVoiceDriver.getInstance().sendPatch (oPatch, aPart);
 					}
 				}
@@ -342,7 +342,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 						public void JSLFrameIconified(JSLFrameEvent e) {}
 					});
 
-					JSLDesktop.add(oEdit);
+					PatchEdit.getDesktop().add(oEdit);
 					oEdit.setVisible(true);
 					oEdit.moveToFront();
 				}

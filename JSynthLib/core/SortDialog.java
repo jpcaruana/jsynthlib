@@ -58,7 +58,7 @@ public class SortDialog extends JDialog {
 			setVisible (false);
 			PatchEdit.showWaitDialog();
 			String command = group.getSelection ().getActionCommand ();
-			((LibraryFrame) JSLDesktop.getSelectedFrame())
+			((LibraryFrame) PatchEdit.getDesktop().getSelectedFrame())
 			    .sortPatch(new MyOrder(command));
 			PatchEdit.hideWaitDialog();
 		    }

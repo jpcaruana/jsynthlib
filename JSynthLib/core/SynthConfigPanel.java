@@ -158,7 +158,7 @@ class SynthConfigPanel extends ConfigPanel {
     }
 
     private void revalidateLibraries() {
-	JSLFrame[] jList = JSLDesktop.getAllFrames();
+	JSLFrame[] jList = PatchEdit.getDesktop().getAllFrames();
 	if (jList.length > 0) {
 	    PatchEdit.showWaitDialog();
 	    for (int i = 0; i < jList.length; i++) {

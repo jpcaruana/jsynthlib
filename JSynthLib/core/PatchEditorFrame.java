@@ -80,7 +80,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     protected PatchEditorFrame(String name, ISinglePatch patch) {
         // create a resizable, closable, maximizable, and iconifiable frame.
         super(name, true, true, true, true);
-        ErrorMsg.reportStatus("!!!PE.Constructor: nFrame = " + nFrame);
+
         nFrame++;
         p = patch;
         // make a backup copy
@@ -89,11 +89,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
         gbc = new GridBagConstraints();
         scrollPane = new JPanel();
         scrollPane.setLayout(new GridBagLayout());
-        scrollPane.setSize(600, 400);
+        //scrollPane.setSize(600, 400);
         scroller = new JScrollPane(scrollPane);
         getContentPane().add(scroller);
         setSize(600, 400);
-        moveToDefaultLocation();
 
         faderInEnable(AppConfig.getFaderEnable());
 
@@ -532,23 +531,30 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     /**
-     * When showing the dialog, also check how many components there
-     * are to determine the number of widget banks needed.
+     * When showing the dialog, also check how many components there are to
+     * determine the number of widget banks needed.
      */
-    public void show() {        // override a method of JSLFrame
-        int high = 0;
+    private int getNumFaderBank() {
+        int high = 0; // highest slider number
         for (int i = 0; i < widgetList.size(); i++) {
             SysexWidget w = (SysexWidget) widgetList.get(i);
             if ((w.getSliderNum() + w.getNumFaders() - 1) > high)
                 high = w.getSliderNum() + w.getNumFaders() - 1;
         }
-        numFaderBanks = (high / 16) + 1;
-        faderHighlight();
-        ErrorMsg.reportStatus("PatchEditorFrame:Show   Num Fader Banks =  "
-                              + numFaderBanks);
+        return (high / 16) + 1;
+    }
 
-        Dimension screenSize = JSLDesktop.getSize();
+    public void show() {        // override a method of JSLFrame
+        numFaderBanks = getNumFaderBank();
+        ErrorMsg.reportStatus("PatchEditorFrame.show(): Num Fader Banks = "
+                              + numFaderBanks);
+        faderHighlight();
+
+        // resize if frame size is bigger than screen size 
+        Dimension screenSize = PatchEdit.getDesktop().getSize();
         Dimension frameSize = this.getSize();
+        ErrorMsg.reportStatus("PatchEditorFrame.show(): scrollPane size = " + scrollPane.getSize() + ", frame size = " + frameSize);
+        
         if (frameSize.height > screenSize.height) {
             // Add necessary place for the vertical Scrollbar
             frameSize.width += scroller.getVerticalScrollBar().getPreferredSize().width;
@@ -564,7 +570,13 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
             this.setSize(screenSize.width, frameSize.height);
         }
         super.show();
-    } // end of method
+    }
+
+    public void setVisible(boolean b) {
+        if (b)
+            show();
+        super.setVisible(b);
+    }
 
     /**
      * Let bankeditorframe set information about itself when it

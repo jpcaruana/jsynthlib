@@ -152,6 +152,7 @@ public class ImportAllDialog extends JDialog
                         if (putName==2) pk.setAuthor(pk.getAuthor() + files[i].getName());
                         if (myModel.includeDevice[pk.getDriver().getDevice().getDeviceNum()].booleanValue ())
                         {
+                            LibraryFrame frame = (LibraryFrame) PatchEdit.getDesktop().getSelectedFrame();
                             if (extract && (pk.isBankPatch()))
                             {
                                 String[] pn = ((IPatchDriver) pk.getDriver()).getPatchNumbers();
@@ -162,12 +163,12 @@ public class ImportAllDialog extends JDialog
                                         q.setDate(q.getDate() + files[i].getName() + " " + pn[j]);
                                     if (putName==2)
                                         q.setAuthor(q.getAuthor() + files[i].getName() + " " + pn[j]);
-                                    ((LibraryFrame)JSLDesktop.getSelectedFrame ()).pastePatch (q);
+                                    frame.pastePatch(q);
                                 }
                             }
                             else
                             {
-                                ((LibraryFrame)JSLDesktop.getSelectedFrame ()).pastePatch (pk);
+                                frame.pastePatch(pk);
                             }
                         }
                     }

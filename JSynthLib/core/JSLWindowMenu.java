@@ -5,23 +5,28 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.lang.ref.*;
-
+// now used only for JSLFakeDesktop (SDI mode)
 public class JSLWindowMenu extends JMenu implements WindowListener,
 						    ActionListener {
     protected ButtonGroup bg = new ButtonGroup();
     protected HashMap windows = new HashMap();
     protected JSLWindowMenuItem none = new JSLWindowMenuItem();
     private Boolean doing_selection = Boolean.FALSE;
-    private static Action close_action = new AbstractAction("Close") {
+    /** Parent JSLDesktop. */
+    private JSLDesktop desktop;
+
+    // XXX This is only for calling JSLFrame.JSLFrameProxy.setClose(true).
+    // Why JSLFrame.JSLFrameProxy.windowClosed method is not used?
+    private Action close_action = new AbstractAction("Close") {
 	    public void actionPerformed(ActionEvent ex) {
 		try {
-		    JFrame f = JSLDesktop.getSelectedWindow();
+		    JFrame f = desktop.getSelectedWindow();
 		    ((JSLFrame.JSLFrameProxy)f).getJSLFrame().setClosed(true);
 		} catch (Exception e) {
-		    if (JSLDesktop.getInstance() == null) {
+		    if (desktop == null) {
 		        ErrorMsg.reportStatus("Error: No JSLDesktkop. Can't close"
 					   + " any windows.");
-		    } else if (JSLDesktop.getSelectedFrame() == null) {
+		    } else if (desktop.getSelectedFrame() == null) {
 		        ErrorMsg.reportStatus("Error: No selected JSLFrame. " +
 					   "Can't close window.");
 		    } else {
@@ -31,8 +36,9 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 	    }
 	};
 
-    public JSLWindowMenu() {
+    public JSLWindowMenu(JSLDesktop desktop) {
 	super("Window");
+	this.desktop = desktop;
 	if (!MacUtils.isMac()) {
 	    add(Actions.prefsAction);	// XXX
 	    setMnemonic(KeyEvent.VK_W); // XXX

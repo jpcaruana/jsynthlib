@@ -116,7 +116,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
             }
 
             public void JSLFrameClosing(JSLFrameEvent e) {
-                JSLFrame[] jList = JSLDesktop.getAllFrames();
+                JSLFrame[] jList = PatchEdit.getDesktop().getAllFrames();
                 for (int j = 0; j < jList.length; j++)
                     if (jList[j] instanceof PatchEditorFrame) {
                         if (((PatchEditorFrame) (jList[j])).bankFrame == instance) {
@@ -150,9 +150,6 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
         //...Then set the window size or call pack...
         setSize(600, 300);
-
-        //Set the window's location.
-        moveToDefaultLocation();
     }
 
     private void frameActivated() {
