@@ -43,6 +43,7 @@ public final class TD6SingleDriver extends Driver {
     // Data set 1 DT1 followed by 4 byte address (MSB first) and data
     //			   0 1 2 3 4 5
     sysexID		= "F041**003F12";
+    // obsoleted
     inquiryID		= "F07E**0602413F01000000020000f7";
 
     patchNameStart	= 10;	// offset 0
@@ -50,19 +51,12 @@ public final class TD6SingleDriver extends Driver {
     deviceIDoffset	= 2;
 
     // can be replaced by patch name???
-    patchNumbers = new String[]
-      {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
-       "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
-       "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
-       "31", "32", "33", "34", "35", "36", "37", "38", "39", "40",
-       "41", "42", "43", "44", "45", "46", "47", "48", "49", "50",
-       "51", "52", "53", "54", "55", "56", "57", "58", "59", "60",
-       "61", "62", "63", "64", "65", "66", "67", "68", "69", "70",
-       "71", "72", "73", "74", "75", "76", "77", "78", "79", "80",
-       "81", "82", "83", "84", "85", "86", "87", "88", "89", "90",
-       "91", "92", "93", "94", "95", "96", "97", "98", "99"};  
+    patchNumbers	= new String[99];
+    for (int i = 0; i < 99; i++)
+      patchNumbers[i] = (i < 9 ? "0" : "") +  String.valueOf(i + 1);
 
     //bankNumbers =new String[] {"0-Internal"}; //???
+
     patchSize		= 37 + 55 * 12;
     numSysexMsgs	= 13;	// Who use this?
 
@@ -100,18 +94,22 @@ public final class TD6SingleDriver extends Driver {
       size = (i == 0) ? 37 : 55; // SysEX data size
       byte [] tmpSysex = new byte [size];
       System.arraycopy(p.sysex, ofst, tmpSysex, 0, size);
-      Patch tmpPatch = new Patch(tmpSysex);
-      // Drum kit "01" : patchNum 0 : address 04 00 00 00
-      tmpPatch.sysex[7] = (byte) patchNum;
-      tmpPatch.sysex[size - 2] = calcChkSum(tmpPatch, 6, size - 3);
+
+      // Drum kit : kk,  address 41 kk ii 00
+      tmpSysex[6] = (byte) 0x41;
+      tmpSysex[7] = (byte) patchNum;
+      tmpSysex[8] = (byte) i;
+      tmpSysex[size - 2] = calcChkSum(tmpSysex, 6, size - 3);
 
       // send created patch to synthersizer
+      Patch tmpPatch = new Patch(tmpSysex);
+      //ErrorMsg.reportStatus(tmpPatch.toString());
       sendPatchWorker(tmpPatch);
+      try {
+	Thread.sleep(50);	// wait at least 50 milliseconds.
+      } catch (Exception e) {	// What's this?
+      }
     }
-//     try {
-//       Thread.sleep(100);	// at least 100 milliseconds.
-//     } catch (Exception e) {
-//     }
   }
 
   /**
@@ -123,21 +121,21 @@ public final class TD6SingleDriver extends Driver {
    * @param p a <code>Patch</code> value
    */
   public void sendPatch (Patch p) { 
-    storePatch (p, 0, 99);
+    storePatch (p, 0, 99 - 1);
   }
 
   /**
    * Calculate checksum from <code>start</code> to <code>end</code>.
    *
-   * @param p a <code>Patch</code> value
+   * @param b a byte array
    * @param start start offset
    * @param end end offset
    * @return a <code>byte</code> value
    */
-  private byte calcChkSum(Patch p, int start, int end) {
+  private static byte calcChkSum(byte[] b, int start, int end) {
     int sum = 0;
     for (int i = start; i <= end; i++)
-      sum += p.sysex[i];
+      sum += b[i];
     return (byte) (-sum & 0x7f);
   }
 
@@ -149,18 +147,17 @@ public final class TD6SingleDriver extends Driver {
   public void calculateChecksum(Patch p) {
     for (int i = 0; i < 13; i++) {
       int ofst = (i == 0) ? 0 : 37 + (i - 1) * 55;
-      int chkSumIdx = (i == 0 ? 37 : 55) - 2;
-      p.sysex[ofst + chkSumIdx]
-	= calcChkSum(p, ofst + 6, ofst + chkSumIdx - 1);
+      int chkSumIdx = ofst + (i == 0 ? 37 : 55) - 2;
+      p.sysex[chkSumIdx] = calcChkSum(p.sysex, ofst + 6, chkSumIdx - 1);
     }
   }
 
   /** patch file name for createNewPatch() */
-  private final String patchFileName = "synthdrivers/RolandTD6/newpatch.syx";
+  private final static String patchFileName = "synthdrivers/RolandTD6/newpatch.syx";
   /**
    * Create new patch using "synthdrivers/RolandTD6/newpatch.syx".
    *
-   * This should be defined in Driver.java. !!!FIXIT!!!
+   * This can be defined in Driver.java. !!!FIXIT!!!
    * @return a <code>Patch</code> value
    */
   public Patch createNewPatch() { // Borrowed from DR660 driver
