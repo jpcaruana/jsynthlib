@@ -14,7 +14,7 @@ import java.util.*;
 	Formant sequence parameters.
 	@author denis queffeulou mailto:dqueffeulou@free.fr
 */
-class FseqWindow extends JInternalFrame implements PatchContainer
+class FseqWindow extends JPanel
 {
 
 	private Patch p;
@@ -29,9 +29,7 @@ class FseqWindow extends JInternalFrame implements PatchContainer
 	};
 	
 	FseqWindow(Patch aPatch) {
-		super("Yamaha FS1R Formant sequence",true,true,true,true);
 		p = aPatch;
-		setSize(500, 300);
 		Box oPanel = Box.createVerticalBox();
 
 		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -60,7 +58,6 @@ class FseqWindow extends JInternalFrame implements PatchContainer
 		oPanel3.add(new KnobWidget("Delay", p, 0, 0x63, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x26), new YamahaFS1RPerformanceDriver.Sender(0x26)));
 		oPanel.add(oPanel3);
 		
-		getContentPane().add(oPanel);
-		pack();
+		add(oPanel);
 	}
 }
