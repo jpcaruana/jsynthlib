@@ -51,7 +51,7 @@ public class JSLDesktop implements JSLFrameListener {
 	    proxy = new JSLJDesktop(title, mb, tb);
 	} else {
 	    proxy = new JSLFakeDesktop();
-	    if (isMac && System.getProperty("apple.laf.useScreenMenuBar").equals("true"))
+	    if (isMac && "true".equals(System.getProperty("apple.laf.useScreenMenuBar")))
 	        ((JSLFakeDesktop) proxy).createInvisibleWindow(mb);
 	    else
 	        ((JSLFakeDesktop) proxy).createToolBarWindow(title + " Tool Bar", mb, tb);

@@ -199,8 +199,7 @@ public final class AppConfig {
     /** Getter for guiStyle */
     static int getGuiStyle() {
         return prefs.getInt("guiStyle",
-                MacUtils.isMac() && System.getProperty("apple.laf.useScreenMenuBar").equals("true")
-                ? GUI_SDI : GUI_MDI);
+                MacUtils.isMac() ? GUI_SDI : GUI_MDI);
     }
     /** Setter for guiStyle */
     static void setGuiStyle(int guiStyle) {
