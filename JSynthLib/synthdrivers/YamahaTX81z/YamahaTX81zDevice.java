@@ -15,10 +15,11 @@ import java.util.prefs.Preferences;
  */
 public class YamahaTX81zDevice extends Device
 {
-    private static final String infoText="The Yamaha TX81z is susceptable to internal midi buffer overflow if you send it a lot of Data"+
-	          "quickly. With JSynthLib, this can happenif you are using a fader box and throwing the faders"+
-		  "around rapidly. Otherwise, it should not be a problem\n\n"+
-		  "JSynthLib supports the TX81z as both a Single and Bank Librarian and also supports Patch Editing.";
+    private static final String infoText =
+    "The Yamaha TX81z is susceptable to internal MIDI buffer overflow if you send it a lot of Data quickly. "
+    + "With JSynthLib, this can happen if you are using a fader box and throwing the faders around rapidly. "
+    + "Otherwise, it should not be a problem\n\n"
+    + "JSynthLib supports the TX81z as both a Single and Bank Librarian and also supports Patch Editing.";
 
     /** Creates new YamahaTX81zDevice */
     public YamahaTX81zDevice ()
