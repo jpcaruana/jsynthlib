@@ -155,7 +155,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		    //System.out.println("Frame activated"+table.getSelectedRowCount());
 		}
 		public void JSLFrameClosing(JSLFrameEvent e) {
-		    JSLFrame[] jList = PatchEdit.desktop.getAllFrames();
+		    JSLFrame[] jList = JSLDesktop.getAllFrames();
 		    for (int j = 0; j < jList.length; j++)
 			if (jList[j] instanceof PatchEditorFrame) {
 			    if (((PatchEditorFrame) (jList[j])).bankFrame == instance) {

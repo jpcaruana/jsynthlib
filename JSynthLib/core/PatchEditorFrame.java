@@ -429,7 +429,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	ErrorMsg.reportStatus("PatchEditorFrame:Show   Num Fader Banks =  "
 			      + numFaderBanks);
 
-	Dimension screenSize = PatchEdit.desktop.getSize();
+	Dimension screenSize = JSLDesktop.getSize();
         Dimension frameSize = this.getSize();
         if (frameSize.height > screenSize.height) {
             // Add necessary place for the vertical Scrollbar

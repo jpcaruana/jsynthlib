@@ -65,7 +65,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
                 if (!changed) return;
 
                 int i;
-                JSLFrame[] jList =PatchEdit.desktop.getAllFrames();
+                JSLFrame[] jList =JSLDesktop.getAllFrames();
 
                 for (int j=0;j<jList.length;j++)
                 {

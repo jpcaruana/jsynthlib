@@ -176,13 +176,13 @@ public class ImportAllDialog extends JDialog
                                     if (putName==2)
                                         q.setAuthor(q.getAuthor() + files[i].getName() + " " + myDriver.patchNumbers[j]);
                                     PatchEdit.Clipboard=q;
-                                    ((LibraryFrame)PatchEdit.desktop.getSelectedFrame ()).PastePatch ();
+                                    ((LibraryFrame)JSLDesktop.getSelectedFrame ()).PastePatch ();
                                 }
                             }
                             else
                             {
                                 PatchEdit.Clipboard=pk;
-                                ((LibraryFrame)PatchEdit.desktop.getSelectedFrame ()).PastePatch ();
+                                ((LibraryFrame)JSLDesktop.getSelectedFrame ()).PastePatch ();
                             }
                         }
                     }

@@ -152,7 +152,7 @@ public class DeviceDetailsDialog extends JDialog
     }
     void revalidateLibraries()
     {
-	JSLFrame[] jList =PatchEdit.desktop.getAllFrames ();
+	JSLFrame[] jList =JSLDesktop.getAllFrames ();
 	if (jList.length >0)
 	{
 	  PatchEdit.waitDialog.show();

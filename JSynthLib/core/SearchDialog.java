@@ -59,7 +59,7 @@ public class SearchDialog extends JDialog {
          group.add(button4);
          group.add(button5);
 
-         if (PatchEdit.desktop.getSelectedFrame() instanceof SceneFrame)
+         if (JSLDesktop.getSelectedFrame() instanceof SceneFrame)
          {
              button2.setEnabled(false);
              button3.setEnabled(false);
@@ -116,7 +116,7 @@ public class SearchDialog extends JDialog {
 
 public void show()
 {
-    if (PatchEdit.desktop.getSelectedFrame() instanceof SceneFrame)
+    if (JSLDesktop.getSelectedFrame() instanceof SceneFrame)
          {
              button2.setEnabled(false);
              button3.setEnabled(false);
@@ -143,12 +143,13 @@ public void show()
 
 void findString(String text, String command, boolean restart)
 {
-   if ((PatchEdit.desktop.getSelectedFrame()==null)||(!(PatchEdit.desktop.getSelectedFrame() instanceof AbstractLibraryFrame)))
+   if ((JSLDesktop.getSelectedFrame() == null)
+       || (!(JSLDesktop.getSelectedFrame() instanceof AbstractLibraryFrame)))
       {ErrorMsg.reportError("Error","Library to search in must be focused.");
        return;
       }
 
-   AbstractLibraryFrame lf= ((AbstractLibraryFrame)PatchEdit.desktop.getSelectedFrame());
+   AbstractLibraryFrame lf= ((AbstractLibraryFrame)JSLDesktop.getSelectedFrame());
    if (lf.getAbstractPatchListModel().getRowCount()==0) return;
    int searchFrom;
    if (restart || lf.getTable().getSelectedRow()==-1) searchFrom=0;

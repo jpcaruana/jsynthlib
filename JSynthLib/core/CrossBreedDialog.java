@@ -47,7 +47,7 @@ public class CrossBreedDialog extends JDialog {
 	keep.addActionListener(new ActionListener() {
 	                       public void actionPerformed(ActionEvent e) {
 			       try {
-			        PatchBasket library=(PatchBasket)PatchEdit.desktop.getSelectedFrame();
+			        PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
 				Patch q=PatchEdit.Clipboard;
 				PatchEdit.Clipboard=crossBreeder.getCurrentPatch();
 				library.PastePatch();
@@ -98,7 +98,7 @@ void OKPressed() {
   }
 void generatePressed()
 {
-   crossBreeder.workFromLibrary((PatchBasket)PatchEdit.desktop.getSelectedFrame());
+   crossBreeder.workFromLibrary((PatchBasket)JSLDesktop.getSelectedFrame());
    crossBreeder.generateNewPatch();
    Patch p=crossBreeder.getCurrentPatch();
    try {

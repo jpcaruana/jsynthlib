@@ -69,8 +69,8 @@ public class SortDialog extends JDialog
                     setVisible (false);
                     PatchEdit.waitDialog.show ();
                     String command = group.getSelection ().getActionCommand ();
-                    Collections.sort (((LibraryFrame)PatchEdit.desktop.getSelectedFrame ()).myModel.PatchList,new myOrder (command));
-                    ((LibraryFrame)PatchEdit.desktop.getSelectedFrame ()).myModel.fireTableDataChanged ();
+                    Collections.sort (((LibraryFrame)JSLDesktop.getSelectedFrame ()).myModel.PatchList,new myOrder (command));
+                    ((LibraryFrame)JSLDesktop.getSelectedFrame ()).myModel.fireTableDataChanged ();
                     PatchEdit.waitDialog.hide ();
                 }});
                 buttonPanel.add ( done );

@@ -35,7 +35,7 @@ public class ImportMidiFile {
                     Patch[] patarray=q.dissect();
                     for (int k=0;k<patarray.length;k++) {
                         PatchEdit.Clipboard=patarray[k];
-                    ((LibraryFrame)PatchEdit.desktop.getSelectedFrame()).PastePatch();
+                    ((LibraryFrame)JSLDesktop.getSelectedFrame()).PastePatch();
                 }
             }
         }
