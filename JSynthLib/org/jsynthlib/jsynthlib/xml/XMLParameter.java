@@ -26,6 +26,10 @@ public class XMLParameter implements Parameter {
     private Decoder decoder;
     private int def= 0;
 
+    public XMLParameter(Decoder decoder) {
+        this.decoder = decoder;
+    }
+
     public int get(IPatch _p) {
         XMLPatch p = (XMLPatch)_p;
         HashMap c = p.getCache();

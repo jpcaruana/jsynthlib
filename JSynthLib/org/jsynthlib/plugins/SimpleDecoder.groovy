@@ -30,7 +30,7 @@ class SimpleDecoder extends Decoder {
     }
     
     public XMLParameter newParameter(String type) {
-        Parameter p = new Parameter(size)
+        Parameter p = new Parameter(this, size)
         p.setSize(default_size) // Set default size
         t = 0
         switch (type) {
@@ -171,8 +171,9 @@ class Parameter extends XMLParameter {
 	protected boolean signed = false
 	protected int base = 0
 	   
-	Parameter(offset) {
-	   this.offset = offset
+	Parameter(decoder, offset) {
+        super(decoder)
+	    this.offset = offset
 	}
 	   
     public void setSize(int size) {
