@@ -28,25 +28,19 @@ public class YamahaFS1RBankEditor extends BankEditorFrame {
 
     /**
      * Edit a patch without select it. This allow the performance to edit a
-     * patch from the bank.
+     * patch from the bank when the user clic on Edit in a performance part.
      * 
-     * @param aPart
-     *            performance part number 1..4
+     * @param aPart performance part number 1..4
+     * @see YamahaFS1RPerformanceEditor           
      */
-    public JSLFrame EditPatch(int aNumPatch, int aPart) // This is not called.
-                                                        // OK?
+    public JSLFrame EditPatch(int aNumPatch, int aPart) 
     {
         Patch p = (Patch) bankDriver.getPatch(bankData, aNumPatch);
         if (p == null) {
             return null;
         }
-        PatchEditorFrame pf = (PatchEditorFrame) (YamahaFS1RVoiceDriver
-                .getInstance().editPatch(p, aPart, aNumPatch - 128));
-        //pf.setBankEditorInformation (this,table.getSelectedRow
-        // (),table.getSelectedColumn ());
-        pf.setBankEditorInformation(this, aNumPatch
-                % YamahaFS1RBankDriver.NB_ROWS, aNumPatch
-                / YamahaFS1RBankDriver.NB_ROWS);
+        PatchEditorFrame pf = (PatchEditorFrame) (YamahaFS1RVoiceDriver.getInstance().editPatch(p, aPart, aNumPatch - 128));
+        pf.setBankEditorInformation(this, aNumPatch % YamahaFS1RBankDriver.NB_ROWS, aNumPatch / YamahaFS1RBankDriver.NB_ROWS);
         return pf;
     }
 
