@@ -6,6 +6,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.MidiDevice.Info;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -372,9 +373,13 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @return String of Device Name with inPort and Channel.
      */
     public String getDeviceName() {
+        Info di = null;
+        try {
+            di = MidiUtil.getOutputMidiDeviceInfo(getPort());
+        } catch (Exception ex) {}
 	return getManufacturerName() + " " + getModelName()
 	    + " <" + getSynthName() + ">  -  MIDI Out Port: "
-	    + MidiUtil.getOutputMidiDeviceInfo(getPort()).getName()
+	    + ((di == null) ? "None" : di.getName())
 	    + "  -  MIDI Channel: " + getChannel();
     }
 
