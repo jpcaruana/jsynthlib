@@ -1,4 +1,5 @@
 //======================================================================================================================
+// $Id$
 // Summary: SysexGetDialog.java
 // Author: phil@muqus.com - 07/2001
 //======================================================================================================================
@@ -35,6 +36,7 @@ public class SysexGetDialog extends JDialog {
   //===== Instance variables
   int sysexSize = 0;
   protected Driver driver;
+  protected Device device;
   protected int bankNum;
   protected int patchNum;
 
@@ -45,6 +47,7 @@ public class SysexGetDialog extends JDialog {
 
   JLabel myLabel;
 
+  JComboBox deviceComboBox;
   JComboBox driverComboBox;
   JComboBox bankComboBox;
   JComboBox patchNumComboBox;
@@ -59,7 +62,8 @@ public class SysexGetDialog extends JDialog {
     JPanel dialogPanel = new JPanel(new BorderLayout(5, 5));
 //    dialogPanel.setLayout(new GridLayout(0, 1));
 
-    myLabel = new JLabel(" ", JLabel.CENTER);
+    //myLabel = new JLabel(" ", JLabel.CENTER);
+    myLabel=new JLabel("Please select a Patch Type to Get.",JLabel.CENTER);
     dialogPanel.add(myLabel, BorderLayout.NORTH);
 
     //=================================== Combo Panel ==================================
@@ -68,43 +72,34 @@ public class SysexGetDialog extends JDialog {
     driverComboBox.addActionListener(new DriverActionListener());
     driverComboBox.setRenderer(new DriverCellRenderer());
 
+    deviceComboBox = new JComboBox();
+    deviceComboBox.addActionListener(new DeviceActionListener());
+    deviceComboBox.setRenderer(new DeviceCellRenderer());
+
     bankComboBox = new JComboBox();
     bankComboBox.setRenderer(new ComboCellRenderer());
 
     patchNumComboBox = new JComboBox();
     patchNumComboBox.setRenderer(new ComboCellRenderer());
 
+    
     //----- Populate the combo boxes
   Device dev; 
        for (int i=0;i<PatchEdit.appConfig.deviceCount();i++)
             {
-                dev=(Device)PatchEdit.appConfig.getDevice(i);
-                for (int j=0;j<dev.driverList.size ();j++)
-                {
-                    if (!(Converter.class.isInstance (dev.driverList.get (j))))
-                        driverComboBox.addItem (PatchEdit.getDriver(i,j));
-                }
+      deviceComboBox.addItem( dev=(Device)PatchEdit.appConfig.getDevice(i));
             }
    
-  /* Object[] drivers = PatchEdit.DriverList.toArray();
-    if (drivers.length > 1) {
-      for (int i = 1; i < drivers.length ; i++)               // Ignore first driver (the core driver)
-        driverComboBox.addItem(drivers[i]);
-      driverComboBox.setSelectedIndex(0);
-    } else {
-      driverComboBox.setEnabled(false);
-      bankComboBox.setEnabled(false);
-      patchNumComboBox.setEnabled(false);
-    }*/
-
     //----- Layout the labels in a panel.
     JPanel labelPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+    labelPanel.add(new JLabel("Device:", JLabel.LEFT));
     labelPanel.add(new JLabel("Driver:", JLabel.LEFT));
     labelPanel.add(new JLabel("Bank:", JLabel.LEFT));
     labelPanel.add(new JLabel("Patch:", JLabel.LEFT));
 
     //----- Layout the fields in a panel
     JPanel fieldPanel = new JPanel(new GridLayout(0, 1));
+    fieldPanel.add(deviceComboBox);
     fieldPanel.add(driverComboBox);
     fieldPanel.add(bankComboBox);
     fieldPanel.add(patchNumComboBox);
@@ -193,6 +188,9 @@ public class SysexGetDialog extends JDialog {
      }
 	    
     Patch p = new Patch(patchSysex);
+    p.deviceNum=deviceComboBox.getSelectedIndex();
+    p.driverNum=driverComboBox.getSelectedIndex();
+
     Patch[] patarray = p.dissect();
     for (int k = 0; k < patarray.length; k++) {
       PatchEdit.Clipboard = patarray[k];
@@ -216,6 +214,34 @@ public class SysexGetDialog extends JDialog {
       pasteIntoSelectedFrame();
     }
   } // End InnerClass: DoneActionListener
+
+//----------------------------------------------------------------------------------------------------------------------
+// InnerClass: DeviceActionListener
+//----------------------------------------------------------------------------------------------------------------------
+ 
+   public class DeviceActionListener implements ActionListener {
+     public void actionPerformed (ActionEvent evt) {
+ //      ErrorMsg.reportStatus("DeviceActionListener->actionPerformed");
+ 
+       device = (Device)deviceComboBox.getSelectedItem();
+       driverComboBox.removeAllItems();
+       bankComboBox.removeAllItems();
+       patchNumComboBox.removeAllItems();
+ 
+       if (device != null)
+       {
+         for (int j=0;j<device.driverList.size ();j++)
+         {
+           if (!(Converter.class.isInstance (device.driverList.get (j))))
+               driverComboBox.addItem (device.getDriver(j));
+         }
+       }
+ 
+       driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
+     }
+   } // End InnerClass: DeviceActionListener
+ 
+ 
 
 //----------------------------------------------------------------------------------------------------------------------
 // InnerClass: DriverActionListener
@@ -269,7 +295,8 @@ public class SysexGetDialog extends JDialog {
 
   public class GetActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-      driver = (Driver)driverComboBox.getSelectedItem();
+      device   = (Device)deviceComboBox.getSelectedItem();
+      driver   = (Driver)device.getDriver(driverComboBox.getSelectedIndex());
       bankNum = bankComboBox.getSelectedIndex();
       patchNum = patchNumComboBox.getSelectedIndex();
 
@@ -342,6 +369,25 @@ public class SysexGetDialog extends JDialog {
   } // End InnerClass: ComboCellRenderer
 
 //----------------------------------------------------------------------------------------------------------------------
+// InnerClass: DeviceCellRenderer
+//----------------------------------------------------------------------------------------------------------------------
+ 
+   class DeviceCellRenderer extends ComboCellRenderer {
+     public Component getListCellRendererComponent (
+         JList list,
+         Object value,
+         int index,
+         boolean isSelected,
+         boolean cellHasFocus
+       ) {
+ 
+       super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+       setText(value == null ? "" : ((Device)value).getDeviceName());
+       return this;
+     }
+   } // End InnerClass: DeviceCellRenderer
+ 
+//----------------------------------------------------------------------------------------------------------------------
 // InnerClass: DriverCellRenderer
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -355,7 +401,7 @@ public class SysexGetDialog extends JDialog {
       ) {
 
       super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-      setText(value == null ? "" : ((Driver)value).getDriverName());
+      setText(value == null ? "" : ((Driver)value).getPatchType());
       return this;
     }
   } // End InnerClass: DriverCellRenderer

@@ -136,9 +136,12 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
                 if (table.getSelectedRowCount()>0) {
                     PatchEdit.extractAction.setEnabled(true);
                     PatchEdit.sendAction.setEnabled(true);
+                    PatchEdit.sendToAction.setEnabled(true);
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
-                    
+ 		    PatchEdit.reassignAction.setEnabled(true);
+ 
+
                     Patch myPatch=((Performance)myModel.performanceList.get(table.getSelectedRow())).getPatch();
                     try{
                         // look, if the driver for the selected patch brings his own editor
@@ -173,8 +176,10 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
                 PatchEdit.receiveAction.setEnabled(false);
                 PatchEdit.extractAction.setEnabled(false);
                 PatchEdit.sendAction.setEnabled(false);
+                PatchEdit.sendToAction.setEnabled(false);
                 PatchEdit.playAction.setEnabled(false);
                 PatchEdit.storeAction.setEnabled(false);
+ 		PatchEdit.reassignAction.setEnabled(false);
                 PatchEdit.editAction.setEnabled(false);
                 PatchEdit.saveAction.setEnabled(false);
                 PatchEdit.menuSaveAs.setEnabled(false);
@@ -323,8 +328,11 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
                 if (((javax.swing.ListSelectionModel)e.getSource()).getMaxSelectionIndex()>=0) {
                     PatchEdit.extractAction.setEnabled(true);
                     PatchEdit.sendAction.setEnabled(true);
+                    PatchEdit.sendToAction.setEnabled(true);
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
+ 		    PatchEdit.reassignAction.setEnabled(true);
+                    
                     
                     Patch myPatch=((Performance)myModel.performanceList.get(table.getSelectedRow())).getPatch();
                     try{
@@ -347,8 +355,10 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
                 else {
                     PatchEdit.extractAction.setEnabled(false);
                     PatchEdit.sendAction.setEnabled(false);
+                    PatchEdit.sendToAction.setEnabled(false);
                     PatchEdit.playAction.setEnabled(false);
                     PatchEdit.storeAction.setEnabled(false);
+ 		    PatchEdit.reassignAction.setEnabled(false);
                     PatchEdit.editAction.setEnabled(false);
                     PatchEdit.copyAction.setEnabled(false);
                     PatchEdit.cutAction.setEnabled(false);
@@ -434,16 +444,33 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).sendPatch(myPatch);
     }
     
+     public void SendToSelectedPatch()
+     {
+         Patch myPatch=((Performance)myModel.performanceList.get(table.getSelectedRow())).getPatch();
+         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+         new SysexSendToDialog(myPatch);
+     }
+ 
+     public void ReassignSelectedPatch()
+     {
+         Patch myPatch=((Performance)myModel.performanceList.get(table.getSelectedRow())).getPatch();
+         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+         new ReassignPatchDialog(myPatch);
+ 	myModel.fireTableDataChanged();
+     }
+ 
     public void PlaySelectedPatch() {
         Patch myPatch=((Performance)myModel.performanceList.get(table.getSelectedRow())).getPatch();
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).sendPatch(myPatch);
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).playPatch(myPatch);
     }
     
     public void StoreSelectedPatch() {
         Patch myPatch=((Performance)myModel.performanceList.get(table.getSelectedRow())).getPatch();
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).choosePatch(myPatch);
+        //PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).choosePatch(myPatch);
+        new SysexStoreDialog(myPatch);
     }
     
     public javax.swing.JInternalFrame EditSelectedPatch() {
