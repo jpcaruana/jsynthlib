@@ -136,7 +136,7 @@ public class PrefsDialog extends JDialog {
         container.add (buttonPanel, BorderLayout.SOUTH);
         getContentPane ().add (container);
 	pack ();
-	centerDialog ();
+	Utility.centerDialog(this);
     }
 
     /**
@@ -152,24 +152,6 @@ public class PrefsDialog extends JDialog {
 
     public void show () {
         super.show ();
-    }
-
-    /**
-     * This centers the JDialog on the screen.
-     * TODO Move this to a static method in some utility class so that we can call it
-     * for any Component from anywhere. - emenaker 2003.03.26
-     *
-     */
-    protected void centerDialog () {
-        Dimension screenSize = this.getToolkit ().getScreenSize ();
-        Dimension size = this.getSize ();
-        screenSize.height = screenSize.height / 2;
-        screenSize.width = screenSize.width / 2;
-        size.height = size.height / 2;
-        size.width = size.width / 2;
-        int y = screenSize.height - size.height;
-        int x = screenSize.width - size.width;
-        this.setLocation (x, y);
     }
 
     /**

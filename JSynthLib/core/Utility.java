@@ -1,5 +1,8 @@
 package core;
+
+import java.awt.Dimension;
 import java.io.ByteArrayOutputStream;
+import javax.swing.JDialog;
 
 /**
  * Various utility functions.
@@ -123,5 +126,43 @@ public class Utility extends Object {
 	return buf.toString();
     }
     //----- End Hiroo Hayashi
+
+    /**
+     * Place a JDialog window to the center of computer screen.
+     */
+    static void centerDialog (JDialog dialog) {
+        Dimension screenSize = dialog.getToolkit().getScreenSize();
+        Dimension size = dialog.getSize();
+        screenSize.height = screenSize.height / 2;
+        screenSize.width = screenSize.width / 2;
+        size.height = size.height / 2;
+        size.width = size.width / 2;
+        int y = screenSize.height - size.height;
+        int x = screenSize.width - size.width;
+        dialog.setLocation(x, y);
+    }
+
+    // moved from AppConfig.java
+    /** Returns the "os.name" system property. */
+    //- emenaker 2003.03.13
+    public static String getOSName() {
+	return (getSystemProperty("os.name"));
+    }
+
+    /** Returns the "java.specification.version" system property. */
+    // - emenaker 2003.03.13
+    public static String getJavaSpecVersion() {
+	return (getSystemProperty("java.specification.version"));
+    }
+
+    /** Looks up a system property and returns "" on exceptions. */
+    private static String getSystemProperty(String key) {
+	try {
+	    return (System.getProperty(key));
+	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	    return ("");
+	}
+    }
 
 } // End Class: Utility

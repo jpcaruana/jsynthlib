@@ -407,7 +407,7 @@ MtxModel(patch,104),new ModSender(patch,0),source);
  gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=6;gbc.gridheight=5;gbc.fill=GridBagConstraints.BOTH;
   scrollPane.add(tabPane,gbc);
    pack();
-   if (AppConfig.getOSName().equals("Linux")) // Does J2SE 1.4 still require this?
+   if (Utility.getOSName().equals("Linux")) // Does J2SE 1.4 still require this?
    {
      ErrorMsg.reportStatus("Matrix1000Editor:  Linux Detected-- adding 30 pixels to window height to compensate for Sun/JRE bug");
       Dimension rv = new Dimension();

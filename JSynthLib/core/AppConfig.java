@@ -342,25 +342,4 @@ final public class AppConfig {
     int getDeviceIndex(Device device) {
 	return deviceList.indexOf(device);
     }
-
-    // Shall we define JSLUtil for these mothods?
-    // Returns the "os.name" system property - emenaker 2003.03.13
-    public static String getOSName() {
-	return (getSystemProperty("os.name"));
-    }
-
-    // Returns the "java.specification.version" system property - emenaker 2003.03.13
-    public static String getJavaSpecVersion() {
-	return (getSystemProperty("java.specification.version"));
-    }
-
-    // Looks up a system property and returns "" on exceptions
-    private static String getSystemProperty(String key) {
-	try {
-	    return (System.getProperty(key));
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
-	return ("");
-    }
 }

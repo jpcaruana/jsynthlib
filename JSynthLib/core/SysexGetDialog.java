@@ -138,18 +138,8 @@ public class SysexGetDialog extends JDialog {
     getContentPane().add(dialogPanel);
     pack();
 //    setSize(600, 200);
-    centerDialog();
+    Utility.centerDialog(this);
     sysexSize = 0;
-  }
-
-//--------------------------------------------------------------------------
-// SysexGetDialog->centerDialog
-//--------------------------------------------------------------------------
-
-  protected void centerDialog () {
-    Dimension screenSize = this.getToolkit().getScreenSize();
-    Dimension size = this.getSize ();
-    this.setLocation((screenSize.width - size.width)/2, (screenSize.height - size.height)/2);
   }
 
 //--------------------------------------------------------------------------

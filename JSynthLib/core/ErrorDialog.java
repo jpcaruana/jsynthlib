@@ -15,27 +15,27 @@ import java.awt.datatransfer.*;
  * @version $Id$
  */
 public class ErrorDialog extends javax.swing.JDialog {
-    
+
     private boolean informationIsVisible;
     java.awt.Dimension miniSize;
     Clipboard clipbrd=getToolkit().getSystemClipboard();
-    
+
     /** Creates new form ErrorDialog
      * @param parent
      * @param modal
      */
     public ErrorDialog(java.awt.Frame parent, boolean modal) {
-        
+
         super(parent, modal);
         initComponents();
         informationPanel.setVisible(false);
         informationIsVisible=false;
         miniSize=this.getSize();
         pack();
-        centerDialog();
+        Utility.centerDialog(this);
         getRootPane().setDefaultButton(okButton);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -133,33 +133,33 @@ public class ErrorDialog extends javax.swing.JDialog {
           StringSelection text=new StringSelection(informationTextArea.getText());
         clipbrd.setContents(text,text);
     }//GEN-LAST:event_copyButtonActionPerformed
-    
+
     private void showButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showButtonActionPerformed
         // Add your handling code here:
         this.setVisible(false);
         informationIsVisible=!informationIsVisible;
         informationPanel.setVisible(informationIsVisible);
-        
+
         pack();
-        centerDialog();
+        Utility.centerDialog(this);
         informationTextArea.setText(exceptionText);
         this.setVisible(true);
-        
+
     }//GEN-LAST:event_showButtonActionPerformed
-    
+
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         // Add your handling code here:
         setVisible(false);
         dispose();
-        
+
     }//GEN-LAST:event_okButtonActionPerformed
-    
+
     /** Closes the dialog */
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         setVisible(false);
         dispose();
     }//GEN-LAST:event_closeDialog
-    
+
     public static void showMessageDialog(java.awt.Component parentComponent,
     Object message,
     String title,
@@ -175,14 +175,14 @@ public class ErrorDialog extends javax.swing.JDialog {
 	    Thread.sleep(30);
 	} catch (InterruptedException ex) {}
     }
-        
+
     /**
      * @param parentComponent
      * @param message
      * @param title The title string of the box
      * @param messageType
      * @param e The causing exception, which can be displayed on the screen
-     */    
+     */
     public static void showMessageDialog(java.awt.Component parentComponent,
     Object message,
     String title,
@@ -218,20 +218,7 @@ public class ErrorDialog extends javax.swing.JDialog {
 	    Thread.sleep(30);
 	} catch (InterruptedException ex) {}
     }
-    
-    /** Utility to center the dialog box to the screen */    
-    protected void centerDialog() {
-        java.awt.Dimension screenSize = this.getToolkit().getScreenSize();
-        java.awt.Dimension size = this.getSize();
-        screenSize.height = screenSize.height/2;
-        screenSize.width = screenSize.width/2;
-        size.height = size.height/2;
-        size.width = size.width/2;
-        int y = screenSize.height - size.height;
-        int x = screenSize.width - size.width;
-        this.setLocation(x,y);
-    }
-    
+
     /** Getter for property message.
      * @return Value of property message.
      *
@@ -239,7 +226,7 @@ public class ErrorDialog extends javax.swing.JDialog {
     public String getMessage() {
         return this.message;
     }
-    
+
     /** Setter for property message.
      * @param message New value of property message.
      *
@@ -257,9 +244,9 @@ public class ErrorDialog extends javax.swing.JDialog {
             ex.printStackTrace();
         }
         pack();
-        
+
     }
-    
+
     /** Getter for property exceptionText.
      * @return Value of property exceptionText.
      *
@@ -267,7 +254,7 @@ public class ErrorDialog extends javax.swing.JDialog {
     public String getExceptionText() {
         return this.exceptionText;
     }
-    
+
     /** Setter for property exceptionText.
      * @param exceptionText New value of property exceptionText.
      *
@@ -275,7 +262,7 @@ public class ErrorDialog extends javax.swing.JDialog {
     public void setExceptionText(String exceptionText) {
         this.exceptionText = exceptionText;
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea informationTextArea;
     private javax.swing.JPanel jPanel3;
@@ -289,11 +276,11 @@ public class ErrorDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane informationPane;
     private javax.swing.JToggleButton showButton;
     // End of variables declaration//GEN-END:variables
-    
+
     /** Holds value of property message. */
     private String message;
-    
+
     /** Holds value of property exceptionText. */
     private String exceptionText;
-    
+
 }

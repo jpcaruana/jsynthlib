@@ -68,23 +68,11 @@ public class MidiMonitor extends JDialog
 	    setSize(500,400);
 
 // 	    pane.getVerticalScrollBar().setValue(pane.getVerticalScrollBar().getMinimum());
-	    centerDialog();
+	    Utility.centerDialog(this);
 	} catch (Exception e) {
 	    ErrorMsg.reportError("Error","Error opening Monitor",e);
 	}
 
-    }
-
-    protected void centerDialog() {
-        Dimension screenSize = this.getToolkit().getScreenSize();
-	Dimension size = this.getSize();
-	screenSize.height = screenSize.height/2;
-	screenSize.width = screenSize.width/2;
-	size.height = size.height/2;
-	size.width = size.width/2;
-	int y = screenSize.height - size.height;
-	int x = screenSize.width - size.width;
-	this.setLocation(x,y);
     }
 
     void OKPressed() {

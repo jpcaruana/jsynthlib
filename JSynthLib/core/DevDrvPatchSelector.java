@@ -76,7 +76,7 @@ public class DevDrvPatchSelector extends JDialog {
         //----- Populate the combo boxes only with devices, which supports the patch
         int nDriver = 0;
 
-	
+
         for (int i=0; i < PatchEdit.appConfig.deviceCount(); i++) {
             Device device = PatchEdit.appConfig.getDevice(i);
             boolean newDevice = true;
@@ -107,7 +107,7 @@ public class DevDrvPatchSelector extends JDialog {
     	    labelPanel.add(new JLabel("Bank:", JLabel.LEFT));
     	    labelPanel.add(new JLabel("Patch:", JLabel.LEFT));
         }
-    
+
         //----- Layout the fields in a panel
         JPanel fieldPanel = new JPanel(new GridLayout(0, 1));
         fieldPanel.add(deviceComboBox);
@@ -116,7 +116,7 @@ public class DevDrvPatchSelector extends JDialog {
     	    fieldPanel.add(bankComboBox);
     	    fieldPanel.add(patchNumComboBox);
         }
-    
+
         //----- Create the comboPanel, labels on left, fields on right
         JPanel comboPanel = new JPanel(new BorderLayout());
         comboPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -147,7 +147,7 @@ public class DevDrvPatchSelector extends JDialog {
         //===== Final initialisation of dialog box
         getContentPane().add(dialogPanel);
         pack();
-        centerDialog();
+        Utility.centerDialog(this);
 
         if (nDriver > 0) {
             show();
@@ -159,15 +159,6 @@ public class DevDrvPatchSelector extends JDialog {
     }
 
     protected void doit() {}
-  
-    /**
-     *
-     */
-    private void centerDialog () {
-        Dimension screenSize = this.getToolkit().getScreenSize();
-        Dimension size = this.getSize ();
-        this.setLocation((screenSize.width - size.width)/2, (screenSize.height - size.height)/2);
-    }
 
     /**
      * Makes the actual work after pressing the 'Store' button
@@ -178,7 +169,6 @@ public class DevDrvPatchSelector extends JDialog {
 	}
     }
 
- 
     /**
      * Repopulate the Driver ComboBox with valid drivers after a Device change
      */
@@ -235,7 +225,7 @@ public class DevDrvPatchSelector extends JDialog {
             patchNumComboBox.setEnabled(!(driver instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
         }
     }
-    
+
     /**
      * This method returns the list of patch numbers, which may change according
      * to the dialog type (some have patch locations to which you can send but
