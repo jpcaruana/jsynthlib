@@ -166,13 +166,12 @@ void uploadPatch(Patch p)
 	    mime += mimeBoundary();
 	    mime += makeMime("comment",desc);
 	    mime += mimeBoundary();
-	    mime += makeMime("synth","1");
-	    mime += mimeBoundary();
 	    mime += makeMime("send","Upload");
 	    mime += mimeBoundary();
 	    mime += "\r\n\r\n";
-	    System.out.println(mime);
-	    postData(repository,mime);
+	    // System.out.println(mime);
+	    if (postData(repository,mime)==1)
+		setVisible(false);
 	}
 	
 
@@ -188,7 +187,7 @@ void uploadPatch(Patch p)
 	
     }
 
-    void postData(String repository,String mime)
+    int postData(String repository,String mime)
     {
 	try{
 	    URL url = new URL(repository+"/cgi-bin/upload.cgi");
@@ -207,15 +206,33 @@ void uploadPatch(Patch p)
 	    String str;
 	    while (( str = in.readLine()) != null)
 		{
-		    		    System.out.println("Server: "+str);
-		    System.out.println("");
-
+		    //     System.out.println("Server: "+str);
+		    
+		    if (str.indexOf("<h2")>-1)
+		    {
+			int st = str.indexOf(">");
+			int en = str.indexOf("</h");
+			if (st<0 || en<0)
+			    ErrorMsg.reportError("Error","Can not Understand Server Response: "+str);
+			else 
+			    {
+				if (str.indexOf("Success")>-1)
+				    {
+					ErrorMsg.reportError("Info","Patch Uploaded Successfully");
+					return 1;
+				    }
+				else
+				    ErrorMsg.reportError("Error",str.substring(st+1,en));
+			    }						 
+		    }
+		      
+			
 		}
    in.close();    
 	    
 	} catch (Exception e){ ErrorMsg.reportStatus(e);}
 	
-
+		    return 0;
     }
 
     String mimeBoundary()
