@@ -9,7 +9,7 @@ public class MidiMonitor extends JDialog
 
     public MidiMonitor()
     {
-	super(PatchEdit.getInstance(),"JSynthLib Midi Monitor",false);
+	super(PatchEdit.getRootFrame(),"JSynthLib Midi Monitor",false);
         JPanel container= new JPanel();
         container.setLayout (new BorderLayout());
 	jt = new MyEditorPane();

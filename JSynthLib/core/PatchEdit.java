@@ -62,11 +62,11 @@ public final class PatchEdit  {
 	Actions.createPopupMenu();
 
 	// set up Preference Dialog Window
-	prefsDialog = new PrefsDialog(getInstance());
+	prefsDialog = new PrefsDialog(getRootFrame());
 
         //Set up a silly little dialog we can pop up for the user to
         //gawk at while we do time consuming work later on.
-        waitDialog = new WaitDialog(getInstance());
+        waitDialog = new WaitDialog(getRootFrame());
 
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music

@@ -24,7 +24,7 @@ public class DocumentationWindow extends JDialog
      * @see JEditorPane
      */
     DocumentationWindow(String contentType, String url) {
-        super(PatchEdit.getInstance(),"JSynthLib Documentation Viewer",false);
+        super(PatchEdit.getRootFrame(),"JSynthLib Documentation Viewer",false);
         JPanel container= new JPanel();
         container.setLayout (new BorderLayout());
 	final MyEditorPane jt = new MyEditorPane();
