@@ -127,7 +127,8 @@ public final class TD6SingleDriver extends Driver {
 	    calculateChecksum(p, 6, size - 3, size - 2);
 // 	    p.sysex[size - 2] = calcChkSum(tmpSysex, 6, size - 3);
 	    try {
-		PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
+		//PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
+		send(p.sysex);
 	    } catch (Exception e) {
 		ErrorMsg.reportStatus(e);
 	    }
