@@ -27,12 +27,26 @@ import java.util.*;
 /**
  * MidiUtil.java
  *
- * MIDI Utility Routines.
- *
- * Created: Mon Feb 02 01:14:09 2004
+ * MIDI Utility Routines.  This class contains methods and inner
+ * classes for Java Sound API.<p>
+ * Examples:<p>
+ * MIDI output
+ * <pre>
+ *   Receiver rcvr = MidiUtil.getReceiver(outport);
+ *   MidiUtil.send(rcvr, msg);
+ *   rcvr.close();
+ * </pre>
+ * MIDI input
+ * <pre>
+ *   MidiUtil.clearSysexInputQueue(inport);
+ *   msg = MidiUtil.getMessage(inport, 1000);
+ * </pre>
+ * See the description for each method for more details.
  *
  * @author Hiroo Hayashi
  * @version $Id$
+ * @see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/sound/programmer_guide/contents.html">
+ * Java Sound Progremmer Guide</a>
  */
 public final class MidiUtil {
 
@@ -129,22 +143,42 @@ public final class MidiUtil {
 	return (MidiDevice.Info[]) list.toArray(new MidiDevice.Info[0]);
     }
 
-    /** return an array of MidiDevice.Info for MIDI output */
+    /**
+     * return an array of MidiDevice.Info for MIDI output.
+     * @see #getOutputMidiDeviceInfo(int)
+     * @see #getReceiver
+     * @see #send
+     */
     static MidiDevice.Info[] getOutputMidiDeviceInfo() {
 	return outputMidiDeviceInfo;
     }
 
-    /** return an array of MidiDevice.Info for MIDI input */
+    /**
+     * return an array of MidiDevice.Info for MIDI input.
+     * @see #getInputMidiDeviceInfo(int)
+     * @see #clearSysexInputQueue
+     * @see #getMessage
+     */
     static MidiDevice.Info[] getInputMidiDeviceInfo() {
 	return inputMidiDeviceInfo;
     }
 
-    /** return an entry of MidiDevice.Info for MIDI output */
+    /**
+     * return an entry of MidiDevice.Info for MIDI output.
+     * @see #getOutputMidiDeviceInfo()
+     * @see #getReceiver
+     * @see #send
+     */
     static MidiDevice.Info getOutputMidiDeviceInfo(int i) {
 	return outputMidiDeviceInfo[i];
     }
 
-    /** return an entry of MidiDevice.Info for MIDI input */
+    /**
+     * return an entry of MidiDevice.Info for MIDI input.
+     * @see #getInputMidiDeviceInfo()
+     * @see #clearSysexInputQueue
+     * @see #getMessage
+     */
     static MidiDevice.Info getInputMidiDeviceInfo(int i) {
 	return inputMidiDeviceInfo[i];
     }
@@ -167,7 +201,17 @@ public final class MidiUtil {
 	return -1;
     }
 
-    /** get opened MidiDevice for Output */
+    /**
+     * get MidiDevice for Output.
+     *
+     * @param port an index in an array returned by
+     * <code>getOutputMidiDeviceInfo()</code>.
+     * @return a <code>MidiDevice</code> object for MIDI output.  The
+     * MidiDevice is already opened.
+     * @see #getOutputMidiDeviceInfo()
+     * @see #getReceiver
+     * @see #send
+     */
     private static MidiDevice getOutputMidiDevice(int port) {
 	MidiDevice dev = null;
 	try {
@@ -183,7 +227,16 @@ public final class MidiUtil {
 	return dev;
     }
 
-    /** get Receiver */
+    /**
+     * get a Receiver for Output.
+     *
+     * @param port an index in an array returned by
+     * <code>getOutputMidiDeviceInfo()</code>.
+     * @return a <code>Receiver</code> object for MIDI output.
+     * @see #getOutputMidiDeviceInfo()
+     * @see #getReceiver
+     * @see #send
+     */
     static Receiver getReceiver(int port) {
 	if (midiOutRcvr[port] != null)
 	    return midiOutRcvr[port];
@@ -199,7 +252,17 @@ public final class MidiUtil {
 	return null;
     }
 
-    /** get opened MidiDevice for Input */
+    /**
+     * get MidiDevice for Input.
+     *
+     * @param port an index in an array returned by
+     * <code>getInputMidiDeviceInfo()</code>.
+     * @return a <code>MidiDevice</code> object for MIDI input.  The
+     * MidiDevice is already opened.
+     * @see #getInputMidiDeviceInfo()
+     * @see #clearSysexInputQueue
+     * @see #getMessage
+     */
     private static MidiDevice getInputMidiDevice(int port) {
 	MidiDevice dev = null;
 	try {
@@ -215,7 +278,16 @@ public final class MidiUtil {
 	return dev;
     }
 
-    /** get Transmitter */
+    /**
+     * get a Transmitter for Input.
+     *
+     * @param port an index in an array returned by
+     * <code>getInputMidiDeviceInfo()</code>.
+     * @return a <code>Transmitter</code> object for MIDI input.
+     * @see #getInputMidiDeviceInfo()
+     * @see #clearSysexInputQueue
+     * @see #getMessage
+     */
     static Transmitter getTransmitter(int port) {
 	// Transmitter cannot be shared.
 	MidiDevice dev = getInputMidiDevice(port);
@@ -227,7 +299,12 @@ public final class MidiUtil {
 	return null;
     }
 
-    /** Setup input queue for MIDI System Exclusive Message input */
+    /**
+     * Setup an input queue for MIDI System Exclusive Message input.
+     * The input queue is shared.  If the input queue is already
+     * opened, nothing is done.
+     * @see #clearSysexInputQueue
+     */
     static void setSysexInputQueue(int port) {
 	if (sysexInputQueue[port] != null)
 	    return;
@@ -241,16 +318,32 @@ public final class MidiUtil {
 	    ErrorMsg.reportStatus(e);
 	}
     }
-    /** clear MIDI input queue */
+
+    /**
+     * clear MIDI input queue specified.  Internally
+     * setSysexInputQueue(port) is called.
+     * @see #getInputMidiDeviceInfo()
+     * @see #setSysexInputQueue
+     */
     static void clearSysexInputQueue(int port) {
 	setSysexInputQueue(port);
 	sysexInputQueue[port].clearQueue();
     }
-    /** return <code>true</code> when MIDI input queue is empty */
+
+    /**
+     * return <code>true</code> when MIDI input queue is empty.
+     * @see #getInputMidiDeviceInfo()
+     * @see #clearSysexInputQueue
+     */
     static boolean isSysexInputQueueEmpty(int port) {
 	return sysexInputQueue[port].isEmpty();
     }
-    /** get Sysex Message from MIDI input queue */
+
+    /**
+     * get Sysex Message from MIDI input queue.
+     * @see #getInputMidiDeviceInfo()
+     * @see #clearSysexInputQueue
+     */
     static MidiMessage getMessage(int port, long timeout)
 	throws MidiUtil.TimeoutException, InvalidMidiDataException {
 	return sysexInputQueue[port].getMessage(timeout);
@@ -708,14 +801,14 @@ public final class MidiUtil {
     }
 
     /**
-     * Get the state of displaying Midi Messages.  (Complete Sysex
-     * Message)
+     * Get the state of displaying Midi Messages in the MIDI Monitor.
+     * (Complete Sysex Message)
      */
     static boolean getCSM() { return CSMstate; }
 
     /**
-     * Toggle the state of displaying Midi messages.  (Complete Sysex
-     * Message)
+     * Toggle the state of displaying Midi messages in the MIDI
+     * Monitor.  (Complete Sysex Message)
      */
     static void toggleCSM() { CSMstate = !CSMstate; }
 
