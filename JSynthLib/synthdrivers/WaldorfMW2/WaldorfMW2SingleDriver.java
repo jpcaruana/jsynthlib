@@ -33,12 +33,6 @@ import core.Patch;
 import core.PatchEdit;
 import core.SysexHandler;
 
-/*
- * 
- * TODO 
- * 
- * - Request single programs doesn't work anymore!
- */
 /**
  * Driver for Microwave 2 / XT / XTK single programs
  *
@@ -50,7 +44,7 @@ public class WaldorfMW2SingleDriver extends Driver {
     public WaldorfMW2SingleDriver() {
         super("Single program", "Joachim Backhaus");
         
-        this.sysexID = MW2Constants.SYSEX_ID + "10****";
+        this.sysexID = MW2Constants.SYSEX_ID + "10";
         
         this.sysexRequestDump = new SysexHandler( "F0 3E 0E @@ 00 *BB* *NN* *XSUM* F7" );
         

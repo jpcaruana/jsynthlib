@@ -28,16 +28,14 @@ import javax.swing.JOptionPane;
 import core.BankDriver;
 import core.DriverUtil;
 import core.ErrorMsg;
+import core.ISinglePatch;
 import core.Patch;
 import core.SysexHandler;
 
 /*
  * 
  * TODO 
- * - Copying a single program inside a bank doesn't work -> fixed
- * - Copying a single program from a bank to a new position in the library window doesn't work -> fixed
  * - Storing banks doesn't work
- * - Request banks doesn't work anymore!
  */
 
 /**
@@ -168,7 +166,22 @@ public class WaldorfMW2BankDriver extends BankDriver {
                 getPatchStart(patchNum),
                 // The SYSEX_FOOTER_SIZE is for that the checksum is copied, too!
                 MW2Constants.PURE_PATCH_SIZE + MW2Constants.SYSEX_FOOTER_SIZE);
-    }    
+    }
+    
+    /**
+     * Sends a patch to the synth's edit buffer.<p>
+     *
+     * Override this in the subclass if parameters or warnings need to
+     * be sent to the user (aka if the particular synth does not have
+     * a edit buffer or it is not MIDI accessable).
+     * @see Patch#send()
+     * @see ISinglePatch#send()
+     */
+    protected void sendPatch(Patch p) {
+        p.sysex[MW2Constants.DEVICE_ID_OFFSET] = (byte) ( getDeviceID() - 1);
+        
+        send(p.sysex);
+    }
     
     /**
      * Store the bank to a given bank on the synth. Ignores the
@@ -184,7 +197,7 @@ public class WaldorfMW2BankDriver extends BankDriver {
         for (int patchNo = 0; patchNo < this.patchNumbers.length; patchNo++) {
             singlePatch = getPatch(bank, bankNum, patchNo);
 
-            sendPatchWorker(singlePatch);
+            sendPatch(singlePatch);
             
             try {
                 // Wait a little bit so that the Microwave 2 / XT doesn't hang up
