@@ -134,6 +134,7 @@ public class JSLFrame {
 	public JSLIFrame(JSLFrame p, String s, boolean resizable, boolean			 closable, boolean maximizable, boolean iconifiable) {
 	    super(s, resizable, closable, maximizable, iconifiable);
 	    parent = new WeakReference(p);
+	    addInternalFrameListener(this);
 	}
 	public void setJMenuBar(JMenuBar m) {}
 	public JSLFrame getJSLFrame() {
