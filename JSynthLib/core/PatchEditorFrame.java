@@ -144,7 +144,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 		    p.getDriver().calculateChecksum(p);
 		    p.getDriver().sendPatch(p);
 		    gotFocus();
-		    PatchEdit.receiveAction.setEnabled(false);
+		    PatchEdit.getAction.setEnabled(false);
 		    PatchEdit.pasteAction.setEnabled(false);
 		    PatchEdit.sendAction.setEnabled(true);
 		    PatchEdit.sendToAction.setEnabled(true);

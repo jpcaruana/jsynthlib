@@ -79,7 +79,7 @@ public class JSLDesktop {
 	    //Quit this app when the big window closes.
 	    selected.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e) {
-			PatchEdit.exitAction.exit();
+			PatchEdit.exit();
 		    }
 		});
 
@@ -251,7 +251,7 @@ public class JSLDesktop {
 	    JSLFrame f = e.getJSLFrame();
 	    if (f == toolbar) {
 		if (windows.size() < 2 && invisible == null) {
-		    PatchEdit.exitAction.exit();
+		    PatchEdit.exit();
 		} else {
 		    ErrorMsg.reportStatus("\"" + f.getTitle() + "\" hidden. " +
 					  (windows.size() - 1)
@@ -269,7 +269,7 @@ public class JSLDesktop {
 		    ErrorMsg.reportStatus("\""+selected.getTitle()+
 					  "\" selected");
 		} else if (invisible == null) {
-		    PatchEdit.exitAction.exit();
+		    PatchEdit.exit();
 		} else {
 		    ErrorMsg.reportStatus("All windows closed, but invisible "+
 					  "frame exists. Not exiting.");

@@ -29,43 +29,43 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     static AppConfig appConfig;
 
     // accessed by BankEditorFrame
-    static ExtractAction extractAction;
-    static SendAction sendAction;
-    static SendToAction sendToAction;
-    static StoreAction storeAction;
-    static ReassignAction reassignAction;
-    static EditAction editAction;
-    static PlayAction playAction;
-    static GetAction receiveAction;
-    static SaveAction saveAction;
-    static SaveAsAction saveAsAction;
-    static SortAction sortAction;
-    static SearchAction searchAction;
-    static DeleteDuplicatesAction dupAction;
-    static CopyAction copyAction;
-    static CutAction cutAction;
-    static PasteAction pasteAction;
-    static DeleteAction deleteAction;
-    static ImportAction importAction;
-    static ExportAction exportAction;
-    static ImportAllAction importAllAction;
-    static NewPatchAction newPatchAction;
-    static CrossBreedAction crossBreedAction;
+    static Action extractAction;
+    static Action sendAction;
+    static Action sendToAction;
+    static Action storeAction;
+    static Action reassignAction;
+    static Action editAction;
+    static Action playAction;
+    static Action getAction;
+    static Action saveAction;
+    static Action saveAsAction;
+    static Action sortAction;
+    static Action searchAction;
+    static Action deleteDuplicatesAction;
+    static Action copyAction;
+    static Action cutAction;
+    static Action pasteAction;
+    static Action deleteAction;
+    static Action importAction;
+    static Action exportAction;
+    static Action importAllAction;
+    static Action newPatchAction;
+    static Action crossBreedAction;
 
-    static MonitorAction monitorAction;
-    static TransferSceneAction transferSceneAction;
-    static PrefsAction prefsAction;
-    static ExitAction exitAction;
-    static UploadAction uploadAction;
+    static Action monitorAction;
+    static Action transferSceneAction;
+    static Action prefsAction;
+    static Action exitAction;
+    static Action uploadAction;
 
-    private static DocsAction docsAction;
-    private static LicenseAction licenseAction;
-    private static HomePageAction homePageAction;
-    private static NewSceneAction newSceneAction;
-    private static NextFaderAction nextFaderAction;
-    private static NewAction newAction;
-    private static OpenAction openAction;
-    private static AboutAction aboutAction;
+    private static Action docsAction;
+    private static Action licenseAction;
+    private static Action homePageAction;
+    private static Action newSceneAction;
+    private static Action nextFaderAction;
+    private static Action newAction;
+    private static Action openAction;
+    private static Action aboutAction;
 
     private static MidiMonitor midiMonitor;
     private static JToolBar toolBar;
@@ -119,6 +119,11 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	masterInEnable(appConfig.getMasterInEnable());
     }
 
+    static void exit() {
+	appConfig.savePrefs();
+	System.exit(0);
+    }
+
     // PatchEdit.getInstance() can/should be replaced by
     // JSLDesktop.getSelectedWindow(). Hiroo
     public static JFrame getInstance() {
@@ -136,7 +141,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         transferSceneAction	= new TransferSceneAction(mnemonics);
         sortAction		= new SortAction(mnemonics);
         searchAction		= new SearchAction(mnemonics);
-        dupAction		= new DeleteDuplicatesAction(mnemonics);
+        deleteDuplicatesAction	= new DeleteDuplicatesAction(mnemonics);
         exitAction		= new ExitAction(mnemonics);
 
         copyAction		= new CopyAction(mnemonics);
@@ -149,7 +154,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         sendAction		= new SendAction(mnemonics);
         sendToAction		= new SendToAction(mnemonics);
         storeAction		= new StoreAction(mnemonics);
-        receiveAction		= new GetAction(mnemonics);
+        getAction		= new GetAction(mnemonics);
 
         playAction		= new PlayAction(mnemonics);
         editAction		= new EditAction(mnemonics);
@@ -211,7 +216,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         menuLib.add(sortAction);
         menuLib.add(searchAction);
         menuLib.add(crossBreedAction);
-        menuLib.add(dupAction);
+        menuLib.add(deleteDuplicatesAction);
         menuLib.addSeparator();
 
 	mi = menuLib.add(newAction);
@@ -239,7 +244,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, mask));
         menuPatch.add(sendToAction);
         menuPatch.add(storeAction);
-        menuPatch.add(receiveAction); // phil@muqus.com
+        menuPatch.add(getAction); // phil@muqus.com
         menuPatch.addSeparator();
 
         mi = menuPatch.add(editAction);
@@ -261,7 +266,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		public void menuDeselected(MenuEvent e) {
 		}
 		public void menuSelected(MenuEvent e) {
-		    pasteAction.enable();
+		    pasteAction.setEnabled(true);
 		}
 	    });
 
@@ -380,9 +385,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	return button;
     }
 
-    private static void initForMac(final ExitAction exitAction,
-				   final PrefsAction prefsAction,
-				   final AboutAction aboutAction) {
+    private static void initForMac(final Action exitAction,
+				   final Action prefsAction,
+				   final Action aboutAction) {
 	MacUtils.init(new ApplicationAdapter() {
 		public void handleAbout(ApplicationEvent e) {
 		    final ActionEvent event =
@@ -583,13 +588,14 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     }
     */
 
-    /** @deprecated Don't use this. */
+    /** deprecated Don't use this. */
+    /*
     public static Driver getDriver(int deviceNumber, int driverNumber) {
 	if (appConfig == null)
 	    return null;
         return appConfig.getDevice(deviceNumber).getDriver(driverNumber);
     }
-
+    */
     /**
      * Output string to MIDI Monitor Window.  Use MidiUtil.log()
      * instead of this.
@@ -607,7 +613,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
      * preforms one of the menu commands and are called either from
      * the menubar, popup menu or toolbar.
      */
-    static class AboutAction extends AbstractAction {
+    private static class AboutAction extends AbstractAction {
 	public AboutAction(Map mnemonics) {
 	    super("About");
 	    mnemonics.put(this, new Integer('A'));
@@ -624,7 +630,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
     }
 
-    static class ReassignAction extends AbstractAction {
+    private static class ReassignAction extends AbstractAction {
 	public ReassignAction(Map mnemonics) {
 	    super("Reassign...", null); // show a dialog frame???
 	    // mnemonics.put(this, new Integer('R'));
@@ -639,7 +645,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
     }
 
-    static class PlayAction extends AbstractAction {
+    private static class PlayAction extends AbstractAction {
         public PlayAction(Map mnemonics) {
             super("Play", null);
             mnemonics.put(this, new Integer('P'));
@@ -654,7 +660,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class StoreAction extends AbstractAction {
+    private static class StoreAction extends AbstractAction {
         public StoreAction(Map mnemonics) {
             super("Store...", null);
             mnemonics.put(this, new Integer('R'));
@@ -669,7 +675,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class SendAction extends AbstractAction {
+    private static class SendAction extends AbstractAction {
         public SendAction(Map mnemonics) {
             super("Send", null);
 	    mnemonics.put(this, new Integer('S'));
@@ -684,7 +690,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class SendToAction extends AbstractAction {
+    private static class SendToAction extends AbstractAction {
 	public SendToAction(Map mnemonics) {
 	    super("Send to...", null);
 	    // mnemonics.put(this, new Integer('S'));
@@ -699,7 +705,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
     }
 
-    static class DeleteAction extends AbstractAction {
+    private static class DeleteAction extends AbstractAction {
         public DeleteAction(Map mnemonics) {
             super("Delete", null);
             setEnabled(false);
@@ -715,7 +721,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class CopyAction extends AbstractAction {
+    private static class CopyAction extends AbstractAction {
         public CopyAction(Map mnemonics) {
             super("Copy", null);
             setEnabled(false);
@@ -730,7 +736,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class CutAction extends AbstractAction {
+    private static class CutAction extends AbstractAction {
         public CutAction(Map mnemonics) {
             super("Cut", null);
             setEnabled(false);
@@ -746,7 +752,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class PasteAction extends AbstractAction {
+    private static class PasteAction extends AbstractAction {
         public PasteAction(Map mnemonics) {
             super("Paste", null);
             setEnabled(false);
@@ -759,19 +765,18 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		ErrorMsg.reportError("Error", "Library to Paste into must be the focused Window.", ex);
 	    }
         }
-	public void enable() {
+	public void setEnabled(boolean b) {
 	    try {
 		JSLFrame f = JSLDesktop.getSelectedFrame();
-		boolean b = f.canImport(c.getContents(this)
-					.getTransferDataFlavors());
-		setEnabled(b);
+		b = b && f.canImport(c.getContents(this).getTransferDataFlavors());
+		super.setEnabled(b);
 	    } catch (Exception ex) {
-		setEnabled(false);
+		super.setEnabled(false);
 	    }
 	}
     }
 
-    static class EditAction extends AbstractAction {
+    private static class EditAction extends AbstractAction {
         public EditAction(Map mnemonics) {
             super("Edit...", null);
 	    mnemonics.put(this, new Integer('E'));
@@ -818,7 +823,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
     }
 
-    static class ExportAction extends AbstractAction {
+    private static class ExportAction extends AbstractAction {
         public ExportAction(Map mnemonics) {
             super("Export...", null);
             mnemonics.put(this, new Integer('O'));
@@ -861,7 +866,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     // Sub Class: GetAction
     //=====================================================================
 
-    static class GetAction extends AbstractAction {
+    private static class GetAction extends AbstractAction {
 	//-----------------------------------------------------------------
 	// Constructor: GetAction
 	//-----------------------------------------------------------------
@@ -882,7 +887,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     } // End SubClass: GetAction
     //------ End phil@muqus.com
 
-    static class UploadAction extends AbstractAction {
+    private static class UploadAction extends AbstractAction {
 	public UploadAction(Map mnemonics) {
 	    super("Upload...", null);
 	    mnemonics.put(this, new Integer('U'));
@@ -896,8 +901,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     }
 
-    // denis: all Action classes made public
-    static class ImportAction extends AbstractAction {
+    private static class ImportAction extends AbstractAction {
         public ImportAction(Map mnemonics) {
             super("Import...", null);
             mnemonics.put(this, new Integer('I'));
@@ -926,7 +930,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
     }
 
-    static class NewAction extends AbstractAction {
+    private static class NewAction extends AbstractAction {
         public NewAction(Map mnemonics) {
 	    super("New Library", null);
 	    mnemonics.put(this, new Integer('N'));
@@ -936,7 +940,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
     }
 
-    static class NewSceneAction extends AbstractAction {
+    private static class NewSceneAction extends AbstractAction {
         public NewSceneAction(Map mnemonics) {
             super("New Scene", null);
         }
@@ -946,7 +950,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class TransferSceneAction extends AbstractAction {
+    private static class TransferSceneAction extends AbstractAction {
         public TransferSceneAction(Map mnemonics) {
             super("Transfer Scene", null); // show a dialog frame???
             // mnemonics.put(this, new Integer('S'));
@@ -961,7 +965,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class OpenAction extends AbstractAction {
+    private static class OpenAction extends AbstractAction {
         public OpenAction(Map mnemonics) {
             super("Open...", null);
             mnemonics.put(this, new Integer('O'));
@@ -980,7 +984,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class SaveAction extends AbstractAction {
+    private static class SaveAction extends AbstractAction {
         public SaveAction(Map mnemonics) {
 	    super("Save", null);
 	    setEnabled(false);
@@ -992,7 +996,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class SaveAsAction extends AbstractAction {
+    private static class SaveAsAction extends AbstractAction {
         public SaveAsAction(Map mnemonics) {
 	    super("Save As...", null);
 	    setEnabled(false);
@@ -1004,7 +1008,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class ExitAction extends AbstractAction {
+    private static class ExitAction extends AbstractAction {
         public ExitAction(Map mnemonics) {
 	    super("Exit", null);
 	    mnemonics.put(this, new Integer('X'));
@@ -1013,13 +1017,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         public void actionPerformed(ActionEvent e) {
 	    exit();
         }
-	public void exit() {
-            appConfig.savePrefs();
-            System.exit(0);
-	}
     }
 
-    static class ExtractAction extends AbstractAction {
+    private static class ExtractAction extends AbstractAction {
         public ExtractAction(Map mnemonics) {
             super("Extract", null);
             mnemonics.put(this, new Integer('E'));
@@ -1035,7 +1035,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class SortAction extends AbstractAction {
+    private static class SortAction extends AbstractAction {
         public SortAction(Map mnemonics) {
             super("Sort...", null);
             setEnabled(false);
@@ -1052,7 +1052,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class SearchAction extends AbstractAction {
+    private static class SearchAction extends AbstractAction {
         public SearchAction(Map mnemonics) {
             super("Search...", null);
             setEnabled(false);
@@ -1070,7 +1070,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class ImportAllAction extends AbstractAction {
+    private static class ImportAllAction extends AbstractAction {
         public ImportAllAction(Map mnemonics) {
             super("Import All...", null);
             setEnabled(false);
@@ -1096,7 +1096,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class DeleteDuplicatesAction extends AbstractAction {
+    private static class DeleteDuplicatesAction extends AbstractAction {
         public DeleteDuplicatesAction(Map mnemonics) {
             super("Delete Dups...", null);
             setEnabled(false);
@@ -1120,7 +1120,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class NewPatchAction extends AbstractAction {
+    private static class NewPatchAction extends AbstractAction {
         public NewPatchAction(Map mnemonics) {
             super("New Patch...", null);
             setEnabled(false);
@@ -1139,7 +1139,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class PrefsAction extends AbstractAction {
+    private static class PrefsAction extends AbstractAction {
         public PrefsAction(Map mnemonics) {
             super("Preferences...", null);
 	    mnemonics.put(this, new Integer('P'));
@@ -1150,7 +1150,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class CrossBreedAction extends AbstractAction {
+    private static class CrossBreedAction extends AbstractAction {
         public CrossBreedAction(Map mnemonics) {
             super("Cross Breed...", null);
             setEnabled(false);
@@ -1166,7 +1166,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class NextFaderAction extends AbstractAction {
+    private static class NextFaderAction extends AbstractAction {
         public NextFaderAction(Map mnemonics) {
 	    super("Go to Next Fader Bank", null);
 	    mnemonics.put(this, new Integer('F'));
@@ -1180,7 +1180,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class DocsAction extends AbstractAction {
+    private static class DocsAction extends AbstractAction {
         public DocsAction(Map mnemonics) {
 	    super("Help", null);
 	    setEnabled(true);
@@ -1197,7 +1197,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class LicenseAction extends AbstractAction {
+    private static class LicenseAction extends AbstractAction {
         public LicenseAction(Map mnemonics) {
 	    super("License", null);
 	    setEnabled(true);
@@ -1214,7 +1214,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class HomePageAction extends AbstractAction {
+    private static class HomePageAction extends AbstractAction {
         public HomePageAction(Map mnemonics) {
 	    super("JSynthLib Home Page", null);
 	    setEnabled(true);
@@ -1233,7 +1233,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
     }
 
-    static class MonitorAction extends AbstractAction {
+    private static class MonitorAction extends AbstractAction {
         public MonitorAction(Map mnemonics) {
 	    super("MIDI Monitor", null);
 	    setEnabled(true);

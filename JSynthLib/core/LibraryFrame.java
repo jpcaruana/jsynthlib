@@ -230,7 +230,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 
 		    if (((AbstractPatchListModel) e.getSource()).getRowCount() > 1) {
 			PatchEdit.sortAction.setEnabled(true);
-			PatchEdit.dupAction.setEnabled(true);
+			PatchEdit.deleteDuplicatesAction.setEnabled(true);
 			PatchEdit.crossBreedAction.setEnabled(true);
 		    }
 		}
@@ -283,7 +283,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     private void enableMenus() {
-	PatchEdit.receiveAction.setEnabled(true);
+	PatchEdit.getAction.setEnabled(true);
 	PatchEdit.importAction.setEnabled(true);
 	PatchEdit.importAllAction.setEnabled(true);
 	PatchEdit.newPatchAction.setEnabled(true);
@@ -297,7 +297,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 
 	if (table.getRowCount() > 1) {
 	    PatchEdit.sortAction.setEnabled(true);
-	    PatchEdit.dupAction.setEnabled(true);
+	    PatchEdit.deleteDuplicatesAction.setEnabled(true);
 	}
 
 	if (table.getSelectedRowCount() > 0) {
@@ -352,7 +352,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     private void disableMenus() {
-	PatchEdit.receiveAction.setEnabled(false);
+	PatchEdit.getAction.setEnabled(false);
 	PatchEdit.extractAction.setEnabled(false);
 	PatchEdit.sendAction.setEnabled(false);
 	PatchEdit.sendToAction.setEnabled(false);
@@ -364,7 +364,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	PatchEdit.saveAsAction.setEnabled(false);
 	PatchEdit.sortAction.setEnabled(false);
 	PatchEdit.searchAction.setEnabled(false);
-	PatchEdit.dupAction.setEnabled(false);
+	PatchEdit.deleteDuplicatesAction.setEnabled(false);
 	PatchEdit.cutAction.setEnabled(false);
 	PatchEdit.copyAction.setEnabled(false);
 	PatchEdit.deleteAction.setEnabled(false);

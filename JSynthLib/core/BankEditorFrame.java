@@ -109,7 +109,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		public void JSLFrameIconified(JSLFrameEvent e) {
 		}
 		public void JSLFrameActivated(JSLFrameEvent e) {
-		    	PatchEdit.receiveAction.setEnabled(false);
+		    	PatchEdit.getAction.setEnabled(false);
 			PatchEdit.importAction.setEnabled(true);
 			PatchEdit.importAllAction.setEnabled(true);
 			PatchEdit.newPatchAction.setEnabled(true);
@@ -121,7 +121,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 			}
 			if (table.getRowCount() > 1) {
 			    PatchEdit.sortAction.setEnabled(true);
-			    PatchEdit.dupAction.setEnabled(true);
+			    PatchEdit.deleteDuplicatesAction.setEnabled(true);
 			}
 		    enableMenus();
 		}
@@ -296,7 +296,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     protected void disableMenus() {
-	//PatchEdit.receiveAction.setEnabled(false);
+	//PatchEdit.getAction.setEnabled(false);
 	PatchEdit.extractAction.setEnabled(false);
 	PatchEdit.sendAction.setEnabled(false);
 	PatchEdit.sendToAction.setEnabled(false);
@@ -308,7 +308,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	PatchEdit.saveAsAction.setEnabled(false);
 	PatchEdit.sortAction.setEnabled(false);
 	PatchEdit.searchAction.setEnabled(false);
-	PatchEdit.dupAction.setEnabled(false);
+	PatchEdit.deleteDuplicatesAction.setEnabled(false);
 	PatchEdit.cutAction.setEnabled(false);
 	PatchEdit.copyAction.setEnabled(false);
 	PatchEdit.deleteAction.setEnabled(false);
