@@ -6,7 +6,7 @@ import java.io.*;
 /** Driver for Kawai K4 Multi's
  *
  * @author Gerrit Gehnen
- * @version $Id§
+ * @version $Id$
  */
 
 public class KawaiK4MultiDriver extends Driver
@@ -20,7 +20,7 @@ public class KawaiK4MultiDriver extends Driver
    model="K4/K4r";
    patchType="Multi";
    id="K4";
-   sysexID="F040**200004";
+   sysexID="F040**2*0004";
  //  inquiryID="F07E**06024000000400000000000f7";
        authors="Gerrit Gehnen";
 
@@ -97,7 +97,7 @@ public JInternalFrame editPatch(Patch p)
         NameValue nv[]=new NameValue[2];
         nv[0]=new NameValue("bankNum",bankNum<<1);
         nv[1]=new NameValue("patchNum",patchNum+0x40);
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        byte[] sysex = internalMultiSysexRequestDump.toByteArray((byte)channel,nv);
    
     SysexHandler.send(port, sysex);
   }
