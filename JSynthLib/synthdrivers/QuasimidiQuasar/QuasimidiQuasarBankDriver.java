@@ -32,26 +32,22 @@ import java.io.*;
  * @version $Id$
  */
 public class QuasimidiQuasarBankDriver extends BankDriver {
-	private QuasimidiQuasarSingleDriver quasarSingleDriver;
+	public QuasimidiQuasarBankDriver() {
+		super("Performance Bank", "Joachim Backhaus", QuasarConstants.PATCH_NUMBERS.length, 5);
 
-	public QuasimidiQuasarBankDriver(QuasimidiQuasarSingleDriver quasarSingleDriver) {			
-		super("Performance Bank", "Joachim Backhaus", QuasarConstants.QUASAR_PATCH_NUMBERS.length, 5);
-		
-		this.quasarSingleDriver = quasarSingleDriver;		
-		
-		this.sysexID = QuasarConstants.QUASAR_SYSEX_ID;		
-		
+		this.sysexID = QuasarConstants.SYSEX_ID;
+
 		// This one is never really used, just a dummy to prevent the "this synth doesn't support patch request" dialog
-		this.sysexRequestDump = new SysexHandler( QuasarConstants.QUASAR_SYSEX_PERFORMANCE_REQUEST[0] );
+		this.sysexRequestDump = new SysexHandler( QuasarConstants.SYSEX_PERFORMANCE_REQUEST[0] );
 
 		this.patchNameStart = 0;
 		this.patchNameSize = 0; // Just one bank ("RAM")
-		this.deviceIDoffset = 2;
+		this.deviceIDoffset = QuasarConstants.ARRAY_DEVICE_ID_OFFSET;
 		this.bankNumbers = new String[] { "RAM" };
-		this.patchNumbers = QuasarConstants.QUASAR_PATCH_NUMBERS;
-				
+		this.patchNumbers = QuasarConstants.PATCH_NUMBERS;
+
 		this.singleSysexID = this.sysexID;
-		this.singleSize = QuasarConstants.QUASAR_PATCH_SIZE;
+		this.singleSize = QuasarConstants.PATCH_SIZE;
 
 		this.patchSize = singleSize * patchNumbers.length;
     }
@@ -63,9 +59,39 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
         // no checksum, do nothing
     }
 
+    /**
+    * Replacement for sendPatchWorker
+    * which doesn't work here as the Device ID has to be set in each one of the 6 SysEx sub parts
+    */
+    private final void doSendPatch(Patch p) {
+        if (deviceIDoffset > 0) {
+        	int deviceID = ( getDeviceID() - 1);
+        	int temporaryOffset = 0;
+
+        	for(int patchNo = 0; patchNo < patchNumbers.length; patchNo++) {
+        		temporaryOffset = deviceIDoffset + (patchNo * this.singleSize);
+
+		    	p.sysex[temporaryOffset]                                       = (byte) deviceID;
+		    	p.sysex[temporaryOffset + QuasarConstants.ARRAY_PART_1_OFFSET] = (byte) deviceID;
+		    	p.sysex[temporaryOffset + QuasarConstants.ARRAY_PART_2_OFFSET] = (byte) deviceID;
+		    	p.sysex[temporaryOffset + QuasarConstants.ARRAY_PART_3_OFFSET] = (byte) deviceID;
+		    	p.sysex[temporaryOffset + QuasarConstants.ARRAY_PART_4_OFFSET] = (byte) deviceID;
+		    	p.sysex[temporaryOffset + QuasarConstants.ARRAY_NAME_OFFSET]   = (byte) deviceID;
+		   	}
+
+		   	send(p.sysex);
+	    }
+    }
+
+	/**
+	* Stores the bank
+	*
+	* @param p			The bank to store
+	* @param bankNum	Ignored
+	* @param patchNum	Ignored
+	*/
     public void storePatch(Patch p, int bankNum, int patchNum) {
-        setPatchNum(patchNum);
-        sendPatch(p);
+        doSendPatch(p);
 	}
 
 	/**
@@ -103,7 +129,7 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
 	*/
 	public Patch getPatch(Patch bank, int patchNum) {
 		try{
-			byte [] sysex = new byte[QuasarConstants.QUASAR_PATCH_SIZE];
+			byte [] sysex = new byte[QuasarConstants.PATCH_SIZE];
 
 			System.arraycopy(	bank.sysex,
 								getPatchStart(patchNum),
@@ -111,7 +137,7 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
 								0,
 								this.singleSize);
 			Patch p = new Patch(sysex);
-			
+
 			return p;
 		} catch (Exception e) {
 			ErrorMsg.reportError("Error", "Error in Quasar Bank Driver", e);
@@ -124,11 +150,11 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
 	*/
 	public String getPatchName(Patch p, int patchNum) {
 		int nameStart = getPatchStart(patchNum);
-		nameStart += QuasarConstants.QUASAR_PATCH_NAME_START; //offset of name in patch data
+		nameStart += QuasarConstants.PATCH_NAME_START; //offset of name in patch data
 		try {
 			StringBuffer s = new StringBuffer(new String(	p.sysex,
 															nameStart,
-															QuasarConstants.QUASAR_PATCH_NAME_SIZE,
+															QuasarConstants.PATCH_NAME_SIZE,
 															"US-ASCII"));
 			return s.toString();
 		} catch (UnsupportedEncodingException ex) {
@@ -140,24 +166,24 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
 	/**
 	* Request a dump of all 100 RAM Performances
 	*/
-	public void requestPatchDump(int bankNum, int patchNum) {		
+	public void requestPatchDump(int bankNum, int patchNum) {
 		if (sysexRequestDump == null) {
 			JOptionPane.showMessageDialog
 				(PatchEdit.getInstance(),
 				 "The " + toString()
 				 + " driver does not support patch getting.\n\n"
 				 + "Please start the patch dump manually...",
-				 "Get Patch", JOptionPane.WARNING_MESSAGE);		
+				 "Get Patch", JOptionPane.WARNING_MESSAGE);
 		}
 		else {
 			// Request dumps for all 100 RAM peformances (that are 5 * 100 requests!!!)
 			for(int patchNo = 0; patchNo < patchNumbers.length; patchNo++) {
-				for(int count = 0; count < QuasarConstants.QUASAR_SYSEX_PERFORMANCE_REQUEST.length; count++) {
-					
-					this.sysexRequestDump = new SysexHandler( QuasarConstants.QUASAR_SYSEX_PERFORMANCE_REQUEST[count] );
-					
-					send(sysexRequestDump.toSysexMessage(getDeviceID(),					
-						 new NameValue("perfNumber", patchNo + QuasarConstants.QUASAR_SYSEX_PERFORMANCE_OFFSET)
+				for(int count = 0; count < QuasarConstants.SYSEX_PERFORMANCE_REQUEST.length; count++) {
+
+					this.sysexRequestDump = new SysexHandler( QuasarConstants.SYSEX_PERFORMANCE_REQUEST[count] );
+
+					send(sysexRequestDump.toSysexMessage(getDeviceID(),
+						 new NameValue("perfNumber", patchNo + QuasarConstants.SYSEX_PERFORMANCE_OFFSET)
 						 								)
 					);
 
@@ -181,13 +207,13 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
         Patch tempPatch;
 
         for(int patchNo = 0; patchNo < patchNumbers.length; patchNo++) {
-        	tempPatch = this.quasarSingleDriver.createNewPatch(patchNo, QuasarConstants.QUASAR_SYSEX_PERFORMANCE_OFFSET);
+        	tempPatch = QuasimidiQuasarSingleDriver.createNewPatch(patchNo, QuasarConstants.SYSEX_PERFORMANCE_OFFSET);
 
         	System.arraycopy(	tempPatch.sysex,
         						0,
         						sysex,
-        						(patchNo * QuasarConstants.QUASAR_PATCH_SIZE ),
-        						QuasarConstants.QUASAR_PATCH_SIZE );
+        						(patchNo * QuasarConstants.PATCH_SIZE ),
+        						QuasarConstants.PATCH_SIZE );
        	}
 
         Patch p = new Patch(sysex);

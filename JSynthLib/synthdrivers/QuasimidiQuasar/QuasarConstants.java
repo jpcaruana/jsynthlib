@@ -33,27 +33,63 @@ import java.util.prefs.Preferences;
 public class QuasarConstants {
 	public static final byte SYSEX_START_BYTE			= (byte) 0xF0;
 	public static final byte SYSEX_END_BYTE				= (byte) 0xF7;
-	public static final int SYSEX_HEADER_OFFSET			= 8;
+	public static final int  SYSEX_HEADER_OFFSET		= 8;
 
-	public static final int QUASAR_PATCH_SIZE			= 223;
-	public static final int QUASAR_PATCH_NAME_SIZE		= 8;
-	public static final int QUASAR_PATCH_NAME_START		= 214;
+	public static final int PATCH_SIZE			= 223;
+	public static final int TEMPORARY_SIZE		= 644;
+	public static final int PATCH_NAME_SIZE		= 8;
+	public static final int PATCH_NAME_START		= 214;
+
+
+	public static final int ARRAY_DEVICE_ID_OFFSET	 	= 2;
+	/**
+	* Offset for the performance offset in the byte array
+	*/
+	public static final int ARRAY_PERFORMANCE_OFFSET	= 5;
+	/**
+	* Offset for the performance part in the byte array
+	*/
+	public static final int ARRAY_PERF_PART_OFFSET		= 6;
+	/**
+	* Offset for the beginning of performance part 1 parameters in the byte array
+	*/
+	public static final int ARRAY_PART_1_OFFSET		= 74;
+	/**
+	* Offset for the beginning of performance part 2 parameters in the byte array
+	*/
+	public static final int ARRAY_PART_2_OFFSET		= 107;
+	/**
+	* Offset for the beginning of performance part 3 parameters in the byte array
+	*/
+	public static final int ARRAY_PART_3_OFFSET		= 140;
+	/**
+	* Offset for the beginning of performance part 4 parameters in the byte array
+	*/
+	public static final int ARRAY_PART_4_OFFSET		= 173;
+	/**
+	* Offset for the beginning of performance name parameters in the byte array
+	*/
+	public static final int ARRAY_NAME_OFFSET		= 206;
 
 	/**
 	* Offset for the "real" performance parameters
 	*/
-	public static final int QUASAR_SYSEX_PERFORMANCE_OFFSET	= 0x05;
+	public static final int SYSEX_PERFORMANCE_OFFSET	= 0x05;
 	/**
 	* Offset for the temporary parameters
 	*/
-	public static final int QUASAR_SYSEX_TEMPORARY_OFFSET	= 0x01;
+	public static final int SYSEX_TEMPORARY_OFFSET	= 0x01;
 	/**
 	* The SysEx ID for the Quasimidi Quasar
 	*/
-	public static final String QUASAR_SYSEX_ID				= "F03F**2044";
+	public static final String SYSEX_ID				= "F03F**2044";
 
+	/**
+	* Array holding the request headers for the full Performance<br>
+	* (Common, Part 1-4 and name parameters)
+	*/
 	//"F03F**2052**********F7" is the format for requests
-	public static final String[] QUASAR_SYSEX_PERFORMANCE_REQUEST   = {
+	public static final String[] SYSEX_PERFORMANCE_REQUEST   = {
 		"F0 3F @@ 20 52 *perfNumber* 00 00 00 41 F7 ", // Request performance common parameter
 		"F0 3F @@ 20 52 *perfNumber* 01 00 00 18 F7 ", // Request performance part 1 parameter
 		"F0 3F @@ 20 52 *perfNumber* 02 00 00 18 F7 ", // Request performance part 2 parameter
@@ -62,8 +98,10 @@ public class QuasarConstants {
 		"F0 3F @@ 20 52 *perfNumber* 05 00 00 08 F7 "  // Request performance name
 	};
 
-	/** Performance numbers go from 00 to 99 */
-	public static final String[] QUASAR_PATCH_NUMBERS   = {
+	/**
+	* Performance numbers are going from 00 to 99
+	*/
+	public static final String[] PATCH_NUMBERS   = {
 		"00" , "01", "02", "03", "04", "05", "06", "07", "08", "09",
 		"10" , "11", "12", "13", "14", "15", "16", "17", "18", "19",
 		"20" , "21", "22", "23", "24", "25", "26", "27", "28", "29",
@@ -76,8 +114,8 @@ public class QuasarConstants {
 		"90" , "91", "92", "93", "94", "95", "96", "97", "98", "99",
 	};
 
-	/** The effects for FX1 */
-	public static final String[] QUASAR_FX1_EFFECTS   = {
+	/** The effect names for FX1 */
+	public static final String[] FX1_EFFECTS   = {
 		"Room", "Small Room", "Warm Room", "Chamber", "Chamber 2",
 		"Plate 1", "Plate 2", "Hall", "Large Hall", "Cathedral",
 		"Gated Reverb 1", "Gated Reverb 2", "Gated Reverb 3", "Duck Reverb",
@@ -85,8 +123,8 @@ public class QuasarConstants {
 		"Raindrops", "Long Delay", "Duck Delay", "HQ Delay", "Bypass"
 	};
 
-	/** The effects for FX2 */
-	public static final String[] QUASAR_FX2_EFFECTS   = {
+	/** The effect names for FX2 */
+	public static final String[] FX2_EFFECTS   = {
 		"Chorus 1", "Chorus 2", "Chorus 3",
 		"Flanger 1", "Flanger 2",
 		"Phaser 1", "Phaser 2",
@@ -100,7 +138,8 @@ public class QuasarConstants {
 		"HQ Delay", "Bypass"
 	};
 
-	public static final String[] QUASAR_PERFORMANCE_MODES   = {
+	/** The Performance modes of the Quasar */
+	public static final String[] PERFORMANCE_MODES   = {
 		"Single", // Only Part 13 is used
 		"Double", // Only Parts 13 & 14  are used
 		"Layer 3", // Parts 13 - 15 layered
@@ -121,9 +160,11 @@ public class QuasarConstants {
 		"UpVocSolo",
 		"Unisono" // Performance value parameter is used as detune parameter
 	};
-	
+
 	/**
-	* Velocity curve
+	* Velocity curves
+	*/
+	/*
 	* 00 Lin
 	* 01 Lin-
 	* 02 Lin+
@@ -138,18 +179,21 @@ public class QuasarConstants {
 	* 0B -Exp-
 	* 0C -Ex--
 	* 0D -Exp+
-	* 0E -Ex++ */
-	public static final String[] QUASAR_VELOCITY_CURVES   = {
+	* 0E -Ex++
+	*/
+	public static final String[] VELOCITY_CURVES   = {
 		"Lin", "Lin-", "Lin+", "Exp-", "Ex--", "Exp+", "Ex++", "Fix",
 		"-Lin", "-Lin-", "-Lin+", "-Exp", "-Ex--", "-Exp+", "-Ex++"
 	};
-	
-	public static final String[] QUASAR_MASTER_VELOCITY_CURVES   = {
+
+	public static final String[] MASTER_VELOCITY_CURVES   = {
 		"Lin", "Lin-", "Lin+", "Exp-", "Ex--", "Exp+", "Ex++", "Fix"
 	};
 
 	/**
-	* Panorama
+	* Panorama:
+	*/
+	/*	
 	* 00 off
 	* 01 7L
 	* 02 6L
@@ -170,8 +214,9 @@ public class QuasarConstants {
 	* 11 Key
 	* 12 Yek
 	* 13 Dyn
-	* 14 Nyd */	        	   
-	public static final String[] QUASAR_PANORAMA   = {
+	* 14 Nyd 	
+	*/
+	public static final String[] PANORAMA   = {
 		"off",
 		"Left 7", "Left 6", "Left 5", "Left 4", "Left 3", "Left 2", "Left 1",
 		"Center",
@@ -179,10 +224,10 @@ public class QuasarConstants {
 		"Random", "KEY", "YEK", "DYN", "NYD"
 	};
 
-	public static final String[] QUASAR_TRACKMODE   = {
+	public static final String[] TRACKMODE   = {
 		"muted", "poly", "mono"
 	};
 
-	public static final String QUASAR_SWITCH_OFF   = "off";
-	public static final String QUASAR_SWITCH_ON    = "on";
+	public static final String SWITCH_OFF   = "off";
+	public static final String SWITCH_ON    = "on";
 }

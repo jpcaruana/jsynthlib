@@ -33,7 +33,7 @@ import java.util.prefs.Preferences;
 public class QuasimidiQuasarDevice extends Device {
 	private static final String INFO_TEXT
     = "Currently only supporting the librarian features for single perfomances and performance banks.";
-    
+
     /**
     * Constructor for DeviceListWriter.
     */
@@ -56,10 +56,9 @@ public class QuasimidiQuasarDevice extends Device {
 
     	this.prefs = prefs;
 
-		QuasimidiQuasarSingleDriver quasarSingleDriver = new QuasimidiQuasarSingleDriver();
-
-        addDriver(quasarSingleDriver);
-        addDriver(new QuasimidiQuasarBankDriver(quasarSingleDriver));
+		addDriver(new QuasimidiQuasarTemporaryConverter());
+        addDriver(new QuasimidiQuasarSingleDriver());
+        addDriver(new QuasimidiQuasarBankDriver());
     }
 
 }
