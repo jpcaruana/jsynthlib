@@ -58,6 +58,7 @@ final class Actions {
     static final long EN_STORE			= 0x0000000100000000L;
     static final long EN_TRANSFER_SCENE		= 0x0000000200000000L;
     static final long EN_UPLOAD			= 0x0000000400000000L;
+    static final long EN_PREV_FADER		= 0x0000000800000000L;
 
     /** All actions excluding ones which are always eanbled.  */
     static final long EN_ALL	= (//EN_ABOUT
@@ -81,6 +82,7 @@ final class Actions {
 				   | EN_NEW_PATCH
 				   //| EN_NEW_SCENE
 				   //| EN_NEXT_FADER
+				   //| EN_PREV_FADER
 				   //| EN_OPEN
 				   //| EN_PASTE : 'paste' needs special handling
 				   | EN_PLAY
@@ -117,6 +119,7 @@ final class Actions {
     private static Action newPatchAction;
     private static Action newSceneAction;
     private static Action nextFaderAction;
+    private static Action prevFaderAction;
     private static Action openAction;
     private static Action pasteAction;
     private static Action playAction;
@@ -187,6 +190,7 @@ final class Actions {
         homePageAction		= new HomePageAction(mnemonics);
 
         nextFaderAction		= new NextFaderAction(mnemonics);
+        prevFaderAction		= new PrevFaderAction(mnemonics);
 	uploadAction		= new UploadAction(mnemonics);
 
 	if (MacUtils.isMac())
@@ -382,6 +386,8 @@ final class Actions {
 
         toolBar.addSeparator();
 
+        toolBar.add(createToolBarButton(prevFaderAction, "Prev",
+                "Go to Previous Fader Bank"));
         toolBar.add(createToolBarButton(nextFaderAction, "Next",
                 "Go to Next Fader Bank"));
 
@@ -459,6 +465,8 @@ final class Actions {
 	    newSceneAction.setEnabled(b);
 	if ((v & EN_NEXT_FADER) != 0)
 	    nextFaderAction.setEnabled(b);
+	if ((v & EN_PREV_FADER) != 0)
+	    prevFaderAction.setEnabled(b);
 	if ((v & EN_OPEN) != 0)
 	    openAction.setEnabled(b);
 	if ((v & EN_PASTE) != 0)
@@ -1152,6 +1160,20 @@ final class Actions {
 		return;
             PatchEditorFrame pf = (PatchEditorFrame) JSLDesktop.getSelectedFrame();
             pf.nextFader();
+	    return;
+        }
+    }
+
+    private static class PrevFaderAction extends AbstractAction {
+        public PrevFaderAction(Map mnemonics) {
+	    super("Go to Previous Fader Bank", null);
+	    //mnemonics.put(this, new Integer('F'));
+        }
+        public void actionPerformed(ActionEvent e) {
+            if (!(JSLDesktop.getSelectedFrame() instanceof PatchEditorFrame))
+		return;
+            PatchEditorFrame pf = (PatchEditorFrame) JSLDesktop.getSelectedFrame();
+            pf.prevFader();
 	    return;
         }
     }

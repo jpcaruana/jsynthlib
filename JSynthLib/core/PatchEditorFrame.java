@@ -382,10 +382,16 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
         /**
          * <pre>
-         * Control Change MIDI Message
-         *   1011nnnn : BnH, nnnn: Voice Channel number
-         *   0ccccccc : control # (0-119)
-         *   0vvvvvvv : control value
+         *    Control Change MIDI Message
+         *      1011nnnn : BnH, nnnn: Voice Channel number
+         *      0ccccccc : control number (0-119)
+         *      0vvvvvvv : control value
+         * </pre>
+         * 
+         * A fader number whose FaderChannel and FaderControl number matches
+         * "Voice Channel number" and "control number" in a Control Change MIDI
+         * message is selected. The faderMoved() method is called with the fader
+         * number and "control value".
          */
         public void send(MidiMessage message, long timeStamp) {
             // ignore unless Editor Window is active.
@@ -427,18 +433,14 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
         ErrorMsg.reportStatus("FaderMoved: fader: " + fader
                               + ", value: " + value);
         if (fader == 32) {      // button 16 : next fader bank
-            faderBank = (faderBank + 1) % numFaderBanks;
-            faderHighlight();
+            nextFader();
             return;
-        } else if (fader == 31) { // button 15 : prev fader bank
-            faderBank = faderBank - 1;
-            if (faderBank < 0)
-                faderBank = numFaderBanks - 1;
-            faderHighlight();
+        } else if (fader == 31) { // button 15 : previous fader bank
+            prevFader();
             return;
         } else if (fader > 16)  // 17-30 : button 1-14
             fader = (byte) (0 - (fader - 16) - (faderBank * 16));
-        else                    // 0 : active slder, 1-16 : fader 1-16
+        else                    // 0 : active slider, 1-16 : fader 1-16
             fader += (faderBank * 16);
 
         if (recentWidget != null) {
@@ -472,6 +474,18 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
         }
     }
 
+    private static Color activeColor;
+    private static Color inactiveColor;
+    static {
+        activeColor = UIManager.getColor("controlText");
+        if (activeColor == null)
+            activeColor = new Color(75, 75, 100);
+
+        inactiveColor = UIManager.getColor("textInactiveText");
+        if (inactiveColor == null)
+            inactiveColor = new Color(102, 102, 153);
+    }
+
     /**
      * > P.S. btw, anyone an idea why some labels are grayed-out?<p>
      *
@@ -490,15 +504,9 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
             SysexWidget w = (SysexWidget) widgetList.get(i);
             if (w.getLabel() != null) {
                 if (((Math.abs(w.getSliderNum() - 1) & 0xf0)) == faderBank * 16) {
-                    Color c = UIManager.getColor("controlText");
-                    if (c == null)
-                        c = new Color(75, 75, 100);
-                    w.getJLabel().setForeground(c);
+                    w.getJLabel().setForeground(activeColor);
                 } else {
-                    Color c = UIManager.getColor("textInactiveText");
-                    if (c == null)
-                        c = new Color(102, 102, 153);
-                    w.getJLabel().setForeground(c);
+                    w.getJLabel().setForeground(inactiveColor);
                 }
                 w.getJLabel().repaint();
             }
@@ -507,6 +515,13 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
     void nextFader() {
         faderBank = (faderBank + 1) % numFaderBanks;
+        faderHighlight();
+    }
+
+    void prevFader() {
+        faderBank = faderBank - 1;
+        if (faderBank < 0)
+            faderBank = numFaderBanks - 1;
         faderHighlight();
     }
 
