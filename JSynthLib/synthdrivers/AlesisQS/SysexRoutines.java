@@ -61,78 +61,96 @@ public class SysexRoutines
     TRACE = false;
     byte[] bytes =
     {
-      (byte)0xf0, 0x00, 0x00, 0x0e, 0x0e, 0x0e, 0x5a, 0x41, 0x2a, 0x50, 0x56, 0x16, 0x00, 0x2c, 0x32, 0x50,
-      0x73, 0x13, 0x00, 0x00, 0x47, 0x3f, 0x32, 0x0a, 0x03, 0x78, 0x7f, 0x07, 0x10, 0x58, 0x7d, 0x64,
-      0x14, 0x46, 0x77, 0x7f, 0x0f, 0x20, 0x20, 0x7c, 0x49, 0x29, 0x0c, 0x60, 0x2e, 0x1f, 0x00, 0x40,
-      0x75, 0x13, 0x53, 0x18, 0x40, 0x7f, 0x3e, 0x00, 0x60, 0x78, 0x27, 0x26, 0x31, 0x00, 0x7f, 0x79,
-      0x00, 0x40, 0x71, 0x4f, 0x4c, 0x62, 0x00, 0x7e, 0x73, 0x01, 0x00, 0x63, 0x1f, 0x19, 0x45, 0x01,
-      0x7c, 0x67, 0x03, 0x00, 0x46, 0x3f, 0x32, 0x0a, 0x03, 0x78, 0x4f, 0x07, 0x00, 0x0c, 0x7f, 0x64,
-      0x14, 0x06, 0x70, 0x1f, 0x0f, 0x00, 0x18, 0x7e, 0x49, 0x29, 0x0c, 0x60, 0x3f, 0x1e, 0x00, 0x30,
-      0x7c, 0x13, 0x53, 0x18, 0x40, 0x7f, 0x3c, 0x00, 0x60, 0x78, 0x27, 0x26, 0x31, 0x00, 0x7f, 0x79,
-      0x00, 0x40, 0x71, 0x4f, 0x4c, 0x62, 0x00, 0x7e, 0x73, 0x01, 0x00, 0x63, 0x1f, 0x19, 0x45, 0x01,
-      0x7c, 0x67, 0x03, 0x00, 0x46, 0x3f, 0x32, 0x0a, 0x03, 0x78, 0x4f, 0x07, 0x00, 0x0c, 0x7f, 0x64,
+      (byte)0xf0, 0x00, 0x00, 0x0e, 0x0e, 0x0e, 0x5a, 0x41,
+	  0x2a, 0x50, 0x56, 0x16, 0x00, 0x2c, 0x32, 0x50,
+      0x73, 0x13, 0x00, 0x00, 0x47, 0x3f, 0x32, 0x0a,
+	  0x03, 0x78, 0x7f, 0x07, 0x10, 0x58, 0x7d, 0x64,
+      0x14, 0x46, 0x77, 0x7f, 0x0f, 0x20, 0x20, 0x7c,
+	  0x49, 0x29, 0x0c, 0x60, 0x2e, 0x1f, 0x00, 0x40,
+      0x75, 0x13, 0x53, 0x18, 0x40, 0x7f, 0x3e, 0x00,
+	  0x60, 0x78, 0x27, 0x26, 0x31, 0x00, 0x7f, 0x79,
+      0x00, 0x40, 0x71, 0x4f, 0x4c, 0x62, 0x00, 0x7e,
+	  0x73, 0x01, 0x00, 0x63, 0x1f, 0x19, 0x45, 0x01,
+      0x7c, 0x67, 0x03, 0x00, 0x46, 0x3f, 0x32, 0x0a,
+	  0x03, 0x78, 0x4f, 0x07, 0x00, 0x0c, 0x7f, 0x64,
+      0x14, 0x06, 0x70, 0x1f, 0x0f, 0x00, 0x18, 0x7e,
+	  0x49, 0x29, 0x0c, 0x60, 0x3f, 0x1e, 0x00, 0x30,
+      0x7c, 0x13, 0x53, 0x18, 0x40, 0x7f, 0x3c, 0x00,
+	  0x60, 0x78, 0x27, 0x26, 0x31, 0x00, 0x7f, 0x79,
+      0x00, 0x40, 0x71, 0x4f, 0x4c, 0x62, 0x00, 0x7e,
+	  0x73, 0x01, 0x00, 0x63, 0x1f, 0x19, 0x45, 0x01,
+      0x7c, 0x67, 0x03, 0x00, 0x46, 0x3f, 0x32, 0x0a,
+	  0x03, 0x78, 0x4f, 0x07, 0x00, 0x0c, 0x7f, 0x64,
       0x14, 0x06, 0x70, 0x1f, 0x0f, (byte)0xf7
     };
 
-    debug("Effect Channel     = " + getBits(bytes, QSConstants.HEADER, (0 << 3) + 4, 4, false));
-    String patchName = getChars(bytes, QSConstants.HEADER, QSConstants.MIX_NAME_START, QSConstants.MIX_NAME_LENGTH);
+    debug("Effect Channel     = " +
+		  getBits(bytes, QSConstants.HEADER, (0 << 3) + 4, 4, false));
+    String patchName = getChars(bytes, QSConstants.HEADER,
+								QSConstants.MIX_NAME_START,
+								QSConstants.MIX_NAME_LENGTH);
     debug("PatchName          = \"" + patchName + "\"");
 
-    setChars("ZellynHunter", bytes, QSConstants.HEADER, QSConstants.MIX_NAME_START, QSConstants.MIX_NAME_LENGTH);
-    patchName = getChars(bytes, QSConstants.HEADER, QSConstants.MIX_NAME_START, QSConstants.MIX_NAME_LENGTH);
+    setChars("ZellynHunter", bytes, QSConstants.HEADER,
+			 QSConstants.MIX_NAME_START, QSConstants.MIX_NAME_LENGTH);
+    patchName = getChars(bytes, QSConstants.HEADER, QSConstants.MIX_NAME_START,
+						 QSConstants.MIX_NAME_LENGTH);
     debug("PatchName          = \"" + patchName + "\"");
 
     TRACE = oldTrace;
   }
 
   /**
-   * Given a compressed sysex, retrieve a run of consecutive bits as an integer.
+   * Given a compressed sysex, retrieve a run of consecutive bits as an integer
    * @param sysex the actual bytes of the sysex message
-   * @param headerCount how many bytes of the sysex are used up as a header - compression starts after the header
-   * @param startBit the starting (most significant) bit (least significant 3 bits specify bit position)
+   * @param headerCount how many bytes of the sysex are used up as a header -
+   *                    compression starts after the header
+   * @param msBit the starting (most significant) bit
    * @param bitSize the number of bits to return - 1 to 8
    * @param signed if true, take the two's complement of the result
    * @return int the value of the requested bits
    */
-  public static int getBits(byte[] sysex, int headerCount, int startBit, int bitSize, boolean signed)
+  public static int getBits(byte[] sysex, int headerCount, int msBit,
+							int bitSize, boolean signed)
   {
     int returnVal = 0;
 
     // calculate ending bit
-    int endBit = startBit - bitSize + 1;
+    int lsBit = msBit - bitSize + 1;
     // calculate which byte the bits fall in
-    int startByte = startBit / 7;
-    int endByte = endBit / 7;
+    int msByte = msBit / 7;
+    int lsByte = lsBit / 7;
     // calculate where in the byte the bits fall
-    int startBitPos = startBit % 7;
-    int endBitPos = endBit % 7;
+    int msBitPos = msBit % 7;
+    int lsBitPos = lsBit % 7;
 
-    trace("startBit    = " + startBit);
-    trace("endBit      = " + endBit);
-    trace("startByte   = " + startByte);
-    trace("endByte     = " + endByte);
-    trace("startBitPos = " + startBitPos);
-    trace("endBitPos   = " + endBitPos);
+    trace("msBit       = " + msBit);
+    trace("lsBit       = " + lsBit);
+    trace("msByte      = " + msByte);
+    trace("lsByte      = " + lsByte);
+    trace("msBitPos    = " + msBitPos);
+    trace("lsBitPos    = " + lsBitPos);
 
     // check if the value spans two bytes
-    if (startByte!=endByte)
+    if (msByte!=lsByte)
     {
       trace("Calculating top part");
       // grab the bits of the top part, shift up above lower part
 
-      returnVal = (sysex[headerCount + startByte] & 0xff) << (7 - endBitPos);
-      trace("Sysex byte  = " + sysex[headerCount + startByte]);
-      trace("& 0xff      = " + (sysex[headerCount + startByte] & 0xff));
-      trace("8-endBitPos = " + (7 - endBitPos));
+      returnVal = (sysex[headerCount + msByte] & 0xff) << (7 - lsBitPos);
+      trace("Sysex byte  = " + sysex[headerCount + msByte]);
+      trace("& 0xff      = " + (sysex[headerCount + msByte] & 0xff));
+      trace("7-lsBitPos  = " + (7 - lsBitPos));
       trace("returnVal   = " + returnVal);
     }
 
     trace("Calculating bottom part");
     // get the lower part, shift it down, and OR it in
-    returnVal |= (sysex[headerCount + endByte] & 0xff) >> (endBitPos);
-    trace("Sysex byte  = " + sysex[headerCount + endByte]);
-    trace("& 0xff      = " + (sysex[headerCount + endByte] & 0xff));
-    trace(">>endBitPos = " + ((sysex[headerCount + endByte] & 0xff) >> (endBitPos)));
+    returnVal |= (sysex[headerCount + lsByte] & 0xff) >> (lsBitPos);
+    trace("Sysex byte  = " + sysex[headerCount + lsByte]);
+    trace("& 0xff      = " + (sysex[headerCount + lsByte] & 0xff));
+    trace(">>lsBitPos  = " +
+		  ((sysex[headerCount + lsByte] & 0xff) >> (lsBitPos)));
     trace("returnVal   = " + returnVal);
 
     // mask out only the bytes within the length we want
@@ -164,43 +182,45 @@ public class SysexRoutines
   }
 
   /**
-   * Given a compressed sysex, set a run of consecutive bits to an integer value.
+   * Given a compressed sysex, set a run of consecutive bits to a value
    * @param value the integer value to set the bits to
    * @param sysex the actual bytes of the sysex message
-   * @param headerCount how many bytes of the sysex are used up as a header - compression starts after the header
-   * @param startBit the starting (most significant) bit (least significant 3 bits specify bit position)
+   * @param headerCount how many bytes of the sysex are used up as a header -
+   *                    compression starts after the header
+   * @param msBit the starting (most significant) bit
    * @param bitSize the number of bits to return - 1 to 8
    * @return int the value of the requested bits
    */
-  public static void setBits(int value, byte[] sysex, int headerCount, int startBit, int bitSize)
+  public static void setBits(int value, byte[] sysex, int headerCount,
+							 int msBit, int bitSize)
   {
     // calculate ending bit
-    int endBit = startBit - bitSize + 1;
+    int lsBit = msBit - bitSize + 1;
     // calculate which byte the bits fall in
-    int startByte = startBit / 7;
-    int endByte = endBit / 7;
+    int msByte = msBit / 7;
+    int lsByte = lsBit / 7;
     // calculate where in the byte the bits fall
-    int startBitPos = startBit % 7;
-    int endBitPos = endBit % 7;
+    int msBitPos = msBit % 7;
+    int lsBitPos = lsBit % 7;
 
-    trace("startBit    = " + startBit);
-    trace("endBit      = " + endBit);
-    trace("startByte   = " + startByte);
-    trace("endByte     = " + endByte);
-    trace("startBitPos = " + startBitPos);
-    trace("endBitPos   = " + endBitPos);
+    trace("msBit    = " + msBit);
+    trace("lsBit    = " + lsBit);
+    trace("msByte   = " + msByte);
+    trace("lsByte   = " + lsByte);
+    trace("msBitPos = " + msBitPos);
+    trace("lsBitPos = " + lsBitPos);
 
     // check if the value spans two bytes
-    if (startByte!=endByte)
+    if (msByte!=lsByte)
     {
       trace("Setting top part");
 
       // get just the top part
-      int topPart = value >> (7 - endBitPos);
+      int topPart = value >> (7 - lsBitPos);
       trace("top         = " + topPart);
 
       // mask the relevant bits: 2 ^ width - 1, for 'width' 1's
-      int mask = (1 << (startBitPos + 1)) - 1;
+      int mask = (1 << (msBitPos + 1)) - 1;
       trace("mask        = " + mask);
 
       // mask value in to cut off high sign bits if we're negative
@@ -212,17 +232,17 @@ public class SysexRoutines
       trace("reverse mask= " + mask);
 
       // clear out old value
-      sysex[headerCount + startByte] &= mask;
+      sysex[headerCount + msByte] &= mask;
 
       // write in new value
-      sysex[headerCount + startByte] |= topPart;
+      sysex[headerCount + msByte] |= topPart;
     }
 
     trace("Setting bottom part");
 
     // calculate how many bits the bottom part uses
     int bottomLen;
-    if (startByte==endByte)     // no split
+    if (msByte==lsByte)     // no split
     {
       // it's all in one byte, so it's just the length
       bottomLen = bitSize;
@@ -230,7 +250,7 @@ public class SysexRoutines
     else                        // split
     {
       // it's everything up to the end of the bottom part
-      bottomLen = 7 - endBitPos;
+      bottomLen = 7 - lsBitPos;
     }
 
     // mask is as wide as 'width' 1's, so use 2 ^ width - 1
@@ -242,11 +262,11 @@ public class SysexRoutines
     trace("bottom part = " + bottomPart);
 
     // shift the value up to the correct position
-    bottomPart <<= endBitPos;
+    bottomPart <<= lsBitPos;
     trace("and shifted = " + bottomPart);
 
     // shift the mask up to the correct position
-    mask <<= endBitPos;
+    mask <<= lsBitPos;
     trace("shifted mask= " + mask);
 
     // then reverse the mask - to clear bits
@@ -254,23 +274,26 @@ public class SysexRoutines
     trace("reverse mask= " + mask);
 
     // clear out old value
-    sysex[headerCount + endByte] &= mask;
+    sysex[headerCount + lsByte] &= mask;
 
     // write in new value
-    sysex[headerCount + endByte] |= bottomPart;
+    sysex[headerCount + lsByte] |= bottomPart;
 
   }
 
 
   /**
-   * Given a compressed sysex, retrieve a run of consecutive characters, starting at the given bit
+   * Given a compressed sysex, retrieve a run of consecutive characters,
+   * starting at the given bit
    * @param sysex the actual bytes of the sysex message
-   * @param headerCount how many bytes of the sysex are used up as a header - compression starts after the header
-   * @param startBit the starting (most significant) bit (least significant 3 bits specify bit position)
+   * @param headerCount how many bytes of the sysex are used up as a header -
+   *                    compression starts after the header
+   * @param msBit the starting (most significant) bit
    * @param count the number of characters to return
    * @return the uncompressed and decoded characters
    */
-  public static String getChars(byte[] sysex, int headerCount, int startBit, int count)
+  public static String getChars(byte[] sysex, int headerCount, int msBit,
+								int count)
   {
 
     StringBuffer buf = new StringBuffer();
@@ -278,7 +301,7 @@ public class SysexRoutines
 
     for (int i=0; i<count; i++)
     {
-      charCode = getBits(sysex, headerCount, startBit + i*7, 7, false);
+      charCode = getBits(sysex, headerCount, msBit + i*7, 7, false);
 
       buf.append(decodeChar(charCode));
     }
@@ -287,15 +310,18 @@ public class SysexRoutines
   }
 
   /**
-   * Given a compressed sysex, set a run of consecutive characters, starting at the given bit.
+   * Given a compressed sysex, set a run of consecutive characters,
+   * starting at the given bit.
    * If chars has more characters than count, set only count characters
    * @param chars the characters to set
    * @param sysex the actual bytes of the sysex message
-   * @param headerCount how many bytes of the sysex are used up as a header - compression starts after the header
-   * @param startBit the starting (most significant) bit (least significant 3 bits specify bit position)
+   * @param headerCount how many bytes of the sysex are used up as a header -
+   *                    compression starts after the header
+   * @param msBit the starting (most significant) bit
    * @param count the maximum number of characters to set
    */
-  public static void setChars(String chars, byte[] sysex, int headerCount, int startBit, int count)
+  public static void setChars(String chars, byte[] sysex, int headerCount,
+							  int msBit, int count)
   {
     int length = chars.length();
     int alesisCharCode;
@@ -304,13 +330,14 @@ public class SysexRoutines
     {
       alesisCharCode = encodeChar(chars.charAt(i));
       
-      setBits(alesisCharCode, sysex, headerCount, startBit + i*7, 7);
+      setBits(alesisCharCode, sysex, headerCount, msBit + i*7, 7);
     }
 
   }
 
   /**
-   * Given an Alesis character code for a character, return the character it represents
+   * Given an Alesis character code for a character, return the character it
+   * represents
    * @param charCode the code for the character, as stored in the Alesis
    * @return the char represented by charCode
    */
