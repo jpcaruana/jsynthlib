@@ -6,7 +6,7 @@ import javax.swing.event.*;
 import com.dreamfabric.DKnob;
 
 /**
-   Widget de type potentiometre rotatif.
+   A rotary knob type widget.
 */
 public class KnobLookupWidget extends KnobWidget {
 

@@ -7,19 +7,18 @@ import javax.swing.event.*;
 import com.dreamfabric.DKnob;
 
 /**
-   Widget de type potentiometre rotatif. Utilise la classe DKnob de
-   deamfabric qui se charge du dessin. Ce composant doit plutot etre
-   utilise pour les parametres qui n'ont pas besoin d'un ajustement
-   precis, et comportant beaucoup de valeurs.
+   A rotary knob widget. Uses the class DKnob by dreamfabric which
+   is responsible for drawing the widget. This component should
+   rather be used for parameters which do not need fine adjustment.
 
-   Il utilise les ToolTip pour afficher la valeur. Une version
-   precedente utilisait un textfield pour cela mais le composant
-   obtenu n'etait pas coherent, et etait difficile a placer.
+   A tooltip is used to display the current value. A prior version
+   used a text field instead, but the resulting component was
+   inconsistent and diffucult to place.
 
    @author denis queffeulou mailto:dqueffeulou@free.fr
 */
 public class KnobWidget extends SysexWidget {
-    /** decalage a l'affichage */
+    /** display offset */
     private int mBase;
     protected DKnob mKnob = new DKnob();
     //protected JLabel mLabel;
@@ -27,7 +26,7 @@ public class KnobWidget extends SysexWidget {
     private JLabel mLabelImage;
 
     /**
-       Constructeur special pour les classes derivees.
+       Special constructor for derived classes.
     */
     protected KnobWidget(String l, Patch p, int min, int max,
 			 ParamModel ofs, SysexSender s) {
@@ -46,8 +45,8 @@ public class KnobWidget extends SysexWidget {
     }
 
     /**
-       Affiche une image a droite de la valeur.
-       @param aImages tableau d'images correspondant a chaque valeur.
+       Display an image to the right of the value.
+       @param aImages array of images corresponding to each value.
     */
     public KnobWidget(String l, Patch p, int min, int max, int base,
 		      ParamModel ofs, SysexSender s, ImageIcon[] aImages) {
@@ -57,9 +56,9 @@ public class KnobWidget extends SysexWidget {
         setupUI();
     }
 
-	/**
-		In order to get it public.
-	*/
+    /**
+       In order to get it public.
+    */
     public void setMinMax(int min, int max) {
 		super.setMinMax(min, max);
     }

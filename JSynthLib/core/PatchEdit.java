@@ -910,7 +910,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     }
 
-    // denis: mis en public toutes les classes Action
+    // denis: all Action classes made public
     static class ImportAction extends AbstractAction {
         public ImportAction(Map mnemonics) {
             super("Import...", null);
