@@ -70,6 +70,7 @@ public class Patch extends Object implements Serializable,Transferable
                     patchString.append ("0");
                patchString.append (intg.toHexString (sysex[i]&0xff));
             }
+        }
         StringBuffer driverString=new StringBuffer ();
         for ( int i2 =0;i2<PatchEdit.appConfig.deviceCount (); i2++)
         {
@@ -87,9 +88,8 @@ public class Patch extends Object implements Serializable,Transferable
                 }
             }
         }
-  }
         // Unkown patch, try to guess at least the manufacturer
-        comment=new StringBuffer("Probably a "+LookupManufacturer.get(sysex[1],sysex[2],sysex[3])+" Patch");
+        comment=new StringBuffer("Probably a "+LookupManufacturer.get(sysex[1],sysex[2],sysex[3])+" Patch, Size: "+sysex.length);
         
     }
       
