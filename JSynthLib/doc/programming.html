@@ -28,7 +28,8 @@
 <font face="Verdana,arial,helvetica" size="-1">
 
 <h1>JSynthLib Programmer's Guide</h1>
-<p>Last modified:  $Date$</p>
+
+Last modified:  $Date$<p>
 
 Go to <a href="documentation.html">JSynthLib User's Guide</a>.
 
@@ -100,6 +101,8 @@ Go to <a href="documentation.html">JSynthLib User's Guide</a>.
 
 <h2><a name="common" href="#toc">I. Before we start...</a></h2>
 First a few words about writing code which will be shared by many developers.
+This is a project to which many people are joining to.
+Readability of code is very important.<p>
 
 Even if someone want write <strong>just</strong> a driver for his/her synth, the code will be read by others too.
 Maybe some changes are necessary since an API change or another developer want take a look how a special issue is solved.
@@ -125,17 +128,16 @@ Add javadoc on important members (methods and fields).
 <var>public</var> and </var>protected</var> member must be documented.
 
 <h3>I.c. Proper Use of Access Control Modifier (for core developers)</h3>
-This is important for codes under "core/".
-It would be much easier for programmers to write a driver if the methods and the fields were used properly.<br>
+This is especially important for codes under "core/".
+It would be much easier for programmers to write a driver if the
+methods and the fields were used properly.  If <code>private</code> or
+<code>protected</code> is used properly, for example, there is no need
+to grep all files to see how a method or a field is used.<p>
 
-Many classes make easy use of public or package (default) modifiers in files under "core/".
-If private or protected is used properly there is no need to grep all files to see how a method or a field is used.<p>
-
-Especially we have to be very careful to make a public (or package) field.
-If you really need to access it, consider using protected or defining getFoo() or setFoo() method.<p>
-
-This is a project to which many people are joining to.
-Readability of code is very important.<p>
+Especially we have to be very careful to make a <code>public</code>
+(or package) field.  If you really need to access it, consider
+defining a getter or setter method (ex. <var>getFoo()</var> or
+<var>setFoo()</var>) or using <code>protected</code>.<p>
 
 <h3>I.d. Code Sharing</h3>
 
@@ -945,39 +947,154 @@ and <b>{@link core.TreeWidget}</b> are also provided.
 <h4><a name="modelsender" href="#toc">III.h.3. Param Model and Sender</a></h4>
 
 Param Model (Parameter Model) and Sender are objects which communicate
-data between the synth and the SysexWidgets.
+data between the synth and the SysexWidgets.  For example every time a
+SysexWidget moves, its Param Model ({@link
+core.SysexWidget.IParamModel#set}) gets told and then Sender ({@link
+core.SysexWidget.ISender#send}) does.
 
-<p>A <strong>Sender</strong> is a class object which implements
-{@link core.SysexWidget.ISender} interface.
-Every time a SysexWidget moves, its Sender
-gets told. The job of the Sender is to send a Sysex string to the
-synth informing it of the change. Usually a Single Editor will have
-one or more Sender. Sometimes more than one is used because a synth
-uses more than one method to transfer the data. Here's an example of a
-Sender which extends {@link core.SysexSender} class from
-the YamahaTX81z Editor:
+<p>We want to keep track
+of the changes to the patch so that when we next call up this patch
+the changes are there. We also want to be able to set the SysexWidgets
+to the correct values for a particular patch when the Single Editor is
+opened. This is what the <strong>Param Model (Parameter Model)</strong>
+is for.
+
+<p>Param Model is a class object which implements {@link
+core.SysexWidget.IParamModel} interface.  The interface provides two
+method, {@link core.SysexWidget.IParamModel#set} and {@link
+core.SysexWidget.IParamModel#get}.  They just read (get) and write
+(set) a parameter value.
+
+<p>The default Param Model (constructor <code>ParamModel(Patch patch,
+int offset)</code>) is used by the YamahaTX81z editor. Its constructor
+takes two parameters, the <var>patch</var> being edited and the
+<var>offset</var> into the patch of the value.
+
+<p>Sometimes the default Param Model can be used, other times it is
+either necessary or more convenient to subclass ParamModel to make
+your own Model. Here is a simple example from the KawaiK5000 Editor:
 
 <pre>
-    class VcedSender extends SysexSender {
-        int parameter;
-        byte[] b = new byte [7];
-        public VcedSender(int param) {
-            parameter = param;
-            b[0] = (byte) 0xF0; b[1] = (byte) 0x43;
-            b[3] = (byte) 0x12; b[4] = (byte) parameter; b[6] = (byte) 0xF7;
+    class K5kSrcModel extends ParamModel {
+        public K5kSrcModel(Patch patch, int src, int offset) {
+            super(patch, 91 - 1 + offset + 86 * (src - 1));
         }
-        public byte[] generate (int value) {
-            b[2] = (byte) (16 + channel - 1); b[5] = (byte) value;
+    }
+</pre>
+
+This overrides only constructor to make the calculation of offset easier.
+
+<p>Here is a more complex example from the KawaiK4 Editor:
+<pre>
+    class K4Model extends ParamModel {
+        private int bitmask;
+        private int mult;
+        ...
+        public K4Model(Patch p, int offset, int bitmask) {
+            super(p, offset + 8);
+            this.bitmask = bitmask;
+            if ((bitmask & 1) == 1)
+                mult = 1;
+            else if ((bitmask & 2) == 2)
+                mult = 2;
+            else if ((bitmask & 4) == 4)
+                mult = 4;
+            else if ((bitmask & 8) == 8)
+                mult = 8;
+            else if ((bitmask & 16) == 16)
+                mult = 16;
+            else if ((bitmask & 32) == 32)
+                mult = 32;
+            else if ((bitmask & 64) == 64)
+                mult = 64;
+            else if ((bitmask & 128) == 128)
+                mult = 128;
+        }
+    
+        public void set(int i) {
+            patch.sysex[ofs] = (byte) ((i * mult) + (patch.sysex[ofs] & (~bitmask)));
+        }
+    
+        public int get() {
+            return ((patch.sysex[ofs] & bitmask) / mult);
+        }
+    }
+</pre>
+
+<p>In the case of the KawaiK4, we couldn't just use the default
+ParamModel class, because some Kawai K4 parameters are bitmasks stored
+in the same byte as other parameters. The above class K4Model takes
+care of deciphering the bitmasks. <kbd>MIDIboxFMModel.java</kbd> is
+another example which uses bitmasks.
+
+<p>You can also implement SysexWidget.IParamModel directly if you
+don't need <code>patch</code> or <code>ofs</code> field. See
+AlesisDMProModel as an exmaple.
+
+<p>A <strong>Sender</strong> sends a Sysex message generated by Param
+Model to the synth informing it of the change.  It is a class object
+which implements {@link core.SysexWidget.ISender} interface.  The
+interface has only one method, {@link core.SysexWidget.ISender#send}.
+
+<p>Here's an example of a Sender from the Kawai K4 Editor.  It
+extends {@link core.SysexSender} class which implements {@link
+core.SysexWidget.ISender}:
+
+<pre>
+    class K4Sender extends SysexSender {
+        private int source;
+    
+        private byte[] b = {
+                (byte) 0xF0, 0x40, 0, 0x10, 0x00,
+                0x04, 0, 0, 0, (byte) 0xF7
+        };
+    
+        public K4Sender(int parameter, int source) {
+            this.source = source;
+            b[6] = (byte) parameter;
+        }
+    
+        public K4Sender(int parameter) {
+            this.source = 0;
+            b[6] = (byte) parameter;
+        }
+    
+        public byte[] generate(int value) {
+            b[2] = (byte) (channel - 1);
+            b[7] = (byte) ((value / 128) + (source * 2));
+            b[8] = (byte) (value & 127);
             return b;
         }
     }
 </pre>
 
-The TX81z has two Senders, VcedSender (shown above) and AcedSender
-(not shown), because it uses two slightly different methods to transfer
-two types of data (called Vced and Aced in the TX81z manual).
+This sender has two constructors.  One has a parameter
+<code>source</code> and the other does not.
 
-<p>The constructor for a SysexSender takes a parameter representing which
+<p>Here is another example of RolandJV80SystemSetupEditor which uses
+{@link core.SysexSender#SysexSender(String)} constructor.
+
+<pre>
+    static class JVSender extends SysexSender {
+        int offset;
+
+        // retrieve default from patch
+        public JVSender(int offset) {
+            super("F041@@461200000000**00F7");
+            this.offset = offset;
+        }
+
+        protected byte[] generate(int value) {
+            byte[] data = super.generate(value);
+            data[JV80Constants.ADDR4_IDX] = (byte) offset;
+            JV80Constants.calculateChecksum(data, 1);
+            return data;
+        }
+    }
+</pre>
+
+<p>The constructor for a SysexSender takes a String parameter
+representing which
 parameter a particular instance of the Sender should control and
 creates a sysex message containing all necessary information except
 for the data value to be transmitted and the channel (Device ID) to transmit
@@ -986,63 +1103,20 @@ the <var>generate</var> method of the SysexSender gets called with the value to
 send. The generate function simply puts the value and channel into the
 message and returns it.
 
-<p>In addition to sending changes to the synth, we want to keep track
-of the changes to the patch so that when we next call up this patch
-the changes are there. We also want to be able to set the SysexWidgets
-to the correct values for a particular patch when the Single Editor is
-opened. This is what the <strong>Param Model (Parameter Model)</strong>
-is for.
+<p>RolandTD6.RolandDT1Sender is an example which implements {@link
+core.SysexWidget.ISender} directly without extending {@link
+core.SysexSender}.  It is little complexed to support generic Roland
+DT1 (Data Transfer) message.
 
-<p>Param Model is a class object which implements
-{@link core.SysexWidget.IParameter} interface.  The default Param Model,
-defined by {@link core.ParamModel} class, is used by the YamahaTX81z editor. Its
-constructor takes two parameters, the <var>patch</var> being edited
-and the <var>offset</var> into the patch of the
-value. Sometimes the default can be used, other times it is either
-necessary or more convenient to subclass ParamModel to make your own
-Model. Here's an example from the KawaiK4 Editor:
+<p>Often a Single Editor will have one or more Param Model and/or
+Sender. Sometimes more than one is used because a synth may use more
+than one method to transfer the data.
 
-<pre>
-    class K4Model extends ParamModel {
-        public int bitmask;
-        public int mult;
-        public K4Model(Patch p, int o) {
-            ofs = o + 8; patch = p; bitmask = 255; mult = 1;
-        }
-        public K4Model(Patch p, int o, int b) {
-            ofs = o + 8; patch = p; bitmask = b;
-            if ((bitmask&  1) ==   1) mult =   1; else
-            if ((bitmask&  2) ==   2) mult =   2; else
-            if ((bitmask&  4) ==   4) mult =   4; else
-            if ((bitmask&  8) ==   8) mult =   8; else
-            if ((bitmask& 16) ==  16) mult =  16; else
-            if ((bitmask& 32) ==  32) mult =  32; else
-            if ((bitmask& 64) ==  64) mult =  64; else
-            if ((bitmask&128) == 128) mult = 128;
-        }
-        public void set(int i) {
-            patch.sysex[ofs] = (byte) ((i*mult) + (patch.sysex[ofs]&(~bitmask)));
-        }
-        public int get() {
-            return ((patch.sysex[ofs]&bitmask)/mult);
-        }
-    }
-</pre>
-
-<p>In the case of the KawaiK4, we couldn't just use default Param Model, because
-some Kawai K4 parameters are bitmasks stored in the same byte as other
-parameters. The above class K4Model, takes care of deciphering the
-bitmasks. The Model is designed to take the same two parameters as
-ParamModel. It implements two functions in addition to its
-constructor. the set function is given a value and must set its
-parameter to the value. the get must return the value of its
-parameter.
-
-<p>Note how the Param Models and Senders are used in the addWidget functions in
-the various editors. addWidget doesn't care if you use the default
+<p>Note how the Param Models and Senders are used in
+the various editors.  A SysexWidget doesn't care if you use the default
 Param Model or if you implement your own. This makes the
 SysexWidgets much more extensible. They can be used without needing to know
-how exactly the data is supposed to be accessed. The Model and Sender
+how exactly the data is supposed to be accessed. The Param Model and Sender
 takes care of that.
 
 <p>This all probably sounds more complex than it really is, just take a
