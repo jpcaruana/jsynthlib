@@ -364,10 +364,11 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         for (int i = start; i <= end; i++)
             sum += p.sysex[i];
 	// Here are examples of checksum caluculation
-        p.sysex[ofs] = (byte) (sum & 0xff);
-        p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0xff);
-        p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
-        p.sysex[ofs] = (byte) (p.sysex[ofs] & 0xff);   //to ensure that checksum is in range 0-127;
+// 	p.sysex[ofs] = (byte) (sum & 0x7f);
+// 	p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0x7f);
+// 	p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
+// 	p.sysex[ofs] = (byte) (p.sysex[ofs] & 0x7f);   //to ensure that checksum is in range 0-127;
+	p.sysex[ofs] = (byte) ((~sum + 1) & 0x7f);
         ErrorMsg.reportStatus("Checksum is now " + p.sysex[ofs]);
     }
 
