@@ -45,11 +45,12 @@ public abstract class MidiWrapper {
 	 * @param sysex byte array
 	 * @param length length of data to dump
 	 */
+	/*
 	public void logMidi(int port,boolean in,byte []sysex,int length) {
 		if ((core.PatchEdit.midiMonitor!=null) && core.PatchEdit.midiMonitor.isVisible())
 			core.PatchEdit.midiMonitor.log(port,in,sysex,length);
 	}
-
+	*/
 	/**
 	 * Dump <code>msg</code> MidiMessage to MIDI Monitor Window
 	 * with port number information and input/output information.
@@ -58,6 +59,7 @@ public abstract class MidiWrapper {
 	 * @param in true for input, false for output
 	 * @param msg MidiMessage
 	 */
+	/*
 	public void logMidi(int port,boolean in, MidiMessage msg) {
 		if ((core.PatchEdit.midiMonitor!=null) && core.PatchEdit.midiMonitor.isVisible()) {
 			byte sysex[] = msg.getMessage();
@@ -65,17 +67,18 @@ public abstract class MidiWrapper {
 			core.PatchEdit.midiMonitor.log(port,in,sysex,length);
 		}
 	}
-
+	*/
 	/**
 	 * Output string to MIDI Monitor Window.
 	 *
 	 * @param s string to be output
 	 */
+	/*
 	public void logMidi(String s) {
 		if ((core.PatchEdit.midiMonitor!=null) && core.PatchEdit.midiMonitor.isVisible())
 			core.PatchEdit.midiMonitor.log(s);
 	}
-
+	*/
 	/**
 	 * This allows you to send JavaSound-compatible MidiMessage objects. - emenaker 2003.03.22
 	 *

@@ -140,7 +140,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		if (outStream[port]!=null) {
 			outStream[port].write (sysex,0,length);
 			outStream[port].flush ();
-			logMidi(port,false,sysex,length);
+			MidiUtil.logOut(port, sysex, length);
 		}
 	}
 
@@ -245,7 +245,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 
 		// pop the oldest message
 		MidiMessage msg = (MidiMessage) list.remove(0);
-		logMidi(port, true, msg);
+		MidiUtil.logIn(port, msg);
 		return msg;
 	}
 

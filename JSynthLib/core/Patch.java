@@ -462,18 +462,12 @@ public class Patch extends Object
     /**
      * Dump byte data array.  Only for debugging.
      *
-     * @return string like "[2,3] f0 a3 00 "
+     * @return string like "[2,3] f0 a3 00"
      */
     public String toString() {
 	StringBuffer buf = new StringBuffer();
-	buf.append("[" + deviceNum + "," + driverNum + "] ");
-	/*
-	for (int i = 0; i < sysex.length; i++) {
-	    if ((int) (sysex[i] & 0xff) < 0x10)
-		buf.append("0");
-	    buf.append(Integer.toHexString((int) (sysex[i] & 0xff)) + " ");
-	}
-	*/
+	buf.append("[" + deviceNum + "," + driverNum + "] "
+		   + MidiUtil.hexDumpOneLine(sysex, 0, -1, 20));
 	return buf.toString();
     }
 }

@@ -127,6 +127,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 			oData.addRawData(sysex, 0, length);
 			MIDISysexSendRequest oSysex = new MIDISysexSendRequest(oOut, oData);
 			oSysex.send(MacOSXMidiWrapper.this);
+			MidiUtil.logOut(port, sysex, length);
 		}
 	}
 
@@ -277,7 +278,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 			}
 		}
 		*/
-		logMidi(port, true, msg);
+		MidiUtil.logIn(port, msg);
 		return msg;
 	}
 

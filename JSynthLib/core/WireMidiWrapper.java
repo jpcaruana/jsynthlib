@@ -174,8 +174,8 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 	final int BUFSIZE = 0;
 	if (BUFSIZE == 0) {
 	    msg.setMessage(sysex, size);
-	    logMidi(port, false, sysex, size);
 	    output.send(msg, -1);
+	    MidiUtil.logOut(port, msg);
 	} else {
 	    byte[] tmpArray = new byte[BUFSIZE + 1];
 	    for (int i = 0; size > 0; i += BUFSIZE, size -= BUFSIZE) {
@@ -189,8 +189,8 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 		    System.arraycopy(sysex, i, tmpArray, 1, s);
 		    msg.setMessage(tmpArray, ++s);
 		}
-		logMidi(port, false, tmpArray, s);
 		output.send(msg, -1);
+		MidiUtil.logOut(port, msg);
 	    }
 	}
     }
@@ -278,7 +278,7 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 
 	// pop the oldest message
 	MidiMessage msg = (MidiMessage) list.remove(0);
-	logMidi(port, true, msg);
+	MidiUtil.logIn(port, msg);
 	return msg;
     }
 

@@ -8,7 +8,7 @@ import javax.swing.*;
 /**
  * @author Emenaker - 2003.03.20
  *
- * This class is for running tests on the Midi subsystem
+ * This class is for running tests on the MIDI subsystem
  */
 public class MidiTest implements Runnable {
 
@@ -32,8 +32,7 @@ public class MidiTest implements Runnable {
 				       "When you press \"OK\", a variety of MIDI messages will\n" +
 				       "be sent from the OUT to the IN to make sure that they\n" +
 				       "transferred properly. This process usually takes about\n" +
-				       "5 to 10 seconds, so be patient.\n" +
-				       "NOTE: This test is still under development.");
+				       "5 to 10 seconds, so be patient.\n");
 
 		try {
 			Vector msgList = getMidiMessages();
@@ -113,11 +112,11 @@ public class MidiTest implements Runnable {
 					return;
 				} else {
 					ErrorMsg.reportError("Error",
-							     "Data Compare Error:\n"
-							     + "received data (" + inmsg.getLength() + " bytes)\n"
-							     + messageToString(inmsg) + "\n"
-							     + "expected data (" + msg.getLength() + " bytes)\n"
-							     + messageToString(msg));
+							     "Data Compare Error:"
+							     + "\nreceived data: "
+							     + MidiUtil.midiMessageToString(inmsg)
+							     + "\nexpected data: "
+							     + MidiUtil.midiMessageToString(msg));
 					throw new Exception("Data mismatch");
 				}
 			} catch (MidiWrapper.TimeoutException e) {
@@ -258,6 +257,7 @@ public class MidiTest implements Runnable {
 	 * unless it has 16 values in it).
 	 */
 	//- emenaker 2003.03.25
+	/*
 	public static String messageToString(MidiMessage msg) {
 		String str = new String();
 		byte[] msgarray = msg.getMessage();
@@ -270,5 +270,6 @@ public class MidiTest implements Runnable {
 		}
 		return(str);
 	}
+	*/
 }
 //(setq c-basic-offset 8)

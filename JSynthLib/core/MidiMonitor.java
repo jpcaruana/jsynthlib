@@ -95,7 +95,7 @@ public class MidiMonitor extends JDialog
 	jt.replaceSelection(s);
 	jt.setEditable(false);
     }
-
+    /*
     void log (int port,boolean in, byte []sysex,int length)
     {
 	log("Port: " + port + (in ? " RECV " : " XMIT ")
@@ -112,4 +112,5 @@ public class MidiMonitor extends JDialog
 	}
 	return s.toString();
     }
+    */
 }
