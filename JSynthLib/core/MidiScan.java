@@ -108,11 +108,11 @@ public class MidiScan extends Thread {
 				    ErrorMsg.reportStatus(e);
 				    continue;
 				}
-	
+
 				// clear all input queue
 				for (int i = 0; i < maxin; i++)
 				    MidiUtil.clearSysexInputQueue(i);
-	
+
 				// send Inquiry ID Sysex Message
 		 		try {
 				    MidiUtil.send(rcvr, inqMsg);
@@ -133,7 +133,7 @@ public class MidiScan extends Thread {
 				    //ErrorMsg.reportStatus("    in port : " + i);
 				    if (MidiUtil.isSysexInputQueueEmpty(i))
 						continue;
-	
+
 				    //ErrorMsg.reportStatus("    Message Received");
 				    SysexMessage msg;
 				    try {
@@ -150,10 +150,14 @@ public class MidiScan extends Thread {
 						continue;
 				    byte[] answerData = msg.getMessage();
 				    // check, whether it is really an inquiry response
+				    //
+				    // The (answerData[2] == 0x06) and (answerData[3] == 0x02) parts
+				    // are a hack that is needed e.g. for the Waldorf Microwave 2
+				    // which does not obey the MIDI specification
 				    if (((answerData[0] & 0xff) == 0xf0)
 						&& (answerData[1] == 0x7e)
 						&& ( (answerData[2] == 0x06) || (answerData[3] == 0x06))
-						&& ( (answerData[3] == 0x02) || (answerData[4] == 0x02)) ) 
+						&& ( (answerData[3] == 0x02) || (answerData[4] == 0x02)) )
 					{
 						// Look in all loaded modules
 						checkResponseData(answerData, sysexSize, j, i, devID);
@@ -204,7 +208,7 @@ public class MidiScan extends Thread {
 				    ErrorMsg.reportStatus("MidiOut: " + midiout
 							  + ", MidiIn: " + midiin
 							  + ", devID: " + devID);
-	
+
 				    useDevice.setPort(midiout);
 				    useDevice.setInPort(midiin);
 				    useDevice.setDeviceID(devID + 1);
@@ -212,7 +216,7 @@ public class MidiScan extends Thread {
 						pb.setNote("Found " + useDevice.getManufacturerName()
 						   + " " + useDevice.getModelName());
 				}
-	
+
 				found = true;
 				model.fireTableDataChanged();
 		    }
@@ -236,7 +240,7 @@ public class MidiScan extends Thread {
 				if ((0xff & (int) answerData[x]) < 0x10)
 				    report += "0";
 				report += Integer.toHexString(0xff & (int) answerData[x]);
-				if ((answerData[x] & 0xff) == 0xf7) 
+				if ((answerData[x] & 0xff) == 0xf7)
 					break;
 		    }
 		    report += "\n";
