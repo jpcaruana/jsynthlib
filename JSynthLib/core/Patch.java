@@ -359,15 +359,12 @@ public class Patch extends Object
 
     public boolean isDataFlavorSupported(final DataFlavor p1) {
         // System.out.println("isDataFlavorSupported "+driverNum);
-        return p1.equals(new DataFlavor(getDriver().getClass(),
-					getDriver().toString()));
+        return p1.match(PatchTransferHandler.PATCH_FLAVOR);
     }
 
     public DataFlavor[] getTransferDataFlavors() {
         // System.out.println("getTransferDataFlavors "+driverNum);
-        DataFlavor[] df = new DataFlavor[1];
-	df[0] = new DataFlavor(getDriver().getClass(),
-			       getDriver().toString());
+        DataFlavor[] df = { PatchTransferHandler.PATCH_FLAVOR };
         return df;
     }
 

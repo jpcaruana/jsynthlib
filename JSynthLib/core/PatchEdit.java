@@ -14,6 +14,8 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import javax.sound.midi.*;
+import java.awt.datatransfer.*;
+import javax.swing.event.*;
 
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
@@ -30,7 +32,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
     public static WaitDialog waitDialog; // define showWaitDialog() and hideWaitDialog()
 
-    static Patch Clipboard;
     static JPopupMenu menuPatchPopup; // define showMenuPatchPopup()
     static javax.swing.Timer echoTimer;
 
@@ -273,6 +274,21 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         menuPatch.add(newPatchAction);
         menuPatch.add(extractAction);
         menuBar.add(menuPatch);
+	menuPatch.addMenuListener(new MenuListener() {
+		Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+		public void menuCanceled(MenuEvent e) {}
+		public void menuDeselected(MenuEvent e) {}
+		public void menuSelected(MenuEvent e) {
+		    try {
+			JSLFrame f = JSLDesktop.getSelectedFrame();
+			boolean b = f.canImport(c.getContents(this)
+						.getTransferDataFlavors());
+			pasteAction.setEnabled(b);
+		    } catch (Exception ex) {
+			pasteAction.setEnabled(false);
+		    }
+		}
+	    });
 
 	// create "Window" menu
 	JMenu menuWindow = JSLDesktop.createWindowMenu();
@@ -498,7 +514,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     }
 
     /** This one saves a Library to Disk */
-    private static void saveFrame() {
+    static void saveFrame() {
 	File fn = null;
 	try {
 	    JSLFrame oFrame = JSLDesktop.getSelectedFrame();
@@ -1139,11 +1155,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		Patch p = Clipboard;
 		NewPatchDialog np = new NewPatchDialog(PatchEdit.getInstance());
-		np.show();
-		((PatchBasket) JSLDesktop.getSelectedFrame()).PastePatch();
-		Clipboard = p;
+		np.setVisible(true);
+		((PatchBasket) JSLDesktop.getSelectedFrame()).PastePatch(np.getNewPatch());
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to create this new patch.", ex);
 	    }
@@ -1324,6 +1338,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     private static void beginEcho() {
         echoTimer = new javax.swing.Timer(5, new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {
+		    Patch patch;
+
 		    try {
 			//FIXME there is a bug in the javaMIDI classes
 			//so this routine gets the input messages from
@@ -1335,18 +1351,18 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 			    while (PatchEdit.MidiIn.messagesWaiting(mstPort) > 0) {
  				MidiMessage msg = PatchEdit.MidiIn.readMessage(mstPort);
 				ErrorMsg.reportStatus("beginEcho: " + msg);
-				Patch p = PatchEdit.Clipboard; // save Clipboard
 				// When no frame is selected this code cose error. Hiroo
 				if (JSLDesktop.getSelectedFrame() instanceof PatchBasket
 				    && (!(JSLDesktop.getSelectedFrame() instanceof PatchEditorFrame))) {
 				    if (JSLDesktop.getSelectedFrame() instanceof LibraryFrame
 					&& ((LibraryFrame) ((JSLDesktop.getSelectedFrame()))).table.getSelectedRowCount() == 0)
 					break; // Is this OK for master controller?
-				    ((PatchBasket) JSLDesktop.getSelectedFrame()).CopySelectedPatch();
+
+				    patch = ((PatchBasket) JSLDesktop.getSelectedFrame()).GetSelectedPatch();
 				} else
-				    Clipboard = ((PatchEditorFrame) JSLDesktop.getSelectedFrame()).p;
+				    patch = ((PatchEditorFrame) JSLDesktop.getSelectedFrame()).p;
 				if (msg.getStatus() == SysexMessage.SYSTEM_EXCLUSIVE) {
-				    PatchEdit.MidiOut.send(Clipboard.getDevice().getPort(),
+				    PatchEdit.MidiOut.send(ClipboardUtil.getPatch().getDevice().getPort(),
 							   (SysexMessage) msg);
 				} else {
 				    ShortMessage smsg = (ShortMessage) msg;
@@ -1360,13 +1376,12 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 					//do nothing for now
 				    } else {
 					if ((0x80 <= cmd) && (cmd < 0xF0)) { // MIDI channel Voice Message
-					    smsg.setMessage(cmd, Clipboard.getDevice().getChannel() - 1,
+					    smsg.setMessage(cmd, patch.getDevice().getChannel() - 1,
 							    smsg.getData1(), smsg.getData2());
 					}
-					PatchEdit.MidiOut.send(Clipboard.getDevice().getPort(), smsg);
+					PatchEdit.MidiOut.send(patch.getDevice().getPort(), smsg);
 				    }
 				}
-				PatchEdit.Clipboard = p; // restore Clipboard
 			    }
 			}
 		    } catch (Exception ex) {

@@ -23,6 +23,7 @@ public class NewPatchDialog extends JDialog
 {
     private JComboBox deviceComboBox;
     private JComboBox driverComboBox;
+    private Patch p;
 
     public NewPatchDialog(JFrame parent)
     {
@@ -90,8 +91,8 @@ public class NewPatchDialog extends JDialog
 		{
 		    Driver driver = (Driver) driverComboBox.getSelectedItem();
 
-		    PatchEdit.Clipboard = driver.createNewPatch();
-		    if (PatchEdit.Clipboard != null) {
+		    p = driver.createNewPatch();
+		    if (p != null) {
 			ErrorMsg.reportStatus("Bingo " + driver.toString());
 		    } else {
 			// If a driver does not override
@@ -143,6 +144,8 @@ public class NewPatchDialog extends JDialog
         int x = screenSize.width - size.width;
         this.setLocation(x,y);
     }
+
+    public Patch getNewPatch() { return p; }
 
     /**
      * Repopulate the Driver ComboBox with valid drivers after a Device change

@@ -72,6 +72,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	scroller = new JScrollPane(scrollPane);
 	getContentPane().add(scroller);
 	setSize(600, 400);
+	moveToDefaultLocation();
 
 	if (PatchEdit.newMidiAPI) {
 	    if (PatchEdit.appConfig.getFaderEnable())
@@ -174,10 +175,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void CopySelectedPatch() {
-	try {
-	    PatchEdit.Clipboard = (Patch) p.clone();
-	} catch (Exception e) {
-	}
+	ClipboardUtil.storePatch(p);
+    }
+    public Patch GetSelectedPatch() {
+	return p;
     }
 
     public void SendSelectedPatch() {
@@ -210,7 +211,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
     public void PastePatch() {
     }
-
+    public void PastePatch(Patch _p) {
+    }
     // end of PatchBasket methods
 
     /**

@@ -48,10 +48,8 @@ public class CrossBreedDialog extends JDialog {
 	                       public void actionPerformed(ActionEvent e) {
 			       try {
 			        PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-				Patch q=PatchEdit.Clipboard;
-				PatchEdit.Clipboard=crossBreeder.getCurrentPatch();
-				library.PastePatch();
-				PatchEdit.Clipboard=q;
+				Patch q = crossBreeder.getCurrentPatch();
+				library.PastePatch(q);
 			       }catch (Exception ex){JOptionPane.showMessageDialog(null, "Destination Library Must be Focused","Error", JOptionPane.ERROR_MESSAGE);}
 			       }});
         buttonPanel2.add(keep);

@@ -1,24 +1,13 @@
 package core;
 
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
+import java.io.*;
+import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.TableColumn;
+import java.util.ArrayList;
 
 /**
  * @version $Id$
@@ -29,11 +18,13 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
     private static int openFrameCount = 0;
     private static final int xOffset = 30, yOffset = 30;
     PatchListModel myModel;
-    DNDLibraryTable table;
-    private DNDLibraryTable table2;
+    JTable table;
+    private JTable table2;
     JLabel statusBar;
     private File filename;
     private boolean changed=false;  //has the library been altered since it was last saved?
+    // This transferhandler could be shared with scene's too.
+    protected static PatchTransferHandler pth = new PatchListTransferHandler();
 
     public LibraryFrame(File file)
     {
@@ -96,45 +87,12 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
                     }
                 }
 
-                if (JOptionPane.showConfirmDialog(null,"This Library may contain unsaved data.\nSave before closing?","Delete Duplicate Patches",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
+                if (JOptionPane.showConfirmDialog(null,"This Library may contain unsaved data.\nSave before closing?","Unsaved Data",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
 
-                if (getTitle().startsWith("Unsaved Library"))
-                {
-                    CompatibleFileDialog fc2 = new CompatibleFileDialog();
-                    ExtensionFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)", ".patchlib");
-                    fc2.addChoosableFileFilter(type1);
-                    fc2.setFileFilter(type1);
-                    if (fc2.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
-                    {
-                        File file = fc2.getSelectedFile();
-                        try
-                        {
-                            if (!file.getName().toUpperCase().endsWith(".PATCHLIB"))
-                                file=new File(file.getPath()+".patchlib");
+		moveToFront();
+		PatchEdit.saveFrame();
 
-                            if (file.isDirectory())
-                            { ErrorMsg.reportError("Error", "Can not save over a directory");
-                              return;
-                            }
 
-                            if (file.exists())
-
-                                if (JOptionPane.showConfirmDialog(null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-
-                            save(file);
-                        } catch (Exception ex)
-                        {
-                            ErrorMsg.reportError("Error", "Error saving File",ex);
-                        }
-                    }
-                    return;
-                }
-
-                try
-                {
-                    save();
-                } catch (Exception ex)
-                {};
             }
 
             public void JSLFrameOpened(JSLFrameEvent e)
@@ -143,7 +101,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
             public void JSLFrameActivated(JSLFrameEvent e)
             {
                 PatchEdit.receiveAction.setEnabled(true);
-                PatchEdit.pasteAction.setEnabled(true);
+                //PatchEdit.pasteAction.setEnabled(true);
                 PatchEdit.importAction.setEnabled(true);
                 PatchEdit.importAllAction.setEnabled(true);
                 PatchEdit.newPatchAction.setEnabled(true);
@@ -162,43 +120,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
                     PatchEdit.dupAction.setEnabled(true);
                 }
 
-                if (table.getSelectedRowCount()>0)
-                {
-                    PatchEdit.extractAction.setEnabled(true);
-                    PatchEdit.sendAction.setEnabled(true);
-                    PatchEdit.sendToAction.setEnabled(true);
-                    PatchEdit.playAction.setEnabled(true);
-                    PatchEdit.storeAction.setEnabled(true);
- 		    PatchEdit.reassignAction.setEnabled(true);
-
-
-                    Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-                    try{
-                        // look, if the driver for the selected patch brings his own editor
-                        myPatch.getDriver().getClass().getDeclaredMethod("editPatch", new Class[]{myPatch.getClass()});
-                        // since the call didn't throw an exception, the driver implements the method itself
-                        PatchEdit.editAction.setEnabled(true);
-                    }
-                    catch(NoSuchMethodException ex) {
-                        // oh, the driver has no own editor. Is it a bank driver?
-                        if (myPatch.getDriver() instanceof BankDriver) {
-                            // for a bankDriver is it ok, since the universal bankEditor works
-                            PatchEdit.editAction.setEnabled(true);
-                        }
-                        else {
-                            // don't allow editing
-                            PatchEdit.editAction.setEnabled(false);
-                        }
-                    };
-
-                    PatchEdit.cutAction.setEnabled(true);
-                    PatchEdit.copyAction.setEnabled(true);
-                    PatchEdit.deleteAction.setEnabled(true);
-                    PatchEdit.exportAction.setEnabled(true);
-                }
-
-                //                System.out.println ("Frame activated"+table.getSelectedRowCount ());
-
+		enableMenus();
             }
 
             public void JSLFrameClosed(JSLFrameEvent e)
@@ -228,7 +150,6 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
                 PatchEdit.exportAction.setEnabled(false);
                 PatchEdit.newPatchAction.setEnabled(false);
                 PatchEdit.crossBreedAction.setEnabled(false);
-                //                System.out.println ("Frame deactivated");
             }
 
             public void JSLFrameDeiconified(JSLFrameEvent e)
@@ -240,10 +161,10 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
         });
 
         myModel = new PatchListModel(changed);
-        table = new DNDLibraryTable(myModel);
+        table = new JTable(myModel);
         table2=table;
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        table.addMouseListener(new MouseAdapter()
+	table.addMouseListener(new MouseAdapter()
         {
             public void mousePressed(MouseEvent e)
             {
@@ -277,14 +198,15 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
                 }
             }
         });
-
-
+	//table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	table.setTransferHandler(pth);
+	table.setDragEnabled(true);
 
         //Create the scroll  pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
-        DNDViewport myviewport=new DNDViewport();
-        scrollPane.setViewport(myviewport);
-        myviewport.setView(table);
+	// Enable drop on scrollpane
+	scrollPane.getViewport()
+	    .setTransferHandler( new ProxyImportHandler(table, pth) );
         scrollPane.getVerticalScrollBar().addMouseListener(new MouseAdapter()
         {
             public void mousePressed(MouseEvent e)
@@ -323,20 +245,6 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
 
         //Set the window's location.
 	moveToDefaultLocation();
-
-        this.addFocusListener(new FocusListener()
-        {
-            public void focusGained(FocusEvent e)
-            {
-                // System.out.println ("Focus Gained");
-            }
-
-            public void focusLost(FocusEvent e)
-            {
-                //System.out.println ("Focus Lost");
-            }
-
-        });
 
         table.getModel().addTableModelListener( new TableModelListener()
         {
@@ -478,17 +386,18 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
 
     public void CopySelectedPatch()
     {
-        try
-        {
-            if (table.getSelectedRowCount()==0)
-            {
-		    ErrorMsg.reportError("Error", "No Patch Selected.");
-		    return;
-	    }
-            Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-	    PatchEdit.Clipboard = (Patch) myPatch.clone();
-        }catch (Exception e)
-        {};
+	pth.exportToClipboard(table,
+			      Toolkit.getDefaultToolkit().getSystemClipboard(),
+			      pth.COPY);
+    }
+
+    public Patch GetSelectedPatch() {
+	try {
+	    return ((Patch)myModel.PatchList.get(table.getSelectedRow()));
+	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	    return null;
+	}
     }
 
     public void SendSelectedPatch()
@@ -541,21 +450,10 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
 
     public void PastePatch()
     {
-        Patch myPatch=PatchEdit.Clipboard;
-
-	//System.out.println("Paste "+myPatch);
-        if (myPatch!=null)
-        {
-	    if (table.getSelectedRowCount()==0)
- 		myModel.PatchList.add((Patch) myPatch.clone());
-	    else
-		myModel.PatchList.add(table.getSelectedRow(),
-				      (Patch) myPatch.clone());
-
-            changed=true;
-            myModel.fireTableDataChanged();
-        //    statusBar.setText(myModel.PatchList.size()+" Patches");
-        }
+	pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this));
+    }
+    public void PastePatch(Patch p) {
+	pth.importData(table, p);
     }
 
     public void save() throws Exception
@@ -633,7 +531,49 @@ return;
         return myModel;
     }
 
-    public DNDLibraryTable getTable() {
+    public JTable getTable() {
         return table;
+    }
+
+    protected void enableMenus() {
+	boolean b = (table.getSelectedRowCount()>0);
+
+	PatchEdit.extractAction.setEnabled(b);
+	PatchEdit.sendAction.setEnabled(b);
+	PatchEdit.sendToAction.setEnabled(b);
+	PatchEdit.playAction.setEnabled(b);
+	PatchEdit.storeAction.setEnabled(b);
+	PatchEdit.reassignAction.setEnabled(b);
+
+	if (b) {
+	    Patch myPatch=
+		((Patch)myModel.PatchList.get(table.getSelectedRow()));
+
+	    // check if the driver for the selected patch has an editor
+	    boolean hasEditor = false;
+	    try {
+		hasEditor = (myPatch.getDriver().getClass()
+		     .getMethod("editPatch", new Class[]{myPatch.getClass()})
+		     .getDeclaringClass() != Patch.class);
+	    } catch (NoSuchMethodException e) {}
+	    
+	    if (hasEditor)
+		    PatchEdit.editAction.setEnabled(true);
+	    // the driver has no editor. Is it a bank driver?
+	    else if (myPatch.getDriver() instanceof BankDriver) {
+		// for a bankDriver is it ok, since BankEditorFrame works
+		PatchEdit.editAction.setEnabled(true);
+	    } else {
+		// don't allow editing
+		PatchEdit.editAction.setEnabled(false);
+	    }
+	} else {
+	    PatchEdit.editAction.setEnabled(false);
+	}
+
+	PatchEdit.cutAction.setEnabled(b);
+	PatchEdit.copyAction.setEnabled(b);
+	PatchEdit.deleteAction.setEnabled(b);
+	PatchEdit.exportAction.setEnabled(b);
     }
 }

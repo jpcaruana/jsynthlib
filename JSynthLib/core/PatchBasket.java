@@ -37,4 +37,6 @@ public interface PatchBasket {
     void PastePatch();
     /** Return collection of all patches in basket. */
     ArrayList getPatchCollection();
+    Patch GetSelectedPatch();
+    void PastePatch(Patch p);
 }

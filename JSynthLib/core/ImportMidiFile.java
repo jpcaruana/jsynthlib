@@ -34,8 +34,7 @@ public class ImportMidiFile {
                     Patch q=new Patch(tr[j].get(i).getMessage().getMessage());
                     Patch[] patarray=q.dissect();
                     for (int k=0;k<patarray.length;k++) {
-                        PatchEdit.Clipboard=patarray[k];
-                    ((LibraryFrame)JSLDesktop.getSelectedFrame()).PastePatch();
+			((LibraryFrame)JSLDesktop.getSelectedFrame()).PastePatch(patarray[k]);
                 }
             }
         }

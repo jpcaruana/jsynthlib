@@ -1,12 +1,8 @@
 /* $Id$ */
 package core;
 
-import javax.swing.JInternalFrame;
-//import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableColumn;
-//import javax.swing.SwingUtilities;
 import javax.swing.event.*;
 import java.util.*;
 import java.awt.event.*;
@@ -25,12 +21,15 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /** A table model. */
     protected PatchGridModel myModel;
     // These refer a same JTable object.  For what table2 is?
-    protected DNDPatchTable table;
-    protected DNDPatchTable table2;
+    protected JTable table;
+    protected JTable table2;
 
     protected Dimension preferredScrollableViewportSize = new Dimension(500, 70);
     protected int autoResizeMode = JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS;
     protected int preferredColumnWidth = 75;
+
+    protected static PatchGridTransferHandler pth =
+	new PatchGridTransferHandler();
 
     /**
      * Creates a new <code>BankEditorFrame</code> instance.
@@ -55,42 +54,26 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     protected void InitBankEditorFrame() {
         //...Create the GUI and put it in the window...
         myModel = new PatchGridModel(bankData, bankDriver);
-        table = new DNDPatchTable(myModel);
+        table = new JTable(myModel);
         table2 = table;
+	table.setTransferHandler(pth);
+	table.setDragEnabled(true);
+	//table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
-        table.setRowSelectionAllowed(false);
-        table.setColumnSelectionAllowed(false);
+        //table.setRowSelectionAllowed(false);
+        //table.setColumnSelectionAllowed(false);
+	table.setCellSelectionEnabled(true);
 	table.setAutoResizeMode(autoResizeMode);
+	ListSelectionListener lsl = new ListSelectionListener() {
+		public void valueChanged(ListSelectionEvent e) {
+		    enableMenus();
+		}
+	    };
+	table.getSelectionModel().addListSelectionListener(lsl);
+	table.getColumnModel().getSelectionModel().addListSelectionListener(lsl);
+
         table.addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
-		    table2.setRowSelectionInterval
-			(table2.rowAtPoint(new Point(e.getX(), e.getY())),
-			 table2.rowAtPoint(new Point(e.getX(), e.getY())));
-		    table2.setColumnSelectionInterval
-			(table2.columnAtPoint(new Point(e.getX(), e.getY())),
-			 table2.columnAtPoint(new Point(e.getX(), e.getY())));
-
-		    PatchEdit.extractAction.setEnabled(true);
-		    PatchEdit.sendAction.setEnabled(true);
-		    PatchEdit.sendToAction.setEnabled(false);	// not available yet!
-		    PatchEdit.reassignAction.setEnabled(false);	// not available yet!
-		    PatchEdit.playAction.setEnabled(true);
-		    PatchEdit.storeAction.setEnabled(true);
-
-		    // All entries are of the same type, so we can check the first one....
-		    Patch myPatch = ((Patch) myModel.getPatchAt(0, 0));
-		    try {
-			myPatch.getDriver().getClass().getDeclaredMethod("editPatch", new Class[] {myPatch.getClass()});
-			PatchEdit.editAction.setEnabled(true);
-		    } catch (NoSuchMethodException ex) {
-			if (myPatch.getDriver() instanceof BankDriver)
-			    PatchEdit.editAction.setEnabled(true);
-		    }
-		    PatchEdit.cutAction.setEnabled(true);
-		    PatchEdit.copyAction.setEnabled(true);
-		    PatchEdit.deleteAction.setEnabled(true);
-		    PatchEdit.exportAction.setEnabled(true);
-
 		    if (e.isPopupTrigger())
 			PatchEdit.menuPatchPopup.show(table2, e.getX(), e.getY());
 		}
@@ -115,44 +98,22 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		public void JSLFrameIconified(JSLFrameEvent e) {
 		}
 		public void JSLFrameActivated(JSLFrameEvent e) {
-		    PatchEdit.receiveAction.setEnabled(false);
-		    PatchEdit.pasteAction.setEnabled(true);
-		    PatchEdit.importAction.setEnabled(true);
-		    PatchEdit.importAllAction.setEnabled(true);
-		    PatchEdit.newPatchAction.setEnabled(true);
-
-		    if (table.getRowCount() > 0) {
-			PatchEdit.saveAction.setEnabled(true);
-			PatchEdit.saveAsAction.setEnabled(true);
-			PatchEdit.searchAction.setEnabled(true);
-		    }
-		    if (table.getRowCount() > 1) {
-			PatchEdit.sortAction.setEnabled(true);
-			PatchEdit.dupAction.setEnabled(true);
-		    }
-		    if (table.getSelectedRowCount() > 0) {
-			PatchEdit.extractAction.setEnabled(true);
-			PatchEdit.sendAction.setEnabled(true);
-			PatchEdit.sendToAction.setEnabled(false); // not available yet!
-			PatchEdit.reassignAction.setEnabled(false); // not available yet!
-			PatchEdit.playAction.setEnabled(true);
-			PatchEdit.storeAction.setEnabled(true);
-
-			// All entries are of the same type, so we can check the first one....
-			Patch myPatch = ((Patch) myModel.getPatchAt(0, 0));
-			try {
-			    myPatch.getDriver().getClass().getDeclaredMethod("editPatch", new Class[] {myPatch.getClass()});
-			    PatchEdit.editAction.setEnabled(true);
-			} catch (NoSuchMethodException ex) {
-			    if (myPatch.getDriver() instanceof BankDriver)
-				PatchEdit.editAction.setEnabled(true);
+		    	PatchEdit.receiveAction.setEnabled(false);
+			//PatchEdit.pasteAction.setEnabled(true);
+			PatchEdit.importAction.setEnabled(true);
+			PatchEdit.importAllAction.setEnabled(true);
+			PatchEdit.newPatchAction.setEnabled(true);
+			
+			if (table.getRowCount() > 0) {
+			    PatchEdit.saveAction.setEnabled(true);
+			    PatchEdit.saveAsAction.setEnabled(true);
+			    PatchEdit.searchAction.setEnabled(true);
 			}
-			PatchEdit.cutAction.setEnabled(true);
-			PatchEdit.copyAction.setEnabled(true);
-			PatchEdit.deleteAction.setEnabled(true);
-			PatchEdit.exportAction.setEnabled(true);
-		    }
-		    //System.out.println("Frame activated"+table.getSelectedRowCount());
+			if (table.getRowCount() > 1) {
+			    PatchEdit.sortAction.setEnabled(true);
+			    PatchEdit.dupAction.setEnabled(true);
+			}
+		    enableMenus();
 		}
 		public void JSLFrameClosing(JSLFrameEvent e) {
 		    JSLFrame[] jList = JSLDesktop.getAllFrames();
@@ -170,33 +131,14 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		}
 
 		public void JSLFrameDeactivated(JSLFrameEvent e) {
-		    //PatchEdit.receiveAction.setEnabled(false);
-		    PatchEdit.extractAction.setEnabled(false);
-		    PatchEdit.sendAction.setEnabled(false);
-		    PatchEdit.sendToAction.setEnabled(false);
-		    PatchEdit.reassignAction.setEnabled(false);
-		    PatchEdit.playAction.setEnabled(false);
-		    PatchEdit.storeAction.setEnabled(false);
-		    PatchEdit.editAction.setEnabled(false);
-		    PatchEdit.saveAction.setEnabled(false);
-		    PatchEdit.saveAsAction.setEnabled(false);
-		    PatchEdit.sortAction.setEnabled(false);
-		    PatchEdit.searchAction.setEnabled(false);
-		    PatchEdit.dupAction.setEnabled(false);
-		    PatchEdit.cutAction.setEnabled(false);
-		    PatchEdit.copyAction.setEnabled(false);
-		    PatchEdit.pasteAction.setEnabled(false);
-		    PatchEdit.deleteAction.setEnabled(false);
-		    PatchEdit.importAction.setEnabled(false);
-		    PatchEdit.importAllAction.setEnabled(false);
-		    PatchEdit.exportAction.setEnabled(false);
-		    PatchEdit.newPatchAction.setEnabled(false);
-		    //System.out.println("Frame deactivated");
+		    disableMenus();
 		}
 	    });
 
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
+	scrollPane.getViewport()
+	    .setTransferHandler(new ProxyImportHandler(table, pth));
 
         //Add the scroll pane to this window.
         getContentPane().add(scrollPane, BorderLayout.CENTER);
@@ -210,6 +152,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         setSize(600, 300);
 
         //Set the window's location.
+	moveToDefaultLocation();
     }
 
     private boolean checkSelected() {
@@ -258,13 +201,12 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void CopySelectedPatch() {
-        if (!checkSelected()) return;
-        Patch p = getSelectedPatch();
-        if (p == null) {
-	    ErrorMsg.reportError("Error", "That patch is blank.");
-	    return;
-	}
-        PatchEdit.Clipboard = (Patch) p.clone();
+	pth.exportToClipboard(table,
+			      Toolkit.getDefaultToolkit().getSystemClipboard(),
+			      pth.COPY);
+    }
+    public Patch GetSelectedPatch() {
+	return getSelectedPatch();
     }
 
     public void SendSelectedPatch() {
@@ -319,9 +261,10 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void PastePatch() {
-        if (!checkSelected()) return;
-        bankDriver.checkAndPutPatch(bankData, PatchEdit.Clipboard, getSelectedPatchNum());
-        myModel.fireTableDataChanged();
+	pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this));
+    }
+    public void PastePatch(Patch p) {
+	pth.importData(table, p);
     }
 
     public ArrayList getPatchCollection() {
@@ -339,5 +282,61 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    return;
 	}
 	bankDriver = (BankDriver) bankData.getDriver();
+    }
+
+    protected void disableMenus() {
+	//PatchEdit.receiveAction.setEnabled(false);
+	PatchEdit.extractAction.setEnabled(false);
+	PatchEdit.sendAction.setEnabled(false);
+	PatchEdit.sendToAction.setEnabled(false);
+	PatchEdit.reassignAction.setEnabled(false);
+	PatchEdit.playAction.setEnabled(false);
+	PatchEdit.storeAction.setEnabled(false);
+	PatchEdit.editAction.setEnabled(false);
+	PatchEdit.saveAction.setEnabled(false);
+	PatchEdit.saveAsAction.setEnabled(false);
+	PatchEdit.sortAction.setEnabled(false);
+	PatchEdit.searchAction.setEnabled(false);
+	PatchEdit.dupAction.setEnabled(false);
+	PatchEdit.cutAction.setEnabled(false);
+	PatchEdit.copyAction.setEnabled(false);
+	PatchEdit.pasteAction.setEnabled(false);
+	PatchEdit.deleteAction.setEnabled(false);
+	PatchEdit.importAction.setEnabled(false);
+	PatchEdit.importAllAction.setEnabled(false);
+	PatchEdit.exportAction.setEnabled(false);
+	PatchEdit.newPatchAction.setEnabled(false);
+    }
+
+    protected void enableMenus() {
+	boolean b = (table.getSelectedRowCount() > 0);
+	PatchEdit.extractAction.setEnabled(b);
+	PatchEdit.sendAction.setEnabled(b);
+	PatchEdit.sendToAction.setEnabled(false); // not available yet!
+	PatchEdit.reassignAction.setEnabled(false); // not available yet!
+	PatchEdit.playAction.setEnabled(b);
+	PatchEdit.storeAction.setEnabled(b);
+	
+	// All entries are of the same type, so we can check the first one....
+	if (b) {
+	    Patch myPatch = ((Patch) myModel.getPatchAt(0, 0));
+	    try {
+		myPatch.getDriver().getClass().getDeclaredMethod("editPatch", new Class[] {myPatch.getClass()});
+		PatchEdit.editAction.setEnabled(true);
+	    } catch (NoSuchMethodException ex) {
+		if (myPatch.getDriver() instanceof BankDriver)
+		    PatchEdit.editAction.setEnabled(true);
+	    }
+	} else {
+	    PatchEdit.editAction.setEnabled(false);
+	}
+	PatchEdit.cutAction.setEnabled(b);
+	PatchEdit.copyAction.setEnabled(b);
+	PatchEdit.deleteAction.setEnabled(b);
+	PatchEdit.exportAction.setEnabled(b);
+    }
+    // Enable pasting
+    public boolean canImport(java.awt.datatransfer.DataFlavor[] flavors) {
+	return checkSelected() && pth.canImport(table, flavors);
     }
 }

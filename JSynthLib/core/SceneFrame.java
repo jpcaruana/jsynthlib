@@ -1,13 +1,9 @@
 package core;
 
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.TableColumn;
 
@@ -21,12 +17,14 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     private static int openFrameCount = 0;
     private static final int xOffset = 30, yOffset = 30;
     private SceneListModel myModel;
-    DNDLibraryTable table;
-    private DNDLibraryTable table2;
+    JTable table;
+    private JTable table2;
     private JLabel statusBar;
     private File filename;
     private boolean changed=false;  //has the library been altered since it was last saved?
     private SceneTableCellEditor rowEditor ;
+    protected static PatchTransferHandler pth =
+	new PatchListTransferHandler();
 
     /**
      * @param file
@@ -88,37 +86,9 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
                 if (JOptionPane.showConfirmDialog(null,"This Scene may contain unsaved data.\nSave before closing?","Unsaved Data",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
 
-                if (getTitle().startsWith("Unsaved Scene")) {
-                    CompatibleFileDialog fc2 = new CompatibleFileDialog();
-                    ExtensionFilter type1 = new ExtensionFilter("PatchEdit Scene Files (*.scenelib)", ".scenelib");
-                    fc2.addChoosableFileFilter(type1);
-                    fc2.setFileFilter(type1);
-                    if (fc2.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                        File file = fc2.getSelectedFile();
-                        try {
-                            if (!file.getName().toUpperCase().endsWith(".SCENELIB"))
-                                file=new File(file.getPath()+".scenelib");
+		moveToFront();
+		PatchEdit.saveFrame();
 
-                            if (file.isDirectory())
-                            { ErrorMsg.reportError("Error", "Can not save over a directory");
-                              return;
-                            }
-
-                            if (file.exists())
-                                if (JOptionPane.showConfirmDialog(null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-
-                            save(file);
-                        } catch (Exception ex) {
-                            ErrorMsg.reportError("Error", "Error saving File",ex);
-                        }
-                    }
-                    return;
-                }
-
-                try {
-                    save();
-                } catch (Exception ex)
-                {};
             }
 
             public void JSLFrameOpened(JSLFrameEvent e)
@@ -126,7 +96,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
             public void JSLFrameActivated(JSLFrameEvent e) {
                 PatchEdit.receiveAction.setEnabled(true);
-                PatchEdit.pasteAction.setEnabled(true);
+                //PatchEdit.pasteAction.setEnabled(true);
                 PatchEdit.importAction.setEnabled(true);
                 PatchEdit.importAllAction.setEnabled(true);
                 PatchEdit.newPatchAction.setEnabled(true);
@@ -219,7 +189,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         });
 
         myModel = new SceneListModel(changed);
-        table = new DNDLibraryTable(myModel);
+        table = new JTable(myModel);
         table2=table;
 
         rowEditor=new SceneTableCellEditor(table);
@@ -253,11 +223,15 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             }
         });
 
+	//table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	table.setTransferHandler(pth);
+	table.setDragEnabled(true);
+
         //Create the scroll  pane and add the table to it.
         final JScrollPane scrollPane = new JScrollPane(table);
-        DNDViewport myviewport=new DNDViewport();
-        scrollPane.setViewport(myviewport);
-        myviewport.setView(table);
+	// Enable drop on scrollpane
+	scrollPane.getViewport()
+	    .setTransferHandler( new ProxyImportHandler(table, pth) );
         scrollPane.getVerticalScrollBar().addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(MouseEvent e)
             {}
@@ -301,17 +275,6 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
         //Set the window's location.
 	moveToDefaultLocation();
-
-        this.addFocusListener(new java.awt.event.FocusListener() {
-            public void focusGained(java.awt.event.FocusEvent e) {
-                // System.out.println ("Focus Gained");
-            }
-
-            public void focusLost(java.awt.event.FocusEvent e) {
-                //System.out.println ("Focus Lost");
-            }
-
-        });
 
         table.getModel().addTableModelListener( new TableModelListener() {
             public void tableChanged(TableModelEvent e) {
@@ -442,15 +405,17 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     public void CopySelectedPatch() {
-        try {
-            if (table.getSelectedRowCount()==0) {
-                ErrorMsg.reportError("Error", "No Patch Selected.");
-                return;
-            }
-            Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
-	    PatchEdit.Clipboard = (Patch) myPatch.clone();
-        }catch (Exception e)
-        {};
+	pth.exportToClipboard(table,
+			      Toolkit.getDefaultToolkit().getSystemClipboard(),
+			      pth.COPY);
+    }
+    public Patch GetSelectedPatch() {
+	try {
+	    return ((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
+	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	    return null;
+	}
     }
 
     public void SendSelectedPatch() {
@@ -499,16 +464,10 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     public void PastePatch() {
-        Patch myPatch=PatchEdit.Clipboard;
-        if (myPatch!=null) {
-	    if (table.getSelectedRowCount()==0)
- 		myModel.sceneList.add(new Scene((Patch) myPatch.clone()));
-	    else
-		myModel.sceneList.add(table.getSelectedRow(),
- 				      new Scene((Patch) myPatch.clone()));
-            changed=true;
-            myModel.fireTableDataChanged();
-        }
+	pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this));
+    }
+    public void PastePatch(Patch p) {
+	pth.importData(table, p);
     }
 
     /**
@@ -606,7 +565,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     /**
      * @return
      */
-    public DNDLibraryTable getTable() {
+    public JTable getTable() {
         return table;
     }
 
