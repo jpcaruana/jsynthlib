@@ -134,16 +134,15 @@ jar xf ../JSynthLib-XXX.jar
 You can compile them by the following steps.
 
 <pre>
-rm core/MacOSXMidiWrapper.java  # This file will be deleted after 0.19 release
 javac core/*.java
-javac synthdrivers/*/*/*.java
-javac synthdrivers/*/*.java
+javac synthdrivers/*/*/*.java synthdrivers/*/*.java
+javac -classpath '.;Groovy.jar' org/jsynthlib/*/*/*.java org/jsynthlib/*/*.java
 javac *.java
 </pre>
 
 You may also use the following method:
 <pre>
-find . -name "*java" > js
+find . -name "*.java" > js
 javac @js
 </pre>
 
