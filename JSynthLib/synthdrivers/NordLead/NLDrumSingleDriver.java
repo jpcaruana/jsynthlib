@@ -148,10 +148,10 @@ public class NLDrumSingleDriver extends Driver {
     (byte)0x03, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x00, (byte)0x00, (byte)0x00,
     (byte)0x00, (byte)0x00, (byte)0x04, (byte)0x00, (byte)0x04, (byte)0x00, (byte)0xF7
   };
-  protected int globalChannel;
+  NordLeadConfig nlConfig;
 
-  public NLDrumSingleDriver(int chan) {
-    globalChannel = chan;
+  public NLDrumSingleDriver(NordLeadConfig nlc) {
+    nlConfig = nlc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Nord";
     model = "Lead";
@@ -221,7 +221,7 @@ public class NLDrumSingleDriver extends Driver {
   }
 
   protected void sendPatchWorker(Patch p) {
-    p.sysex[deviceIDoffset] = (byte)(globalChannel - 1);
+    p.sysex[deviceIDoffset] = (byte)(nlConfig.getGlobalChannel() - 1);
     try {
       PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
     } catch (Exception e) {
@@ -232,7 +232,7 @@ public class NLDrumSingleDriver extends Driver {
   public void requestPatchDump(int bankNum, int patchNum) {
     setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
     setPatchNum(patchNum + 99); // select drum sound, then get data from edit buffer
-    sysexRequestDump.send(port, (byte)globalChannel,
+    sysexRequestDump.send(port, (byte)(nlConfig.getGlobalChannel()),
         new NameValue("bankNum", 10), new NameValue("patchNum", 0)
     );
   }

@@ -9,10 +9,10 @@ public class NLPatchBankDriver extends BankDriver {
   static final int BANK_NUM_OFFSET = 4;
   static final int PATCH_NUM_OFFSET = 5;
   static final int NUM_IN_BANK = 99;
-  protected int globalChannel;
+  NordLeadConfig nlConfig;
 
-  public NLPatchBankDriver(int chan) {
-    globalChannel = chan;
+  public NLPatchBankDriver(NordLeadConfig nlc) {
+    nlConfig = nlc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Nord";
     model = "Lead";
@@ -85,7 +85,7 @@ public class NLPatchBankDriver extends BankDriver {
       PatchEdit.waitDialog.show();
       for (int i = 0; i < max; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
-        tmp[deviceIDoffset] = (byte)(globalChannel - 1);
+        tmp[deviceIDoffset] = (byte)(nlConfig.getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
         PatchEdit.MidiOut.writeLongMessage(port, tmp);
@@ -113,7 +113,8 @@ public class NLPatchBankDriver extends BankDriver {
 
   public void requestPatchDump(int bankNum, int patchNum) {
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      sysexRequestDump.send(port, (byte)globalChannel, new NameValue("bankNum", bankNum + 11),
+      sysexRequestDump.send(port, (byte)(nlConfig.getGlobalChannel()),
+        new NameValue("bankNum", bankNum + 11),
         new NameValue("patchNum", i)
       );
       try {

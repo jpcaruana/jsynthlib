@@ -26,7 +26,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
     numPatches = patchNumbers.length;
     numColumns = 4;
     singleSize = 2350;
-    singleSysexID = "F000000E1D00007F";
+    singleSysexID = "F000000E1D00";
   }
 
   public void calculateChecksum(Patch p)

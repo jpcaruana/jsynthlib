@@ -260,7 +260,7 @@ public class PatchEdit extends JFrame
         {
             public void actionPerformed (ActionEvent e)
             {
-                JOptionPane.showMessageDialog (null, "JSynthLib Version 0.17\nCopyright (C) 2000-01 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info","About JSynthLib", JOptionPane.INFORMATION_MESSAGE);return;
+                JOptionPane.showMessageDialog (null, "JSynthLib Version 0.18\nCopyright (C) 2000-02 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info","About JSynthLib", JOptionPane.INFORMATION_MESSAGE);return;
             }
         }
         );

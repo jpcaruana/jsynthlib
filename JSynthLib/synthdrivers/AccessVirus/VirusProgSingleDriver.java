@@ -61,10 +61,10 @@ public class VirusProgSingleDriver extends Driver {
     (byte)0x20, (byte)0x2D, (byte)0x20, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x03,
     (byte)0x7F, (byte)0x6A, (byte)0xF7
   };
-  protected int deviceId;
+  AccessVirusConfig avConfig;
 
-  public VirusProgSingleDriver(int devId) {
-    deviceId = devId;
+  public VirusProgSingleDriver(AccessVirusConfig avc) {
+    avConfig = avc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Access";
     model = "Virus";
@@ -89,7 +89,7 @@ public class VirusProgSingleDriver extends Driver {
     for (int i = start; i <= end; i++) {
       sum += p.sysex[i];
     }
-    p.sysex[ofs] = (byte)(sum % 128);
+    p.sysex[ofs] = (byte)(sum & 0x7F);
   }
 
   public void sendPatch(Patch p) {
@@ -98,7 +98,7 @@ public class VirusProgSingleDriver extends Driver {
 
   public void sendPatch(Patch p, int bankNum, int patchNum) {
     Patch p2 = new Patch(p.sysex);
-    p2.sysex[deviceIDoffset] = (byte)deviceId;
+    p2.sysex[deviceIDoffset] = (byte)(avConfig.getDeviceId() - 1);
     p2.sysex[BANK_NUM_OFFSET] = (byte)bankNum;
     p2.sysex[PATCH_NUM_OFFSET] = (byte)patchNum;
     calculateChecksum(p2);
@@ -120,7 +120,7 @@ public class VirusProgSingleDriver extends Driver {
 
   public void playPatch(Patch p) {
     Patch p2 = new Patch(p.sysex);
-    p2.sysex[deviceIDoffset] = (byte)deviceId;
+    p2.sysex[deviceIDoffset] = (byte)(avConfig.getDeviceId() - 1);
     p2.sysex[BANK_NUM_OFFSET] = 0; // edit buffer
     p2.sysex[PATCH_NUM_OFFSET] = 64; // single mode
     calculateChecksum(p2);
@@ -133,8 +133,17 @@ public class VirusProgSingleDriver extends Driver {
     return p;
   }
 
+  protected void sendPatchWorker(Patch p) {
+    p.sysex[deviceIDoffset] = (byte)(avConfig.getDeviceId() - 1);
+    try {
+      PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
+    } catch (Exception e) {
+      ErrorMsg.reportStatus (e);
+    }
+  }
+
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)deviceId,
+    sysexRequestDump.send(port, (byte)(avConfig.getDeviceId()),
         new NameValue("bankNum", bankNum + 1), new NameValue("patchNum", patchNum)
     );
   }

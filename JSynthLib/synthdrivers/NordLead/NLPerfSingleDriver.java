@@ -112,10 +112,10 @@ public class NLPerfSingleDriver extends Driver {
     (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
     (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xF7
   };
-  protected int globalChannel;
+  NordLeadConfig nlConfig;
 
-  public NLPerfSingleDriver(int chan) {
-    globalChannel = chan;
+  public NLPerfSingleDriver(NordLeadConfig nlc) {
+    nlConfig = nlc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Nord";
     model = "Lead";
@@ -179,7 +179,7 @@ public class NLPerfSingleDriver extends Driver {
   }
 
   protected void sendPatchWorker(Patch p) {
-    p.sysex[deviceIDoffset] = (byte)(globalChannel - 1);
+    p.sysex[deviceIDoffset] = (byte)(nlConfig.getGlobalChannel() - 1);
     try {
       PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
     } catch (Exception e) {
@@ -188,7 +188,7 @@ public class NLPerfSingleDriver extends Driver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)globalChannel,
+    sysexRequestDump.send(port, (byte)(nlConfig.getGlobalChannel()),
         new NameValue("bankNum", 41), new NameValue("patchNum", patchNum)
     );
   }

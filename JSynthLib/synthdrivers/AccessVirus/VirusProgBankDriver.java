@@ -9,17 +9,17 @@ public class VirusProgBankDriver extends BankDriver {
   static final int BANK_NUM_OFFSET = 7;
   static final int PATCH_NUM_OFFSET = 8;
   static final int NUM_IN_BANK = 128;
-  protected int deviceId;
+  AccessVirusConfig avConfig;
 
-  public VirusProgBankDriver(int devId) {
-    deviceId = devId;
+  public VirusProgBankDriver(AccessVirusConfig avc) {
+    avConfig = avc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Access";
     model = "Virus";
     patchType = "Prog Bank";
     id = "Virus";
     sysexID = "F000203301**10";
-    sysexRequestDump = new SysexHandler("F0 00 20 33 01 @@ 32 *bankNum* F7");
+    sysexRequestDump = new SysexHandler("F0 00 20 33 01 10 32 *bankNum* F7");
     singleSysexID = "F000203301**10";
     singleSize = 267;
     patchSize = singleSize * NUM_IN_BANK;
@@ -40,7 +40,7 @@ public class VirusProgBankDriver extends BankDriver {
     for (int i = start; i <= end; i++) {
       sum += sysex[i];
     }
-    sysex[ofs] = (byte)(sum % 128);
+    sysex[ofs] = (byte)(sum & 0x7F);
   }
 
   public void calculateChecksum(Patch p, int start, int end, int ofs) {
@@ -111,7 +111,7 @@ public class VirusProgBankDriver extends BankDriver {
       PatchEdit.waitDialog.show();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
-        tmp[deviceIDoffset] = (byte)deviceId;
+        tmp[deviceIDoffset] = (byte)(avConfig.getDeviceId() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
         calculateChecksum(tmp, checksumStart, checksumEnd,checksumOffset);
@@ -139,7 +139,8 @@ public class VirusProgBankDriver extends BankDriver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)deviceId, new NameValue("bankNum", bankNum + 1)
+    sysexRequestDump.send(port, (byte)(avConfig.getDeviceId()),
+      new NameValue("bankNum", bankNum + 1)
     );
   }
 }
