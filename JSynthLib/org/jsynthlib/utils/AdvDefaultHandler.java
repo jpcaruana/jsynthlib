@@ -1,6 +1,7 @@
 package org.jsynthlib.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -134,7 +137,11 @@ public class AdvDefaultHandler extends DefaultHandler {
         objects.addFirst(new Object());
         applyDefaults();
     }
-    
+    public Object parse(File f) throws ParserConfigurationException, FactoryConfigurationError, SAXException, IOException {
+		SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+		parser.parse(f, this);
+		return getOutput();
+    }
     public Object getOutput() {
         return output;
     }
@@ -217,7 +224,7 @@ public class AdvDefaultHandler extends DefaultHandler {
     private void storeText(String element) throws SAXParseException {
         element = element.substring(0,1).toUpperCase() + element.substring(1);
         String text = characters.toString();
-        text = text.replaceFirst("^\\s*(.*?)\\s*$","$1");
+        text = text.trim();
         recorder.recordCharacters(text);
         store(text, element, true);
     }
@@ -244,18 +251,30 @@ public class AdvDefaultHandler extends DefaultHandler {
 
     private Method getSetter(String prop, Class parent, Class object) {
         Method m = null;
+        Class[] ifaces = object.getInterfaces();
+        Class[] ca = { object };
+        for (int i = 0; m == null && i < ifaces.length; i++) {
+            ca[0] = ifaces[i];
+            m = findSetterInClass(prop, parent, ca);	
+        }
         while (m == null && object != null) {
-            Class[] ca = new Class[] { object };
-            try {
-                m = parent.getMethod("set" + prop, ca);
-            } catch (NoSuchMethodException e) {
-                try {
-                    m = parent.getMethod("add" + prop, ca);
-                } catch (NoSuchMethodException ex) { }
-            }
+            ca[0] = object;
+            m = findSetterInClass(prop, parent, ca);
             object = object.getSuperclass();
         }
         return m;
+    }
+
+    private Method findSetterInClass(String prop, Class parent, Class[] ca) {
+    	Method m = null;
+    	try {
+    	    m = parent.getMethod("set" + prop, ca);
+    	} catch (NoSuchMethodException e) {
+    	    try {
+    	    	m = parent.getMethod("add" + prop, ca);
+    	    } catch (NoSuchMethodException ex) { }
+    	}
+    	return m;
     }
 
     public static String[] list2sa(LinkedList l) {
@@ -272,4 +291,12 @@ public class AdvDefaultHandler extends DefaultHandler {
         Object value;
         boolean used = false;
     }
+
+	protected void addGenerator(String element, Class c) {
+		generators.put(element, new Generator(c));
+	}
+
+	protected void addGenerator(String element, Generator g) {
+		generators.put(element, g);
+	}
 }
