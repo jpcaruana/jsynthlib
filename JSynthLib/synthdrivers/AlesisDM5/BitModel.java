@@ -24,9 +24,9 @@ package synthdrivers.AlesisDM5;
 import core.*;
 
 /** The BitModel class allows a control to set the individual bits in a byte
-* of the patch.sysex record. This is used when a byte of the sysex record
-* contains several distinct parameters for the device. Masks are provided for 
-* the DM5 to define which bits are used for a given parameter.
+* of the patch.sysex record. This is used when a single byte of the sysex record
+* contains more than one parameter. Masks are provided for each of the parameters
+* of the DM5 to define which bits are used for a given parameter.
 */
 class BitModel extends ParamModel {
     static final byte ROOT_NOTE_MASK = (byte)0x7F;  //0111 1111
@@ -45,7 +45,9 @@ class BitModel extends ParamModel {
     protected byte mask;
     protected int power = 0;
     
-    /** Constructs a BitModel. */
+    /** Constructs a BitModel given the patch, the offset into the sysex record,
+        * and the mask representing the parameter.
+        */
     BitModel(Patch p, int offset, byte mask) {
         this.patch = p;
         this.ofs = offset;

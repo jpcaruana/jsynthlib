@@ -24,13 +24,17 @@ package synthdrivers.AlesisDM5;
 import core.*;
 
 /** DM5 ComboBoxWidget. Adds functionality to the standard JSynthLib ComboBoxWidget
-to allow dynamic updating of the options list. 
+to allow dynamic updating of the options list, the control value, and the 
+associated NRPNSender based on the associated NRPNModel. 
 * @author Jeff Weber
 */
 class DM5ComboBoxWidget extends ComboBoxWidget {
     IParamModel UCBWModel;
     NRPNSender UCBWSender;
     
+    /** Constructs a new DM5ComboBoxWidget given the standard parameters for a
+        JSynthLib ComboBoxWidget.
+        */
     DM5ComboBoxWidget(String label, IPatch patch,
                       IParamModel pmodel, ISender sender, Object[] options) {
         super(label, patch, 0, pmodel, sender, options);
@@ -40,6 +44,10 @@ class DM5ComboBoxWidget extends ComboBoxWidget {
         UCBWSender = (NRPNSender)sender;
     }
     
+    /** Updates the comboBox list with the list of objects (Strings) given by 
+        options and updates the value of the associated NRPNSender based on the
+        current value of the associated model.
+        */
     void updateComboBoxWidgetList(Object[] options) {
         int newValue = UCBWModel.get();
         int newMax = options.length - 1;

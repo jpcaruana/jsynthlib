@@ -23,6 +23,10 @@ package synthdrivers.AlesisDM5;
 
 import core.*;
 
+/** DM5ScrollBarLookupWidget. Adds functionality to the standard JSynthLib 
+ScrollBarLookupWidget to allow dynamic updating of the options list. 
+* @author Jeff Weber
+*/
 class DM5ScrollBarLookupWidget extends ScrollBarLookupWidget {
     private static final String[] noteNames = new String[] {
         "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"        
@@ -30,6 +34,9 @@ class DM5ScrollBarLookupWidget extends ScrollBarLookupWidget {
     
     private int numNotes;
     
+    /** Constructs a new DM5ScrollBarLookupWidget given the standard parameters for a
+        JSynthLib ScrollBarLookupWidget.
+        */
     DM5ScrollBarLookupWidget(String label,
                              IPatch patch, 
                              int min, 
@@ -45,12 +52,21 @@ class DM5ScrollBarLookupWidget extends ScrollBarLookupWidget {
         updateRootNote(startValue);
     }
     
+    /** Updates the display value of the ScrollBarLookupWidget (not the actual
+        control value) using the current value of the control as the nth element
+        of the array given by getNoteNames(newRootNoteValue, numNotes)
+        */
     void updateRootNote(int newRootNoteValue) {
         options = getNoteNames(newRootNoteValue, numNotes);
         int v = slider.getValue();
         text.setText(options[v]);
     }
     
+    /** Returns an array of strings, each element of which represents a note name
+        given by num/name, where num is the numeric note value and name is the 
+        name of the note. The first element of the array is determined by 
+        startValue and the number of elements is determined by numNotes.
+        */
     private String[] getNoteNames(int startValue, int numNotes) {
         String noteTitle[] = new String[numNotes];
         for (int i = 0; i < numNotes; i++) {

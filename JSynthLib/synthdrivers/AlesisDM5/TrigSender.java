@@ -24,6 +24,10 @@ package synthdrivers.AlesisDM5;
 import core.*;
 import javax.sound.midi.InvalidMidiDataException;
 
+/** The TrigSender class is used to send NRPNs to the DM5. The parameters
+* handled by the TrigSender are specifically related to trigger setups--i.e. all
+* the parameters represented by a trigger setup sysex record. 
+*/
 class TrigSender extends NRPNSender implements SysexWidget.ISender {
     final static int TR_V_CURVE        = 1;
     final static int TR_NOTE_NBR       = 2;
@@ -41,11 +45,24 @@ class TrigSender extends NRPNSender implements SysexWidget.ISender {
     private static int LAST_TRIG_NUM = 99;
     private int trigNum;
     
-    public TrigSender(int trigNum, int param, int max) {
+    /** Constructs a TrigSender given the trigger number, the parameter, which
+        represents the mask, and the maximum value.
+        */
+    TrigSender(int trigNum, int param, int max) {
         super(param, max);
         this.trigNum = trigNum;
     }
     
+    /** Sends NRPN messages to the DM5 to adjust the selected parameter.
+        * TrigSenders are used exclusively by the AlesisDM5TrSetEditor to send out
+        * NRPNs associated with any of the parameters of the trigger setup
+        * record. A single invocation of the send method will cause two groups
+        * of NRPNs to be send. The first group selects the active trigger and 
+        * consists of the MSB, the LSB representing the active trigger select
+        * command, and the trigger number. The second group sets the value for
+        * the active trigger and consts of the LSB to select the parameter,
+        * followed by the Data Entry value for that parameter.
+        */
     public void send(IPatchDriver driver, int value) {
         if (trigNum != LAST_TRIG_NUM) {
             try {
