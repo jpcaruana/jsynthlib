@@ -24,7 +24,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	static final int PATCHNAME_OFFSET = 6;
 	static final int BANK_SIZE = 128*YamahaFS1RVoiceDriver.PATCH_AND_HEADER_SIZE + 128*YamahaFS1RPerformanceDriver.PATCH_AND_HEADER_SIZE;
 	static final int BANK_AND_HEADER_SIZE = BANK_SIZE+HEADER_SIZE+1;
-	static final int NB_COLUMNS = 8;
+	static final int NB_COLUMNS = 4;
 	static final int NB_ROWS = BANK_NB_PATCHES/NB_COLUMNS;
 	
 	static private YamahaFS1RBankDriver mInstance;
