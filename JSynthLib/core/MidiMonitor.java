@@ -48,7 +48,14 @@ public class MidiMonitor extends JDialog
 			OKPressed();
 		    }});
 	    buttonPanel.add(ok,BorderLayout.EAST);
-	   
+
+	    JCheckBox csm = new JCheckBox("Complete SysexMessages?",MidiUtil.getCSM());
+	    csm.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+			MidiUtil.toggleCSM();
+		}});
+	    buttonPanel.add(csm,BorderLayout.CENTER);
+	    
 	    JButton clr = new JButton("Clear");
 	    clr.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {

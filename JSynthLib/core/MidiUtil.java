@@ -35,7 +35,11 @@ import java.util.*;
  * @version $Id$
  */
 public final class MidiUtil {
-
+	
+    // holds the state if a SysexMessage is completly displayed or
+    // shorten to one hexdump line
+    private static boolean CSMstate=false;
+    
     private MidiUtil() {
     }
 
@@ -73,7 +77,7 @@ public final class MidiUtil {
 	    buf.append(Integer.toHexString(c));
 	    if (bytes > 0
 		&& (i % bytes == bytes - 1 && i != len - 1))
-		buf.append("\n");
+		buf.append("\n  ");
 	    else if (i != len - 1)
 		buf.append(" ");
 	}
@@ -220,11 +224,17 @@ public final class MidiUtil {
 	if (m instanceof ShortMessage)
 	    return (statusString(m) + "\n  "
 		    + shortMessageToString((ShortMessage) m));
-	else if (m instanceof SysexMessage)
-	    return ("SysEX:length="
-		    + m.getLength() + "\n  "
-		    + sysexMessageToString((SysexMessage) m));
-	else
+	else if (m instanceof SysexMessage) {
+	    if (CSMstate == true) {
+		return ("SysEX:length="
+			+ m.getLength() + "\n  "
+			+ sysexMessageToString((SysexMessage) m, 16));
+	    } else {
+	    	return ("SysEX:length="
+			+ m.getLength() + "\n  "
+			+ sysexMessageToString((SysexMessage) m));
+	    }
+	} else
 	    throw new InvalidMidiDataException();
     }
 
@@ -297,8 +307,13 @@ public final class MidiUtil {
     }
 
     private static void log(int port, String dir, byte[] sysex, int length) {
-	log("Port: " + port + dir + length + " bytes :\n"
-	    + hexDump(sysex, 0, length, 16) + "\n");
+	if (CSMstate == true ) {
+	    log("Port: " + port + dir + length + " bytes :\n  "
+	        + hexDump(sysex, 0, length, 16) + "\n");
+	} else {
+            log("Port: " + port + dir + length + " bytes :\n  "
+		+hexDumpOneLine(sysex, 0, length, 16) + "\n");
+	}
     }
 
     /** Only for debugging. */
@@ -369,4 +384,14 @@ public final class MidiUtil {
 	System.out.println(midiMessageToString(msg));
     }
 
+    /**
+     * Get the state of displaying Midi Messages.
+     * (Completly or shorten)
+     */
+    static boolean getCSM() { return CSMstate; }
+    /**
+     * Toggle the state of displaying Midi messages.
+     * (Completly or shorten)
+     */
+    static void toggleCSM() { CSMstate = !CSMstate; }
 } // MidiUtil
