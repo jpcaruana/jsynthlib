@@ -1735,6 +1735,11 @@ latest release. The source can be downloaded via CVS from
 JSynthLib'sSourceforge.net page by going
 <a href="http://sourceforge.net/cvs/?group_id=41208">here</a>.
 
+After downloading via CVS, you need to copy <kbd>wireprovidor</kbd>
+directory (folder), <kbd>WireNative.dll<kbd>, <kbd>jmidi</kbd>
+directory, and <kbd>MidiPort.dll</kbd> from the latest JSynthLib
+distribution.
+
 At this point Windows (and Linux?) user cannot compile
 <kbd>core/MacOSXMidiWapper.java</kbd>.  But you can download the
 compiled class code via CVS with other files.
@@ -1747,7 +1752,8 @@ javac synthdrivers/*/*.java
 javac *.java
 </pre>
 
-When native MIDI support by Java become stable, we don't need this hack.
+When native MIDI support by Java (JavaSound) become stable on all
+platforms which JSynthLib supports, we don't need this hack.
 
 <h3><a name="acknowledgment" href="#toc">We wish to say thank you to....</a></h3>
 ...a large number of contributors. Currently the list is not included here,
