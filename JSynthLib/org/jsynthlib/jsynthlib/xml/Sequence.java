@@ -1,5 +1,8 @@
 package org.jsynthlib.jsynthlib.xml;
 
+import groovy.lang.Closure;
+import groovy.lang.GroovyShell;
+
 import java.io.IOException;
 
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -27,16 +30,11 @@ public class Sequence {
         value = v;
     }
     public String[] getSequence() throws CompilationFailedException, IOException {
-        String code = 
-            "string_sequence = java.lang.reflect.Array.newInstance(String.class, " + (end - start + 1) + ")\n" +
-            "for (" + variable + " in " + start + ".." + end + " ) {\n"
-            + "text = <<<EOL\n"
-            + value
-            + "\nEOL\n"
-            + "string_sequence[" + variable + " - " + start+ "] = text.toString()\n" +
-            "}\n" +
-            "return string_sequence";
-        Object o = PluginRegistry.groovyShell().evaluate(code);
-        return (String[])o;
+    		GroovyShell s = PluginRegistry.groovyShell();
+		Closure c = (Closure)s.evaluate("return { " + variable + " | " + value + " }");
+		String result[] = new String[end - start + 1];
+		for (int i = start; i <= end; i++)
+			result[i - start] = c.call(new Object[] { new Integer(i) }).toString();
+		return result;
     }
 }

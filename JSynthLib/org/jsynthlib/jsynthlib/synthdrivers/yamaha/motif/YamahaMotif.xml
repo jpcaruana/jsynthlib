@@ -18,7 +18,7 @@
 	<start>0</start>
 	<end>127</end>
 	<!-- format 0 to A-1, 17 to B-2, etc -->
-	<value>${(char)(65 + id/16)}-${id%16 + 1}</value>
+	<value>"${(char)(65 + id/16)}-${id%16 + 1}"</value>
       </sequence>
     </patchnames>
 
