@@ -182,7 +182,7 @@ public class DeviceDetailsDialog extends JDialog {
 		return (d.getManufacturerName() + " " + d.getModelName() + " "
 			+ myDriver.getPatchType());
 	    } else if (col == TYPE) {
-		if (myDriver instanceof IConverter)
+		if (myDriver.isConverter())
 		    return "Converter";
 		else
 		    return "Driver";

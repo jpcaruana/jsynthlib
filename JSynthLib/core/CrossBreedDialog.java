@@ -106,7 +106,7 @@ public class CrossBreedDialog extends JDialog {
     }
 
     private void play(IPatch p) {
-        if (!(p.getDriver() instanceof IConverter)) {
+        if (p.getDriver().isSingleDriver()) {
             p.send();
             p.play();
         }

@@ -71,7 +71,7 @@ public class SysexGetDialog extends JDialog {
       Device device=AppConfig.getDevice(i);
       for (int j=0; j < device.driverCount(); j++) {
 	IDriver driver = device.getDriver(j);
-        if (!(driver instanceof IConverter)) { // Skipping a converter
+        if (driver.isSingleDriver() || driver.isBankDriver()) { // Skipping a converter
 	  deviceComboBox.addItem(device);
 	  break;
         }
@@ -190,7 +190,7 @@ public class SysexGetDialog extends JDialog {
        Device device = (Device) deviceComboBox.getSelectedItem();
        for (int i = 0; i < device.driverCount(); i++) {
 	 IDriver driver = (IDriver) device.getDriver(i);
-	 if (!(driver instanceof IConverter)) {
+	 if (driver.isSingleDriver() || driver.isBankDriver()) {
 	   driverComboBox.addItem(driver);
 	 }
        }
@@ -227,7 +227,7 @@ public class SysexGetDialog extends JDialog {
 	}
       }
       // N.B. Do not enable patch selection for banks
-      patchNumComboBox.setEnabled(!(driver instanceof IBankDriver)
+      patchNumComboBox.setEnabled(driver.isSingleDriver()
 				  && patchNumComboBox.getItemCount() > 1);
     }
   } // End InnerClass: DriverActionListener

@@ -38,4 +38,16 @@ abstract public class Converter extends Driver implements IConverter {
      * Convert a bulk patch into an array of single and/or bank patches.
      */
     abstract public Patch[] extractPatch(Patch p);
+
+    public final boolean isSingleDriver() {
+        return false;
+    }
+
+    public final boolean isBankDriver() {
+        return false;
+    }
+
+    public final boolean isConverter() {
+        return true;
+    }
 }

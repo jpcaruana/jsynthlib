@@ -232,11 +232,10 @@ public class UploadPatchDialog extends JDialog {
 	try{
 	    PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
 	    IPatch p = library.getSelectedPatch();
-
-	    if (p==null || !(p.getDriver() instanceof ISingleDriver))
-	        return;
-	    p.send();
-	    p.play();
+	    if (p != null && p.getDriver().isSingleDriver()) {
+	        p.send();
+	        p.play();
+	    }
 	} catch (Exception ex) {
 	    JOptionPane.showMessageDialog(null, "Patch Must be Focused","Error", JOptionPane.ERROR_MESSAGE);
 	}

@@ -48,4 +48,27 @@ public interface IDriver {
      */
     // called by Patch.valueOf and CrossBreeder.generateNewPatch
     IPatch[] createPatch(byte[] sysex);
+
+    /**
+     * Returns whether this driver is a Single Driver.
+     * '<code>this instanceof ISingleDriver</code>' does not work, BankDriver and
+     * Converter class extend SingleDriver class which implements ISingleDriver.
+     * @see ISingleDriver
+     */
+    boolean isSingleDriver();
+
+    /**
+     * Returns whether this driver is a Bank Driver.
+     * Equivalent with <code>instanceof IBankDriver</code>.
+     * @see IBankDriver
+     */
+    boolean isBankDriver();
+
+    /**
+     * Returns whether this driver is a Converter. Equivalent with
+     * <code>instanceof IConverter</code>. Note that there can be a Driver
+     * which are both Single Driver and Converter.
+     * @see IConverter
+     */
+    boolean isConverter();
 }

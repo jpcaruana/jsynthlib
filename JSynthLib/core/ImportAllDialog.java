@@ -152,7 +152,7 @@ public class ImportAllDialog extends JDialog
                         if (putName==2) pk.setAuthor(pk.getAuthor() + files[i].getName());
                         if (myModel.includeDevice[pk.getDriver().getDevice().getDeviceNum()].booleanValue ())
                         {
-                            if (extract && (pk.getDriver() instanceof IBankDriver))
+                            if (extract && (pk.getDriver().isBankDriver()))
                             {
                                 IBankDriver myDriver=((IBankDriver) pk.getDriver());
 				String[] pn = myDriver.getPatchNumbers();

@@ -229,7 +229,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        if (p.getDriver() instanceof ISingleDriver)
+        if (p.getDriver().isSingleDriver())
             p.send();
     }
 
@@ -240,13 +240,14 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void playSelectedPatch() {
-        if (!checkSelected()) return;
+        if (!checkSelected()) 
+            return;
         IPatch p = getSelectedPatch();
         if (p == null) {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        if (p.getDriver() instanceof ISingleDriver) {
+        if (p.getDriver().isSingleDriver()) {
             p.send();
             p.play();
         }

@@ -82,7 +82,7 @@ public class DevDrvPatchSelector extends JDialog {
             boolean newDevice = true;
             for (int j=0, m=0; j<device.driverCount();j++) {
 	        IDriver driver = device.getDriver(j);
-	        if (!(driver instanceof IConverter)
+	        if ((driver.isSingleDriver() || driver.isBankDriver())
 	                && (driver.supportsPatch(patchString, p.getByteArray()))) {
 	            if (newDevice) {	// only one entry for each supporting device
 	    		deviceComboBox.addItem(device);
@@ -180,7 +180,7 @@ public class DevDrvPatchSelector extends JDialog {
             int nDriver = 0;
             for (int i = 0; i < device.driverCount(); i++) {
 	        IDriver driver = device.getDriver(i);
-                if (!(driver instanceof IConverter)
+                if ((driver.isSingleDriver() || driver.isBankDriver())
 	                && driver.supportsPatch(patchString, p.getByteArray())) {
                     driverComboBox.addItem (driver);
                     nDriver++;
@@ -199,7 +199,7 @@ public class DevDrvPatchSelector extends JDialog {
     private class DriverActionListener implements ActionListener {
         public void actionPerformed (ActionEvent evt) {
 
-            ISingleDriver driver = (ISingleDriver)driverComboBox.getSelectedItem();
+            IPatchDriver driver = (IPatchDriver)driverComboBox.getSelectedItem();
             bankComboBox.removeAllItems();
             patchNumComboBox.removeAllItems();
 
@@ -210,19 +210,22 @@ public class DevDrvPatchSelector extends JDialog {
             	        bankComboBox.addItem(bankNumbers[i]);
                     }
                 }
-
-                String[] patchNumbers = getPatchNumbers(driver);
-                if (patchNumbers.length > 1) {
-                    for (int i = 0 ; i < patchNumbers.length ; i++) {
-                        patchNumComboBox.addItem(patchNumbers[i]);
+                if (driver.isSingleDriver()) {
+                    String[] patchNumbers = getPatchNumbers((ISingleDriver) driver);
+                    if (patchNumbers.length > 1) {
+                        for (int i = 0; i < patchNumbers.length; i++) {
+                            patchNumComboBox.addItem(patchNumbers[i]);
+                        }
+                        patchNumComboBox.setSelectedIndex(Math.min(patchNum,
+                                patchNumComboBox.getItemCount() - 1));
                     }
-                    patchNumComboBox.setSelectedIndex(Math.min(patchNum, patchNumComboBox.getItemCount() - 1));
                 }
             }
 
             bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
             // N.B. Do not enable patch selection for banks
-            patchNumComboBox.setEnabled(!(driver instanceof IBankDriver) && patchNumComboBox.getItemCount() > 1);
+            patchNumComboBox.setEnabled(driver.isSingleDriver()
+                    && patchNumComboBox.getItemCount() > 1);
         }
     }
 

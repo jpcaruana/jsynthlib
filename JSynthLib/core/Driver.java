@@ -471,19 +471,13 @@ abstract public class Driver implements ISingleDriver {
     }
 
     public boolean hasEditor() {
-	if (this instanceof IBankDriver)
-	    return true;
-	else if (getClass().equals(Driver.class)) // ex. Generic Driver
-	    return false;
-	else {
-	    try {
-		getClass().getDeclaredMethod("editPatch",
-					     new Class[] {Patch.class});
-		return true;
-	    } catch (NoSuchMethodException e) {
-		return false;
-	    }
-	}
+        try {
+            getClass().getDeclaredMethod("editPatch",
+                    new Class[] { Patch.class });
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     public final JSLFrame edit(IPatch p) {
@@ -696,6 +690,21 @@ abstract public class Driver implements ISingleDriver {
     /** Getter of patchNameSize. */
     public int getPatchNameSize() {
         return patchNameSize;
+    }
+
+    // These are not 'final' because BankDriver and Converter class override
+    // them.
+    // Synth drivers should not override these.
+    public boolean isSingleDriver() {
+        return true;
+    }
+
+    public boolean isBankDriver() {
+        return false;
+    }
+
+    public boolean isConverter() {
+        return false;
     }
 
     //

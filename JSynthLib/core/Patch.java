@@ -245,7 +245,7 @@ public class Patch implements IPatch {
 
             for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
                 IDriver drv = dev.getDriver(idrv);
-                if ((drv instanceof IConverter)
+                if ((drv.isConverter())
                         && drv.supportsPatch(patchString, this.sysex)) {
                     patarray = ((IConverter) drv).extractPatch(this);
                     if (patarray != null)

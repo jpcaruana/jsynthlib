@@ -204,6 +204,18 @@ public class XMLDriver implements ISingleDriver {
         return this == AppConfig.getNullDriver();
     }
 
+    public final boolean isSingleDriver() {
+        return true;
+    }
+
+    public final boolean isBankDriver() {
+        return false;
+    }
+
+    public final boolean isConverter() {
+        return false;
+    }
+
     public String toString() {
         return getManufacturerName() + " " + getModelName() + " "
             + getPatchType();

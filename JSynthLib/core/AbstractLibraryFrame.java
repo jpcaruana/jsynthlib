@@ -287,7 +287,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
 
     public void sendSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        if (myPatch.getDriver() instanceof ISingleDriver) {
+        if (myPatch.getDriver().isSingleDriver()) {
             myPatch.calculateChecksum();
             myPatch.send();
         }
@@ -308,7 +308,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
 
     public void playSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        if (myPatch.getDriver() instanceof ISingleDriver) {
+        if (myPatch.getDriver().isSingleDriver()) {
             myPatch.calculateChecksum();
             myPatch.send();
             myPatch.play();

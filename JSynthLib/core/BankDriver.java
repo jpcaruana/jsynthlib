@@ -69,6 +69,10 @@ abstract public class BankDriver extends Driver implements IBankDriver {
 	super.sendPatch(bank);
     }
 
+    public boolean hasEditor() {
+        return true;
+    }
+
     /** Creates a default bank editor window to edit this bank. */
     protected JSLFrame editPatch(Patch bank) {
 	return new BankEditorFrame(bank);
@@ -182,6 +186,18 @@ abstract public class BankDriver extends Driver implements IBankDriver {
     /** Set name of the bank. */
     public void setPatchName(Patch bank, String name) {
 	// Most Banks have no name.
+    }
+
+    public final boolean isSingleDriver() {
+        return false;
+    }
+
+    public final boolean isBankDriver() {
+        return true;
+    }
+
+    public final boolean isConverter() {
+        return false;
     }
 
     //
