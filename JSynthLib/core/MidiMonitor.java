@@ -36,6 +36,7 @@ public class MidiMonitor extends JDialog
       jt.setCaretPosition(0);
 	 jt.setEditable(false);
       jt.setFont(new Font("monospaced", Font.PLAIN, 12));        
+      /*
      JButton ok = new JButton("Close");
         ok.addActionListener(new ActionListener() {
 	                       public void actionPerformed(ActionEvent e) {
@@ -43,6 +44,15 @@ public class MidiMonitor extends JDialog
 			       }});
          getContentPane().add(ok,BorderLayout.SOUTH);
 	getRootPane().setDefaultButton(ok);   
+        */
+        JButton clr = new JButton("Clear");
+       clr.addActionListener(new ActionListener() {
+ 	  public void actionPerformed(ActionEvent e) {
+ 	    jt.setText("");
+ 	  }});
+       getContentPane().add(clr,BorderLayout.SOUTH);
+ 
+
         setSize(500,400);
 	
 
@@ -75,10 +85,12 @@ public class MidiMonitor extends JDialog
    }
   void log (int port,boolean in, byte []sysex,int length)
   {
+      // move the selection at the end of text
+      jt.select(Integer.MAX_VALUE, Integer.MAX_VALUE);
 	 jt.setEditable(true);
-	 if (in) jt.replaceSelection("Port: "+port+" RECV "+length+ " bytes :");
-	 if (!in) jt.replaceSelection("Port: "+port+" XMIT "+length+ " bytes :");
-	 jt.replaceSelection(hexDump(sysex,length)+"\n");
+      jt.replaceSelection("Port: " + port + (in ? " RECV " : " XMIT ")
+  			+ length+ " bytes :\n"
+ 			+ hexDump(sysex,length) + "\n");
 	 jt.setEditable(false);
 
   }

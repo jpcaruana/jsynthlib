@@ -1,6 +1,7 @@
 package core;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import com.dreamfabric.DKnob;
@@ -85,6 +86,7 @@ public class KnobWidget extends SysexWidget {
 		//setMaximumSize(new Dimension(120+oWidthOff, 80));
 		
 		setupListener();
+		setupMouseWheelListener();
  	}
 
 
@@ -104,6 +106,20 @@ public class KnobWidget extends SysexWidget {
 				sendSysex();
 		    }
 		});
+	}
+
+        // This is not overridden by KnobLookupWidget.
+	protected void setupMouseWheelListener() {
+	  // mouse wheel event is supported by J2SE 1.4 and later 
+	  mKnob.addMouseWheelListener(new MouseWheelListener() {
+	      public void mouseWheelMoved(MouseWheelEvent e) {
+		DKnob t = (DKnob) e.getSource();
+		if (t.hasFocus()) // to make consistent with other operation.
+		  t.setValue(t.getValue()
+			     + (e.getWheelRotation()
+				/ (float) (valueMax - valueMin)));
+	      }
+	    });
 	}
 }
 

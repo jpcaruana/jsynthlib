@@ -4,6 +4,7 @@
  * display code.  Implements the Storable interface, so it can be easily
  * persisted to a Properties file.
  * @author Zellyn Hunter (zellyn@zellyn.com)
+ * @version $Id$
  */
 
 package core;
@@ -25,8 +26,9 @@ import java.io.FileNotFoundException;
 public class AppConfig implements Storable {
 
 	/* Configurable properties */
-	private String libPath           = null;
-	private String sysexPath         = null;
+	private String libPath           = "."; // so both properties are defaulted to the startup
+	private String sysexPath         = "."; // directory and doesn't generate a NPE when quitting
+                                                // the application, if you didn't change them.
    	private int initPortIn           = 0;
    	private int initPortOut          = 0;
    	private int note                 = 0;
