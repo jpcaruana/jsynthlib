@@ -59,15 +59,18 @@ class FCB1010Driver extends Driver {
     protected void setBankNum(int bankNum) {
     }
     
-    /** Override of Driver.sendPatch. Included because sometimes the sign on the first
-        * byte of the sysex array gets wiped. This method resets the first byte 
-        * to 0xf0 and then calls Driver.sendPatch.
+    /** FCB1010Driver patch does not utilize checksum. Method overridded with
+        * null method.
         */
-    protected void sendPatch(Patch p) {
-        p.sysex[0] = (byte)0xf0; // Sometimes the sign on the first byte of the sysex array gets wiped. Restore it.
-        super.sendPatch(p);
+    protected void calculateChecksum(Patch p) {
     }
-
+    
+    /** FCB1010Driver patch does not utilize checksum. Method overridded with
+        * null method.
+        */
+    protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
+    }
+    
     /** Requests a dump of the FCB1010 patch.
         * This patch does not utilize bank select or program changes. 
         */
