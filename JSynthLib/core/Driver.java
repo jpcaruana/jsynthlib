@@ -460,7 +460,11 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 
     /**
      * Returns an Editor Window for this Patch. Overwrite this to
-     * invoke your Patch Editor if made it.
+     * invoke your Patch Editor if made it.<p>
+     *
+     * Compatibility Note: The method returned
+     * <code>JInternalFrame</code>, but now returns
+     * <code>JSLFrame</code>.
      */
     protected JSLFrame editPatch(Patch p) {
 	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");

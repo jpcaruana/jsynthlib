@@ -5,8 +5,30 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * Base class of SysexWidgets.
+ * Base class of SysexWidgets. There are many kinds of extended class.<p>
  *
+ * They can be used as is, and can be used by being extended.  Here is
+ * an example of extended {@link ScrollBarWidget} class.
+ * <pre>
+ *    class MyScrollBarWidget extends ScrollBarWidget {
+ *        MyScrollBarWidget(String l, Patch p, int min, int max, int b,
+ *                          ParamModel ofs, SysexSender s) {
+ *            super(l, p, min, max, b, ofs, s);
+ *        }
+ *
+ *        protected void layoutWidgets() {
+ *            setLayout(new BorderLayout());
+ *            JLabel label = getJLabel();
+ *            label.setHorizontalAlignment(SwingConstants.CENTER);
+ *            slider.setMinimumSize(new Dimension(50, 25));
+ *            slider.setMaximumSize(new Dimension(125, 25));
+ *
+ *            add(label, BorderLayout.NORTH);
+ *            add(slider, BorderLayout.CENTER);
+ *            add(text, BorderLayout.EAST);
+ *        }
+ *    }
+ * </pre>
  * @version $Id$
  */
 public abstract class SysexWidget extends JPanel {
