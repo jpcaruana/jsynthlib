@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.9 2005-01-27 07:39:07 jbackhaus Exp $
+	Version: $Id: build.xml,v 1.10 2005-01-31 07:35:44 jbackhaus Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -76,9 +76,8 @@
 			<include name="**/*.java"/>
 			<exclude name="core/MacOSXMidiWrapper.java" unless="isMacOS"/>
 			<exclude name="midiprovider/**/*.java"/>
-		</javac>
-
-		<!-- Extra files -->
+		</javac>				
+		<!-- Images -->
 		<copy todir="${build}/images">
 			<fileset dir="images"/>
 		</copy>
@@ -89,7 +88,7 @@
 			<fileset dir="synthdrivers/RolandJV80/images" includes="**/*.png"/>
 		</copy>
 		<copy todir="${build}/synthdrivers/YamahaDX100">
-			<fileset dir="synthdrivers/YamahaDX100" includes="**/*.gif"/>				
+			<fileset dir="synthdrivers/YamahaDX100" includes="**/*.gif"/>
 		</copy>
 		<copy todir="${build}/synthdrivers/YamahaDX7/images">
 			<fileset dir="synthdrivers/YamahaDX7/images" includes="**/*.gif"/>
@@ -100,6 +99,23 @@
 		<copy todir="${build}/synthdrivers/YamahaTX81z">
 			<fileset dir="synthdrivers/YamahaTX81z" includes="**/*.gif"/>
 		</copy>
+		<!-- .syx files -->
+		<copy todir="${build}/synthdrivers/KawaiK5000">
+			<fileset dir="synthdrivers/KawaiK5000" includes="**/*.syx"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/RolandTD6">
+			<fileset dir="synthdrivers/RolandTD6" includes="**/*.syx"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/WaldorfMW2">
+			<fileset dir="synthdrivers/WaldorfMW2" includes="**/*.syx"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/WaldorfPulse">
+			<fileset dir="synthdrivers/WaldorfPulse" includes="**/*.syx"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/YamahaMotif">
+			<fileset dir="synthdrivers/YamahaMotif" includes="**/*.syx"/>
+		</copy>
+		<!-- Extra files -->
 		<copy file="doc/documentation.html" todir="${build}/doc"/>
 		<copy file="doc/programming.html" todir="${build}/doc"/>
 		<copy file="synthdrivers.properties" todir="${build}"/>
@@ -113,7 +129,9 @@
 		<javadoc destdir="${api_docs}" nohelp="true" private="${show-private-classes}">
 			<packageset dir="${src}">
 				<include name="*/**"/>
+				<exclude name="groovy/**"/>
 				<exclude name="midiprovider/**"/>
+				<exclude name="org/codehaus/groovy/**"/>
 			</packageset>
 		</javadoc>
 	</target>
@@ -130,7 +148,7 @@
 		<jar jarfile="${dist}/${ant.project.name}-${version}.jar"
 			 basedir="${build}"
 			 excludes="core/DeviceListWriter.class,JSynthLib.properties,
-					   linuxdevices.conf">
+					   linuxdevices.conf,*.bat">
 			<manifest>
 				<attribute name="Main-Class" value="JSynthLib"/>
 			</manifest>
@@ -146,6 +164,7 @@
 				<include name="**/*.java"/>
 				<include name="**/*.gif"/> <!-- needed e.g. for the Yamaha DX-7 driver -->
 				<include name="**/*.png"/> <!-- needed e.g. for the Roland JV80 driver -->
+				<include name="**/*.syx"/> <!-- needed e.g. for the Roland TD6 driver -->
 				<include name="images/**"/>
 				<include name="synthdrivers.properties"/>
 				<include name="${docs}"/>
