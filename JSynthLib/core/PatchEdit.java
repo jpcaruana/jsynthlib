@@ -12,6 +12,10 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import javax.sound.midi.*;
+
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
+
 public class PatchEdit extends JFrame
 {
     public static JDesktopPane desktop;
@@ -44,6 +48,7 @@ public class PatchEdit extends JFrame
     public static SortAction sortAction;
     public static SearchAction searchAction;
     public static DeleteDuplicatesAction dupAction;
+    public static ExitAction exitAction;
     public static CopyAction copyAction;
     public static CutAction cutAction;
     public static PasteAction pasteAction;
@@ -93,9 +98,7 @@ public class PatchEdit extends JFrame
         {
             public void windowClosing (WindowEvent e)
             {
-                savePrefs ();
-                unloadMidiDriver();
-		System.exit (0);
+	      exitAction.actionPerformed(new ActionEvent(this, 0, ""));
             }
         });
         
@@ -125,6 +128,7 @@ public class PatchEdit extends JFrame
     // This sets up the Menubar as well as the main right-click Popup menu and the toolbar
     protected JMenuBar createMenus ()
     {
+        int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
         JMenuBar menuBar = new JMenuBar ();
         JMenu menuLib = new JMenu ("Library");
         menuLib.setMnemonic (KeyEvent.VK_L);
@@ -132,18 +136,18 @@ public class PatchEdit extends JFrame
         NewAction newAction=new NewAction ();
         menuLib.add (newAction);
         menuLib.getItem (menuLib.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_N, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_N, mask));
         
         OpenAction openAction=new OpenAction ();
         menuLib.add (openAction);
         menuLib.getItem (menuLib.getItemCount ()-1).setAccelerator (
 
-        KeyStroke.getKeyStroke (KeyEvent.VK_O, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_O, mask));
         
         saveAction=new SaveAction ();
         menuLib.add (saveAction);
         menuLib.getItem (menuLib.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_S, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_S, mask));
         
         menuSaveAs = new JMenuItem ("Save As");
         menuSaveAs.setMnemonic (KeyEvent.VK_A);
@@ -174,8 +178,9 @@ public class PatchEdit extends JFrame
         dupAction=new DeleteDuplicatesAction ();
         menuLib.add (dupAction);
         menuLib.add (new JSeparator ());
-        ExitAction exitAction=new ExitAction ();
-        menuLib.add (exitAction);
+        exitAction=new ExitAction ();
+        if (!MacUtils.isMac())
+	  menuLib.add (exitAction);
         menuBar.add (menuLib);
         
         JMenu menuPatch = new JMenu ("Patch");
@@ -183,15 +188,15 @@ public class PatchEdit extends JFrame
         copyAction=new CopyAction ();
         menuPatch.add (copyAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_C, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_C, mask));
         cutAction=new CutAction ();
         menuPatch.add (cutAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_X, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_X, mask));
         pasteAction=new PasteAction ();
         menuPatch.add (pasteAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_V, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_V, mask));
         deleteAction=new DeleteAction ();
         menuPatch.add (deleteAction);
         menuPatch.add (new JSeparator ());
@@ -205,7 +210,7 @@ public class PatchEdit extends JFrame
         sendAction=new SendAction ();
         menuPatch.add (sendAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_T, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_T, mask));
         sendToAction=new SendToAction ();
         menuPatch.add (sendToAction);       
         storeAction=new StoreAction ();
@@ -217,11 +222,11 @@ public class PatchEdit extends JFrame
         playAction=new PlayAction ();
         menuPatch.add (playAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_P, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_P, mask));
         editAction=new EditAction ();
         menuPatch.add (editAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
-        KeyStroke.getKeyStroke (KeyEvent.VK_E, KeyEvent.CTRL_MASK));
+        KeyStroke.getKeyStroke (KeyEvent.VK_E, mask));
         menuPatch.add (new JSeparator ());
         reassignAction=new ReassignAction();
  	menuPatch.add (reassignAction);
@@ -247,8 +252,9 @@ public class PatchEdit extends JFrame
         }
         );
         menuConfig.add (menuSynths);
-        PrefsAction prefsAction=new PrefsAction ();
-        menuConfig.add (prefsAction);
+        final PrefsAction prefsAction=new PrefsAction ();
+        if (!MacUtils.isMac())
+	  menuConfig.add (prefsAction);
         NoteChooserAction noteChooserAction=new NoteChooserAction ();
         menuConfig.add (noteChooserAction);
         MonitorAction monitorAction=new MonitorAction ();
@@ -258,19 +264,11 @@ public class PatchEdit extends JFrame
         
         JMenu menuHelp = new JMenu ("Help");
         menuHelp.setMnemonic (KeyEvent.VK_H);
-        JMenuItem menuAbout = new JMenuItem ("About");
-        menuAbout.setMnemonic (KeyEvent.VK_A);
+        final AboutAction aboutAction = new AboutAction( );
        
+	if (!MacUtils.isMac())
+	  menuHelp.add (aboutAction);
   
-        menuAbout.addActionListener (new ActionListener ()
-        {
-            public void actionPerformed (ActionEvent e)
-            {
-                JOptionPane.showMessageDialog (null, "JSynthLib Version 0.18\nCopyright (C) 2000-02 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info","About JSynthLib", JOptionPane.INFORMATION_MESSAGE);return;
-            }
-        }
-        );
-        menuHelp.add (menuAbout);
         docsAction = new DocsAction();
 	menuHelp.add(docsAction);
         menuBar.add (menuHelp);
@@ -354,6 +352,49 @@ public class PatchEdit extends JFrame
         getContentPane ().add (toolBar,BorderLayout.NORTH);
         toolBar.setVisible (true); //necessary as of kestrel
         
+	MacUtils.init( new ApplicationAdapter () {
+	    public void handleAbout(ApplicationEvent e) {
+	      final ActionEvent event = 
+		new ActionEvent(e.getSource(),0,"About");
+	      // opens dialog, so I think we need to do this to avoid deadlock
+	      SwingUtilities.invokeLater(new Runnable () {
+		  public void run () {
+		    try {
+		      aboutAction.actionPerformed(event);
+		    } catch (Exception e) {}
+		  }
+		});
+	      e.setHandled(true);
+	    }
+	    public void handleOpenFile(ApplicationEvent e) {
+	      final File file = new File(e.getFilename());
+	      SwingUtilities.invokeLater(new Runnable () {
+		  public void run () {
+		    try {
+		      openFrame(file);
+		    } catch (Exception e) {}
+		  }
+		});
+	      e.setHandled(true);
+	    }
+	    public void handlePreferences(ApplicationEvent e) {
+	      e.setHandled(true);
+	      final ActionEvent event = 
+		new ActionEvent(e.getSource(),0,"Preferences");
+	      SwingUtilities.invokeLater(new Runnable () {
+		  public void run () {
+		    try {
+		      prefsAction.actionPerformed(event);
+		    } catch (Exception e) {}
+		  }
+		});
+	    }
+	    public void handleQuit(ApplicationEvent e) {
+	      exitAction.actionPerformed(new ActionEvent(e.getSource(),0,
+							 "Exit"));
+	      e.setHandled(true);
+	    }
+	  } );
         return menuBar;
     }
     // This creates a new [empty] Library Window
@@ -603,6 +644,17 @@ public class PatchEdit extends JFrame
 /* Now we start with the various action classes. Each of these preforms one of the menu commands and are called either from
    the menubar, popup menu or toolbar.*/
     
+     public class AboutAction extends AbstractAction
+     {
+       public AboutAction( ) {
+	 super("About"); 
+	 putValue( Action.MNEMONIC_KEY, new Integer ('A'));
+       }
+       public void actionPerformed (ActionEvent e)
+       {
+	 JOptionPane.showMessageDialog (null, "JSynthLib Version 0.18\nCopyright (C) 2000-02 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info","About JSynthLib", JOptionPane.INFORMATION_MESSAGE);return;
+       }
+      }
      public class ReassignAction extends AbstractAction
      {
          public ReassignAction ()
@@ -992,6 +1044,7 @@ public class PatchEdit extends JFrame
         public void actionPerformed (ActionEvent e)
         {
             savePrefs ();
+	    unloadMidiDriver();
             System.exit (0);
         }
     }
