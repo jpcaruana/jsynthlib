@@ -81,7 +81,7 @@ public class NewPatchDialog extends JDialog
 		{
 		    IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
 
-		    p = driver.createNewPatch();
+		    p = driver.createPatch();
 		    if (p != null) {
 			ErrorMsg.reportStatus("Bingo " + driver.toString());
 		    } else {

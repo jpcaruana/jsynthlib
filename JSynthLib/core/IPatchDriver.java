@@ -38,8 +38,7 @@ public interface IPatchDriver extends IDriver {
     /**
      * Create a new Patch.
      */
-    // XXX replace with IPatch createPatch()
-    public abstract Patch createNewPatch();
+    public abstract IPatch createPatch();
 
     /**
      * Create a patch from a byte array for the driver.

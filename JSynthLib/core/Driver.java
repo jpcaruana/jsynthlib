@@ -439,8 +439,12 @@ public class Driver implements ISingleDriver {
     /**
      * Create a new Patch.
      */
-    public Patch createNewPatch() {
+    protected Patch createNewPatch() {
 	return null;
+    }
+
+    public IPatch createPatch() {
+	return (IPatch) createNewPatch();
     }
 
     protected int trimSysex(Patch p) { // no driver overrides this now.
