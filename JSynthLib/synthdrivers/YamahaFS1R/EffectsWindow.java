@@ -165,6 +165,212 @@ class EffectsWindow
 	};
 	
 	static String mInsertionNames[][] = {
+	{},
+	// chorus
+	{"LFO freq", "LFO Depth", "FB level", "Delay Offset", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "EQ MidFreq", "EQ MidGain", "EQ Mid Q", null, "Mode"},
+	// celeste
+	{"LFO freq", "LFO Depth", "FB level", "Delay Offset", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "EQ MidFreq", "EQ MidGain", "EQ Mid Q", null, "Mode"},
+	// flanger
+	{"LFO freq", "LFO Depth", "FB level", "Delay Offset", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "EQ MidFreq", "EQ MidGain", "EQ Mid Q", "LFO phase"},
+	// symphonic
+	{"LFO freq", "LFO Depth", "Delay Offset", null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "EQ MidFreq", "EQ MidGain", "EQ Mid Q"},
+	// phaser1
+	{"LFO freq", "LFO Depth", "Phase shift", "FB level", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "Stage", "Diffuse"},
+	// phaser2
+	{"LFO freq", "LFO Depth", "Phase shift", "FB level", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "Stage", null, "LFO phase"},
+	// pitch change
+	{"Pitch", "Init delay", "Fine1", "Fine2", "FB level", null, null, null, null, "dry/wet", "Pan1", "Out level1", "Pan2", "Out level2"},
+	// ens detune
+	{"Detune", "InitDelayL", "InitDelayR", null, null, null, null, null, null, "dry/wet", "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain"},
+	// rotary SP
+	{"LFO Freq", "LFO Depth", null, null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "EQ MidFreq", "EQ MidGain", "EQ Mid Q"},
+	// 2 way rotary
+	{"Rotor Spd", "Drive Low", "Drive High", "Low/High", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", null,  "CrossFreq", "Mic Angle"},
+	// tremolo
+	{"LFO Freq", "AM depth", "PM depth", null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", null, "EQ MidFreq", "EQ MidGain", "EQ Mid Q", "LFO phase", "Mode"},
+	// auto pan
+	{"LFO Freq", "L/R depth", "F/R depth", "Pan dir", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", null, "EQ MidFreq", "EQ MidGain", "EQ Mid Q"},
+	// ambience
+	{"Delay Time", "Phase", null, null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet"},
+	// a wah + dist
+	{"LFO Freq", "LFO Depth", "Cutoff", "Resonance", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "Drive", "DS LowGain", "DS MidGain", "LPFCutoff", "OutputLevel"},
+	// a wah + overdrive
+	{"LFO Freq", "LFO Depth", "Cutoff Fr", "Resonance", null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "Drive", "DS LowGain", "DS MidGain", "LPFCutoff", "OutputLevel"},
+	// t wah + dist
+	{"Sensitivity", "Cutoff", "Resonance", null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "Drive", "DS LowGain", "DS MidGain", "LPFCutoff", "OutputLevel"},
+	// t wah + overdrive
+	{"Sensitivity", "Cutoff", "Resonance", null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain", "dry/wet", "Drive", "DS LowGain", "DS MidGain", "LPFCutoff", "OutputLevel"},
+	// wah + ds + delay
+	{"Delay", "FB level", "Delay Mix", "Drive", "Output level", "DS LowGain", "DS MidGain", null, null, "dry/wet", "Sensitivity", "Cutoff", "Resonance", "Release"},
+	// wah + od + delay
+	{"Delay", "FB level", "Delay Mix", "Drive", "Output level", "DS LowGain", "DS MidGain", null, null, "dry/wet", "Sensitivity", "Cutoff", "Resonance", "Release"},
+	// lofi
+	{"SampleFreq", "Word Len", "OutputGain", "LPFCutoff", "Filter", "LPFReso", "Bit assign", "Emphasis", null, "dry/wet"},
+	// 3-band EQ
+	{"Low Gain", "Mid Freq", "Mid Gain", "Mid Q", "High Gain", "Low Freq", "High Freq", null, null, null, null, null, null, null, "Mode"},
+	// HM enhencer
+	{"HPFCutoff", "Drive", "Mix level"},
+	// noise gate
+	{"Attack", "Release", "Threshold", "OutputLevel"},
+	// compressor
+	{"Attack", "Release", "Threshold", "Ratio", "OutputLevel"},
+	// comp + dist
+	{"Drive", "EQ LowFreq", "EQ LowGain", "LPFCutoff", "OutputLevel", null, "EQ MidFreq", "EQ MidGain", "EQ Mid Q", "dry/wet", "Edge", "Attack", "Release", "Threshold", "Ratio"},
+	// comp + dist + delay
+	{"Delay", "FB level", "Delay mix", "Drive", "OutputLevel", "DS LowGain", "DS MidGain", null, null, "dry/wet", "Attack", "Release", "Threshold", "Ratio"},
+	// comp + over + delay
+	{"Delay", "FB level", "Delay mix", "Drive", "OutputLevel", "DS LowGain", "DS MidGain", null, null, "dry/wet", "Attack", "Release", "Threshold", "Ratio"},
+	// distortion
+	{"Drive", "EQ LowFreq", "EQ LowGain", "LPFCutoff", "OutputLevel", null, "EQ MidFreq", "EQ MidGain", "EQ Mid Q", "dry/wet", "Edge"},
+	// dist + delay
+	{"LchDelay", "RchDelay", "FB delay", "FB level", "Delay mix", "Drive", null, "DS LowGain", "DS MidGain", "dry/wet"},
+	// overdrive
+	{"Drive", "EQ LowFreq", "EQ LowGain", "LPFCutoff", "OutputLevel", null, "EQ MidFreq", "EQ MidGain", "EQ Mid Q", "dry/wet", "Edge"},
+	// over + delay
+	{"LchDelay", "RchDelay", "FB delay", "FB level", "Delay mix", "Drive", null, "DS LowGain", "DS MidGain", "dry/wet"},
+	// amp sim
+	{"Drive", "Amp type", "LPFCutoff", "OutputLevel", null, null, null, null, null, "dry/wet", "Edge"},
+	// delay LCR
+	{"LchDelay", "RchDelay", "CchDelay", "FB Delay", "FB level", "Cch level", "High Damp", null, null, "dry/wet", null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain"},
+	// delay L,R
+	{"LchDelay", "RchDelay", "FBDelay1", "DBDelay2", "FB level", "High Damp", null, null, null, "dry/wet", null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain"},
+	// echo
+	{"LchDelay1", "Lch FB Lev", "RchDelay1", "Rch FB Lev", "High Damp", "LchDelay2", "RchDelay2", "Delay2 Lev", null, "dry/wet", null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain"},
+	// crossdelay
+	{"L>E delay", "R>L delay", "FB level", "InputSelect", "High Damp", null, null, null, null, "dry/wet", null, null, "EQ LowFreq", "EQ LowGain", "EQ HiFreq", "EQ HiGain"},
+	// ER1
+	{"Early type", "Room size", "Diffusion", "InitDelay", "FB level", "HPFCutoff", "LPFCutoff", null, null, "dry/wet", "Liveness", "Density"},
+	// ER2
+	{"Early type", "Room size", "Diffusion", "InitDelay", "FB level", "HPFCutoff", "LPFCutoff", null, null, "dry/wet", "Liveness", "Density"},
+	// Gate rev
+	{"Gate type", "Room size", "Diffusion", "InitDelay", "FB level", "HPFCutoff", "LPFCutoff", null, null, "dry/wet", "Liveness", "Density"},
+	// reverse gate
+	{"Gate type", "Room size", "Diffusion", "InitDelay", "FB level", "HPFCutoff", "LPFCutoff", null, null, "dry/wet", "Liveness", "Density"},
+	};
+	
+	static int mInsertionParams[][][] = {
+	{},
+	// default, min, max
+	{// chorus
+	{6, 0, 0x7F}, {0x3E, 0, 127}, {0x4F, 1, 0x7F}, {0x50, 0, 0x7F}, {}, {0x16, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x33, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x40, 1, 0x7F}, {0x27, 0xE, 0x36}, {0x40, 0x34, 0x4C}, {10, 10, 0x78}, {}, {1, 0, 1}
+	},
+	{// celeste
+	{0x12, 0, 0x7F}, {0x1C, 0, 127}, {0x40, 1, 0x7F}, {10, 0, 0x7F}, {}, {0xF, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x33, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x7F, 1, 0x7F}, {0x28, 0xE, 0x36}, {0x3E, 0x34, 0x4C}, {10, 10, 0x78}, {}, {1, 0, 1}
+	},
+	{// flanger
+	{11, 0, 0x7F}, {0x1E, 0, 127}, {0x68, 1, 0x7F}, {2, 0, 0x7F}, {}, {0x14, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x32, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x60, 1, 0x7F}, {0x27, 0xE, 0x36}, {0x40, 0x34, 0x4C}, {10, 10, 0x78}, {4, 4, 0x7C}
+	},
+	{// symphonic
+	{10, 0, 0x7F}, {0x28, 0, 127}, {0, 0, 0x7F}, {}, {}, {0x16, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x32, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x60, 1, 0x7F}, {0x2E, 0xE, 0x36}, {0x3D, 0x34, 0x4C}, {10, 10, 0x78} 
+	},
+	{// phaser1
+	{0xE, 0, 0x7F}, {0x5C, 0, 0x7F}, {0x4C, 0, 0x7F}, {0x64, 1, 127}, {}, {0x16, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x28, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x62, 1, 0x7F}, {6, 4, 10}, {1, 0, 1}
+	},
+	{// phaser2
+	{2, 0, 0x7F}, {0x7F, 0, 0x7F}, {0x19, 0, 0x7F}, {0x73, 1, 127}, {}, {0x14, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x31, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x60, 1, 0x7F}, {5, 3, 5}, {}, {4, 4, 0x7C}
+	},
+	{// pitch change
+	{0x40, 0x28, 0x58}, {1, 0, 0x7F}, {0x4F, 0xE, 0x72}, {0x30, 0xE, 0x72}, {0x40, 1, 0x7F}, {}, {}, {}, {}, {0x3D, 1, 127}, {1, 1, 0x7F}, {0x7D, 0, 0x7F}, {0x7F, 1, 0x7F}, {0x7F, 0, 0x7F}
+	},
+	{// ens detune
+	{0x22, 0xE, 0x72}, {10, 0, 0x7F}, {0x1E, 0, 0x7F}, {}, {}, {}, {}, {}, {}, {0x40, 1, 0x7F}, {0x16, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x30, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}
+	},
+	{// rotary SP
+	{0x33, 0, 0x7F}, {0x4C, 0, 127}, {}, {}, {}, {0x16, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x30, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x40, 1, 0x7F}, {0x2B, 0xE, 0x36}, {0x34, 0x34, 0x4C}, {0x18, 10, 0x78} 
+	},
+	{// 2 way rotary
+	{0x57, 0, 0x7F}, {0x59, 0, 127}, {62, 0, 127}, {0x11, 1, 0x7F}, {}, {15, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x2C, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {}, {0x19, 0xE, 0x36}, {0x1F, 0, 0x3C} 
+	},
+	{// tremolo
+	{0x28, 0, 127}, {0x70, 0, 127}, {0, 0, 127}, {}, {}, {0xE, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x33, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {}, {0x27, 0xE, 0x36}, {0x40, 0x34, 0x4C}, {10, 10, 0x78}, {0x40, 4, 0x7C}, {1, 0, 1}
+	},
+	{// auto pan
+	{0x29, 0, 127}, {0x50, 0, 127}, {0x20, 0, 127}, {5, 0, 5}, {}, {0x11, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x32, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {}, {0x27, 0xE, 0x36}, {0x40, 0x34, 0x4C}, {10, 10, 0x78}
+	},
+	{// ambiance
+	{0x70, 0, 0x7F}, {1, 0, 1}, {}, {}, {}, {0x16, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x30, 0x1C, 0x3A}, {0x36, 0x34, 0x4C}, {0x4A, 1, 0x7F}
+	},
+	{// a wah + dist
+	{0x20, 0, 0x7F}, {0x54, 0, 127}, {0x2E, 0, 127}, {0x22, 10, 0x78}, {}, {0x16, 4, 0x28}, {0x42, 0x34, 0x4C}, {0x2E, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x7F, 1, 0x7F}, {0x3C, 0, 0x7F}, {0x48, 0x34, 0x4C}, {0x44, 0x34, 0x4C}, {0x34, 0x22, 0x3C}, {0x40, 0, 0x7F}
+	},
+	{// a wah + overdr
+	{0x19, 0, 0x7F}, {0x40, 0, 127}, {0x20, 0, 127}, {0x17, 10, 0x78}, {}, {0x16, 4, 0x28}, {0x42, 0x34, 0x4C}, {0x2E, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x7F, 1, 0x7F}, {0x10, 0, 0x7F}, {0x44, 0x34, 0x4C}, {0x48, 0x34, 0x4C}, {0x2D, 0x22, 0x3C}, {0x44, 0, 0x7F}
+	},
+	{// t wah + dist
+	{0x50, 0, 127}, {0x12, 0, 127}, {0x2D, 10, 0x78}, {}, {}, {0x16, 4, 0x28}, {0x42, 0x34, 0x4C}, {0x2E, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x7F, 1, 0x7F}, {0x1E, 0, 0x7F}, {0x48, 0x34, 0x4C}, {0x4A, 0x34, 0x4C}, {0x35, 0x22, 0x3C}, {0x48, 0, 0x7F}
+	},
+	{// t wah + over
+	{0x3D, 0, 127}, {0x1E, 0, 127}, {0x29, 10, 0x78}, {}, {}, {0x16, 4, 0x28}, {0x42, 0x34, 0x4C}, {0x2E, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}, {0x7F, 1, 0x7F}, {0xF, 0, 0x7F}, {0x44, 0x34, 0x4C}, {0x48, 0x34, 0x4C}, {0x31, 0x22, 0x3C}, {0x48, 0, 0x7F}
+	},
+	{// wah + ds + delay
+	{0x0E6C, 1, 0x6A52}, {0x54, 1, 0x7F}, {0x1E, 0, 0x7F}, {0x3C, 0, 0x7F}, {0x35, 0, 127}, {0x44, 0x34, 0x4C}, {0x48, 0x34, 0x4C}, {}, {}, {0x7F, 1, 0x7F}, {0x66, 0, 127}, {0x14, 0, 127}, {0x17, 10, 0x78}, {0x3B, 0x34, 0x43}
+	},
+	{// wah + over + delay
+	{0x0C40, 1, 0x6A52}, {0x54, 1, 0x7F}, {0x32, 0, 0x7F}, {0x10, 0, 0x7F}, {0x57, 0, 127}, {0x40, 0x34, 0x4C}, {0x40, 0x34, 0x4C}, {}, {}, {0x7F, 1, 0x7F}, {0x50, 0, 127}, {0x23, 0, 127}, {0x1E, 10, 0x78}, {0x40, 0x34, 0x43}
+	},
+	{// lofi
+	{2, 0, 0x7F}, {1, 1, 127},  {3, 0, 0x2A}, {0x3C, 10, 0x3C}, {4, 0, 5}, {0x1D, 10, 0x78}, {1, 0, 6}, {0, 0, 1}, {}, {0x7F, 1, 0x7F}
+	},
+	{// 3 band EQ
+	{0x40, 0x34, 0x4C}, {0x22, 0xE, 0x36}, {0x40, 0x34, 0x4C}, {0x32, 10, 0x78}, {0x40, 0x34, 0x4C}, {0x13, 8, 0x28}, {0x34, 0x1C, 0x3A}, {}, {}, {}, {}, {}, {}, {}, {0, 0, 1}
+	},
+	{// HM enhencer
+	{0x31, 0x1C, 0x3A}, {0x14, 0, 0x7F}, {0x1E, 0, 127}
+	},
+	{// noise gate
+	{0, 0, 0x13}, {11, 0, 15}, {0x52, 0x37, 0x61}, {0x32, 0, 127}
+	},
+	{// compressor
+	{10, 0, 0x13}, {2, 0, 15}, {0x63, 0x4F, 0x79}, {4, 0, 7}, {0x50, 0, 127}
+	},
+	{// comp + dist
+	{0x3C, 0, 0x7F}, {0x16, 4, 0x28}, {0x45, 0x34, 0x4C}, {0x35, 0x22, 0x3C}, {0x46, 0, 0x7F}, {}, {0x2E, 0xE, 0x36}, {0x48, 0x34, 0x4C}, {10, 10, 0x78}, {0x7F, 1, 0x7F}, {0x78, 0, 127}, {6, 0, 0x13}, {2, 0, 15}, {0x64, 0x4F, 0x79}, {5, 0, 7}
+	},
+	{// comp + ds + delay
+	{0x0E6C, 1, 0x6A52}, {0x48, 1, 127}, {0x26, 0, 127}, {0x3C, 0, 127}, {0x33, 0, 127}, {0x44, 0x34, 0x4C}, {0x48, 0x34, 0x4C}, {}, {}, {0x7F, 1, 127}, {6, 0, 0x13}, {11, 0, 15}, {0x5F, 0x4F, 0x79}, {5, 0, 7}
+	},
+	{// comp + over + delay
+	{0x0E6C, 1, 0x6A52}, {0x4A, 1, 127}, {0x32, 0, 127}, {0x12, 0, 127}, {0x41, 0, 127}, {0x44, 0x34, 0x4C}, {0x45, 0x34, 0x4C}, {}, {}, {0x7F, 1, 127}, {6, 0, 0x13}, {2, 0, 15}, {0x5F, 0x4F, 0x79}, {4, 0, 7}
+	},
+	{// distortion
+	{0x3C, 0, 127}, {0x13, 4, 0x28}, {0x48, 0x34, 0x4C}, {0x35, 0x22, 0x3C}, {65, 0, 127}, {}, {0x23, 0xE, 0x36}, {0x4A, 0x34, 0x4C}, {10, 10, 0x78}, {0x7F, 1, 127}, {80, 0, 127}
+	},
+	{// dist + delay
+	{0x0374, 1, 0x6A52}, {0x768, 1, 0x6A52}, {0xF50, 1, 0x6A52}, {0x54, 1, 127}, {80, 0, 127}, {60, 0, 127}, {42, 0, 127}, {0x48, 0x34, 0x4C}, {0x4A, 0x34, 0x4C}, {0x7F, 1, 127}
+	},
+	{// overdrive
+	{0x1D, 0, 127}, {0x18, 4, 0x28}, {0x44, 0x34, 0x4C}, {0x2E, 0x22, 0x3C}, {80, 0, 127}, {}, {0x24, 0xE, 0x36}, {0x48, 0x34, 0x4C}, {10, 10, 0x78}, {0x7F, 1, 127}, {104, 0, 127}
+	},
+	{// over + delay
+	{0x0374, 1, 0x6A52}, {0x768, 1, 0x6A52}, {0xF50, 1, 0x6A52}, {0x54, 1, 127}, {64, 0, 127}, {25, 0, 127}, {55, 0, 127}, {0x44, 0x34, 0x4C}, {0x48, 0x34, 0x4C}, {0x7F, 1, 127}
+	},
+	{// amp sim
+	{76, 0, 127}, {3, 0, 3}, {0x2A, 0x22, 0x3C}, {80, 0, 127}, {}, {}, {}, {}, {}, {0x7F, 1, 127}, {102, 0, 127}
+	},
+	{// delay LCR
+	{0x1A05, 1, 0x6A52}, {0x0D03, 1, 0x6A52}, {0x2708, 1, 0x6A52}, {0x2708, 1, 0x6A52}, {0x4A, 1, 127}, {100, 0, 127}, {3, 1, 10}, {}, {}, {0x20, 1, 127}, {}, {}, {0x1A, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x2E, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}
+	},
+	{// delay L,R
+	{0x1344, 1, 0x6A52}, {0x1D26, 1, 0x6A52}, {0x1D28, 1, 0x6A52}, {0x1D26, 1, 0x6A52}, {0x57, 1, 127}, {3, 1, 10}, {}, {}, {}, {0x20, 1, 127}, {}, {}, {0x1A, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x2E, 0x1C, 0x3A}, {0x40, 0x34, 0x4C}
+	},
+	{// echo
+	{0x1118, 1, 0x3524}, {0x56, 1, 127}, {0x1034, 1, 0x3524}, {0x55, 1, 127}, {5, 1, 10}, {0x117C, 1, 0x3524}, {0x122E, 1, 0x3524}, {62, 0, 127}, {}, {0x20, 1, 127}, {}, {}, {0x17, 4, 0x28}, {0x3A, 0x34, 0x4C}, {0x32, 0x1C, 0x3A}, {0x3F, 0x34, 0x4C}
+	},
+	{// cross delay
+	{0x1C42, 1, 0x3524}, {0x1C42, 1, 0x3524}, {0x58, 1, 127}, {1, 0, 2}, {5, 1, 10}, {}, {}, {}, {}, {0x20, 1, 127}, {}, {}, {0x19, 4, 0x28}, {0x40, 0x34, 0x4C}, {0x32, 0x1C, 0x3A}, {0x3E, 0x34, 0x4C}
+	},
+	{// ER1
+	{0, 0, 5}, {0x19, 0, 127}, {5, 0, 10}, {6, 0, 127}, {0x4A, 1, 127}, {0, 0, 0x34}, {0x2E, 0x22, 0x3C}, {}, {}, {0x1D, 1, 127}, {7, 0, 10}, {1, 0, 3}, {10, 1, 10}
+	},
+	{// ER2
+	{2, 0, 5}, {0xC, 0, 127}, {8, 0, 10}, {4, 0, 127}, {0x43, 1, 127}, {0, 0, 0x34}, {0x38, 0x22, 0x3C}, {}, {}, {0x1D, 1, 127}, {5, 0, 10}, {3, 0, 3}, {10, 1, 10}
+	},
+	{// gate rev
+	{0, 0, 1}, {6, 0, 127}, {10, 0, 10}, {0, 0, 127}, {0x40, 1, 127}, {0, 0, 0x34}, {0x34, 0x22, 0x3C}, {}, {}, {0x34, 1, 127}, {5, 0, 10}, {3, 0, 3}, {5, 1, 10}
+	},
+	{// reverse gate
+	{1, 0, 1}, {15, 0, 127}, {8, 0, 10}, {3, 0, 127}, {0x40, 1, 127}, {0, 0, 0x34}, {0x2F, 0x22, 0x3C}, {}, {}, {127, 1, 127}, {6, 0, 10}, {3, 0, 3}, {10, 1, 10}
+	},
 	};
 	
 	static final int DEFAULT = 0;
@@ -419,65 +625,79 @@ class EffectsWindow
 		// insertion
 		Box oInsPanel = Box.createVerticalBox(); 
 		JPanel oPanel3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		ComboBoxWidget oSelInsertion = new ComboBoxWidget("", p, new YamahaFS1RPerformanceDriver.Model(p, 0x012F), new YamahaFS1RPerformanceDriver.Sender(0x012F), mInsertions);
-		/*
+		ParamModel oInsertionTypeModel = new YamahaFS1RPerformanceDriver.Model(p, 0x012F);
+		ComboBoxWidget oSelInsertion = new ComboBoxWidget("", p, oInsertionTypeModel, new YamahaFS1RPerformanceDriver.Sender(0x012F), mInsertions);
 		oSelInsertion.cb.addItemListener(new ItemListener() {
 			public void itemStateChanged (ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
 				{
 					JComboBox oCB = (JComboBox)e.getSource();
 					int oIndex = oCB.getSelectedIndex();
-					for (int i = 0; i < 16; i++)
-					{
-						if (i < mInsertionNames[oIndex].length && mInsertionNames[oIndex][i] != null)
-						{
-							mInsertionWidgets[i].setLabel(mInsertionNames[oIndex][i]);
-							mInsertionWidgets[i].setMinMax(mInsertionParams[oIndex][i][1], mInsertionParams[oIndex][i][2]);
-							mVariationWidgets[i].setEnabled(true);
-						}
-						else
-						{
-							mInsertionWidgets[i].setLabel("");
-							mInsertionWidgets[i].setEnabled(false);
-						}
-					}
+					selectInsertionType(oIndex, true);
 				}
 			}
 		});
-		*/
 		oPanel3.add(oSelInsertion);
 		oPanel3.add(new KnobWidget("Pan", p, 1, 0x7F, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x0130), new YamahaFS1RPerformanceDriver.Sender(0x0130)));
 		oPanel3.add(new KnobWidget("Send to Reverb", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0131), new YamahaFS1RPerformanceDriver.Sender(0x0131)));		
 		oPanel3.add(new KnobWidget("Send to Var", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0132), new YamahaFS1RPerformanceDriver.Sender(0x0132)));		
 		oPanel3.add(new KnobWidget("Level", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0133), new YamahaFS1RPerformanceDriver.Sender(0x0133)));	
 		oInsPanel.add(oPanel3);	
-		/*
+		
 		oPanel3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel3.add(new KnobWidget("P1", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0108), new YamahaFS1RPerformanceDriver.Sender(0x0108)));
-		oPanel3.add(new KnobWidget("P2", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x010A), new YamahaFS1RPerformanceDriver.Sender(0x010A)));
-		oPanel3.add(new KnobWidget("P3", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x010C), new YamahaFS1RPerformanceDriver.Sender(0x010C)));
-		oPanel3.add(new KnobWidget("P4", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x010E), new YamahaFS1RPerformanceDriver.Sender(0x010E)));
-		oPanel3.add(new KnobWidget("P5", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0110), new YamahaFS1RPerformanceDriver.Sender(0x0110)));
-		oPanel3.add(new KnobWidget("P6", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0112), new YamahaFS1RPerformanceDriver.Sender(0x0112)));
-		oPanel3.add(new KnobWidget("P7", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0114), new YamahaFS1RPerformanceDriver.Sender(0x0114)));
-		oPanel3.add(new KnobWidget("P8", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0116), new YamahaFS1RPerformanceDriver.Sender(0x0116)));
-		oInsPanel.add(oPanel3);	
+		oMin = 0;
+		oMax = 0xFFFF;
+		for (n = 0; n < 8; n++)
+		{
+			if (n < mInsertionParams[oInsertionTypeModel.get()].length && mInsertionParams[oInsertionTypeModel.get()][n].length > 0)
+			{
+				oMin = mInsertionParams[oInsertionTypeModel.get()][n][MIN];
+				oMax = mInsertionParams[oInsertionTypeModel.get()][n][MAX];
+			}
+			mInsertionWidgets[n] = new KnobWidget("unused", p, oMin, oMax, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x108+n*2), new YamahaFS1RPerformanceDriver.Sender(0x108+n*2));
+			oPanel3.add((Component)mInsertionWidgets[n]);
+		}
+		oInsPanel.add(oPanel3);
 		oPanel3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel3.add(new KnobWidget("P9", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0118), new YamahaFS1RPerformanceDriver.Sender(0x0118)));
-		oPanel3.add(new KnobWidget("P10", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x011A), new YamahaFS1RPerformanceDriver.Sender(0x011A)));
-		oPanel3.add(new KnobWidget("P11", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x011C), new YamahaFS1RPerformanceDriver.Sender(0x011C)));
-		oPanel3.add(new KnobWidget("P12", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x011E), new YamahaFS1RPerformanceDriver.Sender(0x011E)));
-		oPanel3.add(new KnobWidget("P13", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0120), new YamahaFS1RPerformanceDriver.Sender(0x0120)));
-		oPanel3.add(new KnobWidget("P14", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0122), new YamahaFS1RPerformanceDriver.Sender(0x0122)));
-		oPanel3.add(new KnobWidget("P15", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0124), new YamahaFS1RPerformanceDriver.Sender(0x0124)));
-		oPanel3.add(new KnobWidget("P16", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0126), new YamahaFS1RPerformanceDriver.Sender(0x0126)));
+		for (; n < mInsertionWidgets.length; n++)
+		{
+			if (n < mInsertionParams[oInsertionTypeModel.get()].length && mInsertionParams[oInsertionTypeModel.get()][n].length > 0)
+			{
+				oMin = mInsertionParams[oInsertionTypeModel.get()][n][MIN];
+				oMax = mInsertionParams[oInsertionTypeModel.get()][n][MAX];
+			}
+			mInsertionWidgets[n] = new KnobWidget("unused", p, oMin, oMax, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x108+n*2), new YamahaFS1RPerformanceDriver.Sender(0x108+n*2));
+			oPanel3.add((Component)mInsertionWidgets[n]);
+		}
 		oInsPanel.add(oPanel3);	
-		*/
 		oPane.addTab("Insertion", oInsPanel);
-
+		selectInsertionType(oInsertionTypeModel.get(), false);
+		
 		return oPane;
 	}
 
+	private void selectInsertionType(int aIndex, boolean aInitDefault)
+	{
+		for (int i = 0; i < 16; i++)
+		{
+			if (i < mInsertionNames[aIndex].length && mInsertionNames[aIndex][i] != null)
+			{
+				mInsertionWidgets[i].setLabel(mInsertionNames[aIndex][i]);
+				mInsertionWidgets[i].setMinMax(mInsertionParams[aIndex][i][MIN], mInsertionParams[aIndex][i][MAX]);
+				mInsertionWidgets[i].setEnabled(true);
+				if (aInitDefault)
+				{
+					mInsertionWidgets[i].setValue(mInsertionParams[aIndex][i][DEFAULT]);
+				}
+			}
+			else
+			{
+				mInsertionWidgets[i].setLabel("");
+				mInsertionWidgets[i].setEnabled(false);
+			}
+		}
+	}
+	
 	private void selectVariationType(int aIndex, boolean aInitDefault)
 	{
 		for (int i = 0; i < 16; i++)
