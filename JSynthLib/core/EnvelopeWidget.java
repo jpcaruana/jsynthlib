@@ -230,8 +230,7 @@ public class EnvelopeWidget extends SysexWidget {
             for (int i = 0; i < nodes.length; i++) {
 		width += nodes[i].maxX;
 		if ((nodes[i].maxY + nodes[i].baseY > height)
-		    && nodes[i].minY != Node.SAME
-		    && nodes[i].maxY != Node.SAME)
+		    && nodes[i].minY != Node.SAME)
 		    height = nodes[i].maxY + nodes[i].baseY;
 	    }
         }
@@ -296,8 +295,7 @@ public class EnvelopeWidget extends SysexWidget {
 	 */
 	/** Return Y axis value of <code>node[i]</code>. */
         private int getY(int i) {
-	    if (nodes[i].minY == Node.SAME
-		|| nodes[i].maxY == Node.SAME)
+	    if (nodes[i].minY == Node.SAME)
 		return getY(i - 1);
 	    if (nodes[i].minY == nodes[i].maxY)
 		return nodes[i].minY + nodes[i].baseY;
@@ -318,9 +316,11 @@ public class EnvelopeWidget extends SysexWidget {
                 int y = e.getY();
 		// select the first close node.
                 for (int i = 0; i < nodes.length; i++)
-                    if (((Math.abs(x - nodeX[i])) < DELTA)
-			&& ((Math.abs(y - nodeY[i]) < DELTA))) {
-			dragNodeIdx = i;
+                    // ignore static node
+                    if ((nodes[i].minX != nodes[i].maxX || nodes[i].minY != nodes[i].maxY)
+                            && (Math.abs(x - nodeX[i]) < DELTA)
+                            && (Math.abs(y - nodeY[i]) < DELTA)) {
+                        dragNodeIdx = i;
 			dragNode = nodes[i];
 			oldx = nodeX[i];
 			oldy = nodeY[i];
@@ -425,11 +425,10 @@ public class EnvelopeWidget extends SysexWidget {
      * @see EnvelopeWidget
      */
     public static class Node {
-	/**
-	 * Using <code>Node.SAME</code> for <code>miny</code> or
-	 * <code>maxy</code> means that the height remains at whatever
-	 * the previous node was at.
-	 */
+        /**
+         * When this value is used for <code>miny</code>, Y axis value
+         * remains at whatever the Y axis value of the previous node was.
+         */
 	public static final int SAME = 5000;
 
 	private int minX;
@@ -449,25 +448,27 @@ public class EnvelopeWidget extends SysexWidget {
 	 * Construcutor for a <code>Node</code>.<p>
 	 *
 	 * Using <code>null</code>s for the Models and Senders and setting
-	 * min to max means that a node is stationary on that axis and has
+	 * min to max means that the node is stationary on that axis and has
 	 * no related parameter.<p>
 	 *
-	 * Using <code>Node.SAME</code> for <code>miny</code> or
-	 * <code>maxy</code> means that the height remains at whatever
-	 * the previous node was at.
+	 * 
 	 *
 	 * @param minx The minimum value permitted by the synth
 	 * parameter which rides the X axis of the node.
 	 * @param maxx The maximum value permitted by the synth
 	 * parameter which rides the X axis of the node.
-	 * @param ofsx The Parameter Model which provides reading/writing
+	 * @param pmodelx The Parameter Model which provides reading/writing
 	 * abilities to the sysex data representing the parameter.
 	 *
 	 * @param miny The minimum value permitted by the synth
-	 * parameter which rides the Y axis of the node.
+	 * parameter which rides the Y axis of the node. Using 
+	 * <code>Node.SAME</code> for <code>miny</code> means that
+	 * the height remains at whatever the previous node was at.
 	 * @param maxy The maximum value permitted by the synth
-	 * parameter which rides the Y axis of the node.
-	 * @param ofsy The Parameter Model which provides reading/writing
+	 * parameter which rides the Y axis of the node. When 
+	 * <code>Node.SAME</code> is used for <code>miny</code>, this 
+	 * parameter is ignored.
+	 * @param pmodely The Parameter Model which provides reading/writing
 	 * abilities to the sysex data representing the parameter.
 	 *
 	 * @param basey The value will be added to all Y values.  This
@@ -479,9 +480,9 @@ public class EnvelopeWidget extends SysexWidget {
 	 * @param invertx Sometimes on an X-axis-riding attribute 0 is the
 	 * fastest, other times it is the slowest. This allows you to choose.
 	 *
-	 * @param x The ISender which send system exclusive messages
+	 * @param senderx The ISender which send system exclusive messages
 	 * to the synths when the Node is moved on the X axis direction.
-	 * @param y The ISender which send system exclusive messages
+	 * @param sendery The ISender which send system exclusive messages
 	 * to the synths when the Node is moved on the Y axis direction.
 	 *
 	 * @param namex The names of the X-axis parameters riding each
@@ -491,20 +492,20 @@ public class EnvelopeWidget extends SysexWidget {
 	 *
 	 * @see EnvelopeWidget
 	 */
-	public Node(int minx, int maxx, IParamModel ofsx,
-		    int miny, int maxy, IParamModel ofsy,
+	public Node(int minx, int maxx, IParamModel pmodelx,
+		    int miny, int maxy, IParamModel pmodely,
 		    int basey, boolean invertx,
-		    ISender x, ISender y,
+		    ISender senderx, ISender sendery,
 		    String namex, String namey) {
 	    baseY = basey;
 	    minX = minx;
 	    maxX = maxx;
 	    minY = miny;
-	    maxY = maxy;
-	    ofsX = ofsx;
-	    ofsY = ofsy;
-	    senderX = x;
-	    senderY = y;
+	    maxY = miny == SAME ? miny : maxy;
+	    ofsX = pmodelx;
+	    ofsY = pmodely;
+	    senderX = senderx;
+	    senderY = sendery;
 	    nameX = namex;
 	    nameY = namey;
 	    invertX = invertx;
