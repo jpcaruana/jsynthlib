@@ -169,20 +169,24 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 		 */
 
 		JPanel cmnPane= new JPanel();
-		cmnPane.setLayout(new GridBagLayout());gbc.weightx=0;
-		addWidget(cmnPane,new PatchNameWidget("Performance Name (30 Char.)", patch),0,0,7,1,1);
+		cmnPane.setLayout(new GridBagLayout());gbc.weightx=0;gbc.anchor=GridBagConstraints.EAST;
 
-		addWidget(cmnPane,new ComboBoxWidget("Key Assign Mode",patch,new ParamModel(patch,6+60),new PerformanceSender(patch,30),KeyAssignName),0,1,3,1,2);
-		addWidget(cmnPane,new ComboBoxWidget("Voice Memory Select Flag",patch,new ParamModel(patch,6+61),new PerformanceSender(patch,31),VoiceSelectName),3,1,3,1,3);
+		addWidget(cmnPane,new PatchNameWidget("Performance Name (30 Char.)", patch),0,0,9,1,1);
 		
-		if (isDX1(patch) || isDX5(patch) ) {
-		    addWidget(cmnPane,new ComboBoxWidget("Dual Mode Detune",patch,new ParamModel(patch,6+62),new PerformanceSender(patch,32),DualModeDetuneName),0,2,3,1,4);
-		    addWidget(cmnPane,new ComboBoxWidget("Split Point",patch,new ParamModel(patch,6+63),new PerformanceSender(patch,33),SplitPointName),3,2,3,1,5);
+		if (!isDX7(patch)) {
+
+		    addWidget(cmnPane,new ComboBoxWidget("Key Assign Mode",patch,new ParamModel(patch,6+60),new PerformanceSender(patch,30),KeyAssignName),0,1,3,1,2);
+		    addWidget(cmnPane,new ComboBoxWidget("Voice Memory Select Flag",patch,new ParamModel(patch,6+61),new PerformanceSender(patch,31),VoiceSelectName),3,1,3,1,3);
+		
+		    if (isDX1(patch) || isDX5(patch) ) {
+		        addWidget(cmnPane,new ComboBoxWidget("Dual Mode Detune",patch,new ParamModel(patch,6+62),new PerformanceSender(patch,32),DualModeDetuneName),0,2,3,1,4);
+		        addWidget(cmnPane,new ComboBoxWidget("Split Point",patch,new ParamModel(patch,6+63),new PerformanceSender(patch,33),SplitPointName),3,2,3,1,5);
+		    }
 		}
 		
 		addWidget(cmnPane,new ComboBoxWidget("Corresponding Voice?",patch,new ParamModel(patch,6+0),null,VoiceNumberName),0,3,3,1,6);
 		gbc.gridx=3;gbc.gridy=3;gbc.gridwidth=6;gbc.gridheight=1;gbc.anchor=GridBagConstraints.EAST;
-		cmnPane.add(new JLabel("(Attention! This is an undocumented parameter!)					   "),gbc);
+		cmnPane.add(new JLabel("(Attention! This is an undocumented parameter!)"),gbc);
 		
 		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=1;
 		cmnPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Common",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -196,20 +200,24 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 		for (int i=0; i<=1; i++) {
 		    JPanel panel = new JPanel();
 		    panel.setLayout(new GridBagLayout());
+
 		    if ( i == 0 ) {
 		        voicePane.addTab("Voice A",panel);
-		    } else
+		    } else {
 		        voicePane.addTab("Voice B",panel);
-
+		    }
+		    
 		    gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1;gbc.weightx=1; panel.add(new JLabel(" "),gbc);
 		    if (isDX1(patch) || isDX5(patch) ) {
 		        addWidget(panel,new ComboBoxWidget("Source Select",patch,new ParamModel(patch,6+(i*30)+1),new PerformanceSender(patch,1),SourceSelectName),3,0,6,1,10);
-		        addWidget(panel,new ComboBoxWidget("Performance Key Shift(*)",patch,new ParamModel(patch,6+(i*30)+29),new PerformanceSender(patch,29),PerformanceKeyShiftName),9,0,6,1,13);
+		        addWidget(panel,new ComboBoxWidget("Performance Key Shift",patch,new ParamModel(patch,6+(i*30)+29),new PerformanceSender(patch,29),PerformanceKeyShiftName),9,0,6,1,13);
 		    }
 
 		    gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel(" "),gbc);
 		    addWidget(panel,new ComboBoxWidget("Key Mode Assign",patch,new ParamModel(patch,6+(i*30)+2),new PerformanceSender(patch,2),PolyMonoName),3,1,6,1,12);
-		    addWidget(panel,new ScrollBarWidget("Output Attenuator",patch,0,7,0,new ParamModel(patch,6+(i*30)+26),new PerformanceSender(patch,26)),9,1,6,1,11);
+		    if (!isDX7(patch)) {
+		        addWidget(panel,new ScrollBarWidget("Output Attenuator",patch,0,7,0,new ParamModel(patch,6+(i*30)+26),new PerformanceSender(patch,26)),9,1,6,1,11);
+		    }
 
 		    gbc.gridx=0;gbc.gridy=2;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel(" "),gbc);
 		    gbc.gridx=0;gbc.gridy=3;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("Pitch Bend: "),gbc);
@@ -245,6 +253,10 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 		    gbc.gridx=0;gbc.gridy=15;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("Breath Controller: "),gbc);
 		    addWidget(panel,new ComboBoxWidget("Assign",patch,new ParamModel(patch,6+(i*30)+16),new PerformanceSender(patch,16),AssignName),3,15,6,1,26);
 		    addWidget(panel,new ScrollBarWidget("Sensitivity",patch,0,15,0,new ParamModel(patch,6+(i*30)+15),new PerformanceSender(patch,15)),9,15,6,1,27);
+
+		    if (isDX7(patch)) {
+			i=1;
+		    }
 		}
 		
 		gbc.gridx=0;gbc.gridy=10;gbc.gridwidth=3;gbc.gridheight=13;
@@ -278,7 +290,7 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 
 	/*
 	 * SysexSender - Performance Parameter
-	 *		 DX1, TX7	(g=1; h=0)
+	 *		 DX1, DX5, TX7	(g=1; h=0)
 	 *		 DX7		(g=2; h=0)
 	 *
 	 * Since the DX7 doesn't support the performance patch directly,
@@ -294,16 +306,21 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 		Patch patch;
 		int parameter;
 		byte []b = new byte [7];
-
-		// translation table TX7->DX7 for Sensitivity parameters (ModulationWheel, FootCtrl, BreathCtrl, AfterTouch)
-		private final byte []TX2DXsens = new byte [] {0x00,0x06,0x0d,0x13,0x1A,0x21,0x27,0x2E,0x35,0x3B,0x42,0x48,0x4F,0x56,0x5C,0x63};
-
+		// translation table TX7->DX7 for Sensitivity parameters
+		// (ModulationWheel, FootCtrl, BreathCtrl, AfterTouch)
+		byte []TX2DXsensitivity = new byte [] { 
+		    0x00, 0x06, 0x0d, 0x13,
+		    0x1A, 0x21, 0x27, 0x2E,
+		    0x35, 0x3B, 0x42, 0x48,
+		    0x4F, 0x56, 0x5C, 0x63 
+		};
+		
 		public PerformanceSender(Patch p, int param)
 		{
 			patch = p;
 
-			if (patch.getDevice().getModelName() == "DX7") {
-				parameter = getDX7Parameter(param);
+			if (isDX7(patch)) {
+				parameter = getDX7ParameterNumber(param);
 				b[3]=(byte)0x08;
 			} else {
 				parameter = param;
@@ -319,17 +336,18 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 		public byte [] generate (int value)
 		{
 			b[2]=(byte)(0x10+channel-1);
-			b[5]=(byte)value;		
-		
-			if (patch.getDevice().getModelName() == "DX7") 
-				if ( parameter==0x46 || parameter==0x48 || parameter==0x4A || parameter==0x4C) 
-					b[5]=(byte)TX2DXsens[value];
+			b[5]=(byte)value;
 
-			if (b[4] == (byte)(-1)) return null;
-			else  return b;
+			if (isDX7(patch)) {
+		    	    if ( parameter==0x46 || parameter==0x48 || parameter==0x4A || parameter==0x4C) {
+			           b[5]=(byte)TX2DXsensitivity[value];
+			    }
+			}
+			
+			return b;
 		}
 
-		private int getDX7Parameter(int p)
+		private int getDX7ParameterNumber(int p)
 		{
 			if	(p ==  2) {return 64;}	// Mono/Poly
 			else if (p ==  3) {return 65;}	// Pitch Bend Range
@@ -345,7 +363,7 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 			else if (p == 14) {return 77;}	// Aftertouch Assign
 			else if (p == 15) {return 74;}	// Breath Control Sensitivity
 			else if (p == 16) {return 75;}	// Breath Control Assign
-			else { return -1;}		// not supported performance parameter!
+			else { return p; }		// not supported performance parameter!
 		}
 	}
 
