@@ -68,7 +68,7 @@ public class SysexHandler extends Object implements Serializable {
      * Set Sysex String.
      * @see #SysexHandler
      */
-    protected void setSysex(String src) {
+    public void setSysex(String src) { // some YAMAHA driver use this?  Why?
 	//----- Reset instance variables
 	channelIndex = -1;
 	channel16Index = -1;
@@ -176,7 +176,7 @@ public class SysexHandler extends Object implements Serializable {
      * @return a <code>byte[]</code> value
      * @see NameValue
      */
-    private byte[] toByteArray(byte channel, NameValue[] nameValues) {
+    public byte[] toByteArray(byte channel, NameValue[] nameValues) {
 	// Replace the channel number
 	if (channelIndex != -1)
 	    sysex[channelIndex] = (byte) ((int) channel - 1);
@@ -207,7 +207,7 @@ public class SysexHandler extends Object implements Serializable {
      * A simplified methodology to use when there's only one value to
      * be replaced (so the *patchNum* syntax is wasteful).
      */
-    private byte[] toByteArray(byte channel, int value) {
+    public byte[] toByteArray(byte channel, int value) {
 	// Replace the channel number
 	if (channelIndex != -1)
 	    sysex[channelIndex] = (byte) ((int) channel - 1);
@@ -224,7 +224,7 @@ public class SysexHandler extends Object implements Serializable {
     /**
      * Return a byte array where @@, ** etc.. have been replaced by 0.
      */
-    private byte[] toByteArray() {
+    public byte[] toByteArray() {
 	return toByteArray((byte) 0, 0);
     }
 
