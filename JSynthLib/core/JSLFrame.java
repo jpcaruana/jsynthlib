@@ -429,12 +429,7 @@ public class JSLFrame {
 	}
 	public void setPreferredSize(Dimension d) {}
 	public boolean isSelected() {
-	    //return isActive() || lastselection == this;
-	    //JSLDesktop d = JSLDesktop.getInstance();
-	    JFrame f = desktop.getSelectedWindow();
-	    return (f == this)
-		|| (f == desktop.getToolBar().getJFrame()
-		    && desktop.getLastSelectedWindow() == this);
+	    return (desktop.getSelectedFrame().getJFrame() == this);
 	}
 	public boolean isIcon() {
 	    return (getExtendedState() & Frame.ICONIFIED) != 0;
