@@ -14,9 +14,8 @@ import java.awt.datatransfer.*;
  * </ol>
  *
  * Use <code>Patch(byte[], Driver)</code> form if possible.  The
- * latter two constructors guess the proper driver by using the
- * <code>Driver.supportsPatch</code> method to set
- * <code>deviceNum</code> and <code>driverNum</code> fields.<p>
+ * latter two constructors <b>guesses</b> the proper driver by using
+ * the <code>Driver.supportsPatch</code> method.  It is not efficient.<p>
  *
  * Use <code>Patch(byte[])</code> only when you have no idea about
  * either Driver or Device for which your Patch is.  If you know that
@@ -28,39 +27,17 @@ import java.awt.datatransfer.*;
  * @version $Id$
  * @see Driver#supportsPatch
  */
-public class Patch extends Object
-    implements Serializable, Transferable, Cloneable {
-    // 'deviceNum' and 'driverNum' fields can be replaced by 'driver'
-    // field.
-    //
-    //	private transitent Driver driver;
-    //
-    // 'deviceNum' and 'driverNum' fields are used only to get the
-    // driver reference. But at this point many drivers access them.
-    // Those accesses are not necessary if the drivers use proper
-    // constructor and method.
-    /**
-     * device number.
-     * @deprecated
-     * Use <code>patch.getDriver()</code> instead of
-     * <code>PatchEdit.getDriver(patch.deviceNum, patch.driverNum)</code>.
-     * Use <code>patch.getDevice()</code> instead of
-     * <code>PatchEdit.appConfig.getDevice(patch.deviceNum)</code>.
-     */
-    public transient int deviceNum;
-    /**
-     * driver number.
-     * @deprecated
-     * Use <code>patch.getDriver()</code> instead of
-     * <code>PatchEdit.getDriver(patch.deviceNum, patch.driverNum)</code>.
-     */
-    public transient int driverNum;
+public class Patch implements Serializable, Transferable, Cloneable {
+    /** Driver for this Patch. */
+    private transient Driver driver;
+
     /**
      * MIDI System Exclusive Message byte array.
      */
-    public byte[] sysex ;
+    public byte[] sysex;
 
-    // 'StringBuffer' to keep compatibility with serialized files
+    // 'String' is better.  But 'StringBuffer' is used to keep
+    // the compatibility for serialized files
     /** "Field 1" comment. */
     private StringBuffer date;
     /** "Field 2" comment. */
@@ -76,12 +53,15 @@ public class Patch extends Object
      * Constructor - Driver is known.  This is often used by a Single
      * Driver and its subclass.
      * @param gsysex The MIDI SysEx message.
-     * @param driver a <code>Driver</code> instance.
+     * @param driver a <code>Driver</code> instance.  If
+     * <code>null</code>, a null driver (Generic Driver) is used.
      */
     public Patch(byte[] gsysex, Driver driver) {
-	this(gsysex,
-	     (driver == null) ? 0 : driver.getDeviceNum(),
-	     (driver == null) ? 0 : driver.getDriverNum());
+        date    = new StringBuffer();
+        author  = new StringBuffer();
+        comment = new StringBuffer();
+	sysex   = gsysex;
+ 	setDriver(driver);
     }
 
     /**
@@ -91,19 +71,15 @@ public class Patch extends Object
      * @param device a <code>Device</code> instance.
      */
     public Patch(byte[] gsysex, Device device) {
-	this(device.getDeviceNum(), gsysex);
+        date    = new StringBuffer();
+        author  = new StringBuffer();
+        comment = new StringBuffer();
+	sysex   = gsysex;
+        chooseDriver(device);
     }
 
     /**
-     * Constructor - all parameters are unknown.
-     */
-    // replaced by 'Patch(new byte[1024], (Driver) null)'.
-//   Patch() {			// called by Scene
-// 	this(new byte[1024]);
-//   }
-
-    /**
-     * Constructor - only sysex is known.  Consider using
+     * Constructor - Either Device nor Driver is not known.  Consider using
      * <code>Patch(byte[], Driver)</code> or <code>Patch(byte[],
      * Device)</code>.  If you know that the patch you are creating
      * does not correspond to any driver, use <code>Patch(byte[],
@@ -115,43 +91,8 @@ public class Patch extends Object
         date    = new StringBuffer();
         author  = new StringBuffer();
         comment = new StringBuffer();
-        sysex = gsysex;
+        sysex   = gsysex;
         chooseDriver();
-    }
-
-    /**
-     * Constructor - The device number is known, but not the driver
-     * number.  Consider using <code>Patch(byte[], Device)</code>.
-     * @param deviceNum The known device number.
-     * @param gsysex The MIDI SysEx message.
-     * @deprecated Use <code>Patch(byte[], Device)</code>.
-     */
-    // The signature Patch(byte[], int) is conflict with Patch(byte[]
-    // gsysex, int offset).  A kind of ugry...
-    public Patch(int deviceNum, byte[] gsysex) {
-        date    = new StringBuffer();
-        author  = new StringBuffer();
-        comment = new StringBuffer();
-	sysex = gsysex;
- 	this.deviceNum = deviceNum;
-        chooseDriver(deviceNum);
-    }
-
-    /**
-     * Constructor - Device and driver number are known.  Consider
-     * using <code>Patch(byte[], Driver)</code>.
-     * @param gsysex The MIDI SysEx message.
-     * @param deviceNum The known device number.
-     * @param driverNum The known driver number.
-     * @deprecated Use <code>Patch(byte[], Driver)</code>.
-     */
-    public Patch(byte[] gsysex, int deviceNum, int driverNum) {
-        date    = new StringBuffer();
-        author  = new StringBuffer();
-        comment = new StringBuffer();
-	sysex = gsysex;
- 	this.deviceNum = deviceNum;
- 	this.driverNum = driverNum;
     }
 
     /**
@@ -164,53 +105,10 @@ public class Patch extends Object
         date    = new StringBuffer();
         author  = new StringBuffer();
         comment = new StringBuffer();
-        sysex = new byte[gsysex.length - offset];
+        sysex   = new byte[gsysex.length - offset];
         System.arraycopy(gsysex, offset, sysex, 0, gsysex.length - offset);
         chooseDriver();
     }
-
-    // The following two constructores are obsoleted by introducing
-    // clone() method.
-    /**
-     * Constructor
-     * @param gsysex The MIDI SysEx message.
-     * @param gdate A comment.
-     * @param gauthor Another comment.
-     * @param gcomment A last comment.
-     */
-    // called by BankEditorFrame and PatchEditorFrame
-    /*
-    Patch(byte[] gsysex,
-	  String gdate, String gauthor, String gcomment) {
-        this.comment = new StringBuffer(gcomment);
-        this.date = new StringBuffer(gdate);
-        this.author = new StringBuffer(gauthor);
-        this.sysex = gsysex;
-        chooseDriver();
-    }
-    */
-
-    /**
-     * Constructor - all parameters are known
-     * @param gsysex The MIDI SysEx message.
-     * @param deviceNum The known device number.
-     * @param driverNum The known driver number.
-     * @param gdate A comment.
-     * @param gauthor Another comment.
-     * @param gcomment A last comment.
-     */
-    // called by LibraryFrame and SceneFrame
-    /*
-    Patch(byte[] gsysex, int deviceNum, int driverNum,
-	  String gdate, String gauthor, String gcomment) {
-	this.comment = new StringBuffer(gcomment);
-	this.date = new StringBuffer(gdate);
-	this.author = new StringBuffer(gauthor);
-	this.sysex = gsysex;
- 	this.deviceNum = deviceNum;
- 	this.driverNum = driverNum;
-    }
-    */
 
     /**
      * Set <code>driverNum</code> by guessing from <code>sysex</code>
@@ -218,51 +116,28 @@ public class Patch extends Object
      * @param deviceNum The known device number
      * @see Driver#supportsPatch
      */
-    private void chooseDriver(int deviceNum) {
-        this.deviceNum = deviceNum;
-        StringBuffer patchString = this.getPatchHeader();
+    private boolean chooseDriver(Device dev) {
+        StringBuffer patchString = getPatchHeader();
 
-        Device dev = PatchEdit.appConfig.getDevice(deviceNum);
         for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
 	    // iterating over all Drivers of the given device
-	    if ((dev.getDriver(idrv)).supportsPatch(patchString, this)) {
-		this.driverNum = idrv;
-		getDriver().trimSysex(this);
-		return;
+	    Driver drv = dev.getDriver(idrv);
+	    if (drv.supportsPatch(patchString, this)) {
+		drv.trimSysex(this);
+		setDriver(drv);
+		return true;
 	    }
         }
-        driverNum = 0;
         // Unkown patch, try to guess at least the manufacturer
         comment = new StringBuffer("Probably a "
 				   + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
 				   + " Patch, Size: " + sysex.length);
+	setDriver(AppConfig.getNullDriver());
+	return false;
     }
 
     /**
-     * Set <code>deviceNum</code> and <code>driverNum</code> field by
-     * guessing from <code>sysex</code> by using
-     * <code>Driver.suportsPatch</code> method.<p>
-     *
-     * Probably your driver does not have to call this method.  Many
-     * existing drivers call this method after constructor
-     * <code>Patch(byte[])</code> as follows. But it is verbose
-     * because <code>Patch(byte[])</code> calls this method
-     * internally.
-     *
-     * <pre>
-     *      byte sysex[] = new byte[patchSize];
-     *      ...
-     *      Patch p = new Patch(sysex);
-     *      p.ChooseDriver(); // !!!verbose!!!
-     * </pre>
-     * @deprecated Use proper constructor of the Patch.
-     */
-    public void ChooseDriver() {
-	chooseDriver();
-    }
-
-    /**
-     * Set <code>deviceNum</code> and <code>driverNum</code> field by
+     * Set <code>driver</code> field by
      * guessing from <code>sysex</code> by using
      * <code>Driver.suportsPatch</code> method.
      * @return <code>true</code> if a driver is found,
@@ -271,27 +146,26 @@ public class Patch extends Object
     boolean chooseDriver() {
         //Integer intg = new Integer(0);
         //StringBuffer driverString = new StringBuffer();
-        StringBuffer patchString = this.getPatchHeader();
+        StringBuffer patchString = getPatchHeader();
 
         for (int idev = 0; idev < PatchEdit.appConfig.deviceCount(); idev++) {
             // Outer Loop, iterating over all installed devices
 	    Device dev = PatchEdit.appConfig.getDevice(idev);
 	    for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
+		Driver drv = dev.getDriver(idrv);
                 // Inner Loop, iterating over all Drivers of a device
-		if ((dev.getDriver(idrv)).supportsPatch(patchString, this)) {
-		    driverNum = idrv;
-		    deviceNum = idev;
-                    getDriver().trimSysex(this);
-                    return true;
+		if (drv.supportsPatch(patchString, this)) {
+                    drv.trimSysex(this);
+                    setDriver(drv);
+		    return true;
                 }
             }
         }
-        driverNum = 0;
-        deviceNum = 0;
         // Unkown patch, try to guess at least the manufacturer
         comment = new StringBuffer("Probably a "
 				   + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
 				   + " Patch, Size: " + sysex.length);
+	setDriver(AppConfig.getNullDriver());
 	return false;
     }
 
@@ -327,36 +201,23 @@ public class Patch extends Object
 
     /** Return Device for this patch. */
     public Device getDevice() {
-	if (PatchEdit.appConfig == null)
-	    return null;
-	return PatchEdit.appConfig.getDevice(deviceNum);
-// 	return driver.getDevice();
+	return driver.getDevice();
     }
 
     /** Return Driver for this patch. */
     public Driver getDriver() {
-	if (PatchEdit.appConfig == null)
-	    return null;
-        return PatchEdit.appConfig.getDevice(deviceNum).getDriver(driverNum);
-// 	return driver;
+	return driver;
     }
 
     /** Set driver. */
     void setDriver(Driver driver) {
-	if (driver == null) {
-	    deviceNum = 0;
-	    driverNum = 0;
-	} else {
-	    deviceNum = driver.getDeviceNum();
-	    driverNum = driver.getDriverNum();
-	}
-//  	this.driver = (driver == null) ? PatchEdit.nullDriver : driver;
+  	this.driver = (driver == null) ? AppConfig.getNullDriver() : driver;
     }
 
     // Transferable interface methods
 
     public Object getTransferData(DataFlavor p1)
-	throws UnsupportedFlavorException, java.io.IOException {
+	throws UnsupportedFlavorException, IOException {
         return this;
     }
 
@@ -397,28 +258,23 @@ public class Patch extends Object
      */
     // called by ImportAllDialog, ImportMidiFile, SysexGetDialog,
     // LibraryFrame, and SceneFrame.
+    // Converter is used only here.
     Patch[] dissect() {
 	Patch[] patarray;
+	Device dev = getDevice();
     search:
 	{
 	    StringBuffer patchString = this.getPatchHeader();
 
-	    // When a Converter is found 'deviceNum' is used.  Why do
-	    // we need this outermost loop?  - Hiroo
-	    for (int idev = 0; idev < PatchEdit.appConfig.deviceCount(); idev++) {
-		// Do it for all converters. They should be at the
-		// beginning of the driver list!
-		Device dev = PatchEdit.appConfig.getDevice(idev);
-		for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-		    Driver drv = dev.getDriver(idrv);
-		    if ((drv instanceof Converter)
-			&& drv.supportsPatch(patchString, this)) {
-			patarray = ((Converter) drv).extractPatch(this);
-			if (patarray != null)
-			    break search; // found!
-		    }
+	    for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
+		Driver drv = dev.getDriver(idrv);
+		if ((drv instanceof Converter)
+		    && drv.supportsPatch(patchString, this)) {
+		    patarray = ((Converter) drv).extractPatch(this);
+		    if (patarray != null)
+			break search; // found!
 		}
-	    } //    idev++;
+	    }
 	    // No conversion. Try just the original patch....
 	    return new Patch[] {this};
 	}
@@ -426,16 +282,11 @@ public class Patch extends Object
 	// converted patch assign the original deviceNum and
 	// individual driverNum to each patch of patarray
 	for (int i = 0; i < patarray.length; i++) {
-	    // set deviceNum field
-	    patarray[i].deviceNum = deviceNum; // Can we use 'dev' for this instance?
-
-	    // set driverNum field
-	    Device dev = PatchEdit.appConfig.getDevice(deviceNum);
 	    StringBuffer patchString = patarray[i].getPatchHeader();
 	    for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {
 		Driver drv = dev.getDriver(jdrv);
 		if (drv.supportsPatch(patchString, patarray[i]))
-		    patarray[i].driverNum = jdrv;
+		    patarray[i].setDriver(drv);
 	    }
 	}
 	return patarray;
@@ -466,7 +317,7 @@ public class Patch extends Object
      */
     public String toString() {
 	StringBuffer buf = new StringBuffer();
-	buf.append("[" + deviceNum + "," + driverNum + "] "
+	buf.append("[" + driver + "] "
 		   + Utility.hexDumpOneLine(sysex, 0, -1, 20));
 	return buf.toString();
     }

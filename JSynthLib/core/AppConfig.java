@@ -347,7 +347,7 @@ final public class AppConfig {
     }
 
     /** Indexed getter for deviceList elements */
-    Device getDevice(int i) { return (Device) this.deviceList.get(i); }
+    static Device getDevice(int i) { return (Device) deviceList.get(i); }
 
     /**
      * Remover for deviceList elements.
@@ -372,5 +372,13 @@ final public class AppConfig {
     /** Getter for the index of <code>device</code>. */
     int getDeviceIndex(Device device) {
 	return deviceList.indexOf(device);
+    }
+
+    /**
+     * Returns null driver of Generic Device.  It is used when proper
+     * driver is not found.
+     */
+    static Driver getNullDriver() {
+	return getDevice(0).getDriver(0);
     }
 }
