@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+
+<!-- 
+	Ant build file for JSynthLib.
+	
+	Use 'ant -p' to see the available targets for this build file.
+	For using different defaults (e.g. for build.compiler, version), define 
+	the specific properties in a file called 'build.properties'  or at 
+
+	Remko Troncon <remko@ulyssis.org> 
+-->
+
+<project name="JSynthLib" default="build" basedir=".">
+
+	<description>  JSynthLib: A universal synth librarian  </description>
+
+	<!-- User-defined properties -->
+	<property file="build.properties"/>
+
+	<!-- Defaults -->
+	<property name="src" location="."/>
+	<property name="docs" location="doc"/>
+	<property name="api_docs" location="doc/api-docs"/>
+	<property name="build" location="build"/>
+	<property name="dist"  location="dist"/>
+	
+	<!-- Conditions -->
+	<condition property="isMacOS"> <os family="mac"/> </condition>
+	<condition property="isWindows"> <os family="windows"/> </condition>
+	<condition property="isUnix"> <os family="unix"/> </condition>
+
+	<!-- Initialization -->
+	<target name="init">
+		<!-- Create timestamp -->
+		<tstamp/>
+		
+		<!-- Create build dir -->
+		<mkdir dir="${build}"/>
+		
+		<!-- Set version number -->
+		<property name="version" value="${DSTAMP}cvs"/>
+		<filter token="version" value="${version}"/>
+		<!--<copy file="Version.java" todir="${build}" filtering="true"/>-->
+	</target>
+
+
+	<!-- Building -->
+	<target name="build" depends="init,linuxchardev" 
+			description="Build the complete package">
+		<!-- Libraries -->
+		<copy file="WireNative.dll" todir="${build}"/>
+		<copy todir="${build}/jmidi">
+			<fileset dir="jmidi"/>
+		</copy>
+
+		<!-- Compile -->
+		<javac srcdir="${src}" destdir="${build}">
+			<include name="**/*.java"/>
+			<exclude name="midiprovider/**"/>
+			<exclude name="core/MacOSXMidiWrapper.java" unless="isMacOS"/>
+		</javac>
+
+		<!-- Extra files -->
+		<copy todir="${build}/images">
+			<fileset dir="images"/>
+		</copy>
+		<copy file="doc/documentation.html" todir="${build}/doc"/>
+		<copy file="doc/programming.html" todir="${build}/doc"/>
+		<copy file="synthdrivers.properties" todir="${build}"/>
+	</target>
+
+
+	<!-- Documentation -->
+	<target name="api_docs" depends="init"
+			description="Generate API documentation">
+		<mkdir dir="${api_docs}"/>
+		<javadoc sourcepath="${src}" destdir="${api_docs}" nohelp="true">
+			<packageset dir="${src}">
+				<include name="*/**"/>
+			</packageset>
+		</javadoc>
+	</target>
+
+
+	<!-- Distribution -->
+	<target name="dist" depends="init,build,api_docs"
+			description="Create package distribution files (jar, sources, ...)">
+		<mkdir dir="${dist}"/>
+		
+		<!-- Create JAR -->
+		<jar jarfile="${dist}/${ant.project.name}-${version}.jar" 
+			 basedir="${build}" 
+			 excludes="core/DeviceListWriter.class,JSynthLib.properties,
+					   linuxdevices.conf">
+			<manifest>
+				<attribute name="Main-Class" value="JSynthLib"/>
+			</manifest>
+		</jar>
+		<checksum file="${dist}/${ant.project.name}-${version}.jar"
+				  forceoverwrite="yes" fileext=".md5"/>
+
+		<!-- Create sources bundle -->
+		<tar destfile="${dist}/${ant.project.name}-${version}.tar.gz" 
+			 compression="gzip" casesensitive="yes" longfile="gnu">
+			<tarfileset dir="." prefix="${ant.project.name}-${version}/">
+				<!-- Base files -->
+				<include name="**/*.java"/>
+				<include name="images/**"/>
+				<include name="synthdrivers.properties"/>
+				<include name="${docs}"/>
+				<include name="build.xml"/>
+				
+				<!-- Libraries -->
+				<include name="WireProvider/**"/>
+				<include name="jmidi/**"/>
+				<include name="WireNative.dll"/>
+
+				<!-- Linux CharDev extras -->
+				<include name="midiprovider/LinuxCharDev/build.xml"/>
+				<include name="midiprovider/LinuxCharDev/META-INF/services/javax.sound.midi.spi.MidiDeviceProvider"/>
+
+				<!-- Junk -->
+				<exclude name="${api_docs}/**"/>
+			</tarfileset>
+		</tar>
+		<checksum file="${dist}/${ant.project.name}-${version}.tar.gz"
+				  forceoverwrite="yes" fileext=".md5"/>
+		
+		<!-- Create API docs bundle -->
+		<tar destfile="${dist}/${ant.project.name}-${version}-api.tar.gz" 
+			 compression="gzip" casesensitive="yes" longfile="gnu">
+			<tarfileset dir="${api_docs}" 
+						prefix="${ant.project.name}-${version}-api"/>
+		</tar>
+	</target>
+
+
+	<!-- Run -->
+	<target name="run" description="Run the application" depends="init,build">
+		<java classname="JSynthLib" dir="${build}" fork="true"/>	
+	</target>
+	
+	
+	<!-- Update driver information -->
+	<target name="update-drivers" 
+			description="Update synth drivers information" depends="init,build">
+		<delete file="${build}/synthdrivers.properties"/>
+		<java classname="core.DeviceListWriter" dir="${build}" fork="true"/>	
+		<copy todir="${src}" file="${build}/synthdrivers.properties" />
+	</target>
+
+
+	<!-- Cleanup -->
+	<target name="clean" description="Cleanup all generated files">
+		<delete dir="${dist}"/>
+		<delete dir="${api_docs}"/>
+		<delete dir="${build}"/>
+	</target>
+
+
+	<!-- Linux CharDev midi provider -->
+	<!-- FIXME: Not sure if linuxchardev should be built together with
+		 JSynthLib. If not, remove this target and all dependencies on it,
+		 and remove all the midichardev stuff from the dist target -->
+	<target name="linuxchardev" if="isUnix" depends="init">
+		<ant antfile="midiprovider/LinuxCharDev/build.xml" target="build">
+			<property name="src" location="midiprovider/LinuxCharDev"/>
+			<property name="build" location="${build}"/>
+		</ant>
+	</target>
+</project>
