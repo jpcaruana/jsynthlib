@@ -398,8 +398,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
     }
 
     void revalidateDriver() {
-	p.ChooseDriver();
-	if (p.deviceNum == 0) {
+	if (!p.chooseDriver()) {
 	    try {
 		setClosed(true);
 	    } catch (Exception e) {

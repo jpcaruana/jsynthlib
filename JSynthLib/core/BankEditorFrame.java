@@ -325,8 +325,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
     // end of PatchBasket methods
 
     void revalidateDriver() {
-	bankData.ChooseDriver();
-	if (bankData.deviceNum == 0) {
+	if (!bankData.chooseDriver()) {
 	    try {
 		setClosed(true);
 	    } catch (Exception e) {
