@@ -259,16 +259,21 @@ public abstract class SysexWidget extends JPanel {
 
     /** Getter of Patch name. */
     public String getPatchName() {
+	if (driver == null)
+	    return "Patch Name";
 	return driver.getPatchName(patch);
     }
 
     /** Setter of Patch name. */
     protected void setPatchName(String s) {
-	driver.setPatchName(patch, s);
+	if (driver != null)
+	    driver.setPatchName(patch, s);
     }
 
     /** Getter of Patch name size. */
     public int getPatchNameSize() {
+	if (driver == null)
+	    return 0;
 	return driver.patchNameSize;
     }
 

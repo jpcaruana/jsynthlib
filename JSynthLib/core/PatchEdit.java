@@ -1274,6 +1274,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
 
     public static Driver getDriver(int deviceNumber, int driverNumber) {
+	if (appConfig == null)
+	    return null;
         return (Driver) appConfig.getDevice(deviceNumber).driverList.get(driverNumber);
     }
 }

@@ -13,7 +13,7 @@ import javax.sound.midi.*;
 
 abstract public class MidiWrapper {
 	private MidiWrapper(int inport, int outport) {} /* Deprecated. This is to prevent anyone from using it - emenaker 2003.09.01 */
-	public void init (int inport, int outport) throws Exception {}
+        public abstract void init (int inport, int outport) throws Exception;
 	public MidiWrapper() throws Exception {}
 	//FIXME Made public so that PrefsDialog can call it until we straighten this mess out - emenaker 2003.03.12
 	public abstract void setInputDeviceNum(int port)throws Exception;

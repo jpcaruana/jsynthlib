@@ -326,6 +326,8 @@ public class Patch extends Object
 
     /** Return Device for this patch. */
     public Device getDevice() {
+	if (PatchEdit.appConfig == null)
+	    return null;
 	return PatchEdit.appConfig.getDevice(deviceNum);
 // 	return driver.getDevice();
     }
