@@ -277,7 +277,7 @@ public abstract class Device implements Serializable, Storable {
             ((Driver) iter.next()).setPort(port);
 	if (PatchEdit.newMidiAPI && PatchEdit.MidiOut != null) {
 	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) PatchEdit.MidiOut;
-	    setMidiOut(jw.getOutputDevice(port));
+	    //setMidiOut(jw.getOutputDevice(port));
 	}
     }
 
@@ -293,7 +293,7 @@ public abstract class Device implements Serializable, Storable {
             ((Driver) iter.next()).setInPort(inPort);
 	if (PatchEdit.newMidiAPI && PatchEdit.MidiIn != null) {
 	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) PatchEdit.MidiIn;
-	    setMidiIn(jw.getInputDevice(port));
+	    //setMidiIn(jw.getInputDevice(port));
 	}
     }
 
@@ -402,17 +402,10 @@ public abstract class Device implements Serializable, Storable {
     public Set storedProperties() {
 	final String[] storedPropertyNames = {
 	    "inPort", "synthName", "port", "channel",
-	    "deviceID"
-	};
-	final String[] storedPropertyNamesNew = {
-	    "inPort", "synthName", "port", "channel",
-	    "deviceID", "midiIn", "midiOut"
+	    "deviceID" //, "midiIn", "midiOut"
 	};
 	TreeSet set = new TreeSet();
-	if (PatchEdit.newMidiAPI)
-	    set.addAll(Arrays.asList(storedPropertyNamesNew));
-	else
-	    set.addAll(Arrays.asList(storedPropertyNames));
+	set.addAll(Arrays.asList(storedPropertyNames));
 	return set;
     }
 
