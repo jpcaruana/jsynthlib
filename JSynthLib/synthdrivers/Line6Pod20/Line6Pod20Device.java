@@ -33,7 +33,7 @@ public class Line6Pod20Device extends Device
         this();
         this.prefs = prefs;
         
-//        addDriver(new Line6Pod20Converter());
+        addDriver(new Line6Pod20Converter());
         addDriver(new Line6Pod20SingleDriver());
         addDriver(new Line6Pod20BankDriver());
         addDriver(new Line6Pod20EdBufDriver());

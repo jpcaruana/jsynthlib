@@ -10,10 +10,12 @@ package synthdrivers.Line6BassPod;
 
 final class Constants {
     
-    /** Single Dump Match ID--Used to match a patch to a Line6BassPodSingleDriver*/
+    /** Manufacturer of device*/
     static final String MANUFACTURER_NAME = "Line6";
-    /** Single Dump Match ID--Used to match a patch to a Line6BassPodSingleDriver*/
+    /** Name of device*/
     static final String DEVICE_NAME = "Bass Pod";
+    /** Name of Converter for device*/
+    static final String CONVERTER_NAME = "Bass Pod All Dump Converter";
     /** Line6 Bass Pod Universal Device Inquiry*/
     static final String INQUIRY_ID = "F07E..060200010C02000000........F7";
     /** Text displayed in the synth driver device details window in preferences*/
@@ -73,6 +75,8 @@ final class Constants {
         "9-A","9-B","9-C","9-D"
     };
     
+    /** Converter Match ID--Used to match a patch to a Line6BassPodConverter*/
+    static final String CONV_SYSEX_MATCH_ID = "F000010C0201****";
     
     /** Single Dump Request ID--Sent to POD for a single dump request.*/
     static final String SIGL_DUMP_REQ_ID = "F0 00 01 0C 02 00 00 *progNum* F7";    

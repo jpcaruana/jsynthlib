@@ -12,7 +12,7 @@ import core.*;
 
 // Note that on the Pod, the edit buffer patch has an 8 byte header and the program patch has a 9 byte header. 
 // The only reason for having this driver is to be able to request an edit buffer patch. As soon as the edit buffer
-// patch is received, it is converted to a regular program patch by Line6BassPodSingleDriver.supportsPatch. From that
+// patch is received, it is converted to a regular program patch by Line6BassPodConverter. From that
 // point on it is handled like any other program patch. Note that we have declared Constants.EDMP_HDR_SIZE and sysexID to the values for 
 // a program patch, not an edit buffer patch. By the time these values are referenced, the patch has already been converted.
 
@@ -35,11 +35,6 @@ public class Line6BassPodEdBufDriver extends Line6BassPodSingleDriver {
         patchNumbers = Constants.EDIT_PATCH_LIST;
     }
 
-    // Even though, from an operational standpoint, the POD has nine banks (numbered 1 through 9) of
-    // four patches each (numbered A, B, C, and D), internally there is only a single bank of 36 patch
-    // locations, referenced by program change numbers 0-35. By assigning the numbers 0 through 8 for
-    // the banks and 0 through 3 for the patches, the conversion is as follows:
-    //                      program number = (bank number * 4) + patch number 
     public void requestPatchDump(int bankNum, int patchNum) {
         int progNum = 0;
         send(SYS_REQ.toSysexMessage(getChannel(),

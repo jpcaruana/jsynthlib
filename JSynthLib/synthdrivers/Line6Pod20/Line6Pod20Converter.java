@@ -1,35 +1,35 @@
 //
-//  Line6BassPodConverter.java
+//  Line6Pod20Converter.java
 //  JSynthLib
 //
 //  Created by Jeff Weber on 8/29/04.
 //  Copyright 2004 __MyCompanyName__. All rights reserved.
 //
-package synthdrivers.Line6BassPod;
+package synthdrivers.Line6Pod20;
 
 import core.*;
 
 
 /**
 * Removes "Garbage Data" from Line6 response to dump request and extracts desired patch.
-* 
-* When responding to a sysex data dump request, the PODs sometimes send a single sysex message and sometimes
-* they send a block of multiple messages along with garbage data (the behavior is unpredictable). The last
-* valid sysex message message sent is always the one we are interested in but it can be preceded or succeeded
-* with other garbage data. Searching for F0 and F7 isn't always enough because sometimes the garbage data starts
-* with an F0 (with no F7) or sometimes it ends with an F7 with no F0 at the beginning. This converter will attempt
-* to parse out the last POD patch and validate it. If the block of data sent by the POD contains a valid POD patch
-* (program, edit buffer, or bank), the Converter will strip away all the unneeded data and replace the patch with
-* a new one containing only the POD sysex data we are interested in.
-* 
-* @author Jeff Weber
-*/
-public class Line6BassPodConverter extends Converter{
+ * 
+ * When responding to a sysex data dump request, the PODs sometimes send a single sysex message and sometimes
+ * they send a block of multiple messages along with garbage data (the behavior is unpredictable). The last
+ * valid sysex message message sent is always the one we are interested in but it can be preceded or succeeded
+ * with other garbage data. Searching for F0 and F7 isn't always enough because sometimes the garbage data starts
+ * with an F0 (with no F7) or sometimes it ends with an F7 with no F0 at the beginning. This converter will attempt
+ * to parse out the last POD patch and validate it. If the block of data sent by the POD contains a valid POD patch
+ * (program, edit buffer, or bank), the Converter will strip away all the unneeded data and replace the patch with
+ * a new one containing only the POD sysex data we are interested in.
+ * 
+ * @author Jeff Weber
+ */
+public class Line6Pod20Converter extends Converter{
     
-/**
-Constructor for 
-*/
-    public Line6BassPodConverter() {
+    /**
+    Constructor for 
+     */
+    public Line6Pod20Converter() {
         super(Constants.CONVERTER_NAME, Constants.AUTHOR);
         
         this.sysexID = Constants.CONV_SYSEX_MATCH_ID;
@@ -37,7 +37,7 @@ Constructor for
         /* This doesn't seem to be used */
         //this.deviceIDoffset = 0;
     }
-
+    
     /**
     */
     // If supportsPatch returns true, extractPatch will get called. If it returns false, extractPatch will not get called.
@@ -67,9 +67,9 @@ Constructor for
         
         Patch[] newPatchArray = new Patch[1];
         if (sysex[6] == (byte)0x00) {  // Is this a program patch?
-            newPatchArray[0] = new Patch(sysex, new Line6BassPodSingleDriver());
+            newPatchArray[0] = new Patch(sysex, new Line6Pod20SingleDriver());
         } else {
-            newPatchArray[0] = new Patch(sysex, new Line6BassPodBankDriver());
+            newPatchArray[0] = new Patch(sysex, new Line6Pod20BankDriver());
         }
         return newPatchArray;
     }    

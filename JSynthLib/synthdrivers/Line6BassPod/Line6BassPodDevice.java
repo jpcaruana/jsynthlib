@@ -33,7 +33,7 @@ public class Line6BassPodDevice extends Device
         this();
         this.prefs = prefs;
         
-//        addDriver(new Line6BassPodConverter());
+        addDriver(new Line6BassPodConverter());
         addDriver(new Line6BassPodSingleDriver());
         addDriver(new Line6BassPodBankDriver());
         addDriver(new Line6BassPodEdBufDriver());

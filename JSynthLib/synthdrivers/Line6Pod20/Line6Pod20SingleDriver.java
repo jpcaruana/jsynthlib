@@ -61,69 +61,6 @@ public class Line6Pod20SingleDriver extends Driver {
             PatchBytes.setSysexByte(p, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart, (byte)0x20);
         }
     }
-    
-    // When responding to a sysex data dump request, the PODs sometimes send a single sysex message and sometimes
-    // they send a block of multiple messages along with garbage data (the behavior is unpredictable). The last
-    // valid sysex message message sent is always the one we are interested in but it can be preceded or succeeded
-    // with other garbage data. Searching for F0 and F7 isn't always enough because sometimes the garbage data starts
-    // with an F0 (with no F7) or sometimes it ends with an F7 with no F0 at the beginning. This version of supportsPatch
-    // contains some extra logic to extract the last message in the block (or the only message if there is only one).
-
-    public boolean supportsPatch (String patchString, byte[] sysex) {
-        if (sysex.length > patchSize) {
-            sysex = parseSysex(sysex);
-        }
-        
-        String ptchStr = PatchBytes.getPatchString(sysex, 0, patchString.length());
-        boolean isPodPatch = super.supportsPatch(ptchStr, sysex);
-        return isPodPatch; 
-    }
-    
-    private byte[] parseSysex(byte[] sysex) {
-        byte[] l6Sysex = new byte[patchSize];
-        for (int i = sysex.length-1; i > 0; i--) {
-            if (sysex[i] == Constants.SIGL_DUMP_HDR_BYTES[0]) {
-                if ((i + patchSize - 1) < sysex.length) {
-                    if ((sysex[i+1] == Constants.SIGL_DUMP_HDR_BYTES[1])
-                        && (sysex[i+2] == Constants.SIGL_DUMP_HDR_BYTES[2])
-                        && (sysex[i+3] == Constants.SIGL_DUMP_HDR_BYTES[3])
-                        && (sysex[i+4] == Constants.SIGL_DUMP_HDR_BYTES[4])
-                        && (sysex[i+5] == Constants.SIGL_DUMP_HDR_BYTES[5])) {
-
-                        if (((sysex[i+6] == Constants.SIGL_DUMP_HDR_BYTES[6]) || (sysex[i+6] == Constants.EDIT_DUMP_HDR_BYTES[6]))
-                            && (sysex[i + patchSize - 1] == (byte)0xF7)) {
-                            System.arraycopy(sysex, i, l6Sysex, 0, (patchSize));
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if ((l6Sysex[0] == (byte)0xF0) && (l6Sysex[patchSize-1] == (byte)0xF7)) {
-            return l6Sysex;
-        } else {
-            return sysex;
-        }
-    } 
-
-    protected int trimSysex(Patch p) {
-        p.sysex = parseSysex(p.sysex);
-        String ptchStr = p.getPatchHeader().toString().substring(0, Constants.EDIT_BUFR_PATCH.length());
-        if (ptchStr.equalsIgnoreCase(Constants.EDIT_BUFR_PATCH)) {    // Is this an edit buffer patch?
-            p.sysex = convertToProgramPatch(p.sysex);
-        }
-        return p.sysex.length;
-    }
-    
-    public byte[] convertToProgramPatch (byte[] sysex) {
-        int newSysexLength = sysex.length + 1;
-        byte newSysex[] = new byte[newSysexLength];
-        System.arraycopy(Constants.SIGL_DUMP_HDR_BYTES, 0, newSysex, 0, Constants.PDMP_HDR_SIZE);
-        System.arraycopy(sysex, Constants.EDMP_HDR_SIZE, newSysex, Constants.PDMP_HDR_SIZE, newSysexLength - Constants.PDMP_HDR_SIZE);
-        return newSysex;
-    }
-    
     public void sendPatch (Patch p)
     {
         byte[] saveSysex = p.sysex;  //Save the patch to a temp save area
@@ -187,9 +124,9 @@ public class Line6Pod20SingleDriver extends Driver {
     }
     
     /*
-        public void setBankNum (int bankNum) {
-            // Not used for POD
-        }
+     public void setBankNum (int bankNum) {
+         // Not used for POD
+     }
      
      public void setPatchNum (int patchNum) {
          // Not used for POD

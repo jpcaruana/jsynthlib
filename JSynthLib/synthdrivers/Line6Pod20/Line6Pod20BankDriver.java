@@ -64,56 +64,6 @@ public class Line6Pod20BankDriver extends BankDriver
         } catch (UnsupportedEncodingException ex) {return;}
     }
     
-    // When responding to a sysex data dump request, the PODs sometimes send a single sysex message and sometimes
-    // they send a block of multiple messages along with garbage data (the behavior is unpredictable). The last
-    // valid sysex message message sent is always the one we are interested in but it can be preceded or succeeded
-    // with other garbage data. Searching for F0 and F7 isn't always enough because sometimes the garbage data starts
-    // with an F0 (with no F7) or sometimes it ends with an F7 with no F0 at the beginning. This version of supportsPatch
-    // contains some extra logic to extract the last message in the block (or the only message if there is only one).
-
-    public boolean supportsPatch (String patchString, byte[] sysex) {
-        if (sysex.length > patchSize) {
-            sysex = parseSysex(sysex);
-        }
-        
-        String ptchStr = PatchBytes.getPatchString(sysex, 0, patchString.length());
-        boolean isPodPatch = super.supportsPatch(ptchStr, sysex);
-        return isPodPatch; 
-    }
-
-    private byte[] parseSysex(byte[] sysex) {
-        byte[] l6Sysex = new byte[patchSize];
-        for (int i = sysex.length-1; i > 0; i--) {
-            if (sysex[i] == Constants.BANK_DUMP_HDR_BYTES[0]) {
-                if ((i + patchSize - 1) < sysex.length) {
-                    if ((sysex[i+1] == Constants.BANK_DUMP_HDR_BYTES[1])
-                        && (sysex[i+2] == Constants.BANK_DUMP_HDR_BYTES[2])
-                        && (sysex[i+3] == Constants.BANK_DUMP_HDR_BYTES[3])
-                        && (sysex[i+4] == Constants.BANK_DUMP_HDR_BYTES[4])
-                        && (sysex[i+5] == Constants.BANK_DUMP_HDR_BYTES[5])) {
-                        
-                        if ((sysex[i+6] == Constants.BANK_DUMP_HDR_BYTES[6])
-                            && (sysex[i + patchSize - 1] == (byte)0xF7)) {
-                            System.arraycopy(sysex, i, l6Sysex, 0, (patchSize));
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        if ((l6Sysex[0] == (byte)0xF0) && (l6Sysex[patchSize-1] == (byte)0xF7)) {
-            return l6Sysex;
-        } else {
-            return sysex;
-        }
-    } 
-    
-    protected int trimSysex(Patch p) {
-        p.sysex = parseSysex(p.sysex);
-        return p.sysex.length;
-    }
-    
     public void putPatch(Patch bank, Patch p, int patchNum)  // Tested??  // Retest with new version of Core.*
     { 
         if (!canHoldPatch(p)) {
@@ -150,7 +100,7 @@ public class Line6Pod20BankDriver extends BankDriver
         start+=Constants.BDMP_HDR_SIZE;  //sysex header
         return start;
     }
-        
+    
     /** Creates a new bank patch..*/
     public Patch createNewPatch()
     {
@@ -170,10 +120,6 @@ public class Line6Pod20BankDriver extends BankDriver
                                     new SysexHandler.NameValue("bankNum", bankNum << 1)));
     }
     
-    // storePatch needs to be rewritten to send individual program patches instead of the whole bank at once
-    // because the Pod can't keep up with the data transmission rate. This will be done much like it is when
-    // transferring a scene, where it calls Line6Pod20SingleDriver.storePatch (IPatch ip, int bankNum,int patchNum)
-    // repeatedly.
     public void storePatch (Patch p, int bankNum,int patchNum)
     {
         Patch[] thisPatch = new Patch[Constants.PATCHES_PER_BANK];
