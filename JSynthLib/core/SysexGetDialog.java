@@ -86,8 +86,8 @@ public class SysexGetDialog extends JDialog {
     patchNumComboBox.setRenderer(new ComboCellRenderer());
 
     //----- First Populate the Device/Driver List with all Device/Driver combinations except converters
-       for (int i=0;i<PatchEdit.appConfig.deviceCount();i++)
-            {
+    for (int i=0;i<PatchEdit.appConfig.deviceCount();i++)
+    {
       device=(Device)PatchEdit.appConfig.getDevice(i);
       deviceAssignmentList.add(new deviceAssignment( i, device) );        // the original deviceNum/device
     
@@ -316,35 +316,34 @@ public class SysexGetDialog extends JDialog {
 //----------------------------------------------------------------------------------------------------------------------
 
   public class DriverActionListener implements ActionListener {
-    public void actionPerformed (ActionEvent evt) {
-//      ErrorMsg.reportStatus("DriverActionListener->actionPerformed");
-
-      driverAssignment myDrvAssign = (driverAssignment)driverComboBox.getSelectedItem();
-
-      bankComboBox.removeAllItems();
-      patchNumComboBox.removeAllItems();
-
-      if (myDrvAssign != null) {
-        if (myDrvAssign.driver.bankNumbers.length > 1) {
-          for (int i = 0 ; i < myDrvAssign.driver.bankNumbers.length ; i++) {
-            bankComboBox.addItem(myDrvAssign.driver.bankNumbers[i]);
-        }
-
-
-
-        if (myDrvAssign.driver.patchNumbers.length > 1) {
-          for (int i = 0 ; i < myDrvAssign.driver.patchNumbers.length ; i++) {
-            patchNumComboBox.addItem(myDrvAssign.driver.patchNumbers[i]);
+      public void actionPerformed(ActionEvent evt) {
+          //      ErrorMsg.reportStatus("DriverActionListener->actionPerformed");
+          
+          driverAssignment myDrvAssign = (driverAssignment)driverComboBox.getSelectedItem();
+          
+          bankComboBox.removeAllItems();
+          patchNumComboBox.removeAllItems();
+          
+          if (myDrvAssign != null) {
+              if (myDrvAssign.driver.bankNumbers.length > 1) {
+                  for (int i = 0 ; i < myDrvAssign.driver.bankNumbers.length ; i++) {
+                      bankComboBox.addItem(myDrvAssign.driver.bankNumbers[i]);
+                  }
+              }
+              
+              if (myDrvAssign.driver.patchNumbers.length > 1) {
+                  for (int i = 0 ; i < myDrvAssign.driver.patchNumbers.length ; i++) {
+                      patchNumComboBox.addItem(myDrvAssign.driver.patchNumbers[i]);
+                  }
+              }
+              
+              
+              bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
+              // N.B. Do not enable patch selection for banks
+              patchNumComboBox.setEnabled(!(myDrvAssign.driver instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
           }
-        }
       }
-
-      bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
-      // N.B. Do not enable patch selection for banks
-      patchNumComboBox.setEnabled(!(myDrvAssign.driver instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
-    }
-      }
-  } // End InnerClass: DriverActionListener
+  }// End InnerClass: DriverActionListener
 
 //----------------------------------------------------------------------------------------------------------------------
 // InnerClass: PasteActionListener
