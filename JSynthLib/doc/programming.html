@@ -11,7 +11,7 @@
     STRONG:	Indicates stronger emphasis. 
     CITE: 	Contains a citation or a reference to other sources. 
     DFN: 	Indicates that this is the defining instance of the enclosed term. 
-    CODE:	Designates a fragment of computer code. 
+    CODE:	Designates a fragment of computer code.
     SAMP:	Designates sample output from programs, scripts, etc. 
     KBD: 	Indicates text to be entered by the user. 
     VAR: 	Indicates an instance of a variable or program argument. 
@@ -134,7 +134,7 @@ The source can be downloaded via CVS from JSynthLib's Sourceforge.net page by go
 After downloading via CVS, you need to copy
 <ul>
   <li><kbd>wireprovidor</kbd> directory (folder),
-  <li><kbd>WireNative.dll<kbd>,
+  <li><kbd>WireNative.dll</kbd>,
   <li><kbd>jmidi</kbd> directory and
   <li><kbd>MidiPort.dll</kbd>
 </ul>
@@ -149,7 +149,11 @@ jar xvf com.apple.jar
 </pre>
 
 When native MIDI support by Java (JavaSound) become stable on all
-platforms which JSynthLib supports, we don't need this pseudo class.<p>
+platforms which JSynthLib supports, we don't need this pseudo
+class. (NOTE: If you are using the latest JSynthLib from CVS and set
+<var>PatchEdit.newMidiAPI</var> to <var>true</var>, you don't have to
+copy the files from JSynthLib distribution nor need pseudo MacOSX
+classes.)<p>
 
 Now you should be able to compile source code as follows;
 <pre>
@@ -994,7 +998,7 @@ called.
   <li><a name="yahoofiles" href="http://groups.yahoo.com/group/jsynthlib-dev/files/">JSynthLib Yahoo group - file section</a><br>
     <font size="-1">(contains the pseudo MacOSX classes)</font>
   <li><a name="wireprovider"
-  href="http://http://www.geocities.com/ggehnen/">MIDI Provider for
+  href="http://www.geocities.com/ggehnen/">MIDI Provider for
   Windows</a>.  JDK older than 1.4.2 requires this.
 </ul>
 

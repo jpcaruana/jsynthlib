@@ -140,22 +140,34 @@ application. JSynthLib runs under Windows and Linux.</p>
 
 <h2><a name="install" href="#toc">Installing JSynthLib</a></h2>
 
+NOTE: This chapter is updated for new MIDI layer.
+
 <h4>Microsoft Windows</h4>
 
 <ul>
 <li>Download the .ZIP file from the web site and unzip it to any
     directory (for example <kbd>c:\jsynthlib</kbd>).
 <li>Create a shortcut on the desktop to JSynthLib.jar (optional)
-<li>Make sure you have a Java Run Time Environment (JRE) which supports Java
-    1.4 or later. If you do not have it, you can download it from <a
-    href="http://java.sun.com">Sun</a>
+<li>Make sure you have the J2SE JRE (Java Run Time Environment) or SDK
+    (Software Development Kit) which supports Java 1.4 or later. If
+    you do not have it, you can download it from <a
+    href="http://java.sun.com">http://java.sun.com/</a>.
+<li>If you have a J2SE older than version 1.4.2 installed, you need to
+    install <a
+    href="http://www.geocities.com/ggehnen/">WireProvider</a>.
+    Download binary package and put <kbd>WireProvider.jar</kbd> under
+    <kbd>$JAVA_HOME/jre/lib/ext/</kbd> directory and put
+    <kbd>WireProvider.dll</kbd> under <kbd>$JAVA_HOME/jre/bin/</kbd>
+    directory.
 <li>Run JSynthLib.jar either by double-clicking the icon or by typing
     <kbd>java -jar JSynthLib.jar</kbd> from the command prompt
+<!--
 <li>Go to Config-&gt;Preferences-&gt;MIDI and set 'MIDI Platform' to
     MS-Windows (WireProvider).
 <li>If you have a JRE 1.4.2 installed, you can select as alternative the
     "JavaSound" access method. Due to some bugs in earlier versions of the JRE
     this doesn't work with versions before 1.4.2.
+-->
 <li>Go to Config-&gt;Synths and add and configure the Synthesizers you
     want to use with JSynthLib
 <li>Set any other preferences (such as MIDI Fader Port, Default
@@ -167,32 +179,58 @@ application. JSynthLib runs under Windows and Linux.</p>
 <h4>GNU/Linux</h4>
 
 <ul>
-<li>Download the .zip file from the web site, and unzip it
-<li>Make sure you have a Java Run Time Environment (JRE) which supports Java
-    1.4 or later. If you do not have it, you can download it from <a
-    href="http://java.sun.com">Sun</a>
-<li>Edit the file linuxdevices.conf in the main JSynthLib Directory to
-    reflect your setup. Each line in this file represents one device
-    that you wish to have accessible in JSynthLib.
-<li>Run JSynthLib.jar by typing <kbd>/usr/java/jdk1.4/bin/java -jar
-    JSynthLib.jar</kbd> from the command prompt. (If you installed java to
-    a different path, of course you should use that path instead)
+<li>Download the .zip file from the web site, and unzip it to any
+    directory (for example <kbd>c:\jsynthlib</kbd>).
+<li>Make sure you have the J2SE JRE (Java Run Time Environment) or SDK
+    (Software Development Kit) which supports Java 1.4 or later. If
+    you do not have it, you can download it from <a
+    href="http://java.sun.com">http://java.sun.com/</a>.
+<li>If you have a J2SE older than version 1.5 installed, copy
+    <kbd>midiprovider/LinuxCharDev.jar</kbd> under
+    <kbd>$JAVA_HOME/jre/lib/ext/</kbd> directory.  And copy
+    <kbd>midiprovider/LinuxCharDev/linuxdevices.conf</kbd> under the
+    main JSynthLib Directory and edit it to reflect your setup. Each
+    line in this file represents one device that you wish to have
+    accessible in JSynthLib.
+<li>Run JSynthLib.jar by typing <kbd>java -jar JSynthLib.jar</kbd>
+    from the shell prompt.
+<!--
 <li>Go to Config-&gt;Preferences-&gt;MIDI and set 'MIDI Platform' to
     Gnu/Linux (<kbd>/dev/*</kbd>).
+-->
 <li>Go to Config-&gt;Synths and add and configure the Synthesizers you
-    want to use with JSynthLib
+    want to use with JSynthLib.
 <li>Set any other preferences (such as MIDI Fader Port, Default
-    Directories) as you wish
+    Directories) as you wish.
 <li>Quit JSynthLib after you are done configuring it and restart
     it. Now you can go back into it and use it.
 </ul>
 
 <h4>Mac OS X</h4>
 
-OS X comes with java preinstalled. All you should have to do is
-download and unzip JSynthLib and run JSynthLib.jar. Once in JSynthLib,
-go to Config-&gt;Prefs and set the MIDI platform to Mac OS-X.
+<ul>
+<li>Download the .zip file from the web site, and unzip it to any
+    directory (for example <kbd>c:\jsynthlib</kbd>).
+<li>OS X comes with java preinstalled.
+<li>If you have a J2SE older than version 1.5 installed, copy
+    <kbd>midiprovider/CAProvider.jar</kbd> under
+    <kbd>/Library/Java/Extensions/</kbd>
+    directory(<kbd>~/Library/Java/Extensions/</kbd> should also work
+    for single user installation).<br>
+    You may use <a
+    href="http://www.cems.uwe.ac.uk/~lrlang/plumstone/">PlumStone</a>
+    instead of <kbd>CAProvider.jar</kbd>.
+<li>Run JSynthLib.jar by typing <kbd>java -jar JSynthLib.jar</kbd>
+    from the shell prompt.
+<li>Go to Config-&gt;Synths and add and configure the Synthesizers you
+    want to use with JSynthLib.
+<li>Set any other preferences (such as MIDI Fader Port, Default
+    Directories) as you wish.
+<li>Quit JSynthLib after you are done configuring it and restart
+    it. Now you can go back into it and use it.
+</ul>
 
+<!--
 <h4>Mac OS 9</h4>
 
 JSynthLib can use the javaMIDI library for MIDI I/O. This Library has
@@ -201,6 +239,7 @@ JSynthLib on Mac OS. Unfortunately, Apple has really dropped the ball
 on providing modern Java support for their older Operating System. If
 Java JDK 1.4 ever becomes available for OS9, JSynthLib should be able
 to run under it.
+-->
 
 <h2><a name="using" href="#toc">Using JSynthLib</a></h2>
 
