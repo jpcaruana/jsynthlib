@@ -23,7 +23,7 @@ package synthdrivers.BehringerFCB1010;
 
 import core.*;
 import javax.swing.*;
-import java.awt.*;
+
 import java.awt.event.*;
 import javax.swing.border.*;
 
@@ -170,7 +170,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         
         selectPanel.add(new JLabel(""));
         JLabel bankLabel = new JLabel("Bank");
-        bankLabel.setHorizontalAlignment(bankLabel.RIGHT);
+        bankLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         selectPanel.add(bankLabel);
         
         bankSelect = new JComboBox(BANK_NUMS);
@@ -180,7 +180,7 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         
         selectPanel.add(new JLabel(""));
         JLabel presetLabel = new JLabel("Preset");
-        presetLabel.setHorizontalAlignment(presetLabel.RIGHT);
+        presetLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         selectPanel.add(presetLabel);
         
         presetSelect = new JComboBox(PRESET_NUMS);
