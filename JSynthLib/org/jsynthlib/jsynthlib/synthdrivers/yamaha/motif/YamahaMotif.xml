@@ -31,6 +31,7 @@
     </checksum>
 
     <patch file="normal_voice.xml" />
+    <editor>test2.xml</editor>
 
     <class>normal_voice.groovy</class>
 
