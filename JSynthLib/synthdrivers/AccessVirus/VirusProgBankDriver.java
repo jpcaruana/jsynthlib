@@ -40,7 +40,7 @@ public class VirusProgBankDriver extends BankDriver {
     sysex[ofs] = (byte)(sum & 0x7F);
   }
 
-  protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
+  protected void calculateChecksum(Patch p, int start, int end, int ofs) {
     calculateChecksum(p.sysex, start, end, ofs);
   }
 

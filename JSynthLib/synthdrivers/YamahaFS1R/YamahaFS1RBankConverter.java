@@ -50,7 +50,7 @@ public class YamahaFS1RBankConverter extends Converter
 			int oCSEnd = oIDest-1;
 			oIDest++;
 			oBank.sysex[oIDest++] = (byte)0xF7; 
-			Driver.calculateChecksum(oBank, oCSStart, oCSEnd, oCSEnd+1);
+			DriverUtil.calculateChecksum(oBank.sysex, oCSStart, oCSEnd, oCSEnd+1);
 		}
 		for (int v = 0; v < 128; v++)
 		{
@@ -71,7 +71,7 @@ public class YamahaFS1RBankConverter extends Converter
 			int oCSEnd = oIDest-1;
 			oIDest++;
 			oBank.sysex[oIDest++] = (byte)0xF7; 
-			Driver.calculateChecksum(oBank, oCSStart, oCSEnd, oCSEnd+1);
+			DriverUtil.calculateChecksum(oBank.sysex, oCSStart, oCSEnd, oCSEnd+1);
 		}
         return oBank;
 	}

@@ -71,7 +71,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	}
     }
 
-    protected static void calculateChecksum(Patch p, int start, int end, int ofs)  {
+    protected void calculateChecksum(Patch p, int start, int end, int ofs)  {
     	int i;
 	int sum = 0;
 

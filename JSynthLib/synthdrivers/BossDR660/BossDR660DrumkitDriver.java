@@ -56,7 +56,7 @@ public class BossDR660DrumkitDriver extends Driver
    }
 
   // XXX this method can be commented out, because same as superclass.
-  protected static void calculateChecksum(Patch p,int start,int end,int ofs)
+  protected void calculateChecksum(Patch p,int start,int end,int ofs)
   {
     int sum=0;
     for (int i=start;i<=end;i++)

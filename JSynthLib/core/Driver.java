@@ -659,7 +659,7 @@ abstract public class Driver implements IPatchDriver {
      *            offset of the checksum data
      * @see #calculateChecksum(Patch)
      */
-    protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
+    protected void calculateChecksum(Patch patch, int start, int end, int offset) {
         DriverUtil.calculateChecksum(patch.sysex, start, end, offset);
     }
 

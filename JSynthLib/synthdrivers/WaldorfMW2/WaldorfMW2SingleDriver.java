@@ -65,20 +65,23 @@ public class WaldorfMW2SingleDriver extends Driver {
         this.patchSize = MW2Constants.PATCH_SIZE;
     }
     
-    protected static void calculateChecksum(Patch p, int start, int end, int ofs)  {        
+    protected static void calculateChecksum(byte[] d, int start, int end, int ofs)  {        
         int sum = 0;        
         for (int i = start; i <= end; i++)
-            sum += p.sysex[i];        
-        p.sysex[ofs] =  (byte) (sum & 0x7F); 
+            sum += d[i];        
+        d[ofs] =  (byte) (sum & 0x7F); 
     }
     
+    protected void calculateChecksum(Patch p, int start, int end, int ofs)  {
+        calculateChecksum(p.sysex, start, end, ofs);
+    }
     /**
      * Calculate check sum of a <code>Patch</code>.<p>
      *
      * @param p a <code>Patch</code> value
      */
     protected void calculateChecksum(Patch p) {        
-        calculateChecksum(p, this.checksumStart, this.checksumEnd, this.checksumOffset);        
+        calculateChecksum(p.sysex, this.checksumStart, this.checksumEnd, this.checksumOffset);        
     }
     
     /**

@@ -222,7 +222,7 @@ public class WaldorfMW2BankDriver extends BankDriver {
             Patch p = new Patch(sysex);
             WaldorfMW2SingleDriver.createPatchHeader(   p, bankNum, patchNum);
             p.sysex[264] = MW2Constants.SYSEX_END_BYTE;
-            WaldorfMW2SingleDriver.calculateChecksum(   p, 
+            WaldorfMW2SingleDriver.calculateChecksum(   p.sysex, 
                     MW2Constants.SYSEX_HEADER_OFFSET, 
                     MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1, 
                     MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE);
@@ -284,7 +284,7 @@ public class WaldorfMW2BankDriver extends BankDriver {
         p = new Patch(bankSysex);
             
         for(int patchNo = 0; patchNo < patchNumbers.length; patchNo++) {            
-            WaldorfMW2SingleDriver.calculateChecksum(   p, 
+            WaldorfMW2SingleDriver.calculateChecksum(   p.sysex, 
                     offset + this.checksumStart,
                     offset + this.checksumEnd,
                     offset + this.checksumOffset);

@@ -70,7 +70,7 @@ public class WaldorfMW2AllSoundConverter extends Converter {
             tempPatch = new Patch(temporarySysex, getDevice());
             
             WaldorfMW2SingleDriver.createPatchHeader(tempPatch, 0, patchNo);                        
-            WaldorfMW2SingleDriver.calculateChecksum( tempPatch,
+            WaldorfMW2SingleDriver.calculateChecksum( tempPatch.sysex,
                 MW2Constants.SYSEX_HEADER_OFFSET, 
                 MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1, 
                 MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE);
@@ -103,7 +103,7 @@ public class WaldorfMW2AllSoundConverter extends Converter {
             tempPatch = new Patch(temporarySysex, getDevice());
             
             WaldorfMW2SingleDriver.createPatchHeader(tempPatch, 1, patchNo);                       
-            WaldorfMW2SingleDriver.calculateChecksum( tempPatch,
+            WaldorfMW2SingleDriver.calculateChecksum(tempPatch.sysex,
                 MW2Constants.SYSEX_HEADER_OFFSET, 
                 MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1, 
                 MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE);

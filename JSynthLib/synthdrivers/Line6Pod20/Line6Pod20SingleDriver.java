@@ -72,7 +72,7 @@ public class Line6Pod20SingleDriver extends Driver {
     
     /** Null method. Line6 devices do not use checksum.
         */
-    protected static void calculateChecksum(Patch p, int start, int end, int ofs)
+    protected void calculateChecksum(Patch p, int start, int end, int ofs)
     {
         // Pod doesn't use checksum
     }

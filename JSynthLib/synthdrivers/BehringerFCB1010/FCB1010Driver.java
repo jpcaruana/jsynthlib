@@ -68,7 +68,7 @@ class FCB1010Driver extends Driver {
     /** FCB1010Driver patch does not utilize checksum. Method overridded with
         * null method.
         */
-    protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
+    protected void calculateChecksum(Patch patch, int start, int end, int offset) {
     }
     
     /** Requests a dump of the FCB1010 patch.

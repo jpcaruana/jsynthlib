@@ -153,7 +153,7 @@ public class AlesisDM5SgSetDriver extends Driver {
     /** Calculates the checksum for the DM5. Equal to the mod 128 of the sum of
         * all the bytes from offset header+1 to offset total patchlength-3.
         */
-    protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
+    protected void calculateChecksum(Patch patch, int start, int end, int offset) {
         int sum = 0;
         
         for (int i = start; i <= end; i++) {
