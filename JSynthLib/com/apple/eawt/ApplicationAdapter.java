@@ -35,6 +35,10 @@ public class ApplicationAdapter implements ApplicationListener
 	{
 	}
 	
+        public void handleReOpenApplication(ApplicationEvent e)
+        {
+        }
+
 	public void handleQuit(ApplicationEvent e)
 	{
 	}
