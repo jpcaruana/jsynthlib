@@ -125,7 +125,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 
 	protected void buildEditor(Patch patch)
 	{
-		PatchEdit.waitDialog.show();	// Because it needs some time to build up the editor frame
+		PatchEdit.showWaitDialog();	// Because it needs some time to build up the editor frame
 
 
 		int ofs=1;				// auxiliary value, because parameter 0 (PROTCT) isn't transmitted!
@@ -220,7 +220,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 		pack();
 		show();
 
-		PatchEdit.waitDialog.hide();	// Okay, the editor frame is ready
+		PatchEdit.hideWaitDialog();	// Okay, the editor frame is ready
 	}
 
 

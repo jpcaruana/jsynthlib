@@ -231,10 +231,10 @@ public Patch createNewPatch()
     {
      if (bankNum==0)p.sysex[7]=0;   //bank a
      if (bankNum==3)p.sysex[7]=2;   //bank d
-      PatchEdit.waitDialog.show();
+      PatchEdit.showWaitDialog();
       setBankNum(bankNum);
       sendPatchWorker(p);
-      PatchEdit.waitDialog.hide();  // phil@muqus.com
+      PatchEdit.hideWaitDialog();  // phil@muqus.com
 
     };
 

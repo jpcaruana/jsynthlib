@@ -106,7 +106,7 @@ public class AlesisA6MixBankDriver extends BankDriver
     byte tmp[] = new byte[1180];  // send in 128 single-mix messages
     try
     {
-      PatchEdit.waitDialog.show();
+      PatchEdit.showWaitDialog();
       for (int i = 0; i < 128; i++)
       {
         System.arraycopy(p.sysex, i * 1180, tmp, 0, 1180);
@@ -115,7 +115,7 @@ public class AlesisA6MixBankDriver extends BankDriver
         send(tmp);
         Thread.sleep(15);
       }
-      PatchEdit.waitDialog.hide();
+      PatchEdit.hideWaitDialog();
     }
     catch (Exception e)
     {

@@ -76,7 +76,7 @@ public class NL2PerfBankDriver extends BankDriver {
   protected void sendPatchWorker (Patch p, int bankNum) {
     byte tmp[] = new byte[singleSize];  // send in 100 single-performance messages
     try {
-      PatchEdit.waitDialog.show();
+      PatchEdit.showWaitDialog();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
         tmp[deviceIDoffset] = (byte) (((NordLeadDevice) (getDevice())).getGlobalChannel() - 1);
@@ -85,7 +85,7 @@ public class NL2PerfBankDriver extends BankDriver {
         send(tmp);
         Thread.sleep(50);
       }
-      PatchEdit.waitDialog.hide();
+      PatchEdit.hideWaitDialog();
     } catch (Exception e) {
       ErrorMsg.reportStatus (e);
       ErrorMsg.reportError("Error", "Unable to send Patch");

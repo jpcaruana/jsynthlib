@@ -105,7 +105,7 @@ public class VirusProgBankDriver extends BankDriver {
     byte tmp[] = new byte[singleSize];  // send in 128 single-program messages
     int max;
     try {
-      PatchEdit.waitDialog.show();
+      PatchEdit.showWaitDialog();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
         tmp[deviceIDoffset] = (byte) (getDeviceID() - 1);
@@ -115,7 +115,7 @@ public class VirusProgBankDriver extends BankDriver {
         send(tmp);
         Thread.sleep(50);
       }
-      PatchEdit.waitDialog.hide();
+      PatchEdit.hideWaitDialog();
     } catch (Exception e) {
       ErrorMsg.reportStatus (e);
       ErrorMsg.reportError("Error", "Unable to send Patch");

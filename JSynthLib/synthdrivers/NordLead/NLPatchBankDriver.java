@@ -78,7 +78,7 @@ public class NLPatchBankDriver extends BankDriver {
       max = NUM_IN_BANK;
     }
     try {
-      PatchEdit.waitDialog.show();
+      PatchEdit.showWaitDialog();
       for (int i = 0; i < max; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
         tmp[deviceIDoffset] = (byte) (((NordLeadDevice) getDevice()).getGlobalChannel() - 1);
@@ -87,7 +87,7 @@ public class NLPatchBankDriver extends BankDriver {
         send(tmp);
         Thread.sleep(50);
       }
-      PatchEdit.waitDialog.hide();
+      PatchEdit.hideWaitDialog();
     } catch (Exception e) {
       ErrorMsg.reportStatus (e);
       ErrorMsg.reportError("Error", "Unable to send Patch");

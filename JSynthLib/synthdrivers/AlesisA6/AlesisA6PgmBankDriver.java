@@ -106,7 +106,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
     byte tmp[] = new byte[2350];  // send in 128 single-program messages
     try
     {
-      PatchEdit.waitDialog.show();
+      PatchEdit.showWaitDialog();
       for (int i = 0; i < 128; i++)
       {
         System.arraycopy(p.sysex, i * 2350, tmp, 0, 2350);
@@ -115,7 +115,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
         send(tmp);
         Thread.sleep(15);
       }
-      PatchEdit.waitDialog.hide();
+      PatchEdit.hideWaitDialog();
     }
     catch (Exception e)
     {

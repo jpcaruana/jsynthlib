@@ -107,7 +107,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 
 	protected void buildEditor(Patch patch)
 	{
-		PatchEdit.waitDialog.show();	// Because it needs some time to build up the editor frame
+		PatchEdit.showWaitDialog();	// Because it needs some time to build up the editor frame
 
 
 		final DecimalFormat freqFormatter = new DecimalFormat("###0.00");
@@ -213,7 +213,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 		pack();
 		show();
 
-		PatchEdit.waitDialog.hide();	// Okay, the editor frame is ready
+		PatchEdit.hideWaitDialog();	// Okay, the editor frame is ready
 	}
 
 
