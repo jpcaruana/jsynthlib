@@ -114,8 +114,9 @@ public class NLPerfSingleDriver extends Driver {
   };
   NordLeadConfig nlConfig;
 
-  public NLPerfSingleDriver(NordLeadConfig nlc) {
-    nlConfig = nlc;
+  public NLPerfSingleDriver() {
+  //public NLPerfSingleDriver(NordLeadConfig nlc) {
+  //  nlConfig = nlc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Nord";
     model = "Lead";
@@ -192,5 +193,22 @@ public class NLPerfSingleDriver extends Driver {
         new NameValue("bankNum", 41), new NameValue("patchNum", patchNum)
     );
   }
+  
+  /** Getter for property nlConfig.
+   * @return Value of property nlConfig.
+   *
+   */
+  public synthdrivers.NordLead.NordLeadConfig getNlConfig() {
+      return nlConfig;
+  }
+  
+  /** Setter for property nlConfig.
+   * @param nlConfig New value of property nlConfig.
+   *
+   */
+  public void setNlConfig(synthdrivers.NordLead.NordLeadConfig nlConfig) {
+      this.nlConfig = nlConfig;
+  }
+  
 }
 

@@ -11,8 +11,9 @@ public class VirusMultiBankDriver extends BankDriver {
   static final int NUM_IN_BANK = 128;
   AccessVirusConfig avConfig;
 
-  public VirusMultiBankDriver(AccessVirusConfig avc) {
-    avConfig = avc;
+  public VirusMultiBankDriver ()  {
+  //public VirusMultiBankDriver(AccessVirusConfig avc) {
+//    avConfig = avc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Access";
     model = "Virus";
@@ -134,5 +135,22 @@ public class VirusMultiBankDriver extends BankDriver {
     sysexRequestDump.send(port, (byte)(avConfig.getDeviceId()), new NameValue("bankNum", 1)
     );
   }
+  
+  /** Getter for property avConfig.
+   * @return Value of property avConfig.
+   *
+   */
+  public synthdrivers.AccessVirus.AccessVirusConfig getAvConfig() {
+      return avConfig;
+  }
+  
+  /** Setter for property avConfig.
+   * @param avConfig New value of property avConfig.
+   *
+   */
+  public void setAvConfig(synthdrivers.AccessVirus.AccessVirusConfig avConfig) {
+      this.avConfig = avConfig;
+  }
+  
 }
 
