@@ -162,8 +162,8 @@ abstract public class Driver implements IPatchDriver {
      * @param authors The names of the authors of this driver.
      */
     public Driver(String patchType, String authors) {
-	this.patchType = patchType;
-	this.authors = authors;
+        this.patchType = patchType;
+        this.authors = authors;
     }
 
     /*
@@ -171,25 +171,25 @@ abstract public class Driver implements IPatchDriver {
      * @deprecated Use Driver(String, String).
      */
     /*
-    public Driver() {
-    }
-    */
+     public Driver() {
+     }
+     */
     //
     // IDriver interface methods
     //
     public final String getPatchType() {
-	return patchType;
+        return patchType;
     }
 
     public final String getAuthors() {
-	return authors;
+        return authors;
     }
 
     public final void setDevice(Device d) {
-	device = d;
+        device = d;
     }
     public final Device getDevice() {
-	return device;
+        return device;
     }
 
     /**
@@ -203,29 +203,29 @@ abstract public class Driver implements IPatchDriver {
      * @see #sysexID
      */
     public boolean supportsPatch(String patchString, byte[] sysex) {
-  	// check the length of Patch
+        // check the length of Patch
         if ((patchSize != sysex.length) && (patchSize != 0))
-	    return false;
+            return false;
 
         if (sysexID == null || patchString.length() < sysexID.length())
-	    return false;
+            return false;
 
         StringBuffer compareString = new StringBuffer();
         for (int i = 0; i < sysexID.length(); i++) {
-	    switch (sysexID.charAt(i)) {
-	    case '*':
-		compareString.append(patchString.charAt(i));
-		break;
-	    default:
-		compareString.append(sysexID.charAt(i));
+            switch (sysexID.charAt(i)) {
+            case '*':
+                compareString.append(patchString.charAt(i));
+                break;
+            default:
+                compareString.append(sysexID.charAt(i));
             }
         }
-// 	ErrorMsg.reportStatus(toString());
-// 	ErrorMsg.reportStatus("Comp.String: " + compareString);
-// 	ErrorMsg.reportStatus("DriverString:" + driverString);
-// 	ErrorMsg.reportStatus("PatchString: " + patchString);
+        // 	ErrorMsg.reportStatus(toString());
+        // 	ErrorMsg.reportStatus("Comp.String: " + compareString);
+        // 	ErrorMsg.reportStatus("DriverString:" + driverString);
+        // 	ErrorMsg.reportStatus("PatchString: " + patchString);
         return (compareString.toString().equalsIgnoreCase
-		(patchString.substring(0, sysexID.length())));
+                (patchString.substring(0, sysexID.length())));
     }
 
     // These are not 'final' because BankDriver and Converter class override
@@ -247,7 +247,7 @@ abstract public class Driver implements IPatchDriver {
     // IPatchDriver interface methods
     //
     public int getPatchSize() {
-	return patchSize;
+        return patchSize;
     }
 
     public String[] getPatchNumbers() {
@@ -278,7 +278,7 @@ abstract public class Driver implements IPatchDriver {
     }
 
     public final IPatch createPatch() {
-	return (IPatch) createNewPatch();
+        return (IPatch) createNewPatch();
     }
 
     /**
@@ -288,7 +288,7 @@ abstract public class Driver implements IPatchDriver {
      * @see #createPatch()
      */
     protected Patch createNewPatch() { // overridden by subclass
-	return null;
+        return null;
     }
 
     public IPatch createPatch(byte[] sysex) {
@@ -334,11 +334,11 @@ abstract public class Driver implements IPatchDriver {
                     pk.setDriver(driver);
                     driver.trimSysex(pk);
                     JOptionPane
-                            .showMessageDialog(null, "You requested a "
-                                    + driver.toString() + " patch!"
-                                    + "\nBut you got a "
-                                    + pk.getDriver().toString() + " patch.",
-                                    "Warning", JOptionPane.WARNING_MESSAGE);
+                    .showMessageDialog(null, "You requested a "
+                            + driver.toString() + " patch!"
+                            + "\nBut you got a "
+                            + pk.getDriver().toString() + " patch.",
+                            "Warning", JOptionPane.WARNING_MESSAGE);
                     return pk;
                 }
             } // end of driver (j) loop
@@ -384,30 +384,30 @@ abstract public class Driver implements IPatchDriver {
      * @see SysexHandler
      */
     public void requestPatchDump(int bankNum, int patchNum) {
-	//clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
-	setBankNum(bankNum);
-	setPatchNum(patchNum);
-	if (sysexRequestDump == null) {
-	    JOptionPane.showMessageDialog
-		(PatchEdit.getInstance(),
-		 "The " + toString()
-		 + " driver does not support patch getting.\n\n"
-		 + "Please start the patch dump manually...",
-		 "Get Patch", JOptionPane.WARNING_MESSAGE);
-	} else
-	    send(sysexRequestDump.toSysexMessage(getDeviceID(),
-						 new SysexHandler.NameValue("bankNum", bankNum),
-						 new SysexHandler.NameValue("patchNum", patchNum)));
+        //clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
+        setBankNum(bankNum);
+        setPatchNum(patchNum);
+        if (sysexRequestDump == null) {
+            JOptionPane.showMessageDialog
+            (PatchEdit.getInstance(),
+                    "The " + toString()
+                    + " driver does not support patch getting.\n\n"
+                    + "Please start the patch dump manually...",
+                    "Get Patch", JOptionPane.WARNING_MESSAGE);
+        } else
+            send(sysexRequestDump.toSysexMessage(getDeviceID(),
+                    new SysexHandler.NameValue("bankNum", bankNum),
+                    new SysexHandler.NameValue("patchNum", patchNum)));
     }
 
     // MIDI in/out mothods to encapsulate lower MIDI layer
     public final void send(MidiMessage msg) {
-	device.send(msg);
+        device.send(msg);
     }
 
     public String toString() {
-	return getManufacturerName() + " " + getModelName() + " "
-	    + getPatchType();
+        return getManufacturerName() + " " + getModelName() + " "
+        + getPatchType();
     }
 
     public void sendParameter(IPatch patch, SysexWidget.IParameter param) {
@@ -425,12 +425,12 @@ abstract public class Driver implements IPatchDriver {
      */
     protected String getPatchName(Patch p) {
         if (patchNameSize == 0)
-	    return ("-");
+            return ("-");
         try {
- 	    return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
-	} catch (UnsupportedEncodingException ex) {
-	    return "-";
-	}
+            return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
+        } catch (UnsupportedEncodingException ex) {
+            return "-";
+        }
     }
 
     /**
@@ -441,21 +441,21 @@ abstract public class Driver implements IPatchDriver {
      */
     protected void setPatchName(Patch p, String name) {
         if (patchNameSize == 0) {
-	    ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Name Editing.");
-	    return;
-	}
+            ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Name Editing.");
+            return;
+        }
 
-	while (name.length() < patchNameSize)
-		name = name + " ";
+        while (name.length() < patchNameSize)
+            name = name + " ";
 
         byte[] namebytes = new byte[patchNameSize];
         try {
-	    namebytes = name.getBytes("US-ASCII");
-	    for (int i = 0; i < patchNameSize; i++)
-		((Patch)p).sysex[patchNameStart + i] = namebytes[i];
-	} catch (UnsupportedEncodingException ex) {
-	    return;
-	}
+            namebytes = name.getBytes("US-ASCII");
+            for (int i = 0; i < patchNameSize; i++)
+                ((Patch)p).sysex[patchNameStart + i] = namebytes[i];
+        } catch (UnsupportedEncodingException ex) {
+            return;
+        }
     }
 
     /**
@@ -470,18 +470,18 @@ abstract public class Driver implements IPatchDriver {
     }
 
     /**
-     * Send Program Change MIDI message. 
+     * Send Program Change MIDI message.
      * @see #storePatch(Patch, int, int)
      */
     protected void setPatchNum(int patchNum) {
         try {
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, getChannel() - 1,
-			   patchNum, 0); // Program Number
-	    send(msg);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	}
+            ShortMessage msg = new ShortMessage();
+            msg.setMessage(ShortMessage.PROGRAM_CHANGE, getChannel() - 1,
+                    patchNum, 0); // Program Number
+            send(msg);
+        } catch (InvalidMidiDataException e) {
+            ErrorMsg.reportStatus(e);
+        }
     }
 
     /**
@@ -490,18 +490,18 @@ abstract public class Driver implements IPatchDriver {
      */
     protected void setBankNum(int bankNum) {
         try {
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
-			   0x00, //  Bank Select (MSB)
-			   bankNum / 128); // Bank Number (MSB)
-	    send(msg);
-	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
-			   0x20, //  Bank Select (LSB)
-			   bankNum % 128); // Bank Number (MSB)
-	    send(msg);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	}
+            ShortMessage msg = new ShortMessage();
+            msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
+                    0x00, //  Bank Select (MSB)
+                    bankNum / 128); // Bank Number (MSB)
+            send(msg);
+            msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
+                    0x20, //  Bank Select (LSB)
+                    bankNum % 128); // Bank Number (MSB)
+            send(msg);
+        } catch (InvalidMidiDataException e) {
+            ErrorMsg.reportStatus(e);
+        }
     }
 
     /**
@@ -523,8 +523,8 @@ abstract public class Driver implements IPatchDriver {
      * @see Patch#edit()
      */
     protected JSLFrame editPatch(Patch p) {
-	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
-	return null;
+        ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
+        return null;
     }
 
     //
@@ -540,7 +540,7 @@ abstract public class Driver implements IPatchDriver {
      * @see ISinglePatch#send()
      */
     protected void sendPatch(Patch p) {
-	sendPatchWorker(p);
+        sendPatchWorker(p);
     }
 
     /**
@@ -549,7 +549,7 @@ abstract public class Driver implements IPatchDriver {
      */
     protected final void sendPatchWorker(Patch p) {
         if (deviceIDoffset > 0)
-	    ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
+            ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
 
         send(((Patch)p).sysex);
     }
@@ -562,7 +562,7 @@ abstract public class Driver implements IPatchDriver {
      * @see ISinglePatch#play()
      */
     protected void playPatch(Patch p) {
-	if (AppConfig.getSequencerEnable())
+        if (AppConfig.getSequencerEnable())
             playSequence();
         else
             playNote();
@@ -570,27 +570,27 @@ abstract public class Driver implements IPatchDriver {
 
     private void playNote() {
         try {
-// 	    sendPatch(p);
-	    Thread.sleep(100);
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
-			   AppConfig.getNote(),
-			   AppConfig.getVelocity());
-	    send(msg);
+            // 	    sendPatch(p);
+            Thread.sleep(100);
+            ShortMessage msg = new ShortMessage();
+            msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
+                    AppConfig.getNote(),
+                    AppConfig.getVelocity());
+            send(msg);
 
-	    Thread.sleep(AppConfig.getDelay());
+            Thread.sleep(AppConfig.getDelay());
 
-	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
-			   AppConfig.getNote(),
-			   0);	// expecting running status
-	    send(msg);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
+            msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
+                    AppConfig.getNote(),
+                    0);	// expecting running status
+            send(msg);
+        } catch (Exception e) {
+            ErrorMsg.reportStatus(e);
+        }
     }
 
     private void playSequence() {
-	MidiUtil.startSequencer(getDevice().getPort());
+        MidiUtil.startSequencer(getDevice().getPort());
     }
     // end of ISinglePatch methods
 
@@ -599,22 +599,22 @@ abstract public class Driver implements IPatchDriver {
     //
     /** Return the name of manufacturer of synth. */
     protected final String getManufacturerName() {
-	return device.getManufacturerName();
+        return device.getManufacturerName();
     }
 
     /** Return the name of model of synth. */
     protected final String getModelName() {
-	return device.getModelName();
+        return device.getModelName();
     }
 
     /** Return the personal name of the synth. */
     protected final String getSynthName() {
-	return device.getSynthName();
+        return device.getSynthName();
     }
 
     /** Return MIDI devide ID. */
     public final int getDeviceID() {
-	return device.getDeviceID();
+        return device.getDeviceID();
     }
 
     /** Return MIDI channel number. */
@@ -628,7 +628,7 @@ abstract public class Driver implements IPatchDriver {
     }
 
     /**
-     * Caluculate check sum of a <code>Patch</code>.<p>
+     * Calculate check sum of a <code>Patch</code>.<p>
      *
      * Need to be overridden if a patch is consist from multiple SysEX
      * messages.
@@ -636,11 +636,11 @@ abstract public class Driver implements IPatchDriver {
      * @param p a <code>Patch</code> value
      */
     protected void calculateChecksum(Patch p) {
-	calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
+        calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
     }
 
     /**
-     * Caluculate check sum of a <code>Patch</code>.
+     * Calculate check sum of a <code>Patch</code>.
      * <p>
      *
      * This method is called by calculateChecksum(Patch). The checksum
@@ -661,40 +661,40 @@ abstract public class Driver implements IPatchDriver {
      * @see #calculateChecksum(Patch)
      */
     protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
-	DriverUtil.calculateChecksum(patch.sysex, start, end, offset);
+        DriverUtil.calculateChecksum(patch.sysex, start, end, offset);
     }
 
     /**
      * Send Sysex byte array data to MIDI outport.
-     * 
+     *
      * @param sysex
      *            a byte array of Sysex data. If it has checksum, the checksum
      *            must be calculated before calling this method.
      */
     public final void send(byte[] sysex) {
-	try {
-	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
-	    for (int i = 0; i < a.length; i++)
-		device.send(a[i]);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	}
+        try {
+            SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
+            for (int i = 0; i < a.length; i++)
+                device.send(a[i]);
+        } catch (InvalidMidiDataException e) {
+            ErrorMsg.reportStatus(e);
+        }
     }
 
     /** Send ShortMessage to MIDI outport. */
     public final void send(int status, int d1, int d2) {
-	ShortMessage msg = new ShortMessage();
-	try {
-	    msg.setMessage(status, d1, d2);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	}
-	send(msg);
+        ShortMessage msg = new ShortMessage();
+        try {
+            msg.setMessage(status, d1, d2);
+        } catch (InvalidMidiDataException e) {
+            ErrorMsg.reportStatus(e);
+        }
+        send(msg);
     }
 
     /** Send ShortMessage to MIDI outport. */
     public final void send(int status, int d1) {
-	send(status, d1, 0);
+        send(status, d1, 0);
     }
 
     //
@@ -705,8 +705,8 @@ abstract public class Driver implements IPatchDriver {
      * debugging purposes.
      */
     protected String getFullPatchName(Patch p) {
-	return getManufacturerName() + " | " + getModelName() + " | "
-	    + p.getType() + " | " + getSynthName() + " | " + getPatchName(p);
+        return getManufacturerName() + " | " + getModelName() + " | "
+        + p.getType() + " | " + getSynthName() + " | " + getPatchName(p);
     }
 
     //
@@ -786,7 +786,7 @@ abstract public class Driver implements IPatchDriver {
 
     /** @deprecated use getDevice().getInPort() */
     public final int getInPort() {
-	return device.getInPort();
+        return device.getInPort();
     }
 
     /**
@@ -799,43 +799,43 @@ abstract public class Driver implements IPatchDriver {
      * @deprecated Nobody uses this method now.
      */
     protected void choosePatch(Patch p, int bankNum, int patchNum) {
-	int bank = 0;
-	int patch = 0;
-	String bankstr;
-	String patchstr;
+        int bank = 0;
+        int patch = 0;
+        String bankstr;
+        String patchstr;
 
-	// choose bank number
-	if (bankNumbers.length > 1) {
-	    bankstr = (String) JOptionPane.showInputDialog
-		(null, "Please Choose a Bank", "Storing Patch",
-		 JOptionPane.QUESTION_MESSAGE, null,
-		 bankNumbers, bankNumbers[bankNum]);
-	    if (bankstr == null) // canceled
-		return;
-	    for (int i = 0; i < bankNumbers.length; i++)
-		if (bankstr.equals(bankNumbers[i])) {
-		    bank = i;
-		    break;
-		}
-	}
-	// choose patch number
-	if (patchNumbers.length > 1) {
-	    patchstr = (String) JOptionPane.showInputDialog
-		(null, "Please Choose a Patch Location", "Storing Patch",
-		 JOptionPane.QUESTION_MESSAGE, null,
-		 patchNumbers, patchNumbers[patchNum]); // phil@muqus.com
-	    if (patchstr == null) // canceled
-		return;
-	    for (int i = 0; i < patchNumbers.length; i++)
-		if (patchstr.equals(patchNumbers[i])) {
-		    patch = i;
-		    break;
-		}
-	}
-	ErrorMsg.reportStatus("Driver:ChoosePatch  Bank = " + bank
-			      + "  Patch = " + patch);
-	// send a Patch to selected bank & patch number
-	storePatch(p, bank, patch);
+        // choose bank number
+        if (bankNumbers.length > 1) {
+            bankstr = (String) JOptionPane.showInputDialog
+            (null, "Please Choose a Bank", "Storing Patch",
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    bankNumbers, bankNumbers[bankNum]);
+            if (bankstr == null) // canceled
+                return;
+            for (int i = 0; i < bankNumbers.length; i++)
+                if (bankstr.equals(bankNumbers[i])) {
+                    bank = i;
+                    break;
+                }
+        }
+        // choose patch number
+        if (patchNumbers.length > 1) {
+            patchstr = (String) JOptionPane.showInputDialog
+            (null, "Please Choose a Patch Location", "Storing Patch",
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    patchNumbers, patchNumbers[patchNum]); // phil@muqus.com
+            if (patchstr == null) // canceled
+                return;
+            for (int i = 0; i < patchNumbers.length; i++)
+                if (patchstr.equals(patchNumbers[i])) {
+                    patch = i;
+                    break;
+                }
+        }
+        ErrorMsg.reportStatus("Driver:ChoosePatch  Bank = " + bank
+                + "  Patch = " + patch);
+        // send a Patch to selected bank & patch number
+        storePatch(p, bank, patch);
     }
 
     /**
@@ -846,34 +846,34 @@ abstract public class Driver implements IPatchDriver {
      * @deprecated Nobody uses this method now.
      */
     protected void choosePatch(Patch p) {
-	choosePatch(p, 0, 0);
+        choosePatch(p, 0, 0);
     }
 
     /*
-    void setDeviceNum(int deviceNum) {
-	this.deviceNum = deviceNum;
-    }
+     void setDeviceNum(int deviceNum) {
+     this.deviceNum = deviceNum;
+     }
 
-    void setDriverNum(int driverNum) {
-	this.driverNum = driverNum;
-    }
+     void setDriverNum(int driverNum) {
+     this.driverNum = driverNum;
+     }
 
-    public void setPort(int port) { // 'public' for storable interface
-	this.port = port;
-	//device.setPort(port);
-    }
+     public void setPort(int port) { // 'public' for storable interface
+     this.port = port;
+     //device.setPort(port);
+      }
 
-    public void setInPort(int inPort) { // 'public' for storable interface
-	this.inPort = inPort;
-	//device.setInPort(inPort);
-    }
+      public void setInPort(int inPort) { // 'public' for storable interface
+      this.inPort = inPort;
+      //device.setInPort(inPort);
+       }
 
-    public void setChannel(int channel) { // called by Device and for storable interface
-	this.channel = channel;
-    }
+       public void setChannel(int channel) { // called by Device and for storable interface
+       this.channel = channel;
+       }
 
-    protected void setSynthName(String s) {
-	id = s;
-    }
-    */
+       protected void setSynthName(String s) {
+       id = s;
+       }
+       */
 }
