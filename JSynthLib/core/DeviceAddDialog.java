@@ -81,35 +81,17 @@ public class DeviceAddDialog extends JDialog {
 	    PatchEdit.appConfig.addDevice(device);
 	    String info = device.getInfoText();
 	    if (info != null && info.length() > 0) {
-  		JOptionPane.showMessageDialog(null, fold(info, 72),
+		JTextArea jta = new JTextArea(info, 25, 80);
+		jta.setEditable(false);
+		jta.setLineWrap(true);
+		jta.setWrapStyleWord(true);
+		jta.setCaretPosition(0);
+		JScrollPane jasp = new JScrollPane(jta);
+  		JOptionPane.showMessageDialog(null, jasp,
 					      "Device Information",
   					      JOptionPane.INFORMATION_MESSAGE);
-		/*
-		JOptionPane pane = new JOptionPane(info,
-						   JOptionPane.INFORMATION_MESSAGE);
-		JDialog dialog = pane.createDialog(this, "Device Information");
-		dialog.setSize(480, 400);
-		dialog.show();
-		*/
 	    }
 	}
-    }
-
-    private static String fold(String s, int limit) {
-	String[] lines = s.split("\n");
-	StringBuffer ret = new StringBuffer();
-	for (int i = 0; i < lines.length; i++) {
-	    StringBuffer buf = new StringBuffer(lines[i]);
-	    int len = buf.length();
-	    int index = 0;
-	    for (int j = limit; j < len; j += limit + 1, len++) {
-		buf.insert(j, "\n");
-	    }
-	    ret.append(buf);
-	    if (i < lines.length - 1)
-		ret.append("\n");
-	}
-	return ret.toString();
     }
 
     void CancelPressed() {
