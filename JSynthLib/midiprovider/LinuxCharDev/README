@@ -1,0 +1,10 @@
+To install, place LinuxCharDev.jar into one of the Java Extension
+folders (for example: /usr/lib/java/jre/lib/ext/).
+And copy midiprovider/LinuxCharDev/linuxdevices.conf under the main
+JSynthLib Directory and edit it to reflect your setup.
+Each line in this file represents one device that you wish to have
+accessible in JSynthLib.
+
+  To build simple compile all the sources, and create a jar with the
+classes and META-INF/services/javax.sound.midi.spi.MidiDeviceProvider.
+Build.sh will do just this.
