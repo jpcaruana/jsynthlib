@@ -7,6 +7,10 @@
 
 package core;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -21,8 +25,13 @@ public final class PatchEdit  {
     private static PrefsDialog prefsDialog;
     private static WaitDialog waitDialog;
 
-    /** Initialize Application: */
-    public PatchEdit() {
+    /**
+     * Initialize Application: 
+     * @param debugLevel debug level
+     * @param fileList list of file name
+     */
+    public PatchEdit(ArrayList fileList, int debugLevel) {
+        ErrorMsg.setDebugLevel(debugLevel);
         // for bug report
         ErrorMsg.reportStatus("JSynthLib: " + Constants.VERSION
                 + ", Java: " +  Utility.getJavaVersion()
@@ -61,14 +70,24 @@ public final class PatchEdit  {
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music
 	masterInEnable(AppConfig.getMasterInEnable());
+
+	// open library frame specified on the command line argument.
+	Iterator it = fileList.iterator();
+	while (it.hasNext()) {
+	    String fname = (String) it.next();
+	    ErrorMsg.reportStatus("file name: " + fname);
+	    Actions.openFrame(new File(fname));
+	}
     }
 
     static void exit() {
+	ErrorMsg.reportStatus("JSynthLib exiting...");
 	AppConfig.savePrefs();
 	System.exit(0);
     }
 
     protected void finalize() {	// ???
+	ErrorMsg.reportStatus("JSynthLib finalizing...");
 	masterInEnable(false);
     }
 

@@ -2,30 +2,52 @@ package core;
 import javax.swing.*;
 
 /**
- * This class handles error or warning conditions and debug
- * messages. <code>reportWarning</code> and <code>reportError</code> methods show warning/error message
- * dialogs to the users.  <code>reportStatus</code> methods
- * show debug information to console if a flag is set.<p>
- *
- * The Meaning for the <code>debug</code> variable flag is: (Each
- * number does all of preceding as well.)<p>
+ * This class handles error or warning conditions and debug messages.
+ * <p>
+ * 
+ * <code>reportWarning</code> and <code>reportError</code> methods show
+ * warning/error message dialogs to the users.
+ * <p>
+ * 
+ * <code>reportStatus</code> methods show debug information to the console if
+ * a <code>(debugLevel & mask)</code> is not equal to 0.
+ * <code>debugLevel</code> is a bit mask specified by <code>-D</code>
+ * command line option. <code>mask</code> is an argument of the
+ * <code>reportStatus</code> method.  At this point the following bit masks are defined.
+ * <p>
+ * 
  * <pre>
- * 0 = No Debugging Info at all
- * 1 = Just print Stack Trace for Exceptions
- * 2 = Print Debug Status Messages & Error Messages
- * 3 = Print Stack Trace for all for non-exception Errors
+ *      0x1 debug message
+ *      0x2 Stack Trace
+ *      0x4 MIDI debug message
+ *      0x8 JSLFrame debug message
  * </pre>
- *
- * In general <code>System.out.print</code> or
- * <code>System.out.println</code> should not be used. An example of
- * the exception is <code>main</code> method for debugging.
- *
+ * 
+ * In general <code>System.out.print</code> or <code>System.out.println</code>
+ * should not be used in JSynthLib. An example of the exception is
+ * <code>main</code> method for debugging.
+ * 
  * @author ???
  * @version $Id$
  */
 public class ErrorMsg {
-    /** @see ErrorMsg */
-    public static int debug;
+    /** debug message level set by -D command line argument. */
+    private static int debugLevel = 0;
+    /** debug message. */
+    static final int DEBUG_MSG		= 0x0001;
+    /** show dump stack on Error and Warning message. */
+    static final int DUMP_STACK		= 0x0002;
+    /** show debug message for MIDI. */
+    static final int MIDI		= 0x0004;
+    /** show debug message for JSLFrame. */
+    static final int FRAME		= 0x0008;
+
+    /**
+     * @param debugLevel The debug level to set.
+     */
+    static void setDebugLevel(int debugLevel) {
+        ErrorMsg.debugLevel = debugLevel;
+    }
 
     /**
      * Show a message in an error dialog window.
@@ -37,9 +59,9 @@ public class ErrorMsg {
 	ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.ERROR_MESSAGE);
-	if (debug > 1)
+	if ((debugLevel & DEBUG_MSG) != 0)
 	    System.out.println("ERR> '" + errorMSG + "' reported.");
-	if (debug > 2)
+	if ((debugLevel & DUMP_STACK) != 0)
 	    Thread.dumpStack();
     }
 
@@ -56,14 +78,12 @@ public class ErrorMsg {
 	ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.ERROR_MESSAGE, e);
-	if (debug > 1)
+	if ((debugLevel & DEBUG_MSG) != 0) {
 	    System.out.println("ERR> '" + errorMSG + "' reported.");
-	if (debug > 0) {
 	    System.out.println("ERR> [Exception] " + e.getMessage());
-	    e.printStackTrace(System.out);
 	}
-	if (debug > 2)
-	    Thread.dumpStack();
+	if ((debugLevel & DUMP_STACK) != 0)
+	    e.printStackTrace(System.out);
     }
 
     /**
@@ -76,9 +96,9 @@ public class ErrorMsg {
         ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.WARNING_MESSAGE);
-	if (debug > 1)
+	if ((debugLevel & DEBUG_MSG) != 0)
 	    System.out.println("WRN> '" + errorMSG + "' reported.");
-	if (debug > 2)
+	if ((debugLevel & DUMP_STACK) != 0)
 	    Thread.dumpStack();
     }
 
@@ -95,44 +115,54 @@ public class ErrorMsg {
         ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.WARNING_MESSAGE);
-	if (debug > 1)
+	if ((debugLevel & DEBUG_MSG) != 0) {
 	    System.out.println("WRN> '" + errorMSG + "' reported.");
-	if (debug > 0) {
 	    System.out.println("WRN> [Exception] " + e.getMessage());
-	    e.printStackTrace(System.out);
 	}
-	if (debug > 2)
-	    Thread.dumpStack();
+	if ((debugLevel & DUMP_STACK) != 0)
+	    e.printStackTrace(System.out);
     }
 
     /**
-     * Report a debug message when <code>debug &gt 1</code>.
+     * Print a debug message to the console when
+     * <code>(debugLevel & mask)</code> is not equal to 0.
+     * 
+     * @param mask
+     *            debug level bit mask.
+     * @param msg
+     *            debug message string.
+     */
+    public static void reportStatus(int mask, String msg) {
+	if ((debugLevel & mask) != 0)
+	    System.out.println(msg);
+    }
+
+    /**
+     * Print a debug message to the console.
      *
      * @param msg a <code>String</code> value
      */
     public static void reportStatus(String msg) {
-	if (debug > 1)
-	    System.out.println("DBG>" + msg);
+        reportStatus(DEBUG_MSG, msg);
     }
 
     /**
-     * Report an <code>Exception</code> information and the stack
-     * trace when <code>debug &gt 0</code>.
+     * Print an <code>Exception</code> information and/or the stack
+     * trace to the console.
      *
      * @param e an <code>Exception</code> value
      */
     public static void reportStatus(Exception e) {
-	if (debug > 0) {
-	    System.out.println("DBG> [Exception] " + e.getMessage());
+	if ((debugLevel & DEBUG_MSG) != 0)
+	    System.out.println("[Exception] " + e.getMessage());
+	if ((debugLevel & DUMP_STACK) != 0)
 	    e.printStackTrace(System.out);
-	}
     }
 
     //----- Start phil@muqus.com
 
     /**
-     * Output byte array as a pretty printed hex dump when <code>debug
-     * &gt 1</code>.
+     * Print byte array as a pretty printed hex dump to the console.
      *
      * @param data a <code>byte</code> array.
      */
@@ -141,25 +171,23 @@ public class ErrorMsg {
     }
 
     /**
-     * Output a debug message and byte array as a pretty printed hex
-     * dump when <code>debug &gt 1</code>.
+     * Print a debug message and byte array as a pretty printed hex
+     * dump to the console.
      *
      * @param sMsg a debug message.
      * @param data a <code>byte</code> array.
      */
     public static void reportStatus(String sMsg, byte[] data) {
-	if (debug < 2)
-	    return;
-
 	if (sMsg != null)
 	    reportStatus(sMsg);
 
-	Utility.hexDump(data, 0, data.length, 20);
+	if ((debugLevel & DEBUG_MSG) != 0)
+	    reportStatus(Utility.hexDump(data, 0, data.length, 20));
     }
 
     /**
-     * Output a debug message and byte array as a pretty printed hex
-     * dump when <code>debug &gt 1</code>.
+     * Print a debug message and byte array as a pretty printed hex
+     * dump to the console.
      *
      * @param sMsg a debug message.
      * @param data a <code>byte</code> array.
@@ -169,7 +197,8 @@ public class ErrorMsg {
      */
     public static void reportStatus(String sMsg,
 				    byte[] data, int offset, int len) {
-	Utility.hexDump(data, offset, len, 20);
+        if ((debugLevel & DEBUG_MSG) != 0)
+            reportStatus(Utility.hexDump(data, offset, len, 20));
     }
     //----- End phil@muqus.com
 }

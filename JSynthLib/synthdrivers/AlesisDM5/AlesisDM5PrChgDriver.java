@@ -82,18 +82,14 @@ public class AlesisDM5PrChgDriver extends Driver {
         */
     protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
         int sum = 0;
-        if (ErrorMsg.debug >= 2) {
-            System.out.println("Checksum was " + patch.sysex[offset]);
-        }
+        ErrorMsg.reportStatus("Checksum was " + patch.sysex[offset]);
         
         for (int i = start; i <= end; i++) {
             sum += patch.sysex[i];
         }
         patch.sysex[offset] = (byte)(sum % 128);
         
-        if (ErrorMsg.debug >= 2) {
-            System.out.println("Checksum now is " + patch.sysex[offset]);
-        }
+        ErrorMsg.reportStatus("Checksum now is " + patch.sysex[offset]);
     }
     
     /** Requests a dump of the system info message.

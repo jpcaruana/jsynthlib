@@ -21,6 +21,7 @@
 
 package synthdrivers.Line6BassPod;
 import core.*;
+
 import java.io.UnsupportedEncodingException;
 import javax.swing.*;
 
@@ -141,13 +142,11 @@ public class Line6BassPodSingleDriver extends Driver {
         */
     protected void playPatch(Patch p)
     {
-        if (ErrorMsg.debug >= 2) {
-            System.out.println(getPatchName(p));
-            System.out.println("  Header -- ");
-            System.out.println("  " + Utility.hexDump(p.sysex, 0, Constants.PDMP_HDR_SIZE, 16));
-            System.out.println("  Data -- ");
-            System.out.println("  " + Utility.hexDump(p.sysex, Constants.PDMP_HDR_SIZE, -1, 16));
-        }
+        ErrorMsg.reportStatus(getPatchName(p)
+                + "  Header -- "
+                + "  " + Utility.hexDump(p.sysex, 0, Constants.PDMP_HDR_SIZE, 16)
+                + "  Data -- "
+                + "  " + Utility.hexDump(p.sysex, Constants.PDMP_HDR_SIZE, -1, 16));
         
         JFrame frame = new JFrame();
         JOptionPane.showMessageDialog(frame, Constants.PLAY_CMD_MSG);

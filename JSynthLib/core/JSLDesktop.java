@@ -245,7 +245,7 @@ public class JSLDesktop {
 		}
 	    }
 	    selected = f.getJFrame();
-	    ErrorMsg.reportStatus("\""+selected.getTitle()+"\" selected");
+	    ErrorMsg.reportStatus(ErrorMsg.FRAME, "\""+selected.getTitle()+"\" selected");
 	}
 	public void JSLFrameClosing(JSLFrameEvent e) {
 	    JSLFrame f = e.getJSLFrame();
@@ -253,7 +253,7 @@ public class JSLDesktop {
 		if (windows.size() < 2 && invisible == null) {
 		    PatchEdit.exit();
 		} else {
-		    ErrorMsg.reportStatus("\"" + f.getTitle() + "\" hidden. " +
+		    ErrorMsg.reportStatus(ErrorMsg.FRAME, "\"" + f.getTitle() + "\" hidden. " +
 					  (windows.size() - 1)
 					  + " windows still open.");
 		}
@@ -266,18 +266,21 @@ public class JSLDesktop {
 		// toolbar should never be closed, only hidden
 		if (toolbar.isVisible()) {
 		    selected = toolbar.getJFrame();
-		    ErrorMsg.reportStatus("\""+selected.getTitle()+
-					  "\" selected");
+		    ErrorMsg.reportStatus(ErrorMsg.FRAME,
+		            "\""
+                            + selected.getTitle() + "\" selected");
 		} else if (invisible == null) {
 		    PatchEdit.exit();
 		} else {
-		    ErrorMsg.reportStatus("All windows closed, but invisible "+
-					  "frame exists. Not exiting.");
+		    ErrorMsg.reportStatus(ErrorMsg.FRAME,
+		            "All windows closed, but invisible "
+		            + "frame exists. Not exiting.");
 		}
 	    } else {
-		ErrorMsg.reportStatus("\""+e.getJSLFrame().getTitle()+
-				      "\" closed. " + (windows.size() - 1) +
-				      " windows still open.");
+		ErrorMsg.reportStatus(ErrorMsg.FRAME,
+		        "\""
+                        + e.getJSLFrame().getTitle() + "\" closed. "
+                        + (windows.size() - 1) + " windows still open.");
 	    }
 	}
 	public void JSLFrameDeactivated(JSLFrameEvent e) {
