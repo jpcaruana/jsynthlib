@@ -112,40 +112,15 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
             });
         addJSLFrameListener(new JSLFrameListener() {
                 public void JSLFrameClosing(JSLFrameEvent e) {
-                    String[] choices = new String[] {"Keep Changes",
-                                                     "Revert to Original",
-                                                     "Place Changed Version on Clipboard"
-                    };
-                    int choice;
-                    do {
-                        choice = JOptionPane.showOptionDialog
-                            ((Component) null,
-                             "What do you wish to do with the changed copy of the Patch?",
-                             "Save Changes?",
-                             JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE,
-                             null, choices, choices[0]);
-                    } while (choice == JOptionPane.CLOSED_OPTION);
-                    if (choice == 0) { // "Keep Changes"
-                        if (bankFrame != null)
-                            bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
-                    } else {
-                        if (choice == 2) // "Place Changed Version on Clipboard"
-                            //put on clipboard but don't 'return' just yet
-                            copySelectedPatch();
-                        //restore backup
-                        p.useSysexFromPatch(originalPatch);
-                    }
+					frameClosing();
                 }
 
                 public void JSLFrameOpened(JSLFrameEvent e) {
+					frameOpened();
                 }
 
                 public void JSLFrameActivated(JSLFrameEvent e) {
-                    // XXX: Do we really want to send the patch every
-                    //      time the editor gets focus?
-                    ISingleDriver d = (ISingleDriver)p.getDriver();
-                    d.calculateChecksum(p);
-                    d.sendPatch(p);
+					frameActivated();
                     gotFocus();
 
                     Actions.setEnabled(false,
@@ -184,6 +159,59 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                 }
             });
     }
+	
+	/** 
+		Called when the frame is closed. Default ask for keep changes.
+		May be redefined in sub-classes. 
+	*/
+	protected void frameClosing()
+	{
+		String[] choices = new String[] {"Keep Changes",
+										"Revert to Original",
+										"Place Changed Version on Clipboard"
+		};
+		int choice;
+		do {
+			choice = JOptionPane.showOptionDialog
+					((Component) null,
+                             "What do you wish to do with the changed copy of the Patch?",
+                             "Save Changes?",
+                             JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE,
+                             null, choices, choices[0]);
+		} while (choice == JOptionPane.CLOSED_OPTION);
+		if (choice == 0) { // "Keep Changes"
+			if (bankFrame != null)
+				bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
+		} else {
+			if (choice == 2) // "Place Changed Version on Clipboard"
+						//put on clipboard but don't 'return' just yet
+				copySelectedPatch();
+			//restore backup
+			p.useSysexFromPatch(originalPatch);
+		}
+	}
+	
+	/** 
+		Called when the frame is opened. Default does nothing.
+		May be redefined in sub-classes. 
+	*/
+	protected void frameOpened()
+	{
+	}
+	
+	/** 
+		Called when the frame is activated. Default send the patch.
+		May be redefined in sub-classes. 
+	*/
+	protected void frameActivated()
+	{
+		// XXX: Do we really want to send the patch every
+		//      time the editor gets focus?
+		ISingleDriver d = (ISingleDriver)p.getDriver();
+		d.calculateChecksum(p);
+		d.sendPatch(p);
+	}
+	
 
     // PatchBasket methods
 
