@@ -92,7 +92,7 @@ public class JSLFrame {
     public void moveToDefaultLocation() { proxy.moveToDefaultLocation(); }
 
     public boolean canImport(DataFlavor[] flavors) {
-	return proxy.canImport(flavors);
+	return false;
     }
 
     interface JSLFrameProxy {
@@ -127,7 +127,6 @@ public class JSLFrame {
 	public void setPreferredSize(Dimension d);
 	public boolean isSelected();
 	public void moveToDefaultLocation();
-	public boolean canImport(DataFlavor[] flavors);
     }
 
     class JSLIFrame extends JInternalFrame implements JSLFrameProxy,
@@ -226,9 +225,6 @@ public class JSLFrame {
 	}
 	public void moveToDefaultLocation() {
 	    setLocation(30*frame_count, 30*frame_count);
-	}
-	public boolean canImport(DataFlavor[] flavors) {
-	    return false;
 	}
     }
     class JSLJFrame extends JFrame implements JSLFrameProxy,
@@ -383,7 +379,6 @@ public class JSLFrame {
 		y = yofs + ysep;
 	    setLocation(x,y);
 	}
-	public boolean canImport(DataFlavor[] flavors) { return false; }
     }
 }
 

@@ -576,4 +576,7 @@ return;
 	PatchEdit.deleteAction.setEnabled(b);
 	PatchEdit.exportAction.setEnabled(b);
     }
+    public boolean canImport(java.awt.datatransfer.DataFlavor[] flavors) {
+	return pth.canImport(table, flavors);
+    }
 }

@@ -583,4 +583,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         //   statusBar.setText(myModel.PatchList.size()+" Patches");
     }
 
+    public boolean canImport(java.awt.datatransfer.DataFlavor[] flavors) {
+	return pth.canImport(table, flavors);
+    }
 }
