@@ -4,8 +4,12 @@ package core;
 import java.io.*;
 import javax.swing.*;
 
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
+
 /**This is the base class for all Drivers*/
-public class Driver extends Object implements Serializable
+public class Driver extends Object implements Serializable, Storable
 {
     /**The company which made the Synthesizer*/
     public String manufacturer;
@@ -265,10 +269,10 @@ public void choosePatch (Patch p, int patchNum)
             Thread.sleep (100);
         
             PatchEdit.MidiOut.writeShortMessage (port,
-            (byte)(0x90+(channel-1)),(byte)PatchEdit.noteChooserDialog.note,(byte)PatchEdit.noteChooserDialog.velocity);
-            Thread.sleep (PatchEdit.noteChooserDialog.delay);
+            (byte)(0x90+(channel-1)),(byte)PatchEdit.appConfig.getNote(),(byte)PatchEdit.appConfig.getVelocity());
+            Thread.sleep (PatchEdit.appConfig.getDelay());
             PatchEdit.MidiOut.writeShortMessage (port,
-            (byte)(0x80+(channel-1)),(byte)PatchEdit.noteChooserDialog.note,(byte)0);
+            (byte)(0x80+(channel-1)),(byte)PatchEdit.appConfig.getNote(),(byte)0);
         } catch (Exception e)
         {ErrorMsg.reportStatus (e);}
     }
@@ -384,6 +388,28 @@ public void choosePatch (Patch p, int patchNum)
  }
      
      
+	// For storable interface
+
+
+	private String[] storedPropertyNames = {
+	};
+
+	/**
+	 * Get the names of properties that should be stored and loaded.
+	 * @return a Set of field names
+	 */
+	public Set storedProperties() {
+		HashSet set = new HashSet();
+		set.addAll(Arrays.asList(this.storedPropertyNames));
+		return set;
+	}
+
+	/**
+	 * Method that will be called after loading
+	 */
+	public void afterRestore() {
+		// do nothing
+	}
      
      
      

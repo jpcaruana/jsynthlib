@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @version
  */
 
-abstract public class Device implements Serializable
+abstract public class Device implements Serializable, Storable
 {
     /** The List for all available drivers of this device
      */    
@@ -184,4 +184,66 @@ abstract public class Device implements Serializable
       panel.add(new JLabel("This Device has no configuration options."));
       return panel;
    }
+
+
+
+
+
+	// Getters/Setters, etc for Drivers 
+
+	/** Indexed getter for driverList elements */
+	public Driver getDriver(int i) { return (Driver)this.driverList.get(i); };
+	/** Indexed setter for driverList elements */
+	public Driver setDriver(int i, Driver drv) {
+		return (Driver)this.driverList.set(i, drv);
+	};
+	/** Getter for driverList */
+	public Driver[] getDriver() {
+		return (Driver[])this.driverList.toArray(new Driver[0]);
+	};
+	/** setter for driverList */
+	public void setDriver(Driver[] drivers) {
+		ArrayList newList = new ArrayList();
+		newList.addAll(Arrays.asList(drivers));
+		this.driverList = newList;
+	}
+
+	//already defined above
+	///** Adder for driverList elements */
+	//public boolean addDriver(Driver driver) { return this.driverList.add(driver); };
+	/** Remover for driverList elements */
+	public Driver removeDriver(int i) { return (Driver)this.driverList.remove(i); };
+	/** Size query for driverList */
+	public int driverCount() { return this.driverList.size(); };
+
+
+
+
+
+
+
+	// For storable interface
+
+	/**
+	 * Get the names of properties that should be stored and loaded.
+	 * @return a Set of field names
+	 */
+	public Set storedProperties() {
+		final String[] storedPropertyNames = {
+			"inPort", "synthName", "port", "channel",
+			"driver",
+		};
+		HashSet set = new HashSet();
+		set.addAll(Arrays.asList(storedPropertyNames));
+		return set;
+	}
+
+	/**
+	 * Method that will be called after loading
+	 */
+	public void afterRestore() {
+		// do nothing
+	}
+
+
 }
