@@ -261,6 +261,10 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     protected String getPatchType() {
 	return patchType;
     }
+    /** Getter for property <code>patchSize</code>. */
+    protected int getPatchSize() {
+	return patchSize;
+    }
     /** Getter for property <code>getAuthors</code>. */
     protected String getAuthors() {
 	return authors;

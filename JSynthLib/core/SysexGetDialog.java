@@ -33,6 +33,8 @@ import java.util.*;
 public class SysexGetDialog extends JDialog {
 
   //===== Instance variables
+  /** timeout value (in milli second). */
+  private long timeOut;
   /** number of received data bytes. */
   private int sysexSize = 0;
   /** queue to save Sysex Messages received. */
@@ -347,6 +349,8 @@ public class SysexGetDialog extends JDialog {
 
       //----- Start timer and request dump
       myLabel.setText("Getting sysex dump...");
+      // patchsize value is similiar to expected transmission time *3
+      timeOut=(long)driver.getPatchSize();
       sysexSize = 0;
       queue = new ArrayList();	// clear queue
       timer.start();
@@ -362,7 +366,7 @@ public class SysexGetDialog extends JDialog {
     public void actionPerformed (ActionEvent evt) {
       try {
         while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0) {
-          SysexMessage msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(inPort);
+          SysexMessage msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(inPort, timeOut);
 	  queue.add(msg);
 //  	  ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + msg.getLength());
           sysexSize += msg.getLength();

@@ -218,6 +218,10 @@ public abstract class MidiWrapper {
 	 * This returns only SysexMessage.  ShortMessages are discarded.
 	 */
 	public SysexMessage readSysexMessage(int port, long timeout) throws Exception {
+		if (timeout == 0) timeout = 10000;
+		// avoid too short (< 1 second) timeout values (necessary?)
+		else if (timeout < 2840) timeout = 1000;		
+
 		return (SysexMessage) readMessage(port, timeout, true);
 	}
 
