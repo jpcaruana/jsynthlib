@@ -82,7 +82,7 @@ public class NLPerfBankDriver extends BankDriver {
       PatchEdit.waitDialog.show();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
-        tmp[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
+        tmp[deviceIDoffset] = (byte) (((NordLeadDevice) getDevice()).getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)31;
         tmp[PATCH_NUM_OFFSET] = (byte)i; // performance #
         send(tmp);
@@ -109,7 +109,7 @@ public class NLPerfBankDriver extends BankDriver {
 
   public void requestPatchDump(int bankNum, int patchNum) {
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
+      sysexRequestDump.send(getPort(), (byte) (((NordLeadDevice) getDevice()).getGlobalChannel()),
         new NameValue("bankNum", 41),
         new NameValue("patchNum", i)
       );

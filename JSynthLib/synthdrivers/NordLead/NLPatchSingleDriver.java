@@ -107,7 +107,7 @@ public class NLPatchSingleDriver extends Driver {
   }
 
   protected void mySendPatch(Patch p) {
-    p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
+    p.sysex[deviceIDoffset] = (byte) (((NordLeadDevice) getDevice()).getGlobalChannel() - 1);
     try {
       send(p.sysex);
     } catch (Exception e) {
@@ -116,7 +116,7 @@ public class NLPatchSingleDriver extends Driver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
+    sysexRequestDump.send(getPort(), (byte) (((NordLeadDevice) getDevice()).getGlobalChannel()),
         new NameValue("bankNum", bankNum + 11), new NameValue("patchNum", patchNum)
     );
   }

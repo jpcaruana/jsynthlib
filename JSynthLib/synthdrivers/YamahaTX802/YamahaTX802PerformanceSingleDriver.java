@@ -54,7 +54,7 @@ public class YamahaTX802PerformanceSingleDriver extends DX7FamilyPerformanceIIIS
 	{
 		sendPatchWorker (p);
 
-		if ( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
+		if ( ((YamahaTX802Device) getDevice()).getTipsMsgFlag()==1 )
 			// show Information 
 			YamahaTX802Strings.dxShowInformation(toString(), YamahaTX802Strings.STORE_SINGLE_PERFORMANCE_STRING);
 	}
