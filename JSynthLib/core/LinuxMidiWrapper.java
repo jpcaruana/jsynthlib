@@ -107,7 +107,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		keyboardThread.stopRunning();
 		readPos=writePos;
         //thread = new Thread(keyboardThread);
-		keyboardThread.restartRunning();
+		keyboardThread.start();
 	}
     
 	//FIXME Made public so that PrefsDialog can call it until we straighten this mess out - emenaker 3/12/2003
@@ -253,27 +253,39 @@ public class LinuxMidiWrapper extends MidiWrapper {
 	// in the LinuxMidiWrapper class. Besides, the option for implementing Runnable
 	// was created for cases where you were already extending another class and
 	// couldn't extend Thread - emenaker 2003.03.12
+	
+	/* Since Joe's initial thread code causes an exception while using start(), I changed
+	 * the code considering SUN's recommendations in the document:
+	 * http://java.sun.com/j2se/1.4.2/docs/guide/misc/threadPrimitiveDeprecation.html
+	 * ttittmann 13. Januar 2004
+	 */
 	private class InputThread extends Thread {
-		boolean running;
 
+		private volatile Thread InputMidi;
+
+		public void start() {
+		        InputMidi = new Thread(this);
+                        InputMidi.start();
+                } 
+		
 		public void run () {
-			running = true;
+			Thread thisThread=Thread.currentThread(); 
 			byte i;
-			while (running) {
+			
+			while (InputMidi==thisThread) {
 				try {
 					if (inStream[currentInPort]==null)
 						break;
-					while (running) {
-						/* TODO I imagine that this might be chewing up a lot of CPU time if it's
-						 * contantly polling. We might want to add something here where that does
-						 * a short sleep() if this loop cycles some number of times without seeing
-						 * any input. - emenaker 2003.03.12
-						 */
-						i=(byte)inStream[currentInPort].read ();
-						if ((i!=-1)&&(i!=-2)&&(i!=0xFE) && (i!=0xF8)) {    //Ignore Active Sensing & Timing
-							midiBuffer[writePos]=i;writePos++;
-							writePos%=bufferSize;
-						}
+					
+					/* TODO I imagine that this might be chewing up a lot of CPU time if it's
+					 * contantly polling. We might want to add something here where that does
+					 * a short sleep() if this loop cycles some number of times without seeing
+					 * any input. - emenaker 2003.03.12
+					 */
+					i=(byte)inStream[currentInPort].read ();
+					if ((i!=-1)&&(i!=-2)&&(i!=0xFE) && (i!=0xF8)) {    //Ignore Active Sensing & Timing
+						midiBuffer[writePos]=i;writePos++;
+						writePos%=bufferSize;
 					}
 				} catch (Exception ex) {
 					System.out.println ("Error");
@@ -285,14 +297,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		* We need this if we are to stop using thread.stop(), which is deprecated  - emenaker 2003.03.12
 		*/
 		void stopRunning() {
-			running = false;
-		}
-		/**
-		* Tells the InputThread to restart polling the midi input port
-		* We need this if we are to restart using thread.start(), which isn't working furthermore - ttittmann 05 january 2004
-		*/
-		void restartRunning() {
-			running = true;
+			InputMidi = null;
 		}
 
 	}
