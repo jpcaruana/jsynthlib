@@ -21,38 +21,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		"Off", "Ins param 1", "Ins param 2", "Ins param 3", "Ins param 4", "Ins param 5", "Ins param 6", "Ins param 7", "Ins param 8", "Ins param 9", "Ins param 10", "Ins param 11", "Ins param 12", "Ins param 13", "Ins param 14", "Send ins to reverb", "Send ins to var", "Volume", "Panpot", "Reverb send", "Var send", "Filter cutoff", "Filter resonance", "Filter EG depth", "Attack time", "Decay time", "Release time", "PEG initial level", "PEG attack time", "PEG release level", "V/N balance", "Formant", "FM", "Pitch bias", "Amp EG bias", "Freq bias", "Voiced band width", "Unvoiced band width", "LFO1 pitch mod", "LFO1 amp mod", "LFO1 freq mod", "LFO1 filter mod", "LFO1 speed", "LFO2 filter mod", "LFO2 speed", "Fseq speed", "Formant scratch"
 	};
 	
-	static final String[] mReverbs = { "No effect", "Hall 1", "Hall 2", "Room 1", "Room 2", "Room 3", "Stage 1", "Stage 2", "Plate", "White room", "Tunnel", "Basement", "Canyon", "Delay LCR", "Delay L,R", "Echo", "Cross delay"
-	};
-
-	static final String[] mVariations = { "No effect", "Chorus", "Celeste", "Flanger", "Symphonic", "Phaser 1", "Phaser 2", "Ensemble detune", "Rotary speaker", "Tremolo", "Auto pan", "Auto wah", "Touch wah", "3-band EQ", "HM enhencer", "Noise gate", "Compressor", "Distortion", "Overdrive", "Amp sim", "Delay LCR", "Delay L,R", "Echo", "Cross delay", "Karaoke", "Hall", "Room", "Stage", "Plate"
-	};
-	
-	static final String[] mInsertions = { "Thru", "Chorus", "Celeste", "Flanger", "Symphonic", "Phaser 1", "Phaser 2", "Pitch change", "Ensemble detune", "Rotary speaker", "2 way rotary", "Tremolo", "Auto pan", "Ambiance", "Auto wah+distortion", "Auto wah+overdrive", "Touch wah+distortion", "Touch wah+overdrive", "TWah+Dist+Delay", "TWah+Ovdr+Delay", "Lo-fi", "3-band EQ", "HM enhencer", "Noise gate", "Compressor", "Comp+Dist", "Comp+Dist+Delay", "Comp+Ovdr+Delay", "Distortion", "Dist+Delay", "Overdrive", "Ovdr+Delay", "Amp sim", "Delay LCR", "Delay L,R", "Echo", "Cross delay", "ER 1", "ER 2", "Gate reverb", "Reverse gate"
-	};
-	
-	static final String[] mFreqs = { 
-	"", "", "", "", "32", "36", "40", "45", "50", "56", "63", 
-	"70", "80", "90", "100", "110", "125", "140", "160", "180", "200", 
-	"225", "250", "280", "315", "355", "400", "450", "500", "560", "630", 
-	"700", "800", "900", "1.0k", "1.1k", "1.2k", "1.4k", "1.6k", "1.8k", "2.0k",
-	"2.2k", "2.5k", "2.8k", "3.2k", "3.6k", "4.0k", "4.5k", "5.0k", "5.6k", "6.3k", "7.0k", "8.0k", "9.0k", "10.0k", "11.0k", "12.0k", "14.0k", "16.0k"
-	};
-		
-	static final String[] mQs = { 
-	"", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", 
-	"1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", 
-	"2.0", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", 
-	"3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9",
-	"4.0", "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7", "4.8", "4.9",
-	"5.0", "5.1", "5.2", "5.3", "5.4", "5.5", "5.6", "5.7", "5.8", "5.9",
-	"6.0", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.7", "6.8", "6.9",
-	"7.0", "7.1", "7.2", "7.3", "7.4", "7.5", "7.6", "7.7", "7.8", "7.9",
-	"8.0", "8.1", "8.2", "8.3", "8.4", "8.5", "8.6", "8.7", "8.8", "8.9",
-	"9.0", "9.1", "9.2", "9.3", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9",
-	"10.0", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7", "10.8", "10.9", 
-	"11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8", "11.9", "12.0" 
-	};
-
+			
 	static final String[] mPartChannels = new String[] {"A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "pfm", "Off"};
 	
 	static final String [] mNotes = new String [] {	"C-2","C#-2","D-2","D#-2","E-2","F-2","F#-2","G-2","G#-2","A-2","A#-2","B-2",
@@ -96,8 +65,10 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		JTabbedPane oTabs = new JTabbedPane();
 		scrollPane.add(oTabs);
 		
-		oTabs.add(buildCommonWindow(), "Common");	
-		oTabs.add(buildEffectsWindow(), "Effects");	
+		oTabs.add(buildCommonWindow(), "Common");
+		oTabs.add(new MatrixWindow(patch), "Matrix");
+		oTabs.add(new FseqWindow(patch), "Fseq");	
+		oTabs.add((new EffectsWindow(p)).buildEffectsWindow(), "Effects");	
 		for (int i = 1; i <= 4; i++) {
 			oTabs.add(buildPartWindow(i), "Part "+i);
 		}
@@ -132,9 +103,9 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		});
 		addInternalFrameListener(oList[0]);
 
-		setSize(600, 410);
+		setSize(800, 600);
 
-//		pack();
+		pack();
 		setVisible(true);	
 	}
 	
@@ -247,124 +218,11 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		oPanel2.add(new ComboBoxWidget("Ind out", p, new YamahaFS1RPerformanceDriver.Model(p, 0x14), new YamahaFS1RPerformanceDriver.Sender(0x14), new String []{"Off", "Pre ins", "Post ins"}));
 		oPanel.add(oPanel2);
 
-		// matrice de controles
-		JPanel oPanel4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton oMatrixButton = new JButton("Matrix");
-		oMatrixButton.addActionListener(new ActionListener() {
-                    public void actionPerformed (ActionEvent e) {
-                        JInternalFrame oWin = new MatrixWindow(p);
-						getDesktopPane().add(oWin);
-                        oWin.setVisible(true);
-						oWin.moveToFront();
-                    }}
-		);
-		oPanel4.add(oMatrixButton);
-		// formant sequences
-		JButton oFseqButton = new JButton("Fseq");
-		oFseqButton.addActionListener(new ActionListener() {
-                    public void actionPerformed (ActionEvent e) {
-                        JInternalFrame oWin = new FseqWindow(p);
-						getDesktopPane().add(oWin);
-                        oWin.setVisible(true);
-						oWin.moveToFront();
-                    }}
-		);
-		oPanel4.add(oFseqButton);
-		oPanel.add(oPanel4);
-                		
 		return oPanel;
 	}
         
 	
 
-	/** Effects parameters */
-	private Container buildEffectsWindow() {
-		Box oPanel = Box.createVerticalBox();
-
-		// EQ
-		JPanel oPanel4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton oEQButton = new JButton("Equalizer");
-		oEQButton.addActionListener(new ActionListener() {
-                    public void actionPerformed (ActionEvent e) {
-                        JInternalFrame oWin = new EqualizerWindow(p);
-						getDesktopPane().add(oWin);
-                        oWin.setVisible(true);
-						oWin.moveToFront();
-                    }}
-		);
-		oPanel4.add(oEQButton);
-		oPanel.add(oPanel4);
-		
-		// reverb
-		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel1.add(new ComboBoxWidget("", p, new YamahaFS1RPerformanceDriver.Model(p, 0x0128), new YamahaFS1RPerformanceDriver.Sender(0x0128), mReverbs));
-		oPanel1.add(new KnobWidget("Pan", p, 1, 0x7F, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x0129), new YamahaFS1RPerformanceDriver.Sender(0x0129)));
-		oPanel1.add(new KnobWidget("Return", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x012A), new YamahaFS1RPerformanceDriver.Sender(0x012A)));		
-		oPanel1.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Reverberation", TitledBorder.LEFT, TitledBorder.CENTER));
-		oPanel.add(oPanel1);
-		
-		// variation
-		JPanel oPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel2.add(new ComboBoxWidget("", p, new YamahaFS1RPerformanceDriver.Model(p, 0x012B), new YamahaFS1RPerformanceDriver.Sender(0x012B), mVariations));
-		oPanel2.add(new KnobWidget("Pan", p, 1, 0x7F, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x012C), new YamahaFS1RPerformanceDriver.Sender(0x012C)));
-		oPanel2.add(new KnobWidget("Return", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x012D), new YamahaFS1RPerformanceDriver.Sender(0x012D)));		
-		oPanel2.add(new KnobWidget("Send to Reverb", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x012E), new YamahaFS1RPerformanceDriver.Sender(0x012E)));		
-		oPanel2.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Variation", TitledBorder.LEFT, TitledBorder.CENTER));
-		oPanel.add(oPanel2);
-		
-		// insertion
-		JPanel oPanel3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel3.add(new ComboBoxWidget("", p, new YamahaFS1RPerformanceDriver.Model(p, 0x012F), new YamahaFS1RPerformanceDriver.Sender(0x012F), mInsertions));
-		oPanel3.add(new KnobWidget("Pan", p, 1, 0x7F, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x0130), new YamahaFS1RPerformanceDriver.Sender(0x0130)));
-		oPanel3.add(new KnobWidget("Send to Reverb", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0131), new YamahaFS1RPerformanceDriver.Sender(0x0131)));		
-		oPanel3.add(new KnobWidget("Send to Var", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0132), new YamahaFS1RPerformanceDriver.Sender(0x0132)));		
-		oPanel3.add(new KnobWidget("Level", p, 0, 0x7F, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x0133), new YamahaFS1RPerformanceDriver.Sender(0x0133)));		
-		oPanel3.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Insertion", TitledBorder.LEFT, TitledBorder.CENTER));
-		oPanel.add(oPanel3);
-
-		return oPanel;
-	}
-
-
-	/**
-		Affiche les parametres de l'EQ dans une fenetre separee.
-	*/
-	private static class EqualizerWindow extends JInternalFrame implements PatchContainer
-	{
-		private Patch p;
-		public Patch getPatch()
-		{
-			return p;
-		}
-		
-		EqualizerWindow(Patch aPatch) {
-			super("Yamaha FS1R Equalizer",true,true,true,true);
-			p = aPatch;
-			setSize(500, 300);
-			Container oPane = getContentPane();
-			oPane.setLayout(new BoxLayout(oPane, BoxLayout.Y_AXIS));
-			JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			oPanel1.add(new KnobWidget("Low gain", p, 0x34, 0x4C, -12 - 0x34, new YamahaFS1RPerformanceDriver.Model(p, 0x0134), new YamahaFS1RPerformanceDriver.Sender(0x0134)));
-			oPanel1.add(new KnobLookupWidget("Low freq", p, 4, 0x28, new YamahaFS1RPerformanceDriver.Model(p, 0x0135), new YamahaFS1RPerformanceDriver.Sender(0x0135), mFreqs));
-			oPanel1.add(new KnobLookupWidget("Low Q", p, 1, 0x78, new YamahaFS1RPerformanceDriver.Model(p, 0x0136), new YamahaFS1RPerformanceDriver.Sender(0x0136), mQs));
-			oPanel1.add(new ComboBoxWidget("Low Shape", p, new YamahaFS1RPerformanceDriver.Model(p, 0x0137), new YamahaFS1RPerformanceDriver.Sender(0x0137), new String[] {"Shelving", "Peaking"}));
-			oPane.add(oPanel1);
-
-			JPanel oPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			oPanel2.add(new KnobWidget("Mid gain", p, 0x34, 0x4C, -12 - 0x34, new YamahaFS1RPerformanceDriver.Model(p, 0x0138), new YamahaFS1RPerformanceDriver.Sender(0x0138)));
-			oPanel2.add(new KnobLookupWidget("Mid freq", p, 0x0E, 0x36, new YamahaFS1RPerformanceDriver.Model(p, 0x0139), new YamahaFS1RPerformanceDriver.Sender(0x0139), mFreqs));
-			oPanel2.add(new KnobLookupWidget("Mid Q", p, 1, 0x78, new YamahaFS1RPerformanceDriver.Model(p, 0x013A), new YamahaFS1RPerformanceDriver.Sender(0x013A), mQs));
-			oPane.add(oPanel2);
-
-			JPanel oPanel3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			oPanel3.add(new KnobWidget("High gain", p, 0x34, 0x4C, -12 - 0x34, new YamahaFS1RPerformanceDriver.Model(p, 0x013B), new YamahaFS1RPerformanceDriver.Sender(0x013B)));
-			oPanel3.add(new KnobLookupWidget("High freq", p, 0x1C, 0x3A, new YamahaFS1RPerformanceDriver.Model(p, 0x013C), new YamahaFS1RPerformanceDriver.Sender(0x013C), mFreqs));
-			oPanel3.add(new KnobLookupWidget("High Q", p, 1, 0x78, new YamahaFS1RPerformanceDriver.Model(p, 0x013D), new YamahaFS1RPerformanceDriver.Sender(0x013D), mQs));
-			oPanel3.add(new ComboBoxWidget("High Shape", p, new YamahaFS1RPerformanceDriver.Model(p, 0x013E), new YamahaFS1RPerformanceDriver.Sender(0x013E), new String[] {"Shelving", "Peaking"}));
-			oPane.add(oPanel3);
-			pack();
-		}
-	}
 
 	/** combo box listener for voices names change according to the chosen bank */
 	class BankItemListener implements ItemListener
@@ -394,7 +252,9 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	
 
 	/** Part parameters */
-	private Container buildPartWindow(final int aPart) {
+	private Container buildPartWindow(final int aPart) 
+	{
+		JTabbedPane oTabs = new JTabbedPane();
 		Box oPanel = Box.createVerticalBox();
 		
 		JPanel oPartPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -464,7 +324,6 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		// TODO gerer le OFF
 		mPartChannel[aPart-1] = new ComboBoxWidget("Chan", p, new YamahaFS1RPerformanceDriver.Model(p, 0x04, aPart), new YamahaFS1RPerformanceDriver.Sender(0x04, aPart), mPartChannels);
 		oPartPane.add(mPartChannel[aPart-1]);
-		//oPartPane.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Part", TitledBorder.LEFT, TitledBorder.CENTER));
 		oPanel.add(oPartPane);
 
 		JPanel oEffectsPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -475,16 +334,6 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		oEffectsPane.add(new KnobWidget("Reverb", p, 0, 127, 0, new YamahaFS1RPerformanceDriver.Model(p, 0x13, aPart), new YamahaFS1RPerformanceDriver.Sender(0x13, aPart)));
 		// TODO gerer le rnd pour 0
 		oEffectsPane.add(new KnobWidget("Pan", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x0E, aPart), new YamahaFS1RPerformanceDriver.Sender(0x0E, aPart)));
-		JButton oDetailsButton = new JButton("Edit details");
-		oDetailsButton.addActionListener(new ActionListener() {
-                    public void actionPerformed (ActionEvent e) {
-                        JInternalFrame oWin = new PartDetailsWindow(p, aPart);
-						getDesktopPane().add(oWin);
-                        oWin.setVisible(true);
-						oWin.moveToFront();
-                    }}
-		);
-		oEffectsPane.add(oDetailsButton);
 		oPanel.add(oEffectsPane);
 
 		JPanel oFreqPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -500,7 +349,9 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		oOthersPane.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Filter", TitledBorder.LEFT, TitledBorder.CENTER));
 		oPanel.add(oOthersPane);
 		
-		return oPanel;
+		oTabs.addTab("Main", oPanel);
+		oTabs.addTab("Details", new PartDetailsWindow(p, aPart));
+		return oTabs;
 	}
 
 	/** 
@@ -508,7 +359,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		Because these are so much, I found better to display some
 		less important parameters in another window.
 	*/
-	static class PartDetailsWindow extends JInternalFrame implements PatchContainer
+	static class PartDetailsWindow extends JPanel
 	{
 		private Patch p;
 		public Patch getPatch()
@@ -516,10 +367,12 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			return p;
 		}
 		PartDetailsWindow(Patch aPatch, int aPart) {
-			super("FS1R Part "+aPart+" details",true,true,true,true);
+			//super("FS1R Part "+aPart+" details",true,true,true,true);
 			p = aPatch;
-			setSize(600, 400);
-			Box oPanel = Box.createVerticalBox();
+			//setSize(600, 400);
+			//Box oPanel = Box.createVerticalBox();
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			JPanel oPanel = this;
 
 			JPanel oPartPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			oPartPane.add(new ComboBoxWidget("", p, new YamahaFS1RPerformanceDriver.Model(p, 0x05, aPart), new YamahaFS1RPerformanceDriver.Sender(0x05, aPart), new String[] {"Mono", "Poly"}));
@@ -572,8 +425,8 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			oOthersPane.add(new CheckBoxWidget("Sustain", p, new YamahaFS1RPerformanceDriver.Model(p, 0x2D, aPart), new YamahaFS1RPerformanceDriver.Sender(0x2D, aPart)));
 			oPanel.add(oOthersPane);
 
-			getContentPane().add(oPanel);
-			pack();
+			//getContentPane().add(oPanel);
+			//pack();
 		}
 	}
 
