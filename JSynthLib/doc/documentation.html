@@ -1,0 +1,924 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- $Id$ -->
+<!--
+  convention
+    kbd:	for command line, filename
+    var:	variable, method name
+
+    Use structured text instead of B, I, or TT
+
+    EM:		Indicates emphasis. 
+    STRONG:	Indicates stronger emphasis. 
+    CITE: 	Contains a citation or a reference to other sources. 
+    DFN: 	Indicates that this is the defining instance of the enclosed term. 
+    CODE:	Designates a fragment of computer code. 
+    SAMP:	Designates sample output from programs, scripts, etc. 
+    KBD: 	Indicates text to be entered by the user. 
+    VAR: 	Indicates an instance of a variable or program argument. 
+-->
+
+<html>
+<head>
+<title>JSynthLib Documentation</title>
+<link REV="made" HREF="mailto:jsynthlib@overwhelmed.org">
+</head>
+
+<body bgcolor="#E5ED9D" text="Black" link="#3D75B4" vlink="#315480"
+alink="Red" leftmargin=40 topmargin=40>
+
+<font face="Verdana,arial,helvetica" size="-1">
+<h1><a name="toc">JSynthLib Documentation</a></h1>
+
+<ol type="I">
+<li><a href="#overview">JSynthLib Overview</a>
+     <ol type="A">
+     <li><a href="#purpose">Purpose</a>
+     <li><a href="#features">Features</a>
+     </ol>
+<li><a href="#install">Installing JSynthLib</a>
+<li><a href="#using">Using JSynthLib</a>
+<li><a href="#synths">Notes about Particular Synths</a>
+<li><a href="#trouble">Troubleshooting</a>
+<li><a href="#acknowledgment">We wish to say thank you to.....</a>
+</ol>
+
+<h2><a name="overview" href="#toc">JSynthLib Overview</a></h2>
+
+<h3><a name="purpose" href="#toc">Why write JSynthLib?</a></h3>
+
+<p>I have a lot of electronic music making equipment: synthesizers,
+midi controllers, effects processors, all kinds of fun stuff, almost
+all of which I bought used off the Internet. So why, after I've spend
+thousands of dollars on hardware, not just spend a couple of hundred
+more and purchase one of the many available commercial universal patch
+editor/ librarians such as MIDIQuest or SoundDiver? I like Free
+Software. I like the control, the power, and the community. With Free
+Software / Open Source / Copyleft the user is a stakeholder not just a
+consumer. (Of course, I'm not a Free Software fanatic or I wouldn't be
+using Java). In 1997 had used Linux for several months exclusively,
+but finally gave in and set up a dual-boot with Windows 95 in order to
+do MIDI Sequencing. For the past several years I've used Cakewalk to
+sequence and a myriad of Shareware and Freeware editors for various
+synths (some synths I have no editors for).</p>
+
+<p>Since 1997 both Linux sequencers and Linux hardware support have
+improved dramatically, but leaving Windows behind would require
+leaving behind all of the Synth editors I used. So in June 1999, I set
+up to write a universal patch librarian for Linux. The problem with
+this is that I still do all of my music stuff in Windows, I merely
+hope to convert to Linux when the software is ready. So I require a
+program which can run under both Operating systems. I began writing in
+C++ using a cross platform GUI library but quickly got tangled in too
+many implementation details and caveats and gave up. Recently I
+realized that Java/Swing gives me the flexibility I need for my
+application. JSynthLib runs under Windows and Linux.</p>
+
+<h3><a name="features" href="#toc">JSynthLib Features</a></h3>
+
+<!-- Should each line end with period '.', or not? -->
+<ul>
+<li>Create / Load / Save heterogeneous collections of Patches in
+     Libraries. Libraries can contain various types of patches and
+     patches for multiple synths can be stored in a single library.
+<li>Attach comments and user defined attributes to patches. Can be
+     used for Author, instrument, rating, etc.)
+<li>Sort Libraries by patch name or attributes
+<li>Automatically eliminate duplicates from libraries
+<!-- Sysex or sysex? -->
+<li>Import / Export raw Sysex (MIDI System Exclusive Message)
+     Data. JSynthLib automatically determines the patch type for sysex
+     data if a suitable driver is loaded.
+<li>Import MIDI Files and extract containing Sysex Data. JSynthLib
+     automatically determines the patch type for sysex data if a
+     suitable driver is loaded.
+<li>Cut / Copy / Paste patches between Libraries and also banks of
+     Patches
+<li>Easy Creation of Banks of Patches by Dragging Patches from other
+     banks and Libraries
+<li>Automatically extract all patches from a bank
+<li>Automatically import all patches in a directory and optionally
+     auto extract all patches from banks.
+<li>Search function to find patches in large libraries
+<li>Store Patches to any location on a Synth or to a temporary buffer
+     (where supported) for previewing etc.
+<li>Receive sysex from Synths (max size 256k)
+<li>Request sysex dumps from Synths 
+<li>Create new patches or banks
+<li>Cross Breed patches to create new patches by combining aspects of
+     existing patches
+<li>Automatically patch master controller to proper synthesizer to
+     preview patch
+<li>"Play" function with User selected Note, duration and velocity to
+     preview without a MIDI controller
+</ul>
+
+<h4>Editor Features</h4>
+
+<ul>
+<li>Edit patches graphically through on screen sliders, envelopes,
+     check boxes, etc.
+<li>Send changes to synths in real time (on synths supporting this
+     feature)
+<li>Automatically patch master controller to proper synthesizer to
+     preview patch
+<li>"Play" function with User selected Note, duration and velocity to
+     preview without a MIDI controller
+<li>Allow on screen controls to be manipulated with MIDI
+     controllers. This allows you to use a MIDI fader box (such as a
+     Peavey PC1600) to edit any synth.
+</ul>
+
+<h4>Extensibility Features</h4>	
+
+<ul>
+<li>New Drivers and Editors can be created relatively easily by
+     extending given Java Classes
+<li>Widget set (sliders, checkboxes etc) which automatically send
+     sysex and interface with patch data
+</ul>
+
+<h2><a name="install" href="#toc">Installing JSynthLib</a></h2>
+
+<h4>Microsoft Windows</h4>
+
+<ul>
+<li>Download the .ZIP file from the web site and unzip it to any
+    directory (for example <kbd>c:\jsynthlib</kbd>).
+<li>Create a shortcut on the desktop to JSynthLib.jar (optional)
+<li>Make sure you have a Java Run Time Environment (JRE) which supports Java
+    1.3. If you do not have it, you can download it from <a
+    href="http://java.sun.com">Sun</a>
+<li>Run JSynthLib.jar either by double-clicking the icon or by typing
+    <kbd>java -jar JSynthLib.jar</kbd> from the command prompt
+<li>Go to Config-&gt;Preferences-&gt;MIDI and set 'MIDI Platform' to
+    MS-Windows (WireProvider).
+<li>If you have a JRE 1.4.2 installed, you can select as alternative the
+    "JavaSound" access method. Due to some bugs in earlier versions of the JRE
+    this doesn't work with versions before 1.4.2.
+<li>Go to Config-&gt;Synths and add and configure the Synthesizers you
+    want to use with JSynthLib
+<li>Set any other preferences (such as MIDI Fader Port, Default
+    Directories) as you wish
+<li>Quit JSynthLib after you are done configuring it and restart
+    it. Now you can go back into it and use it.
+</ul>
+
+<h4>GNU/Linux</h4>
+
+<ul>
+<li>Download the .zip file from the web site, and unzip it
+<li>Make sure you have a Java Run Time Environment which supports Java
+    1.3. If you do not have it, you can download it from <a
+    href="http://java.sun.com">Sun</a>
+<li>Edit the file linuxdevices.conf in the main JSynthLib Directory to
+    reflect your setup. Each line in this file represents one device
+    that you wish to have accessible in JSynthLib.
+<li>Run JSynthLib.jar by typing <kbd>/usr/java/jdk1.3/bin/java -jar
+    JSynthLib.jar</kbd> from the command prompt. (If you installed java to
+    a different path, of course you should use that path instead)
+<li>Go to Config-&gt;Preferences-&gt;MIDI and set 'MIDI Platform' to
+    Gnu/Linux (<kbd>/dev/*</kbd>).
+<li>Go to Config-&gt;Synths and add and configure the Synthesizers you
+    want to use with JSynthLib
+<li>Set any other preferences (such as MIDI Fader Port, Default
+    Directories) as you wish
+<li>Quit JSynthLib after you are done configuring it and restart
+    it. Now you can go back into it and use it.
+</ul>
+
+<h4>Mac OS X</h4>
+
+OS X comes with java preinstalled. All you should have to do is
+download and unzip JSynthLib and run JSynthLib.jar. Once in JSynthLib,
+go to Config-&gt;Prefs and set the MIDI platform to Mac OS-X.
+
+<h4>Mac OS 9</h4>
+
+JSynthLib can use the javaMIDI library for MIDI I/O. This Library has
+been ported to Mac OS 9, so in theory, this could be used to run
+JSynthLib on Mac OS. Unfortunately, Apple has really dropped the ball
+on providing modern Java support for their Older Operating System. If
+Java JDK 1.3 ever becomes available for OS9, JSynthLib should be able
+to run under it.
+
+<h2><a name="using" href="#toc">Using JSynthLib</a></h2>
+
+<h3>The Main Windows</h3>
+
+There are four main types of windows which you will be working with
+when using JSynthLib. Each provides access to a particular type of
+data. The first is a Library Window which holds patches. Different
+types of patches can be stored in one library, or you can use a
+library to hold only patches for a particular synthesizer.
+
+<p>A <b><i><a name="library">Library window</a></i></b> looks like a table where each row
+represents one patch.  The columns represent different pieces of
+information about the patch. The columns are:
+
+<p><b>Synth-- </b>A shorthand identifier for the synthesizer to which the
+patch belongs. For example, if a patch is for a Yamaha TG33
+Synthesizer, this field might read "TG33". These identifiers merely
+help the user to see what patch goes with each synthesizer and are
+merely arbitrary identifiers. The identifier used for each synthesizer
+can be changed in the preferences-&gt;synths menu.
+
+<p><b>Type-- </b> This tells what kind of patch the patch is. The most
+common values for this field are "Single" which means the patch
+represents a single patch in the synthesizer or "Bank" which means
+this patch actually holds an entire bank (set) of patches. Other
+values are possible for particular types of synthesizers, for example,
+a drum machine would probably have a "DrumKit" type rather than a
+"Single" type. Words like "Single", "Multi", and "Bank" are standard
+synthesizer jargon. If you are unfamiliar with synthesizer terminology
+you should probably brush up in order to use this program.
+
+<p><b>PatchName-- </b> Obviously, this is the name of the patch. Note
+that this is the name of the patch as it appears in the actual
+synthesizer data for the patch, so it suffers the same limitations as
+the synthesizer impresses upon its data. For example, if the
+synthesizer only allows for 6 characters in a patch name, so will
+JSynthLib. Some synthesizers do not support patch names at all, and
+most of the time "Bank" type patches will not support names.
+
+<p><b>field1 / field2--</b> These two fields hold data outside of the
+actual data used by the Synthesizer and can therefore hold values even
+for patches belonging to synthesizers which lack patch names. The
+meaning of these two fields is user defines, for example, you could
+set all of the field1 values in a library to be the name of the author
+of the patch and all of the field2 values to be the type of instrument
+that the patch is trying to emulate (Guitar/Piano/Drum, etc)
+
+<p><b>comment</b> This is another field which holds data outside of the
+actual data used by the Synthesizer. The main difference between
+field1 / field2 and comment is that the comment field can hold longer
+strings and that you can not sort a library based on the comment
+field.
+
+<p>In addition to the table of patches, a library window contains a
+footer which tells the number of patches in the library.
+
+<p>A <b><i><a name="scene">Scene window</a></i></b> looks very much like the library window.
+It is intended to gather all patches for different synths, which are
+needed in a particular "scene". A "scene" can be a song or a set of
+songs - that depends on you. The advantage of a scene is, that
+it contains in addition to the synth's and patches the locations for the
+patches in the synt's memories. You can transfer the patches all together
+with the "Library-&gt;Transfer Scene" function to the synths.
+Very practical for the recall of a specific sound setup.
+The columns are:
+ 
+<p><b>Synth-- </b>A shorthand identifier for the synthesizer to which the
+patch belongs. It's the same as in the <a href="#library">library window</a>
+above.
+
+<p><b>Type-- </b> It's the same as in the <a href="#library">library window</a>
+above.
+
+<p><b>PatchName-- </b> Obviously, this is the name of the patch. 
+It's the same as in the <a href="#library">library window</a> above.
+
+<p><b>Bank Number</b> This is the first difference to the library.
+This column contains the bank number for your patch, since patches are usually
+organized in banks in the synthesizers. You can select a bank with a drop-down
+menu. The actual content of the drop-down is determined by the patch type and
+the architecture of the synth.
+
+<p><b>Patch Number</b> 
+This column contains the patch number for your patch within the bank.
+Again, you can select a patch number with a drop-down
+menu. The actual content of the drop-down is determined by the patch type and
+the architecture of the synth.
+
+<p><b>comment</b> This is another field which holds data outside of the
+actual data used by the Synthesizer.
+
+<p>In addition to the table of patches, a scene window contains a
+footer which tells the number of patches in the scene.
+
+<p>A <b><i>Bank Editor Window</i></b> looks like a two dimensional
+table/array of patch names and numbers. This represents a bank of
+patches for a particular synthesizer. The number of patches in the
+bank and the numbering scheme used is dependent on the
+synthesizer. For example,the Oberheim Matrix 1000 holds 100 patches in
+a bank numbered 0-99, which the Kawai K4 holds 64 numbered 1-A to
+16-D.
+
+<p>A <b><i>Single Editor Window</i></b> is by far the most complex window
+in the program. This window holds implementation details for one
+single patch. Here you can set various parameters that make the sound
+of the patch using sliders, checkboxes, comboboxes, etc. The layout of
+this window and the controls available depends on the synthesizer to
+which the patch belongs.</p>
+
+<p> Although, the exact layout and function of the controls shown in
+the Single Editor will depend on the synthesizer to which the patch
+belongs, all Single Editor Windows share much in common.
+
+<p>A Control is an element in the Editor Window which controls a
+specific aspect of the patch, such as Filter Cutoff or
+Resonance. There are four basic types of controls.
+
+<p>1. a Slider Control consists of a label, a slider, and a numeric
+     readout.. You can tell the current value of the control both
+     graphically (by how far the slider is over) and by the value of
+     the numeric readout. You can change the value of the control only
+     by moving the slider. You can either click to the side of the
+     pointer on the slider, drag the pointer, or click on it and then
+     use the arrows on the keyboard. In any case, each time the value
+     is changed, JSynthLib will send a real-time sysex message to the
+     synthesizer (on synths which support real time sysex messages)
+     telling it to update the value internally. Some synthesizers may
+     take a few seconds to process all the incoming data before being
+     available to play a note , making real-time 'tweaking' difficult.
+
+<p>2. a ComboBox Control consists of a label and a textfield. The
+     textfield tells you what the current value of the control is set
+     for. Clicking on this textfield will produce a menu from which
+     you can choose one of the other values for the control.
+
+<p>3. a CheckBox Control consists of a label and a checkbox. Clicking
+     the check box will turn the setting the control represents on or off.
+
+<p>4. an Envelope Control consists of a graphical depiction of the
+     envelope and a label and numeric display for each parameter the
+     envelope controls. Commonly, these parameters will be the Attack,
+     Delay, Sustain, and Release parameters for a particular DCA. To
+     change a parameter, simply click and drag one of the nodes
+     (rectangles) on the envelope. Some nodes control two parameters,
+     one on the vertical axis and one on the horizontal. Others
+     control only one parameter and are therefore fixed in position on
+     one axis. There are also some nodes which do not control any
+     parameters and are therefore fixed in position. JSynthLib will
+     draw lines connecting all the nodes to show a graphical depiction
+     of the envelope given the current settings.
+
+<p>In addition to these controls, there are a number of interface
+elements which do not interact with the synthesizer or patch data and
+only serve to make the presentation of the data more clear. One of
+these are the frames which surround groups of related controls. For
+example a frame labeled "Filter" might surround a group of sliders
+labeled "Cutoff", "Resonance", and "Envelope Bias" to show you that
+these three parameters are a part of the synth's filter section.
+
+<p>Second, are tables which are simply grid-like structures used to
+hold parameters. As of version 0.12, only the Oberheim Matrix Editor
+makes use of tables. Note that you can click and drag on the table's
+headings to change the order in which parameters are displayed.
+
+<p>Third are "Tabs". By clicking on a tab, you are taken to a
+different set of parameters to edit. Sometimes the tabs surround
+entire editor screens, but usually they surround only a group of
+parameters. For example, In the Yamaha TX81z editor, there are four
+tabs, one for each Operator, by clicking on one of them, the section
+of controls related to the Operator is set to control the operator you
+have chosen.
+
+<p>Although Editing on-screen using a mouse or keyboard is efficient
+and all editing functions can be realized this way, JSynthLib also
+provides another, optional, method to edit controls-- Faders.  A Fader
+is simply a knob or a slider you might have on a synthesizer or fader
+box which sends a MIDI control message, when moved. Almost all
+synthesizers have at least one or two, and some advanced ones such as
+the Kawai K5000S have as many as sixteen or more. In addition, there
+are "Controller Surfaces" you can buy which consist only of Faders
+(either as knobs or slider).
+
+<p>These faders are generally used to edit parameters on synthesizers,
+but have two major drawbacks. First, they are often designed to work
+only on a certain, hardwired parameter or only for a particular
+synthesizer. Second, its difficult to picture what's happening when
+editing this way, because you don't get any visual feedback. You can't
+simply look at a Controller Surface and tell what the current settings
+are for the parameters (unless you have a motorized controller
+surface).
+
+<p>JSynthLib allows you to overcome these limitations. If you have a
+Controller Surface or other source of MIDI Controller Messages which
+has at least 16 Faders, you can edit any synthesizer supported by
+JSynthLib and see visual feedback on your computer screen.
+
+<p>To set up your controller surface, look under
+Config-&gt;Preferences-&gt;MIDI. Look at that section in this documentation
+for help on setting these up.
+
+<p>Once set up, when you move a fader, the corresponding control in
+the active Editor Window will move. As you probably realize, however,
+there are usually more than 16 controls in an editor window. This is
+where the concept of fader banks come in. A fader bank is a group of
+16 controls which respond to faders. You can choose which bank your
+fader movements are sent to either by using the 15th and 16th buttons
+on you Controller Surface (if your controller surface supplies buttons
+and well has faders) or by using the "Next Fader Bank" Option on the
+toolbar. Note that the labels for the controls in the currently
+selected fader bank are darkened slightly. To determine which fader
+bank and fader number will move a particular control, simply let the
+mouse cursor hover over the label for that control and a tooltip will
+pop up with this information.
+
+<p>When you close an editor window, a dialog box will pop up asking
+what you wish to do with any changes to the patch. If you choose to
+"Revert to Original", then any changes you have made in the editing
+session will be lost. If you choose to "Keep Changes", the changes are
+stored over the original patch in the library and the original version
+is lost. The third option "Revert and send Changes to Clipboard" is
+the best of both worlds. The Original patch is kept as in the "Revert
+to Original" setting,but the changed version of the patch is placed on
+the clipboard. You can then use the Patch-&gt;Paste command to place it
+into a patch library of bank of your choosing. This is useful if you
+like the new edits you have created, but also like the original patch.
+
+
+<h3>JSynthLib Menu Functions</h3>
+
+<h4>Right-Click Menu</h4>
+
+If your right-click on a patch in a Library Window or a Bank Editor
+Window, a menu will appear which allows you to manipulate the patch in
+various ways. All of the functions on this menu are also available
+from the menu bar and a description of what they do can be found under
+their menu bar entries in this documentation.
+
+<h4>The Library Menu</h4>
+
+The Library menu on the menu bar allows you to access a number of
+functions to manipulate Libraries of patches (see <b>Library
+Window</b>) above. These functions act on a library or act on all of
+the patches in the library. Functions which manipulate a single patch
+within a library are located under the Patch Menu. The available
+functions in the Library Menu are:
+
+<p><b>New-- </b> This creates a new <a href="#library">Library</a> which
+contains no patches and displays it on the screen. This function is
+also available from the toolbar.
+
+<p><b>Open-- </b>This prompts you for a file name and then loads the
+previously saved library under that name from disk and displays it on
+the screen. Note that if the library is very large, the program might
+take several seconds to read it from disk. The filename of the loaded
+library is placed on the top frame of the Library Window. This
+function is also available from the Toolbar.
+
+<p><b>Save-- </b>This saves a library window to disk. The library
+window which you wish to save must be the currently focused (active)
+window when you choose this option. If the library does not have a
+file name, then the program will pop up a save as dialog box just as
+if you had chosen the Save As Option instead. This function is also
+available from the Toolbar.
+
+<p><b>Save As-- </b> this function pops up a file dialog box to ask
+you for a new name and then saves the currently focused Library Window
+under that name.
+
+<p><b>New Scene-- </b> This creates a new <a href="#scene">Scene</a> which contains
+no patches and displays it on the screen.
+
+<p><b>Transfer Scene-- </b> This transfers all patches of the selected Scene
+to their configured places in the synths.
+
+<p><b>Sort-- </b> This function will sort all of the patches in a
+library by either the type, patch name, field1 or field2 field (the
+program will prompt you for the sort field) The sort algorithm used is
+stable, so you can for example sort by patch name and then sort by
+synth in order to get a library that is sorted by synth type and then
+sorted by patch name within each synth type.
+
+<p><b>Search-- </b> This function allows you to search for patches
+within a library. You enter the text to search for, and where you want
+the text to be located, whether in the patch name, field1, field2,
+comment, or any of the fields. Then you use the "Find First" button to
+locate the first patch matching the search criteria, or the "Find
+Next" button to locate the next one.
+
+<p><b>Delete Dups</b> This function will search through a library for
+identical patches and delete all but one copy. This is most useful
+immediately after you have imported all your patches in to
+JSynthLib. Many times copies of the same patch are sitting around in
+different places on a hard drive. This only deletes patches that are
+perfect duplicates, so if as much as one byte is different, they will
+not be considered duplicates and will not be deleted. Therefore two
+identical patches with different names will not be considered
+duplicates by this function.
+
+<p><b>Exit</b> The Exit command doesn't really belong in the Library
+Menu since it doesn't act on a library, but we had to put it somewhere
+and this seemed like as good a place as any other. Basically this
+command just exits the program. It will <em>not</em> warn you about
+unsaved data!
+
+<h4>The Patch Menu</h4>
+
+The Patch menu allows you to access a number of functions which
+manipulate individual patches which are located either in a Library
+Window, a Bank Edit Window, or (for some functions) in a Single Patch
+Editor Window. The available functions in the Patch Menu are:
+
+<p><b>Copy--</b> This function copies the currently selected patch to
+the clipboard. It will copy the currently highlighted patch from the
+currently focused Library Window or Bank Edit Window. If the current
+Window is a Single Patch Editor window, then the patch represented by
+the current position of the editing controls is copied to the
+clipboard. This function is also available from the toolbar and from
+the right-click pop up menu.
+
+<p><b>Cut--</b> This command simply performs a <em>Copy</em> command
+followed by a <em>Delete</em> command. It is also available from the
+toolbar and from the right-click pop up menu.
+
+<p><b>Delete-- </b> This deletes the currently selected patch in the
+currently focused Library Window or Bank Editor Window. If the current
+window is a Single Editor Window then this command has no function.
+
+<p><b>Paste-- </b> This copies a patch from the clipboard to the
+currently selected location in a Library Window or Bank Editor
+Window. If the currently focused window is a Library Window but no
+patch is selected, then the patch will be appended, otherwise it will
+be inserted before the selected patch. If the currently focused window
+is a Bank Editor Window, then the patch on the clipboard will
+<em>replace</em> the currently highlighted patch. Note also that while a
+Library Window can hold any type of sysex data, a Bank Editor Window
+is designed to hold only one particular type of data. If the data type
+is invalid, the paste will not work. The same is true for the Import
+command. This command is also available from the toolbar and from the
+right-click pop up menu.
+
+<p><b>Import--</b> This function will load raw Sysex data and/or MIDI
+files from disk into the currently focused Library Window or Bank
+Editor Window.  If a driver is installed (under Config-&gt;Synths) which
+recognizes the format of this data, then it will be turned into a
+patch of the proper type, otherwise it will be listed as "unknown".
+This function is also available from the toolbar.
+
+<p><b>Export--</b> This function will save the raw Sysex data from the
+currently selected patch (in a Library Window or Bank Editor Window)
+to disk, stripping away field1, field2, and comment. The data will be
+in the raw form suitable for sending to the synthesizer of importing
+into another editor for that type of data.
+
+<p><b>Import All--</b> This is a powerful function that is very useful
+when you first start using JSynthLib. It is designed to quickly import
+a large amount of data into a Library Window. If you've been using
+other editor or librarian programs to manipulate your synthesizer data
+or if you have downloaded patches for your synthesizer from the
+Internet, you might have a large patch library that you will want
+accessible from JSynthLib. If your patch Library is stored in the
+proprietary format of some other Synthesizer Librarian program, you
+will have to get that program to export it to the industry standard
+.SYX format (raw Sysex Data). The Import All command will take all the
+files in a directory and attempt to import them into JSynthLib.<br>
+
+You will be prompted for several options when you choose this
+function. First you must choose a directory to import from The Java
+Standard for choosing directories from a file dialog is to
+single-click on it so the directory name is highlighted, but do not
+enter the directory you wish to import from. If you accidental enter
+the directory you wish to import from, back up one level before
+hitting the OK button on the file dialog.<br>
+
+Next, you must choose which types of patches you wish to import at
+this time. You will be given a list of each Synthesizer driver you
+have installed in your system, each with a checkbox next to it. Check
+the box to include that type of patch in your import. If you check the
+box for "unknown" then even data that the program does not understand
+will be imported. For example, you can use this to create one big
+library of all your patches for all your synths, or you can import
+only the singles patches for a particular synth in order to create a
+library of all your patches for that synth.<br>
+
+You are also given the option to place the filename from which each
+patch came from either in field1 or field2. This is useful if the
+patch does not have a name of if you've grown accustomed to referring
+to it by its file name.  You are also given the option of
+automatically extracting patches from banks. When you import patches,
+you might get full banks of patches in addition to singles.  To access
+these patches, you must choose to edit the Bank Data. Sometimes this
+is desirable, but often you'll want to see all of your Single Patches
+at the top level of your library. If this option is checked, any banks
+that are imported will be automatically extracted and the patches
+taken out and placed in the library (you can do this yourself with the
+Patch-&gt;Extract option. If both this option and the option to place the
+filename in field1 or field2 are checked, each of the extracted
+patches will get the filename followed by their location in the bank
+placed in their field. For example " MYSOUNDS1.SYX 34 ".
+
+<p><b>Send-- </b> This option will send the currently highlighted
+patch in the currently focused Library Window or Bank Edit Window to
+the proper synthesizer. The idea is to send the data so that you can
+test it out. On synths which support it, the data will be sent to a
+temporary edit buffer so that no other data in the synthesizer is
+overwritten. Unfortunately, not all synths support temporary edit
+buffers, so on these synths a set patch (usually the first non-preset)
+will be overwritten with the sent data. In order for the send command
+to work, the synthesizer corresponding to the patch must be correctly
+set up from Config-&gt;synths.
+
+<p><b>Store-- </b> Like Send, this function also sends the currently
+selected patch to the correct synthesizer. This option however, will
+prompt you for a patch location (bank and patch numbers) on the
+synthesizer to store the patch to. It will then store it to the
+synthesizer, overwriting whatever patch may already be at that
+location. This function is also available from the toolbar.
+
+<p><b>Get--</b> This function will receive sysex data from a
+synthesizer. When you choose this command, a dialog box will appear,
+giving you several options. First, choose which kind of patch you wish
+to get from any of the installed synthesizer drivers. Where
+applicable, you must also chose a bank and patch number for the patch
+to get. Once this is all set, press the 'Get' button. If JSynthLib
+knows the correct code to automatically start the sysex dump for your
+chosen driver, it will do so. Otherwise, you will be prompted to
+manually start the patch dump from the front panel of the
+synthesizer. Once JSynthLib receives data from the synth, it will tell
+you how many bytes have been received. When the entire sysex dump has
+been received, you must decide what to do with it. If you press the
+'paste' button, the received patch will be pasted in the currently
+focused library. If you wish to discard the received patch, you can
+simply press 'get' again to get a different patch or press 'Cancel' to
+quit the dialog. When your done press 'done'.
+
+<p><b>Play-- </b> This command will send the currently selected patch
+to the proper synths followed by a MIDI command to play a note.  This
+is useful for checking a patch out quickly or without a master
+controller keyboard. The specifics on which note is played, how hard
+it it hit, and how long it is held can be set in the Note Chooser
+Dialog Box, which is accessible from Config-&gt;Choose Note The play
+function is also available from the toolbar and from the right-click
+menu.
+
+<p><b>Edit--</b> Using the Editing command on a Patch for the driver
+contains editing support will bring up an Editor Window. This window
+will consist of various sliders, checkboxes, and other controls which
+can be manipulated to change the patch. The layout and function of
+these controls is dependent on the architecture of the synthesizer you
+are working with. Your synthesizer manual should give you the
+information you need in order to understand how it generates sound and
+what the various parameters do. This command is also available from
+the right-click menu. See the section under 'Editing Patches' for more
+information
+
+<p><b>Crossbreed-- </b> Crossbreeding patches is a cool way to make
+new 'random' patches. Rather than simply sending random data to a
+synthesizer (which would likely end up sending it lots of garbage and
+out-of-range values), the crossbreed command generates random
+combinations of the patches in a library. To use it to best affect,
+you need an as-large-as-possible library full of patches for the
+synthesizer you wish to create patches for. If the library contains
+patches of more than one type,the command will randomly choose which
+synthesizer it is creating patches for. <br>
+
+When you use the crossbreeder, you are shown a dialog with four
+buttons. The "Close" button quits the crossbreeder. The "Generate"
+button creates a new random patch and plays it for you. The "Play"
+button replays the patch in case you want to hear it again. You can
+also use the master keyboard controller to play with your random
+patch. If you don't like a patch, simply hit generate to create a new
+one.  If you find something you like, hit the "Keep" button and your
+patch will be appended to the current library. Note that as a random
+patch, it will have a random name, so you'll probably want to go in
+and give it a more useful name later.
+
+<p><b>New--</b> This command creates a new (blank or default)
+patch. When you choose this option you will be given a list of the
+types of patches you are able to create. (Which patch types are
+available depends on which synth drivers you have loaded). The patch
+will be added to the currently focused patch library window.
+
+<p><b>Extract--</b> You run the extract command on patches which
+represent entire banks of patches rather than singles. Make sure the
+bank patch you wish to extract is highlighted in the currently focused
+library window. When you choose this option, the bank will be deleted
+and replaced with all the single patches which were inside of the
+bank. The same effect can be achieved when importing patches by using
+an option to the "Import All" command. See that part of the
+documentation for more details.
+
+<h4>The Config Menu</h4>
+
+<p><b>Synths</b>-- This is where you tell JSynthLib what synthesizers
+you have and how they are configured. When you open this window, you
+will see a list of the "Synth Drivers" which you have installed. Note
+that many synths have more than one Synth Driver, all of which are
+installed in order to use all functionality on that synth. The
+left-most parameter is a shorthand "ID" for the synthesizer.
+JSynthLib doesn't care what this is set to, its simply short name
+given to the synth that JSynthLib will use to refer to that
+synth. Generally, you will keep the defaults. You might change this,
+for example, If you've become accustomed to calling your Yamaha TX81z,
+"Yamaha" or "Bob" rather than "TX81z" (the default). The middle
+parameter is the name of the driver. To the right are two parameters
+which tell JSynthLib how to access the synthesizer. You must correctly
+set the MIDI port and channel (Device ID) for your synthesizer. </p>
+
+<p>Three buttons at the bottom allow more functionality. You can only
+add or remove drivers if no Library or Editor windows are currently
+opened. The add button pops up a list of all the synthesizers
+supported by your version of JSynthLib. You choose one from the list
+in order to install it and then configure it as explained above. When
+you choose a synthesizer, all the drivers associated with that
+synthesizer will be installed. There is also a button to remove, or
+uninstall a synthesizer driver, for example if you no longer own a
+particular synth. The third button closes the Synth dialog.</p>
+
+<p>As of version 0.15, there is an additional button called
+"Auto-Scan".  Currently this feature does not work with the
+JavaMIDI-drivers.  When you chose this option, JSynthLib will attempt
+to scan your MIDI ports for supported Synthesizers and correctly add
+and configure them for you. It is not able to detect certain synths
+(such as Yamaha and Roland) and you should double check the settings it
+determines for accuracy, but it can still be more convenient then
+having to add and configure them all by hand.</p>
+
+<p><b>Preferences</b>--
+This dialog is used to configure various settings that determine how
+JSynthLib functions.  There are three sets of parameters, each with
+its own tab. The four sets are "General","Directories", "MIDI", and
+"Fader Box"
+
+<p>Under general, you can set the look-and-feel which JSynthLib will
+use., You can also change the Platform on which you are running
+JSynthLib. Note that there are two different options for
+MS-Windows. This is because JSynthLib provides two different methods
+to communicate with MIDI devices under Windows. I recommend using the
+WireProvider option.  It seems to work well and can transfer large
+sysex messages. The JavaMIDI option is included in case WireProvider
+does not work on your set up. If this is the case, you should e-mail
+in a bug report, and use JavaMIDI for now.
+
+<p>In the directory tab, you can set the default directory from which
+JSynthLib will attempt to load and save files. The library path
+determines where the <kbd>.patchlib</kbd> files are loaded and saved. The sysex
+path is used by the import and export commands.
+
+<p>The second tab holds MIDI settings.  The parameter called "Run
+Initialization on MIDI ports" only needs to be played with if
+JSynthLib tells you to on startup or if you want to free the ports for
+another program. Basically, it needs to grab a couple of MIDI ports on
+your system when it starts up to initialize itself. Normally it just
+grabs the first ones it sees and thats fine. On some systems though,
+the first MIDI ports will be in use by some other program, or you'll
+want them left alone for some other program to use. Most MIDI port
+drivers allow more than one program to use the port, but not
+all. These parameters just give you the most control possible.
+
+<p>The master controller port determines which MIDI port JSynthLib
+will watch for Notes being played. If notes are played (for example
+from a MIDI keyboard) on this port, JSynthLib will echo them to
+whatever Synthesizer you are currently working with. (Either by having
+an editor open in the foreground or having a library open in the
+foreground and having a patch selected). This allows you more
+controlling auditioning patches than just using the "play" command. If
+you have no master controller or don't want to use one, just set this
+to the same value as your "Run Initialization on" MIDI IN port.
+
+<p>The fader tab allows you to configure your fader box if you want to
+use one. A fader box can be useful when editing patches, see the
+section of this documentation on editing patches for details of what
+they do. If you want to enable faders, you just check the enable box
+and set the fader port to the port on which you want to receive
+faders. Note that due to a bug in the MIDI routines used, JSynthLib
+will also receive faders on the master controller port.
+
+<p>JSynthLib recognizes up to 16 Sliders/Knobs and up to 16
+Buttons. You can configure which MIDI controller number and channel
+(Device ID)
+will recognized as each button and slider. You can either do this by
+hand, or use one of the preset buttons. The Kawai K5000 is set to
+respond to the 16 knobs on your Kawai as the 16 sliders and ignore the
+buttons. The Peavey PC1600 preset simply responds to controller 24 on
+channels 1-16 as sliders 1 through 16 and controllers 25 on channels
+1-16 as buttons 1-16. Its up to you to configure your PC1600 to send
+these values (its very easy).
+
+<p>Note that if you are using buttons, buttons 15 and 16 are special
+purpose, they increment or decrement your fader bank by one.
+
+<p>There is also a variable for most recent fader. If this controller
+is received it is patched to whatever fader has been accessed most
+recently. For example you could set your mod wheel to send to
+whichever fader you've used most recently.
+
+
+<p><b>Choose Note</b>-- When you choose the 'play' command to hear a
+sound, the patch is played at a particular note, velocity and
+duration. The Choose Note dialog allows you to determine what note,
+velocity and duration are used.
+
+<h2><a name="synths" href="#toc">Notes on Particular Synths</a></h2>
+
+<em>In this section of the documentation, issues relating only to the
+use of JSynthLib with particular synthesizers will be discussed</em>
+
+<p><b>Boss-DR660</b>- It is not possible to edit effects settings on the
+Boss-DR660 with JSynthLib, but all other editing functions are
+available.
+
+<p><b>Emu Proteus MPS</b>- This synthesizer lacks a MIDI addressable
+patch buffer. Therefore, when you send or play a patch from within
+JSynthLib, the patch at location 100 on the Proteus will be
+overwritten.  JSynthLib treats this location as an edit buffer.
+
+<p><b>Ensoniq ESQ-1</b>- Whenever JSynthLib sends a Patch to the ESQ, the
+synthesizer will go to a screen where you must hit 'exit' on the front
+panel before you can send another patch. This is kind of annoying, so
+if anyone knows a way around this let me know. The other ESQ
+librarians I checked out had the same problem, so it may be
+impossible.
+
+<p><b>Kawai K4 / K4r</b>- There are no known issues or problems with this
+synthesizer 
+
+<p><b>Kawai K5000</b>- The 'crossbreed' option does not work with this
+synth. Also, note that changes made to patches in the K5000 will be
+lost when you turn it off, unless you perform the backup to
+non-volatile ram from the front panel. Also, Patch A01 will be used as
+the MIDI edit buffer.
+
+<p><b>Oberheim Matrix 1000</b>- I've noticed that this synthesizer
+responds slowly to changes of certain parameters, such as the
+Modulation Matrix. This is a limitation of the synthesizer, not of
+JSynthLib.  Luckily, the slow response parameters tend not to be the
+ones you would want to tweak in real time.
+
+<p><b>Oberheim Matrix 6 / 6r</b>- I've had one report that the Single
+Driver and the Single Editor for the Matrix 1000 also work with these
+synths, but that the Bank Driver does not, since these use a different
+bank format. Can anyone verify this?
+
+<p><b>Yamaha TG33</b> There are no known issues or problems with this
+synthesizer. I am looking for information which would allow me to write
+a Single Editor for this synth.
+
+<p><b>Yamaha TX81z</b>- It is possible to make the TX81z's internal MIDI
+buffer overflow if you send it too much Data too quickly. This should
+only happen if you are using a fader box and throwing the faders
+around rapidly.</p>
+
+<p><b>Yamaha DX7/TX7/DX7-II/DX7s/TX802</b>- There are no known issues or problems with this
+synthesizer. I am looking for MIDI specification of the DX1 and DX5 to
+extend the support to these synthesizers.
+
+<p><b>Yamaha DX21/DX27/DX100- </b> These synths all use the same editor,
+since they are compatible, however some parameters will not have an
+effect on the sound on all three synths.
+
+<p><b>Yamaha FS1R</b>- The common manner of working with the driver is
+ first to create a FS1R bank (or to open one). Then you should be able
+ to edit a performance by selecting it in the bank. The performance has
+ four parts that can make reference to internal voices or ROM voices (A-K).
+ When the performance is edited, all the voices are sent to the FS1R.
+ When you edit an internal voice of a performance, it is the voice of the
+ bank, not the one in the synth memory. So when you close an editor window
+ the bank patch is updated or stored in the JSynthLib clipboard. If you want
+ to store the patch in the FS1R you have to do it manually for each component
+ of the performance (performance an voices).
+
+<h2><a name="trouble" href="#toc">Troubleshooting JSynthLib</a></h2>
+
+<b><i>[Windows]</i> I can't get the MIDI to initialize. I've tried
+setting the initialization ports to every port in my system, but I
+still get an error on startup</b><br>
+
+This usually happens if you are using the JavaMIDI driver.  Go into
+Config-&gt;Prefs-&gt;General and set 'MIDI Platform' to MS-Windows
+(WireProvider). When using the JavaMIDI drivers, certain MIDI devices
+just refuse to work.
+
+<p><b><i>[Gnu/Linux]</i>All the fonts have way to much space between
+the letters and look awful!</b><br>
+
+This is a Java issue under Linux. Supposedly it can be fixed by
+tweaking your fonts.properties file, but I haven't been able to get it
+to look right. Anyone have a fix for this?
+
+<p><b><i>[General]</i>I changed some settings in JSynthLib to values
+that don't work. Now I can't even get it to run well enough to change
+them back!</b><br>
+
+Delete the file called <kbd>PatchEdit.config</kbd> in your JSynthLib
+Directory. Now JSynthLib will go back to it's default settings the
+next time it is run and you can re-configure it.
+
+<p><b><i>[General]</i>What information should I give when I report a
+bug?</b><br>
+
+If you run JSynthLib with the parameter '2' as in <kbd>java JSynthLib 2
+&gt; outputfile</kbd>, JSynthLib will place information regarding any errors
+that occur in the file 'outputfile'. Sending this file with your bug
+report would be useful. Also, make sure to include all relevant
+information about what you were doing when the bug occurred and what
+your system setup is like.
+
+
+<h3><a name="acknowledgment" href="#toc">We wish to say thank you to....</a></h3>
+...a large number of contributors. Currently the list is not included here,
+because we would forget one or two for sure. So we left them out complete.
+<p>
+But we would like to say "thank you" to the people outside of the JSynthLib development team
+who gave us some timesaving code examples and ideas:
+<ul>
+<li>Joakim Eriksson for his DKnob widget (see at 
+<a href="http://www.dreamfabric.com/"> www.dreamfabric.com </a>).
+</ul>
+
+</font>
+</body>
+</html>

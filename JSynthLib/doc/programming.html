@@ -1,0 +1,1037 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- $Id$ -->
+<!--
+  convention
+    kbd:	for command line, filename
+    var:	variable, method name
+
+    Use structured text instead of B, I, or TT
+
+    EM:		Indicates emphasis. 
+    STRONG:	Indicates stronger emphasis. 
+    CITE: 	Contains a citation or a reference to other sources. 
+    DFN: 	Indicates that this is the defining instance of the enclosed term. 
+    CODE:	Designates a fragment of computer code. 
+    SAMP:	Designates sample output from programs, scripts, etc. 
+    KBD: 	Indicates text to be entered by the user. 
+    VAR: 	Indicates an instance of a variable or program argument. 
+-->
+
+<html>
+<head>
+<title>JSynthLib Programmer's Guide</title>
+<link REV="made" HREF="mailto:jsynthlib@overwhelmed.org">
+</head>
+
+<body bgcolor="#E5ED9D" text="Black" link="#3D75B4" vlink="#315480" alink="Red" leftmargin=40 topmargin=40>
+JSynthLib Programmer's Guide.
+
+<font face="Verdana,arial,helvetica" size="-1">
+
+<h1><a name="toc">JSynthLib Programmer's Guide</a></h1>
+
+<ol type="I">
+  <li><a href="#common">Before we start...</a>
+  <ol type="a">
+    <li>Coding Style
+    <li>Using JavaDoc
+    <li>Proper Use of Access Control Modifier
+  </ol>
+  <li><a href="#compiling">How to Compile Files Checked Out from CVS</a>
+  <li><a href="#writing">Writing the driver</a>
+  <ol type="a">
+    <li><a href="#wri_intro">Introduction</a>
+    <ol>
+      <li>How hard is it to add support for a new synthesizer to JSynthLib?
+      <li>What do I need in order to add support for a new synthesizer?
+      <li>Who owns the copyright to the code I contribute to JSynthLib?
+    </ol>
+    <li><a href="#settingOut">Setting Out to Work on JSynthLib</a>
+    <li><a href="#layout">The Layout of JSynthLib</a>
+    <li><a href="#areas">The Four Areas of Synthesizer Support</a>
+    <li><a href="#wri_single">Writing a Single Driver for your Synthesizer</a>
+    <ol>
+      <li>Create the files
+      <li>Tell the core program about your driver
+      <li>Write the damn thing
+    </ol>
+    <li><a href="#wri_bank">Writing a Bank Driver for your Synthesizer</a>
+    <li><a href="#wri_editor">Writing a Single Editor for your Synthesizer</a>
+    <ol>
+      <li>How to Add Widget</a>
+      <li>The provided Widgets</a>
+      <li><a href="#modelsender">Models and Senders</a>
+      <li>Action Listener</a>
+    </ol>
+  </ol>
+  <li><a href="#testing">Testing the driver</a>
+  <ol type="a">
+    <li><a href="#tst_intro">Introduction</a>
+    <li><a href="#tst_single">Testing your Single Driver</a>
+    <li><a href="#tst_bank">Testing your Bank Driver</a>
+    <li><a href="#tst_editor">Testing your Editor</a>
+  </ol>
+  <li><a href="#final">Final Words...</a>
+  <li><a href="#links">Related Documentation and Links</a>
+  <ol type="a">
+    <li>JSynthLib
+    <li>Java Language
+    <li>MIDI Specification
+    <li>Applications
+  </ol>
+</ol>
+
+
+<h2><a name="common" href="#toc">I. Before we start...</a></h2>
+first a few words about writing code which will be shared by many developers.
+
+Even if someone want write <strong>just</strong> a driver for his/her synth, the code will be readed by others too.
+Maybe some changes are necessary since an API change or another developer want take a look how a special issue is solved.
+
+Following some rules makes the life easier for all who contribute to JSynthLib.
+
+<h3>I.a. Coding Style</h3>
+During developing driver you will/have to read source codes in
+JSynthLib distribution.  Other programmers will read your source code
+in the future. Use consistent coding style.
+
+<a href="#codeconv">Code Conventions for the Java Programming Language</a> is a good reference.  Sample codes in
+<a href="#examples">The Java Programming Language</a> by Ken Arnold and James Gosling (creators of Java
+language) are good examples.  We encourage you to follow the coding
+style in these documents especially you are editing source code in
+core package.  Preferred indentation level is 4.
+
+<h3>I.b. Using JavaDoc</h3>
+Add javadoc on important (public or protected) methods and fields.
+
+<h3>I.c. Proper Use of Access Control Modifier</h3>
+This is important for codes under "core/". I believe this will help programmers best.
+It would be much easier for me to write my driver if methods and fields were used properly.
+
+I see many easy use of public or package (default) modifier in files under "core/".
+If private or protected is used properly I don't have to do grep all files to see how a method or a field is used.<p>
+
+Especially we have to be very careful to make a public (or package) field.
+If you really need to access it, consider using protected or defining getFoo() or setFoo() method.<p>
+
+This is a project to which many people are joining to.
+Readability of code is very important.<p>
+
+
+<h2><a name="compiling" href="#toc">II. How to Compile Files Checked Out from CVS</a></h2>
+
+Although the source code for each version of JSynthLib is included in
+the JSynthLib distribution, you may wish to download the latest
+version of the source code to get any improvements made after the
+latest release.
+
+The source can be downloaded via CVS from JSynthLib'sSourceforge.net page by going
+<a href="#cvssite">here</a>.<p>
+
+After downloading via CVS, you need to copy
+<ul>
+  <li><kbd>wireprovidor</kbd> directory (folder),
+  <li><kbd>WireNative.dll<kbd>,
+  <li><kbd>jmidi</kbd> directory and
+  <li><kbd>MidiPort.dll</kbd>
+</ul>
+from the latest JSynthLib distribution.<p>
+
+Windows and Linux users need to download pseudo MacOSX classes (com.apple.jar)
+from <a href="#yahoofiles">here</a> and
+extract the files as;
+
+<pre>
+jar xvf com.apple.jar
+</pre>
+
+When native MIDI support by Java (JavaSound) become stable on all
+platforms which JSynthLib supports, we don't need this pseudo class.<p>
+
+Now you should be able to compile source code as follows;
+<pre>
+javac core/*.java
+javac synthdrivers/*/*.java
+javac synthdrivers/*/*/*.java
+javac *.java
+</pre>
+
+Linux users can also use the following method:
+<pre>
+find . -name "*java" > js
+javac @js
+</pre>
+
+
+<h2><a name="writing" href="#toc">III. Writing the Driver</a></h2>
+
+<h3><a name="wri_intro" href="#toc">III.a. Introduction</a></h3>
+
+Alright, so you've got JSynthLib and like what it does. The problem is
+that it doesn't support one of the synthesizers you own. You drop a
+line to <a href="mailto:jsynthlib@overwhelmed.org">jsynthlib@overwhelmed.org</a>
+to find out if anyone is working on
+adding support for that synth and find out that no one is. You decide
+to volunteer to add support. Triumphantly you let us know your
+intention and set down to hacking. This document is designed to help
+you to complete this task.
+
+<h4>III.a.1. How hard is it to add support for a new synthesizer to
+JSynthLib?</h4>
+
+The hardest part is simply becoming familiar with how JSynthLib works
+and how it's laid out internally. Spend some time looking through the
+driver code for other synthesizers and you'll basically pick it up by
+osmosis. Once your familiar with what you have to do, actually doing
+it shouldn't take too long. I've gotten librarian (not editing)
+support for synthesizers hacked up in under two hours.  It depends of
+course, on the complexity of the synthesizer and the quality of the
+sysex specification.  Adding editing support can be a little more time
+consuming, but is probably even easier than writing librarian
+support. I've spent anywhere between 3 or 4 hours (working on the
+DR660 Editor) up to 5 days (working on the Matrix 1000 editor). If you
+run into any trouble, you can email
+<a href="mailto:jsynthlib@overwhelmed.org">jsynthlib@overwhelmed.org</a> for
+help.
+
+<h4>III.a.2. What do I need in order to add support for a new
+synthesizer?</h4>
+
+<ol>
+<li>At the very least, you need a sysex specification for your
+   synthesizer. In most cases, the sysex specification is located in
+   the back of the manual, but this is not always the case.  Sometimes
+   they are also available on the Internet if you look around
+   enough.
+
+<li>You probably also need the synthesizer you wish to add support for
+   (for testing). While it might be possible to do it without the
+   synthesizer, it would be pretty tough.
+
+<li>You'll need a copy of the Java 1.3 (or higher) JDK. This is
+   available for free from <a href="#javasite">java.sun.com</a>.
+   This contains the various tools used to compile JSynthLib.
+
+<li>You'll need a text editor in order to edit code. Anything will
+   work. I wrote a significant part of the JSynthLib core code using
+   EDIT.COM which comes with Windows. More recently, I've switched to
+   <a href="#jedit">jEdit</a>, a Java based emacs-like
+   programmer's editor with syntax highlighting and bracket matching.
+
+<li>Finally, you'll need to be able to program in Java. If you've
+   programmed in C++ before, you can probably pick it up in about an
+   hour (I did). If you are coming from C++ the most important thing
+   to know is that Java passes all objects by reference, not
+   value.
+</ol>
+
+<h4>III.a.3. Who owns the copyright to the code I contribute to
+JSynthLib?<br></h4>
+
+You do. Unless you specifically assign your copyright to me, you
+retain ownership. Of course, <em>you must release your code under the GNU
+General Public License</em> since it is considered a work derived from
+JSynthLib, but in addition to releasing it under the GNU Public
+License, you can do whatever else you want with it.
+
+<h3><a name="settingOut" href="#toc">III.b. Setting Out to Work on JSynthLib</a></h3>
+
+This section is simply designed towards setting up a working
+environment (under Windows) for doing work on JSynthLib. If you have a
+different way of setting up your working environment, feel free to use
+it, but this works for me.
+
+<p>First, decompress JSynthLib.zip to the directory you are going to work
+in (such as C:\JSynthLib).  Or you can get the latest source code via
+CVS. See "How to Compile File Checked Out from CVS".
+
+Next, open up a DOS prompt set to 50 row
+display and set it to that directory. This is used to run JSynthLib
+for testing (the 50 row display helps keep error messages from
+scrolling off the screen too fast). Make sure that the java.exe and
+javac.exe executables are in your path for easy access. Next, open up
+your trusty editor to the correct directory.
+
+<h3><a name="layout" href="#toc">III.c. The Layout of JSynthLib</a></h3>
+
+If you look at the JSynthLib directory, you'll see a number of files
+and directories.  Since you are only adding support for a synthesizer,
+and not working on the core program, you don't have to worry about
+most of these. For you, the most important areas are the SynthDrivers
+directory where code pertaining to various synthesizers are kept, and
+the JSynthLib.jar file, which holds most of the code.
+
+<!-- Now obsoleted
+<p>Though 99% of your work will go in the SynthDrivers directory, you
+need to tell the core JSynthLib program about the existence of your
+new code.  To do so, you must only make entries into the file
+"synthdrivers.properties", located in the main directory.
+-->
+
+<p>All of the core code is kept bundled up inside the JSynthLib.jar
+file. To extract it, run
+<pre> jar -xvf JSynthLib.jar</pre>
+
+<p>This will extract all of the files inside the .jar into the
+directory. You will now see more files and directories in your
+JSynthLib directory. You now have access to the source code for the
+entire program.  In addition to the SynthDrivers subdirectory, you will
+now see one labeled <kbd>core</kbd> (there are others too but they
+aren't important). Inside the core directory is all the code for the
+main part of JSynthLib.  Feel free to look around.
+
+<p>Important: Once you've extracted the .jar file and made changes to the
+resultant files, you must launch JSynthLib using <kbd>java
+JSynthLib</kbd> instead of <kbd>java -jar
+JSynthLib.jar</kbd>. Otherwise you just run the old .jar file and none
+of your alterations get used.
+
+<p>When you compile parts of JSynthLib, always do so from the main
+JSynthLib directory. For example, to compile the file
+synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java
+sit in the main JSynthLib directory and type
+<kbd>javac synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java</kbd>.
+Don't enter that directory and just type 
+<kbd>javac BossDR660DrumkitDriver.java</kbd>, it won't work.
+
+You can make API document by executing;
+<pre>
+javadoc -locale en_US -breakiterator -quiet -d html -use -author -version core/*.java
+</pre>
+View html/index.html with your favarite browser.
+
+<h3><a name="areas" href="#toc">III.d. The Four Areas of Synthesizer Support</a></h3>
+
+To add full support for a synthesizer, there are four things you need
+to write. You need a Device class, a Single Driver, a Bank Driver, and a Single
+Editor. Each of these provides different functionality.  
+Only a Device class and a Single Driver are strictly necessary.
+
+<p>First, you would write a Device class.  It defines some
+informations for your synthesizer.  Take a look at
+<kbd>KawaiK4Device.java</kbd>.
+
+<p>Single Driver provides routines to allow JSynthLib to detect data for
+the synthesizer, to communicate with the synthesizer, and to calculate
+checksums on the data. Once this is written, JSynthLib will have
+Librarian support for your synthesizer. Note that you must write a
+Device class and Single Driver first-- both the Bank Driver and Single Editor use the
+Single Driver in order to communicate with the synthesizer.
+
+<p>The Bank Driver provides the ability to work with banks of patches, to
+combine singles into banks and to extract banks into singles. While
+this functionality isn't strictly necessary, it is nice to have.
+
+<p>The Single Editor is the fun part. This is a graphical representation
+of the synthesizers internals which allows parameters to be changed
+and edited. It depends on the Single Driver for some of its
+functionality, so you must write that first.
+<!-- Is the last sentence above really correct? -->
+
+<p>You will also need to write a device file. This is very easy, just
+copy an existing one and change it to suit your needs.  Basically, the
+device file just holds some information about the synthesizer that in
+earlier versions of JSynthLib had to be hard coded into each
+driver. Also, it is responsible for loading each driver for the
+device.
+
+<h3><a name="wri_single" href="#toc">III.e. Writing a Single Driver for Your Synthesizer</a></h3>
+
+<h4>III.e.1. Create the files</h4>
+
+Under the synthdrivers directory, create a directory for your
+synth. Into it copy a Single Driver from one of the other synthesizers
+and change its name to match your synthesizers. Go through that file
+and change all the references to that synthesizer to yours. I
+recommend using the KawaiK4SingleDriver as a starting point because
+its the most simple driver.
+
+<h4>III.e.2. Tell the core program about your driver</h4>
+<!-- Can this step be done without SignleDriver file?  If yes, create -->
+<!-- new section for Device class, and move this step to the section -->
+You have to let JSynthLib know about your driver. Execute the
+following command on your command shell,
+
+<pre>
+java core/DeviceListWrite
+</pre>
+
+and click &quot;OK&quot; button on the pop-up windows.
+This recreate the <kbd>synthdrivers.properties</kbd> file.
+
+<p>
+<!-- Now obsoleted
+Edit the file called <kbd>.\synthdrivers.properties</kbd>. This is the only file
+in the core JSynthLib program that you will have to edit. Add an entry
+with your synthesizer's name and class to the properties file. Just
+write it exactly like the ones for the other drivers.  You need three
+or four entries for each supported device: The manufacturer, the plain
+text name of the device, the class including the entire path for the
+device-class and optionally the string for the response to the
+universal inquiry message, if your device supports it and you want,
+that the device is recognized by the auto-scanner. The entry will look
+like this:
+
+<pre>
+manufacturer.OberheimMatrix1000=Oberheim
+deviceName.OberheimMatrix1000=Oberheim Matrix 1000 Driver
+deviceClass.OberheimMatrix1000=synthdrivers.OberheimMatrix.OberheimMatrix1000Device
+inquriyID.OberheimMatrix1000=F07E**06021006000200********F7
+</pre>
+
+Save this file. 
+-->
+If all goes well, JSynthLib now knows about your
+driver. Now you just have to write it :)
+
+<h4>III.e.3. Write the damn thing</h4>
+
+Your Single Driver will be a subclass of the core.Driver class. Open
+up the file <kbd>core\Driver.java</kbd> and take a look at that file. All of the
+variables and functions are documented as to their purpose. Also look
+at your Single Driver code (which you copied from another synthesizer)
+Between these two files you should be able to figure out what to
+do.
+
+<p>First, you change your constructor to provide the correct information
+to the driver. This information is used by the functions in
+core.Driver class to manipulate the data. If your synthesizer were perfectly
+regular, that would be just about all there was to writing the
+driver. However, most synths have their unique quirks and features
+that are impossible to describe using just data. Therefore you will
+probably have to override some of the functions in core\Driver.java to
+perform for your synth.
+
+<p>Looking at your driver code (which you stole from the KawaiK4 code
+like I told you to).  You'll see that we had to implement two methods,
+<var>storePatch</var> and <var>sendPatch</var>, to store and send to the synth. This is
+common, since usually,
+slightly different sysex messages are used to send a patch to the
+editing buffer (and not overwrite a patch) or to a specific patch (and
+overwrite). Change these functions to match your synth. If your synth
+has no edit buffer, you'll need to overwrite the send method to treat a
+specific patch location on the synth as the edit buffer
+it (see the EmuProteusMPS Driver for an example of this).
+
+<!-- Only calculateChecksum(Patch p) must be defined. -->
+<p>You'll also see that for the KawaiK4, I had to override the
+<var>calculateChecksum</var> method in core\Driver.java because the K4 uses a different
+algorithm than the default.  You'll find that the checksum
+computation is the most common method which needs to be overridden,
+either because of multiple checksums or because your synth uses a
+different method to compute its checksum (by default JSynthLib adds
+all of the data bytes, takes the lowest 7 bits, XORs them with 127 and
+adds one to get the checksum). All of this is in
+core\Driver.java. Take a look. Computing the checksum properly is the
+hardest part of writing the driver. Trial and error.  If your synth
+uses the default checksum method, you can erase this method from your
+source file.  Otherwise implement it.
+
+<!-- Why don't we erase the two lines? Anyway this note is unnecessary.)
+Note that in the K4 version, two lines are commented out.  This is bad
+programming, I should have erased them. Sorry.
+-->
+
+<!-- propose the default createPath method and fix here -->
+<p>There are two functions that will always need to be overridden if you
+wish to provide that functionality because there is no default version
+in core\Driver.java. These are both easy to implement. One of these
+
+is the <var>createPatch</var> method which returns a new (blank) patch. The
+other is the <var>editPath</var> method which opens an
+Single Editor window for the patch and must be included if you plan to write
+a Single Editor for your synth. You should be able to figure out how
+to write these by looking at the code for the KawaiK4.
+
+<p>There may be other functions in core\Driver.java that you will need to
+override for your synth. In general, spend time looking at that file
+and also the drivers for all of the other synths to get a feel for how
+things are done.
+
+<p>Once your driver is working, JSynthLib now has Librarian support for
+your synth. Celebrate. And send in the code to us so we can include it
+in the next release of JSynthLib.
+
+<h3><a name="wri_bank" href="#toc">III.f. Writing a Bank Driver for Your Synthesizer</a></h3>
+
+If you've decided to write a Bank Driver for your synth, make sure you
+told JSynthLib that back in Section 5 Step 2 of this document.
+Basically, write this the same way you did the Single Driver. Copy the
+BankDriver from the KawaiK4 or one of the other synths and edit it to
+fit your needs. Change all the data in the constructor to fit you
+synth. The Bank Driver subclasses core\BankDriver.java. I recommend
+you look at that file (its commented nicely) and figure out which
+functions you need to override.
+
+<h3><a name="wri_editor" href="#toc">III.g. Writing a Single Editor for Your Synthesizer</a></h3>
+
+Alright, so you've written a Single Driver and maybe a Bank Driver and
+now have Librarian support for your synthesizer. JSynthLib can load,
+save and play patches. Pretty neat. But the real trick is to add
+editing support for your synth. Writing an editor is both easier and
+harder than writing a driver. Its easier because you usually don't
+have to override functions. Its harder because you have to write a
+Java Swing interface. Swing is the default graphical toolkit that
+comes with Java. Its the graphical interface which all of JSynthLib
+uses. If you don't know Swing at all you might want to get a Java
+book, but you can get away with just the
+<a href="#tutorial">Tutorial</a>
+on java.sun.com and the
+<a href="#javaapi">API guide</a>
+that you can download when you download the JDK.
+
+<p>You can do like with the SingleDriver and start out by copying an
+existing editor over and renaming the file, classes, constructor,
+etc. I recommend the YamahaTX81z Editor since its the simplest.
+
+<p>Basically, its the job of the constructor to set up the interface for
+your editor by using a number of functions and widgets provided by
+JSynthLib and a number of Swing features. I like to set up all
+my sliders and checkboxes and figure out where they go and what there
+ranges are first, get a nice pretty GUI on screen and then go back and
+put in the numbers to make it actually work. Basically you are going
+to create a number of JPanes and place controls inside them using
+the <var>addWidget</var> function. Then you insert these JPanes onto
+<var>scrollPane</var> (the background of the window). <var>scrollPane</var> is
+created by JSynthLib for your convenience.
+
+<p>If you want Tabs and such, you can implement them the same way the
+other editors do using the Swing feature. For a simple synth, you
+can get away with just putting all the JPanes directly onto
+<var>scrollPane</var>.
+
+Make sure you've taken a look at how all the other Single Editors are
+set up, the code contained within them explains all better than I
+could cope with mere words.
+
+<h4>III.g.1. How to Add Widgets:</h4>
+
+JSynthLib comes with several Widgets I've created which automatically
+deal with sending sysex and whatnot. All you have to do is tell them
+where to go and what values to send out. You create them like this:
+(example from the TX81z Editor)
+
+<pre>
+    addWidget(cmnPane,  // pane to put the widget on
+              new ScrollBarWidget("Feedback", patch, 0, 7, 0,
+                                  new ParamModel(patch, 100),
+                                  new VcedSender(53)),
+              1, 1,     // horizontal/vertical location
+              3, 1,     // horizontal/vertical size
+              18);      // fader number
+</pre>
+
+The first parameter is the JComponent (pane) you wish to put the widget
+on. You would have created this pane previously as a JPane. Usually I
+use panes to break the interface into functional sections (such as LFO
+parameters, filter parameters, etc.).
+
+<p>The second parameter is the widget to create, in this case a
+ScrollBarWidget. Notice that the widget itself takes a few parameters, we'll
+get to that in a moment.
+
+<p>The next four parameters represent
+the location and size of the widget within the Pane (Read up on
+gridbaglayout in Sun's Java tutorial). They are (in order) the
+horizontal location, the vertical location, the horizontal size, and
+the vertical size).
+
+<p>The last parameter is the fader number. Each widget
+needs to have a unique fader number and they should go in order. label
+all widgets with positive numbers except for checkboxes which get
+negative numbers (buttons). So the sliders etc. would go
+1, 2, 3, 4, 5.. and the checkboxes would go -1, -2, -3, -4, -5... etc.
+
+<h4>III.g.2. The Provided Widgets:</h4>
+
+<b>ScrollBarWidgets</b> contain a label, a slider, and a numeric
+readout of the value of the slider. They are the most common
+widgets. The first parameter to the widget should be its label. the
+second one will always be <var>patch</var>. The next two values are
+the minimum and maximum values on the slider. The fifth value is a
+value offset for the slider. This is usually zero, but gets used if
+the parameter in the synthesizer is (for example) 0 through 127, but
+should be displayed as -63 to +63). The last two parameters are a
+<a href="#modelsender">Model and Sender</a> for this fader (we'll get
+to those after we deal with some other widgets.).
+
+<p><b>ScrollBarLookupWidgets</b> are just like ScrollBarWidgets but they
+let the numeric readout contain values other than numbers. They are
+used rarely. For example if a parameter can take the values of OFF,
+1,2,3,4,5,6 or 7, you might use one. You wouldn't want to use a
+ScrollBar because the first value should be OFF, not zero. You could
+also use a ComboBoxWidgets in this situation. The constructor is about the
+same as for a combo box.
+
+<p><b>ComboBoxWidgets</b> are drop-down list of choices that are best used
+for non-numeric data (such as LFO shape). Here's an example of setting
+up a ComboBoxWidget:
+
+<pre>
+    addWidget(panel,
+              new ComboBoxWidget("EG Shift", patch,
+                                 new ParamModel(patch, 20 + i*5),
+                                 new AcedSender(i*5 + 4),
+                                 new String[] {"96db", "48db", "24db", "12db"}),
+              0, 4, 1, 1, 5);
+</pre>
+
+Parameters to the constructor are 1) a Label, 2) <var>patch</var>, 3)
+a Model, 4) a Sender, and  5) an array of all the values that it can
+contain.
+
+<p><b>CheckBoxWidgets</b> are used for parameters that can be either on
+or off. Heres an example:
+
+<pre>
+    addWidget(lfoPane,
+              new CheckBoxWidget("1", patch,
+                                 new ParamModel(patch, 55 + 3*13),
+                                 new VcedSender(3*13 + 8)),
+              3, 6, 1, 1, -19);
+</pre>
+
+Parameters to the Constructor are 1) a Label, 2) <var>patch</var>, 3)
+a Model, and 4) a Sender.
+
+<p><b>EnvelopeWidgets,</b> the final widget type, are vastly more complex
+than the others.They represent several parameters on the synth, such
+as the attack, decay, sustain, and release of a VCA envelope.
+
+<p>Note that the fader number you give to an envelope widget represents
+is its first fader number, and it will take as many as it needs starting at
+that one to represent all of it's parameters.
+
+<p>The constructor for an envelope widget takes a list
+of EnvelopeNodes, each with its own constructor. Each EnvelopeNode is
+one of the movable squares on the envelope. Some of these nodes are
+stationary, some contain two parameters on the synth and can be moved
+vertically and horizontally, and others contain only one parameter and
+can therefore be moved in only one direction. Here is an example:
+
+<pre>
+    addWidget(panel,
+              new EnvelopeWidget("Envelope", patch,
+                                 new EnvelopeNode[] {
+                                   new EnvelopeNode(0, 0, null,
+                                                    0, 0, null,
+                                                    0, false,
+                                                    null, null, null, null),
+                                   new EnvelopeNode(0, 31, new ParamModel(patch, i*13+47),
+                                                    30,30, null,
+                                                    10, true,
+                                                    new VcedSender(i*13), null, " AR", null),
+                                   new EnvelopeNode(0, 31, new ParamModel(patch, i*13+48),
+                                                    0, 15, new ParamModel(patch, i*13+51),
+                                                    25, true,
+                                                    new VcedSender(i*13+1), new VcedSender(i*13+4), "D1R", "D1L"),
+                                   new EnvelopeNode(0, 31,new ParamModel(patch, i*13+49),
+                                                    0, 0, null,
+                                                    10, true,
+                                                    new VcedSender(i*13+2), null, "D2R", null),
+                                   new EnvelopeNode(1, 15, new ParamModel(patch, i*13+50),
+                                                    0, 0, null,
+                                                    0, true,
+                                                    new VcedSender(i*13+3), null, "RR", null),
+                                }),
+              3, 0, 3, 5, 10);
+</pre>
+
+As you can see, the Envelope Widget takes a label, followed by
+<var>patch</var> and then an array of EnvelopeNodes. The parameters
+given to the Envelopenodes constructor have the following meaning:
+
+<pre>
+    public EnvelopeNode(int minx, int maxx, ParamModel ofsx, 
+                        int miny, int maxy, ParamModel ofsy,
+                        int basey,
+                        boolean invertx,
+                        SysexSender x, SysexSender y,
+                        String namex, String namey)
+</pre>
+
+<small>
+<dl>
+<dt>minx, maxx, miny, maxy <dd> The minimum/maximum value permitted by
+the synth parameter which rides the X/Y axis of the node.
+
+<dt>ofsx, ofsy <dd>For the X and Y parameters-- this is the
+ParameterModel which provides reading/writing abilities to the sysex
+data representing the parameter.
+
+<dt>basey <dd>Sometimes you don't want zero on a
+Y-axis-riding-parameter to be all the way down at the bottom. This
+gives it a little bit of rise. <var>basey</var> will be added to all Y
+values. (This doesn't change the function of the EnvelopeWidget, but
+makes it look nicer and possibly be more intuitive to use.)
+
+<dt>invertx <dd>Sometimes on an X-axis-riding attribute 0 is the fastest,
+other times it is the slowest. This allows you to choose.
+
+<dt>x, y <dd>The Senders which send sysex messages to the synths when
+the Node is moved.
+
+<dt>namex, namey <dd>The names of the parameters riding each access.
+</dl>
+
+**Using <var>null</var>s for the Models and Senders and setting min to max means
+that a node is stationary on that axis and has no related
+parameter.
+
+**Using EnvelopeNode.SAME (or 5000) for miny & maxy means that the
+height remains at whatever the previous node was at.
+</small>
+
+<p>I hope that made sense, if not, just take a look at the way
+EnvelopeWidgets are used by various single editors.
+
+<p>
+<b>CheckBoxWidget</b>,
+<b>KnobWidget</b>,
+<b>KnobLookUpWidget</b>,
+<b>LabelWidget</b>,
+<b>PatchNameWidget</b>,
+<b>ScrollBarLookupWidget</b>,
+<b>SpinerWidget</b>,
+<b>TreeWidget</b>,
+and <b>VertScrollBarWidget</b> are also provided.
+
+<h4><a name="modelsender" href="#toc">III.g.3. Models and Senders</a></h4>
+
+Models and Senders are objects which communicate data between the synth
+and the widgets.
+
+<p><strong>Senders</strong> first: Every time a widget moves, its Sender
+gets told. The job of the Sender is to send a Sysex string to the
+synth informing it of the change. Usually a Single Editor will have
+one or more Sender. Sometimes more than one is used because a synth
+uses more than one method to transfer the data. Here's an example from
+the YamahaTX81z Editor:
+
+<pre>
+    class VcedSender extends SysexSender {
+      int parameter;
+      byte[] b = new byte [7];
+      public VcedSender(int param) {
+        parameter = param;
+        b[0] = (byte) 0xF0; b[1] = (byte) 0x43;
+	b[3] = (byte) 0x12; b[4] = (byte) parameter; b[6] = (byte) 0xF7;
+      }
+      public byte[] generate (int value) {
+       b[2] = (byte) (16 + channel - 1); b[5] = (byte) value;
+	return b;
+      }
+    }
+</pre>
+
+The TX81z has two Senders, VcedSender (shown above) and AcedSender
+(not shown), because it uses two slightly different methods to transfer
+two types of data (called Vced and Aced in the TX81z manual).
+
+<p>The constructor for a Sender takes a parameter representing which
+parameter a particular instance of the Sender should control and
+creates a sysex message containing all necessary information except
+for the data value to be transmitted and the channel (Device ID) to transmit
+on. When the widget attached to this instance of the Sender moves,
+the <var>generate</var> method of the Sender gets called with the value to
+send. The generate function simply puts the value and channel into the
+message and returns it.
+
+<p>In addition to sending changes to the synth, we want to keep track of
+the changes to the patch so that when we next call up this patch the
+changes are there. We also want to be able to set the widgets to the
+correct values for a particular patch when the Single Editor is
+opened. This is what the <strong>Model</strong> is for.
+
+<!-- param vs offset?? Be consistent. -->
+
+<p>The default Model, defined by ParamModel class, is used by the YamahaTX81z
+editor. Its constructor takes two parameters, the <var>patch</var> being edited
+ and the <var>offset</var> into the patch of the
+value. Sometimes the default can be used, other times it is either
+necessary or more convenient to subclass ParamModel to make your own
+Model. Here's an example from the KawaiK4 Editor:
+
+<pre>
+    class K4Model extends ParamModel {
+      public int bitmask;
+      public int mult;
+      public K4Model(Patch p, int o) {
+	ofs = o + 8; patch = p; bitmask = 255; mult = 1;
+      }
+      public K4Model(Patch p, int o, int b) {
+	ofs = o + 8; patch = p; bitmask = b;
+	if ((bitmask&  1) ==   1) mult =   1; else
+	if ((bitmask&  2) ==   2) mult =   2; else
+	if ((bitmask&  4) ==   4) mult =   4; else
+	if ((bitmask&  8) ==   8) mult =   8; else
+	if ((bitmask& 16) ==  16) mult =  16; else
+	if ((bitmask& 32) ==  32) mult =  32; else
+	if ((bitmask& 64) ==  64) mult =  64; else
+	if ((bitmask&128) == 128) mult = 128;
+      }
+      public void set(int i) {
+	patch.sysex[ofs] = (byte) ((i*mult) + (patch.sysex[ofs]&(~bitmask)));
+      }
+      public int get() {
+	return ((patch.sysex[ofs]&bitmask)/mult);
+      }
+    }
+</pre>
+
+<p>In the case of the KawaiK4, we couldn't just use default ParamModel, because
+some Kawai K4 parameters are bitmasks stored in the same byte as other
+parameters. The above class K4Model, takes care of deciphering the
+bitmasks. The Model is designed to take the same two parameters as
+ParamModel. It implements two functions in addition to its
+constructor. the set function is given a value and must set its
+parameter to the value. the get must return the value of its
+parameter.
+
+<p>Note how the Models and Senders are used in the addWidget functions in
+the various editors. addWidget doesn't care if you use the default
+ParamModel or if you implement your own. This makes the
+widgets much more extensible. They can be used without needing to know
+how exactly the data is supposed to be accessed. The Model and Sender
+takes care of that.
+
+<p>This all probably sounds more complex than it really is, just take a
+look at the editors for various other synths, try changing some things
+maybe to see how they work. It shouldn't be too hard to figure out,
+but I'm not too good at explaining.
+
+<h4>III.g.4. Action Listeners</h4>
+
+Swing provides a construct known as an action listener which
+allows you to write a routine which is called whenever a widget is
+moved. You never need to use these for dealing with built in JSynthLib
+widgets because they take care of it themselves. It is useful however
+if you want to have a widget do something more than control the
+synth. the Yamaha TX81x editor, for example, uses one to change the
+picture of the algorithm every time the 'algorithm' slider is
+moved.
+
+<h2><a name="testing" href="#toc">IV. Testing Your Driver...</a></h2>
+
+<em>This section of the Documentation was written by Yves Lefebvre.</em>
+
+<h3><a name="tst_intro" href="#toc">IV.a. Introduction</a></h3>
+<p>This is an attempt to do a test plan when writing a new driver for
+JSynthLib. It take little time to do and may help finding problem
+before the driver is available publicly.
+
+
+<p>First thing to do: you must do some single dump and some bank dump
+from your synth to your computer without using JSynthLib (I use
+Cakewalk to do that but there should be some simple freeware to do
+this). Save those dump in .syx format (binary). Remember, we are not
+using JSynthLib at his point in order to have something "clean" to
+refer to when testing the new driver.
+
+<p>One important note : It seems that some synth could have "bugs" in
+their factory patches. So if you resend those patch to the synth, they
+will be "corrected". To test this, you can simply resend the bank dump
+from your PC to the synth and do a new bank dump from synth to PC. If
+there are difference and the first bank dump and the second, this is
+probably the problem I mention. Normally, resending the second dump
+should be consistent after that. Any dump from synth to PC should be
+identical to the second dump since the synth has now "corrected" the
+original dump! I had this problem with some specific patch of my Nova
+after restoring original patches on the unit with the "Restore from
+ROM" command. I had spent some time figuring out the difference
+between dump so I'm warning you not to do the same mistake!
+
+<p>Now, redo the same thing (single dump and bank dump) but this time,
+change your device id number on the synth (sometime call global MIDI
+channel). Those new dump may have some byte different or not. In most
+case, single dump will be identical while bank dump may be different.
+
+<h3><a name="tst_single" href="#toc">IV.b. Testing your Single Driver</a></h3>
+
+<ul>
+<li>Try to open a "clean" .syx file from JSynthLib and send it to the
+edit buffer of your synth. Try it to see if the name and sound seems
+OK. Do a dump (with external soft) and compare the file, they should
+be identical. Make sure that the patch is really in the edit buffer
+(and not written in memory) by changing patch on the synth and going
+back to the patch number it was before the send: the patch you just
+send should not be there (This may vary with some synth Model).
+
+<li>Try to do a single patch dump to JSynthLib. Check that the patch
+name is correct in JSynthLib. Export it to a .syx file and compare it
+(diff) with the original "clean" version. Should be the same. (Those
+steps will confirm that loading external file and receiving/sending a
+dump give the same result)
+
+<li>Try to store this patch at different location in the synth. At
+least, try to store in patch 0 or 1 and to the highest patch number of
+your synth. Do that in every user bank if possible. Verify that the
+patch appear in all the location you save it.
+
+<li>Create a new patch with JSynthLib and send it to your synth. Make
+sure the new patch didn't do anything wrong on the synth (if your new
+patch is all 0 with a name, some synth may react strangely to invalid
+combination of values). If you want to play safe, your createNewPatch
+method could construct a valid default patch for your synth: just do a
+dump of a simple patch and integrate this in the code.
+
+<li>Now, redo all those step with a different id number on the
+synth. Change JSynthLib accordingly to that new Id (channel
+number). Some time, it's possible you left a bug if you didn't test
+with a different ID (channel number).
+</ul>
+
+<h3><a name="tst_bank" href="#toc">IV.c. Testing your Bank Driver</a></h3>
+<ul>
+<li> Open a "clean" .syx bank file with JSynthLib. Make sure that all
+individual patch name make sense.
+
+<li>Send one patch from the bank to your synth. Make a dump (from
+your synth) of that single patch with another software. Now, do a diff
+of this dump with a previously made dump of that same patch. This will
+make sure that extracting a patch from a bank and sending it to the
+synth gave the exact same thing. You should really do a binary compare
+of the file since just playing it is not enough. Even if some
+parameter are sent wrong, the patch may sound correct to your ear, so
+you need to do a real compare.
+
+<li>Erase all bank memory on your synth. Now, send the whole bank
+from JSynthLib to your synth. Do a dump from the synth to your
+external software. The .syx file should be the same than the original
+one. This is not the same thing than the previous step: extracting a
+single patch from a bank and sending a whole bank is very
+different. Note: one potential problem here is that some synth may
+need more time to "digest" a big bank dump from your PC. In those
+cases, you should put some delay in your code until you find a safe
+speed.
+
+<li>Try sending your bank to all possible banks in the synth and
+verify their integrity.
+
+<li>Now, you should redo some of those steps with a different channel
+number, just to make sure. Note that the bank .syx file will likely
+have the channel byte different so you need to extract a "clean" bank
+with the new channel first from your synth.
+</ul>
+<h3><a name="tst_editor" href="#toc">IV.d. Testing your Editor</a></h3>
+
+<p>Note: I never write an editor but here are some suggestions:
+<ul>
+<li>Usually, modifications done in the editor are sent in real-time
+to your synth.  However, the editor must also make the same
+modification in the single patch that is edited. To test that it works
+correctly, you should made some modification in the editor and save
+the patch (do not send that patch to the edit buffer of your synth).
+Now, on your synth, the same patch should be in the edit buffer since
+all single edit will have send sysex for every parameter changed.  Do
+a dump from your synth to PC and compare it to the patch JSynthLib
+just created.  They should be identical. Normally, you should try each
+fader or knob in the editor to be sure they are controlling the
+correct parameter. Just move each one at random when creating the
+patch. If you do that some time (random edit, saving and comparing the
+file), chance are the editor behave correctly.
+</ul>
+<p>Note: I suggest to move
+each fader at random because putting all of them to 0 or max is not a
+good idea since your editor may send knob info to the wrong place and
+you will not be able to detect it by comparing the .syx file!
+
+
+<p>Last step, send your new driver for integration in the next release
+of JSynthLib!
+
+<p>Yves Lefebvre<br>
+ivanohe@abacom.com<br>
+www.abacom.com/~ivanohe
+
+<h2><a name="final" href="#toc">V. Final Words...</a></h2>
+
+<p>Of course, nothing ever works the first time. Its never as easy as it
+should be. If you have problems getting the synth to do what your
+editor or driver is telling it to do. here's two debugging tricks I
+use.
+
+<ol type="i">
+<li>This is pretty common, but just sprinkle
+<var>System.out.println</var> statements through out the troublesome
+code. Get a good idea of what values are what when and look for
+something that shouldn't be. Better yet, use
+<var>ErrorMsg.reportError("ErrorMsg goes here")</var> instead. This way the
+message is only printed if JSynthLib is run in debugging mode (aka
+<kbd>java -jar JSynthLib.jar 2</kbd>)
+
+<li>Use a MIDI cable to connect your computer's MIDI out to MIDI
+in. Get a program (for example <a href="#midiox">MIDI-OX</a>)
+from the Internet to print out all incoming MIDI
+messages. Now you can see what messages your editor/driver is sending
+and you can check them for correctness.
+
+<li>When you are working on a driver and it doesn't seem to be doing
+what the code looks like it should do, one common problem is that if
+you make a change to the Constructor, you need to go into JSynthLib
+and remove the driver from the SynthConfig Dialog box and then add it
+again. Otherwise the newly Changed constructor isn't getting
+called.
+<!-- What does this paragraph mean?  Fix cases. -->
+</ol>
+<p>Good Luck.
+
+
+
+<h2><a name="links" href="#toc">VI. Related Documentation</a></h2>
+
+<h3>VI.a. JSynthLib</h3>
+<ul>
+  <li><a name="website" href="http://www.jsynthlib.org">JSynthLib Home Page</a><br>
+    <font size="-1">Universal Synth Librarian &amp Patch Editor</font>
+  <li><a name="cvssite" href="http://sourceforge.net/cvs/?group_id=41208">JSynthLib Sourceforge.net site</a><br>
+    <font size="-1">(contains the CVS Repository)</font>
+  <li><a name="yahoogroup" href="http://groups.yahoo.com/group/jsynthlib-dev/">JSynthLib Yahoo group &amp mailinglist</a><br>
+    <font size="-1">(also home of the jsynthlib-dev mailinglist)</font>
+  <li><a name="yahoofiles" href="http://groups.yahoo.com/group/jsynthlib-dev/files/">JSynthLib Yahoo group - file section</a><br>
+    <font size="-1">(contains the pseudo MacOSX classes)</font>
+</ul
+
+<h3>VI.b. Java Language</h3>
+For overviews, tutorials, examples, guides, and tool documentation, please see:<p>
+<a name="javasite" href="http://java.sun.com">Java Home Page</a>
+
+<p>Some selected documents:
+<ul>
+  <li><a name="tutorial" href="http://java.sun.com/docs/books/tutorial/uiswing/">SUN Java tutorials</a><br>
+    <font size="-1">The online tutorials</font>
+  <li><a name="javaapi" href="http://java.sun.com/j2se/1.4.2/docs/api/">Java<sup><font size="-2">TM</font></sup> 2SDK Version 1.4.2 API specification</a><br>
+    <font size="-1">The online J2SDK Version 1.4.2 API specification</font>
+  <li><a name="javadocdownload" href="http://java.sun.com/j2se/1.4.2/download.html#docs">Java<sup><font size="-2">TM</font></sup> 2SDK Version 1.4.2, Standard Edition Documentation</a><br>
+    <font size="-1">Downloadable J2SDK Version 1.4.2 documentation</font>
+  <li><a name="examples"href="http://java.sun.com/docs/books/javaprog/">The Java Programming Language</a><br>
+    <font size="-1">Sample Code by Ken Arnold and James Gosling (creators of Java Language).</font>
+  <li><a name="codeconv" href="http://java.sun.com/docs/codeconv/index.html">Code Conventions for the Java Programming Language</a><br>
+    <font size="-1">Standards and styles for coding Java programs. </font>
+  <li><a href="http://java.sun.com/products/jdk/javadoc/writingdoccomments.html">How to Write Doc Comments for Javadoc</a><br>
+    <font size="-1">describes the tag conventions SUN follows at Java Software. </font>
+  <li><a href="http://java.sun.com/j2se/1.4.2/docs/guide/sound/programmer_guide/contents.html">Java Sound API Programmer's Guide</a><br>
+</ul><p>
+
+<h3>VI.c. MIDI Specification</h3>
+
+<ul>
+  <li><a href="http://www.midi.org">MMA (Midi Manufacturer Association)</a><br>
+    <font size="-1">The MMA is the original source for information on MIDI (Musical Instrument Digital Interface) technology.</font>
+</ul><p>
+
+The <strong>Complete MIDI 1.0 Detailed Specification</strong> isn't downloadable from the MMA Website.<br>
+But you'll find a MIDI specification for example at
+<ul>
+  <li><a href="http://www.borg.comi/~jglatt/">www.borg.com</a>.
+</ul>
+
+<h3>VI.d. Applications</h3>
+<ul>
+  <li><a name="jedit" href="http://www.jedit.org/">JEdit</a>
+  <li><a name="midiox" href="http://www.midiox.com/">Midi-OX</a>
+</ul>
+
+</font>
+</body>
+</html>
