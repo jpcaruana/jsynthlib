@@ -152,6 +152,24 @@ public class QuasarConstants {
 		"Raindrops", "Long Delay", "Duck Delay", "HQ Delay", "Bypass"
 	};
 
+	/** Helper for FX1 */
+	public static final int[] FX1_HELPER   = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // Room to cathedral
+		1, 1, 1, 1,                     // GatedReverb0 to DuckReverb
+		0, 0, 0, 0, 0,                  // EarlyReflection0 to Raindrops
+		2, 3, 2, -1                     // LongDelay to bypass
+	};
+
+	/**
+	* FX1 parameter labels
+	*/
+	public static final String[][] FX1_EFFECTS_PARAMETER   = {
+		 {"Inp. Level", "SFeed", "Decay"},                                      // Typ 0
+		 {"Inp. Level", "SFeed", "Treshold", "Hold-time", "Attack", "Release"}, // Typ 1
+		 {"Inp. Level", "SFeed", "Delay", "Feedback"},                          // Typ 2
+		 {"Inp. Level", "SFeed", "Delay", "Feedback", "Treshold", "Hold-time"}  // Typ 3
+	};
+
 	/** The effect names for FX2 */
 	public static final String[] FX2_EFFECTS   = {
 		"Chorus 1", "Chorus 2", "Chorus 3",
@@ -165,6 +183,56 @@ public class QuasarConstants {
 		"Auto WahWah", "Warm Overdrive", "Distortion",
 		"Ring Modulation", "Vocoder",
 		"HQ Delay", "Bypass"
+	};
+
+	/** Helper for FX2 */
+	public static final int[] FX2_HELPER   = {
+		0, 0, 0,		// Chorus 1-3
+		1, 1, 0, 0,		// Flanger 1-2 / Phaser 1-2
+		2, 2, 2, 2,		// Rotaries
+		3, 4, 3, 		// Vibrato / Panning / Tremolo
+		5, 5, 6, 3,		// Short-/Long Delay / Cross Delay / Ping-Pong
+		7, 7,			// Gated Delay / Duck Delay
+		8, 9, 10,		// Special FX / Equalizer / WahWah + Overdrive
+		11,	12, 13, 12,	// Auto WahWah / Overdrive / Distortion / Ring Mod
+		14, 5, -1		// Vocoder / HQ-Delay / Bypass		
+	};
+
+	/**
+	* FX2 parameter labels
+	*/
+	public static final String[][] FX2_EFFECTS_PARAMETER   = {
+		// Typ 0
+		{"Inp. Level", "Depth", "Rate", "Center", "Out. level" },
+		// Typ 1
+		{"Inp. Level", "Depth", "Rate", "Center", "Feedback", "Out. level"},
+		// Typ 2
+		{"Inp. Level", "Rot Lo", "Rot Hi", "Decay", "Rot level", "Switch", "Drive", "Out. level" },
+		// Typ 3
+		{"Inp. Level", "Depth", "Rate", "Out. level"},
+		// Typ 4
+		{"Inp. Level", "Depth", "Rate", "Phase", "Manual pan", "Out. level"},
+		// Typ 5
+		{"Inp. Level", "Delay", "Feedback", "Out. level"},
+		// Typ 6
+		{"Inp. Level", "Delay left", "Feedback left", "Delay right", "Feedback right", "Cross feedback", "Mute right", "Sync time", "Out. level"},
+		// Typ 7 (Is there an empty parameter between "Release" and "Out. level"?
+		{"Inp. Level", "Delay", "Feedback", "Treshold", "Hold time", "Attack", "Release", "Out. level"},
+		// Typ 8 (Special FX)
+		{"Inp. Level", "Depth", "Rate", "Delay", "Feedback", "Out. level"},
+		// Typ 9
+		{"Inp. Level", "Out. level", "100 Hz", "500 Hz", "3 kHz"},
+		// Typ 10
+		{"Inp. Level", "Cutoff", "Drive", "Clip level", "Out. level"},
+		// Typ 11
+		{"Inp. Level", "Drive", "Clip level", "Out. level"},
+		// Typ 12
+		{"Inp. Level", "Out. level"},
+		// Typ 13
+		{"Inp. Level", "Out. level", "Drive"},
+		// Typ 14		
+		{"Inp. Level", "150 Hz", "350 Hz", "760 Hz", "1,6 kHz", "3,6 kHz", "Attack", "Decay", "Out. level"}
+		
 	};
 
 	/** The Performance modes of the Quasar */
@@ -188,6 +256,31 @@ public class QuasarConstants {
 		"SndRotate",
 		"UpVocSolo",
 		"Unisono" // Performance value parameter is used as detune parameter
+	};
+
+	public static final int[][] PERFORMANCE_HELPER   = {
+		{1, -1},	// Single
+		{2, -1},	// Double
+		{3,	-1},	// Layer 3
+		{4,	-1},	// Layer 4
+		{2,	0},		// Split 1+1
+		{3,	0},		// Split 1+2
+		{4,	0},		// Split 1+3
+		{4,	0},		// Split 2+2
+		{3,	0},		// Split 2+1
+		{4,	0},		// Split 3+1
+		{2,	1},		// DynSplit
+		{4, 1},		// DynSplit2
+		{4, -1},	// Ensemble
+		{4,	-1},	// SndRotate
+		{4,	-1},		// UpVocSolo
+		{4, 2}			// Unisono
+	};
+
+	public static final String[] PERF_VALUE_HELPER	= {
+		"Split key",
+		"Dyn split",
+		"Detune"
 	};
 
 	/**
