@@ -2,8 +2,12 @@
 // $Id$
 package synthdrivers.NordLead;
 
-import core.*;
-import javax.swing.*;
+import core.BankDriver;
+import core.ErrorMsg;
+import core.NameValue;
+import core.Patch;
+import core.PatchEdit;
+import core.SysexHandler;
 
 public class NLPatchBankDriver extends BankDriver {
   static final int BANK_NUM_OFFSET = 4;

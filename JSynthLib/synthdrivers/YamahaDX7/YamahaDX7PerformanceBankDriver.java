@@ -22,11 +22,10 @@
  *
  */
 package synthdrivers.YamahaDX7;
-import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import	synthdrivers.YamahaDX7.common.DX7FamilyPerformanceBankDriver;
-import core.*;
-import java.io.*;
-import javax.swing.*;
+import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceBankDriver;
+import core.JSLFrame;
+import core.Patch;
 
 public class YamahaDX7PerformanceBankDriver extends DX7FamilyPerformanceBankDriver
 {

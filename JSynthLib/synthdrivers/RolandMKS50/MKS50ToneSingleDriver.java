@@ -3,8 +3,10 @@
 
 package synthdrivers.RolandMKS50;
 
-import core.*;
-import javax.swing.*;
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 public class MKS50ToneSingleDriver extends Driver
 {

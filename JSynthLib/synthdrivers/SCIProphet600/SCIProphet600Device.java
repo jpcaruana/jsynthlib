@@ -3,8 +3,7 @@
 
 package synthdrivers.SCIProphet600;
 
-import core.*;
-import javax.swing.*;
+import core.Device;
 
 public class SCIProphet600Device extends Device {
   static final String DRIVER_INFO =

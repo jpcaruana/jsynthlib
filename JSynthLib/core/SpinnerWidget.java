@@ -1,9 +1,12 @@
 /* $Id$ */
 package core;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class SpinnerWidget extends SysexWidget {
     protected int base;

@@ -22,11 +22,9 @@
  *
  */
 package synthdrivers.YamahaDX7II;
-import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import	synthdrivers.YamahaDX7.common.DX7FamilyMicroTuningBankDriver;
-import core.*;
-import java.io.*;
-import javax.swing.*;
+import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import synthdrivers.YamahaDX7.common.DX7FamilyMicroTuningBankDriver;
+import core.Patch;
 
 public class YamahaDX7IIMicroTuningBankDriver extends DX7FamilyMicroTuningBankDriver
 {

@@ -159,7 +159,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
 
         effectTypeWidget.cb.addItemListener(new ItemListener() {
 		public void itemStateChanged(ItemEvent e) {
-		    if (e.getStateChange() == e.SELECTED) {
+		    if (e.getStateChange() == ItemEvent.SELECTED) {
 			int i = ((JComboBox) e.getSource()).getSelectedIndex();
 			parameter1.setText(effectParam1[i]);
 			parameter2.setText(effectParam2[i]);
@@ -241,7 +241,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         outputPane1.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					       "Output A", TitledBorder.CENTER, TitledBorder.CENTER));
         gbc.gridx = 0;
-        gbc.gridy = gbc.RELATIVE;
+        gbc.gridy = GridBagConstraints.RELATIVE;
         scrollPane.add(outputPane1, gbc);
 
         JPanel outputPane2 = new JPanel();
@@ -260,7 +260,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         outputPane2.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					       "Output B", TitledBorder.CENTER, TitledBorder.CENTER));
         gbc.gridx = 0;
-        gbc.gridy  = gbc.RELATIVE;
+        gbc.gridy  = GridBagConstraints.RELATIVE;
         scrollPane.add(outputPane2, gbc);
         //scrollPane.add(picturePanel,gbc);
 
@@ -280,7 +280,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         outputPane3.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					       "Output C", TitledBorder.CENTER, TitledBorder.CENTER));
         gbc.gridx = 0;
-        gbc.gridy = gbc.RELATIVE;
+        gbc.gridy = GridBagConstraints.RELATIVE;
         scrollPane.add(outputPane3, gbc);
 
         JPanel outputPane4 = new JPanel();
@@ -299,7 +299,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         outputPane4.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					       "Output D", TitledBorder.CENTER, TitledBorder.CENTER));
         gbc.gridx = 0;
-        gbc.gridy =  gbc.RELATIVE;
+        gbc.gridy =  GridBagConstraints.RELATIVE;
         scrollPane.add(outputPane4, gbc);
 
         JPanel outputPane5 = new JPanel();
@@ -318,7 +318,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         outputPane5.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					       "Output E", TitledBorder.CENTER, TitledBorder.CENTER));
         gbc.gridx  = 0;
-        gbc.gridy = gbc.RELATIVE;
+        gbc.gridy = GridBagConstraints.RELATIVE;
         scrollPane.add(outputPane5, gbc);
 
         JPanel outputPane6 = new JPanel();
@@ -337,7 +337,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         outputPane6.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					       "Output F", TitledBorder.CENTER, TitledBorder.CENTER));
         gbc.gridx = 0;
-        gbc.gridy = gbc.RELATIVE;
+        gbc.gridy = GridBagConstraints.RELATIVE;
         scrollPane.add(outputPane6, gbc);
 
         JPanel outputPane7 = new JPanel();
@@ -356,7 +356,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         outputPane7.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					       "Output G", TitledBorder.CENTER, TitledBorder.CENTER));
         gbc.gridx = 0;
-        gbc.gridy = gbc.RELATIVE;
+        gbc.gridy = GridBagConstraints.RELATIVE;
         scrollPane.add(outputPane7, gbc);
 
         JPanel outputPane8 = new JPanel();
@@ -375,7 +375,7 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         outputPane8.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					       "Output H", TitledBorder.CENTER, TitledBorder.CENTER));
         gbc.gridx = 0;
-        gbc.gridy = gbc.RELATIVE;
+        gbc.gridy = GridBagConstraints.RELATIVE;
         scrollPane.add(outputPane8, gbc);
 
         pack();

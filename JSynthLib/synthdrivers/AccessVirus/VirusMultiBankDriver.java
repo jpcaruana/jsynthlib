@@ -2,8 +2,12 @@
 
 package synthdrivers.AccessVirus;
 
-import core.*;
-import javax.swing.*;
+import core.BankDriver;
+import core.ErrorMsg;
+import core.NameValue;
+import core.Patch;
+import core.PatchEdit;
+import core.SysexHandler;
 
 /**
  * @version $Id$

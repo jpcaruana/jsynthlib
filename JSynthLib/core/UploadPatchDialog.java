@@ -1,22 +1,26 @@
 
 
 package core;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.plaf.metal.*;
-import java.beans.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
-import java.net.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 public class UploadPatchDialog extends JDialog {
   final JTextField t1;
   final JTextField t2;
@@ -135,7 +139,7 @@ void uploadPatch(Patch p)
     String desc=t3.getText();
     String repository=t4.getText();
     String userName=t5.getText();
-    String passwd=t6.getText();
+    String passwd=new String(t6.getPassword());
     byte [] sysex = p.sysex;
     if (patchName.length()<4)
 	ErrorMsg.reportError("Error","Patch Name must be at least 4 characters.");
@@ -202,7 +206,7 @@ void uploadPatch(Patch p)
 	    os.writeBytes(mime);
 	    os.flush();
 	    os.close();
-	    DataInputStream in = new DataInputStream(conn.getInputStream());
+	    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	    String str;
 	    while (( str = in.readLine()) != null)
 		{

@@ -1,7 +1,8 @@
 package synthdrivers.EnsoniqVFX;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 /**
  *  Multi driver for VFX. Multi have no name.

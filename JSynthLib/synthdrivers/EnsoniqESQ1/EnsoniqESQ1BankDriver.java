@@ -2,9 +2,11 @@
  * @version $Id$
  */
 package synthdrivers.EnsoniqESQ1;
-import core.*;
-import java.io.*;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+
+import core.BankDriver;
+import core.ErrorMsg;
+import core.Patch;
 public class EnsoniqESQ1BankDriver extends BankDriver
 {
 

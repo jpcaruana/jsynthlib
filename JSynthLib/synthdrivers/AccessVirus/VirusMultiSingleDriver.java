@@ -2,8 +2,10 @@
 
 package synthdrivers.AccessVirus;
 
-import core.*;
-import javax.swing.*;
+import core.Driver;
+import core.NameValue;
+import core.Patch;
+import core.SysexHandler;
 /**
  * @version $Id$
  * @author Kenneth L. Martinez

@@ -5,11 +5,20 @@
  */
 package synthdrivers.AlesisDMPro;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.ScrollBarWidget;
+import core.SysexSender;
 
 
 

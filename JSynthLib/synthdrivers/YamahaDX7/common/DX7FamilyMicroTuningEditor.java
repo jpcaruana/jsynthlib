@@ -23,14 +23,19 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.lang.String.*;
-import java.text.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import core.ParamModel;
+import core.Patch;
+import core.PatchEdit;
+import core.PatchEditorFrame;
+import core.SpinnerWidget;
+import core.SysexSender;
 
 public class DX7FamilyMicroTuningEditor extends PatchEditorFrame 
 {
@@ -87,16 +92,16 @@ public class DX7FamilyMicroTuningEditor extends PatchEditorFrame
 				keyByte = SemiTone+12*Octave;
 
 				if (SemiTone == 0) {
-					gbc.gridx=3*SemiTone;gbc.gridy=3*Octave+11;gbc.gridwidth=2;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+					gbc.gridx=3*SemiTone;gbc.gridy=3*Octave+11;gbc.gridwidth=2;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.CENTER;
 					microPane.add(new JLabel("Semitone",SwingConstants.LEFT),gbc);	//Semitone = 100 cent
-					gbc.gridx=3*SemiTone;gbc.gridy=3*Octave+12;gbc.gridwidth=2;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+					gbc.gridx=3*SemiTone;gbc.gridy=3*Octave+12;gbc.gridwidth=2;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.CENTER;
 					microPane.add(new JLabel("1.1719 c",SwingConstants.LEFT),gbc);	//Step	   = 1.1719 cent
 				} else {
 					gbc.gridx=3*SemiTone+10;gbc.gridy=3*Octave+10;gbc.gridwidth=1;gbc.gridheight=1;
 					microPane.add(new JLabel(" "),gbc);
 				}
 
-				gbc.gridx=3*SemiTone+11;gbc.gridy=3*Octave+10;gbc.gridwidth=1;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+				gbc.gridx=3*SemiTone+11;gbc.gridy=3*Octave+10;gbc.gridwidth=1;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.CENTER;
 				microPane.add(new JLabel(SemiToneName[SemiTone]+OctaveName[Octave],SwingConstants.LEFT),gbc);
 
 				addWidget(microPane, new SpinnerWidget(	// coarse

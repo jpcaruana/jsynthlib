@@ -2,10 +2,11 @@
  * $Id$
  */
 package core;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
+import java.awt.BorderLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
+import javax.swing.JTextField;
 
 public class PatchNameWidget extends SysexWidget {
     /** JTextField object */

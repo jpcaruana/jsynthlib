@@ -23,14 +23,21 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.lang.String.*;
-import java.text.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import core.ComboBoxWidget;
+import core.EnvelopeNode;
+import core.EnvelopeWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEdit;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.SysexSender;
 
 public class DX7FamilyPerformanceIIEditor extends PatchEditorFrame 
 {
@@ -203,7 +210,7 @@ public class DX7FamilyPerformanceIIEditor extends PatchEditorFrame
 
 
 		JPanel cmnPane = new JPanel();
-		cmnPane.setLayout(new GridBagLayout());gbc.weightx=1;gbc.anchor=gbc.EAST;
+		cmnPane.setLayout(new GridBagLayout());gbc.weightx=1;gbc.anchor=GridBagConstraints.EAST;
 
 
 		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; cmnPane.add(new JLabel(" "),gbc);

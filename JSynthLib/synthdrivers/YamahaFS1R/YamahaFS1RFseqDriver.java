@@ -1,7 +1,10 @@
 package synthdrivers.YamahaFS1R;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.JSLFrame;
+import core.ParamModel;
+import core.Patch;
+import core.SysexHandler;
+import core.SysexSender;
 
 /**
 	Formant sequence driver for FS1R.

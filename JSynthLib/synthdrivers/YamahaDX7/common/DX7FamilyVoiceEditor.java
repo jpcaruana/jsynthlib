@@ -23,14 +23,37 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.lang.String.*;
-import java.text.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.text.DecimalFormat;
+
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import core.ComboBoxWidget;
+import core.EnvelopeNode;
+import core.EnvelopeWidget;
+import core.NameValue;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.ScrollBarLookupWidget;
+import core.ScrollBarWidget;
+import core.SysexHandler;
+import core.SysexSender;
+import core.SysexWidget;
 
 public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListener
 {
@@ -409,7 +432,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		JPanel pegPane = new JPanel();
 		pegPane.setLayout(new GridBagLayout());
 		oscPane.addTab("PEG",pegPane);
-		gbc.fill=gbc.BOTH;
+		gbc.fill=GridBagConstraints.BOTH;
 		addWidget(pegPane,new EnvelopeWidget("Pitch Envelope Generator",patch,new EnvelopeNode [] {
 			new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
 			new EnvelopeNode(0,99,new ParamModel(patch,6+126),0,99,new ParamModel(patch,6+130),0,true,new VoiceSender(126),new VoiceSender(130),"Rate 1","Pitch 1"),

@@ -1,7 +1,7 @@
 package core;
-import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This interface should be implemented by any window which serves as

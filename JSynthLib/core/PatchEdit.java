@@ -90,7 +90,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	createActions();
 
 	// Set up the GUI.
-	JSLDesktop.getInstance().setupInitialMenuBar(createToolBar());
+	JSLDesktop.getInstance();
+	JSLDesktop.setupInitialMenuBar(createToolBar());
 	if (MacUtils.isMac())
 	    initForMac(exitAction, prefsAction, aboutAction);
 

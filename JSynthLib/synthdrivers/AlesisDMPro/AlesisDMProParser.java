@@ -1,8 +1,6 @@
 package synthdrivers.AlesisDMPro;
 
-import synthdrivers.AlesisQS.*;
-import core.*;
-import java.io.*;
+import core.Patch;
 
 /**
  *Support class...

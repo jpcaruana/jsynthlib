@@ -1,16 +1,14 @@
 package synthdrivers.YamahaFS1R;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
-import java.awt.dnd.*;
-import java.awt.datatransfer.*;
+import java.awt.Dimension;
 
-import core.*;
+import javax.swing.JTable;
+
+import core.BankEditorFrame;
+import core.JSLFrame;
+import core.Patch;
+import core.PatchBasket;
+import core.PatchEditorFrame;
 
 /**
 	Specific bank editor for YamahaFS1R. This bank holds 128 voices + 128 performances.

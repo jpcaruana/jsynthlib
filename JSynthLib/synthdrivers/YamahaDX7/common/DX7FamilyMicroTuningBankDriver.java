@@ -23,9 +23,10 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.io.*;
-import javax.swing.*;
+import core.BankDriver;
+import core.ErrorMsg;
+import core.Patch;
+import core.SysexHandler;
 
 public class DX7FamilyMicroTuningBankDriver extends BankDriver
 {

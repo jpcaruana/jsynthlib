@@ -7,9 +7,9 @@
  */
 
 package core;
-import java.io.*;
-import java.awt.datatransfer.*;
-import javax.swing.JComboBox;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.io.Serializable;
 /**
  * A scene is a container for all patches and their explicite
  * bank/patch locations at the synths for a concrete singular

@@ -1,8 +1,9 @@
 package core;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
+import java.awt.BorderLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.JCheckBox;
 
 public class CheckBoxWidget extends SysexWidget {
     public JCheckBox cb;	// should be prortected !!!FIXIT!!!

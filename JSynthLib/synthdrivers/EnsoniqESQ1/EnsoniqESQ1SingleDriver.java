@@ -2,9 +2,10 @@
  * @version $Id$
  */
 package synthdrivers.EnsoniqESQ1;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.Patch;
 
 public class EnsoniqESQ1SingleDriver extends Driver
 {

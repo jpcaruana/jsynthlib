@@ -1,7 +1,8 @@
 package synthdrivers.KorgWavestation;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.Patch;
+import core.SysexHandler;
 
 /** Driver for Korg Wavestation System Setup.
  *

@@ -8,8 +8,6 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiUnavailableException;
 
 /**
  * Abstract class that is used by PrefsDialog to load an arbitrary
@@ -32,7 +30,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	super(appConfig);
 	setLayout (new GridBagLayout ());
 	GridBagConstraints gbc = new GridBagConstraints ();
-	gbc.fill=gbc.HORIZONTAL; gbc.ipadx=1; gbc.anchor=gbc.WEST;
+	gbc.fill=GridBagConstraints.HORIZONTAL; gbc.ipadx=1; gbc.anchor=GridBagConstraints.WEST;
 
 	// Fader Port selection
 	JLabel l0 = new JLabel ("Receive Faders from MIDI Port:  ");
@@ -213,7 +211,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
      */
     private void resetComboBoxes() {
 	if (!PatchEdit.newMidiAPI) {
-	    MidiWrapper currentDriver = appConfig.getMidiWrapper();
+	    MidiWrapper currentDriver = AppConfig.getMidiWrapper();
 	    cb4.removeAllItems();
 	    try {
 		for (int j = 0; j < currentDriver.getNumInputDevices (); j++)

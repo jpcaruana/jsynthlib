@@ -2,11 +2,20 @@
 
 package synthdrivers.SCIProphet600;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.GridBagLayout;
+
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.EnvelopeNode;
+import core.EnvelopeWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.ScrollBarWidget;
 
 class P600ProgSingleEditor extends PatchEditorFrame {
   public P600ProgSingleEditor(Patch patch) {

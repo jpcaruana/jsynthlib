@@ -352,10 +352,10 @@ public class JSLFrame {
 	public boolean isSelected() {
 	    //return isActive() || lastselection == this;
 	    JSLDesktop d = JSLDesktop.getInstance();
-	    JFrame f = d.getSelectedWindow();
+	    JFrame f = JSLDesktop.getSelectedWindow();
 	    return (f == this)
-		|| (f == d.getToolBar().getJFrame() 
-		    && d.getLastSelectedWindow() == this);
+		|| (f == JSLDesktop.getToolBar().getJFrame() 
+		    && JSLDesktop.getLastSelectedWindow() == this);
 	}
 	void fakeActivate() {
 	    WindowEvent we =

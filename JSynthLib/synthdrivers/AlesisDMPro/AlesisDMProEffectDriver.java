@@ -1,8 +1,9 @@
 package synthdrivers.AlesisDMPro;
 
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 public class AlesisDMProEffectDriver extends Driver
 {

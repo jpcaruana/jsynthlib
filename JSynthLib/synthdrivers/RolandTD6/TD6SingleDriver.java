@@ -20,9 +20,14 @@
  */
 
 package synthdrivers.RolandTD6;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import java.io.InputStream;
+
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.NameValue;
+import core.Patch;
+import core.SysexHandler;
 
 /**
  * Single Driver for Roland Percussion Sound Module TD-6

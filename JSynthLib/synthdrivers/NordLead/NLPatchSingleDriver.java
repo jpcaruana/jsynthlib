@@ -2,8 +2,11 @@
 // $Id$
 package synthdrivers.NordLead;
 
-import core.*;
-import javax.swing.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.NameValue;
+import core.Patch;
+import core.SysexHandler;
 
 public class NLPatchSingleDriver extends Driver {
   static final String BANK_LIST[] = new String[] { "User", "PCMCIA 1",

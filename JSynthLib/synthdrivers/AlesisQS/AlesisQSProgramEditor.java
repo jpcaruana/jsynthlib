@@ -26,13 +26,25 @@
 
 
 package synthdrivers.AlesisQS;
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import java.awt.event.ActionListener;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.EnvelopeNode;
+import core.EnvelopeWidget;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.ScrollBarLookupWidget;
+import core.ScrollBarWidget;
 
 /**
  * Single program editor

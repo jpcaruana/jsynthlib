@@ -1,13 +1,15 @@
 package synthdrivers.YamahaFS1R;
 
-import core.*;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.FlowLayout;
+
+import javax.swing.Box;
+import javax.swing.JPanel;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.KnobWidget;
+import core.Patch;
+import core.SpinnerWidget;
 
 
 /**

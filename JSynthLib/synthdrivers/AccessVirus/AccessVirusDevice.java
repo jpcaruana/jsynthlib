@@ -1,13 +1,6 @@
 package synthdrivers.AccessVirus;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Properties;
-import java.util.Arrays;
-import java.util.Set;
-import java.io.*;
+import core.Device;
 
 /** Device class for the Access Virus
  * @version $Id$

@@ -1,7 +1,9 @@
 package synthdrivers.YamahaFS1R;
 
-import core.*;
-import java.io.*;
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 /**
  *  System parameters driver for Yamaha FS1R.

@@ -6,8 +6,10 @@
 //======================================================================================================================
 
 package synthdrivers.KawaiK5000;
-import java.io.*;
-import core.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.Patch;
+import core.SysexHandler;
 
 //======================================================================================================================
 // Class: KawaiK5000CombiDriver

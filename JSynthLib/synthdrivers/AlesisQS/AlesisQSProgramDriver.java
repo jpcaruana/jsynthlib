@@ -10,9 +10,12 @@
  */
 
 package synthdrivers.AlesisQS;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.NameValue;
+import core.Patch;
+import core.SysexHandler;
 
 public class AlesisQSProgramDriver extends Driver
 {

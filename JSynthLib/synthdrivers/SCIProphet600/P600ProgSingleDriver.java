@@ -3,8 +3,11 @@
 
 package synthdrivers.SCIProphet600;
 
-import core.*;
-import javax.swing.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 public class P600ProgSingleDriver extends Driver {
   static final String BANK_LIST[] = new String[] { "User" };

@@ -1,18 +1,4 @@
 package synthdrivers.NovationNova1;
-import core.*;
-import javax.swing.*;
-import java.io.*;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
-import javax.swing.JDialog;
-import javax.swing.border.*;
-import javax.swing.plaf.metal.*;
-import java.beans.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
 
 public class NovationNova1InitPatch
 {

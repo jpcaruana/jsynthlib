@@ -1,10 +1,9 @@
 package core;
 
-import javax.swing.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
+import java.awt.Dimension;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 public class WaitDialog extends JDialog {
  
    public WaitDialog(JFrame Parent) {

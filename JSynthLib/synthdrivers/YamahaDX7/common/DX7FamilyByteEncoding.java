@@ -22,7 +22,6 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
 
 public class DX7FamilyByteEncoding
 {

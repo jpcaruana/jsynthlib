@@ -2,9 +2,13 @@
  * @version $Id$
  */
 package synthdrivers.KawaiK5000;
-import java.io.*;
-import javax.swing.*;
-import core.*;
+import java.io.InputStream;
+
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 public class KawaiK5000ADDSingleDriver extends Driver
 {
   final static SysexHandler SYSEX_REQUEST_A_DUMP = new SysexHandler("F0 40 @@ 00 00 0A 00 00 *patchNum* F7");  // phil@muqus.com (p23)

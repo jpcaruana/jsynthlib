@@ -22,10 +22,10 @@
  *
  */
 package synthdrivers.YamahaTX802;
-import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import	synthdrivers.YamahaDX7.common.DX7FamilySystemSetupIIIDriver;
-import core.*;
-import javax.swing.*;
+import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import synthdrivers.YamahaDX7.common.DX7FamilySystemSetupIIIDriver;
+import core.JSLFrame;
+import core.Patch;
 
 public class YamahaTX802SystemSetupDriver extends DX7FamilySystemSetupIIIDriver
 {

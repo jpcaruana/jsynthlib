@@ -133,7 +133,7 @@ class YamahaDX100SingleEditor extends PatchEditorFrame
   JPanel pegPane = new JPanel();
   pegPane.setLayout(new GridBagLayout());
   if (((YamahaDX100Device)(patch.getDevice())).getWhichSynth()==21) oscPane.addTab("P.E.G.",pegPane);
-gbc.fill=gbc.BOTH;     
+gbc.fill=GridBagConstraints.BOTH;     
      addWidget(pegPane,new EnvelopeWidget("Pitch Envelope",patch,new EnvelopeNode [] {
         new EnvelopeNode(50,50,null,0,0,null,50,false,null,null,null,null),     
 	new EnvelopeNode(0,99,new ParamModel(patch,93),0,99,new ParamModel(patch,96),0,true,new VcedSender(87),new VcedSender(90),"Rate 1","Pitch 1"),

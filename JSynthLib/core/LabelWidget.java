@@ -1,8 +1,5 @@
 package core;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
+import javax.swing.JLabel;
 
 public class LabelWidget extends SysexWidget {
     /**

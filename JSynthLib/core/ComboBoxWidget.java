@@ -1,8 +1,10 @@
 package core;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.JComboBox;
 
 /**
  * @version $Id$

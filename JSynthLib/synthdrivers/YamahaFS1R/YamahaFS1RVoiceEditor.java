@@ -1,13 +1,44 @@
 package synthdrivers.YamahaFS1R;
 
-import core.*;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.EventObject;
+
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.CellEditorListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.EnvelopeNode;
+import core.EnvelopeWidget;
+import core.JSLDesktop;
+import core.JSLFrame;
+import core.KnobLookupWidget;
+import core.KnobWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.SpinnerWidget;
+import core.SysexSender;
  
 /**
 	Voice editor.
@@ -136,7 +167,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oHelp.addActionListener(new ActionListener() {
 			public void actionPerformed (ActionEvent e) {
 				JSLFrame oHelpWin = new HelpWindow();
-				getDesktopPane().add(oHelpWin);
+				JSLDesktop.add(oHelpWin);
 				oHelpWin.setVisible(true);
 			}}
 		);

@@ -3,12 +3,19 @@
 
 package synthdrivers.RolandMKS50;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.GridBagLayout;
+
+import javax.swing.JPanel;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.ScrollBarLookupWidget;
+import core.ScrollBarWidget;
+import core.SysexSender;
 
 class MKS50PatchSingleEditor extends PatchEditorFrame
 {

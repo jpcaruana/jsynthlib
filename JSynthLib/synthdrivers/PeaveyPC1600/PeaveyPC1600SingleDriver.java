@@ -15,8 +15,10 @@
 //======================================================================================================================
 
 package synthdrivers.PeaveyPC1600;
-import java.io.*;
-import core.*;
+import core.Driver;
+import core.NibbleSysex;
+import core.Patch;
+import core.SysexHandler;
 
 //======================================================================================================================
 // Class: PeaveyPC1600SingleDriver

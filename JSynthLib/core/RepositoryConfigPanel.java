@@ -1,9 +1,10 @@
 
 package core; //TODO org.jsynthlib;
 
-import javax.swing.*;
-import java.awt.event.*;
-import java.io.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 /** Abstract class that is used by PrefsDialog to load an arbitrary
  *  number of configuration tabs.
@@ -64,7 +65,7 @@ public class RepositoryConfigPanel extends ConfigPanel {
 	public void commitSettings() {
 		appConfig.setRepositoryURL(t1.getText());
 		appConfig.setRepositoryUser(t2.getText());
-		appConfig.setRepositoryPass(t3.getText());
+		appConfig.setRepositoryPass(new String(t3.getPassword()));
 	}
 	
 	/**

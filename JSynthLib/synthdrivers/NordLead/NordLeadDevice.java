@@ -2,13 +2,17 @@
 // $Id$
 package synthdrivers.NordLead;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Properties;
+import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.Set;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import core.Device;
 
 
 public class NordLeadDevice extends Device implements ItemListener {

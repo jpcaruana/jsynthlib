@@ -6,20 +6,23 @@
 */
 
 package synthdrivers.NovationNova1;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
+import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.border.*;
-import javax.swing.plaf.metal.*;
-import java.beans.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import core.ColumnLayout;
+import core.Driver;
+import core.ErrorMsg;
+import core.Patch;
+import core.SysexHandler;
 
 public class NovationNova1SingleDriver extends Driver
 {

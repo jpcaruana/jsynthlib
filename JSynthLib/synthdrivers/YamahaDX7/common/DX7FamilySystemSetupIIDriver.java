@@ -23,8 +23,10 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import javax.swing.*;
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 public class DX7FamilySystemSetupIIDriver extends Driver
 {

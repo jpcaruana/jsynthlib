@@ -2,10 +2,17 @@
 
 package synthdrivers.NordLead;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class NLGlobalDialog extends JDialog {
   String channels[];

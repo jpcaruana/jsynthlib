@@ -4,9 +4,6 @@
 
 package core;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 
 /**
  * Dialog to choose a Device and Driver to send the patch into an Edit

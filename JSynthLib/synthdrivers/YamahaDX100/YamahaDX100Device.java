@@ -6,12 +6,18 @@
 
 package synthdrivers.YamahaDX100;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Arrays;
 import java.util.Set;
-import java.util.Arrays;;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
+import core.Device;
+;
 
 /**
  *

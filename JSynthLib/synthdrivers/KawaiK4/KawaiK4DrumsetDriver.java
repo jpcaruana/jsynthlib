@@ -1,7 +1,9 @@
 package synthdrivers.KawaiK4;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.JSLFrame;
+import core.NameValue;
+import core.Patch;
+import core.SysexHandler;
 
 /**
  * Driver for Kawai K4 Drumset

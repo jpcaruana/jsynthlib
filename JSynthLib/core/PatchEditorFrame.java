@@ -1,12 +1,25 @@
 package core;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.sound.midi.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Transmitter;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 /**
  * A base class of a patch editor.
@@ -278,7 +291,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 			     int gridx, int gridy, int gridwidth, int gridheight,
 			     int slidernum) {
 	this.addWidget(parent, widget, gridx, gridy, gridwidth, gridheight,
-		       gbc.NORTHEAST, gbc.HORIZONTAL, slidernum);
+			GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, slidernum);
     }
 
     /**
@@ -294,7 +307,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 			     int gridx, int gridy, int gridwidth, int gridheight,
 			     int slidernum) {
 	this.addWidget(scrollPane, widget, gridx, gridy, gridwidth, gridheight,
-		       gbc.EAST, gbc.BOTH, slidernum);
+			GridBagConstraints.EAST, GridBagConstraints.BOTH, slidernum);
     }
 
     ////////////////////////////////////////////////////////////////////////

@@ -7,8 +7,9 @@
 //======================================================================================================================
 
 package synthdrivers.RolandXV5080;
-import java.io.*;
-import core.*;
+import core.Driver;
+import core.Patch;
+import core.SysexHandler;
 
 //======================================================================================================================
 // Class: RolandXV5080PerfDriver

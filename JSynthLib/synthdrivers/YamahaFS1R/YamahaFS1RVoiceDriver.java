@@ -1,8 +1,11 @@
 package synthdrivers.YamahaFS1R;
 
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import java.io.UnsupportedEncodingException;
+
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 /**
  *  Single driver for Yamaha FS1R voices.

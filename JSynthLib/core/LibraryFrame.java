@@ -1,13 +1,31 @@
 package core;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.TableColumn;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableColumn;
 
 /**
  * @version $Id$
@@ -397,7 +415,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
     {
 	pth.exportToClipboard(table,
 			      Toolkit.getDefaultToolkit().getSystemClipboard(),
-			      pth.COPY);
+			      PatchTransferHandler.COPY);
     }
 
     public Patch GetSelectedPatch() {

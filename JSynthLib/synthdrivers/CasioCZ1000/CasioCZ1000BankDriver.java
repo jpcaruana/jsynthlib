@@ -6,9 +6,11 @@
 */
 
 package synthdrivers.CasioCZ1000;
-import core.*;
-import java.io.*;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+
+import core.BankDriver;
+import core.ErrorMsg;
+import core.Patch;
 public class CasioCZ1000BankDriver extends BankDriver
 {
 

@@ -2,12 +2,25 @@
  * @version $Id$
  */
 package synthdrivers.BossDR660;
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import java.awt.event.*;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.ScrollBarLookupWidget;
+import core.ScrollBarWidget;
+import core.SysexSender;
+import core.SysexWidget;
 class BossDR660DrumkitEditor extends PatchEditorFrame{
  final String [] waveNameList = new String [] {
  "  0- ambient kick","  1- attack kick","  2- basket ball kick","  3- boing solid kick","  4- breater kick","  5- bright kick",

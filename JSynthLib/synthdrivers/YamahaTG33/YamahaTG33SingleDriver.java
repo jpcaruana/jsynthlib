@@ -2,9 +2,9 @@
  * @version $Id$
  */
 package synthdrivers.YamahaTG33;
-import core.*;
-
-import java.io.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.Patch;
 
 public class YamahaTG33SingleDriver extends Driver
 {

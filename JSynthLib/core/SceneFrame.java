@@ -408,7 +408,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     public void CopySelectedPatch() {
 	pth.exportToClipboard(table,
 			      Toolkit.getDefaultToolkit().getSystemClipboard(),
-			      pth.COPY);
+			      PatchTransferHandler.COPY);
     }
     public Patch GetSelectedPatch() {
 	try {

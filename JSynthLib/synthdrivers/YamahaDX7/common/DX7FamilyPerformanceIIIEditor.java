@@ -23,14 +23,17 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.lang.String.*;
-import java.text.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.GridBagLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.SysexSender;
 
 public class DX7FamilyPerformanceIIIEditor extends PatchEditorFrame 
 {

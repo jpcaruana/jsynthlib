@@ -2,8 +2,10 @@
  * @version $Id$
  */
 package synthdrivers.OberheimMatrix;
-import core.*;
-import javax.swing.*;
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 public class OberheimMatrixSingleDriver extends Driver
 {
 

@@ -1,8 +1,16 @@
 package core;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.MouseInputAdapter;
 
 /**
  * @version $Id$
@@ -84,8 +92,8 @@ public class EnvelopeWidget extends SysexWidget {
         JPanel valuePane = new JPanel();
         valuePane.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = gbc.BOTH;
-        gbc.anchor = gbc.EAST;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.EAST;
         gbc.weightx = 1;
         gbc.weighty = 1;
         gbc.insets = new Insets(ypadding, xpadding, ypadding, xpadding);

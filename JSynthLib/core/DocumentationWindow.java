@@ -1,13 +1,21 @@
 package core;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.text.html.*;
-import javax.swing.event.*;
-import java.util.*;
-import java.io.*;
-import java.net.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.net.UnknownHostException;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
 public class DocumentationWindow extends JDialog
 {
     DocumentationWindow() {

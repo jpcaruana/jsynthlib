@@ -1,7 +1,10 @@
 package synthdrivers.EnsoniqVFX;
-import core.*;
-import java.io.*;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+
+import core.BankDriver;
+import core.ErrorMsg;
+import core.Patch;
+import core.SysexHandler;
 
 /**
  *  Bank driver for Ensoniq VFX

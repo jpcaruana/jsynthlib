@@ -2,12 +2,25 @@
  * @version $Id$
  */
 package synthdrivers.KawaiK4;
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import java.awt.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.ScrollBarLookupWidget;
+import core.ScrollBarWidget;
+import core.SysexSender;
+import core.SysexWidget;
 
 class KawaiK4DrumsetEditor extends PatchEditorFrame {
     static final String[] NOTE_NAME = new String[] {
@@ -191,14 +204,14 @@ class KawaiK4DrumsetEditor extends PatchEditorFrame {
 
 	cmnPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
 					   "Common", TitledBorder.CENTER, TitledBorder.CENTER));
-        gbc.gridx = gbc.REMAINDER; gbc.gridy = 0;
-	gbc.gridwidth = gbc.REMAINDER; gbc.gridheight = 1;
+        gbc.gridx = GridBagConstraints.REMAINDER; gbc.gridy = 0;
+	gbc.gridwidth = GridBagConstraints.REMAINDER; gbc.gridheight = 1;
 	gbc.fill = GridBagConstraints.BOTH;
 	gbc.anchor = GridBagConstraints.EAST;
         scrollPane.add(cmnPane, gbc);
 
         //gbc.gridx = gbc.REMAINDER;
-        gbc.gridy = gbc.RELATIVE;
+        gbc.gridy = GridBagConstraints.RELATIVE;
 
 	//gbc.gridwidth=gbc.REMAINDER;gbc.gridheight=1;
 	//gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.EAST;

@@ -3,8 +3,12 @@
 
 package synthdrivers.SCIProphet600;
 
-import core.*;
-import javax.swing.*;
+import core.BankDriver;
+import core.ErrorMsg;
+import core.NameValue;
+import core.Patch;
+import core.PatchEdit;
+import core.SysexHandler;
 
 public class P600ProgBankDriver extends BankDriver {
   static final int PATCH_NUM_OFFSET = 3;

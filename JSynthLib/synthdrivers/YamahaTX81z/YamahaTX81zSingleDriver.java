@@ -2,8 +2,10 @@
  * @version $Id$
  */
 package synthdrivers.YamahaTX81z;
-import core.*;
-import javax.swing.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.Patch;
 public class YamahaTX81zSingleDriver extends Driver
 {
 

@@ -22,10 +22,10 @@
  *
  */
 package synthdrivers.YamahaTX802;
-import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import	synthdrivers.YamahaDX7.common.DX7FamilyFractionalScalingSingleDriver;
-import core.*;
-import javax.swing.*;
+import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import synthdrivers.YamahaDX7.common.DX7FamilyFractionalScalingSingleDriver;
+import core.JSLFrame;
+import core.Patch;
 
 public class YamahaTX802FractionalScalingSingleDriver extends DX7FamilyFractionalScalingSingleDriver
 {

@@ -1,20 +1,22 @@
 package core;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
 import javax.swing.table.TableColumn;
-import javax.sound.midi.MidiDevice;
 ////TODO import org.jsynthlib.midi.*;
 
 public class SynthConfigDialog extends JDialog {
@@ -89,7 +91,7 @@ public class SynthConfigDialog extends JDialog {
 	// they *think* they saw a button once, and not find it... leading to general
 	// confusion regarding the interface. - emenaker 2003.03.13
 	buttonPanel.add (scan);
-	scan.setEnabled(PatchEdit.MidiOut.supportsScanning());
+	scan.setEnabled(MidiWrapper.supportsScanning());
         // END OF ADDED BUTTON
 
         JButton add = new JButton ("Add Device");

@@ -1,8 +1,10 @@
 package core;
-import java.io.*;
-import java.util.*;
-import javax.sound.midi.SysexMessage;
+import java.util.Enumeration;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.SysexMessage;
 
 /**
  * A class for efficient and convenient processing of sysex messages

@@ -23,16 +23,19 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.lang.String.*;
-import java.text.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import core.ParamModel;
+import core.Patch;
+import core.PatchEdit;
+import core.PatchEditorFrame;
+import core.SpinnerWidget;
+import core.SysexSender;
 
 public class DX7FamilyFractionalScalingEditor extends PatchEditorFrame 
 {
@@ -118,11 +121,11 @@ public class DX7FamilyFractionalScalingEditor extends PatchEditorFrame
 		microPane.setLayout(new GridBagLayout());gbc.weightx=1;
 
 		for (OpNum = 0 ; OpNum < OpName.length ; OpNum++) {
-			gbc.gridx=6+3*OpNum;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+			gbc.gridx=6+3*OpNum;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.CENTER;
 			microPane.add(new JLabel(OpName[OpNum],SwingConstants.LEFT),gbc);
 
 			for (KeyNum = 0; KeyNum < KeyGrpName.length ; KeyNum++) {
-				gbc.gridx=0;gbc.gridy=10+2*KeyNum;gbc.gridwidth=6;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+				gbc.gridx=0;gbc.gridy=10+2*KeyNum;gbc.gridwidth=6;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.CENTER;
 				microPane.add(new JLabel(KeyGrpName[KeyNum],SwingConstants.LEFT),gbc);
 
 				if ( (KeyNum+OpNum*KeyGrpName.length)%41==0) {

@@ -22,13 +22,7 @@
  *
  */
 package synthdrivers.YamahaDX7;
-import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Set;
-import java.util.Arrays;
+import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 
 public class YamahaDX7Device extends DX7FamilyDevice
 {

@@ -4,9 +4,6 @@
 
 package core;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 
 /**
  * If more than two devices are loaded which supports the given patch,

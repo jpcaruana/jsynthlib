@@ -6,9 +6,10 @@
  */
 
 package synthdrivers.KorgER1;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.Patch;
+import core.SysexHandler;
 
 public class KorgER1SingleDriver extends Driver
 {

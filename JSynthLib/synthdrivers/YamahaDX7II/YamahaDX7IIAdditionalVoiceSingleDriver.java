@@ -22,10 +22,10 @@
  *
  */
 package synthdrivers.YamahaDX7II;
-import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import	synthdrivers.YamahaDX7.common.DX7FamilyAdditionalVoiceSingleDriver;
-import core.*;
-import javax.swing.*;
+import synthdrivers.YamahaDX7.common.DX7FamilyAdditionalVoiceSingleDriver;
+import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import core.JSLFrame;
+import core.Patch;
 
 public class YamahaDX7IIAdditionalVoiceSingleDriver extends DX7FamilyAdditionalVoiceSingleDriver
 {

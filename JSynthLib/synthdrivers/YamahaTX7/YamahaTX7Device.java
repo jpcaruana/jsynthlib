@@ -23,12 +23,6 @@
  */
 package synthdrivers.YamahaTX7;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Set;
-import java.util.Arrays;
 
 public class YamahaTX7Device extends DX7FamilyDevice
 {

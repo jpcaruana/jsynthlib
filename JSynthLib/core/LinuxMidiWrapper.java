@@ -5,10 +5,22 @@
  */
 package core; //TODO org.jsynthlib.midi;
 
-import java.io.*;
-import javax.swing.*;
-import java.util.*;
-import javax.sound.midi.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.LineNumberReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 
 public class LinuxMidiWrapper extends MidiWrapper {
 	private int faderInPort;

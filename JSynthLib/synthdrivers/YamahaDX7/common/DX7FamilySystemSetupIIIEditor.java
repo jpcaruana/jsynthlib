@@ -23,14 +23,27 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.lang.String.*;
-import java.text.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.text.DecimalFormat;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEdit;
+import core.PatchEditorFrame;
+import core.ScrollBarWidget;
+import core.SpinnerWidget;
+import core.SysexSender;
 
 public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame 
 {
@@ -177,7 +190,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 			if (i%8==0) j++;
 
 			gbc.gridx=4*(i%8);gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1; perfPane.add(new JLabel(" "),gbc);
-			gbc.gridx=4*(i%8)+1;gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.EAST;
+			gbc.gridx=4*(i%8)+1;gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.EAST;
 			perfPane.add(new JLabel(Integer.toString(i),SwingConstants.RIGHT),gbc);
 
 			addWidget(perfPane,new SpinnerWidget("",patch,0,127,0,new ParamModel(patch,16+136+i-ofs),null),4*(i%8)+2,3+j,1,1,150+i);

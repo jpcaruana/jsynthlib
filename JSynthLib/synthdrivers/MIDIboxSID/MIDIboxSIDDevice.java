@@ -25,15 +25,20 @@
  */
 
 package synthdrivers.MIDIboxSID;
-import core.*;
-import javax.swing.*;
-import java.util.*;
-import java.awt.*;
-import java.lang.Integer.*;
-import java.awt.event.*;
-import javax.sound.midi.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import synthdrivers.MIDIboxSID.MIDIboxSIDSlowSender;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.SysexMessage;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import core.Device;
+import core.ErrorMsg;
 
 public class MIDIboxSIDDevice extends Device
 {
@@ -78,7 +83,7 @@ public class MIDIboxSIDDevice extends Device
 	panel.setLayout(gridbag);
 	c.anchor = GridBagConstraints.WEST;
 
-	c.gridx=0;c.gridy=0;c.gridwidth=9;c.gridheight=1;c.weightx=1;c.anchor=c.WEST;c.fill=c.HORIZONTAL;
+	c.gridx=0;c.gridy=0;c.gridwidth=9;c.gridheight=1;c.weightx=1;c.anchor=GridBagConstraints.WEST;c.fill=GridBagConstraints.HORIZONTAL;
 	panel.add(new JLabel("                                                  "),c);
 
 	c.gridx=0;c.gridy=1;c.gridwidth=3;c.gridheight=2;

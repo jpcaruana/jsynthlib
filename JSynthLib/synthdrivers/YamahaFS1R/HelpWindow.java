@@ -1,14 +1,14 @@
 package synthdrivers.YamahaFS1R;
 
-import core.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.util.*;
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.net.URL;
+
+import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.text.Document;
+
+import core.JSLFrame;
 
 
 class HelpWindow extends JSLFrame

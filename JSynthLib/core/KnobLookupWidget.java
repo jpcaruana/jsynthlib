@@ -1,8 +1,7 @@
 package core;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ChangeEvent;
+
 import com.dreamfabric.DKnob;
 
 /**

@@ -158,7 +158,7 @@ class AlesisDMProDrumKitEditor extends PatchEditorFrame
         {
             public void itemStateChanged (ItemEvent e)
             {
-                if (e.getStateChange ()==e.SELECTED)
+                if (e.getStateChange ()==ItemEvent.SELECTED)
                 {
                     JComboBox cbo = (JComboBox) e.getSource();
 			  updateDrumNames (cbo);

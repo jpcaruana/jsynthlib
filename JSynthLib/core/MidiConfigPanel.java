@@ -1,12 +1,20 @@
 
 package core; //TODO org.jsynthlib.midi;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.lang.reflect.*;
-import javax.sound.midi.MidiUnavailableException;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 //import core.*;
 
 /**
@@ -57,7 +65,7 @@ public class MidiConfigPanel extends ConfigPanel {
 	    cbDriver=new JComboBox ();
 	    add (cbDriver);
 	    // Fill the combo box with all Midi wrappers in the midiimps vector
-	    Vector midiImps = appConfig.midiWrappers;
+	    Vector midiImps = AppConfig.midiWrappers;
 	    for(int i=0; i<midiImps.size(); i++) {
 		cbDriver.addItem(midiImps.elementAt(i));
 	    }
@@ -80,9 +88,9 @@ public class MidiConfigPanel extends ConfigPanel {
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints gbc = new GridBagConstraints();
 	cbPanel = new JPanel(gridbag);
-	gbc.fill=gbc.HORIZONTAL;
+	gbc.fill=GridBagConstraints.HORIZONTAL;
 	gbc.ipadx=1;
-	gbc.anchor=gbc.WEST;
+	gbc.anchor=GridBagConstraints.WEST;
 
 
 	// make a space
@@ -104,7 +112,7 @@ public class MidiConfigPanel extends ConfigPanel {
 	    cbOut = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
 	else
 	    cbOut = new JComboBox();
-	gbc.gridx=1; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	gbc.gridx=1; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=GridBagConstraints.REMAINDER;
 	gridbag.setConstraints(cbOut, gbc);
         cbPanel.add (cbOut);
 
@@ -116,12 +124,12 @@ public class MidiConfigPanel extends ConfigPanel {
 	    cbIn = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
 	else
 	    cbIn = new JComboBox();
-	gbc.gridx=1; gbc.gridy=5; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	gbc.gridx=1; gbc.gridy=5; gbc.gridheight=1; gbc.gridwidth=GridBagConstraints.REMAINDER;
 	gridbag.setConstraints(cbIn, gbc);
         cbPanel.add (cbIn);
 
 	// MIDI loopback test
-	gbc.gridx=1; gbc.gridy=6; gbc.gridheight=1; gbc.gridwidth=1;gbc.fill=gbc.NONE;
+	gbc.gridx=1; gbc.gridy=6; gbc.gridheight=1; gbc.gridwidth=1;gbc.fill=GridBagConstraints.NONE;
         JButton testButton = new JButton("MIDI Loopback Test...");
 	testButton.addActionListener (new ActionListener () {
 		public void actionPerformed (ActionEvent e) {
@@ -134,12 +142,12 @@ public class MidiConfigPanel extends ConfigPanel {
 	cbPanel.add(testButton);
 
 	// make a space
-	gbc.gridx=0; gbc.gridy=7; gbc.gridheight=1; gbc.gridwidth=1; gbc.fill=gbc.HORIZONTAL;
+	gbc.gridx=0; gbc.gridy=7; gbc.gridheight=1; gbc.gridwidth=1; gbc.fill=GridBagConstraints.HORIZONTAL;
 	JLabel l0=new JLabel (" ");
 	gridbag.setConstraints(l0, gbc);
         cbPanel.add (l0);
 	// master controller selection
-	gbc.gridx=0; gbc.gridy=8; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER; // gbc.gridwidth=3;
+	gbc.gridx=0; gbc.gridy=8; gbc.gridheight=1; gbc.gridwidth=GridBagConstraints.REMAINDER; // gbc.gridwidth=3;
 	JLabel l1=new JLabel ("Receive from Master Controller on MIDI Port:");
 	gridbag.setConstraints(l1, gbc);
         cbPanel.add (l1);
@@ -153,7 +161,7 @@ public class MidiConfigPanel extends ConfigPanel {
 		}
 	    });
 
-	gbc.gridx=1; gbc.gridy=10; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	gbc.gridx=1; gbc.gridy=10; gbc.gridheight=1; gbc.gridwidth=GridBagConstraints.REMAINDER;
 	if (PatchEdit.newMidiAPI)
 	    cbMC = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
 	else
@@ -255,7 +263,7 @@ public class MidiConfigPanel extends ConfigPanel {
      * ports available from the current MIDI driver - emenaker 2003.03.19
      */
     private void resetPortComboBoxes() { // only for old MIDI layer
-	MidiWrapper currentDriver = appConfig.getMidiWrapper();
+	MidiWrapper currentDriver = AppConfig.getMidiWrapper();
 	cbOut.removeAllItems ();
 	cbIn.removeAllItems ();
 	cbMC.removeAllItems ();

@@ -1,7 +1,9 @@
 package synthdrivers.KorgX3;
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 /**
  * This class is a single driver for Korg X3 -synthesizer to be used in

@@ -2,8 +2,10 @@
  * @version $Id$
  */
 package synthdrivers.YamahaDX100;
-import core.*;
-import javax.swing.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.Patch;
 public class YamahaDX100SingleDriver extends Driver
 {
 

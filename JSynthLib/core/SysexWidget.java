@@ -1,8 +1,8 @@
 package core;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 import java.awt.Insets;
-import java.awt.event.InputEvent;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * Base class of SysexWidgets.

@@ -1,9 +1,15 @@
 package synthdrivers.YamahaFS1R;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
+import javax.swing.Box;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.SpinnerWidget;
+import core.SysexSender;
  
 /**
 	Editor for system parameters. There are lots of parameters still to add,

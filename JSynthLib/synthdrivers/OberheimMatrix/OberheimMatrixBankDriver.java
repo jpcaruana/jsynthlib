@@ -2,8 +2,9 @@
  * @version $Id$
  */
 package synthdrivers.OberheimMatrix;
-import core.*;
-import javax.swing.*;
+import core.BankDriver;
+import core.ErrorMsg;
+import core.Patch;
 public class OberheimMatrixBankDriver extends BankDriver
 {
 

@@ -20,13 +20,30 @@
  */
 
 package synthdrivers.RolandTD6;
-import core.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.ErrorMsg;
+import core.KnobLookupWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.ScrollBarLookupWidget;
+import core.ScrollBarWidget;
+import core.SysexWidget;
+import core.TreeWidget;
+import core.VertScrollBarWidget;
 
 /**
  * Single Patch Editor for Roland TD-6 Percussion Module.

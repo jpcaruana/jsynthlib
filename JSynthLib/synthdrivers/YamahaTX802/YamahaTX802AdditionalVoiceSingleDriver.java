@@ -22,10 +22,10 @@
  *
  */
 package synthdrivers.YamahaTX802;
-import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import	synthdrivers.YamahaDX7.common.DX7FamilyAdditionalVoiceSingleDriver;
-import core.*;
-import javax.swing.*;
+import synthdrivers.YamahaDX7.common.DX7FamilyAdditionalVoiceSingleDriver;
+import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import core.JSLFrame;
+import core.Patch;
 
 public class YamahaTX802AdditionalVoiceSingleDriver extends DX7FamilyAdditionalVoiceSingleDriver
 {

@@ -3,8 +3,9 @@
 
 package synthdrivers.RolandMKS50;
 
-import core.*;
-import javax.swing.*;
+import core.BankDriver;
+import core.ErrorMsg;
+import core.Patch;
 
 public class MKS50PatchBankDriver extends BankDriver
 {

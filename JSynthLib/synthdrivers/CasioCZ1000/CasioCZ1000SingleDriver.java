@@ -6,20 +6,9 @@
 */
 
 package synthdrivers.CasioCZ1000;
-import core.*;
-import javax.swing.*;
-import java.io.*;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
-import javax.swing.JDialog;
-import javax.swing.border.*;
-import javax.swing.plaf.metal.*;
-import java.beans.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.Patch;
 
 // Note : on the casio, if you initiate a dump (from the PC or the Casio itself), you will get a patch
 // of 263 bytes. you CAN'T send that patch back to the Casio... The patch must be 264 bytes long. 

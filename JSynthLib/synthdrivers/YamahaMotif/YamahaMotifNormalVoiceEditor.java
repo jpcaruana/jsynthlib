@@ -1,16 +1,38 @@
 package synthdrivers.YamahaMotif;
-import core.*;
-import javax.swing.*;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListDataEvent;
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
+import core.ComboBoxWidget;
+import core.EnvelopeNode;
+import core.EnvelopeWidget;
+import core.ErrorMsg;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.ScrollBarLookupWidget;
+import core.ScrollBarWidget;
+import core.SysexSender;
+import core.SysexWidget;
+import core.VertScrollBarWidget;
 
 public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
   int slidercount = 0;
@@ -23,7 +45,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     //tabs.addTab("Effects", new EffectsPanel());
     for (int i = 0; i < 4; i++)
       tabs.addTab((i==0?"Element ":"") + (i+1), new ElementPanel(i));
-    gbc.fill = gbc.BOTH;
+    gbc.fill = GridBagConstraints.BOTH;
     gbc.weightx = gbc.weighty = 10;
     scrollPane.add(tabs, gbc);
   }
@@ -156,7 +178,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       widget.setSliderNum(slidernum);
       //      widget.setBorder(BorderFactory.createLineBorder(Color.red));
       if (alignleft)
-	widget.setAlignmentX(widget.LEFT_ALIGNMENT);
+	widget.setAlignmentX(Component.LEFT_ALIGNMENT);
       widget.setMaximumSize(widget.getPreferredSize());
 	 setPreferredSize(getMinimumSize());
 
@@ -403,7 +425,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       ControlPanel arp = new ControlPanel("Arpeggio");
       //      arp.setLayout(new BoxLayout(arp, BoxLayout.X_AXIS));
       Container c;
-      arp.setAlignmentX(arp.LEFT_ALIGNMENT);
+      arp.setAlignmentX(Component.LEFT_ALIGNMENT);
       add(arp);
       addFiller(this, 0, 5);
 
@@ -458,7 +480,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 
 
       arp = new ControlPanel("LFO");
-      arp.setAlignmentX(arp.LEFT_ALIGNMENT);
+      arp.setAlignmentX(Component.LEFT_ALIGNMENT);
       add(arp);
       EnvelopeWidget w = 
 	new EnvelopeWidget("Envelope", p,

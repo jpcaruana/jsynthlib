@@ -20,12 +20,30 @@
  
 package synthdrivers.WaldorfPulse;
 
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import java.awt.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.EnvelopeNode;
+import core.EnvelopeWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.ScrollBarLookupWidget;
+import core.ScrollBarWidget;
+import core.SysexSender;
+import core.SysexWidget;
 
 class WaldorfPulseSingleEditor extends PatchEditorFrame
 {
@@ -142,7 +160,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           2, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 addWidget(osc1Pane,
                           new ScrollBarWidget("Pulse Width",
                                               patch,
@@ -211,7 +229,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           2, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 addWidget(osc2Pane,
                           new ScrollBarWidget("Pulse Width",
                                               patch,
@@ -297,7 +315,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           2, // grid y
                           3, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 osc3Pane.setBorder(
                     new TitledBorder(
                         new EtchedBorder(EtchedBorder.RAISED),
@@ -374,7 +392,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           4, // grid y
                           3, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 addWidget(filterPane,
                           new ScrollBarWidget("Cutoff Mod Amount",
                                               patch,
@@ -428,7 +446,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           0, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 addWidget(arpPane,
                           new ComboBoxWidget("Mode",
                                               patch,
@@ -446,7 +464,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           0, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 addWidget(arpPane,
                           new ComboBoxWidget("Range",
                                               patch,
@@ -459,7 +477,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           0, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 String clockStr [] = new String[32];
                 clockStr[0] = "1";
                 for (int i = 0; i < 5; i++)
@@ -599,7 +617,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           2, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 envPane.setBorder(
                     new TitledBorder(
                         new EtchedBorder(EtchedBorder.RAISED),
@@ -668,7 +686,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           id++);
 
                 gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 1;
-                gbc.anchor = gbc.WEST; gbc.fill = gbc.HORIZONTAL;
+                gbc.anchor = GridBagConstraints.WEST; gbc.fill = GridBagConstraints.HORIZONTAL;
                 gbc.weightx = 0;
 
                 mixPane.add(new JLabel(plus), gbc);
@@ -800,7 +818,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                     1, // grid y
                     1, // grid width
                     1, // grid height
-                    gbc.WEST, gbc.NONE, id++);
+                    GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
 
                 portaPane.setBorder(
                     new TitledBorder(
@@ -898,7 +916,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           1, // grid y
                           2, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 lfo1Pane.setBorder(
                     new TitledBorder(
                         new EtchedBorder(EtchedBorder.RAISED),
@@ -969,7 +987,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           0, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 addWidget(pitchModPane,
                           new ScrollBarWidget("Amount",
                                               patch,
@@ -1022,7 +1040,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           0, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 addWidget(modPane,
                           new ComboBoxWidget("Destination",
                                               patch,
@@ -1033,7 +1051,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           0, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
                 addWidget(modPane,
                           new ScrollBarWidget("Amount",
                                               patch,
@@ -1063,7 +1081,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                 cv2Pane.setLayout(new GridBagLayout());
 
                 gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 1;
-                gbc.anchor = gbc.WEST; gbc.fill = gbc.HORIZONTAL;
+                gbc.anchor = GridBagConstraints.WEST; gbc.fill = GridBagConstraints.HORIZONTAL;
                 gbc.weightx = 0;
                 cv2Pane.add(new JLabel(plus), gbc);
 
@@ -1081,7 +1099,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                           0, // grid y
                           1, // grid width
                           1, // grid height
-                          gbc.WEST, gbc.NONE, id++);
+                          GridBagConstraints.WEST, GridBagConstraints.NONE, id++);
 
                 addWidget(cv2Pane,
                           new ScrollBarWidget("Amount",

@@ -23,14 +23,27 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.lang.String.*;
-import java.text.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.text.DecimalFormat;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEdit;
+import core.PatchEditorFrame;
+import core.ScrollBarWidget;
+import core.SpinnerWidget;
+import core.SysexSender;
 
 public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame 
 {
@@ -103,7 +116,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 		systemPane.setPreferredSize(new Dimension(800,400));
 
 		JPanel cmnPane = new JPanel();
-		cmnPane.setLayout(new GridBagLayout());gbc.weightx=1;gbc.anchor=gbc.EAST;
+		cmnPane.setLayout(new GridBagLayout());gbc.weightx=1;gbc.anchor=GridBagConstraints.EAST;
 		JScrollPane cmnScrollPane = new JScrollPane(cmnPane);
 		systemPane.addTab("System Setup",cmnScrollPane);
 
@@ -119,7 +132,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; cmnPane.add(new JLabel(" "),gbc);
 		addWidget(cmnPane,MasterTune,0,1,8,1,1);
 		addWidget(cmnPane,new ComboBoxWidget("Memory Protection (*)",patch,new ParamModel(patch,16+19),new SystemSetupSender(83),MemProtName),0,2,4,1,2);
-		gbc.gridx=4;gbc.gridy=2;gbc.gridwidth=4;gbc.gridheight=1;gbc.anchor=gbc.CENTER; cmnPane.add(new JLabel("Internal - Cartridge"),gbc);
+		gbc.gridx=4;gbc.gridy=2;gbc.gridwidth=4;gbc.gridheight=1;gbc.anchor=GridBagConstraints.CENTER; cmnPane.add(new JLabel("Internal - Cartridge"),gbc);
 		gbc.gridx=0;gbc.gridy=3;gbc.gridwidth=8;gbc.gridheight=1; cmnPane.add(new JLabel("(*) be not included in bulk data (only parameter change)"),gbc);
 
 
@@ -172,9 +185,9 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 
 		systemPane.addTab("Program Change Transmission Table",perfPane);
 
-		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=gbc.BOTH;
+		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;
 		perfPane.add(new JLabel("If you set the Program Change Transmission Mode to Memory, this Table determines which"),gbc);
-		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=gbc.BOTH;
+		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;
 		perfPane.add(new JLabel("program change number will be transmitted via MIDI."),gbc);
 
 		gbc.gridx=0;gbc.gridy=3;gbc.gridwidth=1;gbc.gridheight=1; perfPane.add(new JLabel(" "),gbc);
@@ -183,7 +196,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 			if (i%8==0) j++;
 
 			gbc.gridx=4*(i%8);gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1; perfPane.add(new JLabel(" "),gbc);
-			gbc.gridx=4*(i%8)+1;gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.EAST;
+			gbc.gridx=4*(i%8)+1;gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.EAST;
 			perfPane.add(new JLabel(Integer.toString(i),SwingConstants.RIGHT),gbc);
 
 			addWidget(perfPane,new SpinnerWidget("",patch,0,127,0,new ParamModel(patch,16+21+i),null)    ,4*(i%8)+2, 3+j,1,1,150+i	);
@@ -192,7 +205,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 		}
 		gbc.gridx=0;gbc.gridy=13;gbc.gridwidth=1;gbc.gridheight=1;
 		perfPane.add(new JLabel(" "),gbc);
-		gbc.gridx=0;gbc.gridy=14;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=gbc.BOTH;
+		gbc.gridx=0;gbc.gridy=14;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=GridBagConstraints.BOTH;
 		perfPane.add(new JLabel("be included in bulk data only (does not have parameter change code)"),gbc);
 
 		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;

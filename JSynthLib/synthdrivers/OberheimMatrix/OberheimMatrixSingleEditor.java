@@ -254,7 +254,7 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   Mod1TableModel mod1TableModel=new Mod1TableModel();
   JTable mod1Table = new JTable(mod1TableModel);
   JScrollPane mod1FramePane=new JScrollPane(mod1Table);
-  gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=10;gbc.gridheight=6;gbc.fill=gbc.BOTH;gbc.anchor=gbc.NORTH;
+  gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=10;gbc.gridheight=6;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.NORTH;
   mod1FramePane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Hard Wired Fixed Modulations",TitledBorder.CENTER,TitledBorder.CENTER));
   modPanel.add(mod1FramePane,gbc);
    mod1Table.setPreferredScrollableViewportSize(new Dimension(450, 180));
@@ -287,7 +287,7 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   Mod2TableModel mod2TableModel=new Mod2TableModel();
   JTable mod2Table = new JTable(mod2TableModel);
   JScrollPane mod2FramePane=new JScrollPane(mod2Table);
-  gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=10;gbc.gridheight=10;gbc.fill=gbc.BOTH;gbc.anchor=gbc.NORTH;
+  gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=10;gbc.gridheight=10;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.NORTH;
   mod2FramePane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Hardwired Adjustable Modulations",TitledBorder.CENTER,TitledBorder.CENTER));
   modPanel.add(mod2FramePane,gbc);
   mod2Table.setRowHeight(20);
@@ -310,7 +310,7 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
        table2Slider[15] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,101),new SliderSender(32));
        table2Slider[16] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,102),new SliderSender(81));
        table2Slider[17] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,103),new SliderSender(91));
-       gbc.gridx=0;gbc.fill=gbc.NONE;
+       gbc.gridx=0;gbc.fill=GridBagConstraints.NONE;
        for (int i=0;i<18;i++)
          {sliderList.add(table2Slider[i].slider);
           modPanel.add(table2Slider[i],gbc);    //work around for Java Swing Bug
@@ -332,7 +332,7 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   Mod3TableModel mod3TableModel=new Mod3TableModel();
   mod3Table = new JTable(mod3TableModel);
   JScrollPane mod3FramePane=new JScrollPane(mod3Table);
-  gbc.gridx=00;gbc.gridy=06;gbc.gridwidth=10;gbc.gridheight=6;gbc.fill=gbc.BOTH;gbc.anchor=gbc.NORTH;
+  gbc.gridx=00;gbc.gridy=06;gbc.gridwidth=10;gbc.gridheight=6;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.NORTH;
   mod3FramePane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"User Defined Modulations",TitledBorder.CENTER,TitledBorder.CENTER));
   modPanel.add(mod3FramePane,gbc);
   mod3Table.setRowHeight(26);
@@ -370,7 +370,7 @@ MtxModel(patch,104),new ModSender(patch,0),source);
        table3Slider[8] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,129),new ModSender(patch,8));
        table3Slider[9] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,132),new ModSender(patch,9));
 
-       gbc.gridx=0;gbc.gridy=0;gbc.fill=gbc.NONE;
+       gbc.gridx=0;gbc.gridy=0;gbc.fill=GridBagConstraints.NONE;
        for (int i=0;i<10;i++)
          {sliderList.add(table3Slider[i].slider);
           modPanel.add(table3Slider[i],gbc);    //work around for Java Swing Bug
@@ -404,7 +404,7 @@ MtxModel(patch,104),new ModSender(patch,0),source);
       			   ),11,10,8,1,1);
 
 
- gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=6;gbc.gridheight=5;gbc.fill=gbc.BOTH;
+ gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=6;gbc.gridheight=5;gbc.fill=GridBagConstraints.BOTH;
   scrollPane.add(tabPane,gbc);
    pack();
    if (AppConfig.getOSName().equals("Linux")) // Does J2SE 1.4 still require this?

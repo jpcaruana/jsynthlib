@@ -1,14 +1,30 @@
 package synthdrivers.YamahaFS1R;
 
-import core.*;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.io.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+
+import core.ComboBoxWidget;
+import core.JSLDesktop;
+import core.JSLFrame;
+import core.KnobWidget;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.SpinnerWidget;
  
 /**
 	Editor for Formant sequence.  
@@ -67,7 +83,7 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		oGraphButton.addActionListener(new ActionListener() {
                     public void actionPerformed (ActionEvent e) {
                         JSLFrame oWin = new FSeqGraphWindow();
-						getDesktopPane().add(oWin);
+						JSLDesktop.add(oWin);
                         oWin.setVisible(true);
 						oWin.moveToFront();
                     }}

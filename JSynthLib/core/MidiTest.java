@@ -1,8 +1,11 @@
 package core; //TODO org.jsynthlib.midi;
 
-import javax.sound.midi.*;
-import java.util.*;
-import javax.swing.*;
+import java.util.Vector;
+
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 // import core.ErrorMsg;
 
 /**

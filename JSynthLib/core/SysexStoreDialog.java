@@ -4,10 +4,6 @@
 
 package core;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
 /**
  * Dialog to choose the Device, Driver, BankNumber and PatchNumber of
  * the location, where a Patch should be stored.  More than one of

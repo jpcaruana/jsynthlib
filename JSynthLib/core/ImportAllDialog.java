@@ -1,24 +1,25 @@
 package core;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Comparator;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.JLabel;
 import javax.swing.table.TableColumn;
 
-import javax.swing.JScrollPane;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
-import javax.swing.JDialog;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.plaf.metal.*;
-
-import java.beans.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
 public class ImportAllDialog extends JDialog
 {
     public ImportModel myModel;

@@ -20,10 +20,14 @@
  
 package synthdrivers.WaldorfPulse;
 
-import core.*;
-import java.text.*;
-import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.text.NumberFormat;
+
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 public class WaldorfPulseSingleDriver extends Driver
 {

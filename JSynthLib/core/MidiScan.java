@@ -4,11 +4,9 @@
  */
 package core; //TODO org.jsynthlib.midi;
 
-import javax.sound.midi.*;
-import java.util.Vector;
-import java.util.*;
-import javax.swing.table.AbstractTableModel;
-import core.*;
+import java.util.Enumeration;
+
+import javax.sound.midi.SysexMessage;
 /**
  *
  * @author Gerrit Gehnen

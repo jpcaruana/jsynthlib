@@ -144,9 +144,9 @@ public class DKnob extends JComponent {
 		public void keyReleased(KeyEvent e) {}
 		public void keyPressed(KeyEvent e) {
 		    int k = e.getKeyCode();
-		    if (k == e.VK_RIGHT)
+		    if (k == KeyEvent.VK_RIGHT)
 			incValue();
-		    else if (k == e.VK_LEFT)
+		    else if (k == KeyEvent.VK_LEFT)
 			decValue();
 		}
 	    });

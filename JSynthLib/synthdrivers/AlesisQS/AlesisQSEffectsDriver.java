@@ -1,8 +1,10 @@
 package synthdrivers.AlesisQS;
 
-import core.*;
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.ErrorMsg;
+import core.NameValue;
+import core.Patch;
+import core.SysexHandler;
 
 /**
  * AlesisQSEffectsDriver.java

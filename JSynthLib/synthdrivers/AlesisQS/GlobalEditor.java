@@ -1,9 +1,12 @@
 package synthdrivers.AlesisQS;
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.GridBagLayout;
+
+import javax.swing.JPanel;
+
+import core.ComboBoxWidget;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.ScrollBarWidget;
 
 /**
  * Editor for AlesisQS global parameters.

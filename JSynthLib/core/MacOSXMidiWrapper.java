@@ -1,17 +1,31 @@
 package core;
 
-import java.io.*;
-import javax.swing.*;
-import java.util.*;
-import javax.sound.midi.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
-import com.apple.component.*;
-import com.apple.audio.midi.*;
-import com.apple.audio.hardware.*;
-import com.apple.audio.toolbox.*;
-import com.apple.audio.units.*;
-import com.apple.audio.util.*;
-import com.apple.audio.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
+
+import com.apple.audio.midi.MIDIClient;
+import com.apple.audio.midi.MIDICompletionProc;
+import com.apple.audio.midi.MIDIConstants;
+import com.apple.audio.midi.MIDIDevice;
+import com.apple.audio.midi.MIDIEndpoint;
+import com.apple.audio.midi.MIDIEntity;
+import com.apple.audio.midi.MIDIInputPort;
+import com.apple.audio.midi.MIDIOutputPort;
+import com.apple.audio.midi.MIDIPacket;
+import com.apple.audio.midi.MIDIPacketList;
+import com.apple.audio.midi.MIDIReadProc;
+import com.apple.audio.midi.MIDISetup;
+import com.apple.audio.midi.MIDISysexSendRequest;
+import com.apple.audio.util.CAFString;
+import com.apple.audio.util.MIDIData;
 
 /**
  * Midi wrapper for MacOS X.2

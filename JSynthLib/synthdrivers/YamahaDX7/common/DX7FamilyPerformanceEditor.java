@@ -23,14 +23,22 @@
  *
  */
 package synthdrivers.YamahaDX7.common;
-import core.*;
-import java.lang.String.*;
-import java.text.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.ComboBoxWidget;
+import core.ParamModel;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.ScrollBarWidget;
+import core.SysexSender;
 
 public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 {
@@ -142,7 +150,7 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 		addWidget(cmnPane,new ComboBoxWidget("Key Assign Mode",patch,new ParamModel(patch,6+60),new PerformanceSender(patch,30),KeyAssignName),0,1,3,1,4);
 		addWidget(cmnPane,new ComboBoxWidget("Voice Memory Select Flag",patch,new ParamModel(patch,6+61),new PerformanceSender(patch,31),VoiceSelectName),3,1,3,1,2);
 		addWidget(cmnPane,new ComboBoxWidget("Corresponding Voice?",patch,new ParamModel(patch,6+0),null,VoiceNumberName),0,2,3,1,3);
-		gbc.gridx=3;gbc.gridy=2;gbc.gridwidth=6;gbc.gridheight=1;gbc.anchor=gbc.EAST;
+		gbc.gridx=3;gbc.gridy=2;gbc.gridwidth=6;gbc.gridheight=1;gbc.anchor=GridBagConstraints.EAST;
 		//cmnPane.add(new JLabel("(Attention! This is an undocumented parameter and only valid for a single patch!)"),gbc);
 		cmnPane.add(new JLabel("(Attention! This is an undocumented parameter!)					   "),gbc);
 

@@ -1,15 +1,24 @@
 /* $Id$ */
 package core;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.TransferHandler;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.event.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
-import java.awt.dnd.*;
-import java.awt.datatransfer.*;
 
 public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
@@ -202,7 +211,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     public void CopySelectedPatch() {
 	pth.exportToClipboard(table,
 			      Toolkit.getDefaultToolkit().getSystemClipboard(),
-			      pth.COPY);
+			      TransferHandler.COPY);
     }
     public Patch GetSelectedPatch() {
 	return getSelectedPatch();

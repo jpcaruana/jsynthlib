@@ -25,10 +25,10 @@
  */
 
 package synthdrivers.MIDIboxSID;
-import core.*;
-import javax.swing.*;
-import java.io.*;
-import java.awt.event.*;
+import core.Driver;
+import core.JSLFrame;
+import core.Patch;
+import core.SysexHandler;
 
 public class MIDIboxSIDSingleDriver extends Driver
 {

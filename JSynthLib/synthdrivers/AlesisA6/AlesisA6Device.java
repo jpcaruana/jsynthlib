@@ -4,8 +4,7 @@
 
 package synthdrivers.AlesisA6;
 
-import core.*;
-import javax.swing.*;
+import core.Device;
 
 public class AlesisA6Device extends Device
 {

@@ -6,9 +6,13 @@
  */
 
 package synthdrivers.KawaiK4;
-import core.*;
-import java.io.*;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+
+import core.BankDriver;
+import core.ErrorMsg;
+import core.NameValue;
+import core.Patch;
+import core.SysexHandler;
 
 public class KawaiK4EffectBankDriver extends BankDriver {
     private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");

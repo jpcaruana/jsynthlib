@@ -2,9 +2,12 @@
  * @version $Id$
  */
 package synthdrivers.BossDR660;
-import core.*;
-import java.io.*;
-import javax.swing.*;
+import java.io.InputStream;
+
+import core.Driver;
+import core.ErrorMsg;
+import core.JSLFrame;
+import core.Patch;
 
 public class BossDR660DrumkitDriver extends Driver
 {

@@ -22,10 +22,10 @@
  *
  */
 package synthdrivers.YamahaTX7;
-import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import	synthdrivers.YamahaDX7.common.DX7FamilyPerformanceSingleDriver;
-import core.*;
-import javax.swing.*;
+import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceSingleDriver;
+import core.JSLFrame;
+import core.Patch;
 
 public class YamahaTX7PerformanceSingleDriver extends DX7FamilyPerformanceSingleDriver
 {

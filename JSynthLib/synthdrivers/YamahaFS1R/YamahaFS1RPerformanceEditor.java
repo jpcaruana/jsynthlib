@@ -1,14 +1,36 @@
 package synthdrivers.YamahaFS1R;
 
-import core.*;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.io.*;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+
+import core.BankEditorFrame;
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.JSLDesktop;
+import core.JSLFrameEvent;
+import core.JSLFrameListener;
+import core.KnobWidget;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.SpinnerWidget;
  
 /**
 	Editor for performance, ie group of 4 parts, each part holds a voice.
@@ -314,7 +336,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 						public void JSLFrameIconified(JSLFrameEvent e) {}
 					});
 
-					getDesktopPane().add(oEdit);
+					JSLDesktop.add(oEdit);
 					oEdit.setVisible(true);
 					oEdit.moveToFront();
 				}
