@@ -79,6 +79,11 @@ public class DeviceAddDialog extends JDialog {
 	Device device = this.devConf.classForDevice(s);
 	if (s != null) {
 	    PatchEdit.appConfig.addDevice(device);
+	    String info = device.getInfoText();
+	    if (info != null && info.length() > 0) {
+		JOptionPane.showMessageDialog(null, info, "Device Information",
+					      JOptionPane.INFORMATION_MESSAGE);
+	    }
 	}
     }
 
