@@ -15,6 +15,7 @@ import java.util.WeakHashMap;
 
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
 import javax.swing.SpringLayout.Constraints;
 
 import org.jsynthlib.editorbuilder.widgets.Widget;
@@ -126,19 +127,20 @@ public class Anchor extends Spring implements java.io.Serializable {
 		if (side < 0 || side > 3)
 			throw new Error(side + " is an invalid side.");
 		
-		Constraints c = layout.getConstraints(component);
-		int x = c.getX().getValue(), y = c.getY().getValue();
+		int x = 0, y = 0;
 		
 		if (side < 2) {
-			x += c.getWidth().getValue()/2;
+			x += component.getWidth()/2;
 			if (side == 1)
-				y += c.getHeight().getValue();
+				y += component.getHeight();
 		} else {
-			y += c.getHeight().getValue()/2;
+			y += component.getHeight()/2;
 			if (side == 2)
-				x += c.getWidth().getValue();
+				x += component.getWidth();
 		}
-		return new Point(x, y);
+		Point result = new Point(x, y);
+		SwingUtilities.convertPointToScreen(result,component);
+		return result;
 	}
 	
 	public int getMinimumValue() {
@@ -308,11 +310,14 @@ public class Anchor extends Spring implements java.io.Serializable {
 		+ " ),\n" +
 		"             \"" + SIDES[ target_side ] + "\", " + tid + ");";
 	}
-	public void drawConnector(Graphics g) {
+	public void drawConnector(Component c, Graphics g) {
 		Graphics2D g2d = (Graphics2D)g;
 		Point ptA = getCenter(constrained_component, constrained_side);
 		Point ptB = getCenter(target_component, target_side);
 		
+		SwingUtilities.convertPointFromScreen(ptA, c);
+		SwingUtilities.convertPointFromScreen(ptB, c);
+        
 		int[] xpoints = new int[] { ptA.x, ptA.x, ptB.x, ptB.x };
 		int[] ypoints = new int[] { ptA.y, ptA.y, ptB.y, ptB.y };
 		
@@ -323,10 +328,12 @@ public class Anchor extends Spring implements java.io.Serializable {
 		}
 		
 		Stroke s = g2d.getStroke();
-		Color c = g2d.getColor();
+		Color color = g2d.getColor();
 		g2d.setStroke(new BasicStroke(3));
 		g2d.setColor(Color.blue);
 		g2d.drawPolyline(xpoints, ypoints, 4);
+		g2d.setColor(color);
+		g2d.setStroke(s);
 		
 		/*    ptA = SwingUtilities.convertPoint(source, ptA, destination);
 		 ptB = SwingUtilities.convertPoint(source, ptB, destination);*/
