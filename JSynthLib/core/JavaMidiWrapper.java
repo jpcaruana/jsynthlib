@@ -1,15 +1,18 @@
-/* This is a wrapper around the JavaMIDI routines which deal with Midi I/O under MacOS & Windows. It seemed clever to write
-   a wrapper around the library rather than to use the Library directly. To support a new platform, all that needs to be
-   done is to implement a wrapper class which extends MidiWrapper and change one line in PatchEdit.java to instantiate the
-   correct wrapper 
-*/
-
 package core; //TODO org.jsynthlib.midi;
 
 import jmidi.*;
 import javax.swing.*;
+import javax.sound.midi.MidiMessage;
 import core.*; // FIXME Eventually, core.* will go away.
 
+/**
+ * This is a wrapper around the JavaMIDI routines which deal with Midi
+ * I/O under MacOS & Windows.  It seemed clever to write a wrapper
+ * around the library rather than to use the Library directly. To
+ * support a new platform, all that needs to be done is to implement a
+ * wrapper class which extends MidiWrapper and change one line in
+ * PatchEdit.java to instantiate the correct wrapper
+ */
 public class JavaMidiWrapper extends MidiWrapper {
 	MidiPort javaMidiPort;
 	// FIXME - This has to be public until PrefsDialog stops using it - emenaker 2003.03.12
@@ -21,9 +24,9 @@ public class JavaMidiWrapper extends MidiWrapper {
 	public  JavaMidiWrapper () throws Exception {
 		currentInPort = currentOutPort = 0;
 	}
- 
+
 	/**
-	 * 	This used to be the constructor with (int,int) params
+	 *  This used to be the constructor with (int,int) params
 	 *  I needed to change the (int,int) constructor to some non-constructor thing, because I neede to
 	 *  have an instance of every eligible midi wrapper ahead of time. - emenaker 3-12-2003
 	 */
@@ -59,7 +62,7 @@ public class JavaMidiWrapper extends MidiWrapper {
 				} else {
 					// We were asked for a MIDI port number that isn't available. Pick first one
 					javaMidiPort.setDeviceNumber( MidiPort.MIDIPORT_INPUT, 0 );
-				}					
+				}
 			} else {
 				// There aren't any input devices to choose from - emenaker 2003.03.19
 				ErrorMsg.reportError ("Error!","JavaMidi Driver reports:\nNo MIDI input devices detected");
@@ -67,7 +70,7 @@ public class JavaMidiWrapper extends MidiWrapper {
 		} catch (MidiPortException e) {
 		} catch (Exception e) {
 		}
-		
+
 		try {
 			if(getNumOutputDevices() > 0) {
 				if(outport > -1 && outport < getNumOutputDevices()) {
@@ -75,7 +78,7 @@ public class JavaMidiWrapper extends MidiWrapper {
 				} else {
 					// We were asked for a MIDI port number that isn't available. Pick first one
 					javaMidiPort.setDeviceNumber( MidiPort.MIDIPORT_OUTPUT, 0 );
-				}					
+				}
 			} else {
 				// There aren't any input devices to choose from - emenaker 2003.03.19
 				ErrorMsg.reportError ("Error!","JavaMidi Driver reports:\nNo MIDI output devices detected");
@@ -83,7 +86,7 @@ public class JavaMidiWrapper extends MidiWrapper {
 		} catch (MidiPortException e) {
 		} catch (Exception e) {
 		}
-		
+
 		try {
 			javaMidiPort.open();
 		} catch (MidiPortException e) {
@@ -111,7 +114,7 @@ public class JavaMidiWrapper extends MidiWrapper {
 						faderMidiPort.open();
 					} catch (Exception e2) {
 						// Opening the fader port failed, but we can still do basic in/out
-						ErrorMsg.reportError("Error", 
+						ErrorMsg.reportError("Error",
 							"Unable to open the midi port for the faders.\n"+
 							"It appears that this is because the midi driver you're using\n"+
 							"does not support listening to multiple midi ports at the same\n"+
@@ -154,61 +157,66 @@ public class JavaMidiWrapper extends MidiWrapper {
 System.out.println("setInputPort("+port+")   was "+currentInPort);
 		if (currentInPort!=port) {
 			javaMidiPort.setDeviceNumber(MidiPort.MIDIPORT_INPUT,port);
-		} 
+		}
 		currentInPort=port;
 	}
 
 	//FIXME Made public so that PrefsDialog can call it until we straighten this mess out - emenaker 2003.03.12
 	public  void setOutputDeviceNum(int port) throws Exception {
 System.out.println("setOutputPort("+port+")   was "+currentOutPort);
-		if (currentOutPort!=port) { 
+		if (currentOutPort!=port) {
 			javaMidiPort.setDeviceNumber(MidiPort.MIDIPORT_OUTPUT,port);
 		}
 		currentOutPort=port;
 	}
-  
+
 	public  void writeLongMessage (int port,byte []sysex) throws Exception {
 		setOutputDeviceNum(port);
 		javaMidiPort.writeLongMessage(sysex,sysex.length,0);
 	}
-  
+
 	public  void writeLongMessage (int port,byte []sysex,int length) throws Exception {
 		setOutputDeviceNum(port);
 		javaMidiPort.writeLongMessage(sysex,length,0);
 	}
-	
+
 	public void writeShortMessage(int port, byte b1, byte b2) throws Exception {
 		setOutputDeviceNum(port);
 		javaMidiPort.writeShortMessage(b1,b2);
 	}
-  
+
 	public void writeShortMessage (int port,byte b1, byte b2,byte b3) throws Exception {
 		setOutputDeviceNum(port);
 		javaMidiPort.writeShortMessage(b1,b2,b3);
 	}
-  
+
 	public  int getNumInputDevices() throws Exception{return javaMidiPort.getNumDevices(MidiPort.MIDIPORT_INPUT);}
-	
+
 	public  int getNumOutputDevices()throws Exception {return javaMidiPort.getNumDevices(MidiPort.MIDIPORT_OUTPUT);}
-	
+
 	public  String getInputDeviceName(int port)throws Exception {
 		return javaMidiPort.getDeviceName(MidiPort.MIDIPORT_INPUT,port);
 	}
-	
+
 	public  String getOutputDeviceName(int port)throws Exception {
 		return javaMidiPort.getDeviceName(MidiPort.MIDIPORT_OUTPUT,port);
 	}
-	
+
 	public  int messagesWaiting(int port)throws Exception {
 		if (port==PatchEdit.appConfig.getFaderPort()) return (faderMidiPort.messagesWaiting());
 			setInputDeviceNum(port);
 		return javaMidiPort.messagesWaiting();
 	}
-  
+    /*
 	public  int readMessage(int port,byte []sysex,int maxSize) throws Exception {
 		if (port==PatchEdit.appConfig.getFaderPort()) return (faderMidiPort.readMessage(sysex,maxSize));
 			setInputDeviceNum(port);
 		return(javaMidiPort.readMessage(sysex,maxSize));
+	}
+    */
+	public MidiMessage getMessage(int port) {
+		ErrorMsg.reportError ("Error!","JavaMidiWrapper.getMessage is not implemented yet.");
+		return null;
 	}
 
 	public String getWrapperName() {
