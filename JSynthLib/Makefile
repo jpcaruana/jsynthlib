@@ -326,7 +326,7 @@ $(BUNDLE_FILE) : $(JAR_FILE)
 	$(RM) 98762infoplist876 $(check-exit)
 	$(INSTALL_FILE) $(JAR_FILE) $(BUNDLE_FILE)/Contents/Resources/Java
 	checkexit="";for f in $(BUNDLE_RESOURCES); do \
-		$(INSTALL_FILE) $(BUNDLE_RESOURCE_DIR)$$f $(BUNDLE_FILE)/Contents/Resources/ \
+		$(INSTALL_FILE) $(BUNDLE_RESOURCE_DIR)/$$f $(BUNDLE_FILE)/Contents/Resources/ \
 		|| checkexit=$?; \
 		done; test -z $$checkexit
 
