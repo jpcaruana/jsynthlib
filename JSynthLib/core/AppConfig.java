@@ -9,73 +9,37 @@
 
 package core;
 
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
-//import java.util.Collection;
-//import java.util.Iterator;
-import java.util.Arrays;
-
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Vector;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+import javax.sound.midi.Transmitter;
 import javax.swing.UIManager;
-import javax.sound.midi.*;
 
-public class AppConfig implements Storable {
-    /* Configurable properties */
-    // so both properties are defaulted to the startup directory and
-    // doesn't generate a Null Pointer Exception when quitting the
-    // application, if you didn't change them.
-    private String libPath		= ".";
-    private String sysexPath		= ".";
-    private int note			= 0;
-    private int velocity		= 0;
-    private int delay			= 0;
-    private int lookAndFeel		= 0;
-    private int guiStyle		= MacUtils.isMac() ? 1 : 0;
-    private boolean midiEnable		= false;
-    private int midiPlatform		= 0;
-    private int initPortIn		= 0;
-    private int initPortOut		= 0;
-    private boolean masterInEnable	= false;
-    private int masterController	= -1;
-    private Transmitter masterInTrns;
-    private boolean faderEnable		= false;
-    private int faderPort		= 0;
-    private Transmitter faderInTrns;
-    private int[] faderController	= new int[Constants.NUM_FADERS];
-    private int[] faderChannel		= new int[Constants.NUM_FADERS];
+import org.jsynthlib.jsynthlib.Dummy;
 
-    private String repositoryURL	= "http://www.jsynthlib.org";
-    private String repositoryUser	= "";
-    private String repositoryPass	= "";
-
-    private ArrayList deviceList	= new ArrayList();
-
-    //private JSLMidiDevice midiIn;
-    //private JSLMidiDevice midiOut;
-    private MidiDevice midiMasterIn;
-    private MidiDevice midiFaderIn;
-
-    /** MidiDevice.Info.name|vendor. */
+public class AppConfig {
+    private ArrayList deviceList = new ArrayList();
     private static MidiWrapper midiWrapper = null;
+    private Transmitter masterInTrns;
+    private Transmitter faderInTrns;
+
+    
+    private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
+
     static Vector midiWrappers;
     {
 	midiWrappers = MidiWrapper.getSuitableWrappers();
     }
-
-    /**
-     * Constructor
-     */
-    public AppConfig() {
-    }
-
     /**
      * This one loads the settings from the config file.
      */
@@ -84,16 +48,9 @@ public class AppConfig implements Storable {
 	    // Load the appconfig
 	    load();
 	    return true;
-	} catch (FileNotFoundException e) {
-	    // When JSynthLib.properties does not exist (the very
-	    // first invoke), setMidiPlafform is not called.
-	    if (midiWrapper == null) { // should be 'true'
-		setMidiEnable(false);
-		setMidiPlatform(0); // DoNothingMidiWrapper
-	    }
-	    return false;
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus("loadPrefs: " + e);
+	    e.printStackTrace();
 	    return false;
 	} finally {
 	    if (deviceCount() == 0) {
@@ -106,17 +63,44 @@ public class AppConfig implements Storable {
      * Load the properties from the file.
      * @throws IOException
      */
-    private void load() throws IOException {
-	// Load in the properties file
-	Properties props = new Properties();
-	InputStream in = new FileInputStream(Constants.FILE_NAME_APP_CONFIG);
-	props.load(in);
-
-	// Use the properties object to restore the configuration
-	Storage.restore(this, props);
-	ErrorMsg.reportStatus("Config Loaded");
+    private void load() throws IOException, BackingStoreException {
+        prefs.sync();
+        // Call setters that act on the value.
+        setMidiPlatform(getMidiPlatform());
+        setLookAndFeel(getLookAndFeel());
+        // Load deviceList
+        Device[] ds = (Device[])getObject("deviceList");
+        setDevice(ds);
+        try {
+        	    masterInTrns = MidiUtil.getTransmitter(getFaderPort());
+            faderInTrns = MidiUtil.getTransmitter(getFaderPort());
+        } catch (Exception e) {}
     }
 
+    protected Object getObject(String key) throws IOException, BackingStoreException {
+    	byte b[] = prefs.getByteArray(key, null);
+    	if (b == null)
+    	    return null;
+    	InputStream bis = new ByteArrayInputStream(b);
+    	XMLDecoder is = new XMLDecoder(bis);
+    	Object o = null;
+    	try {
+    	    o = is.readObject();
+    	} catch (ArrayIndexOutOfBoundsException e) {}
+    	is.close();
+    	bis.close();
+    	return o;
+    }
+    
+    protected void putObject(String key, Object o) throws IOException, BackingStoreException {
+    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    	XMLEncoder os = new XMLEncoder(bos);
+    	os.writeObject(o);
+    	os.close();
+    	prefs.putByteArray(key, bos.toByteArray());
+    	bos.close();
+    }
+    
     /**
      * This routine just saves the current settings in the config
      * file. Its called when the user quits the app.
@@ -135,80 +119,95 @@ public class AppConfig implements Storable {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    private void store() throws IOException /*,FileNotFoundException*/ {
-	// Store the current configuration in a properties object
-	Properties props = new Properties();
-	Storage.store(this, props);
-
-	// Store the properties object to a properties file
-	OutputStream out = new FileOutputStream(Constants.FILE_NAME_APP_CONFIG);
-	props.store(out, Constants.APP_CONFIG_HEADER);
-    }
+    private void store() throws IOException, BackingStoreException {
+        // Save deviceList
+        putObject("deviceList",getDevice());
+        // Save prefs
+        prefs.flush();
+     }
 
     // Simple getters and setters
 
     /** Getter for libPath */
-    public String getLibPath() { return this.libPath; }
+    public String getLibPath() { return prefs.get("libPath", "."); }
     /** Setter for libPath */
-    public void setLibPath(String libPath) { this.libPath = libPath; }
+    public void setLibPath(String libPath) {prefs.put("libPath",libPath);}
 
     /** Getter for sysexPath */
-    public String getSysexPath() { return this.sysexPath; }
+    public String getSysexPath() { return prefs.get("sysexPath","."); }
     /** Setter for sysexPath */
-    public void setSysexPath(String sysexPath) { this.sysexPath = sysexPath; }
+    public void setSysexPath(String sysexPath) { 
+        prefs.put("sysexPath", sysexPath);
+    }
 
     /** Getter for note */
-    public int getNote() { return this.note; }
+    public int getNote() { return  prefs.getInt("note",0); }
     /** Setter for note */
-    public void setNote(int note) { this.note = note; }
+    public void setNote(int note) { prefs.putInt("note", note); }
 
     /** Getter for velocity */
-    public int getVelocity() { return this.velocity; }
+    public int getVelocity() { return  prefs.getInt("velocity",0); }
     /** Setter for velocity */
-    public void setVelocity(int velocity) { this.velocity = velocity; }
+    public void setVelocity(int velocity) { prefs.putInt("velocity", velocity); }
 
     /** Getter for delay */
-    public int getDelay() { return this.delay; }
+    public int getDelay() { return  prefs.getInt("delay",0); }
     /** Setter for delay */
-    public void setDelay(int delay) { this.delay = delay; }
+    public void setDelay(int delay) { prefs.putInt("delay", delay); }
 
     /**Getter for RepositoryURL */
-    public String getRepositoryURL() { return this.repositoryURL; }
+    public String getRepositoryURL() {
+        return prefs.get("repositoryURL","http://www.jsynthlib.org");
+    }
     /**Setter for RepositoryURL */
-    public void setRepositoryURL(String url) { this.repositoryURL = url; }
-
+    public void setRepositoryURL(String url) {
+        prefs.put("repositoryURL",url);
+    }
+    
     /**Getter for RepositoryUser */
-    public String getRepositoryUser() { return this.repositoryUser; }
+    public String getRepositoryUser() {
+        return prefs.get("repositoryUser","");
+    }
     /**Setter for RepositoryUser */
-    public void setRepositoryUser(String user) { this.repositoryUser = user; }
-
+    public void setRepositoryUser(String user) {
+        prefs.put("repositoryUser",user);
+    }
+    
     /**Getter for RepositoryPass */
-    public String getRepositoryPass() { return this.repositoryPass; }
+    public String getRepositoryPass() {
+        return prefs.get("repositoryPass","");
+    }
     /**Setter for RepositoryPass */
-    public void setRepositoryPass(String pass) { this.repositoryPass = pass; }
+    public void setRepositoryPass(String Pass) {
+        prefs.put("repositoryPass",Pass);
+    }
 
 
     /** Getter for lookAndFeel */
-    public int getLookAndFeel() { return this.lookAndFeel; }
+    public int getLookAndFeel() { return  prefs.getInt("lookAndFeel",0); }
     /** Setter for lookAndFeel */
     public void setLookAndFeel(int lookAndFeel) {
-	this.lookAndFeel = lookAndFeel;
-	UIManager.LookAndFeelInfo [] installedLF;
-	installedLF = UIManager.getInstalledLookAndFeels();
-	try {
-	    UIManager.setLookAndFeel(installedLF[lookAndFeel].getClassName());
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e.toString());
-	}
+        prefs.putInt("lookAndFeel", lookAndFeel);
+        UIManager.LookAndFeelInfo [] installedLF;
+        installedLF = UIManager.getInstalledLookAndFeels();
+        try {
+        UIManager.setLookAndFeel(installedLF[lookAndFeel].getClassName());
+        } catch (Exception e) {
+        ErrorMsg.reportStatus(e.toString());
+        }
     }
 
     /** Getter for guiStyle */
-    public int getGuiStyle() { return this.guiStyle; }
+    public int getGuiStyle() { 
+        return prefs.getInt("guiStyle",MacUtils.isMac() ? 1 : 0);
+    }
     /** Setter for guiStyle */
-    public void setGuiStyle(int guiStyle) { this.guiStyle = guiStyle; }
+    public void setGuiStyle(int guiStyle) { 
+        prefs.putInt("guiStyle", guiStyle);
+    }
 
     /** Getter for midiPlatform */
-    public int getMidiPlatform() { return this.midiPlatform; }
+    public int getMidiPlatform() { return  prefs.getInt("midiPlatform",0); }
 
     /** Setter for midiPlatform */
     public void setMidiPlatform(int midiPlatform) {
@@ -230,7 +229,7 @@ public class AppConfig implements Storable {
 	    if (!PatchEdit.newMidiAPI)
 		mw.init(getInitPortIn(), getInitPortOut());
 
-	    this.midiPlatform = midiPlatform;
+	    prefs.putInt("midiPlatform", midiPlatform);
 	    PatchEdit.MidiIn = PatchEdit.MidiOut = midiWrapper = mw;
 	} catch (DriverInitializationException e) {
 	    core.ErrorMsg.reportError
@@ -261,46 +260,48 @@ public class AppConfig implements Storable {
     }
 
     /** Getter for midiEnable */
-    public boolean getMidiEnable() { return this.midiEnable; }
+    public boolean getMidiEnable() { return prefs.getBoolean("midiEnable",false); }
     /** Setter for midiEnable */
     public void setMidiEnable(boolean midiEnable) {
-	this.midiEnable = midiEnable;
+	prefs.putBoolean("midiEnable",midiEnable);
 	ErrorMsg.reportStatus("setMidiEnable: " + midiEnable);
     }
 
     /** Getter for initPortIn */
-    public int getInitPortIn() { return this.initPortIn; }
+    public int getInitPortIn() { return prefs.getInt("initPortIn",0); }
     /** Setter for initPortIn */
     public void setInitPortIn(int initPortIn) {
-	if (initPortIn < 0) initPortIn = 0;
-	this.initPortIn = initPortIn;
+        if (initPortIn < 0) initPortIn = 0;
+        prefs.putInt("initPortIn", initPortIn);
     }
 
     /** Getter for initPortOut */
-    public int getInitPortOut() { return this.initPortOut; }
+    public int getInitPortOut() { return  prefs.getInt("initPortOut",0); }
     /** Setter for initPortOut */
     public void setInitPortOut(int initPortOut) {
-	if (initPortOut < 0) initPortOut = 0;
-	this.initPortOut = initPortOut;
+        if (initPortOut < 0) initPortOut = 0;
+        prefs.putInt("initPortOut", initPortOut);
     }
 
     /** Getter for masterInEnable */
-    public boolean getMasterInEnable() { return this.masterInEnable; }
+    public boolean getMasterInEnable() { return prefs.getBoolean("masterInEnable", false); }
     /** Setter for masterInEnable */
-    public void setMasterInEnable(boolean masterInEnable) { this.masterInEnable = masterInEnable; }
+    public void setMasterInEnable(boolean masterInEnable) { 
+        prefs.putBoolean("masterInEnable", masterInEnable);
+    }
 
     /** Getter for masterController */
-    public int getMasterController() { return this.masterController; }
+    public int getMasterController() { return  prefs.getInt("masterController",0); }
     /** Setter for masterController */
     public void setMasterController(int masterController) {
-	boolean changed = this.masterController != masterController;
+	boolean changed = getMasterController() != masterController;
 	if (masterController < 0) masterController = 0;
 	if (PatchEdit.newMidiAPI && changed) {
 	    // others may be using
 	    //if (masterInTrns != null) masterInTrns.close();
-	    masterInTrns = MidiUtil.getTransmitter(faderPort);
+	    masterInTrns = MidiUtil.getTransmitter(getFaderPort());
 	}
-	this.masterController = masterController;
+        prefs.putInt("masterController", masterController);
     }
 
     Transmitter getMasterInTrns() {
@@ -308,22 +309,24 @@ public class AppConfig implements Storable {
     }
 
     /** Getter for faderEnable */
-    public boolean getFaderEnable() { return this.faderEnable; }
+    public boolean getFaderEnable() { return prefs.getBoolean("faderEnable", false); }
     /** Setter for faderEnable */
-    public void setFaderEnable(boolean faderEnable) { this.faderEnable = faderEnable; }
+    public void setFaderEnable(boolean faderEnable) { 
+        prefs.putBoolean("faderEnable", faderEnable);
+    }
 
     /** Getter for faderPort */
-    public int getFaderPort() { return this.faderPort; }
+    public int getFaderPort() { return prefs.getInt("faderPort",0); }
     /** Setter for faderPort */
     public void setFaderPort(int faderPort) {
-	boolean changed = this.faderPort != faderPort;
+	boolean changed = getFaderPort() != faderPort;
 	if (faderPort < 0) faderPort = 0;
 	if (PatchEdit.newMidiAPI && changed) {
 	    // others may be using (true?)
 	    //if (faderInTrns != null) faderInTrns.close();
-	    faderInTrns = MidiUtil.getTransmitter(faderPort);
+	    faderInTrns = MidiUtil.getTransmitter(getFaderPort());
 	}
-	this.faderPort = faderPort;
+        prefs.putInt("faderPort", faderPort);
     }
 
     Transmitter getFaderInTrns() {
@@ -332,26 +335,17 @@ public class AppConfig implements Storable {
 
     //int[] faderChannel (0 <= channel < 16, 16:off)
     /** Indexed getter for faderChannel */
-    public int getFaderChannel(int i) { return this.faderChannel[i]; }
+    public int getFaderChannel(int i) { return  prefs.getInt("faderChannel"+i,0); }
     /** Indexed setter for faderChannel */
-    public void setFaderChannel(int i, int faderChannel) { this.faderChannel[i] = faderChannel; }
-    /** Getter for faderChannel */
-    public int[] getFaderChannel() { return this.faderChannel; }
-    /** Setter for faderChannel */
-    public void setFaderChannel(int[] newFaderChannel) {
-	this.faderChannel = newFaderChannel;
+    public void setFaderChannel(int i, int faderChannel) { 
+        prefs.putInt("faderChannel"+i, faderChannel);
     }
 
     //int[] faderController (0 <= controller < 256, 256:off)
-    /** Indexed getter for faderController */
-    public int getFaderController(int i) { return this.faderController[i]; }
+    public int getFaderController(int i) { return  prefs.getInt("faderController"+i,0); }
     /** Indexed setter for faderController */
-    public void setFaderController(int i, int faderController) { this.faderController[i] = faderController; }
-    /** Getter for faderController */
-    public int[] getFaderController() { return this.faderController; }
-    /** Setter for faderController */
-    public void setFaderController(int[] newFaderController) {
-	this.faderController = newFaderController;
+    public void setFaderController(int i, int faderController) { 
+        prefs.putInt("faderController"+i, faderController);
     }
 
     // Standard getters/setters
@@ -369,7 +363,8 @@ public class AppConfig implements Storable {
     /** setter for deviceList */
     public void setDevice(Device[] devices) {
 	ArrayList newList = new ArrayList();
-	newList.addAll(Arrays.asList(devices));
+	if (devices != null)
+	    newList.addAll(Arrays.asList(devices));
 	this.deviceList = newList;
 	//reassignDeviceDriverNums();
     }
@@ -439,38 +434,6 @@ public class AppConfig implements Storable {
     //public void setMidiOut(JSLMidiDevice midiOut) { this.midiOut = midiOut; }
     //public void setMidiMasterIn(JSLMidiDevice midiMasterIn) { this.midiMasterIn = midiMasterIn; }
     //public void setMidiFaderIn(JSLMidiDevice midiFaderIn) { this.midiFaderIn = midiFaderIn; }
-
-    // For Storable interface
-    private static final String[] storedPropertyNames = {
-	"libPath", "sysexPath", "note",
-	"velocity", "delay", "lookAndFeel", "guiStyle",
-	"repositoryURL", "repositoryUser", "repositoryPass",
-	"faderEnable", "faderController", "faderChannel",
-	"midiEnable", "masterInEnable",
-	"initPortIn", "initPortOut", "masterController", "faderPort",
-	// must be restored after initPortIn and initPortOut
-	"midiPlatform", "device",
-	//"midiIn", "midiOut", "midiMasterIn", "midiFaderIn",
-    };
-
-    /**
-     * Get the names of properties that should be stored and loaded.
-     * @return a Set of field names
-     */
-    public Set storedProperties() {
-	// TreeSet reserves the restore order
-	TreeSet set = new TreeSet();
-	set.addAll(Arrays.asList(storedPropertyNames));
-	return set;
-    }
-
-    /*
-     * Method that will be called after loading
-     */
-    public void afterRestore() {
-	// do nothing - we don't need any special code to execute after restore
- 	//ErrorMsg.reportStatus("AppConfig: " + deviceList);
-    }
 
     // Shall we define JSLUtil for these mothods?
     // Returns the "os.name" system property - emenaker 2003.03.13
