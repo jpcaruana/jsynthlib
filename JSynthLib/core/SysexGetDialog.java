@@ -147,8 +147,9 @@ public class SysexGetDialog extends JDialog {
 //--------------------------------------------------------------------------
 
     protected void pasteIntoSelectedFrame() {
-        if (sysexSize < 20)
-            return;
+// The following lines are not needed. Alesis DM5 driver has patch of size 11        
+//        if (sysexSize < 20)
+//            return;
 
         IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
         SysexMessage[] msgs = (SysexMessage[]) queue.toArray(new SysexMessage[0]);
