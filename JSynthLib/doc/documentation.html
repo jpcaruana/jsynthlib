@@ -62,6 +62,9 @@ alink="Red" leftmargin=40 topmargin=40>
 <a name="" href="#toc">
 <h2><a name="overview" href="#toc">JSynthLib Overview</a></h2>
 
+JSynthLib is a universal MIDI synthesizer librarian / editor. The
+project aims to eventually support all existing synthesizers.
+
 <h3><a name="purpose" href="#toc">Why write JSynthLib?</a></h3>
 
 <p>I have a lot of electronic music making equipment: synthesizers,
@@ -73,23 +76,23 @@ editor/ librarians such as MIDIQuest or SoundDiver? I like Free
 Software. I like the control, the power, and the community. With Free
 Software / Open Source / Copyleft the user is a stakeholder not just a
 consumer. (Of course, I'm not a Free Software fanatic or I wouldn't be
-using Java). In 1997 had used Linux for several months exclusively,
+using Java). In 1997 had used GNU/Linux for several months exclusively,
 but finally gave in and set up a dual-boot with Windows 95 in order to
 do MIDI Sequencing. For the past several years I've used Cakewalk to
 sequence and a myriad of Shareware and Freeware editors for various
 synths (some synths I have no editors for).</p>
 
-<p>Since 1997 both Linux sequencers and Linux hardware support have
+<p>Since 1997 both GNU/Linux sequencers and GNU/Linux hardware support have
 improved dramatically, but leaving Windows behind would require
 leaving behind all of the Synth editors I used. So in June 1999, I set
-up to write a universal patch librarian for Linux. The problem with
+up to write a universal patch librarian for GNU/Linux. The problem with
 this is that I still do all of my music stuff in Windows, I merely
-hope to convert to Linux when the software is ready. So I require a
+hope to convert to GNU/Linux when the software is ready. So I require a
 program which can run under both Operating systems. I began writing in
 C++ using a cross platform GUI library but quickly got tangled in too
 many implementation details and caveats and gave up. Recently I
 realized that Java/Swing gives me the flexibility I need for my
-application. JSynthLib runs under Windows and Linux.</p>
+application. JSynthLib runs under Windows, GNU/Linux, and Mac OS X.
 
 <h3><a name="features" href="#toc">JSynthLib Features</a></h3>
 
@@ -157,108 +160,123 @@ application. JSynthLib runs under Windows and Linux.</p>
 
 <h2><a name="install" href="#toc">Installing JSynthLib</a></h2>
 
-NOTE: This chapter is updated for new MIDI layer.
+<h3>Step 1: Java Runtime Environment</h3>
+
+Make sure you have the J2SE JRE (Java Run Time Environment) or SDK
+(Software Development Kit) which supports Java 1.4 or later. If you do
+not have it, you can download it from <a
+href="http://java.sun.com">http://java.sun.com/</a>.  If you develop a
+Java program (for example a JSynthLib synth driver for your synth),
+you need SDK.  Otherwise you need JRE. It spends your disk space
+less.<p>
+
+Mac OS X comes with java preinstalled. but you should be sure you have
+the latest update installed.
+
+<h3>Step 2: MIDI Provider</h3>
+
+JSynthLib-0.19 and/or later uses MIDI Provider, a platform dependent
+layer of the Java MIDI API.  Depends on a version of your Java
+Environment, you have to install a MIDI Provider.
 
 <h4>Microsoft Windows</h4>
 
-<ul>
-<li>Download the .ZIP file from the web site and unzip it to any
-    directory (for example <kbd>c:\jsynthlib</kbd>).
-<li>Create a shortcut on the desktop to JSynthLib.jar (optional)
-<li>Make sure you have the J2SE JRE (Java Run Time Environment) or SDK
-    (Software Development Kit) which supports Java 1.4 or later. If
-    you do not have it, you can download it from <a
-    href="http://java.sun.com">http://java.sun.com/</a>.
-<li>If you have a J2SE older than version 1.4.2 installed, you need to
-    install <a
-    href="http://www.geocities.com/ggehnen/">WireProvider</a>.
-    Download binary package and put <kbd>WireProvider.jar</kbd> under
-    <kbd>$JAVA_HOME/jre/lib/ext/</kbd> directory and put
-    <kbd>WireProvider.dll</kbd> under <kbd>$JAVA_HOME/jre/bin/</kbd>
-    directory.
-<li>Run JSynthLib.jar either by double-clicking the icon or by typing
-    <kbd>java -jar JSynthLib.jar</kbd> from the command prompt
-<!--
-<li>Go to Window-&gt;Preferences-&gt;MIDI and set 'MIDI Platform' to
-    MS-Windows (WireProvider).
-<li>If you have a JRE 1.4.2 installed, you can select as alternative the
-    "JavaSound" access method. Due to some bugs in earlier versions of the JRE
-    this doesn't work with versions before 1.4.2.
--->
-<li>Go to Window-&gt;Synths and add and configure the Synthesizers you
-    want to use with JSynthLib
-<li>Set any other preferences (such as MIDI Fader Port, Default
-    Directories) as you wish
-<li>Quit JSynthLib after you are done configuring it and restart
-    it. Now you can go back into it and use it.
-</ul>
+If you have a J2SE version 1.4.2 or newer installed, you don't have to
+install a MIDI Provider.<p>
+
+If you use older version of J2SE, download the binary package of <a
+href="http://www.geocities.com/ggehnen/">WireProvider</a> and put
+<kbd>WireProvider.jar</kbd> under <kbd>$JAVA_HOME/jre/lib/ext/</kbd>
+directory and put <kbd>WireProvider.dll</kbd> under
+<kbd>$JAVA_HOME/jre/bin/</kbd> directory.  ($JAVA_HOME is the root
+directory of J2SE installation.)
 
 <h4>GNU/Linux</h4>
 
-<ul>
-<li>Download the .zip file from the web site, and unzip it to any
-    directory (for example <kbd>c:\jsynthlib</kbd>).
-<li>Make sure you have the J2SE JRE (Java Run Time Environment) or SDK
-    (Software Development Kit) which supports Java 1.4 or later. If
-    you do not have it, you can download it from <a
-    href="http://java.sun.com">http://java.sun.com/</a>.
-<li>If you have a J2SE older than version 1.5 installed, copy
-    <kbd>midiprovider/LinuxCharDev.jar</kbd> under
-    <kbd>$JAVA_HOME/jre/lib/ext/</kbd> directory.  And copy
-    <kbd>midiprovider/LinuxCharDev/linuxdevices.conf</kbd> under the
-    main JSynthLib Directory and edit it to reflect your setup.<br>
-    Each line in this file represents one device that you wish to have
-    accessible in JSynthLib.<br>
-    With the LinuxCharDev MidiProvider no concurrent access of the used
-    devices is provided. The OSS/"ALSA rawmidi" interfaces are used.<br>
-    You can also install the Tritonus ALSA MidiProvider. Please see the
-    <a href="http://www.tritonus.org/">Tritonus: Java Sound for Linux</a>
-    website for further information.
-<li>Run JSynthLib.jar by typing <kbd>java -jar JSynthLib.jar</kbd>
-    from the shell prompt.
-<!--
-<li>Go to Window-&gt;Preferences-&gt;MIDI and set 'MIDI Platform' to
-    Gnu/Linux (<kbd>/dev/*</kbd>).
--->
-<li>Go to Window-&gt;Synths and add and configure the Synthesizers you
-    want to use with JSynthLib.
-<li>Set any other preferences (such as MIDI Fader Port, Default
-    Directories) as you wish.
-<li>Quit JSynthLib after you are done configuring it and restart
-    it. Now you can go back into it and use it.
-</ul>
+If you have a J2SE version 1.5 or newer installed, you don't have to
+install a MIDI Provider.<p>
+
+If you use older version of J2SE, download the latest
+<kbd>LinuxCharDev.jar</kbd> from <a
+href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
+SourceForge site</a> and copy it under
+<kbd>$JAVA_HOME/jre/lib/ext/</kbd> directory.  Then create a file
+<kbd>linuxdevices.conf</kbd> under the main JSynthLib Directory to
+reflect your setup.  Here is an example;
+
+<pre>
+/dev/null
+/dev/midi
+</pre>
+
+Each line in this file represents one device that you wish to have
+accessible in JSynthLib.<br>
+
+With the LinuxCharDev MidiProvider no concurrent access of the used
+devices is provided. The OSS/"ALSA rawmidi" interfaces are used.<p>
+
+You may also use the Tritonus ALSA MidiProvider instead of
+<kbd>LinuxCharDev</kbd>. Please see the <a
+href="http://www.tritonus.org/">Tritonus: Open Source Java Sound</a>
+website for further information.
 
 <h4>Mac OS X</h4>
 
-<ul>
-<li>Download the .zip file from the web site, and unzip it to any
-    directory (for example <kbd>~/Applications/jsynthlib</kbd>).
-<!-- 
-     Future releases should be in the form of Aplication Bundles in a tarball.
--->
-<li>OS X comes with java preinstalled, but you should be sure you have the latest update installed.
-<li>
 <!--If you have a J2SE older than version 1.5 installed, c
 1.5 isn't availble for OS X yet, and it probably won't contain a
 builtin MIDI provider.-->
-    Copy <kbd>midiprovider/CAProvider.jar</kbd> to
-    <kbd>/Library/Java/Extensions/</kbd>
-    (<kbd>~/Library/Java/Extensions/</kbd> should also work
-    for a single user installation).<br>
-    You may use <a
-    href="http://www.cems.uwe.ac.uk/~lrlang/plumstone/">PlumStone</a>
-    instead of <kbd>CAProvider.jar</kbd>.
-<li>Run JSynthLib.jar by typing <kbd>java
-     -Dapple.laf.useScreenMenuBar=ture -jar JSynthLib.jar</kbd>
+At this point (June, 2004) you need to install a MIDI Provider.<p>
+
+Download the latest <kbd>CAProvider.jar</kbd> from <a
+href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
+SourceForge site</a> and copy it under
+<kbd>/Library/Java/Extensions/</kbd>
+(<kbd>~/Library/Java/Extensions/</kbd> should also work for a single
+user installation).<p>
+
+You may use <a
+href="http://www.cems.uwe.ac.uk/~lrlang/plumstone/">Plum Stone</a>
+instead of <kbd>CAProvider</kbd>.
+
+<h3>Step 3: Installing and Invoking JSynthLib</h3>
+
+<ul>
+<li>Download the latest <kbd>JSynthLib-XXX.jar</kbd> file from <a
+    href="http://www.jsynthlib.org/">JSynthLib Home Page</a> or <a
+    href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
+    SourceForge site</a> and copy it to any directory (for example
+    <kbd>c:\Program Files\JSynthLib\</kbd> or
+    <kbd>~/Applications/jsynthlib/</kbd>).<p>
+    Application bundle may be provided for Mac OS X.
+
+<li>Invoke JSynthLib.
+<ul>
+
+<li>[MS Windows] Run JSynthLib.jar <!--either by double-clicking the
+    icon or--> by typing <kbd>java -jar JSynthLib-XXX.jar</kbd> from
+    the command prompt.  You may create a shortcut on the desktop to
+    JSynthLib.jar.
+
+<li>[GNU/Linux] Run JSynthLib.jar by typing <kbd>java -jar
+    JSynthLib-XXX.jar</kbd> from the shell prompt.
+
+<li>[Mac OS X] Run JSynthLib.jar by typing <kbd>java
+     -Dapple.laf.useScreenMenuBar=ture -jar JSynthLib-XXX.jar</kbd>
     from the Terminal. You can also double click the jar file, but then
     each window will have it's own menu bar.
-<!-- Application bundle will remove this step -->
-<li>Go to Window-&gt;Synths and add and configure the Synthesizers you
+    Application bundle would remove this step.
+</ul>
+
+<li>Go to Window-&gt;Preferences and set preferences (such as look and
+    feel, default file directories, default MIDI port, etc.) as you
+    wish.
+
+<li>Go to Window-&gt;Synths and add and configure the synthesizers you
     want to use with JSynthLib.
-<li>Set any other preferences (such as MIDI Fader Port, Default
-    Directories) as you wish.
+<!--
 <li>Quit JSynthLib after you are done configuring it and restart
-    it. Now you can go back into it and use it.<!-- Why quit? -->
+    it. Now you can go back into it and use it.
+-->
 </ul>
 
 <!--
@@ -266,9 +284,9 @@ builtin MIDI provider.-->
 
 JSynthLib can use the javaMIDI library for MIDI I/O. This Library has
 been ported to Mac OS 9, so in theory, this could be used to run
-JSynthLib on Mac OS. Unfortunately, Apple has really dropped the ball
+JSynthLib on Mac OS 9. Unfortunately, Apple has really dropped the ball
 on providing modern Java support for their older Operating System. If
-Java JDK 1.4 ever becomes available for OS9, JSynthLib should be able
+Java JDK 1.4 ever becomes available for Mac OS 9, JSynthLib should be able
 to run under it.
 -->
 
@@ -1019,12 +1037,12 @@ It is saved in Windows Repository,
 <p><b><i>[GNU/Linux]</i>Where is the JSynthLib setting is saved?</b><br>
 It is saved in <kbd>~/.java/</kbd>.
 
-<!-- add information for MacOS X-->
+<!-- add information for Mac OS X-->
 
 <p><b><i>[GNU/Linux]</i>All the fonts have way to much space between
 the letters and look awful!</b><br>
 
-This is a Java issue under Linux. Supposedly it can be fixed by
+This is a Java issue under GNU/Linux. Supposedly it can be fixed by
 tweaking your fonts.properties file, but I haven't been able to get it
 to look right. Anyone have a fix for this?
 
