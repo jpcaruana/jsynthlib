@@ -34,6 +34,54 @@ public class AlesisDM5SgSetDriver extends Driver {
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.SINGL_SET_DUMP_REQ_ID); //System Info Dump Request
     
+    /** Sysex program dump byte array representing a new drumset patch*/
+    static final byte NEW_SYSEX[] =
+    {
+        (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x13, (byte)0x00, (byte)0x01, (byte)0x54,
+        (byte)0x65, (byte)0x73, (byte)0x74, (byte)0x20, (byte)0x50, (byte)0x61, (byte)0x74, (byte)0x63,
+        (byte)0x68, (byte)0x20, (byte)0x20, (byte)0x20, (byte)0x20, (byte)0x24, (byte)0x00, (byte)0x00,
+        (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+        (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00,
+        (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30,
+        (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C,
+        (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00,
+        (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63,
+        (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00,
+        (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30,
+        (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C,
+        (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00,
+        (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63,
+        (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00,
+        (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30,
+        (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C,
+        (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00,
+        (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63,
+        (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00,
+        (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30,
+        (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C,
+        (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00,
+        (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63,
+        (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00,
+        (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30,
+        (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C,
+        (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00,
+        (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63,
+        (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00,
+        (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30,
+        (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C,
+        (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00,
+        (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63,
+        (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00,
+        (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30,
+        (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C,
+        (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00,
+        (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63,
+        (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00,
+        (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30,
+        (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C,
+        (byte)0x63, (byte)0x30, (byte)0x00, (byte)0x00, (byte)0x0C, (byte)0x3D, (byte)0xF7
+    };
+    
     /** Constructs a AlesisDM5SgSetDriver.
     */
     public AlesisDM5SgSetDriver()
@@ -59,19 +107,42 @@ public class AlesisDM5SgSetDriver extends Driver {
         super(patchType, authors);
     }
     
-    /** Send Program Change MIDI message. The Alesis System Info driver does
-        * not utilize program change messages. This method is overrided with a
-        * null method.*/
+    /** Sends a single drumset patch to a set location on the DM5.<p>
+        * Overrides the Driver.storePatch method to embed the program number
+        * in the patch. Location numbers are given as binary 0010 0000 through
+        * 0011 0100 (32 plus patch number 0-20).
+        */
+    protected void storePatch(Patch p, int bankNum, int patchNum) {
+        p.sysex[6] = (byte)(32 + patchNum);
+        calculateChecksum(p);
+        sendPatchWorker(p);
+    }
+    
+    /** Send Program Change MIDI message. The Alesis Single Set driver does
+        * not utilize the program change the same way other devices do. Instead
+        * it embeds the program number in the patch. This is done by the overridden
+        * storePatch method.
+        */
     protected void setPatchNum(int patchNum) {
     }
     
-    /** Send Control Change (Bank Select) MIDI message. The Alesis System Info 
-        * driver does not utilize bank select. This method is overrided with a
+    /** Send Control Change (Bank Select) MIDI message. The Alesis Single Set 
+        * driver does not utilize bank select. This method is overriden with a
         * null method.
         */
     protected void setBankNum(int bankNum) {
     }
     
+    /** Sends a patch to the edit buffer on the DM5.<p>
+        * Overrides the Driver.sendPatch method to embed the program number
+        * in the patch, in this case the value is 1.
+        */
+    protected void sendPatch(Patch p) {
+        p.sysex[6] = 1;
+        calculateChecksum(p);
+        sendPatchWorker(p);
+    }
+
     /** Calculates the checksum for the DM5 by calling 
         this.calculateChecksum(Patch patch, int start, int end, int offset). This 
         needs to be included to override the version in the Driver class.
@@ -105,6 +176,16 @@ public class AlesisDM5SgSetDriver extends Driver {
                                     new SysexHandler.NameValue("patchNum", patchNum)
                                     )
              );
+    }
+    
+    /** Creates a new single drumset patch with default values.
+        */
+    protected Patch createNewPatch()
+    {
+        Patch p = new Patch(NEW_SYSEX, this);
+        setPatchName(p, "NewPatch      ");
+        calculateChecksum(p);
+        return p;
     }
     
     /** Opens an edit window on the specified patch.
