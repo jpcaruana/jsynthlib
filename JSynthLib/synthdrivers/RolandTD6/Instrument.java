@@ -246,7 +246,8 @@ final class Instrument implements TreeNodes {
 	    "Kick/Roll", "Kick/Cymbal", "Orchestra Roll", "Orchestra Chok",
 	    "Hit Roll", "Finale",
 	    "808 Clap", "808 Cwbl 1", "808 Cwbl 2", "808 Marcs", "808 Claves", "808 Conga", "909 Rim", "909 Clap",
-	    "78 Cowbel", "78 Guiro", "78 Giro St", "78 Maracs", "78 MBeat", "78 Tambrn", "78 Bongo", "78 Claves", "78 Rim",
+	    "78 Cowbel", "78 Guiro", "78 Giro St", "78 Maracs", "78 MBeat",
+	    "78 Tambrn", "78 Bongo", "78 Claves", "78 Rim",
 	    "55 Claves",  },
 	new Object[] {
 	    "Special",
@@ -311,19 +312,20 @@ final class Instrument implements TreeNodes {
 	"Off"
     };				// Object[] root
 
-    private static final int[] OFFSET = {0, // kick
-					 129, // snare
-					 324, // tom
-					 560, // hiHat
-					 598, // crash
-					 634, // ride
-					 679, // percussion
-					 810, // special
-					 888, // melodic
-					 920, // voice
-					 971, // reverse
-					 989, // fixedHiHat
-					 1023, // off
+    private static final int[] OFFSET = {
+	0,			// kick
+	129,			// snare
+	324,			// tom
+	560,			// hiHat
+	598,			// crash
+	634,			// ride
+	679,			// percussion
+	810,			// special
+	888,			// melodic
+	920,			// voice
+	971,			// reverse
+	989,			// fixedHiHat
+	1023,			// off
     };
 
     /** Number of Instrument */
