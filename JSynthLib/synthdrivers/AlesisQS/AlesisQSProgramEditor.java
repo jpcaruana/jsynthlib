@@ -113,6 +113,10 @@ class AlesisQSProgramEditor extends PatchEditorFrame
         gbc.gridx=1;gbc.gridy=6;gbc.gridwidth=2;gbc.gridheight=2;
         panel.add(ampEnvPane, gbc);
 
+        modPanel modPane = new modPanel(patch, i);
+        gbc.gridx=0;gbc.gridy=8;gbc.gridwidth=3;gbc.gridheight=1;
+        panel.add(modPane, gbc);
+
     }
     gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=6;gbc.gridheight=2;
     scrollPane.add(soundPane,gbc);
@@ -393,7 +397,7 @@ class AlesisQSProgramEditor extends PatchEditorFrame
                                         new SoundModel(p,snd,7,53,7+ofs),
                                         0,99,
                                         new SoundModel(p,snd,7,54,6+ofs),
-                                        50, false,
+                                        0, false,
                                         new ProgSender(snd,12,0,1),
                                         new ProgSender(snd,12,0,2),
                                         "Decay", "Sustain"),
@@ -439,6 +443,93 @@ class AlesisQSProgramEditor extends PatchEditorFrame
 
     }
 
+  }
+
+  /**
+   * Create a panel containing mod controls
+   * for mod 1-6
+   */
+  class modPanel extends controlPanel {
+    /**
+     * Create panel
+     * @param snd Sound number (0-3)
+     */
+    public modPanel(Patch p, int snd) {
+        super("Modulation");
+        setLayout(new GridBagLayout());
+        //setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        //                           name,TitledBorder.CENTER,
+        //                           TitledBorder.CENTER));
+
+        //string name = "Mod " + modNum;
+        //super(name);
+
+        String[] labels = new String[] {"Source", "Destination", "Amplitude", "Mode"};
+
+        for(int c=0; c<4; c++) {
+            JLabel label = new JLabel(labels[c]);
+            label.setMaximumSize(label.getPreferredSize());
+            gbc.gridx=c+1;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1;
+            this.add(label, gbc);
+        }
+
+        for(int modNum=1; modNum<=6; modNum++) {
+
+            int ofs = 13*(modNum-1);
+            int controlIdx=0;
+            int page = modNum - 1; // Page number for direct parameter editing
+
+            String name = "Mod ";
+            name += modNum;
+
+            JLabel label = new JLabel(name);
+            label.setMaximumSize(label.getPreferredSize());
+            gbc.gridx=0;gbc.gridy=modNum;gbc.gridwidth=1;gbc.gridheight=1;
+            this.add(label, gbc);
+
+            // 31.	Sound mod 1 source	7	0	0	0	24	5	22:6-22:2
+            addWidget(this,new ComboBoxWidget(null,p,
+                                            new SoundModel(p,snd,5,22,6 + ofs),new ProgSender(snd,7,page,0),
+                                            new String [] {"Note #", "Velocity", "Release Velocity",
+                                                "Aftertouch", "Polyphonic pressure", "Modulation Wheel",
+                                                "Pitch Wheel", "MIDI Volume", "Sustain Pedal", "Pedal 1",
+                                                "Pedal 2", "Pitch LFO", "Pitch Envelope", "Random",
+                                                "Trigate", "Controller A", "Controller B",
+                                                "Controller C", "Controller D", "Tracking Generator",
+                                                "Stepped Tracking Generator"}),
+                                            1,modNum,1,1,controlIdx++);
+
+            // 32.	Sound mod 1 destination	7	0	1	0	31	5	23:3-22:7
+            addWidget(this,new ComboBoxWidget(null,p,
+                                new SoundModel(p,snd,5,23,3 + ofs),new ProgSender(snd,7,page,1),
+                                new String [] {
+                                    "Pitch", "Effect Send", "Pitch LFO Delay",
+                                    "Pitch Envelope Decay", "Pitch Envelope Amp",
+                                    "Filter LFO Delay", "Filter Envelope Decay", "Filter Envelope Amp",
+                                    "Amp LFO Delay", "Amp Envelope Decay", "Amp Envelope Amp", "Filter Cutoff",
+                                    "Pitch LFO Speed", "Pitch Envelope Delay", "Pitch Env Sustain Decay",
+                                    "Filter LFO Speed", "Filter Envelope Delay", "Filter Env Sustain Decay",
+                                    "Amp LFO Speed", "Amp Envelope Delay", "Amp Env Sustain Decay",
+                                    "Portamento Rate", "Amplitude",
+                                    "Pitch LFO Amp", "Pitch Envelope Attack", " Pitch Envelope Release",
+                                    "Filter LFO Amp", "Filter Envelope Attack", "Filter Envelope Release",
+                                    "Amp LFO Amp", "Amp Envelope Attack", "Amp Envelope Release"
+                                }),
+                                2,modNum,1,1,controlIdx++);
+
+            // 33.	Sound mod 1 amplitude	7	0	2	-99	199	8	24:3-23:4
+            addWidget(this,new ScrollBarWidget(null,p,-99,99,0,
+                                                new SoundModel(p,snd,8,24,3+ofs,-99),
+                                                new ProgSender(snd,7,page,2)),
+                                                3,modNum,1,1,controlIdx++);
+
+            // 34.	Sound mod 1 gate	7	0	3	0	1	1	24:4
+            addWidget(this,new CheckBoxWidget( (modNum <= 3 ? "Gate" : "Quantize"), p,
+                                                new SoundModel(p,snd,1,24,4+ofs),
+                                                new ProgSender(snd,7,page,3)),
+                                            4,modNum,1,1,-1);
+      }
+    }
   }
 }
 
