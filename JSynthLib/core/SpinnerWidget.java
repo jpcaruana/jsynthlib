@@ -1,3 +1,4 @@
+/* $Id$ */
 package core;
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,7 @@ public class SpinnerWidget extends SysexWidget
     public JSpinner spinner;
     
     
-    /**
+    /** Constructor for setting up the ScrollBarWidget without an initial value.
      * @param l
      * @param p
      * @param min
@@ -56,13 +57,13 @@ public class SpinnerWidget extends SysexWidget
         
         if (valueCurr>valueMax) valueCurr=valueMax;
 
-        SpinnerNumberModel model = new SpinnerNumberModel(valueCurr,valueMin,valueMax,1);
+        SpinnerNumberModel model = new SpinnerNumberModel(valueCurr+base,valueMin+base,valueMax+base,1);
         spinner = new JSpinner(model);
         spinner.addChangeListener (new ChangeListener ()
         {
             public void stateChanged (ChangeEvent e)
             {
-                setValue (((Integer)spinner.getValue ()).intValue());
+                setValue (((Integer)spinner.getValue ()).intValue()-base);	// Maybe the displayed value differ from sysex value for 'base'
                 sendSysex ();
             }
         });
@@ -70,7 +71,10 @@ public class SpinnerWidget extends SysexWidget
             
     }
     public void setValue (int v)
-    {super.setValue (v); spinner.setValue (new Integer(v));}
+    {
+      super.setValue (v);
+      spinner.setValue (new Integer(v+base));	// Maybe the displayed value differ from sysex value for 'base'
+    }
     public void setMinMax (int min, int max)
     {
         valueMin=min;valueMax=max;
@@ -85,7 +89,4 @@ public class SpinnerWidget extends SysexWidget
     {
         spinner.setEnabled (e);
     }                           
-        
 }
-
-
