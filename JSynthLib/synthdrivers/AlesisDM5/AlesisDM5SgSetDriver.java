@@ -20,10 +20,10 @@
  */
 
 package synthdrivers.AlesisDM5;
-import core.Driver;
-import core.ErrorMsg;
-import core.Patch;
-import core.SysexHandler;
+import core.*;
+
+import java.io.UnsupportedEncodingException;
+import javax.swing.*;
 
 /** Line6 Single Driver. Used for Line6 program patch.
 * @author Jeff Weber
@@ -85,14 +85,14 @@ public class AlesisDM5SgSetDriver extends Driver {
         */
     protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
         int sum = 0;
-        ErrorMsg.reportStatus("Checksum was " + patch.sysex[offset]);
+        ErrorMsg.reportStatus(2, "Checksum was " + patch.sysex[offset]);
         
         for (int i = start; i <= end; i++) {
             sum += patch.sysex[i];
         }
         patch.sysex[offset] = (byte)(sum % 128);
         
-        ErrorMsg.reportStatus("Checksum now is " + patch.sysex[offset]);
+        ErrorMsg.reportStatus(2, "Checksum now is " + patch.sysex[offset]);
     }
     
     /** Requests a dump of the system info message.
@@ -106,4 +106,10 @@ public class AlesisDM5SgSetDriver extends Driver {
                                     )
              );
     }
-}
+    
+    /** Opens an edit window on the specified patch.
+        */
+    protected JSLFrame editPatch(Patch p)
+    {
+        return new AlesisDM5SgSetEditor((Patch)p);
+    }}
