@@ -147,7 +147,7 @@ public class SynthConfigDialog extends JDialog {
 	    return;
 	try {
 	    PatchEdit.appConfig.removeDevice(table2.getSelectedRow ());
-	    PatchEdit.appConfig.reassignDeviceDriverNums();
+	    //PatchEdit.appConfig.reassignDeviceDriverNums();
 	    revalidateLibraries();
 	    ((SynthTableModel) table.getModel ()).fireTableDataChanged ();
 	    table2.repaint ();
