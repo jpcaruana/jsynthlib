@@ -340,9 +340,11 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	    ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Name Editing.");
 	    return;
 	}
-        if (name.length() < patchNameSize)
-	    name = name + "            ";
-        byte[] namebytes = new byte[64];
+	
+	while (name.length() < patchNameSize)
+		name = name + " ";
+
+        byte[] namebytes = new byte[patchNameSize];
         try {
 	    namebytes = name.getBytes("US-ASCII");
 	    for (int i = 0; i < patchNameSize; i++)
