@@ -189,9 +189,14 @@ NOTE: This chapter is updated for new MIDI layer.
     <kbd>midiprovider/LinuxCharDev.jar</kbd> under
     <kbd>$JAVA_HOME/jre/lib/ext/</kbd> directory.  And copy
     <kbd>midiprovider/LinuxCharDev/linuxdevices.conf</kbd> under the
-    main JSynthLib Directory and edit it to reflect your setup. Each
-    line in this file represents one device that you wish to have
-    accessible in JSynthLib.
+    main JSynthLib Directory and edit it to reflect your setup.<br>
+    Each line in this file represents one device that you wish to have
+    accessible in JSynthLib.<br>
+    With the LinuxCharDev MidiProvider no concurrent access of the used
+    devices is provided. The OSS/"ALSA rawmidi" interfaces are used.<br>
+    You can also install the Tritonus ALSA MidiProvider. Please see the
+    <a href="http://www.tritonus.org/">Tritonus: Java Sound for Linux</a>
+    website for further information.
 <li>Run JSynthLib.jar by typing <kbd>java -jar JSynthLib.jar</kbd>
     from the shell prompt.
 <!--
