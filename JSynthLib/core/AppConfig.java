@@ -18,16 +18,12 @@ import java.util.Vector;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import javax.sound.midi.Transmitter;
 import javax.swing.UIManager;
 
 import org.jsynthlib.jsynthlib.Dummy;
 
 final public class AppConfig {
     private static ArrayList deviceList = new ArrayList();
-    private static Transmitter masterInTrns;
-    private static Transmitter faderInTrns;
-
     private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
     private static Preferences prefsDev = prefs.node("devices");
 
@@ -41,9 +37,6 @@ final public class AppConfig {
 	    ErrorMsg.reportStatus(e);
 	}
         setLookAndFeel(getLookAndFeel());
-
-	masterInTrns = MidiUtil.getTransmitter(getMasterController());
-	faderInTrns = MidiUtil.getTransmitter(getFaderPort());
     }
 
     /**
@@ -220,6 +213,7 @@ final public class AppConfig {
     }
     /** Setter for masterInEnable */
     public void setMasterInEnable(boolean masterInEnable) {
+	PatchEdit.masterInEnable(masterInEnable);
         prefs.putBoolean("masterInEnable", masterInEnable);
     }
 
@@ -229,19 +223,7 @@ final public class AppConfig {
     }
     /** Setter for masterController */
     public void setMasterController(int masterController) {
-	if (masterController < 0)
-	    masterController = 0;
-	if (getMasterController() != masterController) {
-	    // others may be using
-	    //if (masterInTrns != null) masterInTrns.close();
-	    masterInTrns = MidiUtil.getTransmitter(masterController);
-	}
         prefs.putInt("masterController", masterController);
-    }
-
-    /** Return Transmitter of Master Input. */
-    Transmitter getMasterInTrns() {
-	return masterInTrns;
     }
 
     /** Getter for faderEnable */
@@ -259,19 +241,7 @@ final public class AppConfig {
     }
     /** Setter for faderPort */
     public void setFaderPort(int faderPort) {
-	if (faderPort < 0)
-	    faderPort = 0;
-	if (getFaderPort() != faderPort) {
-	    // others may be using (true?)
-	    //if (faderInTrns != null) faderInTrns.close();
-	    faderInTrns = MidiUtil.getTransmitter(getFaderPort());
-	}
         prefs.putInt("faderPort", faderPort);
-    }
-
-    /** Return Transmitter of Fader Input. */
-    Transmitter getFaderInTrns() {
-	return faderInTrns;
     }
 
     //int[] faderChannel (0 <= channel < 16, 16:off)
