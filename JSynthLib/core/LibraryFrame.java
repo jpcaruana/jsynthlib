@@ -128,7 +128,8 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
 
             public void JSLFrameDeactivated(JSLFrameEvent e)
             {
-                PatchEdit.receiveAction.setEnabled(false);
+                PatchEdit.uploadAction.setEnabled(false);
+		PatchEdit.receiveAction.setEnabled(false);
                 PatchEdit.extractAction.setEnabled(false);
                 PatchEdit.sendAction.setEnabled(false);
                 PatchEdit.sendToAction.setEnabled(false);
@@ -282,6 +283,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
  		    PatchEdit.reassignAction.setEnabled(true);
+		    PatchEdit.uploadAction.setEnabled(true);
 
                     Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
                     try{
@@ -314,6 +316,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
                     PatchEdit.copyAction.setEnabled(false);
                     PatchEdit.cutAction.setEnabled(false);
                     PatchEdit.deleteAction.setEnabled(false);
+		    PatchEdit.uploadAction.setEnabled(false);
                 }
             }
         });

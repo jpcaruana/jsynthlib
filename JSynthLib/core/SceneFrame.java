@@ -121,6 +121,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
                     PatchEdit.reassignAction.setEnabled(true);
+		    PatchEdit.uploadAction.setEnabled(true);
 
 
                     Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
@@ -177,6 +178,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
                 PatchEdit.newPatchAction.setEnabled(false);
                 PatchEdit.crossBreedAction.setEnabled(false);
                 PatchEdit.transferSceneAction.setEnabled(false);
+		PatchEdit.uploadAction.setEnabled(false);
 
             }
 
@@ -306,7 +308,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
                     PatchEdit.reassignAction.setEnabled(true);
-
+		    PatchEdit.uploadAction.setEnabled(true);
 
                     Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
                     try{
@@ -337,6 +339,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
                     PatchEdit.copyAction.setEnabled(false);
                     PatchEdit.cutAction.setEnabled(false);
                     PatchEdit.deleteAction.setEnabled(false);
+		    PatchEdit.uploadAction.setEnabled(false);
                 }
             }
         });

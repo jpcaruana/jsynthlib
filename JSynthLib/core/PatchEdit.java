@@ -65,7 +65,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     static SynthAction synthAction;
     static PrefsAction prefsAction;
     static ExitAction exitAction;
-
+    static UploadAction uploadAction;
     private static NextFaderAction nextFaderAction;
     private static NewAction newAction;
     private static OpenAction openAction;
@@ -192,6 +192,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         docsAction		= new DocsAction(mnemonics);
 
         nextFaderAction		= new NextFaderAction(mnemonics);
+	uploadAction		= new UploadAction(mnemonics);
 
 	// set keyboard short cut
 	if (!MacUtils.isMac())
@@ -273,6 +274,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         menuPatch.add(crossBreedAction);
         menuPatch.add(newPatchAction);
         menuPatch.add(extractAction);
+	menuPatch.add(uploadAction);
         menuBar.add(menuPatch);
 	menuPatch.addMenuListener(new MenuListener() {
 		Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -340,6 +342,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         popup.add(cutAction);
         popup.add(copyAction);
         popup.add(pasteAction);
+	popup.addSeparator();
+	popup.add(uploadAction);
 	return popup;
     }
 
@@ -895,6 +899,21 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     } // End SubClass: GetAction
     //------ End phil@muqus.com
+
+ static class UploadAction extends AbstractAction {
+	public UploadAction(Map mnemonics) {
+	    super("Upload...", null);
+	    mnemonics.put(this, new Integer('U'));
+	    setEnabled(false);
+	}
+
+	public void actionPerformed(ActionEvent e) {
+	    UploadPatchDialog myDialog = new UploadPatchDialog(PatchEdit.getInstance());
+	    myDialog.show();
+	}
+
+    }
+
 
     // denis: mis en public toutes les classes Action
     static class ImportAction extends AbstractAction {
