@@ -96,9 +96,12 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver {
 
     //this gets called whenever a midimessage arrives at input
     public void send (MidiMessage msg,long l) {
-        if (msg instanceof ShortMessage
-            && ((ShortMessage) msg).getStatus() == ShortMessage.ACTIVE_SENSING)
-                return;
+	// ignore System Real Time Message
+	if ((msg.getStatus() & 0xf8) == 0xf8)
+	    return;
+//         if (msg instanceof ShortMessage
+//             && ((ShortMessage) msg).getStatus() == ShortMessage.ACTIVE_SENSING)
+//                 return;
 	//System.out.println("MidiWrapper:Got Message length "+msg.getLength());
 	list.add (msg);
     }
