@@ -31,6 +31,7 @@ public class JSLDesktop {
     void setupInitialMenuBar(JToolBar tb) { proxy.setupInitialMenuBar(tb); }
     public void showToolBar() { proxy.showToolBar(); }
     JSLFrame getToolBar() { return proxy.getToolBar(); }
+    JSLFrame getInvisible() { return proxy.getInvisible(); }
     private interface JSLDesktopProxy {
 	public JSLFrame[] getAllJSLFrames();
 	public JSLFrame getSelectedJSLFrame();
@@ -41,6 +42,7 @@ public class JSLDesktop {
 	public void setupInitialMenuBar(JToolBar tb);
 	public void showToolBar();
 	public JSLFrame getToolBar();
+	public JSLFrame getInvisible();
      }
     private class JSLJDesktop extends JDesktopPane implements JSLDesktopProxy {
 
@@ -114,6 +116,7 @@ public class JSLDesktop {
 	}
 	public void showToolBar() {}
 	public JSLFrame getToolBar() {return null;}
+	public JSLFrame getInvisible() { return null; }
     }
     private class JSLFakeDesktop implements JSLDesktopProxy, JSLFrameListener {
 	protected ArrayList windows = new ArrayList();
@@ -125,8 +128,14 @@ public class JSLDesktop {
 	    if (MacUtils.isMac()) {
 		// Create invisible window to keep menus when no open windows
 		invisible = new JSLFrame();
+		invisible.setTitle("Please enable ScreenMenuBar.");
+		invisible.getJFrame().setDefaultCloseOperation(
+		        JFrame.DO_NOTHING_ON_CLOSE);
 	    }
 	    toolbar = new JSLFrame("JSynthLib",false,false,false,false);
+	    /*
+	    toolbar.getJFrame().setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+	    */
 	}
 	public void setupInitialMenuBar(JToolBar tb) {
 	    if (invisible != null) {
@@ -146,6 +155,7 @@ public class JSLDesktop {
 	    toolbar.pack();
 	    toolbar.setVisible(true);
 	}
+	public JSLFrame getInvisible() { return invisible; }
 	public JMenu createWindowMenu() {
 	    JSLWindowMenu wm = new JSLWindowMenu();
 	    windowMenus.add(wm);
@@ -201,7 +211,7 @@ public class JSLDesktop {
 	public void JSLFrameClosed(JSLFrameEvent e) {
 	    windows.remove(e.getJSLFrame());
 	    if (windows.size() < 1 &&
-		    invisible != null &&
+		    invisible == null &&
 		    !toolbar.isVisible() ) {
 		PatchEdit.appConfig.savePrefs();
 		// We shouldn't need to unload the midi driver if

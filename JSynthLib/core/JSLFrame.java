@@ -213,16 +213,21 @@ public class JSLFrame {
 						      WindowListener {
 	private WeakReference parent;
 	protected ArrayList listeners = new ArrayList();
+	double takemem[] = null;
 
 	public JSLJFrame(JSLFrame p) {
 	    super();
 	    addWindowListener(this);
 	    parent = new WeakReference(p);
+	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	    takemem = new double[1000000];
 	}
 	public JSLJFrame(JSLFrame p, String title) {
 	    super(title);
 	    addWindowListener(this);
 	    parent = new WeakReference(p);
+	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	    takemem = new double[1000000];
 	}
 	public JSLFrame getJSLFrame() { return (JSLFrame)parent.get(); }
 	public void moveToFront() { toFront(); }
@@ -237,6 +242,31 @@ public class JSLFrame {
 	    listeners.add(l);
 	}
 	
+	public void setVisible(boolean b) {
+	    System.err.println("JSLJFrame("+getTitle()+").setVisible("+b+")");
+	    if (MacUtils.isMac()) {
+		if (b && getJMenuBar() == null) {
+		    setJMenuBar(PatchEdit.createMenuBar());
+		} else if (!b) {
+		    // Remove menubar so frame can be disposed.
+		    // http://archives:archives@lists.apple.com/archives/java-dev/2003/Dec/04/disposingofjframesusescr.001.txt
+		    JMenuBar mb = getJMenuBar();
+		    setJMenuBar(null);
+		    
+		    PatchEdit.desktop.getInvisible().getJFrame().requestFocus();
+		    requestFocus();
+		}
+	    }
+	    super.setVisible(b);
+	}
+	public void dispose() {
+	    System.err.println("JSLJFrame("+getTitle()+").dispose()");
+	    super.dispose();
+	}
+	protected void finalize() throws Throwable {
+	    System.err.println("JSLJFrame("+getTitle()+").finalize()");
+	    super.finalize();
+	}
 	public void windowActivated(WindowEvent e) {
 	    if (e.getWindow() == PatchEdit.desktop.getToolBar().getJFrame()) {
 		if (e.getOppositeWindow() instanceof JSLFrame.JSLFrameProxy ) {
@@ -288,8 +318,8 @@ public class JSLFrame {
 	    while (it.hasNext()) {
 		((JSLFrameListener)it.next()).JSLFrameClosing(fe);
 	    }
-	    if (!fe.isConsumed())
-		proxy.dispose();
+	    //if (!fe.isConsumed())
+	    //	proxy.dispose();
 	}
 	public void windowDeactivated(WindowEvent e) {
 	    if (e.getOppositeWindow() == 

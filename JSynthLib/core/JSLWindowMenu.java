@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.lang.ref.*;
 
 public class JSLWindowMenu extends JMenu implements WindowListener,
 						    ActionListener {
@@ -81,7 +82,7 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
     }
 }
 class JSLWindowMenuItem extends JRadioButtonMenuItem implements ButtonModel {
-    private JFrame f;
+    private WeakReference f;
     protected boolean roll = false, press = false;
     JSLWindowMenuItem() {
 	super();
@@ -89,15 +90,15 @@ class JSLWindowMenuItem extends JRadioButtonMenuItem implements ButtonModel {
     }
     public JSLWindowMenuItem(JFrame frame) {
 	super(frame.getTitle());
-	f = frame;
+	f = new WeakReference(frame);
     }
     public boolean equals(Object o) {
-	return f.equals(o);
+	return f.get().equals(o);
     }
     public void setGroup(ButtonGroup g) {}
     public void setRollover(boolean b) { roll = b;}
     public void setPressed(boolean b) {press = b;}
     public boolean isRollover() { return roll; }
     public boolean isPressed() { return press; }
-    public JFrame getJFrame() { return f; }
+    public JFrame getJFrame() { return (JFrame)f.get(); }
 }
