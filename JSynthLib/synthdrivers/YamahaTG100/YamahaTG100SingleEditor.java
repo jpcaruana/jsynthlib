@@ -49,18 +49,20 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
     private static JTabbedPane oTabs;
     private static JPanel element2Panel;
 
-    public YamahaTG100SingleEditor(IPatch patch) {
-	    super ("Yamaha TG100 Single Editor", patch);
+    public YamahaTG100SingleEditor(IPatch iPatch) {
+	    super ("Yamaha TG100 Single Editor", iPatch);
+
+	    Patch patch = (Patch) iPatch;
 
         oTabs = new JTabbedPane();
         scrollPane.add(oTabs);
 
-        oTabs.add(buildCommonWindow(), "Common");
+        oTabs.add(buildCommonWindow(patch), "Common");
 		for (int i = 1; i <= 2; i++) {
-			oTabs.add(buildElementWindow(i), "Element " + i);
+			oTabs.add(buildElementWindow(i, patch), "Element " + i);
 		}
 
-        setSize(400, 600);
+        setSize(500, 600);
 		pack();
 		setVisible(true);
     }
@@ -68,13 +70,12 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
     /**
     * Common parameter tab
     */
-	private Container buildCommonWindow() {
+	private Container buildCommonWindow(Patch patch) {
 		Box verticalBox = Box.createVerticalBox();
 		GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,2,5,2);  // padding
-        Patch patch = (Patch) p;
 
 		JPanel commonPanel =  new JPanel();
 		commonPanel.setLayout(gridbag);
@@ -168,74 +169,189 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 	/**
     * Common element tab
     */
-	private Container buildElementWindow(final int element) {
+	private Container buildElementWindow(final int element, Patch patch) {
 	    int offset = TG100Constants.ELEMENT_SIZE * (element - 1);
 
 		Box verticalBox = Box.createVerticalBox();
+		GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5,2,5,2);  // padding
 
-		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		// Waveform
-		oPanel1.add(new ScrollBarWidget("Waveform", p, 0, 139, 0, new TG100Model(patch, 31 + offset, true),  new TG100Sender(0x18 + offset) ) );
-		// EG AR
-		oPanel1.add(new ScrollBarWidget("EG AR", p, 49, 79, -64, new TG100Model(patch, 33 + offset),  new TG100Sender(0x1A + offset) ) );
-		// EG RR
-		oPanel1.add(new ScrollBarWidget("EG RR", p, 49, 79, -64, new TG100Model(patch, 34 + offset),  new TG100Sender(0x1B + offset) ) );
+		JPanel elementPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-		verticalBox.add(oPanel1);
-
-		// Level Scaling Break Point 1
-		// Level Scaling Break Point 2
-		// Level Scaling Break Point 3
-		// Level Scaling Break Point 4
-		// Level Scaling Offset 1
-		// Level Scaling Offset 2
-		// Level Scaling Offset 3
-		// Level Scaling Offset 4
+		// Waveform		
+		elementPanel.add(new KnobWidget("Waveform", p, 0, 139, 0, new TG100Model(patch, 31 + offset, true),  new TG100Sender(0x18 + offset) ) );
+		// EG AR		
+		elementPanel.add(new KnobWidget("EG AR", p, 49, 79, -64, new TG100Model(patch, 33 + offset),  new TG100Sender(0x1A + offset) ) );
+		// EG RR		
+		elementPanel.add(new KnobWidget("EG RR", p, 49, 79, -64, new TG100Model(patch, 34 + offset),  new TG100Sender(0x1B + offset) ) );
 		// Panpot
+		elementPanel.add(new ComboBoxWidget("Panpot", p,
+		                                    new TG100Model(patch, 47 + offset),
+		                                    new TG100Sender(0x28 + offset), TG100Constants.PANPOT ) );
+		// Veloctiy Curve
+        elementPanel.add(new ComboBoxWidget("Velocity Curve", p,
+		                                    new TG100Model(patch, 66 + offset),
+		                                    new TG100Sender(0x3B + offset),
+		                                    TG100Constants.VELOCITY_CURVE ) );
+        elementPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Element " + element,TitledBorder.CENTER,TitledBorder.CENTER));
+        verticalBox.add(elementPanel);
+
+		JPanel levelScalingPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));		
+
+		// Level Scaling Break Point 1		
+		levelScalingPanel.add(new VertScrollBarLookupWidget(  "Breakpoint 1", p,
+		                                        new TG100Model(patch, 35 + offset),
+		                                        new TG100Sender(0x1C + offset), TG100Constants.NOTES ) );
+        // Level Scaling Offset 1        
+		levelScalingPanel.add(new VertScrollBarWidget(  "Offset 1", p, 0, 256, -128,
+		                                        new TG100Model(patch, 39 + offset, true),
+		                                        new TG100Sender(0x20 + offset)), gbc );
+		// Level Scaling Break Point 2		
+		levelScalingPanel.add(new VertScrollBarLookupWidget(  "Breakpoint 2", p,
+		                                        new TG100Model(patch, 36 + offset),
+		                                        new TG100Sender(0x1D + offset), TG100Constants.NOTES ) );
+        // Level Scaling Offset 2        
+		levelScalingPanel.add(new VertScrollBarWidget(  "Offset 2", p, 0, 256, -128,
+		                                        new TG100Model(patch, 41 + offset, true),
+		                                        new TG100Sender(0x22 + offset)) );
+		// Level Scaling Break Point 3
+		levelScalingPanel.add(new VertScrollBarLookupWidget(  "Breakpoint 3", p,
+		                                        new TG100Model(patch, 37 + offset),
+		                                        new TG100Sender(0x1E + offset), TG100Constants.NOTES ) );
+        // Level Scaling Offset 3        gbc.gridx = 5;
+		levelScalingPanel.add(new VertScrollBarWidget(  "Offset 3", p, 0, 256, -128,
+		                                        new TG100Model(patch, 43 + offset, true),
+		                                        new TG100Sender(0x24 + offset)) );
+		// Level Scaling Break Point 4		
+		levelScalingPanel.add(new VertScrollBarLookupWidget(  "Breakpoint 4", p,
+		                                        new TG100Model(patch, 38 + offset),
+		                                        new TG100Sender(0x1F + offset), TG100Constants.NOTES ) );
+		// Level Scaling Offset 4		
+		levelScalingPanel.add(new VertScrollBarWidget(  "Offset 4", p, 0, 256, -128,
+		                                        new TG100Model(patch, 45 + offset, true),
+		                                        new TG100Sender(0x26 + offset)) );
+
+        levelScalingPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Level Scaling",TitledBorder.CENTER,TitledBorder.CENTER));
+        verticalBox.add(levelScalingPanel);
+
+
+        JPanel lfoEGPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        JPanel lfoPanel = new JPanel();
+        lfoPanel.setLayout(gridbag);
+
 		// LFO Speed
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		lfoPanel.add(new KnobWidget(    "Speed", p, 0, 7, 0,
+		                                    new TG100Model(patch, 48 + offset),
+		                                    new TG100Sender(0x29 + offset) ), gbc );
 		// LFO Delay
+		gbc.gridx = 1;
+		lfoPanel.add(new KnobWidget(    "Delay", p, 0, 127, 0,
+		                                    new TG100Model(patch, 49 + offset),
+		                                    new TG100Sender(0x2A + offset) ), gbc );
+        // Pitch LFO Wave
+        gbc.gridx = 2;
+		lfoPanel.add(new ComboBoxWidget(     "Pitch LFO Wave", p,
+		                                    new TG100Model(patch, 53 + offset),
+		                                    new TG100Sender(0x2E + offset),
+		                                    TG100Constants.PITCH_LFO_WAVE ), gbc );
 		// LFO Pitch Mod Depth
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		lfoPanel.add(new KnobWidget(    "Pitch Mod Depth", p, 0, 15, 0,
+		                                    new TG100Model(patch, 51 + offset),
+		                                    new TG100Sender(0x2C + offset) ), gbc );
 		// LFO Amp Mod Depth
-		// Pitch LFO Wave
+		gbc.gridx = 1;
+		lfoPanel.add(new KnobWidget(    "Amp Mod Depth", p, 0, 7, 0,
+		                                    new TG100Model(patch, 52 + offset),
+		                                    new TG100Sender(0x2D + offset) ), gbc );		
+        lfoPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"LFO",TitledBorder.CENTER,TitledBorder.CENTER));
+        lfoEGPanel.add(lfoPanel);
+
+
+        JPanel pEGPanel = new JPanel();
+		pEGPanel.setLayout(gridbag);
+
 		// P-EG Range
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 2;
+		pEGPanel.add(new ComboBoxWidget(     "Range", p,
+		                                    new TG100Model(patch, 54 + offset),
+		                                    new TG100Sender(0x2F + offset),
+		                                    TG100Constants.P_EG_RANGE ), gbc );
 		// P-EG Velocity Switch
-		// P-EG LO
-/*
-		JPanel envelopePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		// Can't use checkbox because the values are "on", "off" instead of "off", "on"
+		gbc.gridx = 2;		
+		pEGPanel.add(new ComboBoxWidget(     "Velocity Switch", p,
+		                                    new TG100Model(patch, 55 + offset),
+		                                    new TG100Sender(0x30 + offset),
+		                                    TG100Constants.SWITCH ), gbc );
+        // P-EG Rate Scaling
+        gbc.gridx = 4;        
+        pEGPanel.add(new KnobWidget(    "Rate Scaling", p, 0, 7, 0,
+		                                    new TG100Model(patch, 56 + offset),
+		                                    new TG100Sender(0x31 + offset) ), gbc );
+
 
 		// P-EG R1
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		gbc.gridwidth = 1;
+		pEGPanel.add(new KnobWidget(    "Rate 1", p, 0, 63, 0,
+		                                    new TG100Model(patch, 57 + offset),
+		                                    new TG100Sender(0x32 + offset) ), gbc );
 		// P-EG R2
+		gbc.gridx = 2;
+		pEGPanel.add(new KnobWidget(    "Rate 2", p, 0, 63, 0,
+		                                    new TG100Model(patch, 58 + offset),
+		                                    new TG100Sender(0x33 + offset) ), gbc );
 		// P-EG R3
+		gbc.gridx = 3;
+		pEGPanel.add(new KnobWidget(    "Rate 3", p, 0, 63, 0,
+		                                    new TG100Model(patch, 59 + offset),
+		                                    new TG100Sender(0x34 + offset) ), gbc );
 		// P-EG RR
+		gbc.gridx = 4;
+		pEGPanel.add(new KnobWidget(    "Rate R", p, 0, 63, 0,
+		                                    new TG100Model(patch, 60 + offset),
+		                                    new TG100Sender(0x35 + offset) ), gbc );
+		// P-EG LO
+		gbc.gridx = 0;
+        gbc.gridy = 2;
+		pEGPanel.add(new KnobWidget(    "LO", p, 0, 127, -64,
+		                                    new TG100Model(patch, 61 + offset),
+		                                    new TG100Sender(0x36 + offset) ), gbc );
 		// P-EG L1
+		gbc.gridx = 1;
+		pEGPanel.add(new KnobWidget(    "Level 1", p, 0, 127, -64,
+		                                    new TG100Model(patch, 62 + offset),
+		                                    new TG100Sender(0x37 + offset) ), gbc );
 		// P-EG L2
+		gbc.gridx = 2;
+		pEGPanel.add(new KnobWidget(    "Level 2", p, 0, 127, -64,
+		                                    new TG100Model(patch, 63 + offset),
+		                                    new TG100Sender(0x38 + offset) ), gbc );
 		// P-EG L3
+		gbc.gridx = 3;
+		pEGPanel.add(new KnobWidget(    "Level 3", p, 0, 127, -64,
+		                                    new TG100Model(patch, 64 + offset),
+		                                    new TG100Sender(0x39 + offset) ), gbc );
 		// P-EG RL
-		EnvelopeWidget pitchEnvelope = new EnvelopeWidget("  Envelope", p, new EnvelopeWidget.Node [] {
-		    new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-        	new EnvelopeWidget.Node(0, 63, new TG100Model(patch, 57 + offset),
-        	                        0, 127, new TG100Model(patch, 62 + offset),
-        	                        -64, true, new TG100Sender(0x3E + offset), new TG100Sender(0x43 + offset),
-        	                        "P-EG R1","P-EG L1"),
-            new EnvelopeWidget.Node(0, 63, new TG100Model(patch, 58 + offset),
-        	                        0, 127, new TG100Model(patch, 63 + offset),
-        	                        -64, true, new TG100Sender(0x3F + offset), new TG100Sender(0x44 + offset),
-        	                        "P-EG R2","P-EG L2"),
-            new EnvelopeWidget.Node(0, 63, new TG100Model(patch, 59 + offset),
-        	                        0, 127, new TG100Model(patch, 64 + offset),
-        	                        -64, true, new TG100Sender(0x40 + offset), new TG100Sender(0x45 + offset),
-        	                        "P-EG R3","P-EG L3"),
-            new EnvelopeWidget.Node(0, 63, new TG100Model(patch, 60 + offset),
-        	                        0, 127, new TG100Model(patch, 65 + offset),
-        	                        -64, true, new TG100Sender(0x41 + offset), new TG100Sender(0x46 + offset),
-        	                        "P-EG RR","P-EG RL"),
-        });
-        envelopePanel.add(pitchEnvelope);
+		gbc.gridx = 4;
+		pEGPanel.add(new KnobWidget(    "Release Level", p, 0, 127, -64,
+		                                    new TG100Model(patch, 65 + offset),
+		                                    new TG100Sender(0x3A + offset) ), gbc );
 
-        verticalBox.add(envelopePanel);
-        */
-
-		// Veloctiy Curve
+        pEGPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Pitch Envelope (P-EG)",TitledBorder.CENTER,TitledBorder.CENTER));
+        lfoEGPanel.add(pEGPanel);
+        
+        verticalBox.add(lfoEGPanel);
 
 		return verticalBox;
 	}

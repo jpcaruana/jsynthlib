@@ -21,7 +21,8 @@
 
 package synthdrivers.YamahaTG100;
 
-import core.*;
+import core.ParamModel;
+import core.Patch;
 
 public class TG100Model extends ParamModel {
     private boolean has2ByteValue = false;
