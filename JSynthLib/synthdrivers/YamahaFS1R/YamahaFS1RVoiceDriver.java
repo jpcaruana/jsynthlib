@@ -28,7 +28,13 @@ public class YamahaFS1RVoiceDriver extends Driver
 	static final int HEADER_SIZE = 11;
 
 	static final int COMMON_SIZE = 112;
-	static final int VOICE_SIZE = 62;
+	static final int COMMON_OFFSET = PATCHNAME_OFFSET;
+	
+	static final int VOICE_VOICE_SIZE = 35;
+	static final int VOICE_UNVOICE_SIZE = 27;
+	static final int VOICE_SIZE = VOICE_VOICE_SIZE + VOICE_UNVOICE_SIZE;
+	
+	static final int VOICE_VOICE_OFFSET = COMMON_OFFSET + COMMON_SIZE;
 	
 	static final int INTERNAL_PATCHNUM_OFFSET = 8;
 	
