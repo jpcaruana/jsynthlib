@@ -107,6 +107,10 @@ class SceneFrame extends AbstractLibraryFrame {
         Actions.setEnabled(table.getSelectedRowCount() == 1
                 && myModel.getPatchAt(table.getSelectedRow()).isSinglePatch(),
                 Actions.EN_SEND | Actions.EN_SEND_TO | Actions.EN_PLAY);
+
+        // enable paste if the clipboard has contents.
+        Actions.setEnabled(Toolkit.getDefaultToolkit().getSystemClipboard()
+                .getContents(this) != null, Actions.EN_PASTE);
     }
 
     // begin PatchBasket methods

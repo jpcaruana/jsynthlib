@@ -187,6 +187,10 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         // All entries are of the same type, so we can check the first one....
         Actions.setEnabled(selectedOne && myModel.getPatchAt(0, 0).hasEditor(),
                 Actions.EN_EDIT);
+
+        // enable paste if the clipboard has contents.
+        Actions.setEnabled(Toolkit.getDefaultToolkit().getSystemClipboard()
+                .getContents(this) != null, Actions.EN_PASTE);
     }
 
     private int getPatchNum(int row, int col) {

@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
@@ -209,6 +210,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                              // Does send_to and reassgin make sense?
                              | Actions.EN_SEND_TO
                              | Actions.EN_REASSIGN);
+
+        // enable paste if the clipboard has contents.
+        Actions.setEnabled(Toolkit.getDefaultToolkit().getSystemClipboard()
+                .getContents(this) != null, Actions.EN_PASTE);
     }
 	
     /**

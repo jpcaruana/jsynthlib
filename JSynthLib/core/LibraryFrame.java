@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.Toolkit;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.util.ArrayList;
@@ -105,6 +106,10 @@ class LibraryFrame extends AbstractLibraryFrame {
         Actions.setEnabled(table.getSelectedRowCount() == 1
                 && myModel.getPatchAt(table.getSelectedRow()).hasEditor(),
                 Actions.EN_EDIT);
+
+        // enable paste if the clipboard has contents.
+        Actions.setEnabled(Toolkit.getDefaultToolkit().getSystemClipboard()
+                .getContents(this) != null, Actions.EN_PASTE);
     }
 
     void deleteDuplicates() {
