@@ -251,7 +251,16 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	}
 
 	public static boolean supportsPlatform(String platform) {
-            //TODO Add check for JRE 1.4.2 or higher!
+            String implementationVersion;
+            
+            implementationVersion=java.lang.System.getProperty("java.vm.version");
+            if (implementationVersion.startsWith("1.0")   ||      //Everything below 1.4.2 is not good
+                implementationVersion.startsWith("1.1")   ||
+                implementationVersion.startsWith("1.2")   ||
+                implementationVersion.startsWith("1.3")   ||
+                implementationVersion.startsWith("1.4.0") ||
+                implementationVersion.startsWith("1.4.1"))
+                return false;
 		if(platform.length()==0 || platform.indexOf("Windows")>-1) {
 			return(true);
 		}
