@@ -42,8 +42,6 @@ class BitModel extends ParamModel {
     static final byte GROUP_MASK     = (byte)0x18;  //0001 1000
     static final byte CRSE_TUNE_MASK = (byte)0x07;  //0000 0111
     
-    protected Patch patch;
-    protected int ofs;
     protected byte mask;
     protected int power = 0;
     
