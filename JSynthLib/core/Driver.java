@@ -10,13 +10,16 @@ import java.util.Arrays;
  * @author Brian Klock
  * @version $Id$
  */
-public class Driver extends Object implements Serializable, Storable {
+public class Driver extends Object /*implements Serializable, Storable*/ {
     /**
      * Which device does this driver go with?
      * @deprecated Use the getter method.
      */
     // can be private
     protected Device device;
+
+    // deviceNum and driverNum are set by
+    // PatchEdit.appConfig.reassignDeviceDriverNums method.
     /** Which deviceNum does the device of this driver goes with? */
     private int deviceNum;
     /** Which driverNum does the device of this driver goes with? */
@@ -118,7 +121,7 @@ public class Driver extends Object implements Serializable, Storable {
 
     // for default sendPatchWorker method
     /**
-     * Offset of channel (deviceID) in sysex.
+     * Offset of deviceID in sysex.
      * @see #sendPatchWorker
      */
     protected int deviceIDoffset;  //location of device id
@@ -133,15 +136,16 @@ public class Driver extends Object implements Serializable, Storable {
     /** Number of sysex messages in patch dump.  Not used now. */
     protected int numSysexMsgs;
 
-    /** The channel (device ID) the user assigns to this driver. */
-    // This is used for both 'channel' for Channel Meesages and
-    // 'Device ID' for System Exclusive Messages.  !!!FIXIT!!! but how?
-    protected int channel = 1;
-
     /*
      * The following fields are obsoleted when the Device class was
      * introduced.  Use getter functions to access them.
      */
+    /**
+     * The channel the user assigns to this driver.
+     * @deprecated Use the getter method.
+     */
+    protected int channel = 1;
+
     /**
      * The MIDI Out port the user assigns to this driver.
      * @deprecated Use the getter method.
@@ -217,21 +221,29 @@ public class Driver extends Object implements Serializable, Storable {
     protected Device getDevice() {
 	return device;
     }
-    /** Setter for property <code>deviceNum</code>. */
-    public void setDeviceNum(int deviceNum) { // 'public' for storable interface
+    /**
+     * Setter for property <code>deviceNum</code>.
+     * Don't use this. Only for backward compatibility.
+     */
+    void setDeviceNum(int deviceNum) {
 	this.deviceNum = deviceNum;
     }
     /** Getter for property <code>deviceNum</code>. */
-    public int getDeviceNum() {	// 'public' for storable interface
-	return this.deviceNum;
+    protected int getDeviceNum() {
+// 	return this.deviceNum;
+	return device.getDeviceNum();
     }
-    /** Setter for property <code>driverNum</code>. */
-    public void setDriverNum(int driverNum) { // 'public' for storable interface
+    /**
+     * Setter for property <code>driverNum</code>.
+     * Don't use this. Only for backward compatibility.
+     */
+    void setDriverNum(int driverNum) {
 	this.driverNum = driverNum;
     }
     /** Getter for property <code>driverNum</code>. */
-    public int getDriverNum() {	// 'public' for storable interface
-	return this.driverNum;
+    protected int getDriverNum() {
+//  	return this.driverNum;
+ 	return device.driverList.indexOf(this);
     }
     /** Getter for property <code>patchType</code>. */
     protected String getPatchType() {
@@ -252,7 +264,7 @@ public class Driver extends Object implements Serializable, Storable {
 	return device.getPort();
     }
     /** Setter for property <code>inPort</code>. */
-    // remove when 'inPort' becomes 'private'.
+    // remove this method when 'inPort' becomes 'private'.
     public void setInPort(int inPort) { // 'public' for storable interface
         this.inPort = inPort;
 	//device.setInPort(inPort);
@@ -279,8 +291,13 @@ public class Driver extends Object implements Serializable, Storable {
         //return device.channel;
     }
     /** Setter for property <code>device.channel</code>. */
+    // remove this method when 'channel' becomes 'private'.
     public void setChannel(int channel) { // called by Device and for storable interface
         this.channel = channel;
+    }
+    /** Getter for property <code>device.deviceID</code>. */
+    protected int getDeviceID() {
+	return device.getDeviceID();
     }
 //     protected void setSynthName(String s) {
 //  	id = s;
@@ -367,8 +384,11 @@ public class Driver extends Object implements Serializable, Storable {
     }
 
     /**
-     * Create a new Patch.<p>
-     * Need to be Overridden.
+     * Create a new Patch.
+     *
+     * Don't override this method unless your driver supports this.
+     * The caller checks if your driver support this by using
+     * getDeclaredMethod.
      */
     protected Patch createNewPatch() {
 	return null;
@@ -556,7 +576,7 @@ public class Driver extends Object implements Serializable, Storable {
     // Why do we need both sendPatch(Patch) and sendPatchWorker(Patch)?
     protected void sendPatchWorker(Patch p) {
         if (deviceIDoffset > 0)	// set channel (device ID)
-	    p.sysex[deviceIDoffset] = (byte) (channel - 1);
+	    p.sysex[deviceIDoffset] = (byte) (device.getDeviceID() - 1);
         try {
 	    PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
 	} catch (Exception e) {
@@ -624,19 +644,22 @@ public class Driver extends Object implements Serializable, Storable {
      * Get the names of properties that should be stored and loaded.
      * @return a Set of field names
      */
+    /*
     public Set storedProperties() {
 	final String[] storedPropertyNames = {
-	    "deviceNum", "driverNum", /*"port", "inPort",*/ "channel"
+	    "deviceNum", "driverNum", "port", "inPort", "channel"
 	};
 	HashSet set = new HashSet();
 	set.addAll(Arrays.asList(storedPropertyNames));
 	return set;
     }
-
+    */
     /** Method that will be called after loading. */
+    /*
     public void afterRestore() {
 	// do nothing
     }
+    */
     // end of storable interface
 
     //
