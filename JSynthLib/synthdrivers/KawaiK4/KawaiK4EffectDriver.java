@@ -11,11 +11,12 @@ import java.io.*;
  */
 
 public class KawaiK4EffectDriver extends Driver {
+    private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 00 00 04 01 *patchNum* F7");
+
     public KawaiK4EffectDriver() {
 	super("Effect", "Gerrit Gehnen");
         sysexID = "F040**2*0004";
 
-	sysexRequestDump = new SysexHandler("F0 40 @@ 00 00 04 01 *patchNum* F7");
         patchSize = 44;
         patchNameStart = 0;
         patchNameSize = 0;
@@ -98,12 +99,9 @@ public class KawaiK4EffectDriver extends Driver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-        NameValue[] nv = new NameValue[2];
-        nv[0] = new NameValue("bankNum", (bankNum << 1) + 1);
-        nv[1] = new NameValue("patchNum", patchNum);
-
-        byte[] sysex = sysexRequestDump.toByteArray((byte) getChannel(), nv);
-
-        SysexHandler.send(getPort(), sysex);
+	clearMidiInBuffer();
+        send(SYS_REQ.toSysexMessage(getChannel(),
+				    new NameValue("bankNum", (bankNum << 1) + 1),
+				    new NameValue("patchNum", patchNum)));
     }
 }

@@ -11,11 +11,11 @@ import java.io.*;
 import javax.swing.*;
 
 public class KawaiK4EffectBankDriver extends BankDriver {
+    private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
 
     public KawaiK4EffectBankDriver () {
 	super ("EffectBank", "Gerrit Gehnen", 32, 2);
         sysexID = "F040**2100040100";
-   	sysexRequestDump = new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
 
         deviceIDoffset = 2;
         bankNumbers = new String[] {
@@ -146,12 +146,9 @@ public class KawaiK4EffectBankDriver extends BankDriver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-        NameValue[] nv = new NameValue[1];
-        nv[0] = new NameValue("bankNum", (bankNum << 1) + 1);
-
-        byte[] sysex = sysexRequestDump.toByteArray((byte) getChannel(), nv);
-
-        SysexHandler.send(getPort(), sysex);
+	clearMidiInBuffer();
+        send(SYS_REQ.toSysexMessage(getChannel(),
+				    new NameValue("bankNum", (bankNum << 1) + 1)));
     }
 
     public void storePatch (Patch p, int bankNum, int patchNum) {

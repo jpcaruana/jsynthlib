@@ -7,7 +7,7 @@ package synthdrivers.KawaiK4;
 import core.*;
 
 /**
- *
+ * Device class for KAWAI K4/K4r.
  * @author  Gerrit Gehnen
  * @version $Id$
  */
@@ -21,7 +21,6 @@ public class KawaiK4Device extends Device {
     public KawaiK4Device() {
 	super("Kawai", "K4/K4R", "F07E**0602400000040000000000f7",
 	      INFO_TEXT, "Brian Klock & Gerrit Gehnen");
-        setSynthName("K4");
 
         addDriver(new KawaiK4BulkConverter());
         addDriver(new KawaiK4SingleDriver());

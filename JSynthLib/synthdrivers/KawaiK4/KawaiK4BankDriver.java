@@ -8,13 +8,13 @@ import javax.swing.*;
  */
 
 public class KawaiK4BankDriver extends BankDriver {
+    private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
+
     public KawaiK4BankDriver() {
 	super("Bank", "Brian Klock", 64, 4);
+
 	sysexID = "F040**210004**00";
-	sysexRequestDump = new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
-
 	deviceIDoffset = 2;
-
 	bankNumbers = new String[] {
 	    "0-Internal", "1-External"
 	};
@@ -132,10 +132,9 @@ public class KawaiK4BankDriver extends BankDriver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-        NameValue[] nv = new NameValue[1];
-        nv[0] = new NameValue("bankNum", bankNum << 1);
-        byte[] sysex = sysexRequestDump.toByteArray((byte) getChannel(), nv);
-        SysexHandler.send(getPort(), sysex);
+	clearMidiInBuffer();
+        send(SYS_REQ.toSysexMessage(getChannel(),
+				    new NameValue("bankNum", bankNum << 1)));
     }
 
     public void storePatch(Patch p, int bankNum, int patchNum) {

@@ -3,17 +3,19 @@ import core.*;
 import javax.swing.*;
 import java.io.*;
 
-/** Driver for Kawai K4 Drumset
+/**
+ * Driver for Kawai K4 Drumset
  *
  * @author Gerrit Gehnen
  * @version $Id$
  */
 
 public class KawaiK4DrumsetDriver extends Driver {
+    private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 00 00 04 *bankNum* 20 F7");
+
     public KawaiK4DrumsetDriver() {
 	super("Drumset", "Gerrit Gehnen");
         sysexID = "F040**2*0004**20";
-        sysexRequestDump = new SysexHandler("F0 40 @@ 00 00 04 *bankNum* 20 F7");
         patchSize = 682 + 9;
         patchNameStart = 0;
         patchNameSize = 0;
@@ -88,9 +90,8 @@ public class KawaiK4DrumsetDriver extends Driver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-	NameValue[] nv = new NameValue[1];
-        nv[0] = new NameValue("bankNum", (bankNum << 1) + 1);
-        byte[] sysex = sysexRequestDump.toByteArray((byte) getChannel(), nv);
-        SysexHandler.send(getPort(), sysex);
+	clearMidiInBuffer();
+        send(SYS_REQ.toSysexMessage(getChannel(),
+				    new NameValue("bankNum", (bankNum << 1) + 1)));
     }
 }

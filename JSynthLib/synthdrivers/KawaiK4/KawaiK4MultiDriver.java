@@ -10,8 +10,7 @@ import java.io.*;
  */
 
 public class KawaiK4MultiDriver extends Driver {
-    static final SysexHandler internalMultiSysexRequestDump
-    = new SysexHandler("F0 40 @@ 00 00 04 *bankNum* *patchNum* F7");
+    private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 00 00 04 *bankNum* *patchNum* F7");
 
     public KawaiK4MultiDriver() {
 	super("Multi", "Gerrit Gehnen");
@@ -93,10 +92,9 @@ public class KawaiK4MultiDriver extends Driver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-        NameValue[] nv = new NameValue[2];
-        nv[0] = new NameValue("bankNum", bankNum << 1);
-        nv[1] = new NameValue("patchNum", patchNum + 0x40);
-        byte[] sysex = internalMultiSysexRequestDump.toByteArray((byte) getChannel(), nv);
-	SysexHandler.send(getPort(), sysex);
+	clearMidiInBuffer();
+        send(SYS_REQ.toSysexMessage(getChannel(),
+				    new NameValue("bankNum", bankNum << 1),
+				    new NameValue("patchNum", patchNum + 0x40)));
     }
 }
