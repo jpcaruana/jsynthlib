@@ -26,9 +26,7 @@ import org.jsynthlib.jsynthlib.Dummy;
 final public class AppConfig {
     private static ArrayList deviceList = new ArrayList();
     private static MidiWrapper midiWrapper = null;
-    private static boolean initMasterController = false;
     private static Transmitter masterInTrns;
-    private static boolean initFaderIn = false;
     private static Transmitter faderInTrns;
 
     private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
@@ -50,7 +48,7 @@ final public class AppConfig {
         setMidiPlatform(getMidiPlatform());
         setLookAndFeel(getLookAndFeel());
 
-	masterInTrns = MidiUtil.getTransmitter(getFaderPort());
+	masterInTrns = MidiUtil.getTransmitter(getMasterController());
 	faderInTrns = MidiUtil.getTransmitter(getFaderPort());
     }
 
@@ -59,38 +57,40 @@ final public class AppConfig {
      */
     boolean loadPrefs() {
 	try {
-	    // Load the appconfig
-	    loadDevices();
+	    String[] devs;
+	    // Some classes assume that the 1st driver is a Generic Driver.
+	    if (prefsDev.nodeExists("Generic#0"))
+		addDevice("synthdrivers.Generic.GenericDevice",
+			  prefsDev.node("Generic#0"));
+	    else
+		// create for the 1st time.
+		addDevice("synthdrivers.Generic.GenericDevice");
+
+	    devs = prefsDev.childrenNames();
+
+	    for (int i = 0; i < devs.length; i++) {
+		if (devs[i].equals("Generic#0"))
+		    continue;
+
+		// get class name from preferences node name
+		//ErrorMsg.reportStatus("loadDevices: \"" + devs[i] + "\"");
+		String s = devs[i].substring(0, devs[i].indexOf('#'));
+		//ErrorMsg.reportStatus("loadDevices: -> " + s);
+		String className = PatchEdit.devConfig.classNameForShortName(s);
+		//ErrorMsg.reportStatus("loadDevices: -> " + s);
+
+		addDevice(className, prefsDev.node(devs[i]));
+	    }
+	    //ErrorMsg.reportStatus("deviceList: " + deviceList);
 	    return true;
+	} catch (BackingStoreException e) {
+	    ErrorMsg.reportStatus("loadPrefs: " + e);
+	    e.printStackTrace();
+	    return false;
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus("loadPrefs: " + e);
 	    e.printStackTrace();
 	    return false;
-	} finally {
-	    if (deviceCount() == 0) {
-		addDevice("synthdrivers.Generic.GenericDevice");
-	    }
-	}
-    }
-
-    private void loadDevices() {
-	String[] devs;
-	try {
-	    devs = prefsDev.childrenNames();
-	} catch (BackingStoreException e) {
-	    ErrorMsg.reportStatus(e);
-	    return;
-	}
-
-	for (int i = 0; i < devs.length; i++) {
-	    // get class name from preferences node name
-	    //ErrorMsg.reportStatus("loadDevices: " + devs[i]);
-	    String s = devs[i].substring(0, devs[i].indexOf('#'));
-	    //ErrorMsg.reportStatus("loadDevices: -> " + s);
-	    String className = PatchEdit.devConfig.classNameForShortName(s);
-	    //ErrorMsg.reportStatus("loadDevices: -> " + s);
-
-	    addDevice(className, prefsDev.node(devs[i]));
 	}
     }
 
@@ -274,26 +274,28 @@ final public class AppConfig {
     }
 
     /** Getter for masterInEnable */
-    public boolean getMasterInEnable() { return prefs.getBoolean("masterInEnable", false); }
+    public boolean getMasterInEnable() {
+	return prefs.getBoolean("masterInEnable", false);
+    }
     /** Setter for masterInEnable */
     public void setMasterInEnable(boolean masterInEnable) {
         prefs.putBoolean("masterInEnable", masterInEnable);
     }
 
     /** Getter for masterController */
-    public int getMasterController() { return  prefs.getInt("masterController", 0); }
+    public int getMasterController() {
+	return  prefs.getInt("masterController", 0);
+    }
     /** Setter for masterController */
     public void setMasterController(int masterController) {
-	boolean changed = (!initMasterController
-			   || getMasterController() != masterController);
 	if (masterController < 0) masterController = 0;
-	if (PatchEdit.newMidiAPI && changed) {
+	if (PatchEdit.newMidiAPI
+	    && (getMasterController() != masterController)) {
 	    // others may be using
 	    //if (masterInTrns != null) masterInTrns.close();
-	    masterInTrns = MidiUtil.getTransmitter(getFaderPort());
+	    masterInTrns = MidiUtil.getTransmitter(masterController);
 	}
         prefs.putInt("masterController", masterController);
-	initMasterController = true;
     }
 
     /** Return Transmitter of Master Input. */
@@ -302,20 +304,22 @@ final public class AppConfig {
     }
 
     /** Getter for faderEnable */
-    public boolean getFaderEnable() { return prefs.getBoolean("faderEnable", false); }
+    public boolean getFaderEnable() {
+	return prefs.getBoolean("faderEnable", false);
+    }
     /** Setter for faderEnable */
     public void setFaderEnable(boolean faderEnable) {
         prefs.putBoolean("faderEnable", faderEnable);
     }
 
     /** Getter for faderPort */
-    public int getFaderPort() { return prefs.getInt("faderPort", 0); }
+    public int getFaderPort() {
+	return prefs.getInt("faderPort", 0);
+    }
     /** Setter for faderPort */
     public void setFaderPort(int faderPort) {
-	boolean changed = (!initFaderIn
-			   || getFaderPort() != faderPort);
 	if (faderPort < 0) faderPort = 0;
-	if (PatchEdit.newMidiAPI && changed) {
+	if (PatchEdit.newMidiAPI && (getFaderPort() != faderPort)) {
 	    // others may be using (true?)
 	    //if (faderInTrns != null) faderInTrns.close();
 	    faderInTrns = MidiUtil.getTransmitter(getFaderPort());
