@@ -1,4 +1,5 @@
 // written by Kenneth L. Martinez
+// @version $Id$
 
 package synthdrivers.RolandMKS50;
 
@@ -9,13 +10,9 @@ public class MKS50PatchSingleDriver extends Driver
 {
   public MKS50PatchSingleDriver()
   {
-    manufacturer = "Roland";
-    model = "MKS-50";
-    patchType = "Patch Single";
-    id = "MKS-50";
+    super ("Patch Single","Kenneth L. Martinez");
     sysexID = "F041350*233001";
     sysexRequestDump = new SysexHandler("F0 10 06 04 01 *patchNum* F7");
-    authors = "Kenneth L. Martinez";
 
     patchSize = 31;
     patchNameStart = 20;
@@ -89,8 +86,7 @@ public class MKS50PatchSingleDriver extends Driver
       (byte)0x3E, (byte)0x3E, (byte)0x3E, (byte)0x3E, (byte)0x3E,
       (byte)0xF7
     };
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
     setPatchName(p, "NewPatch");
     return p;
   }

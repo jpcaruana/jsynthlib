@@ -11,10 +11,7 @@ public class NLDrumBankDriver extends BankDriver {
   static final int NUM_IN_BANK = 10;
   
   public NLDrumBankDriver() {
-    manufacturer = "Nord";
-    model = "Lead";
-    patchType = "Drum Bank";
-    id = "Lead";
+    super ("Drum Bank","Kenneth L. Martinez",NLDrumSingleDriver.PATCH_LIST.length,2);
     sysexID = "F033**04**";
     sysexRequestDump = new SysexHandler("F0 33 @@ 04 *bankNum* *patchNum* F7");
     singleSysexID = "F033**04**";
@@ -25,8 +22,6 @@ public class NLDrumBankDriver extends BankDriver {
     deviceIDoffset = 2;
     bankNumbers  = NLDrumSingleDriver.BANK_LIST;
     patchNumbers = NLDrumSingleDriver.PATCH_LIST;
-    numPatches = patchNumbers.length;
-    numColumns = 2;
   }
 
   public void calculateChecksum(Patch p) {
@@ -88,7 +83,7 @@ public class NLDrumBankDriver extends BankDriver {
         tmp[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)(i + 99); // program #
-        PatchEdit.MidiOut.writeLongMessage(port, tmp);
+        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();
@@ -106,8 +101,7 @@ public class NLDrumBankDriver extends BankDriver {
       tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
       System.arraycopy(tmp, 0, sysex, i * singleSize, singleSize);
     }
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
     return p;
   }
 
@@ -115,7 +109,7 @@ public class NLDrumBankDriver extends BankDriver {
     for (int i = 0; i < NUM_IN_BANK; i++) {
       setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
       setPatchNum(i + 99); // select drum sound, then get data from edit buffer
-      sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
+      sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", 10),
         new NameValue("patchNum", 0)
       );

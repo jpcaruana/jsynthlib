@@ -1,4 +1,5 @@
 // written by Kenneth L. Martinez
+// @version $Id$
 
 package synthdrivers.SCIProphet600;
 
@@ -29,11 +30,7 @@ public class P600ProgSingleDriver extends Driver {
   };
 
   public P600ProgSingleDriver() {
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Sequential";
-    model = "P600";
-    patchType = "Prog Single";
-    id = "Prophet-600";
+    super ("Prog Single","Kenneth L. Martinez");
     sysexID = "F00102**";
     sysexRequestDump = new SysexHandler("F0 01 00 *patchNum* F7");
 
@@ -85,7 +82,7 @@ public class P600ProgSingleDriver extends Driver {
                           //  delay between them (otherwise P600 may not process properly)
       sendPatch(p2);  // kludge to send midi pgm change without modifying super.playPatch
       Thread.sleep (50);
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xC0 + channel - 1), (byte)99);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xC0 + getChannel() - 1), (byte)99);
       Thread.sleep (50);
       super.playPatch(p2);
     } catch (Exception e) {
@@ -94,8 +91,7 @@ public class P600ProgSingleDriver extends Driver {
   }
 
   public Patch createNewPatch() {
-    Patch p = new Patch(NEW_PATCH);
-    p.ChooseDriver();
+    Patch p = new Patch(NEW_PATCH, this);
     return p;
   }
 

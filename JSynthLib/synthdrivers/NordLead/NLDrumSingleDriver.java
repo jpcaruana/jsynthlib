@@ -150,11 +150,7 @@ public class NLDrumSingleDriver extends Driver {
   };
  
   public NLDrumSingleDriver() {
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Nord";
-    model = "Lead";
-    patchType = "Drum Single";
-    id = "Lead";
+    super ("Drum Single","Kenneth L. Martinez");
     sysexID = "F033**04**";
     sysexRequestDump = new SysexHandler("F0 33 @@ 04 *bankNum* *patchNum* F7");
 
@@ -213,15 +209,14 @@ public class NLDrumSingleDriver extends Driver {
   }
 
   public Patch createNewPatch() {
-    Patch p = new Patch(NEW_PATCH);
-    p.ChooseDriver();
+    Patch p = new Patch(NEW_PATCH, this);
     return p;
   }
 
   protected void mySendPatch(Patch p) {
     p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
     try {
-      PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
+      PatchEdit.MidiOut.writeLongMessage(getPort(), p.sysex);
     } catch (Exception e) {
       ErrorMsg.reportStatus (e);
     }
@@ -230,7 +225,7 @@ public class NLDrumSingleDriver extends Driver {
   public void requestPatchDump(int bankNum, int patchNum) {
     setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
     setPatchNum(patchNum + 99); // select drum sound, then get data from edit buffer
-    sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
+    sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", 10), new NameValue("patchNum", 0)
     );
   }

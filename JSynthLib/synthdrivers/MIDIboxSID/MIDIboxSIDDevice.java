@@ -4,7 +4,7 @@
  * @author  Thorsten Klose
  * file:    MIDIboxSIDDevice.java
  * date:    2002-11-30
- * @version 1.0
+ * @version $Id$
  *
  * Copyright (C) 2002  Thorsten.Klose@gmx.de   
  *                     http://www.uCApps.de
@@ -36,14 +36,7 @@ import synthdrivers.MIDIboxSID.MIDIboxSIDSlowSender;
 
 public class MIDIboxSIDDevice extends Device
 {
-    /** Creates new MIDIboxSIDDevice */
-    public MIDIboxSIDDevice ()
-    {
-        inquiryID="F000007E46000FF7";
-        manufacturerName="MIDIbox";
-        modelName="SID";
-        setSynthName("MIDIbox SID");
-        infoText="This driver has been created for MIDIbox SID, a non-commercial DIY\n"+
+    private static final String infoText="This driver has been created for MIDIbox SID, a non-commercial DIY\n"+
         "synthesizer based on the famous Commodore SID soundchip.\n"+
         "\n"+
         "More informations about the features can be found under http://www.uCApps.de/midibox_sid.html\n"+
@@ -63,6 +56,13 @@ public class MIDIboxSIDDevice extends Device
         "     the MIDI Out again\n"+
         "   o note that the channel and device number will be saved in a non-volatile memory and don't\n"+
 	"     have to be set again after the next power-on";
+
+	
+    /** Creates new MIDIboxSIDDevice */
+    public MIDIboxSIDDevice ()
+    {
+	super ("MIDIbox","SID","F000007E46000FF7",infoText,"Thorsten Klose");
+        setSynthName("MIDIbox SID");
 	
         addDriver(new MIDIboxSIDSingleDriver());
         addDriver(new MIDIboxSIDBankDriver());

@@ -11,7 +11,8 @@ import javax.swing.*;
  On reunit 128 perf + 128 voices dans la meme banque.
  0..127 performances
  128..255 voices
- *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @version    $Id$
  */
 public class YamahaFS1RBankDriver extends BankDriver
 {
@@ -32,11 +33,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	 */
 	public YamahaFS1RBankDriver()
 	{
-		manufacturer = "Yamaha";
-		model = "FS1R";
-		patchType = "Bank";
-		id = "FS1R";
-		authors="Denis Queffeulou";
+		super ("Bank","Denis Queffeulou",BANK_NB_PATCHES,NB_COLUMNS);
 		sysexID = "F00F057F7F7F";
 //   inquiryID="F07E**06020F0200*************F7";
 		deviceIDoffset = -1;
@@ -56,9 +53,6 @@ public class YamahaFS1RBankDriver extends BankDriver
 		patchNameStart = PATCHNAME_OFFSET;	
 		patchNameSize = PATCHNAME_SIZE;
 
-		numPatches = BANK_NB_PATCHES;
-		numColumns = NB_COLUMNS;
-		
 		patchSize = BANK_AND_HEADER_SIZE;
 	}
 
@@ -218,8 +212,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 		for (int i = 0; i < 128; i++) {
 			YamahaFS1RVoiceDriver.initPatch(sysex, HEADER_SIZE + 128*YamahaFS1RPerformanceDriver.PATCH_AND_HEADER_SIZE + i*YamahaFS1RVoiceDriver.PATCH_AND_HEADER_SIZE);
 		}
-		Patch p = new Patch(sysex);
-		p.ChooseDriver();
+		Patch p = new Patch(sysex, this);
 		return p;
 	}
 

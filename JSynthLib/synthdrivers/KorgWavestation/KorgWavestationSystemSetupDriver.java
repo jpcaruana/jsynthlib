@@ -14,11 +14,7 @@ import java.io.*;
 public class KorgWavestationSystemSetupDriver extends Driver {
     
     public KorgWavestationSystemSetupDriver() {
-        authors="Gerrit Gehnen";
-        manufacturer="Korg";
-        model="Wavestation";
-        patchType="System Setup";
-        id="Wavestation";
+	super ("System Setup","Gerrit Gehnen");
         sysexID="F0423*2851";
         sysexRequestDump=new SysexHandler("F0 42 @@ 28 0E F7");
         trimSize=75;
@@ -35,19 +31,19 @@ public class KorgWavestationSystemSetupDriver extends Driver {
         {Thread.sleep(100); } catch (Exception e)
         {}
         
-        p.sysex[2]=(byte)(0x30 + channel - 1);
+        p.sysex[2]=(byte)(0x30 + getChannel() - 1);
         try {
-            PatchEdit.MidiOut.writeLongMessage(port,p.sysex);
+            PatchEdit.MidiOut.writeLongMessage(getPort(),p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
         
    }
     
     public void sendPatch(Patch p) {
-        p.sysex[2]=(byte)(0x30 + channel - 1); // the only thing to do is to set the byte to 3n (n = channel)
+        p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
         
         try {
-            PatchEdit.MidiOut.writeLongMessage(port,p.sysex);
+            PatchEdit.MidiOut.writeLongMessage(getPort(),p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
     }
@@ -55,13 +51,12 @@ public class KorgWavestationSystemSetupDriver extends Driver {
     public Patch createNewPatch() {
         byte [] sysex=new byte[75];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
-        sysex[2]=(byte)(0x30+channel-1);
+        sysex[2]=(byte)(0x30+getChannel()-1);
         sysex[03]=(byte)0x28;sysex[04]=(byte)0x51;
         
         sysex[74]=(byte)0xF7;
 
-        Patch p = new Patch(sysex);
-        p.ChooseDriver();
+        Patch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
@@ -81,9 +76,9 @@ public class KorgWavestationSystemSetupDriver extends Driver {
     }
     
     public void requestPatchDump(int bankNum, int patchNum) {
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,0);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(),0);
         
-        SysexHandler.send(port, sysex);
+        SysexHandler.send(getPort(), sysex);
     }
     
 }

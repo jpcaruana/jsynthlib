@@ -1,4 +1,5 @@
 // written by Kenneth L. Martinez
+// @version $Id$
 
 package synthdrivers.RolandMKS50;
 
@@ -30,7 +31,7 @@ class MKS50ToneSingleEditor extends PatchEditorFrame
     scrollPane.add(rightPane, gbc);
 
     JPanel namePane = new JPanel();
-    addWidget(namePane, new PatchNameWidget(patch, " Name"), 0, 0, 2, 1, 0);
+    addWidget(namePane, new PatchNameWidget(" Name",patch), 0, 0, 2, 1, 0);
     gbc.gridx = 0;
     gbc.gridy = 0;
     gbc.gridwidth = 1;

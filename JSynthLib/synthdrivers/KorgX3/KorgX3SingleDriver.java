@@ -14,6 +14,7 @@ import java.io.*;
  * lower bits is exacty the channel to be used
  *
  * @author Juha Tukkinen
+ * @version $Id$
  */
 public class KorgX3SingleDriver extends Driver
 {
@@ -26,14 +27,9 @@ public class KorgX3SingleDriver extends Driver
    */
   public KorgX3SingleDriver()
   {
-    authors="Juha Tukkinen";
-    manufacturer="Korg";
-    model="X3";
-    patchType="Single";
-    id="X3";
+    super ("Single","Juha Tukkinen");
     sysexID="F042**35";
 
-    inquiryID="F07E**0602423500**00**00**00F7";
     // program parameter dump request:
     sysexRequestDump=new SysexHandler("F0 42 30 35 10 F7");
     // ##TODO## note that                    30: 0 is midi channel
@@ -76,17 +72,17 @@ public class KorgX3SingleDriver extends Driver
 	byte[] programMode = {(byte)0x4E, (byte)0x02, (byte)0x00, (byte)0xF7};
 	byte[] programEditMode = {(byte)0x4E, (byte)0x03, (byte)0x00, (byte)0xF7};
 	// go to PROGRAM mode
-	PatchEdit.MidiOut.writeShortMessage(port,(byte)0xF0,(byte)0x42);
-	PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x30+(channel-1)),(byte)0x35);
-	PatchEdit.MidiOut.writeLongMessage(port, programMode);
+	PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)0xF0,(byte)0x42);
+	PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x30+(getChannel()-1)),(byte)0x35);
+	PatchEdit.MidiOut.writeLongMessage(getPort(), programMode);
 	try {Thread.sleep(100); } catch (Exception e){}   
 	// set patch
-	PatchEdit.MidiOut.writeShortMessage (port,(byte)(0xC0+(channel-1)),(byte)patchNum,(byte)0xF7);
+	PatchEdit.MidiOut.writeShortMessage (getPort(),(byte)(0xC0+(getChannel()-1)),(byte)patchNum,(byte)0xF7);
 	try {Thread.sleep(100); } catch (Exception e){}   
 	// go to PROGRAM EDIT mode
-	PatchEdit.MidiOut.writeShortMessage(port,(byte)0xF0,(byte)0x42);
-	PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x30+(channel-1)),(byte)0x35);
-	PatchEdit.MidiOut.writeLongMessage(port, programEditMode);
+	PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)0xF0,(byte)0x42);
+	PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x30+(getChannel()-1)),(byte)0x35);
+	PatchEdit.MidiOut.writeLongMessage(getPort(), programEditMode);
 	try {Thread.sleep(100); } catch (Exception e){}   
       } catch (Exception e) {};
   }
@@ -101,14 +97,14 @@ public class KorgX3SingleDriver extends Driver
     try
       {
 	byte[] programMode = {(byte)0x4E, (byte)0x02, (byte)0x00, (byte)0xF7};
-	PatchEdit.MidiOut.writeShortMessage(port,(byte)0xF0,(byte)0x42);
-	PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x30+(channel-1)),(byte)0x35);
-	PatchEdit.MidiOut.writeLongMessage(port, programMode);
+	PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)0xF0,(byte)0x42);
+	PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x30+(getChannel()-1)),(byte)0x35);
+	PatchEdit.MidiOut.writeLongMessage(getPort(), programMode);
 	
 	// change bank
 	try {Thread.sleep(100); } catch (Exception e){} 
-	PatchEdit.MidiOut.writeShortMessage (port,(byte)(0xB0+(channel-1)),(byte)0x00,(byte)(0x00)); //MSB
-	PatchEdit.MidiOut.writeShortMessage (port,(byte)(0xB0+(channel-1)),(byte)0x20,(byte)(0x00+bankNum)); //LSB
+	PatchEdit.MidiOut.writeShortMessage (getPort(),(byte)(0xB0+(getChannel()-1)),(byte)0x00,(byte)(0x00)); //MSB
+	PatchEdit.MidiOut.writeShortMessage (getPort(),(byte)(0xB0+(getChannel()-1)),(byte)0x20,(byte)(0x00+bankNum)); //LSB
 	try {Thread.sleep(100); } catch (Exception e){} 
       } catch (Exception e) {};
   }
@@ -131,9 +127,9 @@ public class KorgX3SingleDriver extends Driver
 
     byte[] programWriteRequest = {(byte)0x11, (byte)bankNum, (byte)patchNum, (byte)0xF7};
     try {
-      PatchEdit.MidiOut.writeShortMessage(port,(byte)0xF0,(byte)0x42);
-      PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x30+(channel-1)),(byte)0x35);
-      PatchEdit.MidiOut.writeLongMessage(port, programWriteRequest);                     
+      PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)0xF0,(byte)0x42);
+      PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x30+(getChannel()-1)),(byte)0x35);
+      PatchEdit.MidiOut.writeLongMessage(getPort(), programWriteRequest);                     
     } catch (Exception e) {
       ErrorMsg.reportError("Error", "Error with patch storing",e);
     };
@@ -165,7 +161,7 @@ public class KorgX3SingleDriver extends Driver
     byte[] pd = new byte[188+6];
     pd[0] = (byte)0xF0;
     pd[1] = (byte)0x42;
-    pd[2] = (byte)((byte)0x30+(byte)(channel-1));
+    pd[2] = (byte)((byte)0x30+(byte)(getChannel()-1));
     pd[3] = (byte)0x35;
     pd[4] = (byte)0x40; // program parameter dump
     pd[193] = (byte)0xF7;
@@ -185,7 +181,7 @@ public class KorgX3SingleDriver extends Driver
     }
     
     try {
-      PatchEdit.MidiOut.writeLongMessage (port,pd);
+      PatchEdit.MidiOut.writeLongMessage (getPort(),pd);
     } catch (Exception e) { 
       ErrorMsg.reportStatus (e); 
     }
@@ -210,8 +206,7 @@ public class KorgX3SingleDriver extends Driver
       sysex[i]=(byte)0x20;
     }
     
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
 
     setPatchName(p,"Init");
   

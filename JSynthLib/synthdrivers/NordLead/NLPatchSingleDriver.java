@@ -45,13 +45,9 @@ public class NLPatchSingleDriver extends Driver {
   //NordLeadConfig nlConfig;
 
   public NLPatchSingleDriver() {
+    super ("Patch Single","Kenneth L. Martinez");
   //public NLPatchSingleDriver(NordLeadConfig nlc) {
   //  nlConfig = nlc;
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Nord";
-    model = "Lead";
-    patchType = "Patch Single";
-    id = "Lead";
     sysexID = "F033**04**";
     sysexRequestDump = new SysexHandler("F0 33 @@ 04 *bankNum* *patchNum* F7");
 
@@ -106,22 +102,21 @@ public class NLPatchSingleDriver extends Driver {
   }
 
   public Patch createNewPatch() {
-    Patch p = new Patch(NEW_PATCH);
-    p.ChooseDriver();
+    Patch p = new Patch(NEW_PATCH, this);
     return p;
   }
 
   protected void mySendPatch(Patch p) {
     p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
     try {
-      PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
+      PatchEdit.MidiOut.writeLongMessage(getPort(), p.sysex);
     } catch (Exception e) {
       ErrorMsg.reportStatus (e);
     }
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
+    sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", bankNum + 11), new NameValue("patchNum", patchNum)
     );
   }

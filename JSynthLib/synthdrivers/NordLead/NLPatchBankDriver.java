@@ -11,11 +11,7 @@ public class NLPatchBankDriver extends BankDriver {
   static final int NUM_IN_BANK = 99;
 
   public NLPatchBankDriver() {
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Nord";
-    model = "Lead";
-    patchType = "Patch Bank";
-    id = "Lead";
+    super ("Patch Bank","Kenneth L. Martinez",NLPatchSingleDriver.PATCH_LIST.length,3);
     sysexID = "F033**04**";
     sysexRequestDump = new SysexHandler("F0 33 @@ 04 *bankNum* *patchNum* F7");
     singleSysexID = "F033**04**";
@@ -26,8 +22,6 @@ public class NLPatchBankDriver extends BankDriver {
     deviceIDoffset = 2;
     bankNumbers  = NLPatchSingleDriver.BANK_LIST;
     patchNumbers = NLPatchSingleDriver.PATCH_LIST;
-    numPatches = patchNumbers.length;
-    numColumns = 3;
   }
 
   public void calculateChecksum(Patch p) {
@@ -86,7 +80,7 @@ public class NLPatchBankDriver extends BankDriver {
         tmp[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
-        PatchEdit.MidiOut.writeLongMessage(port, tmp);
+        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();
@@ -104,14 +98,13 @@ public class NLPatchBankDriver extends BankDriver {
       tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
       System.arraycopy(tmp, 0, sysex, i * singleSize, singleSize);
     }
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
     return p;
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
+      sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", bankNum + 11),
         new NameValue("patchNum", i)
       );

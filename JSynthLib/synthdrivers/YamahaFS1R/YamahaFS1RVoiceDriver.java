@@ -7,7 +7,8 @@ import java.io.*;
 /**
  *  Single driver for Yamaha FS1R voices.
  *
- *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @version    $Id$
  */
 public class YamahaFS1RVoiceDriver extends Driver
 {
@@ -106,13 +107,8 @@ public class YamahaFS1RVoiceDriver extends Driver
 	 */
 	public YamahaFS1RVoiceDriver()
 	{
+		super ("Voice","Denis Queffeulou");
 		mSingleton = this;
-		
-		manufacturer = "Yamaha";
-		model = "FS1R";
-		patchType = "Voice";
-		id = "FS1R";
-		authors="Denis Queffeulou";
 		sysexID = "F043005E0460**00";
 
 //   inquiryID="F07E**06020F0200*************F7";
@@ -231,8 +227,7 @@ public class YamahaFS1RVoiceDriver extends Driver
 	{
 		byte[] sysex = new byte[PATCH_AND_HEADER_SIZE];
 		initPatch(sysex, 0);
-		Patch oPatch = new Patch(sysex);
-		oPatch.ChooseDriver();
+		Patch oPatch = new Patch(sysex, this);
 		return oPatch;
 	}
 

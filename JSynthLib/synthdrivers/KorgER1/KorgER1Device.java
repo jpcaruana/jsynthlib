@@ -19,10 +19,8 @@ public class KorgER1Device extends Device
     /** Creates new KorgER1Device */
     public KorgER1Device ()
     {
-        manufacturerName="Korg";
-        modelName="Electribe ER1";
-        synthName="ER1";
-        inquiryID="F07E**06024251**************F7";
+	super ("Korg","Electribe ER1","F07E**06024251**************F7",null,"Yves Lefebvre");
+        setSynthName("ER1");
         addDriver (new KorgER1SingleDriver ());
         
     }

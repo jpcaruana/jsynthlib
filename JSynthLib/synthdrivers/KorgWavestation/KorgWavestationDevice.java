@@ -14,15 +14,13 @@ import core.Device;
  */
 public class KorgWavestationDevice extends Device {
     
+        private static final String infoText="This is an experimental driver. It is not tested on a real device yet!";
+
     /** Creates new KorgWavestationDevice */
     public KorgWavestationDevice() {
-        manufacturerName="Korg";
-        modelName="Wavestation";
+	super ("Korg","Wavestation","F07E**06024228000100********F7",infoText,"Gerrit Gehnen");
         setSynthName("Wavestation");
-        authors="Gerrit Gehnen";
-        infoText="This is an experimental driver. It is not tested on a real device yet!";
         
-        inquiryID="F07E**06024228000100********F7";
         addDriver(new KorgWavestationSinglePatchDriver());
         addDriver(new KorgWavestationSinglePerformanceDriver());
         addDriver(new KorgWavestationBankPatchDriver());

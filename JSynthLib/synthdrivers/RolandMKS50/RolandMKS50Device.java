@@ -1,4 +1,5 @@
 // written by Kenneth L. Martinez
+// @version $Id$
 
 package synthdrivers.RolandMKS50;
 
@@ -9,10 +10,7 @@ public class RolandMKS50Device extends Device
   /** Creates new RolandMKS50Device */
   public RolandMKS50Device()
   {
-    manufacturerName = "Roland";
-    modelName = "MKS-50";
-    //patchType = "Bank";
-    synthName = "MKS-50";
+    super ("Roland","MKS-50",null,null,"Kenneth L. Martinez");
 
     addDriver(new MKS50ToneBankDriver());
     addDriver(new MKS50ToneSingleDriver());

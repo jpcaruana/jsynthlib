@@ -12,6 +12,7 @@ import javax.swing.border.*;
  * Does not implement all features as pan positioning etc. Easy to add however.
  * 
  * @author Juha Tukkinen
+ * @version $Id$
  */ 
 class KorgX3SingleEditor extends PatchEditorFrame
 {
@@ -127,7 +128,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
 
     JPanel globalPane = new JPanel();
     globalPane.setLayout(new GridBagLayout());
-    addWidget(globalPane, new PatchNameWidget(patch," Name  "),0,0,1,1,0);
+    addWidget(globalPane, new PatchNameWidget(" Name  ",patch),0,0,1,1,0);
     addWidget(globalPane, new ComboBoxWidget("Osc Mode",patch,new X3Model(patch,10), 
 					     new X3Sender(10),new String []{"SINGLE","DOUBLE","DRUMS"}),1,0,1,1,1);
     addWidget(globalPane, new ComboBoxWidget("Assign",patch,new X3Model(patch,11,0), 

@@ -7,7 +7,8 @@ import java.io.*;
 	Formant sequence driver for FS1R.
 	Size of sysex depends of frame format which can be 128, 256, 384 or 512 bytes long.
 	It gives sizes from 6443 to 25643.
- *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @version    $Id$
  */
 public class YamahaFS1RFseqDriver extends Driver
 {
@@ -37,11 +38,7 @@ public class YamahaFS1RFseqDriver extends Driver
 	 */
 	public YamahaFS1RFseqDriver()
 	{
-		manufacturer = "Yamaha";
-		model = "FS1R";
-		patchType = "FSeq";
-		id = "FS1R";
-		authors="Denis Queffeulou";
+		super ("FSeq","Denis Queffeulou");
 		sysexID = "F043005E****6*00";
 		patchSize = 0;	// variable
 		patchNameStart = PATCHNAME_OFFSET;	

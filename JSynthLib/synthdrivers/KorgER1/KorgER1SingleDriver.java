@@ -1,6 +1,8 @@
 /* Made by Yves Lefebvre
    email : ivanohe@abacom.com
    www.abacom.com/~ivanohe
+
+   @version $Id$
  */
 
 package synthdrivers.KorgER1;
@@ -13,10 +15,7 @@ public class KorgER1SingleDriver extends Driver
     
     public KorgER1SingleDriver ()
     {
-        manufacturer="Korg";
-        model="Electribe ER1";
-        patchType="Single";
-        id="ER1";
+	super ("Single","Yves Lefebvre");
         sysexID="F0423*5140";
         sysexRequestDump=new SysexHandler("F0 42 @@ 51 10 F7");
 	patchSize=1085;
@@ -26,7 +25,6 @@ public class KorgER1SingleDriver extends Driver
         checksumStart=0;
         checksumEnd=0;
         checksumOffset=0;
-        authors="Yves Lefebvre";
        bankNumbers =new String[]
         {"Bank A","Bank B","Bank C","Bank D"};
         patchNumbers=new String[]
@@ -63,10 +61,10 @@ public class KorgER1SingleDriver extends Driver
         {Thread.sleep (100); } catch (Exception e)
         {}
                 
-        p.sysex[2]=(byte)(0x30 + channel - 1);
+        p.sysex[2]=(byte)(0x30 + getChannel() - 1);
         try
         {
-            PatchEdit.MidiOut.writeLongMessage (port,p.sysex);
+            PatchEdit.MidiOut.writeLongMessage (getPort(),p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
         
@@ -78,7 +76,7 @@ public class KorgER1SingleDriver extends Driver
         byte [] sysex = new byte[8];
         sysex[0] = (byte)0xF0;
         sysex[1] = (byte)0x42;
-        sysex[2] = (byte)(0x30 + channel - 1);
+        sysex[2] = (byte)(0x30 + getChannel() - 1);
         sysex[3] = (byte)0x51;
         sysex[4] = (byte)0x11; // write request
         sysex[5] = (byte)(bankValue);
@@ -86,7 +84,7 @@ public class KorgER1SingleDriver extends Driver
         sysex[7] = (byte)0xF7;
         try
         {
-            PatchEdit.MidiOut.writeLongMessage (port,sysex);
+            PatchEdit.MidiOut.writeLongMessage (getPort(),sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
         
@@ -94,11 +92,11 @@ public class KorgER1SingleDriver extends Driver
     
     public void sendPatch (Patch p)
     {
-        p.sysex[2]=(byte)(0x30 + channel - 1); // the only thing to do is to set the byte to 3n (n = channel)
+        p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
         
         try
         {
-            PatchEdit.MidiOut.writeLongMessage (port,p.sysex);
+            PatchEdit.MidiOut.writeLongMessage (getPort(),p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
     }
@@ -108,12 +106,11 @@ public class KorgER1SingleDriver extends Driver
         byte [] sysex = new byte[1085];
         sysex[0]=(byte)0xF0;
         sysex[1]=(byte)0x42;
-        sysex[2]=(byte)(0x30+channel-1);
+        sysex[2]=(byte)(0x30+getChannel()-1);
         sysex[3]=(byte)0x51;
         sysex[4]=(byte)0x40;
         sysex[1084]=(byte)0xF7;
-        Patch p = new Patch (sysex);
-        p.ChooseDriver ();
+        Patch p = new Patch (sysex, this);
         setPatchName (p,"New Patch");
         calculateChecksum (p);
         return p;
@@ -130,7 +127,7 @@ public class KorgER1SingleDriver extends Driver
         
         try
         {
-            PatchEdit.MidiOut.writeShortMessage (port,(byte)(0xC0+(channel-1)),(byte)patchNum);
+            PatchEdit.MidiOut.writeShortMessage (getPort(),(byte)(0xC0+(getChannel()-1)),(byte)patchNum);
         } catch (Exception e)
         {};
     }
@@ -141,9 +138,9 @@ public class KorgER1SingleDriver extends Driver
     //     return new KorgER1SingleEditor(p);
     // }
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = sysexRequestDump.toByteArray((byte)channel, patchNum+0x30);
+    byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(), patchNum+0x30);
    
-    SysexHandler.send(port, sysex);
+    SysexHandler.send(getPort(), sysex);
   }
 
 }

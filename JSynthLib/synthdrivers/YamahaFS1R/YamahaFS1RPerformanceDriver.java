@@ -5,7 +5,8 @@ import java.io.*;
 
 /**
  *  Multi driver for FS1R. Multi are named Performance on FS1R.
- *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @version $Id$
  */
 public class YamahaFS1RPerformanceDriver extends Driver
 {
@@ -95,11 +96,7 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	 */
 	public YamahaFS1RPerformanceDriver()
 	{
-		manufacturer = "Yamaha";
-		model = "FS1R";
-		patchType = "Performance";
-		id = "FS1R";
-		authors="Denis Queffeulou";
+		super ("Performance","Denis Queffeulou");
 		sysexID = "F043005E03101*00";
 		patchSize = PATCH_AND_HEADER_SIZE;
 		patchNameStart = PATCHNAME_OFFSET;	
@@ -212,8 +209,7 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	{
 		byte[] sysex = new byte[PATCH_AND_HEADER_SIZE];
 		initPatch(sysex, 0);
-		Patch oPatch = new Patch(sysex);
-		oPatch.ChooseDriver();
+		Patch oPatch = new Patch(sysex, this);
 		return oPatch;
 	}
 	

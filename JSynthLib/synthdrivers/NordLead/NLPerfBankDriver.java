@@ -12,13 +12,9 @@ public class NLPerfBankDriver extends BankDriver {
   //NordLeadConfig nlConfig;
   
   public NLPerfBankDriver() {
+    super ("Perf Bank","Kenneth L. Martinez",NLPerfSingleDriver.PATCH_LIST.length,5);
   //public NLPerfBankDriver(NordLeadConfig nlc) {
   //  nlConfig = nlc;
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Nord";
-    model = "Lead";
-    patchType = "Perf Bank";
-    id = "Lead";
     sysexID = "F033**04**";
     sysexRequestDump = new SysexHandler("F0 33 @@ 04 *bankNum* *patchNum* F7");
     singleSysexID = "F033**04**";
@@ -29,8 +25,6 @@ public class NLPerfBankDriver extends BankDriver {
     deviceIDoffset = 2;
     bankNumbers  = NLPerfSingleDriver.BANK_LIST;
     patchNumbers = NLPerfSingleDriver.PATCH_LIST;
-    numPatches = patchNumbers.length;
-    numColumns = 5;
   }
 
   public void calculateChecksum(Patch p) {
@@ -91,7 +85,7 @@ public class NLPerfBankDriver extends BankDriver {
         tmp[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)31;
         tmp[PATCH_NUM_OFFSET] = (byte)i; // performance #
-        PatchEdit.MidiOut.writeLongMessage(port, tmp);
+        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();
@@ -109,14 +103,13 @@ public class NLPerfBankDriver extends BankDriver {
       tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
       System.arraycopy(tmp, 0, sysex, i * singleSize, singleSize);
     }
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
     return p;
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
+      sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", 41),
         new NameValue("patchNum", i)
       );

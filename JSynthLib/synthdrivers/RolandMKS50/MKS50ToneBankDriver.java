@@ -1,4 +1,5 @@
 // written by Kenneth L. Martinez
+// @version $Id$
 
 package synthdrivers.RolandMKS50;
 
@@ -10,12 +11,8 @@ public class MKS50ToneBankDriver extends BankDriver
 
    public MKS50ToneBankDriver()
    {
-     manufacturer = "Roland";
-     model = "MKS-50";
-     patchType = "Tone Bank";
-     id = "MKS-50";
+     super ("Tone Bank","Kenneth L. Martinez",64,4);
      sysexID = "F041370*23200100";
-     authors = "Kenneth L. Martinez";
      patchSize = 4256;
      patchNameStart = 5;
      patchNameSize = 8;
@@ -29,8 +26,6 @@ public class MKS50ToneBankDriver extends BankDriver
                                   "61-", "62-", "63-", "64-", "65-", "66-", "67-", "68-",
                                   "71-", "72-", "73-", "74-", "75-", "76-", "77-", "78-",
                                   "81-", "82-", "83-", "84-", "85-", "86-", "87-", "88-"};
-    numPatches = patchNumbers.length;
-    numColumns = 4;
     singleSize = 54;
     singleSysexID = "F041350*232001";
   }
@@ -313,8 +308,8 @@ public class MKS50ToneBankDriver extends BankDriver
       {
         System.arraycopy(p.sysex, 266*i, tmp, 0, 266);
         if (deviceIDoffset > 0)
-          tmp[deviceIDoffset] = (byte)(channel-1);
-        PatchEdit.MidiOut.writeLongMessage(port, tmp);
+          tmp[deviceIDoffset] = (byte)(getChannel()-1);
+        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
         Thread.sleep(15);
       }
     }

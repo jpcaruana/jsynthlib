@@ -39,11 +39,8 @@ public class NordLeadDevice extends Device implements ItemListener {
   
   /** Creates new NordLead */
   public NordLeadDevice() {
-    manufacturerName = "Nord";
-    modelName = "Lead";
-    //patchType = "Bank";
-    synthName = "NL1-2";
-    infoText = DRIVER_INFO;
+    super ("Nord","Lead",null,DRIVER_INFO,"Kenneth L. Martinez");
+    setSynthName("NL1-2");
     Driver drv;
     
     JOptionPane.showMessageDialog(PatchEdit.getInstance(),

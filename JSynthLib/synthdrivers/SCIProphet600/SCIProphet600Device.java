@@ -1,4 +1,5 @@
 // written by Kenneth L. Martinez
+// @version $Id$
 
 package synthdrivers.SCIProphet600;
 
@@ -13,11 +14,8 @@ public class SCIProphet600Device extends Device {
 
   /** Creates new SCIProphet600 */
   public SCIProphet600Device() {
-    manufacturerName = "Sequential";
-    modelName = "P600";
-    //patchType = "Bank";
-    synthName = "Prophet-600";
-    infoText = DRIVER_INFO;
+    super ("Sequential","P600",null,DRIVER_INFO,"Kenneth L. Martinez");
+    setSynthName("Prophet-600");
 
     addDriver(new P600ProgBankDriver());
     addDriver(new P600ProgSingleDriver());

@@ -7,6 +7,7 @@ import core.*;
  * sizes in JSynthLib differ because of the header information.
  * 
  * @author Juha Tukkinen
+ * @version $Id$
  */
 public class KorgX3BankConverter extends Converter {
 
@@ -14,10 +15,7 @@ public class KorgX3BankConverter extends Converter {
    * Default constructor. Notice that patchSize must be 37493.
    */
   public KorgX3BankConverter () {
-    manufacturer="Korg";
-    model="X3";
-    patchType="Bank Dump Converter";
-    authors="Juha Tukkinen";
+    super ("Bank Dump Converter","Juha Tukkinen");
     sysexID="F042**35"; 
     patchSize = 37493;
   }

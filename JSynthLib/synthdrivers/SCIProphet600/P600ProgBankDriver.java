@@ -1,4 +1,5 @@
 // written by Kenneth L. Martinez
+// @version $Id$
 
 package synthdrivers.SCIProphet600;
 
@@ -10,11 +11,7 @@ public class P600ProgBankDriver extends BankDriver {
   static final int NUM_IN_BANK = 100;
 
   public P600ProgBankDriver() {
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Sequential";
-    model = "P600";
-    patchType = "Prog Bank";
-    id = "Prophet-600";
+    super ("Prog Bank","Kenneth L. Martinez",P600ProgSingleDriver.PATCH_LIST.length,5);
     sysexID = "F00102**";
     sysexRequestDump = new SysexHandler("F0 01 00 *patchNum* F7");
     singleSysexID = "F0010263";
@@ -25,8 +22,6 @@ public class P600ProgBankDriver extends BankDriver {
     deviceIDoffset = -1;
     bankNumbers  = P600ProgSingleDriver.BANK_LIST;
     patchNumbers = P600ProgSingleDriver.PATCH_LIST;
-    numPatches = patchNumbers.length;
-    numColumns = 5;
   }
 
   public void calculateChecksum(Patch p) {
@@ -75,7 +70,7 @@ public class P600ProgBankDriver extends BankDriver {
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
         tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
-        PatchEdit.MidiOut.writeLongMessage(port, tmp);
+        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();
@@ -93,14 +88,13 @@ public class P600ProgBankDriver extends BankDriver {
       tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
       System.arraycopy(tmp, 0, sysex, i * singleSize, singleSize);
     }
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
     return p;
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      sysexRequestDump.send(port, (byte)channel, new NameValue("bankNum", bankNum),
+      sysexRequestDump.send(getPort(), (byte)getChannel(), new NameValue("bankNum", bankNum),
         new NameValue("patchNum", i)
       );
       try {

@@ -115,11 +115,7 @@ public class NL2PerfSingleDriver extends Driver {
   };
  
   public NL2PerfSingleDriver() {
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Nord";
-    model = "Lead2";
-    patchType = "Perf Single";
-    id = "Lead2";
+    super ("Perf Single","Kenneth L. Martinez");
     sysexID = "F033**04**";
     sysexRequestDump = new SysexHandler("F0 33 @@ 04 *bankNum* *patchNum* F7");
 
@@ -172,22 +168,21 @@ public class NL2PerfSingleDriver extends Driver {
   }
 
   public Patch createNewPatch() {
-    Patch p = new Patch(NEW_PATCH);
-    p.ChooseDriver();
+    Patch p = new Patch(NEW_PATCH, this);
     return p;
   }
 
   protected void mySendPatch(Patch p) {
     p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
     try {
-      PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
+      PatchEdit.MidiOut.writeLongMessage(getPort(), p.sysex);
     } catch (Exception e) {
       ErrorMsg.reportStatus (e);
     }
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
+    sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", 41), new NameValue("patchNum", patchNum)
     );
   }

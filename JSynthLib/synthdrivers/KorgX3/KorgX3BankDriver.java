@@ -10,6 +10,7 @@ import javax.swing.*;
  * task if one has the original reference guide.
  *
  * @author  Juha Tukkinen
+ * @version $Id$
  */
 public class KorgX3BankDriver extends BankDriver
 {
@@ -23,13 +24,8 @@ public class KorgX3BankDriver extends BankDriver
    */
   public KorgX3BankDriver()
   {
-    authors="Juha Tukkinen";
-    manufacturer="Korg";
-    model="X3";
-    patchType="Bank";
-    id="X3";
+    super ("Bank","Juha Tukkinen",200,4);
     sysexID="F042**35";
-    inquiryID="F07E**0602423500**00**00**00F7";
     // all program parameter dump request:
     sysexRequestDump=new SysexHandler("F0 42 30 35 1C 00 F7"); 
     
@@ -65,8 +61,6 @@ public class KorgX3BankDriver extends BankDriver
        "B96-","B97-","B98-","B99-"};
 
      
-    numPatches=patchNumbers.length;
-    numColumns=4;
     singleSysexID="F042**35";
     // size after conversion:
     patchSize=37600+EXTRA_HEADER; //164*200Byte = 7*4685+5 -> 8*4685+(1+5) = 37486Byte

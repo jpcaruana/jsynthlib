@@ -14,11 +14,7 @@ import java.io.*;
 public class KorgWavestationSinglePerformanceDriver extends Driver {
     
     public KorgWavestationSinglePerformanceDriver() {
-        authors="Gerrit Gehnen";
-        manufacturer="Korg";
-        model="Wavestation";
-        patchType="Single Performance";
-        id="Wavestation";
+	super ("Single Performance","Gerrit Gehnen");
         sysexID="F0423*2849";
         sysexRequestDump=new SysexHandler("F0 42 @@ 28 19 *bankNum* *patchNum* F7");
         
@@ -49,9 +45,9 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         {Thread.sleep(100); } catch (Exception e)
         {}
         
-        p.sysex[2]=(byte)(0x30 + channel - 1);
+        p.sysex[2]=(byte)(0x30 + getChannel() - 1);
         try {
-            PatchEdit.MidiOut.writeLongMessage(port,p.sysex);
+            PatchEdit.MidiOut.writeLongMessage(getPort(),p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
         
@@ -63,24 +59,24 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         byte [] sysex = new byte[8];
         sysex[0] = (byte)0xF0;
         sysex[1] = (byte)0x42;
-        sysex[2] = (byte)(0x30 + channel - 1);
+        sysex[2] = (byte)(0x30 + getChannel() - 1);
         sysex[3] = (byte)0x28;
         sysex[4] = (byte)0x1A; // Performance write request
         sysex[5] = (byte)(bankNum);
         sysex[6] = (byte)(patchNum);
         sysex[7] = (byte)0xF7;
         try {
-            PatchEdit.MidiOut.writeLongMessage(port,sysex);
+            PatchEdit.MidiOut.writeLongMessage(getPort(),sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
         
     }
     
     public void sendPatch(Patch p) {
-        p.sysex[2]=(byte)(0x30 + channel - 1); // the only thing to do is to set the byte to 3n (n = channel)
+        p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
         
         try {
-            PatchEdit.MidiOut.writeLongMessage(port,p.sysex);
+            PatchEdit.MidiOut.writeLongMessage(getPort(),p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
     }
@@ -89,14 +85,13 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         byte [] sysex = new byte[1085];
         sysex[0]=(byte)0xF0;
         sysex[1]=(byte)0x42;
-        sysex[2]=(byte)(0x30+channel-1);
+        sysex[2]=(byte)(0x30+getChannel()-1);
         sysex[3]=(byte)0x28;
         sysex[4]=(byte)0x49;
         sysex[5]=(byte)0; /*bankNum*/
         sysex[6]=(byte)0; /*patchNum*/
         sysex[1084]=(byte)0xF7;
-        Patch p = new Patch(sysex);
-        p.ChooseDriver();
+        Patch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
@@ -117,7 +112,7 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
     
     public void setPatchNum(int patchNum) {
         try {
-            PatchEdit.MidiOut.writeShortMessage(port,(byte)(0xC0+(channel-1)),(byte)patchNum);
+            PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0xC0+(getChannel()-1)),(byte)patchNum);
         } catch (Exception e)
         {};
     }
@@ -126,9 +121,9 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         NameValue nv[]=new NameValue[2];
         nv[0]=new NameValue("bankNum",bankNum);
         nv[1]=new NameValue("patchNum",patchNum);
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(),nv);
         
-        SysexHandler.send(port, sysex);
+        SysexHandler.send(getPort(), sysex);
     }
     
 }

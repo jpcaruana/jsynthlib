@@ -5,15 +5,13 @@ import core.*;
 /**
 	Convert from FS1R bank OS9 editor into JSynthLib bank format.
 	@author Denis Queffeulou mailto:dqueffeulou@free.fr
+	@version $Id$
 */
 public class YamahaFS1RBankConverter extends Converter
 {
 	public YamahaFS1RBankConverter() 
 	{
-		manufacturer="Yamaha";
-		model="FS1R";
-		patchType="Bank Dump Converter";
-		authors="Denis Queffeulou";
+		super ("Bank Dump Converter","Denis Queffeulou");
 		// en fait ce n'est pas un sysex donc je met le debut du fichier
 		// sauf le premier caractere (F0) qui est mis en dur dans le code core...
 		// Il ne semble pas prevu d'importer autre chose que des sysex !

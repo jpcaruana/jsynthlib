@@ -4,7 +4,7 @@
  * @author  Thorsten Klose
  * file:    MIDIboxSIDSingleEditor.java
  * date:    2003-01-07
- * @version 1.0
+ * @version $Id$
  *
  * Copyright (C) 2003  Thorsten.Klose@gmx.de   
  *                     http://www.uCApps.de
@@ -37,11 +37,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 
     public MIDIboxSIDBankDriver()
     {
-	authors="Thorsten Klose";
-	manufacturer="MIDIbox";
-	model="SID";
-	patchType="Bank";
-	id="SID";
+	super ("Bank","Thorsten Klose",128,4);
 	sysexID="F000007E46**04";
 	sysexRequestDump=new SysexHandler("F0 00 00 7E 46 @@ 03 F7");
 
@@ -61,10 +57,8 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	    "111","112","113","114","115","116","117","118","119","120",
 	    "121","122","123","124","125","126","127","128"};  
 	
-	numPatches=patchNumbers.length;
 	patchSize=128*256+9;
 	deviceIDoffset=5;
-	numColumns=4;
 
 	singleSysexID="F000007E46**02";
 	singleSize=266;
@@ -144,9 +138,8 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	    sysex[265]=(byte)0xF7;
 
 	    System.arraycopy(bank.sysex, getPatchStart(patchNum), sysex, 8, 256);
-	    Patch p = new Patch(sysex);
-	    p.ChooseDriver();
-	    PatchEdit.getDriver(p.deviceNum, p.driverNum).calculateChecksum(p);   
+	    Patch p = new Patch(sysex, getDevice());
+	    p.getDriver().calculateChecksum(p);   
 	    return p;
 	} catch( Exception e ) { ErrorMsg.reportError("Error","Error in MIDIboxSID Bank Driver",e);return null; }
     }
@@ -163,11 +156,10 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	sysex[6]=(byte)0x04;
 	sysex[128*256+8]=(byte)0xF7;
 
-	Patch p = new Patch(sysex);
+	Patch p = new Patch(sysex, this);
 	MIDIboxSIDSingleDriver SingleDriver = new MIDIboxSIDSingleDriver();
 	Patch ps = SingleDriver.createNewPatch();
 
-	p.ChooseDriver();
 	for(int i=0; i<128; i++)
 	    putPatch(p, ps, i);
 

@@ -14,11 +14,7 @@ import javax.swing.*;
 public class KorgWavestationBankPatchDriver extends BankDriver {
     
     public KorgWavestationBankPatchDriver() {
-        authors="Gerrit Gehnen";
-        manufacturer="Korg";
-        model="Wavestation";
-        patchType="Patch Bank";
-        id="Wavestation";
+	super ("Patch Bank","Gerrit Gehnen",35,1);
         sysexID="F042**284C";
         trimSize=35*852+8;
         sysexRequestDump=new SysexHandler("F0 42 @@ 28 1C *bankNum* F7");
@@ -32,8 +28,6 @@ public class KorgWavestationBankPatchDriver extends BankDriver {
         "24-","25-","26-","27-","28-","29-","30-","31-",
         "32-","33-","34-","35-"};
         
-        numPatches=patchNumbers.length;
-        numColumns=1;
         singleSysexID="F040**2*0004";
         singleSize=852;
         
@@ -80,7 +74,7 @@ public class KorgWavestationBankPatchDriver extends BankDriver {
     }
     
     public void storePatch(Patch p, int bankNum,int patchNum) {
-        p.sysex[2]=(byte)(0x30+channel-1);
+        p.sysex[2]=(byte)(0x30+getChannel()-1);
         p.sysex[5]=(byte)bankNum;
         sendPatchWorker(p);
     }
@@ -113,16 +107,15 @@ public class KorgWavestationBankPatchDriver extends BankDriver {
         try{
             byte [] sysex=new byte[852+9];
             sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
-            sysex[2]=(byte)(0x30+channel-1);
+            sysex[2]=(byte)(0x30+getChannel()-1);
             sysex[03]=(byte)0x28;sysex[04]=(byte)0x40;sysex[05]=(byte)0x00/*bankNum*/;
             sysex[06]=(byte)patchNum;
             
             /*sysex[852+7]=checksum;*/
             sysex[852+8]=(byte)0xF7;
             System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,7,852);
-            Patch p = new Patch(sysex);
-            p.ChooseDriver();
-            PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
+            Patch p = new Patch(sysex, getDevice());
+            p.getDriver().calculateChecksum(p);
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Wavestation Bank Driver",e);return null;}
     }
@@ -131,14 +124,13 @@ public class KorgWavestationBankPatchDriver extends BankDriver {
         
         byte [] sysex = new byte[35*852+8];
         sysex[0]=(byte)0xF0; sysex[1]=(byte)0x42;
-        sysex[2]=(byte)(0x30+channel-1);
+        sysex[2]=(byte)(0x30+getChannel()-1);
         sysex[3]=(byte)0x28;sysex[4]=(byte)0x4C;
         sysex[5]=(byte)0x00/*bankNum*/;
         
         /*sysex[35*852+6]=checksum;*/
         sysex[35*852+7]=(byte)0xF7;
-        Patch p = new Patch(sysex);
-        p.ChooseDriver();
+        Patch p = new Patch(sysex, this);
         for (int i=0;i<35;i++)
             setPatchName(p,i,"New Patch");
         calculateChecksum(p);

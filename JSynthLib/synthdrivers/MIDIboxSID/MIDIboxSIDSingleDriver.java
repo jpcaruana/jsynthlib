@@ -4,7 +4,7 @@
  * @author  Thorsten Klose
  * file:    MIDIboxSIDSingleDriver.java
  * date:    2002-11-30
- * @version 1.0
+ * @version $Id$
  *
  * Copyright (C) 2002  Thorsten.Klose@gmx.de   
  *                     http://www.uCApps.de
@@ -35,11 +35,7 @@ public class MIDIboxSIDSingleDriver extends Driver
 
    public MIDIboxSIDSingleDriver()
    {
-       authors="Thorsten Klose";
-       manufacturer="MIDIbox";
-       model="SID";
-       patchType="Single";
-       id="SID";
+       super ("Single","Thorsten Klose");
        sysexID="F000007E46**02";
        sysexRequestDump=new SysexHandler("F0 00 00 7E 46 @@ 01 *patchNum* F7");
 
@@ -164,8 +160,7 @@ public class MIDIboxSIDSingleDriver extends Driver
 	sysex[8+0x7b] = 0x40; // ENV2 release
 
 	sysex[265]=(byte)0xF7;
-	Patch p = new Patch(sysex);
-	p.ChooseDriver();
+	Patch p = new Patch(sysex, this);
 	setPatchName(p,"New Patch");
 	calculateChecksum(p);	 
 	return p;

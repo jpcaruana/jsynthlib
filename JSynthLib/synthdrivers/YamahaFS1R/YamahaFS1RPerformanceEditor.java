@@ -14,6 +14,7 @@ import java.io.*;
 	Editor for performance, ie group of 4 parts, each part holds a voice.
 	Performance contains also effects, modulation matrix and fseq.  
 	@author denis queffeulou mailto:dqueffeulou@free.fr
+	@version $Id$
  */
 class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 {
@@ -207,7 +208,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		Box oPanel = Box.createVerticalBox();
 		
 		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel1.add(new PatchNameWidget(p, "Name"));
+		oPanel1.add(new PatchNameWidget("Name",p));
 		oPanel1.add(new ComboBoxWidget("Category", p, new YamahaFS1RPerformanceDriver.Model(p, 0x0E), new YamahaFS1RPerformanceDriver.Sender(0x0E), YamahaFS1RVoiceEditor.mCategories));
 		oPanel.add(oPanel1);
 

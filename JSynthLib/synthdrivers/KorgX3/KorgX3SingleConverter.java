@@ -7,6 +7,7 @@ import core.*;
  * are 212 and 187 bytes because of the header information.
  * 
  * @author Juha Tukkinen
+ * @version $Id$
  */
 public class KorgX3SingleConverter extends Converter {
 
@@ -14,10 +15,7 @@ public class KorgX3SingleConverter extends Converter {
    * Default constructor. Note that patchsize must be 212.
    */
   public KorgX3SingleConverter () {
-    manufacturer="Korg";
-    model="X3";
-    patchType="Single Dump Converter";
-    authors="Juha Tukkinen";
+    super ("Single Dump Converter","Juha Tukkinen");
     sysexID="F042**35"; 
     patchSize = 212;
   }

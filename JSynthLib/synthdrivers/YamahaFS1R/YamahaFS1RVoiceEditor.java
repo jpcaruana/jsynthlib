@@ -14,6 +14,7 @@ import java.util.*;
 	TODO : pour selectionner le numero de partie performance il faut le faire
 	avant de construire les composants.
 	@author denis queffeulou mailto:dqueffeulou@free.fr
+	@version $Id$
 */ 
 class YamahaFS1RVoiceEditor extends PatchEditorFrame
 {
@@ -94,8 +95,8 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 	/** send patch to current performance part */
 	public void SendSelectedPatch()
 	{
- 	  ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
- 	  ((YamahaFS1RVoiceDriver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).sendPatch(p, getPart());
+ 	  p.getDriver().calculateChecksum(p);
+	  ((YamahaFS1RVoiceDriver)(p.getDriver())).sendPatch(p, getPart());
  	}
 	
 	private void setupUI() {
@@ -147,7 +148,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		
 		// Common Pane (common-others)
 		JPanel oCommonPane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, 0));
-		oCommonPane.add(new PatchNameWidget(patch," Name  "));
+		oCommonPane.add(new PatchNameWidget(" Name  ",patch));
 		oCommonPane.add(new SpinnerWidget("Note shift", patch, 0, 48, -24, new FS1RModel(patch, 0x1E), new FS1RSender(0x1E)));
 		oCommonPane.add(new ComboBoxWidget("Category", patch, new FS1RModel(patch, 0x0E), new FS1RSender(0x0E), mCategories));
 		oCommonPane.add(new KnobWidget("Algorithm", patch, 0, 87, 1, new FS1RModel(patch, 0x2C), new FS1RSender(0x2C), mAlgoImages));

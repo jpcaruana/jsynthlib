@@ -6,7 +6,8 @@ import java.io.*;
 /**
  *  System parameters driver for Yamaha FS1R.
  *
- *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @version    $Id$
  */
 public class YamahaFS1RSystemDriver extends Driver
 {
@@ -26,11 +27,7 @@ public class YamahaFS1RSystemDriver extends Driver
 	 */
 	public YamahaFS1RSystemDriver()
 	{
-		manufacturer = "Yamaha";
-		model = "FS1R";
-		patchType = "System";
-		id = "FS1R";
-		authors="Denis Queffeulou";
+		super ("System","Denis Queffeulou");
 		sysexID = "F043005E004C";
 //   inquiryID="F07E**06020F0200*************F7";
 		patchSize = PATCH_AND_HEADER_SIZE;
@@ -71,7 +68,6 @@ public class YamahaFS1RSystemDriver extends Driver
 		sysex[8] = (byte) 0x00;	
 		sysex[PATCH_AND_HEADER_SIZE-1] = (byte) 0xF7;
 		Patch oPatch = new Patch(sysex);
-		oPatch.ChooseDriver();
 		return oPatch;
 	}
 
