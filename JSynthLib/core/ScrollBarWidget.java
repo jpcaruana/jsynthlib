@@ -73,7 +73,8 @@ public class ScrollBarWidget extends SysexWidget {
 
     protected void createWidgets() {
 	slider = new JSlider(JSlider.HORIZONTAL,
-			     getValueMin(), getValueMax(), getValue());
+			     getValueMin(), getValueMax(), 
+			     constrain(getValueMin(),getValue(),getValueMax()));
         slider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
 		    eventListener(e);
@@ -92,6 +93,10 @@ public class ScrollBarWidget extends SysexWidget {
 	}
     }
 
+    protected int constrain(int min, int val, int max) {
+        return val<min?min:val>max?max:val;
+    }
+    
     /** invoked when the slider is moved. */
     protected void eventListener(ChangeEvent e) {
 	int v = slider.getValue();

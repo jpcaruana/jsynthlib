@@ -95,8 +95,9 @@ public class ScrollBarLookupWidget extends SysexWidget {
     }
 
     protected void createWidgets() {
-        slider = new JSlider(JSlider.HORIZONTAL,
-			     getValueMin(), getValueMax(), getValue());
+    	slider = new JSlider(JSlider.HORIZONTAL,
+			     getValueMin(), getValueMax(), 
+			     constrain(getValueMin(),getValue(),getValueMax()));
 	slider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
 		    eventListener(e);
@@ -113,6 +114,10 @@ public class ScrollBarLookupWidget extends SysexWidget {
 	    d.setSize(labelWidth, d.getHeight() + 1);
 	    getJLabel().setMinimumSize(d);
 	}
+    }
+
+    protected int constrain(int min, int val, int max) {
+        return val<min?min:val>max?max:val;
     }
 
     /** invoked when the slider is moved. */
