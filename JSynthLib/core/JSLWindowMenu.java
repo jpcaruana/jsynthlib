@@ -34,10 +34,10 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
     public JSLWindowMenu() {
 	super("Window");
 	if (!MacUtils.isMac()) {
-	    add(Actions.prefsAction);
-	    setMnemonic(KeyEvent.VK_W);
+	    add(Actions.prefsAction);	// XXX
+	    setMnemonic(KeyEvent.VK_W); // XXX
 	}
-	add(Actions.monitorAction);
+	add(Actions.monitorAction);	// XXX
 	//add(JSLDesktop.toolBarAction);
 	addSeparator();
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -69,7 +69,7 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 	    bg.setSelected((JSLWindowMenuItem)windows.get(f), true);
     }
 
-
+    // WindowListener methods
     public void windowActivated(WindowEvent e) {
 	try {
 	    JFrame f = (JFrame)e.getWindow();
@@ -87,7 +87,9 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
     public void windowDeiconified(WindowEvent e) {}
     public void windowIconified(WindowEvent e) {}
     public void windowOpened(WindowEvent e) {}
+    // end of WindowListener methods
 
+    // ActionListener method
     public void actionPerformed(java.awt.event.ActionEvent e) {
 	if (e.getSource() instanceof JSLWindowMenuItem) {
 	    JFrame f = ((JSLWindowMenuItem)e.getSource()).getJFrame();
