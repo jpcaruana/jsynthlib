@@ -1125,16 +1125,30 @@ look at the editors for various other synths, try changing some things
 maybe to see how they work. It shouldn't be too hard to figure out,
 but I'm not too good at explaining.
 
-<h4>III.h.4. Action Listener</h4>
+<h4>III.h.4. Action Listener - Image Handling</h4>
 
 Swing provides a construct known as an action listener which
 allows you to write a routine which is called whenever a SysexWidget is
 moved. You never need to use these for dealing with built in JSynthLib
 SysexWidgets because they take care of it themselves. It is useful however
 if you want to have a SysexWidget do something more than control the
-synth. the Yamaha TX81x editor, for example, uses one to change the
+synth. The Yamaha TX81x editor, for example, uses one to change the
 picture of the algorithm every time the 'algorithm' slider is
-moved.
+moved.<p>
+
+Note that the following code seems to work.
+<pre>
+    // Bad Example : does not work with jar
+    algoIcon[0] = new ImageIcon("synthdrivers/YamahaTX81z/1.gif");
+</pre> 
+
+But the code above does not work when the files are in a jar file.
+Instead use the following code.
+
+<pre> 
+    // Good Example
+    algoIcon[0] = new ImageIcon(getClass().getResource("1.gif"));
+</pre> 
 
 <h3><a name="wri_converter" href="#toc">III.i. Writing a Converter</a></h3>
 

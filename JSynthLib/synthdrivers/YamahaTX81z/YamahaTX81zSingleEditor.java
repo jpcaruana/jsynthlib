@@ -14,14 +14,14 @@ class YamahaTX81zSingleEditor extends PatchEditorFrame
   public YamahaTX81zSingleEditor(Patch patch)
   {
     super ("Yamaha TX81z Single Editor",patch);
-  algoIcon[0]=new ImageIcon("synthdrivers/YamahaTX81z/1.gif");
-  algoIcon[1]=new ImageIcon("synthdrivers/YamahaTX81z/2.gif");
-  algoIcon[2]=new ImageIcon("synthdrivers/YamahaTX81z/3.gif");
-  algoIcon[3]=new ImageIcon("synthdrivers/YamahaTX81z/4.gif");
-  algoIcon[4]=new ImageIcon("synthdrivers/YamahaTX81z/5.gif");
-  algoIcon[5]=new ImageIcon("synthdrivers/YamahaTX81z/6.gif");
-  algoIcon[6]=new ImageIcon("synthdrivers/YamahaTX81z/7.gif");
-  algoIcon[7]=new ImageIcon("synthdrivers/YamahaTX81z/8.gif");
+  algoIcon[0]=new ImageIcon(getClass().getResource("1.gif"));
+  algoIcon[1]=new ImageIcon(getClass().getResource("2.gif"));
+  algoIcon[2]=new ImageIcon(getClass().getResource("3.gif"));
+  algoIcon[3]=new ImageIcon(getClass().getResource("4.gif"));
+  algoIcon[4]=new ImageIcon(getClass().getResource("5.gif"));
+  algoIcon[5]=new ImageIcon(getClass().getResource("6.gif"));
+  algoIcon[6]=new ImageIcon(getClass().getResource("7.gif"));
+  algoIcon[7]=new ImageIcon(getClass().getResource("8.gif"));
   final JLabel l=new JLabel(algoIcon[patch.sysex[99]]);
 
   JPanel lfoPane=new JPanel();
