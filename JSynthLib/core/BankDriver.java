@@ -133,7 +133,7 @@ public class BankDriver extends Driver {
      */
     protected void storePatch(Patch p, int bankNum, int patchNum) {
 	setBankNum(bankNum);
-	sendPatchWorker(p);
+	super.sendPatch(p);
     }
 
     /** Show an error dialog. */
