@@ -61,7 +61,7 @@ public class QuasimidiQuasarTemporaryConverter extends Converter {
         // starting at 263h (=611): Part 16: 33 Bytes
         System.arraycopy(p.sysex, 611, temporarySysex, QuasarConstants.ARRAY_PART_4_OFFSET, 33);
 
-        newPatchArray[0] = new Patch(temporarySysex, (Driver) null);
+        newPatchArray[0] = new Patch(temporarySysex, getDevice());
 
         return newPatchArray;
     }
