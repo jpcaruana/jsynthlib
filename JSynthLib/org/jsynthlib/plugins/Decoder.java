@@ -1,7 +1,5 @@
 package org.jsynthlib.plugins;
 
-import javax.sound.midi.SysexMessage;
-
 import org.jsynthlib.jsynthlib.xml.XMLParameter;
 
 
@@ -14,7 +12,7 @@ import org.jsynthlib.jsynthlib.xml.XMLParameter;
  * about storing these XMLParameters.
  * @author ribrdb
  */
-public abstract class Decoder {
+public abstract class Decoder implements Cloneable {
     /**
      * Create a new XMLParameter subclass.
      * @param type Currently one of string, lookup, range, or constant
@@ -72,4 +70,8 @@ public abstract class Decoder {
      * @param args Not used.
      */
     abstract public void main(Object args);
+    
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
