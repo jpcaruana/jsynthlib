@@ -1,3 +1,6 @@
+/*
+* $Id$
+*/
 package core;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -20,7 +23,8 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 public class SearchDialog extends JDialog {
- 
+ JRadioButton button2;
+ JRadioButton button3;
    public SearchDialog(JFrame Parent) {
 	   
         super(Parent,"Search Library",false);
@@ -40,8 +44,8 @@ public class SearchDialog extends JDialog {
         container.add(searchFor, BorderLayout.NORTH);
         final ButtonGroup group=new ButtonGroup();
 	JRadioButton button1 = new JRadioButton("Patch Name");
-        JRadioButton button2 = new JRadioButton("Field 1");
-        JRadioButton button3 = new JRadioButton("Field 2");
+        button2 = new JRadioButton("Field 1");
+        button3 = new JRadioButton("Field 2");
         JRadioButton button4 = new JRadioButton("Comment");
         JRadioButton button5 = new JRadioButton("All Fields");
         button1.setActionCommand("P");
@@ -55,6 +59,13 @@ public class SearchDialog extends JDialog {
          group.add(button4);
          group.add(button5);
 
+         if (PatchEdit.desktop.getSelectedFrame() instanceof PerformanceFrame)
+         {
+             button2.setEnabled(false);
+             button3.setEnabled(false);
+         }
+         
+         
          button1.setSelected(true);
 	 JPanel radioPanel=new JPanel();
          radioPanel.setLayout(new FlowLayout());
@@ -103,6 +114,21 @@ public class SearchDialog extends JDialog {
 	   }catch(Exception e) {ErrorMsg.reportStatus(e);}
   }
 
+public void show()
+{
+    if (PatchEdit.desktop.getSelectedFrame() instanceof PerformanceFrame)
+         {
+             button2.setEnabled(false);
+             button3.setEnabled(false);
+         }
+    else
+         {
+             button2.setEnabled(true);
+             button3.setEnabled(true);
+         }
+    super.show();
+}
+   
     protected void centerDialog() {
         Dimension screenSize = this.getToolkit().getScreenSize();
 	Dimension size = this.getSize();
@@ -117,16 +143,16 @@ public class SearchDialog extends JDialog {
 
 void findString(String text, String command, boolean restart)
 {
-   if ((PatchEdit.desktop.getSelectedFrame()==null)||(!(PatchEdit.desktop.getSelectedFrame() instanceof LibraryFrame)))
+   if ((PatchEdit.desktop.getSelectedFrame()==null)||(!(PatchEdit.desktop.getSelectedFrame() instanceof AbstractLibraryFrame)))
       {ErrorMsg.reportError("Error","Library to search in must be focused.");
        return;
       }
 
-   LibraryFrame lf= ((LibraryFrame)PatchEdit.desktop.getSelectedFrame());
-   if (lf.myModel.PatchList.size()==0) return;
+   AbstractLibraryFrame lf= ((AbstractLibraryFrame)PatchEdit.desktop.getSelectedFrame());
+   if (lf.getAbstractPatchListModel().getRowCount()==0) return;
    int searchFrom;
-   if (restart || lf.table.getSelectedRow()==-1) searchFrom=0;
-     else searchFrom=lf.table.getSelectedRow()+1;
+   if (restart || lf.getTable().getSelectedRow()==-1) searchFrom=0;
+     else searchFrom=lf.getTable().getSelectedRow()+1;
 
    Patch p;
    int field=0;
@@ -139,9 +165,10 @@ void findString(String text, String command, boolean restart)
    String s;
    int i;
    boolean match=false;
-   for (i=searchFrom;i<lf.myModel.PatchList.size();i++)
+   for (i=searchFrom;i<lf.getAbstractPatchListModel().getRowCount();i++)
      {
-       p=(Patch)lf.myModel.PatchList.get(i);
+       p=(Patch)lf.getAbstractPatchListModel().getPatchAt(i);
+       
        match=false;
         if (field==0 || field==4)
          {
@@ -149,13 +176,13 @@ void findString(String text, String command, boolean restart)
           match=(s.indexOf(text)!=-1);
           if (match) break;
          }
-        if (field==1 || field==4)
+        if ((field==1 || field==4) && (lf instanceof LibraryFrame))
          {
           s=p.date.toString().toLowerCase();
           match=(s.indexOf(text)!=-1);
           if (match) break;
          }
-        if (field==2 || field==4)
+        if ((field==2 || field==4) && (lf instanceof LibraryFrame))
          {
           s=p.author.toString().toLowerCase();
           match=(s.indexOf(text)!=-1);
@@ -164,7 +191,8 @@ void findString(String text, String command, boolean restart)
 
          if (field==3 || field==4)
          {
-          s=p.comment.toString().toLowerCase();
+          s=lf.getAbstractPatchListModel().getCommentAt(i).toString().toLowerCase();
+          //s=p.comment.toString().toLowerCase();
           match=(s.indexOf(text)!=-1);
           if (match) break;
          }
@@ -172,7 +200,7 @@ void findString(String text, String command, boolean restart)
      }
 
    if (!match) {ErrorMsg.reportError("Search Complete","Not Found.");return;}
-   lf.table.changeSelection(i,0,false,false);
+   lf.getTable().changeSelection(i,0,false,false);
 
      
 

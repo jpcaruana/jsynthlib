@@ -9,7 +9,6 @@ import javax.swing.table.*;
 import java.util.ArrayList;
 /**
  *
- * @author  Administrator
  * @version $Id$
  */
 class PatchListModel extends AbstractTableModel implements AbstractPatchListModel
@@ -108,4 +107,9 @@ class PatchListModel extends AbstractTableModel implements AbstractPatchListMode
        //  fireTableRowsUpdated(PatchList.size(),PatchList.size());
          this.fireTableDataChanged();
      }
+     
+     public StringBuffer getCommentAt(int row) {
+         return ((Patch)PatchList.get(row)).comment;
+     }     
+     
 }

@@ -11,7 +11,7 @@ import javax.swing.event.InternalFrameEvent;
  * @version $Id$
  */
 
-public class PerformanceFrame extends javax.swing.JInternalFrame implements PatchBasket {
+public class PerformanceFrame extends javax.swing.JInternalFrame implements AbstractLibraryFrame {
     static int openFrameCount = 0;
     static final int xOffset = 30, yOffset = 30;
     PerformanceListModel myModel;
@@ -120,7 +120,7 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Patc
                 PatchEdit.importAction.setEnabled(true);
                 PatchEdit.importAllAction.setEnabled(true);
                 PatchEdit.newPatchAction.setEnabled(true);
-                PatchEdit.crossBreedAction.setEnabled(true);
+                //PatchEdit.crossBreedAction.setEnabled(true);
                 
                 if (table.getRowCount()>0) {
                     PatchEdit.saveAction.setEnabled(true);
@@ -539,4 +539,13 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Patc
             PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).storePatch(myPatch,bankNum,patchNum);
         }
     }
+    
+    public AbstractPatchListModel getAbstractPatchListModel() {
+        return myModel;
+    }
+    
+    public DNDLibraryTable getTable() {
+        return table;
+    }
+    
 }

@@ -27,4 +27,6 @@ public interface AbstractPatchListModel {
         */       
        public Patch getPatchAt (int row);
           
+       public StringBuffer getCommentAt(int row);
+       public int getRowCount();   
 }

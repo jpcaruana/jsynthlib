@@ -67,7 +67,7 @@ class PerformanceListModel extends javax.swing.table.AbstractTableModel implemen
      }
      
      public void setValueAt(Object value, int row, int col) {
-         System.out.println("SetValue at "+row+"  "+col+" Value:"+value);
+         //System.out.println("SetValue at "+row+"  "+col+" Value:"+value);
          changed=true;
          Performance myPerformance=(Performance)performanceList.get(row);
          if (col==0) {
@@ -87,7 +87,7 @@ class PerformanceListModel extends javax.swing.table.AbstractTableModel implemen
          }
          if (col==5) {
              /* Comment */
-             myPerformance.setComment((StringBuffer)value);
+             myPerformance.setComment(new StringBuffer((String)value));
          }
          performanceList.set(row,myPerformance);
      }
@@ -116,6 +116,10 @@ class PerformanceListModel extends javax.swing.table.AbstractTableModel implemen
          Performance perf=new Performance(p);
          performanceList.add(perf);
          this.fireTableDataChanged();
+     }
+     
+     public StringBuffer getCommentAt(int row) {
+         return ((Performance)performanceList.get(row)).getComment();
      }
      
 }

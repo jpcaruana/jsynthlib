@@ -1,3 +1,5 @@
+/* $Id$ */
+
 package core;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -16,7 +18,7 @@ import java.awt.*;
 import java.io.*;
 
 
-public class LibraryFrame extends JInternalFrame implements PatchBasket
+public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
 {
     static int openFrameCount = 0;
     static final int xOffset = 30, yOffset = 30;
@@ -608,4 +610,13 @@ return;
             ((Patch)(myModel.PatchList.get(i))).ChooseDriver();
         myModel.fireTableDataChanged();
     }
+
+    public AbstractPatchListModel getAbstractPatchListModel() {
+        return myModel;
+    }
+    
+    public DNDLibraryTable getTable() {
+        return table;
+    }
+    
 }
