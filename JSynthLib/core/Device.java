@@ -99,13 +99,12 @@ public abstract class Device implements Serializable, Storable {
     public Device () {
         inquiryID = "NONE";
 	infoText = "There is no information about this Device.";
-	// set default MIDI port number
-    try{
-	inPort = PatchEdit.appConfig.getInitPortIn();
-	port = PatchEdit.appConfig.getInitPortOut();
-    }
-    catch (Exception e)
-    {}
+	// DeviceListWriter calls this constructor
+	if (PatchEdit.appConfig != null) {
+	    // set default MIDI port number
+	    inPort = PatchEdit.appConfig.getInitPortIn();
+	    port = PatchEdit.appConfig.getInitPortOut();
+	}
     }
 
     /**
@@ -130,11 +129,13 @@ public abstract class Device implements Serializable, Storable {
 	    ? "There is no information about this Device." : infoText;
 	this.authors = authors;
 	this.synthName = modelName;
-	// set default MIDI port number
-    try{
-	inPort = PatchEdit.appConfig.getInitPortIn();
-	port = PatchEdit.appConfig.getInitPortOut();
-    } catch (NullPointerException e){}
+
+	// DeviceListWriter calls this constructor
+	if (PatchEdit.appConfig != null) {
+	    // set default MIDI port number
+	    inPort = PatchEdit.appConfig.getInitPortIn();
+	    port = PatchEdit.appConfig.getInitPortOut();
+	}
     }
 
     /**
