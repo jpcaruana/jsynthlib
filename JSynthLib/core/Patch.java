@@ -1,3 +1,7 @@
+/* 
+ * $Id$ 
+ */
+
 package core;
 import java.io.*;
 import java.awt.datatransfer.*;
@@ -28,6 +32,16 @@ public class Patch extends Object implements Serializable,Transferable
         date= new StringBuffer ();
         author= new StringBuffer ();
         sysex= gsysex;
+        ChooseDriver ();
+    }
+    
+    public Patch (byte[] gsysex,int offset)
+ {
+         comment = new StringBuffer ();
+        date= new StringBuffer ();
+        author= new StringBuffer ();
+        sysex=new byte[gsysex.length-offset];
+        System.arraycopy(gsysex,offset,sysex,0,gsysex.length-offset);
         ChooseDriver ();
     }
     
@@ -66,6 +80,7 @@ public class Patch extends Object implements Serializable,Transferable
                 {
                     driverNum=j;
                     deviceNum=i;
+                    getDriver().trimSysex(this);
                     return;
                 }
             }

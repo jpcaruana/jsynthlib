@@ -26,7 +26,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
     Patch  bankData;
     BankDriver bankDriver;
     final BankEditorFrame instance;
-    
+ 
     public BankEditorFrame (Patch p)
     {
         super(PatchEdit.getDriver (p.deviceNum,p.driverNum).model+" "+PatchEdit.getDriver (p.deviceNum,p.driverNum).patchType+" Window",
@@ -67,7 +67,15 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 PatchEdit.sendAction.setEnabled (true);
                 PatchEdit.playAction.setEnabled (true);
                 PatchEdit.storeAction.setEnabled (true);
-                PatchEdit.editAction.setEnabled (true);
+                Patch myPatch=((Patch)myModel.getPatchAt(0,0)); // All entries are of the same type, so we can check the first one....
+                try{
+                    myPatch.getDriver().getClass().getDeclaredMethod("editPatch", new Class[]{myPatch.getClass()});
+                    PatchEdit.editAction.setEnabled(true);
+                }
+                catch(NoSuchMethodException ex) {
+                    if (myPatch.getDriver() instanceof BankDriver)
+                        PatchEdit.editAction.setEnabled(true);
+                };
                 PatchEdit.cutAction.setEnabled (true);
                 PatchEdit.copyAction.setEnabled (true);
                 PatchEdit.deleteAction.setEnabled (true);
@@ -78,6 +86,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                     PatchEdit.menuPatchPopup.show (table2, e.getX (), e.getY ());
                 }
             }
+
             public void mouseReleased (MouseEvent e)
             {
                 if(e.isPopupTrigger ())
@@ -131,7 +140,15 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                     PatchEdit.sendAction.setEnabled (true);
                     PatchEdit.playAction.setEnabled (true);
                     PatchEdit.storeAction.setEnabled (true);
-                    PatchEdit.editAction.setEnabled (true);
+                    Patch myPatch=((Patch)myModel.getPatchAt(0,0)); // All entries are of the same type, so we can check the first one....
+                    try{
+                        myPatch.getDriver().getClass().getDeclaredMethod("editPatch", new Class[]{myPatch.getClass()});
+                        PatchEdit.editAction.setEnabled(true);
+                    }
+                    catch(NoSuchMethodException ex) {
+                        if (myPatch.getDriver() instanceof BankDriver)
+                            PatchEdit.editAction.setEnabled(true);
+                    };
                     PatchEdit.cutAction.setEnabled (true);
                     PatchEdit.copyAction.setEnabled (true);
                     PatchEdit.deleteAction.setEnabled (true);
@@ -219,8 +236,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         Patch p = new Patch (buffer);
         bankDriver.putPatch (bankData,p,getSelectedPatchNum ());
         myModel.fireTableDataChanged ();
-        
     }
+
     public void ExportPatch (File file) throws IOException,FileNotFoundException
     {
         if (!checkSelected ()) return;
@@ -228,15 +245,15 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         FileOutputStream fileOut= new FileOutputStream (file);
         fileOut.write (p.sysex);
         fileOut.close ();
-        
     }
+
     public void DeleteSelectedPatch ()
     {
         if (!checkSelected ()) return;
         bankDriver.deletePatch (bankData,getSelectedPatchNum ());
         myModel.fireTableDataChanged ();
-        
     }
+
     public void CopySelectedPatch ()
     {
         if (!checkSelected ()) return;
@@ -249,9 +266,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         (p.date.toString ()),
         (p.author.toString ()),
         (p.comment.toString ()));
-        
-        
     }
+
     public void SendSelectedPatch ()
     {
         if (!checkSelected ()) return;
@@ -260,6 +276,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         {ErrorMsg.reportError ("Error","That patch is blank.");return;}
         PatchEdit.getDriver (p.deviceNum,p.driverNum).sendPatch (p);
     }
+
     public void PlaySelectedPatch ()
     {
         if (!checkSelected ()) return;
@@ -268,6 +285,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         {ErrorMsg.reportError ("Error","That patch is blank.");return;}
         PatchEdit.getDriver (p.deviceNum,p.driverNum).playPatch (p);
     }
+
     public void StoreSelectedPatch ()
     {
         if (!checkSelected ()) return;
@@ -276,6 +294,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         {ErrorMsg.reportError ("Error","That patch is blank.");return;}
         PatchEdit.getDriver(p.deviceNum,p.driverNum).choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com    
 }
+
     public JInternalFrame EditSelectedPatch ()
     {
         if (!checkSelected ()) return null;
@@ -286,24 +305,22 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         pf.setBankEditorInformation (this,table.getSelectedRow (),table.getSelectedColumn ());
         return pf;
     }
+
     public void PastePatch ()
     {
         if (!checkSelected ()) return ;
         bankDriver.putPatch (bankData,PatchEdit.Clipboard,getSelectedPatchNum ());
         myModel.fireTableDataChanged ();
     }
+
     public ArrayList getPatchCollection ()
     {
         return null;   //for now bank doesn't support this feature. Need to extract single and place in collection.
     }
+
   public void revalidateDriver()
   {
   bankData.ChooseDriver();
   if (bankData.deviceNum==0) {try{setClosed(true);}catch (Exception e){}; return;}
   bankDriver=(BankDriver)PatchEdit.getDriver(bankData.deviceNum,bankData.driverNum);}    
 }
-
-
-
-
-
