@@ -19,10 +19,10 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 		    ((JSLFrame.JSLFrameProxy)f).getJSLFrame().setClosed(true);
 		} catch (Exception e) {
 		    if (JSLDesktop.getInstance() == null) {
-			System.err.println("Error: No JSLDesktkop. Can't close"
+		        ErrorMsg.reportStatus("Error: No JSLDesktkop. Can't close"
 					   + " any windows.");
 		    } else if (JSLDesktop.getSelectedFrame() == null) {
-			System.err.println("Error: No selected JSLFrame. " +
+		        ErrorMsg.reportStatus("Error: No selected JSLFrame. " +
 					   "Can't close window.");
 		    } else {
 			e.printStackTrace();

@@ -404,7 +404,7 @@ final class Actions {
 	    }
 	} else {                                     //no image found
 	    button.setText(label);
-	    System.err.println("Resource not found: " + "images/" + label + ".png");
+	    ErrorMsg.reportStatus("Resource not found: " + "images/" + label + ".png");
 	}
 	return button;
     }
