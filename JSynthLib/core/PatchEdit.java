@@ -23,6 +23,8 @@ import com.apple.eawt.ApplicationEvent;
 
 //TODO import /*TODO org.jsynthlib.*/midi.*;
 public final class PatchEdit /*implements MidiDriverChangeListener*/ {
+    static final String VERSION = "0.19-alpha";
+
     // This field will be removed when new MIDI API become stable.
     static boolean newMidiAPI = true;
     static MidiWrapper MidiOut;
@@ -641,10 +643,12 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-	    JOptionPane.showMessageDialog(null,
-					  "JSynthLib Version 0.18\nCopyright (C) 2000-04 Brian Klock et al.\n"
-					  + "See the file 'LICENSE.TXT' for more info.",
-					  "About JSynthLib", JOptionPane.INFORMATION_MESSAGE);
+	    JOptionPane.showMessageDialog
+		(null,
+		 "JSynthLib Version " + VERSION
+		 + "\nCopyright (C) 2000-04 Brian Klock et al.\n"
+		 + "See the file 'LICENSE.TXT' for more info.",
+		 "About JSynthLib", JOptionPane.INFORMATION_MESSAGE);
 	    return;
 	}
     }
