@@ -20,7 +20,7 @@
 <html>
 <head>
 <title>JSynthLib Programmer's Guide</title>
-<link REV="made" HREF="mailto:jsynthlib-dev@yahoogroups.com">
+<link REV="made" HREF="mailto:jsynthlib-devel@lists.sourceforge.net">
 </head>
 
 <body bgcolor="#E5ED9D" text="Black" link="#3D75B4" vlink="#315480" alink="Red" leftmargin=40 topmargin=40>
@@ -181,14 +181,16 @@ SourceForge.net site</a>.
 <h3><a name="wri_intro" href="#toc">III.a. Introduction</a></h3>
 
 Alright, so you've got JSynthLib and like what it does. The problem is
-that it doesn't support one of the synthesizers you own. You drop a
-line to <a href="mailto:jsynthlib-dev@yahoogroups.com">JSynthLib
-mailing list</a>
-to find out if anyone is working on
-adding support for that synth and find out that no one is. You decide
-to volunteer to add support. Triumphantly you let us know your
-intention and set down to hacking. This document is designed to help
-you to complete this task.
+that it doesn't support one of the synthesizers you own. Check the
+feature request (RFE) tracker page on <a
+href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
+SourceForge site</a> and drop a line to <a
+href="mailto:jsynthlib-devel@lists.sourceforge.net">JSynthLib mailing
+list</a> to find out if anyone is working on adding support for that
+synth. You may find out that no one is. You decide to volunteer to add
+support. Triumphantly you let us know your intention by adding a
+message on the tracker and set down to hacking. This document is
+designed to help you to complete the task.
 
 <h4>III.a.1. How hard is it to add support for a new synthesizer to
 JSynthLib?</h4>
@@ -205,8 +207,8 @@ consuming, but is probably even easier than writing librarian
 support. I've spent anywhere between 3 or 4 hours (working on the
 DR660 Editor) up to 5 days (working on the Matrix 1000 editor). If you
 run into any trouble, you can email
-<a href="mailto:jsynthlib-dev@yahoogroups.com">JSynthLib mailing list</a> for
-help.
+<a href="mailto:jsynthlib-devel@lists.sourceforge.net">JSynthLib
+mailing list</a> for help.
 
 <h4>III.a.2. What do I need in order to add support for a new
 synthesizer?</h4>
@@ -370,7 +372,6 @@ following command on your command shell,
 java core/DeviceListWriter
 </pre>
 
-and click &quot;OK&quot; button on the pop-up windows.
 This recreate the <kbd>synthdrivers.properties</kbd> file.
 
 <p>
@@ -996,14 +997,13 @@ called.
 
 <h3>VI.a. JSynthLib</h3>
 <ul>
-  <li><a name="website" href="http://www.jsynthlib.org">JSynthLib Home Page</a><br>
-    <font size="-1">Universal Synth Librarian &amp Patch Editor</font>
-  <li><a name="cvssite" href="http://sourceforge.net/cvs/?group_id=41208">JSynthLib SourceForge.net site</a><br>
+  <li><a name="website" href="http://www.jsynthlib.org">JSynthLib Home Page</a>
+  <li><a name="cvssite"
+  href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
+  SourceForge.net Developer Home Page</a> 
     <font size="-1">(contains the CVS Repository)</font>
-  <li><a name="yahoogroup" href="http://groups.yahoo.com/group/jsynthlib-dev/">JSynthLib Yahoo group &amp mailing list</a><br>
-    <font size="-1">(also home of the jsynthlib-dev mailinglist)</font>
-  <li><a name="yahoofiles" href="http://groups.yahoo.com/group/jsynthlib-dev/files/">JSynthLib Yahoo group - file section</a><br>
-    <font size="-1">(contains the pseudo Mac OS X classes)</font>
+  <li><a name="mailinglist" href="mailto:jsynthlib-devel@lists.sourceforge.net">JSynthLib mailing list</a>
+  <li><a name="yahoofiles" href="http://groups.yahoo.com/group/jsynthlib-dev/files/">JSynthLib Yahoo group - file section</a>
   <li><a name="wireprovider"
   href="http://www.geocities.com/ggehnen/">MIDI Provider for
   Windows</a>.  JDK older than 1.4.2 requires this.
