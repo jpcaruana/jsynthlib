@@ -393,7 +393,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
             //ErrorMsg.reportStatus("Buffer length:" + buffer.length + " Patch Lenght: " + firstpat.sysex.length);
 	    Patch[] patarray = firstpat.dissect();
 
-	    if (patarray.length > 1) {
+	    if (patarray.length > 0) {
 		// Conversion was sucessfull, we have at least one converted patch
 		for (int j = 0; j < patarray.length; j++) {
 		    myModel.list.add(patarray[j]); // add all converted patches
