@@ -41,6 +41,7 @@ public class Patch extends Object
     // constructor and method.
     /**
      * device number.
+     * @deprecated
      * Use <code>patch.getDriver()</code> instead of
      * <code>PatchEdit.getDriver(patch.deviceNum, patch.driverNum)</code>.
      * Use <code>patch.getDevice()</code> instead of
@@ -49,6 +50,7 @@ public class Patch extends Object
     public transient int deviceNum;
     /**
      * driver number.
+     * @deprecated
      * Use <code>patch.getDriver()</code> instead of
      * <code>PatchEdit.getDriver(patch.deviceNum, patch.driverNum)</code>.
      */
@@ -108,8 +110,6 @@ public class Patch extends Object
      * this.
      * @param gsysex The MIDI SysEx message.
      */
-    // @deprecated Use <code>Patch(byte[], Driver)</code> or
-    // <code>Patch(byte[], Device)</code>.
     public Patch(byte[] gsysex) {
         date    = new StringBuffer();
         author  = new StringBuffer();
@@ -123,8 +123,8 @@ public class Patch extends Object
      * number.  Consider using <code>Patch(byte[], Device)</code>.
      * @param deviceNum The known device number.
      * @param gsysex The MIDI SysEx message.
+     * @deprecated Use <code>Patch(byte[], Device)</code>.
      */
-    // @deprecated Use <code>Patch(byte[], Device)</code>.
     // The signature Patch(byte[], int) is conflict with Patch(byte[]
     // gsysex, int offset).  A kind of ugry...
     public Patch(int deviceNum, byte[] gsysex) {
@@ -142,8 +142,8 @@ public class Patch extends Object
      * @param gsysex The MIDI SysEx message.
      * @param deviceNum The known device number.
      * @param driverNum The known driver number.
+     * @deprecated Use <code>Patch(byte[], Driver)</code>.
      */
-    // @deprecated Use <code>Patch(byte[], Driver)</code>.
     public Patch(byte[] gsysex, int deviceNum, int driverNum) {
         date    = new StringBuffer();
         author  = new StringBuffer();
@@ -254,8 +254,8 @@ public class Patch extends Object
      *      Patch p = new Patch(sysex);
      *      p.ChooseDriver(); // !!!verbose!!!
      * </pre>
+     * @deprecated Use proper constructor of the Patch.
      */
-    //@deprecated Use proper constructor of Patch.
     public void ChooseDriver() {
 	chooseDriver();
     }
