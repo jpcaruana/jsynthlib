@@ -54,8 +54,9 @@ ErrorMsg.reportStatus("PatchGridModel");
      * @return  */
     public Object getValueAt (int row, int col)
     {
-        return (bankDriver.patchNumbers[         col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row]+" "+
-        bankDriver.getPatchName (bankData,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row));
+	String patchNumbers[] = bankDriver.getPatchNumbers();
+	int i = col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row;
+        return (patchNumbers[i] + " " + bankDriver.getPatchName(bankData, i));
     }
     /**
      * @param row
@@ -63,7 +64,8 @@ ErrorMsg.reportStatus("PatchGridModel");
      * @return  */
     public Patch getPatchAt(int row, int col)
     {
-        return bankDriver.getPatch(bankData,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
+	int i = col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row;
+        return bankDriver.getPatch(bankData, i);
     }
     /**
      * @param c
@@ -104,7 +106,9 @@ ErrorMsg.reportStatus("PatchGridModel");
     {
 //----- Start phil@muqus.com (allow patch name editing from a bank edit window)
       int patchNum = col * bankDriver.getNumPatches() / bankDriver.getNumColumns() + row;
-      bankDriver.setPatchName(bankData, patchNum, ((String)value).substring((bankDriver.patchNumbers[patchNum] + " ").length()));
+      String[] patchNumbers = bankDriver.getPatchNumbers();
+      bankDriver.setPatchName(bankData, patchNum,
+			      ((String) value).substring((patchNumbers[patchNum] + " ").length()));
 //----- End phil@muqus.com
       fireTableCellUpdated (row, col);
     }

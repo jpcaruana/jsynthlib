@@ -168,13 +168,14 @@ public class ImportAllDialog extends JDialog
                             if (extract && (pk.getDriver() instanceof BankDriver))
                             {
                                 BankDriver myDriver=((BankDriver) pk.getDriver());
+				String[] pn = myDriver.getPatchNumbers();
                                 for (int j=0;j<myDriver.getNumPatches();j++)
                                 {
                                     Patch q=(myDriver.getPatch (pk,j));
                                     if (putName==1)
-                                        q.setDate(q.getDate() + files[i].getName() + " " + myDriver.patchNumbers[j]);
+                                        q.setDate(q.getDate() + files[i].getName() + " " + pn[j]);
                                     if (putName==2)
-                                        q.setAuthor(q.getAuthor() + files[i].getName() + " " + myDriver.patchNumbers[j]);
+                                        q.setAuthor(q.getAuthor() + files[i].getName() + " " + pn[j]);
                                     ((LibraryFrame)JSLDesktop.getSelectedFrame ()).PastePatch (q);
                                 }
                             }
