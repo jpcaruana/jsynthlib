@@ -410,7 +410,17 @@ public class PatchEdit extends JFrame
             {saveFrameAs ();return;}
             libFrame.save ();
         } catch (Exception e)
-        {ErrorMsg.reportError ("Error", "Unable to Save Library",e);return;}
+        {
+        PerformanceFrame perFrame;
+        try
+        {
+            perFrame=(PerformanceFrame)desktop.getSelectedFrame ();
+            if (perFrame.getTitle ().startsWith ("Unsaved "))
+            {saveFrameAs ();return;}
+            perFrame.save ();
+        } catch (Exception e2)               {
+        ErrorMsg.reportError ("Error", "Unable to Save Library",e2);return;}
+    }
     }
     // Save and specify a file name
     protected void saveFrameAs ()
@@ -439,8 +449,12 @@ public class PatchEdit extends JFrame
                     }
                     if (file.exists ())
                         if (JOptionPane.showConfirmDialog (null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-                    
+                    try {
                     ((LibraryFrame)desktop.getSelectedFrame ()).save (file);
+                       } catch (Exception pr)
+                       {
+                         ((PerformanceFrame)desktop.getSelectedFrame()).save(file);
+                       }
                 }
             } catch (Exception ex)
             {ErrorMsg.reportError ("Error", "Unable to Save Library",ex);}

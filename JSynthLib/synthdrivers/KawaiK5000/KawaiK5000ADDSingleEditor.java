@@ -277,7 +277,7 @@ class K5kVelSwSender extends SysexSender
 {
   int parameter; 
   byte []b = new byte [14];
-  public K5kSrcSender(int src,int param) 
+  public K5kVelSwSender(int src,int param) 
   {parameter=4;
    b[0]=(byte)0xF0; b[1]=(byte)0x40;b[3]=(byte)0x10;b[4]=0; b[5]=0x0A;
    b[6]=01;b[7]=0;b[8]=((byte)(src-1));b[9]=0;b[10]=((byte)parameter);

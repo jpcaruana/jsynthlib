@@ -74,13 +74,14 @@ public class NewPatchDialog extends JDialog {
                                     // Keep in mind, that there are drivers around, which can't create new patches.....
                                     dev.driverList.get(j).getClass().getDeclaredMethod("createNewPatch",null);
                                     System.out.println("Bingo "+index);
+                                 System.out.println(i+ "&" + j);
                                     PatchEdit.Clipboard=PatchEdit.getDriver(i,j).createNewPatch();
                                     setVisible(false);
                                     i=PatchEdit.deviceList.size();
                                     break;
                                 }
                                 catch (Exception ex) {
-                                    //System.out.println(ex.toString());
+                                    ex.printStackTrace();
                                 }
                                 
                             }

@@ -511,6 +511,8 @@ return null;
     public void PastePatch()
     {
         Patch myPatch=PatchEdit.Clipboard;
+
+       System.out.println("pASTE "+myPatch);
         if (myPatch!=null)
         {
             byte [] mySysex = new byte[myPatch.sysex.length];
