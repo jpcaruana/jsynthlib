@@ -21,7 +21,7 @@ class normal_voice extends XMLDriverImplementation{
     }
     public void sendParameter(XMLPatch patch, XMLParameter param) {
 		d = patch.getDevice()
-		pmsg = param.getMsg()
+		pmsg = param.getMessage(patch)
 		hi = pmsg[5]
 		mid = pmsg[6]
 		low = pmsg[7] + param.getOffset() - 8
