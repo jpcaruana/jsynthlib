@@ -100,7 +100,7 @@ public class TD6BankDriver extends BankDriver {
 
     public void calculateChecksum (Patch p) {
 	for (int i = 0; i < NUM_PATCH; i++)
-	    singleDriver.calcChkSum(p.sysex, SINGLE_SIZE * i);
+	    singleDriver.calculateChecksum(p, SINGLE_SIZE * i);
     }
 
     public void putPatch(Patch bank, Patch p, int patchNum) {
@@ -110,7 +110,7 @@ public class TD6BankDriver extends BankDriver {
 	    // adjust address field
 	    bank.sysex[getPktOfst(patchNum, i) + 7] = (byte) patchNum;
 	}
-	singleDriver.calcChkSum(bank.sysex, SINGLE_SIZE * patchNum);
+	singleDriver.calculateChecksum(bank, SINGLE_SIZE * patchNum);
     }
 
     public Patch getPatch(Patch bank, int patchNum) {
@@ -138,8 +138,7 @@ public class TD6BankDriver extends BankDriver {
     public void storePatch (Patch p, int bankNum, int patchNum) {
 	int ofst = 0;
 	for (int i = 0; i < NUM_PATCH; i++, ofst += SINGLE_SIZE) {
-	    singleDriver.storePatch(p.sysex, ofst,
-				    i, getDeviceID(), getPort());
+	    singleDriver.storePatch(p.sysex, ofst, i);
 	}
     }
 }

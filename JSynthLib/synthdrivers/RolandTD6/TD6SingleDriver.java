@@ -97,7 +97,7 @@ public final class TD6SingleDriver extends Driver {
     public void storePatch (Patch p, int bankNum, int patchNum) {
 // 	ErrorMsg.reportStatus("storePatch: " + p);
 //  	ErrorMsg.reportStatus("storePatch: " + device);
-	storePatch(p.sysex, 0, patchNum, getDeviceID(), getPort());
+	storePatch(p.sysex, 0, patchNum);
     }
 
     /**
@@ -106,26 +106,28 @@ public final class TD6SingleDriver extends Driver {
      * @param sysex SysEX byte array.
      * @param offset offset index in <code>sysex</code>.
      * @param patchNum the patch number.
-     * @param channel device ID
-     * @param port MIDI out port number
      */
-    static void storePatch (byte[] sysex, int offset,
-			    int patchNum, int channel, int port) {
+    void storePatch (byte[] sysex, int offset, int patchNum) {
+	int deviceID = getDeviceID();
+	int port = getPort();
+
 	int size;
 	for (int i = 0; i < NUM_PKT; i++, offset += size) {
 	    // create a Patch data for each packet
 	    size = PKT_SIZE[i];
 	    byte [] tmpSysex = new byte [size];
 	    System.arraycopy(sysex, offset, tmpSysex, 0, size);
+	    Patch p = new Patch(tmpSysex, (Driver) null);
 
-	    tmpSysex[2] = (byte) (channel - 1);	// set channel (device ID)
+	    p.sysex[2] = (byte) (deviceID - 1);
 	    // Drum kit : kk,  address 41 kk ii 00
-	    tmpSysex[6] = (byte) 0x41;
-	    tmpSysex[7] = (byte) patchNum;
-	    tmpSysex[8] = (byte) i;
-	    tmpSysex[size - 2] = calcChkSum(tmpSysex, 6, size - 3);
+	    p.sysex[6] = (byte) 0x41;
+	    p.sysex[7] = (byte) patchNum;
+	    p.sysex[8] = (byte) i;
+	    calculateChecksum(p, 6, size - 3, size - 2);
+// 	    p.sysex[size - 2] = calcChkSum(tmpSysex, 6, size - 3);
 	    try {
-		PatchEdit.MidiOut.writeLongMessage(port, tmpSysex);
+		PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
 	    } catch (Exception e) {
 		ErrorMsg.reportStatus(e);
 	    }
@@ -157,6 +159,7 @@ public final class TD6SingleDriver extends Driver {
      * @param end end offset
      * @return a <code>byte</code> value
      */
+    /*
     private static byte calcChkSum(byte[] b, int start, int end) {
 // 	ErrorMsg.reportStatus("  start = " + start + ", end = " + end);
 	int sum = 0;
@@ -164,20 +167,21 @@ public final class TD6SingleDriver extends Driver {
 	    sum += b[i];
 	return (byte) (-sum & 0x7f);
     }
-
+    */
     /**
      * Calculate and update checksum of a Patch.
      *
      * @param p a <code>Patch</code> value.
      * @param offset offset index to calculate the check sum.
      */
-    static void calcChkSum(byte[] sysex, int offset) {
+    void calculateChecksum(Patch p, int offset) {
 // 	ErrorMsg.reportStatus("offset = " + offset);
 	int size;
 	for (int i = 0; i < NUM_PKT; i++, offset += size) {
 	    size = PKT_SIZE[i];
 	    int chkSumIdx = offset + size - 2;
-	    sysex[chkSumIdx] = calcChkSum(sysex, offset + 6, chkSumIdx - 1);
+// 	    sysex[chkSumIdx] = calcChkSum(sysex, offset + 6, chkSumIdx - 1);
+	    calculateChecksum(p, offset + 6, chkSumIdx - 1, chkSumIdx);
 	}
     }
 
@@ -187,7 +191,7 @@ public final class TD6SingleDriver extends Driver {
      * @param p a <code>Patch</code> value
      */
     public void calculateChecksum(Patch p) {
-	calcChkSum(p.sysex, 0);
+	calculateChecksum(p, 0);
     }
 
     /**
