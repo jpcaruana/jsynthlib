@@ -320,27 +320,27 @@ public class SysexGetDialog extends JDialog {
 
       bankComboBox.removeAllItems();
       patchNumComboBox.removeAllItems();
-
+      
       if (myDrvAssign != null) {
-        if (myDrvAssign.getDriver().bankNumbers.length > 1) {
-          for (int i = 0 ; i < myDrvAssign.getDriver().bankNumbers.length ; i++) {
-            bankComboBox.addItem(myDrvAssign.getDriver().bankNumbers[i]);
-        }
-
-
-
-	  if (myDrvAssign.getDriver().patchNumbers.length > 1) {
-          for (int i = 0 ; i < myDrvAssign.getDriver().patchNumbers.length ; i++) {
-            patchNumComboBox.addItem(myDrvAssign.getDriver().patchNumbers[i]);
+          if (myDrvAssign.getDriver().bankNumbers.length > 1) {
+              for (int i = 0 ; i < myDrvAssign.getDriver().bankNumbers.length ; i++) {
+                  bankComboBox.addItem(myDrvAssign.getDriver().bankNumbers[i]);
+              }
           }
-        }
+          
+          
+          if (myDrvAssign.getDriver().patchNumbers.length > 1) {
+              for (int i = 0 ; i < myDrvAssign.getDriver().patchNumbers.length ; i++) {
+                  patchNumComboBox.addItem(myDrvAssign.getDriver().patchNumbers[i]);
+              }
+          }
+          
+          
+          bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
+          // N.B. Do not enable patch selection for banks
+          patchNumComboBox.setEnabled(!(myDrvAssign.getDriver() instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
       }
-
-      bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
-      // N.B. Do not enable patch selection for banks
-      patchNumComboBox.setEnabled(!(myDrvAssign.getDriver() instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
     }
-      }
   } // End InnerClass: DriverActionListener
 
 //----------------------------------------------------------------------------------------------------------------------
