@@ -5,7 +5,6 @@ import java.io.Serializable;
 
 import javax.sound.midi.SysexMessage;
 
-// Is Transferable necessary?
 public interface IPatch extends Cloneable, Transferable, Serializable {
 
     /** Getter for date. */
@@ -66,7 +65,7 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     /**
      * Sends a patch to a set location on a synth.
      */
-    void store(int bankNum, int patchNum);
+    void send(int bankNum, int patchNum);
 
     // only for Single Patch (Do we need ISinglePatch?)
     /** Play note. */

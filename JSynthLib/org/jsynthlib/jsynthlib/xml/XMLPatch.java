@@ -136,7 +136,7 @@ public class XMLPatch implements IPatch {
         return driver.edit(this);
     }
 
-    public void store(int bankNum, int patchNum) {
+    public void send(int bankNum, int patchNum) {
         driver.send(this, bankNum, patchNum);
     }
 
