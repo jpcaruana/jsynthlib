@@ -140,7 +140,10 @@ public class DX7FamilyAdditionalVoiceEditor extends PatchEditorFrame
 	protected void buildEditor(Patch patch)
 	{
 
-		// Additional Voice settings
+		// voiceTabPane - Additional Voice settings
+		JTabbedPane voiceTabPane = new JTabbedPane();
+
+		// opPane - Operator settings
 		JPanel opPane = new JPanel();
 		opPane.setLayout(new GridBagLayout());gbc.weightx=1;
 
@@ -161,7 +164,7 @@ public class DX7FamilyAdditionalVoiceEditor extends PatchEditorFrame
 		addWidget(opPane,new ComboBoxWidget("OP5",patch,new ParamModel(patch,6+ 7),new AdditionalVoiceSender( 7),OpAmpModSensName), 8, 6, 2, 1,11);
 		addWidget(opPane,new ComboBoxWidget("OP6",patch,new ParamModel(patch,6+ 6),new AdditionalVoiceSender( 6),OpAmpModSensName),10, 6, 2, 1,12);
 
-		// Additional Voice settings
+		// cmnPane - Additional Voice settings
 		JPanel cmnPane = new JPanel();
 		cmnPane.setLayout(new GridBagLayout());gbc.weightx=1;
 
@@ -196,17 +199,16 @@ public class DX7FamilyAdditionalVoiceEditor extends PatchEditorFrame
 		addWidget(cmnPane,new ComboBoxWidget("Step"	       ,patch,new ParamModel(patch,6+21),new AdditionalVoiceSender(21),PortamentoStepName) ,4,30,4,1,22);
 		addWidget(cmnPane,new ScrollBarWidget("Time"	       ,patch,0,99,0,new ParamModel(patch,6+22),new AdditionalVoiceSender(22))		   ,8,30,4,1,23);
 
-		// Additional Voice settings
+		// voicePane = opPane+cmnPane
 		JPanel voicePane = new JPanel();
 		voicePane.setLayout(new GridBagLayout());gbc.weightx=1;
 
 		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; voicePane.add(opPane,gbc);
 		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1; voicePane.add(cmnPane,gbc);
 
-		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1;gbc.weightx=1;
-		voicePane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Voice Parameters",TitledBorder.CENTER,TitledBorder.CENTER));
-		scrollPane.add(voicePane,gbc);
-
+		// add VOICE-PARAMETERS tab
+		voiceTabPane.addTab("Voice Parameters",voicePane);
+		
 		// Controller Settings
 		JPanel ctrlPane= new JPanel();
 		ctrlPane.setLayout(new GridBagLayout());gbc.weightx=1;
@@ -263,10 +265,9 @@ public class DX7FamilyAdditionalVoiceEditor extends PatchEditorFrame
 		gbc.gridx=6;gbc.gridy=23;gbc.gridwidth=1;gbc.gridheight=1; ctrlPane.add(new JLabel("	"),gbc);
 		addWidget(ctrlPane,new ScrollBarWidget("Volume"		 ,patch,0,99,0,new ParamModel(patch,6+46),new AdditionalVoiceSender(71)),7,23,6,1,54);
 
-
-		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;gbc.weightx=1;
-		ctrlPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Controllers",TitledBorder.CENTER,TitledBorder.CENTER));
-		scrollPane.add(ctrlPane,gbc);
+		// add CONTROLLERS tab
+		voiceTabPane.addTab("Controllers",ctrlPane);
+		scrollPane.add(voiceTabPane);
 		pack();
 		show();
 	}
