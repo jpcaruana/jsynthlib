@@ -31,10 +31,10 @@ import core.Patch;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.SpinnerWidget;
- 
+
 /**
 	Editor for performance, ie group of 4 parts, each part holds a voice.
-	Performance contains also effects, modulation matrix and fseq.  
+	Performance contains also effects, modulation matrix and fseq.
 	@author denis queffeulou mailto:dqueffeulou@free.fr
 	@version $Id$
  */
@@ -43,10 +43,10 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	static final String[] mDestinations = {
 		"Off", "Ins param 1", "Ins param 2", "Ins param 3", "Ins param 4", "Ins param 5", "Ins param 6", "Ins param 7", "Ins param 8", "Ins param 9", "Ins param 10", "Ins param 11", "Ins param 12", "Ins param 13", "Ins param 14", "Send ins to reverb", "Send ins to var", "Volume", "Panpot", "Reverb send", "Var send", "Filter cutoff", "Filter resonance", "Filter EG depth", "Attack time", "Decay time", "Release time", "PEG initial level", "PEG attack time", "PEG release level", "V/N balance", "Formant", "FM", "Pitch bias", "Amp EG bias", "Freq bias", "Voiced band width", "Unvoiced band width", "LFO1 pitch mod", "LFO1 amp mod", "LFO1 freq mod", "LFO1 filter mod", "LFO1 speed", "LFO2 filter mod", "LFO2 speed", "Fseq speed", "Formant scratch"
 	};
-	
-			
+
+
 	static final String[] mPartChannels = new String[] {"A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "pfm", "Off"};
-	
+
 	static final String [] mNotes = new String [] {	"C-2","C#-2","D-2","D#-2","E-2","F-2","F#-2","G-2","G#-2","A-2","A#-2","B-2",
 	"C-1","C#-1","D-1","D#-1","E-1","F-1","F#-1","G-1","G#-1","A-1","A#-1","B-1",
 	"C0","C#0","D0","D#0","E0","F0","F#0","G0","G#0","A0","A#0","B0",
@@ -65,37 +65,37 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	static String[] mVoicesNamesFiles = {"voicespra.txt", "voicesprb.txt", "voicesprc.txt",
 	"voicesprd.txt", "voicespre.txt", "voicesprf.txt", "voicesprg.txt", "voicesprh.txt",
 	"voicespri.txt", "voicesprj.txt", "voicesprk.txt"};
-	
+
 	static final int HGAP = 3;
 	static final int VGAP = 0;
-	
+
 	protected int sysexSize = 0;
 	protected int mPartToEdit;
-	protected static byte[] buffer = new byte[1024];    
+	protected static byte[] buffer = new byte[1024];
 	protected static byte[] sysex = new byte [1024];
-    
+
 	protected ComboBoxWidget mBankSelector[] = new ComboBoxWidget[4];
 	protected ComboBoxWidget mVoiceSelector[] = new ComboBoxWidget[4];
 	protected ComboBoxWidget mPartChannel[] = new ComboBoxWidget[4];
-			        
+
 	protected YamahaFS1RVoiceEditor mVoicesInEdit[] = new YamahaFS1RVoiceEditor[4];
-					
+
 	public YamahaFS1RPerformanceEditor(Patch patch)
 	{
-		super ("Yamaha FS1R Performance Editor",patch);   
+		super ("Yamaha FS1R Performance Editor",patch);
 		initVoicesNames();
-		
+
 		JTabbedPane oTabs = new JTabbedPane();
 		scrollPane.add(oTabs);
-		
+
 		oTabs.add(buildCommonWindow(), "Common");
 		oTabs.add(new MatrixWindow(patch), "Matrix");
-		oTabs.add(new FseqWindow(patch), "Fseq");	
-		oTabs.add((new EffectsWindow(p)).buildEffectsWindow(), "Effects");	
+		oTabs.add(new FseqWindow(patch), "Fseq");
+		oTabs.add((new EffectsWindow(p)).buildEffectsWindow(), "Effects");
 		for (int i = 1; i <= 4; i++) {
 			oTabs.add(buildPartWindow(i), "Part "+i);
 		}
-		
+
 		JSLFrameListener oList[] = getJSLFrameListeners();
 		removeJSLFrameListener(oList[0]);
 		addJSLFrameListener(new JSLFrameListener() {
@@ -104,7 +104,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
             public void JSLFrameActivated(JSLFrameEvent e) {
 				// send part voice if bank is int
 				for (int oPart = 0; oPart < 4; oPart++) {
-					if (mBankSelector[oPart].getValue() == 1)// && mPartChannel[oPart].getValue() != 17) 
+					if (mBankSelector[oPart].getValue() == 1)// && mPartChannel[oPart].getValue() != 17)
 					{
 						Patch oPatch = null;
 						if (mVoicesInEdit[oPart] != null) {
@@ -129,25 +129,25 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		setSize(800, 600);
 
 		pack();
-		setVisible(true);	
+		setVisible(true);
 	}
-	
+
 	/**
 		Cree les tableaux contenant les noms des voices pour toutes les banques.
 	*/
-	private void initVoicesNames() 
+	private void initVoicesNames()
 	{
 		// init temporaire qui sert juste a creer les combo
-		for(int i = 0; i < 128; i++) 
+		for(int i = 0; i < 128; i++)
 		{
 			mPrVoices[0][i] = new VoiceName(i+" ---------");
-		}		
+		}
 	}
-	
-	/** Classe permettant de changer les noms de voices dans les combo 
+
+	/** Classe permettant de changer les noms de voices dans les combo
 		sans regenerer un setSelectedItem (dans setBankEditorInformation).
 		Elle ne se sert veritablement que pour la banque int.
-	*/		
+	*/
 	static class VoiceName
 	{
 		private String mName;
@@ -168,15 +168,15 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	public void setBankEditorInformation (BankEditorFrame bf, int row,int col)
 	{
 		super.setBankEditorInformation(bf, row, col);
-		// init des noms des voices 
-		if (bankFrame != null) 
+		// init des noms des voices
+		if (bankFrame != null)
 		{
 		for (int b = 0; b < (mVoicesBanks.length-1); b++)
 		{
 			if (b == 0)
 			{
 				// interne
-				for(int i = 0; i < 128; i++) 
+				for(int i = 0; i < 128; i++)
 				{
 					mPrVoices[b][i] = new VoiceName(""+(i+1)+" "+YamahaFS1RBankDriver.getInstance().getPatchName(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+i));
 				}
@@ -209,7 +209,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 				if (oSelIndex > 0)
 				{
 					int oVoiceIndex = mVoiceSelector[part].getValue();
-					for(int i = 0; i < 128; i++) 
+					for(int i = 0; i < 128; i++)
 					{
 						mVoiceSelector[part].cb.addItem(mPrVoices[oSelIndex-1][i]);
 					}
@@ -218,17 +218,17 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			}
 		}
 	}
-	
+
 	/** send patch to current performance part */
-	public void SendSelectedPatch() {
-		super.SendSelectedPatch();
-	}
-	
+// 	public void sendSelectedPatch() {
+// 		super.sendSelectedPatch();
+// 	}
+
 	/** Common */
-	private Container buildCommonWindow() 
+	private Container buildCommonWindow()
 	{
 		Box oPanel = Box.createVerticalBox();
-		
+
 		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		oPanel1.add(new PatchNameWidget("Name",p));
 		oPanel1.add(new ComboBoxWidget("Category", p, new YamahaFS1RPerformanceDriver.Model(p, 0x0E), new YamahaFS1RPerformanceDriver.Sender(0x0E), YamahaFS1RVoiceEditor.mCategories));
@@ -243,15 +243,15 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 
 		return oPanel;
 	}
-        
-	
+
+
 
 
 	/** combo box listener for voices names change according to the chosen bank */
 	class BankItemListener implements ItemListener
 	{
 		private int mPart;
-		BankItemListener(int aPart) 
+		BankItemListener(int aPart)
 		{
 			mPart = aPart;
 		}
@@ -264,7 +264,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 				mVoiceSelector[mPart-1].cb.removeAllItems();
 				if (oSelIndex > 0)
 				{
-					for(int i = 0; i < 128; i++) 
+					for(int i = 0; i < 128; i++)
 					{
 						mVoiceSelector[mPart-1].cb.addItem(mPrVoices[oSelIndex-1][i]);
 					}
@@ -272,14 +272,14 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			}
 		}
 	}
-	
+
 
 	/** Part parameters */
-	private Container buildPartWindow(final int aPart) 
+	private Container buildPartWindow(final int aPart)
 	{
 		JTabbedPane oTabs = new JTabbedPane();
 		Box oPanel = Box.createVerticalBox();
-		
+
 		JPanel oPartPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		// afficher les noms de voices PrA..PrK
 		YamahaFS1RPerformanceDriver.Model oModel = new YamahaFS1RPerformanceDriver.Model(p, 1, aPart);
@@ -290,10 +290,10 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		oBankCB.addEventListener(oList1[0]);
 		mBankSelector[aPart-1] = oBankCB;
 		oPartPane.add(oBankCB);
-				
+
 		mVoiceSelector[aPart-1] = new ComboBoxWidget("Voice", p, new YamahaFS1RPerformanceDriver.Model(p, 2, aPart), new YamahaFS1RPerformanceDriver.Sender(2, aPart), mPrVoices[0]);
 		// j'inverse l'ordre des listeners sinon le sysex annule
-		// l'envoi du patch et on retombe sur un son interne du FS1R et non 
+		// l'envoi du patch et on retombe sur un son interne du FS1R et non
 		// celui de la banque courante
 		ItemListener oList[] = mVoiceSelector[aPart-1].cb.getItemListeners();
 		mVoiceSelector[aPart-1].cb.removeItemListener(oList[0]);
@@ -303,7 +303,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 				if (e.getStateChange() == ItemEvent.SELECTED)
 				{
 					if (mBankSelector[aPart-1].getValue() == 1)
-					{ 
+					{
 						// envoi sysex de la voice interne selectionnee
 						JComboBox oCB = (JComboBox)e.getSource();
 						Patch oPatch = YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+oCB.getSelectedIndex());
@@ -314,13 +314,13 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		});
 		mVoiceSelector[aPart-1].addEventListener(oList[0]);
 		oPartPane.add(mVoiceSelector[aPart-1]);
-		
+
 		// get the part voice
 		JButton oEditButton = new JButton("Edit");
 		oEditButton.addActionListener(new ActionListener() {
 			public void actionPerformed (ActionEvent e) {
 				if (mBankSelector[aPart-1].getValue() == 1 && bankFrame != null) {
-					// int bank, on edite le voice de la banque 
+					// int bank, on edite le voice de la banque
 					int oIndex = 128+mVoiceSelector[aPart-1].getValue();
 					PatchEditorFrame oEdit = (PatchEditorFrame)((YamahaFS1RBankEditor)bankFrame).EditPatch(oIndex, aPart);
 					mVoicesInEdit[aPart-1] = (YamahaFS1RVoiceEditor)oEdit;
@@ -343,7 +343,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			}}
 		);
 		oPartPane.add(oEditButton);
-		
+
 		// TODO gerer le OFF
 		mPartChannel[aPart-1] = new ComboBoxWidget("Chan", p, new YamahaFS1RPerformanceDriver.Model(p, 0x04, aPart), new YamahaFS1RPerformanceDriver.Sender(0x04, aPart), mPartChannels);
 		oPartPane.add(mPartChannel[aPart-1]);
@@ -363,7 +363,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		oFreqPane.add(new KnobWidget("Note shift", p, 0, 48, -24, new YamahaFS1RPerformanceDriver.Model(p, 8, aPart), new YamahaFS1RPerformanceDriver.Sender(8, aPart)));
 		oFreqPane.add(new KnobWidget("Detune", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model(p, 9, aPart), new YamahaFS1RPerformanceDriver.Sender(9, aPart)));
 		oPanel.add(oFreqPane);
-						
+
 		JPanel oOthersPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		oOthersPane.add(new CheckBoxWidget("Filter", p, new YamahaFS1RPerformanceDriver.Model(p, 7, aPart), new YamahaFS1RPerformanceDriver.Sender(7, aPart)));
 		oOthersPane.add(new KnobWidget("Cutoff", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x18, aPart), new YamahaFS1RPerformanceDriver.Sender(0x18, aPart)));
@@ -371,13 +371,13 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		oOthersPane.add(new KnobWidget("EG depth", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x1F, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1F, aPart)));
 		oOthersPane.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Filter", TitledBorder.LEFT, TitledBorder.CENTER));
 		oPanel.add(oOthersPane);
-		
+
 		oTabs.addTab("Main", oPanel);
 		oTabs.addTab("Details", new PartDetailsWindow(p, aPart));
 		return oTabs;
 	}
 
-	/** 
+	/**
 		Window displaying secondary parameters.
 		Because these are so much, I found better to display some
 		less important parameters in another window.

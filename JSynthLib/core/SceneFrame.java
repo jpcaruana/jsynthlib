@@ -203,7 +203,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
 		public void mouseClicked(MouseEvent e) {
 		    if (e.getClickCount() == 2) {
-			PlaySelectedPatch();
+			playSelectedPatch();
 		    }
 		}
 	    });
@@ -376,7 +376,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 	PatchEdit.uploadAction.setEnabled(false);
     }
 
-    public void ImportPatch(File file) throws IOException, FileNotFoundException {
+    public void importPatch(File file) throws IOException, FileNotFoundException {
         FileInputStream fileIn = new FileInputStream(file);
         byte [] buffer = new byte [(int) file.length()];
         fileIn.read(buffer);
@@ -408,7 +408,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         //statusBar.setText(myModel.getRowCount() + " Patches");
     }
 
-    public void ExportPatch(File file) throws IOException, FileNotFoundException {
+    public void exportPatch(File file) throws IOException, FileNotFoundException {
         if (table.getSelectedRowCount() == 0) {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return;
@@ -420,7 +420,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         fileOut.close();
     }
 
-    public void DeleteSelectedPatch() {
+    public void deleteSelectedPatch() {
         if (table.getSelectedRowCount() == 0) {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return;
@@ -430,13 +430,13 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 	//statusBar.setText(myModel.getRowCount() + " Patches");
     }
 
-    public void CopySelectedPatch() {
+    public void copySelectedPatch() {
 	pth.exportToClipboard(table,
 			      Toolkit.getDefaultToolkit().getSystemClipboard(),
 			      PatchTransferHandler.COPY);
     }
 
-    public Patch GetSelectedPatch() {
+    public Patch getSelectedPatch() {
 	try {
 	    return myModel.getPatchAt(table.getSelectedRow());
 	} catch (Exception e) {
@@ -445,39 +445,39 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 	}
     }
 
-    public void SendSelectedPatch() {
+    public void sendSelectedPatch() {
 	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         myPatch.getDriver().sendPatch(myPatch);
     }
 
-    public void SendToSelectedPatch() {
+    public void sendToSelectedPatch() {
 	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         new SysexSendToDialog(myPatch);
     }
 
-    public void ReassignSelectedPatch() {
+    public void reassignSelectedPatch() {
 	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         new ReassignPatchDialog(myPatch);
         myModel.fireTableDataChanged();
     }
 
-    public void PlaySelectedPatch() {
+    public void playSelectedPatch() {
 	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         myPatch.getDriver().sendPatch(myPatch);
         myPatch.getDriver().playPatch(myPatch);
     }
 
-    public void StoreSelectedPatch() {
+    public void storeSelectedPatch() {
 	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         new SysexStoreDialog(myPatch);
     }
 
-    public JSLFrame EditSelectedPatch() {
+    public JSLFrame editSelectedPatch() {
         if (table.getSelectedRowCount() == 0) {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return null;
@@ -487,12 +487,12 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         return myPatch.getDriver().editPatch(myPatch);
     }
 
-    public void PastePatch() {
+    public void pastePatch() {
 	if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
 	    PatchEdit.pasteAction.setEnabled(false);
     }
 
-    public void PastePatch(Patch p) {
+    public void pastePatch(Patch p) {
 	pth.importData(table, p);
     }
 

@@ -132,7 +132,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 		    }
 		    if (choice == 2) // "Place Changed Version on Clipboard"
 			//put on clipboard but don't 'return' just yet
-			CopySelectedPatch();
+			copySelectedPatch();
 		    //restore backup
 		    System.arraycopy(originalPatch, 0, p.sysex, 0, p.sysex.length);
 		}
@@ -183,53 +183,54 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	return null;
     }
 
-    public void ImportPatch (File file) throws FileNotFoundException {
+    public void importPatch (File file) throws FileNotFoundException {
     }
 
-    public void ExportPatch (File file) throws FileNotFoundException {
+    public void exportPatch (File file) throws FileNotFoundException {
     }
 
-    public void DeleteSelectedPatch () {
+    public void deleteSelectedPatch () {
     }
 
-    public void CopySelectedPatch() {
+    public void copySelectedPatch() {
 	ClipboardUtil.storePatch(p);
     }
-    public Patch GetSelectedPatch() {
+    public Patch getSelectedPatch() {
 	return p;
     }
 
-    public void SendSelectedPatch() {
+    public void sendSelectedPatch() {
 	p.getDriver().calculateChecksum(p);
 	p.getDriver().sendPatch(p);
     }
 
-    public void SendToSelectedPatch() {
+    public void sendToSelectedPatch() {
 	p.getDriver().calculateChecksum(p);
 	new SysexSendToDialog(p);
     }
 
-    public void ReassignSelectedPatch() {
+    public void reassignSelectedPatch() {
 	p.getDriver().calculateChecksum(p);
 	new ReassignPatchDialog(p);
     }
 
-    public void PlaySelectedPatch() {
+    public void playSelectedPatch() {
 	p.getDriver().calculateChecksum(p);
 	p.getDriver().sendPatch(p);
 	p.getDriver().playPatch(p);
     }
 
-    public void StoreSelectedPatch() {
+    public void storeSelectedPatch() {
     }
 
-    public JSLFrame EditSelectedPatch() {
+    public JSLFrame editSelectedPatch() {
 	return null;
     }
 
-    public void PastePatch() {
+    public void pastePatch() {
     }
-    public void PastePatch(Patch _p) {
+
+    public void pastePatch(Patch p) {
     }
     // end of PatchBasket methods
 

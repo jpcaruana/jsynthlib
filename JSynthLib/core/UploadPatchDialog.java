@@ -33,7 +33,7 @@ public class UploadPatchDialog extends JDialog {
 
 	String patchType;
 	PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-	Patch q	= library.GetSelectedPatch();
+	Patch q	= library.getSelectedPatch();
 
 	JPanel container= new JPanel();
 	container.setLayout (new BorderLayout());
@@ -72,7 +72,7 @@ public class UploadPatchDialog extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 		    try {
 			PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-			Patch q	= library.GetSelectedPatch();
+			Patch q	= library.getSelectedPatch();
 			uploadPatch(q);
 		    }catch (Exception ex){JOptionPane.showMessageDialog(null, "Patch Must be Focused","Error", JOptionPane.ERROR_MESSAGE);}
 		}});
@@ -217,7 +217,7 @@ public class UploadPatchDialog extends JDialog {
     void play() {
 	try{
 	    PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-	    Patch p = library.GetSelectedPatch();
+	    Patch p = library.getSelectedPatch();
 
 	    if (p==null) return;
 	    p.getDriver().sendPatch(p);

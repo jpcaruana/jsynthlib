@@ -638,7 +638,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
 	public void actionPerformed(ActionEvent e) {
 	    try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).ReassignSelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).reassignSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to Reassign must be highlighted in the focused Window.", ex);
 	    }
@@ -653,7 +653,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).PlaySelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).playSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to Play must be highlighted in the focused Window.", ex);
 	    }
@@ -668,7 +668,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).StoreSelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).storeSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to Store must be highlighted in the focused Window.", ex);
 	    }
@@ -683,7 +683,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).SendSelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).sendSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to Send must be highlighted in the focused Window.", ex);
 	    }
@@ -698,7 +698,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
 	public void actionPerformed(ActionEvent e) {
 	    try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).SendToSelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).sendToSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to 'Send to...' must be highlighted in the focused Window.", ex);
 	    }
@@ -714,7 +714,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).DeleteSelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).deleteSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to delete must be hilighted\nin the focused Window.", ex);
 	    }
@@ -729,7 +729,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).CopySelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).copySelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to copy must be highlighted\nin the focused Window.", ex);
 	    }
@@ -744,8 +744,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).CopySelectedPatch();
-		((PatchBasket) JSLDesktop.getSelectedFrame()).DeleteSelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).copySelectedPatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).deleteSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Patch to cut must be hilighted\nin the focused Window.", ex);
 	    }
@@ -760,7 +760,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		((PatchBasket) JSLDesktop.getSelectedFrame()).PastePatch();
+		((PatchBasket) JSLDesktop.getSelectedFrame()).pastePatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Library to Paste into must be the focused Window.", ex);
 	    }
@@ -791,7 +791,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	    public void run() {
 		try {
 		    JSLFrame frm =
-			((PatchBasket) JSLDesktop.getSelectedFrame()).EditSelectedPatch();
+			((PatchBasket) JSLDesktop.getSelectedFrame()).editSelectedPatch();
 		    if (frm != null) {
 			frm.setVisible(true);
 			JSLDesktop.add(frm);
@@ -853,7 +853,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 							  JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 			    return;
 
-		    ((PatchBasket) JSLDesktop.getSelectedFrame()).ExportPatch(file);
+		    ((PatchBasket) JSLDesktop.getSelectedFrame()).exportPatch(file);
 		}
 	    } catch (IOException ex) {
 		ErrorMsg.reportError("Error", "Unable to Save Exported Patch", ex);
@@ -923,7 +923,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		if (JSLDesktop.getSelectedFrame() == null) {
 		    ErrorMsg.reportError("Error", "Library to Import Patch\n into Must be in Focus");
 		} else
-		    ((PatchBasket) JSLDesktop.getSelectedFrame()).ImportPatch(file);
+		    ((PatchBasket) JSLDesktop.getSelectedFrame()).importPatch(file);
 	    } catch (IOException ex) {
 		ErrorMsg.reportError("Error", "Unable to Load Sysex Data", ex);
 	    }
@@ -1132,7 +1132,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		np.setVisible(true);
 		Patch p = np.getNewPatch();
 		if (p != null)
-		    ((PatchBasket) JSLDesktop.getSelectedFrame()).PastePatch(p);
+		    ((PatchBasket) JSLDesktop.getSelectedFrame()).pastePatch(p);
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to create this new patch.", ex);
 	    }

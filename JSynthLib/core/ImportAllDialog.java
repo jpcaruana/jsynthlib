@@ -165,12 +165,12 @@ public class ImportAllDialog extends JDialog
                                         q.setDate(q.getDate() + files[i].getName() + " " + pn[j]);
                                     if (putName==2)
                                         q.setAuthor(q.getAuthor() + files[i].getName() + " " + pn[j]);
-                                    ((LibraryFrame)JSLDesktop.getSelectedFrame ()).PastePatch (q);
+                                    ((LibraryFrame)JSLDesktop.getSelectedFrame ()).pastePatch (q);
                                 }
                             }
                             else
                             {
-                                ((LibraryFrame)JSLDesktop.getSelectedFrame ()).PastePatch (pk);
+                                ((LibraryFrame)JSLDesktop.getSelectedFrame ()).pastePatch (pk);
                             }
                         }
                     }

@@ -58,11 +58,11 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         instance = this;
 	bankData = p;
         bankDriver = (BankDriver) p.getDriver();
-        InitBankEditorFrame();
+        initBankEditorFrame();
     }
 
     /** Initialize the bank editor frame. */
-    protected void InitBankEditorFrame() {
+    protected void initBankEditorFrame() {
         //...Create the GUI and put it in the window...
         myModel = new PatchGridModel(bankData, bankDriver);
         table = new JTable(myModel);
@@ -95,7 +95,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		}
 		public void mouseClicked(MouseEvent e) {
 		    if (e.getClickCount() == 2)
-			PlaySelectedPatch();
+			playSelectedPatch();
 		}
 	    });
 
@@ -179,13 +179,9 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    + table.getSelectedRow();
     }
 
-    private Patch getSelectedPatch() {
-        return bankDriver.getPatch(bankData, getSelectedPatchNum());
-    }
-
     // PatchBasket methods
 
-    public void ImportPatch(File file) throws IOException, FileNotFoundException {
+    public void importPatch(File file) throws IOException, FileNotFoundException {
         if (!checkSelected()) return;
         FileInputStream fileIn = new FileInputStream(file);
         byte [] buffer = new byte [(int) file.length()];
@@ -196,7 +192,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         myModel.fireTableDataChanged();
     }
 
-    public void ExportPatch(File file) throws IOException, FileNotFoundException {
+    public void exportPatch(File file) throws IOException, FileNotFoundException {
         if (!checkSelected()) return;
         Patch p = getSelectedPatch();
         FileOutputStream fileOut = new FileOutputStream(file);
@@ -204,22 +200,23 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         fileOut.close();
     }
 
-    public void DeleteSelectedPatch() {
+    public void deleteSelectedPatch() {
         if (!checkSelected()) return;
         bankDriver.deletePatch(bankData, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
 
-    public void CopySelectedPatch() {
+    public void copySelectedPatch() {
 	pth.exportToClipboard(table,
 			      Toolkit.getDefaultToolkit().getSystemClipboard(),
 			      TransferHandler.COPY);
     }
-    public Patch GetSelectedPatch() {
-	return getSelectedPatch();
+
+    public Patch getSelectedPatch() {
+        return bankDriver.getPatch(bankData, getSelectedPatchNum());
     }
 
-    public void SendSelectedPatch() {
+    public void sendSelectedPatch() {
         if (!checkSelected()) return;
         Patch p = getSelectedPatch();
         if (p == null) {
@@ -229,13 +226,13 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         p.getDriver().sendPatch(p);
     }
 
-    public void SendToSelectedPatch() {
+    public void sendToSelectedPatch() {
     }
 
-    public void ReassignSelectedPatch() {
+    public void reassignSelectedPatch() {
     }
 
-    public void PlaySelectedPatch() {
+    public void playSelectedPatch() {
         if (!checkSelected()) return;
         Patch p = getSelectedPatch();
         if (p == null) {
@@ -246,7 +243,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	p.getDriver().playPatch(p);
     }
 
-    public void StoreSelectedPatch() {
+    public void storeSelectedPatch() {
         if (!checkSelected()) return;
         Patch p = getSelectedPatch();
         if (p == null) {
@@ -258,7 +255,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 			     + table.getSelectedRow());
     }
 
-    public JSLFrame EditSelectedPatch() {
+    public JSLFrame editSelectedPatch() {
         if (!checkSelected()) return null;
         Patch p = getSelectedPatch();
         if (p == null) {
@@ -270,11 +267,11 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         return pf;
     }
 
-    public void PastePatch() {
+    public void pastePatch() {
 	if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
 	    PatchEdit.pasteAction.setEnabled(false);
     }
-    public void PastePatch(Patch p) {
+    public void pastePatch(Patch p) {
 	pth.importData(table, p);
     }
 

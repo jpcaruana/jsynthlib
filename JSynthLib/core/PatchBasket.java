@@ -5,38 +5,42 @@ import java.util.ArrayList;
 
 /**
  * This interface should be implemented by any window which serves as
- * a holder or "basket" for patches. It is implemented by
- * LibraryFrame, the Library window and also BankEditorFrame.
+ * a holder or "basket" for patches.
  *
  * @version $Id$
  */
 public interface PatchBasket {
     // Are the following javadoc comments correct?
-    // method name should start with a lower charactor.
-    /** Import a patch. */
-    void ImportPatch(File file) throws IOException;
-    /** Export a patch. */
-    void ExportPatch(File file) throws IOException;
+    /** Import a patch from a file. */
+    void importPatch(File file) throws IOException;
+    /** Export a patch to a file. */
+    void exportPatch(File file) throws IOException;
+
     /** Delete the selected patch. */
-    void DeleteSelectedPatch();
+    void deleteSelectedPatch();
     /** Copy the selected patch. */
-    void CopySelectedPatch();
-    /** Send the selected patch. */
-    void SendSelectedPatch();
-    /** SendTo the selected patch. */
-    void SendToSelectedPatch();
-    /** Play the selected patch. */
-    void PlaySelectedPatch();
-    /** Store the selected patch. */
-    void StoreSelectedPatch();
-    /** Reassign the selected patch. */
-    void ReassignSelectedPatch();
-    /** Invoke an editor for the selected patch. */
-    JSLFrame EditSelectedPatch();
+    void copySelectedPatch();
     /** Paste a patch. */
-    void PastePatch();
+    void pastePatch();
+    /** Paste a patch. */
+    void pastePatch(Patch p);
+    /** Get the selected patch. */
+    Patch getSelectedPatch();
+
+    /** Send the selected patch. */
+    void sendSelectedPatch();
+    /** SendTo the selected patch. */
+    void sendToSelectedPatch();
+    /** Play the selected patch. */
+    void playSelectedPatch();
+    /** Store the selected patch. */
+    void storeSelectedPatch();
+    /** Reassign the selected patch. */
+    void reassignSelectedPatch();
+
+    /** Invoke an editor for the selected patch. */
+    JSLFrame editSelectedPatch();
+
     /** Return collection of all patches in basket. */
     ArrayList getPatchCollection();
-    Patch GetSelectedPatch();
-    void PastePatch(Patch p);
 }

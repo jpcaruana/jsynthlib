@@ -217,7 +217,7 @@ public class SysexGetDialog extends JDialog {
 
       // paste the patch.
       try {
-	((PatchBasket)JSLDesktop.getSelectedFrame()).PastePatch(pk);
+	((PatchBasket) JSLDesktop.getSelectedFrame()).pastePatch(pk);
       } catch (Exception ex) {
 	JOptionPane.showMessageDialog (null, "Library to Receive into must be the focused Window.",
 				       "Error", JOptionPane.ERROR_MESSAGE);
