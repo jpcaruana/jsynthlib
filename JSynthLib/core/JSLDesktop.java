@@ -109,7 +109,7 @@ public class JSLDesktop {
 
 	    for (int i = 0; i < ifs.length; i++) {
 		if (ifs[i] instanceof JSLFrame.JSLFrameProxy) {
-		    a[i] = (JSLFrame)((JSLFrame.JSLFrameProxy)ifs[i]);
+		    a[i] = ((JSLFrame.JSLFrameProxy)ifs[i]).getJSLFrame();
 		}
 	    }
 	    return a;
@@ -205,12 +205,15 @@ public class JSLDesktop {
 
 	public void JSLFrameActivated(JSLFrameEvent e) {
 	    selected = e.getJSLFrame().getJFrame();
+	    ErrorMsg.reportStatus("\""+selected.getTitle()+"\" selected");
 	}
 	public void JSLFrameClosed(JSLFrameEvent e) {
 	    windows.remove(e.getJSLFrame());
 	    if (windows.size() < 1) {
 		if (toolbar.isVisible()) {
 		    selected = toolbar.getJFrame();
+		    ErrorMsg.reportStatus("\""+selected.getTitle()+
+					  "\" selected");
 		} else if (invisible == null) {
 		    PatchEdit.appConfig.savePrefs();
 		    // We shouldn't need to unload the midi driver if

@@ -17,7 +17,15 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 		try {
 		    PatchEdit.desktop.getSelectedFrame().setClosed(true);
 		} catch (Exception e) {
-		    e.printStackTrace();
+		    if (PatchEdit.desktop == null) {
+			System.err.println("Error: No JSLDesktkop. Can't close"
+					   + " any windows.");
+		    } else if (PatchEdit.desktop.getSelectedFrame() == null) {
+			System.err.println("Error: No selected JSLFrame. " +
+					   "Can't close window.");
+		    } else {
+			e.printStackTrace();
+		    }
 		}
 	    }
 	};

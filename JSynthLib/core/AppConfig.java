@@ -307,7 +307,7 @@ public class AppConfig implements Storable {
 		"libPath", "sysexPath", "initPortIn", "initPortOut", "note",
 		"velocity", "delay", "masterController", "lookAndFeel",
 		"guiStyle", "midiPlatform", "faderPort", "faderEnable",
-		"faderController","faderChannel"
+		"faderController","faderChannel", "device"
 	};
 
 	/**

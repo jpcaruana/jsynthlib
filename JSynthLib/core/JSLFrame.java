@@ -144,6 +144,7 @@ public class JSLFrame {
 	}
 	
 	public void internalFrameActivated(InternalFrameEvent e) {
+	    ErrorMsg.reportStatus("\""+getTitle()+"\" activated.");
 	    JSLFrameEvent fe = 
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.ACTIVATED);
 	    Iterator it = listeners.iterator();
@@ -170,6 +171,7 @@ public class JSLFrame {
 		proxy.dispose();
 	}
 	public void internalFrameDeactivated(InternalFrameEvent e) {
+	    ErrorMsg.reportStatus("\""+getTitle()+"\" deactivated.");
 	    JSLFrameEvent fe = 
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEACTIVATED);
 	    Iterator it = listeners.iterator();
@@ -286,6 +288,9 @@ public class JSLFrame {
 		    windowDeactivated(ne);
 		}
 	    }
+	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
+				  +"\" activated.");
+
 	    JSLFrameEvent fe = 
 		new JSLFrameEvent(getJSLFrame(),
 				  JSLFrameEvent.ACTIVATED);
@@ -318,6 +323,8 @@ public class JSLFrame {
 		// Don't notify if we're focusing the toolbar.
 		return;
 	    }
+	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
+				  +"\" deactivated.");
 	    JSLFrameEvent fe = 
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEACTIVATED);
 	    Iterator it = listeners.iterator();
