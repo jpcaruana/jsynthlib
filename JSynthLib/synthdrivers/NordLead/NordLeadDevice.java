@@ -1,5 +1,5 @@
 // written by Kenneth L. Martinez
-
+// $Id$
 package synthdrivers.NordLead;
 
 import core.*;
@@ -37,21 +37,47 @@ public class NordLeadDevice extends Device implements ItemListener {
     //patchType = "Bank";
     synthName = "NL1-2";
     infoText = DRIVER_INFO;
+    Driver drv;
+    
     nlConfig = new NordLeadConfig();
 
     JOptionPane.showMessageDialog(PatchEdit.instance,
       DRIVER_INFO, "Nord Lead Driver Release Notes",
       JOptionPane.WARNING_MESSAGE
     );
-    addDriver(new NLPatchBankDriver(nlConfig));
-    addDriver(new NLPatchSingleDriver(nlConfig));
-    addDriver(new NLDrumBankDriver(nlConfig));
-    addDriver(new NLDrumSingleDriver(nlConfig));
-    addDriver(new NLPerfBankDriver(nlConfig));
-    addDriver(new NLPerfSingleDriver(nlConfig));
-    addDriver(new NL2PerfBankDriver(nlConfig));
-    addDriver(new NL2PerfSingleDriver(nlConfig));
-  }
+    
+    drv=new NLPatchBankDriver();
+    ((NLPatchBankDriver)drv).setNlConfig(nlConfig);
+    addDriver(drv);
+       
+    drv=new NLPatchSingleDriver();
+    ((NLPatchSingleDriver)drv).setNlConfig(nlConfig);
+    addDriver(drv);
+    
+    drv=new NLDrumBankDriver();
+    ((NLDrumBankDriver)drv).setNlConfig(nlConfig);
+    addDriver(drv);
+    
+    drv=new NLDrumSingleDriver();
+    ((NLDrumSingleDriver)drv).setNlConfig(nlConfig);
+    addDriver(drv);
+        
+    drv=new NLPerfBankDriver();
+    ((NLPerfBankDriver)drv).setNlConfig(nlConfig);
+    addDriver(drv);
+        
+    drv=new NLPerfSingleDriver();
+    ((NLPerfSingleDriver)drv).setNlConfig(nlConfig);
+    addDriver(drv);
+        
+    drv=new NL2PerfBankDriver();
+    ((NL2PerfBankDriver)drv).setNlConfig(nlConfig);
+    addDriver(drv);
+        
+    drv=new NL2PerfSingleDriver();
+    ((NL2PerfSingleDriver)drv).setNlConfig(nlConfig);
+    addDriver(drv);
+    }
 
   public JPanel config() {
     JPanel panel= new JPanel();

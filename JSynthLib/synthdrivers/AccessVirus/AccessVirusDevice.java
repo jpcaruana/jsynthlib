@@ -19,6 +19,7 @@ public class AccessVirusDevice extends Device implements ItemListener {
     "9", "10", "11", "12", "13", "14", "15", "16", "Omni"
   };
   AccessVirusConfig avConfig;
+  
   JComboBox channelList;
 
   /** Creates new AccessVirus */
@@ -29,15 +30,27 @@ public class AccessVirusDevice extends Device implements ItemListener {
     synthName = "Virus";
     infoText = DRIVER_INFO;
     avConfig = new AccessVirusConfig();
-
+    Driver drv;
     JOptionPane.showMessageDialog(PatchEdit.instance,
       DRIVER_INFO, "Access Virus Driver Release Notes",
       JOptionPane.WARNING_MESSAGE
     );
-    addDriver(new VirusProgBankDriver(avConfig));
-    addDriver(new VirusProgSingleDriver(avConfig));
-    addDriver(new VirusMultiBankDriver(avConfig));
-    addDriver(new VirusMultiSingleDriver(avConfig));
+    drv=new VirusProgBankDriver();
+    ((VirusProgBankDriver)drv).setAvConfig(avConfig);
+    addDriver(drv);
+    
+    drv=new VirusProgSingleDriver();
+    ((VirusProgSingleDriver)drv).setAvConfig(avConfig);
+    addDriver(drv);
+    
+    drv=new VirusMultiBankDriver();
+    ((VirusMultiBankDriver)drv).setAvConfig(avConfig);
+    addDriver(drv);
+    
+    drv=new VirusMultiSingleDriver();
+    ((VirusMultiSingleDriver)drv).setAvConfig(avConfig);
+    addDriver(drv);
+    
   }
 
   public JPanel config() {

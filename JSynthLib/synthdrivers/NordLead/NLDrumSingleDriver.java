@@ -1,5 +1,5 @@
 // written by Kenneth L. Martinez
-
+// $Id$
 package synthdrivers.NordLead;
 
 import core.*;
@@ -150,8 +150,9 @@ public class NLDrumSingleDriver extends Driver {
   };
   NordLeadConfig nlConfig;
 
-  public NLDrumSingleDriver(NordLeadConfig nlc) {
-    nlConfig = nlc;
+  public NLDrumSingleDriver() {
+  //public NLDrumSingleDriver(NordLeadConfig nlc) {
+  //  nlConfig = nlc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Nord";
     model = "Lead";
@@ -236,5 +237,22 @@ public class NLDrumSingleDriver extends Driver {
         new NameValue("bankNum", 10), new NameValue("patchNum", 0)
     );
   }
+  
+  /** Getter for property nlConfig.
+   * @return Value of property nlConfig.
+   *
+   */
+  public synthdrivers.NordLead.NordLeadConfig getNlConfig() {
+      return nlConfig;
+  }
+  
+  /** Setter for property nlConfig.
+   * @param nlConfig New value of property nlConfig.
+   *
+   */
+  public void setNlConfig(synthdrivers.NordLead.NordLeadConfig nlConfig) {
+      this.nlConfig = nlConfig;
+  }
+  
 }
 

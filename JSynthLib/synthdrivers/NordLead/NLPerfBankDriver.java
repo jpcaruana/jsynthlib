@@ -1,5 +1,5 @@
 // written by Kenneth L. Martinez
-
+// $Id$
 package synthdrivers.NordLead;
 
 import core.*;
@@ -10,9 +10,10 @@ public class NLPerfBankDriver extends BankDriver {
   static final int PATCH_NUM_OFFSET = 5;
   static final int NUM_IN_BANK = 100;
   NordLeadConfig nlConfig;
-
-  public NLPerfBankDriver(NordLeadConfig nlc) {
-    nlConfig = nlc;
+  
+  public NLPerfBankDriver() {
+  //public NLPerfBankDriver(NordLeadConfig nlc) {
+  //  nlConfig = nlc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Nord";
     model = "Lead";
@@ -127,5 +128,22 @@ public class NLPerfBankDriver extends BankDriver {
       }
     }
   }
+  
+  /** Getter for property nlConfig.
+   * @return Value of property nlConfig.
+   *
+   */
+  public synthdrivers.NordLead.NordLeadConfig getNlConfig() {
+      return nlConfig;
+  }
+  
+  /** Setter for property nlConfig.
+   * @param nlConfig New value of property nlConfig.
+   *
+   */
+  public void setNlConfig(synthdrivers.NordLead.NordLeadConfig nlConfig) {
+      this.nlConfig = nlConfig;
+  }
+  
 }
 

@@ -33,7 +33,9 @@ import javax.swing.JButton;
  * @author <a href="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
  */
-public final class PadInfo /*implements Cloneable*/ {
+// deviceclass.newInstance() in core/DeviceListWriter fails without
+// `public'.  Why???!!!
+public final class PadInfo {
   /**
    * Name of Pad. "Kick", "Ride", etc.
    */

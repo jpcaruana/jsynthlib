@@ -29,9 +29,9 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 
 /**
- * TD6SignleEditor.java
+ * TD6SingleEditor.java
  *
- * Single editor for Roland TD-6 Percussion Module.
+ * Single Patch Editor for Roland TD-6 Percussion Module.
  *
  * @author <a href="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
@@ -294,8 +294,10 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 				       TitledBorder.CENTER));
       gbc.gridx = i + 1; gbc.gridy = 0;
       mixerPane.add(padMx, gbc);
+      int w = 0;
       for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
-	if (j == 1 && !padList[i].dualTrigger && !padList[i].dualTriggerActive)
+	if (j == 1
+	    && (!padList[i].dualTrigger || !padList[i].dualTriggerActive))
 	  continue;
 	addWidget(padMx,
 		  new VertScrollBarWidget
@@ -306,7 +308,8 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 					   + (j == 0 ? 0x00 : 0x13) + 0x10)),
 		   new TD6KitSender(padList[i].offset
 				    + (j == 0 ? 0x00 : 0x13) + 0x10)),
-		  j, 0, 1, 1, snum++);
+		  j, 1, 1, 1, snum++);
+	w++;
       }
       if (padList[i].name == "Hi-Hat") {
 	// Pedal Hi-Hat Volume
@@ -315,8 +318,25 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 					  0, 15, 0,
 					  new TD6KitModel(patch, 0x13),
 					  new TD6KitSender(0x13)),
-		  2, 0, 1, 1, snum++);
+		  2, 1, 1, 1, snum++);
+	w++;
       }
+      // How can I move Center to top?  Change DKnob class or add
+      // radio button? !!!FIXIT!!!
+      String[] panText = { "L15", "L14", "L13", "L12", "L11", "L10", "L9",
+			   "L8", "L7", "L6", "L5", "L4", "L3", "L2", "L1",
+			   "Center",
+			   "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8",
+			   "R9", "R10", "R11", "R12", "R13", "R14", "R15",
+			   "Random", "Alternative" };
+      addWidget(padMx,
+		new KnobLookupWidget(null, patch,
+				     0, 32,
+				     new TD6KitModel(patch,
+						     padList[i].offset + 0x26),
+				     new TD6KitSender(padList[i].offset + 0x26),
+				     panText),
+		0, 0, 1, 1, snum++);
     }
 
     /*
@@ -439,7 +459,8 @@ public final class TD6SingleEditor extends PatchEditorFrame {
       padEq = new JPanel();
       padEq.setLayout(new GridBagLayout());
       for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
-	if (j == 1 && !padList[i].dualTrigger && !padList[i].dualTriggerActive)
+	if (j == 1
+	    && (!padList[i].dualTrigger || !padList[i].dualTriggerActive))
 	  continue;
 	addWidget(padEq,
 		  new VertScrollBarWidget
@@ -780,9 +801,11 @@ class TD6KitModel extends ParamModel { // extended by TD6PadModel
       // MSB first nibbled word data
       int d = (patch.sysex[ofs + 0] << 12 | patch.sysex[ofs + 1] << 8
 	       | patch.sysex[ofs + 2] << 4 | patch.sysex[ofs + 3]);
+      /*
       ErrorMsg.reportStatus("TD6KitModel.get(): " + d);
       ErrorMsg.reportStatus("TD6KitModel.get(): ofs =  " + ofs
 			    + "(0x" + Integer.toHexString(ofs) + ")");
+      */
       return d;
     } else {
       return patch.sysex[ofs];

@@ -61,7 +61,14 @@ class PatchListModel extends AbstractTableModel implements AbstractPatchListMode
          */
      public Class getColumnClass (int c)
      {
-         return getValueAt (0, c).getClass ();
+         Object obj;
+         obj=getValueAt (0, c);
+         if (obj!=null)          // Sometimes setValueAt delivers null pointers as value.....
+            return obj.getClass ();
+         else
+             return Object.class;
+         
+                 
      }
      
         /*

@@ -981,6 +981,8 @@ General Public License</em> since it is considered a work derived from
 JSynthLib, but in addition to releasing it under the GNU Public
 License, you can do whatever else you want with it.
 
+<!-- Make a section with example of header and refer it from here. -->
+
 <h4>Section 2: Setting Out to Work on JSynthLib</h4>
 
 This section is simply designed towards setting up a working
@@ -1005,12 +1007,11 @@ most of these. For you, the most important areas are the SynthDrivers
 directory where code pertaining to various synthesizers are kept, and
 the JSynthLib.jar file, which holds most of the code.
 
-<!-- Now obsoleted
+<!-- The next paragraph will be obsoleted soon (hopefully) -->
 <p>Though 99% of your work will go in the SynthDrivers directory, you
 need to tell the core JSynthLib program about the existence of your
 new code.  To do so, you must only make entries into the file
 "synthdrivers.properties", located in the main directory.
--->
 
 <p>All of the core code is kept bundled up inside the JSynthLib.jar
 file. To extract it, run
@@ -1038,22 +1039,20 @@ sit in the main JSynthLib directory and type
 Don't enter that directory and just type 
 <kbd>javac BossDR660DrumkitDriver.java</kbd>, it won't work.
 
-<h4>Section 4: The Four Areas of Synthesizer Support</h4>
+<h4>Section 4: The Three Areas of Synthesizer Support</h4>
 
-To add full support for a synthesizer, there are four things you need
-to write. You need a Device class, a Single Driver, a Bank Driver, and a Single
+<!-- Add description of Device file. -->
+To add full support for a synthesizer, there are three things you need
+to write. You need a Single Driver, a Bank Driver, and a Single
 Editor. Each of these provides different functionality.  
-Only a Device class and a Single Driver are strictly necessary.
 
-<p>First, you would write a Device class.  It defines some
-informations for your synthesizer.  Take a look at
-<kbd>KawaiK4Device.java</kbd>.
-
-<p>Single Driver provides routines to allow JSynthLib to detect data for
+<p>First, you
+would write the Single Driver. This is the only part which is strictly
+necessary. It provides routines to allow JSynthLib to detect data for
 the synthesizer, to communicate with the synthesizer, and to calculate
 checksums on the data. Once this is written, JSynthLib will have
 Librarian support for your synthesizer. Note that you must write a
-Device class and Single Driver first-- both the Bank Driver and Single Editor use the
+Single Driver first-- both the Bank Driver and Single Editor use the
 Single Driver in order to communicate with the synthesizer.
 
 <p>The Bank Driver provides the ability to work with banks of patches, to
@@ -1085,20 +1084,7 @@ recommend using the KawaiK4SingleDriver as a starting point because
 its the most simple driver.
 
 <h5><i>Step 2: Tell the core program about your driver</i></h5>
-<!-- Can this step be done without SignleDriver file?  If yes, create -->
-<!-- new section for Device class, and move this step to the section -->
-You have to let JSynthLib know about your driver. Execute the
-following command on your command shell,
 
-<pre>
-java core/DeviceListWrite
-</pre>
-
-and click &quot;OK&quot; button on the pop-up windows.
-This recreate the <kbd>synthdrivers.properties</kbd> file.
-
-<p>
-<!-- Now obsoleted
 Edit the file called <kbd>.\synthdrivers.properties</kbd>. This is the only file
 in the core JSynthLib program that you will have to edit. Add an entry
 with your synthesizer's name and class to the properties file. Just
@@ -1117,15 +1103,13 @@ deviceClass.OberheimMatrix1000=synthdrivers.OberheimMatrix.OberheimMatrix1000Dev
 inquriyID.OberheimMatrix1000=F07E**06021006000200********F7
 </pre>
 
-Save this file. 
--->
-If all goes well, JSynthLib now knows about your
+Save this file.  If all goes well, JSynthLib now knows about your
 driver. Now you just have to write it :)
 
 <h5><i>Step 3: Write the damn thing</i></h5>
 
 Your Single Driver will be a subclass of the core.Driver class. Open
-up the file <kbd>core\Driver.java</kbd> and take a look at that file. All of the
+up the file core\Driver.java and take a look at that file. All of the
 variables and functions are documented as to their purpose. Also look
 at your Single Driver code (which you copied from another synthesizer)
 Between these two files you should be able to figure out what to
@@ -1709,45 +1693,6 @@ called.
 <!-- What does this paragraph mean?  Fix cases. -->
 
 <p>Good Luck.
-
-<h4>Appendix A:</h4>
-
-<h5>Coding Style</h5>
-
-During developing driver you will/have to read source codes in
-JSynthLib distribution.  Other programmers will read your source code
-in the future. Use consistent coding style.
-
-<a href="http://java.sun.com/docs/codeconv/">Code Conventions for the
-Java Programming Language</a> is a good reference.  Sample codes in <a
-href="http://java.sun.com/docs/books/javaprog/">The Java Programming
-Language</a> by Ken Arnold and James Gosling (creators of Java
-language) are good examples.  We encourage you to follow the coding
-style in these documents especially you are editing source code in
-core package.  Preferred indentation level is 4.
-
-<h5>How to Compile Files Checked Out from CVS</h5>
-
-Although the source code for each version of JSynthLib is included in
-the JSynthLib distribution, you may wish to download the latest
-version of the source code to get any improvements made after the
-latest release. The source can be downloaded via CVS from
-JSynthLib'sSourceforge.net page by going
-<a href="http://sourceforge.net/cvs/?group_id=41208">here</a>.
-
-At this point Windows (and Linux?) user cannot compile
-<kbd>core/MacOSXMidiWapper.java</kbd>.  But you can download the
-compiled class code via CVS with other files.
-
-One way to compile all source code is;
-<pre>
-/usr/bin/ls core/*.java | grep -v MacOSXMidiWrapper.java > foo
-javac @foo
-javac synthdrivers/*/*.java
-javac *.java
-</pre>
-
-When native MIDI support by Java become stable, we don't need this hack.
 
 <h3><a name="acknowledgment" href="#toc">We wish to say thank you to....</a></h3>
 ...a large number of contributors. Currently the list is not included here,

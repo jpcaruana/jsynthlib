@@ -10,9 +10,10 @@ public class VirusProgBankDriver extends BankDriver {
   static final int PATCH_NUM_OFFSET = 8;
   static final int NUM_IN_BANK = 128;
   AccessVirusConfig avConfig;
-
-  public VirusProgBankDriver(AccessVirusConfig avc) {
-    avConfig = avc;
+ 
+  public VirusProgBankDriver() {
+//  public VirusProgBankDriver(AccessVirusConfig avc) {
+//    avConfig = avc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Access";
     model = "Virus";
@@ -143,5 +144,22 @@ public class VirusProgBankDriver extends BankDriver {
       new NameValue("bankNum", bankNum + 1)
     );
   }
+  
+  /** Getter for property avConfig.
+   * @return Value of property avConfig.
+   *
+   */
+  public synthdrivers.AccessVirus.AccessVirusConfig getAvConfig() {
+      return avConfig;
+  }
+  
+  /** Setter for property avConfig.
+   * @param avConfig New value of property avConfig.
+   *
+   */
+  public void setAvConfig(synthdrivers.AccessVirus.AccessVirusConfig avConfig) {
+      this.avConfig = avConfig;
+  }
+  
 }
 

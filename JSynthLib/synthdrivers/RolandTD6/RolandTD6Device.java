@@ -57,22 +57,26 @@ public final class RolandTD6Device extends Device {
    */
   public RolandTD6Device() {
     manufacturerName = "Roland";
-    // What is the difference between modelName and synthName ?
+    /** The modelName is the fixed name of the model, as stated on the
+	type plate of the engine. */
     modelName	= "TD6";
+    /** The synthName is your personal naming of the device. You can
+	change it in the first column of the Synth-Configuration
+	dialog. As default they are the same at the creation. */
     setSynthName("TD6");
-    // Why both Device class and Driver class have to have inquiryID?
-    inquiryID	= "F07E**0602413F01000000020000f7";
     //synthName	= "TD6";
+    inquiryID	= "F07E**0602413F01000000020000f7";
     infoText	=
       "Driver for TD-6 Roland Percussion Sound Module.\n" +
       "This driver is still under development.\n" +
       "This driver uses Drum Kit 99 as edit buffer.\n" +
       "Set \"Sync Mode\" to \"EXT\" to stop sending Timing Clock system real time message (0xF8).";
     authors	= "Hiroo Hayashi <hiroo.hayashi@computer.org>";
-    // Why both Device class and Driver class have to have channel?
-    channel	= 17;		// default Device ID
+    /** default Device ID */
+    channel	= 17;
 
     addDriver(new TD6SingleDriver());
+    addDriver(new TD6BankDriver());
   }
 
   /**
@@ -108,7 +112,7 @@ public final class RolandTD6Device extends Device {
       // check box for pad enable
       JCheckBox cbox = new JCheckBox();
       cbox.setSelected(padinfo[i].padActive);
-      final int	index = i;	// understand why this work!!!FIXIT!!!
+      final int	index = i;
       cbox.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
 	    JCheckBox cb = (JCheckBox) e.getSource();

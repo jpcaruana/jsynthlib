@@ -1,5 +1,5 @@
 // written by Kenneth L. Martinez
-
+// $Id$
 package synthdrivers.NordLead;
 
 import core.*;
@@ -11,8 +11,9 @@ public class NLDrumBankDriver extends BankDriver {
   static final int NUM_IN_BANK = 10;
   NordLeadConfig nlConfig;
 
-  public NLDrumBankDriver(NordLeadConfig nlc) {
-    nlConfig = nlc;
+    public NLDrumBankDriver() {
+//    public NLDrumBankDriver(NordLeadConfig nlc) {
+//    nlConfig = nlc;
     manufacturer = "Nord";
     model = "Lead";
     patchType = "Drum Bank";
@@ -129,5 +130,22 @@ public class NLDrumBankDriver extends BankDriver {
       }
     }
   }
+  
+  /** Getter for property nlConfig.
+   * @return Value of property nlConfig.
+   *
+   */
+  public synthdrivers.NordLead.NordLeadConfig getNlConfig() {
+      return nlConfig;
+  }
+  
+  /** Setter for property nlConfig.
+   * @param nlConfig New value of property nlConfig.
+   *
+   */
+  public void setNlConfig(synthdrivers.NordLead.NordLeadConfig nlConfig) {
+      this.nlConfig = nlConfig;
+  }
+  
 }
 

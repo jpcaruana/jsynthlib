@@ -62,8 +62,9 @@ public class VirusMultiSingleDriver extends Driver {
   };
   AccessVirusConfig avConfig;
 
-  public VirusMultiSingleDriver(AccessVirusConfig avc) {
-    avConfig = avc;
+  public VirusMultiSingleDriver() {
+  //public VirusMultiSingleDriver(AccessVirusConfig avc) {
+//    avConfig = avc;
     authors = "Kenneth L. Martinez";
     manufacturer = "Access";
     model = "Virus";
@@ -129,5 +130,22 @@ public class VirusMultiSingleDriver extends Driver {
         new NameValue("bankNum", 1), new NameValue("patchNum", patchNum)
     );
   }
+  
+  /** Getter for property avConfig.
+   * @return Value of property avConfig.
+   *
+   */
+  public synthdrivers.AccessVirus.AccessVirusConfig getAvConfig() {
+      return avConfig;
+  }
+  
+  /** Setter for property avConfig.
+   * @param avConfig New value of property avConfig.
+   *
+   */
+  public void setAvConfig(synthdrivers.AccessVirus.AccessVirusConfig avConfig) {
+      this.avConfig = avConfig;
+  }
+  
 }
 
