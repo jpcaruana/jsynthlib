@@ -474,7 +474,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	else {
 	    try {
 		getClass().getDeclaredMethod("editPatch",
-					     new Class[] {Patch.class});
+					     new Class[] {IPatch.class});
 		return true;
 	    } catch (NoSuchMethodException e) {
 		return false;
