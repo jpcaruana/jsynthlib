@@ -3,6 +3,12 @@ import core.*;
 import javax.swing.*;
 import java.io.*;
 
+/** Driver for Kawai K4 Effects
+ *
+ * @author Gerrit Gehnen
+ * @version $Id§
+ */
+
 public class KawaiK4EffectDriver extends Driver
 {    
     public KawaiK4EffectDriver ()
@@ -24,7 +30,7 @@ public class KawaiK4EffectDriver extends Driver
         checksumEnd=41;
         checksumOffset=42;
         bankNumbers =new String[]
-        {"0-Internal"};
+        {"0-Internal","1-External"};
         patchNumbers= new String [31];
         for (int i=0;i<31;i++)
             patchNumbers[i]=String.valueOf (i+1);
@@ -42,6 +48,7 @@ public class KawaiK4EffectDriver extends Driver
         {
         }
         p.sysex[3]=(byte)0x20;
+        p.sysex[6]=(byte)((bankNum<<1)+1);
         p.sysex[7]=(byte)(patchNum);
         sendPatchWorker (p);
         try
@@ -99,6 +106,17 @@ public class KawaiK4EffectDriver extends Driver
     {
         String s="Effect Type "+(p.sysex[8]+1);
         return s;
+    } 
+
+    public void requestPatchDump(int bankNum, int patchNum) {
+        NameValue nv[]=new NameValue[2];
+        nv[0]=new NameValue("bankNum",(bankNum<<1)+1);
+        nv[1]=new NameValue("patchNum",patchNum);
+        
+        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        
+        SysexHandler.send(port, sysex);
     }
+    
 }
 

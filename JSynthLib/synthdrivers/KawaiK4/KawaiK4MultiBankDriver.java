@@ -2,6 +2,13 @@ package synthdrivers.KawaiK4;
 import core.*;
 import java.io.*;
 import javax.swing.*;
+
+/** Driver for Kawai K4 Multi Bank
+ *
+ * @author Gerrit Gehnen
+ * @version $Id§
+ */
+
 public class KawaiK4MultiBankDriver extends BankDriver
 {
     
@@ -13,12 +20,12 @@ public class KawaiK4MultiBankDriver extends BankDriver
         id="K4";
         sysexID="F040**210004**40";
 //        inquiryID="F07E**06024000000400000000000f7";
-sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 00 40 F7");
+       sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 40 F7");
        authors="Gerrit Gehnen";
 
         deviceIDoffset=2;
         bankNumbers =new String[]
-        {"0-Internal"};
+        {"0-Internal","1-External"};
         patchNumbers=new String[]
         {"A-1","A-2","A-3","A-4","A-5","A-6","A-7","A-8",
          "A-9","A-10","A-11","A-12","A-13","A-14","A-15","A-16",
@@ -132,4 +139,26 @@ sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 00 40 F7");
         return p;
     }
 
+  public void requestPatchDump(int bankNum, int patchNum) {
+        NameValue nv[]=new NameValue[1];
+        nv[0]=new NameValue("bankNum",bankNum<<1);
+        
+        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        
+        SysexHandler.send(port, sysex);
+    }
+  
+     public void storePatch (Patch p, int bankNum,int patchNum)
+    {
+        try
+        {Thread.sleep (100);}catch (Exception e)
+        { }
+        p.sysex[3]=(byte)0x21;
+        p.sysex[6]=(byte)(bankNum<<1);
+        p.sysex[7]=(byte)0x40;
+        sendPatchWorker (p);
+        try
+        {Thread.sleep (100); } catch (Exception e)
+        {}
+    }
 }

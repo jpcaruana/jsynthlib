@@ -3,10 +3,16 @@ import core.*;
 import javax.swing.*;
 import java.io.*;
 
+/** Driver for Kawai K4 Multi's
+ *
+ * @author Gerrit Gehnen
+ * @version $Id§
+ */
+
 public class KawaiK4MultiDriver extends Driver
 {
   final static SysexHandler internalMultiSysexRequestDump = new 
-   SysexHandler("F0 40 @@ 00 00 04 00 *patchNum* F7");
+   SysexHandler("F0 40 @@ 00 00 04 *bankNum* *patchNum* F7");
 
     public KawaiK4MultiDriver ()
    {
@@ -25,7 +31,7 @@ public class KawaiK4MultiDriver extends Driver
    checksumStart=8;
    checksumEnd=77+6;
    checksumOffset=77+7;
-   bankNumbers =new String[] {"0-Internal"};
+   bankNumbers =new String[] {"0-Internal","1-External"};
    patchNumbers=new String[] {"A-1","A-2","A-3","A-4","A-5","A-6","A-7","A-8",
                               "A-9","A-10","A-11","A-12","A-13","A-14","A-15","A-16",   
                               "B-1","B-2","B-3","B-4","B-5","B-6","B-7","B-8",
@@ -42,6 +48,7 @@ public void storePatch (Patch p, int bankNum,int patchNum)
    setPatchNum(patchNum);
    try {Thread.sleep(100); } catch (Exception e){}
    p.sysex[3]=(byte)0x20;
+   p.sysex[6]=(byte)(bankNum<<1);
    p.sysex[7]=(byte)(patchNum+0x40);
    sendPatchWorker(p);
    try {Thread.sleep(100); } catch (Exception e){}   
@@ -86,9 +93,11 @@ public JInternalFrame editPatch(Patch p)
      return new KawaiK4MultiEditor(p);
  }
  
-
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = internalMultiSysexRequestDump.toByteArray((byte)channel, patchNum+0x40);
+        NameValue nv[]=new NameValue[2];
+        nv[0]=new NameValue("bankNum",bankNum<<1);
+        nv[1]=new NameValue("patchNum",patchNum+0x40);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
    
     SysexHandler.send(port, sysex);
   }
