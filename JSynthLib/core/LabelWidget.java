@@ -1,12 +1,16 @@
 package core;
 import javax.swing.JLabel;
 
+/**
+ * A Label widget.
+ * @version $Id$
+ * @see SysexWidget
+ */
 public class LabelWidget extends SysexWidget {
     /**
      * Creates a new <code>LabelWidget</code> instance.
      *
      * @param label a label text.
-     * @see SysexWidget
      */
     public LabelWidget(String label) {
 	super(label, null, null, null);
@@ -19,8 +23,8 @@ public class LabelWidget extends SysexWidget {
      * Creates a new <code>LabelWidget</code> instance.
      *
      * @param jl a JLabel widget.
+     * @deprecated
      */
-    // For what is this?
     public LabelWidget(JLabel jl) {
         super(jl.toString(), null, null, null);
 	setJLabel(jl);		// overwrite jlabel

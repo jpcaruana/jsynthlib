@@ -8,7 +8,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
+ * Vertical scrollbar SysexWidget.
  * @version $Id$
+ * @see ScrollBarWidget
+ * @see ScrollBarLookupWidget
  */
 public class VertScrollBarWidget extends ScrollBarWidget {
     /** Constructor for setting up the VertScrollBarWidget.
@@ -20,7 +23,6 @@ public class VertScrollBarWidget extends ScrollBarWidget {
      * for display purposes
      * @param ofs a <code>ParamModel</code> instance.
      * @param s sysexSender for transmitting the value at editing the parameter
-     * @see SysexWidget
      */
     public VertScrollBarWidget(String l, Patch p, int min, int max, int b,
 			       ParamModel ofs, SysexSender s) {

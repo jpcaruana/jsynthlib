@@ -7,6 +7,12 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * Horizontal scrollbar SysexWidget.
+ * @version $Id$
+ * @see VertScrollBarWidget
+ * @see ScrollBarLookupWidget
+ */
 public class ScrollBarWidget extends SysexWidget {
     /**
      * Base value.  This value is added to the actual value for
@@ -16,7 +22,7 @@ public class ScrollBarWidget extends SysexWidget {
     /** JTextField to display value. */
     protected JTextField text;
     /** JSlider widget */
-    public JSlider slider;	// accessed by Yamaha DX7 drivers !!!FIXIT!!!
+    protected JSlider slider;
 
     /**Set Label Width explicitly to? zero disables*/
     protected int forceLabelWidth = 0;
@@ -46,7 +52,6 @@ public class ScrollBarWidget extends SysexWidget {
      * @param valueInit initial value, displayed at construction of the widget
      * @deprecated call setValue(int) if really required.
      */
-    // only KawaiK4EffectEditor calls this.
     public ScrollBarWidget(String l, Patch p, int min, int max, int b,
 			   ParamModel ofs, SysexSender s, int valueInit) {
 	this(l, p, min, max, b, ofs, s);
@@ -70,6 +75,11 @@ public class ScrollBarWidget extends SysexWidget {
 	int v = slider.getValue();
 	text.setText(new Integer(v + base).toString());
 	sendSysex(v);
+    }
+
+    /** Adds a <code>ChangeListener</code> to the slider. */
+    public void addEventListener(ChangeListener l) {
+	slider.addChangeListener(l);
     }
 
     protected void layoutWidgets() {

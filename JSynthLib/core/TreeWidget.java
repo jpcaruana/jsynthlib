@@ -43,8 +43,10 @@ import javax.swing.tree.TreeSelectionModel;
  *
  * @author <a href ="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
+ * @see Nodes
  */
 public class TreeWidget extends SysexWidget {
+    /** JTree object. */
     protected JTree tree;
     private Nodes treeNodes;
     private DefaultMutableTreeNode rootNode;
@@ -64,8 +66,6 @@ public class TreeWidget extends SysexWidget {
      * @param paramModel a <code>ParamModel</code> value
      * @param sysexString SysexSender for transmitting the value at
      * editing the parameter.
-     * @see SysexWidget
-     * @see Nodes
      */
     public TreeWidget(String label, Patch patch, Nodes treeNodes,
 		      ParamModel paramModel, SysexSender sysexString) {
@@ -128,6 +128,11 @@ public class TreeWidget extends SysexWidget {
 	}
     }
 
+    /** Adds a <code>TreeSelectionListener</code> to the slider. */
+    public void addEventListener(TreeSelectionListener l) {
+	tree.addTreeSelectionListener(l);
+    }
+
     protected void layoutWidgets() {
 	//Create the scroll pane and add the tree to it.
 	JScrollPane treeScrollPane = new JScrollPane(tree);
@@ -140,14 +145,14 @@ public class TreeWidget extends SysexWidget {
      * array, then make nodes out of subsequent entries and make them
      * child nodes of the first one. The process is repeated recursively
      * for entries that are arrays.
-     * This routine is borrowed from <a href=
-     * "http://www.apl.jhu.edu/~hall/java/Swing-Tutorial/Swing-Tutorial-JTree.html">
-     * Quick Swing Tutorial for AWT Programmers</a>.
      *
      * @param root a tree structure given via <code>treeNode</code>
      * constructor parameter.
      * @return a <code>DefaultMutableTreeNode</code> value
      */
+    // This routine is borrowed from
+    // http://www.apl.jhu.edu/~hall/java/Swing-Tutorial/Swing-Tutorial-JTree.html
+    // Quick Swing Tutorial for AWT Programmers.
     protected DefaultMutableTreeNode populate(Object[] root) {
 	DefaultMutableTreeNode node = new DefaultMutableTreeNode(root[0]);
 	DefaultMutableTreeNode child;

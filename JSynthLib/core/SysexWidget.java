@@ -24,11 +24,11 @@ public abstract class SysexWidget extends JPanel {
     /**
      * JLabel widget for the label text
      *
-     * @deprecated This will be "private".  Use 'setLabel(String)'
-     * instead of 'jlabel.setText(String)'.  Use 'getLabel()' instead
-     * of 'jlabel.getText()'.
+     * @deprecated Use 'setLabel(String)' instead of
+     * 'jlabel.setText(String)'.  Use 'getLabel()' instead of
+     * 'jlabel.getText()'.
      */
-    public JLabel jlabel;	// accessed by some drivers
+    private JLabel jlabel;
 
     /** <code>Patch</code> associated with the widget. */
     private Patch patch;
@@ -51,8 +51,8 @@ public abstract class SysexWidget extends JPanel {
     private int sliderNum;
 
     /**
-     * Number of faders the widget use.<p>
-     * ex. Envelop Widget uses multiple faders.
+     * Number of faders the widget uses.<p>
+     * ex. EnvelopWidget uses multiple faders.
      */
     private int numFaders = 1;
 
@@ -94,6 +94,10 @@ public abstract class SysexWidget extends JPanel {
 	jlabel = new JLabel(label);
     }
 
+    /**
+     * <code>min</code> is set to <code>Integer.MIN_VALUE</code> and
+     * <code>max</code> is set to <code>Integer.MAX_VALUE</code>.
+     */
     protected SysexWidget(String l, Patch p, ParamModel ofs, SysexSender s) {
 	this(l, p, Integer.MIN_VALUE, Integer.MAX_VALUE, ofs, s);
     }
@@ -147,6 +151,9 @@ public abstract class SysexWidget extends JPanel {
      */
     abstract protected void layoutWidgets();
 
+    /** Enable/disable the widget. */
+    public abstract void setEnabled(boolean e);
+
     /** Return the current value. */
     public int getValue() {
 	return valueCurr;
@@ -161,14 +168,19 @@ public abstract class SysexWidget extends JPanel {
 	valueCurr = v;
     }
 
-    /** Set value, and update widget state. Extended class have to
-	override this to update the widget state. */
+    /**
+     * Set value, and update widget state.  An extended class has to
+     * override this method to let update the widget state (i.e. move
+     * a slider to the value set, etc.).
+     */
     protected void setValue(int v) {
 	_setValue(v);
     }
 
-    /** Set value by using <code>paramModel.get</code>, and update
-	the widget state. */
+    /**
+     * Set value by using <code>paramModel.get</code>, and update
+     * the widget state.
+     */
     public void setValue() {
 	if (paramModel != null)
 	    setValue(paramModel.get());
@@ -318,6 +330,8 @@ public abstract class SysexWidget extends JPanel {
 	return sliderNum;
     }
 
+    // numFader is only used by EnvelopWidget.  The following 3
+    // mothods can be moved the EnvelopWidget class.
     /** Get number of faders. */
     protected int getNumFaders() {
 	return numFaders;
@@ -333,16 +347,13 @@ public abstract class SysexWidget extends JPanel {
      * Exclusive message to a MIDI port.<p>
      * Called by PatchEditorFrame.faderMoved(byte, byte).
      * This method is used and must be extended by a SysexWidget with
-     * multiple prameters. (i.e. numFaders != 1, only EnvelopeWidget now)
+     * multiple prameters (i.e. numFaders != 1, only EnvelopeWidget now).
      *
      * @param fader fader number.
      * @param value value to be set. [0-127]
      */
     protected void setFaderValue(int fader, int value) {
     }
-
-    /** Enable/disable the widget. */
-    public abstract void setEnabled(boolean e);
 
     /**
      * Return Insets(0,0,0,0).

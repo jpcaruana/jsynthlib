@@ -8,6 +8,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * Spinner SysexWidget.
+ * @version $Id$
+ */
 public class SpinnerWidget extends SysexWidget {
     protected int base;
     protected JTextField text;
@@ -23,7 +27,6 @@ public class SpinnerWidget extends SysexWidget {
      * for display purposes.
      * @param ofs a <code>ParamModel</code> instance.
      * @param s sysexSender for transmitting the value at editing the parameter
-     * @see SysexWidget
      */
     public SpinnerWidget(String l, Patch p, int min, int max, int b,
 			 ParamModel ofs, SysexSender s) {
@@ -57,6 +60,11 @@ public class SpinnerWidget extends SysexWidget {
     protected void eventListener(ChangeEvent e) {
 	// Maybe the displayed value differ from sysex value for 'base'.
 	sendSysex(((Integer) spinner.getValue()).intValue() - base);
+    }
+
+    /** Adds a <code>ChangeListener</code> to the spinner. */
+    public void addEventListener(ChangeListener l) {
+	spinner.addChangeListener(l);
     }
 
     protected void layoutWidgets() {

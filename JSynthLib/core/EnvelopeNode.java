@@ -1,8 +1,9 @@
-/* This is a datatype used by EnvelopeWidget. It stores information
-   about a single node (point) in the Widget */
 package core;
 
 /**
+ * A data type used by EnvelopeWidget which stores information about a
+ * single node (point) in the Widget.<p>
+ *
  * Each <code>EnvelopeNode</code> is one of the movable squares on the
  * envelope. Some of these nodes are stationary, some contain two
  * parameters on the synth and can be moved vertically and

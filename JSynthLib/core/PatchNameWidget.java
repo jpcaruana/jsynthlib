@@ -1,6 +1,3 @@
-/*
- * $Id$
- */
 package core;
 import java.awt.BorderLayout;
 import java.awt.event.FocusEvent;
@@ -8,6 +5,10 @@ import java.awt.event.FocusListener;
 
 import javax.swing.JTextField;
 
+/**
+ * SysexWidget for patch name.
+ * @version $Id$
+ */
 public class PatchNameWidget extends SysexWidget {
     /** JTextField object */
     protected JTextField name;
@@ -17,7 +18,6 @@ public class PatchNameWidget extends SysexWidget {
      *
      * @param label a label text.
      * @param patch a <code>Patch</code>, which is edited.
-     * @see SysexWidget
      */
     public PatchNameWidget(String label, Patch patch) {
 	super(label, patch, null, null);
@@ -27,7 +27,7 @@ public class PatchNameWidget extends SysexWidget {
     }
 
     /** @deprecated Use PatchNameWidget(String, Patch) */
-    // The order of argument is not consistent with others!!!FIXIT!!!
+    // The order of argument is not consistent with others.
     public PatchNameWidget(Patch patch, String label) {
 	super(label, patch, null, null);
 
@@ -61,6 +61,11 @@ public class PatchNameWidget extends SysexWidget {
 	Driver driver = getDriver();
 	if (driver != null)
 	    driver.setPatchName(getPatch(), name.getText());
+    }
+
+    /** Adds an <code>FocusListener</code> to the JTextField. */
+    public void addEventListener(FocusListener l) {
+	name.addFocusListener(l);
     }
 
     protected void layoutWidgets() {

@@ -5,8 +5,13 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
 
+/**
+ * A SysexWidget class features JCheckBox widget.
+ * @version $Id$
+ */
 public class CheckBoxWidget extends SysexWidget {
-    public JCheckBox cb;	// should be prortected !!!FIXIT!!!
+    /** JCheckBox object. */
+    protected JCheckBox cb;
 
     /**
      * Creates a new <code>CheckBoxWidget</code> instance.
@@ -42,6 +47,11 @@ public class CheckBoxWidget extends SysexWidget {
 	    sendSysex(1);
 	else
 	    sendSysex(0);
+    }
+
+    /** Adds an ItemListener to the CheckBox. */
+    public void addEventListener(ItemListener l) {
+	cb.addItemListener(l);
     }
 
     protected void layoutWidgets() {

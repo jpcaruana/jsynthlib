@@ -3,14 +3,21 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
 /**
+ * A SysexWidget class features JComboBox widget.
  * @version $Id$
  */
 public class ComboBoxWidget extends SysexWidget {
+    /**
+     * JComboBox object.  This should be protected, but many patch
+     * editors access this directly.
+     */
     public JComboBox cb;	// should be protected !!!FIXIT!!!
+    /** An array of the list of the options in the ComboBox. */
     protected Object[] options;
 
     /**
@@ -33,6 +40,7 @@ public class ComboBoxWidget extends SysexWidget {
         layoutWidgets();
     }
 
+    /** <code>min</code> is set to 0. */
     public ComboBoxWidget(String l, Patch p,
 			  ParamModel ofs, SysexSender s, Object [] o) {
         this(l, p, 0, ofs, s, o);
@@ -53,6 +61,16 @@ public class ComboBoxWidget extends SysexWidget {
 	if (e.getStateChange() == ItemEvent.SELECTED) {
 	    sendSysex(cb.getSelectedIndex() + getValueMin());
 	}
+    }
+
+    /** Adds an <code>ActionListener</code> to the ComboBox. */
+    public void addEventListener(ActionListener l) {
+	cb.addActionListener(l);
+    }
+
+    /** Adds an <code>ItemListener</code> to the ComboBox. */
+    public void addEventListener(ItemListener l) {
+	cb.addItemListener(l);
     }
 
     protected void layoutWidgets() {

@@ -13,20 +13,25 @@ import javax.swing.JTextField;
 import javax.swing.event.MouseInputAdapter;
 
 /**
+ * A SysexWidget implements an envelope editing function.
  * @version $Id$
+ * @see SysexWidget
+ * @see EnvelopeNode
  */
 public class EnvelopeWidget extends SysexWidget {
     /** Array of EnvelopNodes provied by constructor */
-    private EnvelopeNode[] nodes;
-    /** Array of JLabel widgets which show the names of the X/Y axis
-     * parameters riding each access.*/
-    private JLabel[] valueLabels;
+    protected EnvelopeNode[] nodes;
+    /**
+     * Array of JLabel widgets which show the names of the X/Y axis
+     * parameters riding each access.
+     */
+    protected JLabel[] valueLabels;
     /** Array of JTextField which show the X/Y axis value. */
-    private JTextField[] values;
+    protected JTextField[] values;
     /** A number of valid paramters (values). */
-    private int numValues;
+    protected int numValues;
     /** EnvelopeCanvas instance */
-    private EnvelopeCanvas envelopeCanvas;
+    protected EnvelopeCanvas envelopeCanvas;
     /** x axis padding used for insets */
     private int xpadding;
     /** y axis padding used for insets */
@@ -38,13 +43,9 @@ public class EnvelopeWidget extends SysexWidget {
      * @param l a label text for the sysexWidget.
      * @param p a <code>Patch</code>, which is edited.
      * @param n an array of EnvelopeNode.
-     * @see SysexWidget
-     * @see EnvelopeNode
+     * @param xpad horizontal padding value.
+     * @param ypad vertical padding value.
      */
-    public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n) {
-	this(l, p, n, 0, 0);
-    }
-
     public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n,
 			  int xpad, int ypad) {
 	super(l, p, null, null);
@@ -56,17 +57,19 @@ public class EnvelopeWidget extends SysexWidget {
         layoutWidgets();
     }
 
+    /** <code>xpad</code> and <code>ypad</code> are set to zero. */
+    public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n) {
+	this(l, p, n, 0, 0);
+    }
+
     protected void createWidgets() {
         valueLabels = new JLabel[nodes.length * 2];
         values = new JTextField[nodes.length * 2];
         int j = 0;
-	// Why don't we simply define valueLabelsX/Y, valuesX/Y? Hiroo
         for (int i = 0; i < nodes.length; i++) {
-	    /*
-	     * Using <code>null</code>s for the Models and Senders and
-	     * setting min to max means that a node is stationary on
-	     * that axis and has no related parameter.<p>
-	     */
+	    // Using <code>null</code>s for the Models and Senders and
+	    // setting min to max means that a node is stationary on
+	    // that axis and has no related parameter.
 	    if (nodes[i].minX != nodes[i].maxX) {
 		valueLabels[j] = new JLabel(nodes[i].nameX);
 		values[j] = new JTextField(new Integer(nodes[i].ofsX.get()).toString(), 4);
@@ -112,6 +115,10 @@ public class EnvelopeWidget extends SysexWidget {
 	    gbc.gridheight = 1;
 	    valuePane.add(values[j], gbc);
 	}
+
+	envelopeCanvas.setMinimumSize(new Dimension(300, 50));
+	envelopeCanvas.setPreferredSize(getMinimumSize());
+
         add(valuePane, BorderLayout.EAST);
         add(getJLabel(), BorderLayout.NORTH);
         add(envelopeCanvas, BorderLayout.CENTER);
@@ -132,11 +139,11 @@ public class EnvelopeWidget extends SysexWidget {
     }
 
     /**
-     * Set value from fader and send System Exclusive message to a
-     * MIDI port.<p>
+     * Set specified by <code>fader</code> and send System Exclusive
+     * message to a MIDI port.<p>
      * Called by PatchEditorFrame.faderMoved(byte, byte).
      * This method is used and must be extended by a SysexWidget with
-     * multiple prameters. (i.e. numFaders != 1, only EnvelopeWidget now)
+     * multiple prameters (i.e. numFaders != 1, only EnvelopeWidget now).
      *
      * @param fader fader number.
      * @param value value to be set. [0-127]
@@ -155,7 +162,7 @@ public class EnvelopeWidget extends SysexWidget {
 		    values[j].setText(new Integer(value).toString());
 		    // send System Exclusive Message
 		    sendSysex(nodes[i].senderX, value);
-		    break;	// hiroo
+		    break;	// added by hiroo
                 }
                 j++;
             }
@@ -168,7 +175,7 @@ public class EnvelopeWidget extends SysexWidget {
 		    values[j].setText(new Integer(value).toString());
 		    // send System Exclusive Message
 		    sendSysex(nodes[i].senderY, value);
-		    break;	// hiroo
+		    break;	// added by hiroo
                 }
                 j++;
             }
@@ -186,6 +193,7 @@ public class EnvelopeWidget extends SysexWidget {
 	//envelopeCanvas.setEnabled(e);
     }
 
+    /** Actual canvas for the envelop lines. */
     final class EnvelopeCanvas extends JPanel {
         private EnvelopeNode[] nodes;
         private JTextField[] values;
@@ -206,8 +214,8 @@ public class EnvelopeWidget extends SysexWidget {
 	    nodes = e;
 	    nodeX = new int[nodes.length];
 	    nodeY = new int[nodes.length];
-	    setMinimumSize(new Dimension(300, 50));
-	    setPreferredSize(getMinimumSize());
+	    //setMinimumSize(new Dimension(300, 50));
+	    //setPreferredSize(getMinimumSize());
 	    MyListener myListener = new MyListener();
 	    addMouseListener(myListener);
 	    addMouseMotionListener(myListener);
@@ -234,7 +242,7 @@ public class EnvelopeWidget extends SysexWidget {
 	protected void paintComponent(Graphics g) {
             if (g != null)
 		super.paintComponent(g);
-            Insets insets = getInsets();
+            Insets insets = getInsets(); // What's this? Hiroo
 
 	    // scale by using actual canvas size
             int currentWidth = getWidth() - insets.left - insets.right - DELTA * 2;
@@ -363,7 +371,7 @@ public class EnvelopeWidget extends SysexWidget {
 		    if (nodes[i].minX != nodes[i].maxX) {
 			if (i == dragNodeIdx) {
 			    values[j].setText(new Integer(nodes[i].ofsX.get()).toString());
-			    //break; // hiroo
+			    //break; // added by hiroo
 			    //bk: this break here is wrong, code below might
 			    //improperly not execute.
 			}
@@ -372,7 +380,7 @@ public class EnvelopeWidget extends SysexWidget {
 		    if (nodes[i].minY != nodes[i].maxY) {
 			if (i == dragNodeIdx) {
 			    values[j].setText(new Integer(nodes[i].ofsY.get()).toString());
-			    break; // hiroo
+			    break; // added by hiroo
 			}
 			j++;
 		    }
