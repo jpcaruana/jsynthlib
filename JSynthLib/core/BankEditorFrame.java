@@ -18,16 +18,26 @@ import java.awt.dnd.*;
 import java.awt.datatransfer.*;
 
 public class BankEditorFrame extends JInternalFrame implements PatchBasket {
-    protected static final int xOffset = 30;
-    protected static final int yOffset = 30;
+//     protected static final int xOffset = 30;
+//     protected static final int yOffset = 30;
+    /** This is the patch we are working on. */
+    protected Patch bankData;
+    /** bank driver. */
+    protected BankDriver bankDriver;
+    /** This BankEditorFrame instance. */
+    protected final BankEditorFrame instance; // accessed by YamahaFS1RBankEditor
+    /** A table model. */
     protected PatchGridModel myModel;
+    // These refer a same JTable object.  For what table2 is?
     protected DNDPatchTable table;
     protected DNDPatchTable table2;
-    protected Patch  bankData;
-    protected BankDriver bankDriver;
-    protected final BankEditorFrame instance;
 
-    public BankEditorFrame(Patch p) {
+    /**
+     * Creates a new <code>BankEditorFrame</code> instance.
+     *
+     * @param p a <code>Patch</code> value
+     */
+    protected BankEditorFrame(Patch p) {
         super(PatchEdit.appConfig.getDevice(p.deviceNum).getModelName() + " "
 	      + PatchEdit.getDriver(p.deviceNum, p.driverNum).getPatchType()
 	      + " Window",
@@ -41,6 +51,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
         InitBankEditorFrame();
     }
 
+    /** Initialize the bank editor frame. */
     protected void InitBankEditorFrame() {
         //...Create the GUI and put it in the window...
         myModel = new PatchGridModel(bankData, bankDriver);
@@ -110,9 +121,9 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 		    PatchEdit.newPatchAction.setEnabled(true);
 
 		    if (table.getRowCount() > 0) {
-			    PatchEdit.saveAction.setEnabled(true);
-			    PatchEdit.menuSaveAs.setEnabled(true);
-			    PatchEdit.searchAction.setEnabled(true);
+			PatchEdit.saveAction.setEnabled(true);
+			PatchEdit.menuSaveAs.setEnabled(true);
+			PatchEdit.searchAction.setEnabled(true);
 		    }
 		    if (table.getRowCount() > 1) {
 			PatchEdit.sortAction.setEnabled(true);
@@ -195,7 +206,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
         //Set the window's location.
     }
 
-    boolean checkSelected() {
+    private boolean checkSelected() {
         if ((table.getSelectedRowCount() == 0) || (table.getSelectedColumnCount() == 0)) {
 	    ErrorMsg.reportError("Error", "No patch is selected");
 	    return false;
@@ -203,15 +214,17 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
         return true;
     }
 
-    public int getSelectedPatchNum() {
+    private int getSelectedPatchNum() {
         table = table2;
         return table.getSelectedColumn() * bankDriver.getNumPatches() / bankDriver.getNumColumns()
 	    + table.getSelectedRow();
     }
 
-    public Patch getSelectedPatch() {
+    private Patch getSelectedPatch() {
         return bankDriver.getPatch(bankData, getSelectedPatchNum());
     }
+
+    // PatchBasket methods
 
     public void ImportPatch(File file) throws IOException, FileNotFoundException {
         if (!checkSelected()) return;
@@ -220,7 +233,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
         fileIn.read(buffer);
         fileIn.close();
         Patch p = new Patch(buffer);
-        bankDriver.putPatch(bankData, p, getSelectedPatchNum());
+        bankDriver.checkAndPutPatch(bankData, p, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
 
@@ -306,7 +319,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 
     public void PastePatch() {
         if (!checkSelected()) return;
-        bankDriver.putPatch(bankData, PatchEdit.Clipboard, getSelectedPatchNum());
+        bankDriver.checkAndPutPatch(bankData, PatchEdit.Clipboard, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
 
@@ -314,7 +327,9 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
         return null;   //for now bank doesn't support this feature. Need to extract single and place in collection.
     }
 
-    public void revalidateDriver() {
+    // end of PatchBasket methods
+
+    void revalidateDriver() {
 	bankData.ChooseDriver();
 	if (bankData.deviceNum == 0) {
 	    try {
