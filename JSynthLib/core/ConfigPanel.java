@@ -2,6 +2,7 @@
 package core; //TODO org.jsynthlib;
 
 import javax.swing.*;
+import java.awt.*;
 
 /** Abstract class that is used by PrefsDialog to load an arbitrary
  *  number of configuration tabs.
@@ -11,8 +12,8 @@ import javax.swing.*;
 
 public abstract class ConfigPanel extends javax.swing.JPanel {
     protected AppConfig appConfig;
-    protected String panelName;
-    protected String namespace;
+    private String panelName;
+    private String namespace;
 
     public ConfigPanel() {
 	/*
@@ -162,6 +163,21 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 	if (cont != null) {
 	    // Pack it
 	    ((java.awt.Window) cont).pack();
+	}
+    }
+
+    /**
+     * Recursively enables or disables all components in a container - emenaker 2003.03.08
+     * @param container
+     * @param enabled
+     */
+    protected static void setContainerEnabled(Container container, boolean enabled) {
+	Component[] components = container.getComponents();
+	for (int i = 0; i < components.length; i++) {
+	    components[i].setEnabled(enabled);
+	    if (components[i] instanceof Container) {
+		setContainerEnabled((Container) components[i], enabled);
+	    }
 	}
     }
 }

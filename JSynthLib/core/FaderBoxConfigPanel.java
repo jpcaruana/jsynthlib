@@ -206,30 +206,14 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
     }
 
     /**
-     * Recursively enables or disables all components in a container - emenaker 2003.03.08
-     * @param container
-     * @param enabled
-     */
-    private void setContainerEnabled(Container container, boolean enabled) {
-	Component[] components = container.getComponents();
-	for(int i=0; i<components.length; i++) {
-	    components[i].setEnabled(enabled);
-	    if(components[i] instanceof Container) {
-		setContainerEnabled((Container)components[i], enabled);
-	    }
-	}
-    }
-
-
-    /**
      * This method re-populates the combobox(es) that contain things that depend upon which
      * midi driver we're using. This is called by the constructor and also by the
      * midiDriverChanged(MidiWrapper) callback method - emenaker 2003.03.18
      *
      */
     private void resetComboBoxes() {
-	MidiWrapper currentDriver = appConfig.getMidiWrapper();
 	if (!PatchEdit.newMidiAPI) {
+	    MidiWrapper currentDriver = appConfig.getMidiWrapper();
 	    cb4.removeAllItems();
 	    try {
 		for (int j = 0; j < currentDriver.getNumInputDevices (); j++)
@@ -239,8 +223,8 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 				     "FaderBoxConfigPanel.resetComboBox: " + e
 				     + "\ncurrentDriver: " + currentDriver);
 	    }
+	    enabledBox.setEnabled(currentDriver.isReady());
 	}
-	enabledBox.setEnabled(currentDriver.isReady());
 	setContainerEnabled(faderPanel,enabledBox.isEnabled() && enabledBox.isSelected());
     }
 
