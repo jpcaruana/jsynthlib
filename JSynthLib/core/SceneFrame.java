@@ -77,7 +77,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                 
                 if (getTitle().startsWith("Unsaved Scene")) {
                     java.awt.FileDialog fc2=new java.awt.FileDialog(PatchEdit.instance);
-                    java.io.FilenameFilter type1 = new ExtensionFilter("PatchEdit Scene Files",".scenelib");
+                    java.io.FilenameFilter type1 = new ExtensionFilter("PatchEdit Scene Files (*.scenelib)",".scenelib");
                     fc2.setMode(fc2.SAVE);
 		    fc2.setFile("Untitled.scenelib");
                     fc2.setFilenameFilter(type1);

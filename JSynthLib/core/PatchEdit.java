@@ -80,19 +80,20 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		// Add the configuration panels to the prefsDialog
         prefsDialog.addPanel(new /*TODO org.jsynthlib.*/GeneralConfigPanel(appConfig));
 		prefsDialog.addPanel(new /*TODO org.jsynthlib.*/DirectoryConfigPanel(appConfig));
-		/*TODO org.jsynthlib.*/FaderBoxConfigPanel faderbox = new /*TODO org.jsynthlib.*/FaderBoxConfigPanel(appConfig);
 		/*TODO org.jsynthlib.midi.*/MidiConfigPanel midiConfigPanel = null;
 		try {
 			midiConfigPanel = new /*TODO org.jsynthlib.midi.*/MidiConfigPanel(appConfig);
 			midiConfigPanel.addDriverChangeListener(this);
-			midiConfigPanel.addDriverChangeListener(faderbox); // Notify the faderbox, too... - emenaker 2003.03.19
     		prefsDialog.addPanel(midiConfigPanel);
     		MidiIn = MidiOut = midiConfigPanel.getMidiWrapper();
+			// FaderBoxConfigPanel() have to be called after MidiIn is initialized.
+			/*TODO org.jsynthlib.*/FaderBoxConfigPanel faderbox = new /*TODO org.jsynthlib.*/FaderBoxConfigPanel(appConfig);
+			midiConfigPanel.addDriverChangeListener(faderbox); // Notify the faderbox, too... - emenaker 2003.03.19
+			prefsDialog.addPanel(faderbox);
 		} catch (Exception e) {
 			System.err.println(e);
 			e.printStackTrace();
 		}
-		prefsDialog.addPanel(faderbox);
 		prefsDialog.addPanel(new /*TODO org.jsynthlib.*/NoteChooserConfigPanel(appConfig));
         
 		prefsDialog.init ();  //loads in the config file and sets parameters
@@ -165,7 +166,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         menuLib.getItem (menuLib.getItemCount ()-1).setAccelerator (
         KeyStroke.getKeyStroke (KeyEvent.VK_S, mask));
         
-        menuSaveAs = new JMenuItem ("Save As");
+        menuSaveAs = new JMenuItem ("Save As...");
 	mnemonics.put( menuSaveAs, new Integer( KeyEvent.VK_A) );
         menuSaveAs.addActionListener (new ActionListener ()
         {
@@ -269,7 +270,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		// Moved "Synths" and "Midi Monitor" to a "Window" menu - emenaker 2003.03.24        
 		JMenu menuWindow = new JMenu ("Window");
 		mnemonics.put (menuWindow, new Integer(KeyEvent.VK_C));
-		JMenuItem menuSynths = new JMenuItem ("Synths");
+		JMenuItem menuSynths = new JMenuItem ("Synths...");
 		mnemonics.put (menuSynths, new Integer(KeyEvent.VK_S));
 		menuSynths.addActionListener (new ActionListener ()
 		{
@@ -523,7 +524,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     {
         FileDialog fc2=new FileDialog (PatchEdit.this);
 	fc2.setMode(fc2.SAVE);
-        FilenameFilter type1 = new ExtensionFilter ("PatchEdit Library Files",".patchlib");
+        FilenameFilter type1 = new ExtensionFilter ("PatchEdit Library Files (*.patchlib)",".patchlib");
         fc2.setFilenameFilter (type1);
 	File file = null;
 	try {
@@ -639,10 +640,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
      }
      public class ReassignAction extends AbstractAction
      {
-         public ReassignAction ( Map mnemonics )
-         {super ("Reassign",null);
+         public ReassignAction( Map mnemonics ){
+             super("Reassign",null); // show a dialog frame???
           // mnemonics.put( this, new Integer ('R'));
-          setEnabled (false);
+             setEnabled(false);
          }
          public void actionPerformed (ActionEvent e)
          {
@@ -656,10 +657,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class PlayAction extends AbstractAction
     {
-        public PlayAction ( Map mnemonics )
-        {super ("Play",null);
-	  mnemonics.put( this, new Integer ('P'));
-         setEnabled (false);
+        public PlayAction( Map mnemonics ){
+            super("Play",null);
+            mnemonics.put( this, new Integer('P'));
+            setEnabled(false);
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -673,11 +674,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class StoreAction extends AbstractAction
     {
-        public StoreAction ( Map mnemonics )
-        {
-            super ("Store",null);
-	    mnemonics.put( this, new Integer ('R'));
-            setEnabled (false);
+        public StoreAction( Map mnemonics ){
+            super("Store...",null);
+            mnemonics.put( this, new Integer('R'));
+            setEnabled(false);
         }
         public void actionPerformed (ActionEvent e)
         {
@@ -709,8 +709,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
      public class SendToAction extends AbstractAction
      {
-         public SendToAction ( Map mnemonics )
-         {
+         public SendToAction ( Map mnemonics ){
              super ("Send to...",null);
              // mnemonics.put( this, new Integer ('S'));
              setEnabled (false);
@@ -801,9 +800,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class EditAction extends AbstractAction
     {
-        public EditAction ( Map mnemonics )
-        {
-            super ("Edit",null);
+        public EditAction ( Map mnemonics ){
+            super ("Edit...",null);
 	    mnemonics.put( this, new Integer ('E'));
             setEnabled (false);
         }
@@ -845,16 +843,16 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class ExportAction extends AbstractAction
     {
-        public ExportAction ( Map mnemonics )
-        {super ("Export",null);
-	  mnemonics.put( this, new Integer ('O'));
-         setEnabled (false);
+        public ExportAction( Map mnemonics ){
+            super("Export...",null);
+            mnemonics.put( this, new Integer('O'));
+            setEnabled(false);
         }
         public void actionPerformed (ActionEvent e)
         {
             FileDialog fc3=new FileDialog (PatchEdit.this);
 	    fc3.setMode(fc3.SAVE);
-            FilenameFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
+            FilenameFilter type1 = new ExtensionFilter ("Sysex Files (*.syx)",".syx");
             fc3.setDirectory (appConfig.getSysexPath());
             fc3.setFilenameFilter (type1);
 	    fc3.show();
@@ -890,7 +888,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 //----------------------------------------------------------------------------------------------------------------------
 
     public GetAction( Map mnemonics ) {
-      super ("Get",null);
+      super ("Get...",null);
       mnemonics.put( this, new Integer('G'));
       setEnabled(false);
     }
@@ -913,16 +911,16 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
     public class ImportAction extends AbstractAction
     {
-        public ImportAction ( Map mnemonics )
-        {super ("Import",null);
-	  mnemonics.put( this, new Integer ('I'));
-         setEnabled (false);
+        public ImportAction( Map mnemonics ){
+            super("Import...",null);
+            mnemonics.put( this, new Integer('I'));
+            setEnabled(false);
         }
         public void actionPerformed (ActionEvent e)
         {
             FileDialog fc2=new FileDialog (PatchEdit.this);
 	    fc2.setMode(fc2.LOAD);
-            FilenameFilter type1 = new ExtensionFilter ("Sysex Files",
+            FilenameFilter type1 = new ExtensionFilter ("Sysex Files (*.syx, *.mid)",
 						    new String[]{".syx"
 								 ,".mid"});
 	    // core.ImportMidiFile extracts Sysex Messages from MidiFile
@@ -973,9 +971,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
    public class TransferSceneAction extends AbstractAction
     {
-        public TransferSceneAction ( Map mnemonics )
-        {
-            super ("Transfer Scene",null);
+        public TransferSceneAction ( Map mnemonics ){
+            super ("Transfer Scene",null); // show a dialog frame???
             // mnemonics.put( this, new Integer ('S'));
             setEnabled (false);
         }
@@ -990,15 +987,15 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class OpenAction extends AbstractAction
     {
-        public OpenAction ( Map mnemonics )
-        {super ("Open",null);
-	  mnemonics.put( this, new Integer ('O'));
+        public OpenAction ( Map mnemonics ){
+            super("Open...",null);
+            mnemonics.put( this, new Integer('O'));
         }
         public void actionPerformed (ActionEvent e)
         {
             FileDialog fc=new FileDialog (PatchEdit.this);
 	    fc.setMode(fc.LOAD);
-            FilenameFilter type1 = new ExtensionFilter ("PatchEdit Library Files",new String[] {".patchlib",".scenelib"});
+            FilenameFilter type1 = new ExtensionFilter ("PatchEdit Library Files (*.patchlib, *.scenelib)",new String[] {".patchlib",".scenelib"});
             fc.setDirectory (appConfig.getLibPath());
             fc.setFilenameFilter (type1);
 	    fc.show();
@@ -1036,10 +1033,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class ExtractAction extends AbstractAction
     {
-        public ExtractAction ( Map mnemonics )
-        {super ("Extract",null);
-	  mnemonics.put( this, new Integer ('E'));
-         setEnabled (false);
+        public ExtractAction ( Map mnemonics ){
+            super("Extract",null);
+            mnemonics.put( this, new Integer('E'));
+            setEnabled(false);
         }
         
         public void actionPerformed (ActionEvent e)
@@ -1053,10 +1050,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class SortAction extends AbstractAction
     {
-        public SortAction ( Map mnemonics )
-        {super ("Sort",null);
-         setEnabled (false);
-	 mnemonics.put( this, new Integer ('R'));
+        public SortAction ( Map mnemonics ){
+            super("Sort...",null);
+            setEnabled(false);
+            mnemonics.put( this, new Integer('R'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -1072,10 +1069,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class SearchAction extends AbstractAction
     {
-        public SearchAction ( Map mnemonics )
-        {super ("Search",null);
-         setEnabled (false);
-	 mnemonics.put( this, new Integer ('E'));
+        public SearchAction( Map mnemonics ){
+            super("Search...",null);
+            setEnabled(false);
+            mnemonics.put( this, new Integer('E'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -1092,9 +1089,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class ImportAllAction extends AbstractAction
     {
-        public ImportAllAction ( Map mnemonics )
-        {
-            super ("ImportAll",null);
+        public ImportAllAction ( Map mnemonics ){
+            super ("Import All...",null);
             setEnabled (false);
 	    mnemonics.put( this, new Integer ('A'));
         }
@@ -1103,14 +1099,14 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         {
             try
             {
-	        FolderDialog fc2=new FolderDialog (PatchEdit.this, "Choose Import All Directory");
-                FilenameFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
-                fc2.setFilenameFilter (type1);
-                fc2.setDirectory (appConfig.getSysexPath());
-		fc2.show();
-		if (fc2.getDirectory() == null)
+		CompatibleFileDialog fc = new CompatibleFileDialog();
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+		if (appConfig.getLibPath() != null)
+		  fc.setSelectedFile(new File(appConfig.getLibPath())); 
+		fc.showDialog(PatchEdit.this, "Choose Import All Directory");
+                File file = fc.getSelectedFile();
+		if (file == null)
 		  return;
-                File file = new File(fc2.getDirectory());
                 
                 ImportAllDialog sd = new ImportAllDialog (PatchEdit.this,file);
                 sd.show ();
@@ -1120,10 +1116,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class DeleteDuplicatesAction extends AbstractAction
     {
-        public DeleteDuplicatesAction ( Map mnemonics )
-        {super ("Delete Dups",null);
-         setEnabled (false);
-	 mnemonics.put( this, new Integer ('D'));
+        public DeleteDuplicatesAction( Map mnemonics ){
+            super("Delete Dups...",null);
+            setEnabled(false);
+            mnemonics.put( this, new Integer('D'));
         }
         
         public void actionPerformed (ActionEvent e)
@@ -1157,9 +1153,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class NewPatchAction extends AbstractAction
     {
-        public NewPatchAction ( Map mnemonics )
-        {
-            super ("New",null);
+        public NewPatchAction ( Map mnemonics ){
+            super ("New...",null);
             setEnabled (false);
 	    mnemonics.put( this, new Integer ('N'));
         }
@@ -1180,9 +1175,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     
     public class PrefsAction extends AbstractAction
     {
-        public PrefsAction ( Map mnemonics )
-        {
-            super ("Preferences",null);
+        public PrefsAction ( Map mnemonics ){
+            super ("Preferences...",null);
 	    mnemonics.put( this, new Integer ('P'));
         }
         
@@ -1222,10 +1216,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
     public class CrossBreedAction extends AbstractAction
     {
-        public CrossBreedAction ( Map mnemonics )
-        {super ("Cross Breed",null);
-         setEnabled (false);
-	 mnemonics.put( this, new Integer ('B'));
+        public CrossBreedAction( Map mnemonics ){
+            super("Cross Breed...",null);
+            setEnabled(false);
+            mnemonics.put( this, new Integer('B'));
         }
         public void actionPerformed (ActionEvent e)
         {

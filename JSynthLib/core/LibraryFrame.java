@@ -88,7 +88,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 if (getTitle().startsWith("Unsaved Library"))
                 {
                     FileDialog fc2=new FileDialog(PatchEdit.instance);
-                    FilenameFilter type1 = new ExtensionFilter("PatchEdit Library Files",".patchlib");
+                    FilenameFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)",".patchlib");
                     
                     fc2.setFilenameFilter(type1);
 		    fc2.setDirectory (PatchEdit.appConfig.getLibPath());
@@ -543,7 +543,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
     {
         Patch myPatch=PatchEdit.Clipboard;
 
-       System.out.println("pASTE "+myPatch);
+	//System.out.println("Paste "+myPatch);
         if (myPatch!=null)
         {
             byte [] mySysex = new byte[myPatch.sysex.length];
