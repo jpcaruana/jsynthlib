@@ -105,7 +105,7 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
 //            if (transferable.isDataFlavorSupported(df)) {
                 System.out.println ("IsSupported");
                 Patch so=(Patch)event.getTransferable().getTransferData(df);
-                so.ChooseDriver(); // Because the driverNum is transient in Patch
+                so.chooseDriver(); // Because the driverNum is transient in Patch
                 //System.out.println(so.getType()+" "+so.getName());
                 event.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
                 Point p=event.getLocation();

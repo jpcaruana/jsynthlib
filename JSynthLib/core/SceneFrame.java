@@ -547,7 +547,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         java.io.ObjectInputStream s = new java.io.ObjectInputStream(f);
         myModel.sceneList=(java.util.ArrayList)s.readObject();
         for (int i=0; i<myModel.sceneList.size();i++)
-            ((Scene)myModel.sceneList.get(i)).getPatch().ChooseDriver();
+            ((Scene)myModel.sceneList.get(i)).getPatch().chooseDriver();
         s.close();
         f.close();
         PatchEdit.waitDialog.hide();
@@ -568,7 +568,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
     protected void revalidateDrivers() {
         int i;
         for (i=0;i<myModel.sceneList.size();i++)
-            ((Scene)(myModel.sceneList.get(i))).getPatch().ChooseDriver();
+            ((Scene)(myModel.sceneList.get(i))).getPatch().chooseDriver();
         myModel.fireTableDataChanged();
     }
 

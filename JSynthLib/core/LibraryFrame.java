@@ -599,7 +599,7 @@ return;
         ObjectInputStream s = new ObjectInputStream(f);
         myModel.PatchList=(ArrayList)s.readObject();
         for (int i=0; i<myModel.PatchList.size();i++)
-            ((Patch)myModel.PatchList.get(i)).ChooseDriver();
+            ((Patch)myModel.PatchList.get(i)).chooseDriver();
         s.close();
         f.close();
         PatchEdit.waitDialog.hide();
@@ -616,7 +616,7 @@ return;
     {
         int i;
         for (i=0;i<myModel.PatchList.size();i++)
-            ((Patch)(myModel.PatchList.get(i))).ChooseDriver();
+            ((Patch)(myModel.PatchList.get(i))).chooseDriver();
         myModel.fireTableDataChanged();
     }
 
