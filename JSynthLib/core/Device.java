@@ -2,6 +2,9 @@
  * Device.java
  *
  * Created on 5. Oktober 2001, 21:59
+ *
+ * $Id$
+ *
  */
 
 package core;
@@ -44,6 +47,10 @@ abstract public class Device implements Serializable
 
     /**Information about Device*/
     protected String infoText;
+    
+    protected String authors;
+    
+    
     /** Creates new Device */
     public Device ()
     {
