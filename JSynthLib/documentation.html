@@ -128,13 +128,16 @@ application. JSynthLib runs under Windows and Linux.</p>
 <li>Download the .ZIP file from the web site and unzip it to any
     directory (for example <samp>c:\jsynthlib</samp>).
 <li>Create a shortcut on the desktop to JSynthLib.jar (optional)
-<li>Make sure you have a Java Run Time Environment which supports Java
+<li>Make sure you have a Java Run Time Environment (JRE) which supports Java
     1.3. If you do not have it, you can download it from <a
     href="http://java.sun.com">Sun</a>
 <li>Run JSynthLib.jar either by double-clicking the icon or by typing
     <samp>java -jar JSynthLib.jar</samp> from the command prompt
 <li>Go to Config->Preferences->MIDI and set 'MIDI Platform' to
     MS-Windows (WireProvider).
+<li>If you have a JRE 1.4.2 installed, you can select as alternative the
+    "JavaSound" acess method. Due to some bugs in earlier versions of the JRE
+    this doesn't work with versions before 1.4.2.
 <li>Go to Config->Synths and add and configure the Synthesizers you
     want to use with JSynthLib
 <li>Set any other preferences (such as MIDI Fader Port, Default
@@ -185,13 +188,13 @@ to run under it.
 
 <h3>The Main Windows</h3>
 
-There are three main types of windows which you will be working with
+There are four main types of windows which you will be working with
 when using JSynthLib. Each provides access to a particular type of
 data. The first is a Library Window which holds patches. Different
 types of patches can be stored in one library, or you can use a
 library to hold only patches for a particular synthesizer.
 
-<p>A <b><i>Library window</i></b> looks like a table where each row
+<p>A <b><i><a name="library">Library window</a></i></b> looks like a table where each row
 represents one patch.  The columns represent different pieces of
 information about the patch. The columns are:
 
@@ -236,6 +239,44 @@ field.
 
 <p>In addition to the table of patches, a library window contains a
 footer which tells the number of patches in the library.
+
+<p>A <b><i><a name="scene">Scene window</i></b> looks very much like the library window.
+It is intended to gather all patches for different synths, which are
+needed in a particular "scene". A "scene" can be a song or a set of
+songs - that depends on you. The advantage of a scene is, that
+it contains in addition to the synth's and patches the locations for the
+patches in the synt's memories. You can transfer the patches all together
+with the "Library->Transfer Scene" function to the synths.
+Very practical for the recall of a specific sound setup.
+The columns are:
+ 
+<p><b>Synth-- </b>A shorthand identifier for the synthesizer to which the
+patch belongs. It's the same as in the <a href="#library">library window</A>
+above.
+
+<p><b>Type-- </b> It's the same as in the <a href="#library">library window</A>
+above.
+
+<p><b>PatchName-- </b> Obviously, this is the name of the patch. 
+It's the same as in the <a href="#library">library window</A> above.
+
+<p><b>Bank Number</b> This is the first difference to the library.
+This column contains the bank number for your patch, since patches are usually
+organized in banks in the synthesizers. You can select a bank with a drop-down
+menu. The actual content of the drop-down is determined by the patch type and
+the architecture of the synth.
+
+<p><b>Patch Number</b> 
+This column contains the patch number for your patch within the bank.
+Again, you can select a patch number with a drop-down
+menu. The actual content of the drop-down is determined by the patch type and
+the architecture of the synth.
+
+<p><b>comment</b> This is another field which holds data outside of the
+actual data used by the Synthesizer.
+
+<p>In addition to the table of patches, a scene window contains a
+footer which tells the number of patches in the scene.
 
 <p>A <b><i>Bank Editor Window</i></b> looks like a two dimensional
 table/array of patch names and numbers. This represents a bank of
@@ -389,9 +430,9 @@ the patches in the library. Functions which manipulate a single patch
 within a library are located under the Patch Menu. The available
 functions in the Library Menu are:
 
-<p><b>New-- </b> This creates a new Library which contains no patches
-and displays it on the screen. This function is also available from
-the toolbar.
+<p><b>New-- </b> This creates a new <a href="#library">Library which
+contains no patches and displays it on the screen. This function is
+also available from the toolbar.
 
 <p><b>Open-- </b>This prompts you for a file name and then loads the
 previously saved library under that name from disk and displays it on
@@ -410,6 +451,12 @@ available from the Toolbar.
 <p><b>Save As-- </b> this function pops up a file dialog box to ask
 you for a new name and then saves the currently focused Library Window
 under that name.
+
+<p><b>New Scene-- </b> This creates a new <a href="#scene">Scene which contains
+no patches and displays it on the screen.
+
+<p><b>Transfer Scene-- </b> This transfers all patches of the selected Scene
+to their configured places in the synths.
 
 <p><b>Sort-- </b> This function will sort all of the patches in a
 library by either the type, patch name, field1 or field2 field (the
@@ -809,6 +856,7 @@ effect on the sound on all three synths.
 
 
 <a name="trouble" href="#toc"><h2>Troubleshooting JSynthLib</h2></a>
+
 <b><i>[Windows]</i> I can't get the MIDI to initialize. I've tried
 setting the initialization ports to every port in my system, but I
 still get an error on startup</b><br>
@@ -846,6 +894,7 @@ your system setup is like.
 <a name="contrib" href="#toc"><h2>Contributing to JSynthLib</h2></a>
 
 <h3>Adding Support for Additional Synthesizers:</h3>
+
 <h4>Section 1: Introduction</h4>
 
 Alright, so you've got JSynthLib and like what it does. The problem is
@@ -877,7 +926,7 @@ help.
 synthesizer?</i></h5>
 
 <ol>
-1. At the very least, you need a sysex specification for your
+<li> At the very least, you need a sysex specification for your
    synthesizer. In most cases, the sysex specification is located in
    the back of the manual, but this is not always the case.  Sometimes
    they are also available on the Internet if you look around
@@ -999,7 +1048,7 @@ device.
 
 <h4>Section 5: Writing a Single Driver for Your Synthesizer.</h4>
 
-<br>
+<h5><i>Step 1: Create the files</i></h5>
 
 Under the synthdrivers directory, create a directory for your
 synth. Into it copy a Single driver from one of the other synthesizers
@@ -1134,7 +1183,7 @@ created by JSynthLib for your convenience)
 <p>If you want Tabs and such, you can implement them the same way the
 other editors do using the Java/Swing feature. For a simple synth, you
 can get away with just putting all the Panes directly onto
-scrollPane.<br>
+scrollPane.
 
 Make sure you've taken a look at how all the other single editors are
 set up, the code contained within them explains all this better than I
@@ -1308,7 +1357,8 @@ other times its the slowest. This allows you to choose.
 the Node is moved.
 
 <dt>namex, namey
-<i>namex, namey</i> - the names of the parameters riding each access.<br>
+<dd>The names of the parameters riding each access.
+</dl>
 
 **Using nulls for the Models and Senders and setting min to max means
 that a node is stationary on that axis and has no related
@@ -1437,8 +1487,8 @@ moved. You never need to use these for dealing with built in JSynthLib
 widgets because they take care of it themselves. It is useful however
 if you want to have a widget do something more than control the
 synth. the Yamaha TX81x editor, for example, uses one to change the
-picture of the algorithem everytime the 'algorithem' slider is
-moved.<br>
+picture of the algorithm every time the 'algorithm' slider is
+moved.
 
 <h4>Section 8: Testing Your Driver...</h4>
 
@@ -1557,6 +1607,7 @@ correct parameter. Just move each one at random when creating the
 patch. If you do that some time (random edit, saving and comparing the
 file), chance are the editor behave correctly.
 
+<p>Note: I suggest to move
 each fader at random because putting all of them to 0 or max is not a
 good idea since your editor may send knob info to the wrong place and
 you will not be able to detect it by comparing the .syx file!
