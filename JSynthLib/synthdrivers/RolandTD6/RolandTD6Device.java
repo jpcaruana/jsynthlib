@@ -52,6 +52,8 @@ public final class RolandTD6Device extends Device {
 	new PadInfo("AUX",	0xb00,	false,	false,	false),
     };
 
+    // Preferences node for persistent data
+    private Preferences prefsPad;
     /**
      * Creates a new <code>RolandTD6Device</code> instance.
      *
@@ -69,6 +71,8 @@ public final class RolandTD6Device extends Device {
     public RolandTD6Device(Preferences prefs) {
 	this();
 	this.prefs = prefs;
+	// create/get a Preferences node
+	prefsPad = prefs.node("pad");
 
 	//setSynthName("TD6");
 	setDeviceID(17);	// default Device ID
@@ -105,18 +109,20 @@ public final class RolandTD6Device extends Device {
 	panel.add(new JLabel("Dual Trigger"), c);
 
 	for (int i = 0; i < padinfo.length; i++) {
+	    final Preferences p = prefsPad.node(padinfo[i].name);
 	    // pad name label
 	    c.gridx = 0; c.gridy = 1 + i;
 	    panel.add(new JLabel(padinfo[i].name), c);
 
 	    // check box for pad enable
 	    JCheckBox cbox = new JCheckBox();
-	    cbox.setSelected(padinfo[i].padActive);
+	    cbox.setSelected(p.getBoolean("padActive", padinfo[i].padActive));
 	    final int	index = i;
 	    cbox.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 			JCheckBox cb = (JCheckBox) e.getSource();
 			padinfo[index].padActive = cb.isSelected();
+			p.putBoolean("padActive", cb.isSelected());
 		    }
 		});
 	    c.gridx = 1; c.gridy = 1 + i;
@@ -125,11 +131,13 @@ public final class RolandTD6Device extends Device {
 	    // check box for dual trigger
 	    cbox = new JCheckBox();
 	    cbox.setEnabled(padinfo[i].dualTrigger);
-	    cbox.setSelected(padinfo[i].dualTriggerActive);
+	    cbox.setSelected(p.getBoolean("dualTriggerActive",
+					  padinfo[i].dualTriggerActive));
 	    cbox.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 			JCheckBox cb = (JCheckBox) e.getSource();
 			padinfo[index].dualTriggerActive = cb.isSelected();
+			p.putBoolean("dualTriggerActive", cb.isSelected());
 		    }
 		});
 	    c.gridx = 2; c.gridy = 1 + i;
@@ -147,7 +155,8 @@ public final class RolandTD6Device extends Device {
 	// count number of active pads
 	int padNum = 0;
 	for (int i = 0; i < padinfo.length; i++) {
-	    if (padinfo[i].padActive) {
+	    Preferences p = prefsPad.node(padinfo[i].name);
+	    if (p.getBoolean("padActive", padinfo[i].padActive)) {
 		padNum++;
 	    }
 	}
@@ -158,8 +167,14 @@ public final class RolandTD6Device extends Device {
 	// create array of active padInfo
 	int n = 0;
 	for (int i = 0; i < padinfo.length; i++) {
-	    if (padinfo[i].padActive)
-		activePad[n++] = padinfo[i];
+	    Preferences p = prefsPad.node(padinfo[i].name);
+	    if (p.getBoolean("padActive", padinfo[i].padActive)) {
+		PadInfo d = (PadInfo) padinfo[i].clone();
+		d.padActive = true;
+		d.dualTriggerActive = p.getBoolean("dualTriggerActive",
+						   padinfo[i].dualTriggerActive);
+		activePad[n++] = d;
+	    }
 	}
 	return activePad;
     }
