@@ -23,12 +23,16 @@ package synthdrivers.AlesisDM5;
 
 import core.*;
 
+/** DM5 ComboBoxWidget. Adds functionality to the standard JSynthLib ComboBoxWidget
+to allow dynamic updating of the options list. 
+* @author Jeff Weber
+*/
 class DM5ComboBoxWidget extends ComboBoxWidget {
     IParamModel UCBWModel;
     NRPNSender UCBWSender;
     
     DM5ComboBoxWidget(String label, IPatch patch,
-                      IParamModel pmodel, ISender sender, Object [] options) {
+                      IParamModel pmodel, ISender sender, Object[] options) {
         super(label, patch, 0, pmodel, sender, options);
         cb.setPrototypeDisplayValue("MMMMMMMMMMMMMM");
         cb.setMaximumRowCount(30);
@@ -36,17 +40,15 @@ class DM5ComboBoxWidget extends ComboBoxWidget {
         UCBWSender = (NRPNSender)sender;
     }
     
-    void updateComboBoxWidgetList(int selectedIndex) {
+    void updateComboBoxWidgetList(Object[] options) {
         int newValue = UCBWModel.get();
-        int newMax = DM5SoundList.DRUM_NAME[selectedIndex].length - 1;
+        int newMax = options.length - 1;
         
         UCBWSender.setMax(newMax);
         
-        String[] list = DM5SoundList.DRUM_NAME[selectedIndex];
-        
         cb.removeAllItems();
-        for (int i = 0; i < list.length; i++) {
-            cb.addItem(list[i]);
+        for (int i = 0; i < options.length; i++) {
+            cb.addItem(options[i]);
         }
         
         setMax(newMax);
