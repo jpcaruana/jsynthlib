@@ -85,7 +85,6 @@ public class DirectoryConfigPanel extends ConfigPanel {
 	* This is the opposite of init(). The implementing class should
 	* copy all GUI settings to internal data elements (and also
 	* save those settings in to the preference-saving system, if any
-	* @param appConfig Instance of appConfig for storing settings
 	*/
 	public void commitSettings() {
 	}

@@ -10,7 +10,7 @@ import javax.swing.*;
  */
 
 public abstract class ConfigPanel extends javax.swing.JPanel {
-	protected core.AppConfig appConfig;
+	protected AppConfig appConfig;
 	protected String panelName;
 	protected String namespace;
 	
@@ -27,7 +27,7 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 		 * Probably, the "right" way to do this is to make this constuctor private, but that would
 		 * probably cause some compiler error that would be really confusing to most people. - emenaker 2003.03.17 
 		 */ 
-		core.ErrorMsg.reportError("Error!",
+		ErrorMsg.reportError("Error!",
 			"This is the no-argument constructor for the abstract ConfigPanel class.\n"+
 			"\n"+
 			"If you're reading this message, then that means that the program just tried\n"+
@@ -52,7 +52,7 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 	 * the details about what it's saving.
 	 * @param appConfig The application's configuration setting storage
 	 */
-	public ConfigPanel(core.AppConfig appConfig) {
+	public ConfigPanel(AppConfig appConfig) {
 		this.appConfig = appConfig;
 		this.panelName = this.getDefaultPanelName();
 		this.namespace = this.getDefaultNamespace();
@@ -70,7 +70,7 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 	 * @param panelName The name that goes on the panel's tab
 	 * @param namespace The root of the namespace in appConfig that the settings go under
 	 */
-	public ConfigPanel(core.AppConfig appConfig, String panelName, String namespace) {
+	public ConfigPanel(AppConfig appConfig, String panelName, String namespace) {
 		this(appConfig);
 		// Set these AFTER calling this(appConfig), since the superclass' getDefaultPanelName and
 		// getDefaultNamespace are set there... and we need to replace those.
@@ -92,7 +92,6 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 	* This is the opposite of init(). The implementing class should
 	* copy all GUI settings to internal data elements (and also
 	* save those settings in to the preference-saving system, if any
-	* @param appConfig Instance of appConfig for storing settings
 	*/
 	public abstract void commitSettings();
 	
@@ -115,7 +114,7 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 	*/
 	public final void showInFrame(JFrame parent) {
 		// Make a new, empty prefsDialog just for us.
-		core.PrefsDialog myOwnDialog = new core.PrefsDialog(parent);
+		PrefsDialog myOwnDialog = new PrefsDialog(parent);
 		myOwnDialog.setTitle(getPanelName());
 		myOwnDialog.add(this);
 		myOwnDialog.init();

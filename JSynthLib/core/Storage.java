@@ -2,7 +2,9 @@
  * Storage.java - Implemenation for storing and restoring of objects that
  * support simple persistance (currently implemented as saving to properties
  * files)
+ * @version $Id$
  * @author Zellyn Hunter (zellyn@zellyn.com)
+ * @see Storable
  */
 package core;
 
@@ -46,9 +48,9 @@ public class Storage {
 			}
 			catch (Exception e) {
 				ErrorMsg.reportError("Storage Error",
-									 "Error storing property '" + propName +
-									 "' for class '" +storable.getClass()+ "'",
-									 e);
+						     "Error storing property '" + propName +
+						     "' for class '" +storable.getClass()+ "'",
+						     e);
 			}
 		}
 	}
@@ -89,9 +91,9 @@ public class Storage {
 			}
 			catch (Exception e) {
 				ErrorMsg.reportError("Storage Error",
-									 "Cannot get property '" + propName +
-									 "' for class '" +storable.getClass()+ "'",
-									 e);
+						     "Cannot get property '" + propName +
+						     "' for class '" +storable.getClass()+ "'",
+						     e);
 			}
 		}
 
@@ -107,7 +109,7 @@ public class Storage {
 	 * @param prefix the string to prepend to the property name
 	 */
 	private static void storeValue(Object value, Properties props,
-								   String propName, String prefix) {
+				       String propName, String prefix) {
 		Class propType = value.getClass();
 
 		// Basic types
@@ -128,7 +130,7 @@ public class Storage {
 		else if (propType.isArray()) {
 			int length = Array.getLength(value);
 			props.setProperty(prefix+propName+".length",
-							  String.valueOf(length));
+					  String.valueOf(length));
 			for (int i=0; i<length; i++) {
 				//storeValue(value, props, propname, prefix)
 				storeValue(Array.get(value,i), props, "["+i+"]", prefix+propName);
@@ -152,7 +154,7 @@ public class Storage {
 	 * @return the value
 	 */
 	private static Object restoreValue(Class propType, Properties props,
-									   String propName, String prefix) {
+					   String propName, String prefix) {
 		String storedValue = props.getProperty(prefix+propName);
 
 		// Basic types
@@ -191,7 +193,7 @@ public class Storage {
 			for (int i=0; i<length; i++) {
 				//restoreValue(propType, props, propName, prefix)
 				Object value = restoreValue(propType.getComponentType(), props,
-											"["+i+"]", prefix+propName);
+							    "["+i+"]", prefix+propName);
 				Array.set(aryValue, i, value);
 			}
 
@@ -210,8 +212,8 @@ public class Storage {
 				}
 				catch (Exception e) {
 					ErrorMsg.reportError("Config Restore Error",
-										 "Error restoring class '" + className
-										 +"'", e);
+							     "Error restoring class '" + className
+							     +"'", e);
 				}
 			};
 		}

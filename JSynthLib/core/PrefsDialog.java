@@ -31,7 +31,6 @@ public class PrefsDialog extends JDialog
 	/**
 	 * Constructor
 	 * @param Parent the parent JFrame
-	 * @param appConfig the application config object
 	 */
     public PrefsDialog (JFrame Parent /*, AppConfig appConfig*/) {
         super(Parent,"User Preferences",true);

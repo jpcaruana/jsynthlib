@@ -1,12 +1,13 @@
 /**
  * Storable.java - Interface for objects that support simple persistance
  * (currently implemented as saving to properties files)
+ * @version $Id$
  * @author Zellyn Hunter (zellyn@zellyn.com)
+ * @see Storage
  */
 package core;
 
 import java.util.Set;
-
 
 public interface Storable {
 	/**
