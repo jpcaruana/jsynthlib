@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.PatchEdit;
 import core.SysexHandler;
@@ -187,7 +186,7 @@ public class QuasimidiQuasarSingleDriver extends Driver {
                 this.sysexRequestDump = new SysexHandler( QuasarConstants.SYSEX_PERFORMANCE_REQUEST[count] );
 
                 send(sysexRequestDump.toSysexMessage(getDeviceID(),
-                         new NameValue("perfNumber", patchNum + QuasarConstants.SYSEX_PERFORMANCE_OFFSET)
+                         new SysexHandler.NameValue("perfNumber", patchNum + QuasarConstants.SYSEX_PERFORMANCE_OFFSET)
                                                     )
                     );
 

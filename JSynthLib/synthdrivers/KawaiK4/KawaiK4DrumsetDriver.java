@@ -1,7 +1,6 @@
 package synthdrivers.KawaiK4;
 import core.Driver;
 import core.JSLFrame;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 
@@ -94,6 +93,6 @@ public class KawaiK4DrumsetDriver extends Driver {
 
     public void requestPatchDump(int bankNum, int patchNum) {
         send(SYS_REQ.toSysexMessage(getChannel(),
-				    new NameValue("bankNum", (bankNum << 1) + 1)));
+				    new SysexHandler.NameValue("bankNum", (bankNum << 1) + 1)));
     }
 }

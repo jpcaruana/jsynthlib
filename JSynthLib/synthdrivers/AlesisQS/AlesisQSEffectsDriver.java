@@ -2,7 +2,6 @@ package synthdrivers.AlesisQS;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 
@@ -112,8 +111,8 @@ public class AlesisQSEffectsDriver extends Driver
     }
 
     send(sysexRequestDump.toSysexMessage(getChannel(),
-					 new NameValue("opcode", opcode),
-					 new NameValue("patchNum", location)));
+					 new SysexHandler.NameValue("opcode", opcode),
+					 new SysexHandler.NameValue("patchNum", location)));
   }
 
   /**

@@ -25,7 +25,6 @@ import java.io.InputStream;
 import core.Driver;
 import core.ErrorMsg;
 import core.JSLFrame;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 
@@ -230,8 +229,8 @@ public final class TD6SingleDriver extends Driver {
 	// checksum depends on drum kit number (patchNum).
 	int checkSum = -(0x41 + patchNum) & 0x7f;
 	send(SYS_REQ.toSysexMessage(getDeviceID(),
-				    new NameValue("patchNum", patchNum),
-				    new NameValue("checkSum", checkSum)));
+				    new SysexHandler.NameValue("patchNum", patchNum),
+				    new SysexHandler.NameValue("checkSum", checkSum)));
     }
 
     /**

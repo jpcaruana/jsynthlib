@@ -5,7 +5,6 @@ package synthdrivers.SCIProphet600;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.PatchEdit;
 import core.SysexHandler;
@@ -96,7 +95,7 @@ public class P600ProgBankDriver extends BankDriver {
 
   public void requestPatchDump(int bankNum, int patchNum) {
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      send(sysexRequestDump.toSysexMessage(((byte)getChannel()), new NameValue[] { new NameValue("bankNum", bankNum), new NameValue("patchNum", i)}));
+      send(sysexRequestDump.toSysexMessage(((byte)getChannel()), new SysexHandler.NameValue[] { new SysexHandler.NameValue("bankNum", bankNum), new SysexHandler.NameValue("patchNum", i)}));
       try {
         Thread.sleep(50);
       } catch (Exception e) {

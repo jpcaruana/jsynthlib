@@ -12,7 +12,6 @@ import core.*;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 
 public class Line6BassPodSingleEditor extends PatchEditorFrame {
     static int pgmDumpheaderSize;

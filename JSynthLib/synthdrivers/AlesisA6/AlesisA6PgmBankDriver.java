@@ -126,7 +126,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
 
   public void requestPatchDump(int bankNum, int patchNum)
   {
-    send(sysexRequestDump.toSysexMessage(((byte)getChannel()), new NameValue[] { new NameValue("bankNum", bankNum), new NameValue("patchNum", patchNum)}));
+    send(sysexRequestDump.toSysexMessage(((byte)getChannel()), new SysexHandler.NameValue[] { new SysexHandler.NameValue("bankNum", bankNum), new SysexHandler.NameValue("patchNum", patchNum)}));
   }
 }
 

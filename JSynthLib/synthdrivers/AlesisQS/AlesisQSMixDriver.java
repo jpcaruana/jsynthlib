@@ -2,7 +2,6 @@ package synthdrivers.AlesisQS;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 
@@ -132,8 +131,8 @@ public class AlesisQSMixDriver extends Driver
     int opcode = QSConstants.OPCODE_MIDI_USER_MIX_DUMP_REQ;
 
     send(sysexRequestDump.toSysexMessage(getChannel(),
-					 new NameValue("opcode", opcode),
-					 new NameValue("patchNum", location)));
+					 new SysexHandler.NameValue("opcode", opcode),
+					 new SysexHandler.NameValue("patchNum", location)));
   }
 
 

@@ -1,7 +1,6 @@
 package synthdrivers.KorgWavestation;
 import core.Driver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 
@@ -123,9 +122,9 @@ public class KorgWavestationSinglePatchDriver extends Driver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-        NameValue nv[]=new NameValue[2];
-        nv[0]=new NameValue("bankNum",bankNum);
-        nv[1]=new NameValue("patchNum",patchNum);
+        SysexHandler.NameValue nv[]=new SysexHandler.NameValue[2];
+        nv[0]=new SysexHandler.NameValue("bankNum",bankNum);
+        nv[1]=new SysexHandler.NameValue("patchNum",patchNum);
         send(sysexRequestDump.toSysexMessage(getChannel(), nv));
     }
 }

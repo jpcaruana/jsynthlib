@@ -44,7 +44,6 @@ import javax.swing.event.ChangeListener;
 import core.ComboBoxWidget;
 import core.Driver;
 import core.EnvelopeWidget;
-import core.NameValue;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
@@ -510,7 +509,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
        // send voice operator state
        private static void xmitVoiceOperatorState(Driver drv, int st)		     // channel, OperatorState
        {
-	       drv.send(VoiceOPstate.toSysexMessage(0x10 + drv.getChannel(), new NameValue("value", st)));
+	       drv.send(VoiceOPstate.toSysexMessage(0x10 + drv.getChannel(), new SysexHandler.NameValue("value", st)));
        }
 
 

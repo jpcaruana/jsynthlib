@@ -110,8 +110,8 @@ public class NLDrumBankDriver extends BankDriver {
       setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
       setPatchNum(i + 99); // select drum sound, then get data from edit buffer
       send(sysexRequestDump.toSysexMessage(devID,
-					   new NameValue("bankNum", 10),
-					   new NameValue("patchNum", 0)));
+					   new SysexHandler.NameValue("bankNum", 10),
+					   new SysexHandler.NameValue("patchNum", 0)));
       try {
         Thread.sleep(400); // it takes some time for each drum patch to be sent
       } catch (Exception e) {

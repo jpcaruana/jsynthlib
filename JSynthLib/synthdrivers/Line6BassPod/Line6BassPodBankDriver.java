@@ -167,7 +167,7 @@ public class Line6BassPodBankDriver extends BankDriver
     
     public void requestPatchDump(int bankNum, int patchNum) {
         send(SYS_REQ.toSysexMessage(getChannel(),
-                                    new NameValue("bankNum", bankNum << 1)));
+                                    new SysexHandler.NameValue("bankNum", bankNum << 1)));
     }
     
     // storePatch needs to be rewritten to send individual program patches instead of the whole bank at once

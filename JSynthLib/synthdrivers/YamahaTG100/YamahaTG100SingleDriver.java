@@ -131,13 +131,13 @@ public class YamahaTG100SingleDriver extends Driver {
             checksum = (byte) (-sum & 0x7f);
             //checksum = (byte) 0x00;
 
-            NameValue[] nameValues = {
-                new NameValue("adressOffset2", startAddress2 ),
-                new NameValue("adressOffset3", startAddress3 ),
-                new NameValue("byteCount1", 0),
-                new NameValue("byteCount2", 0),
-                new NameValue("byteCount3", TG100Constants.SYSEX_SINGLE_VOICE_SIZE),
-                new NameValue("checksum", checksum)
+            SysexHandler.NameValue[] nameValues = {
+                new SysexHandler.NameValue("adressOffset2", startAddress2 ),
+                new SysexHandler.NameValue("adressOffset3", startAddress3 ),
+                new SysexHandler.NameValue("byteCount1", 0),
+                new SysexHandler.NameValue("byteCount2", 0),
+                new SysexHandler.NameValue("byteCount3", TG100Constants.SYSEX_SINGLE_VOICE_SIZE),
+                new SysexHandler.NameValue("checksum", checksum)
             };
 
             send(sysexRequestDump.toSysexMessage(getDeviceID(), nameValues) );

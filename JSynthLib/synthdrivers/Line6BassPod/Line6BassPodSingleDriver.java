@@ -183,7 +183,7 @@ public class Line6BassPodSingleDriver extends Driver {
     public void requestPatchDump(int bankNum, int patchNum) {
         int progNum = bankNum * 4 + patchNum;
         send(SYS_REQ.toSysexMessage(getChannel(),
-                                    new NameValue("progNum", progNum)));
+                                    new SysexHandler.NameValue("progNum", progNum)));
     }
     
     /*

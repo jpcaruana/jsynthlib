@@ -33,17 +33,17 @@ public class YamahaDX7IISysexHelpers
 
 	// switch off internal/cartridge memory protection
 	protected static void swOffMemProt(Driver d, byte ch, byte bn)				// port, channel, 
-	{ d.send(System.toSysexMessage(ch, new NameValue("param", 0x53), new NameValue("action",bn))); }	// bn: bit0 = internal, bit1 = cartridge
+	{ d.send(System.toSysexMessage(ch, new SysexHandler.NameValue("param", 0x53), new SysexHandler.NameValue("action",bn))); }	// bn: bit0 = internal, bit1 = cartridge
 
 	// choose the desired MIDI transmit block 
 	protected static void chXmitBlock(Driver d, byte ch, byte bn)				// port, channel, 
-	{ d.send(System.toSysexMessage(ch, new NameValue("param", 0x4c), new NameValue("action",bn))); }	// bn: 0 = 1-32, 1 = 33-64
+	{ d.send(System.toSysexMessage(ch, new SysexHandler.NameValue("param", 0x4c), new SysexHandler.NameValue("action",bn))); }	// bn: 0 = 1-32, 1 = 33-64
 
 	// choose the desired MIDI receive block 
 	protected static void chRcvBlock(Driver d, byte ch, byte bn)				// port, channel, 
-	{ d.send(System.toSysexMessage(ch, new NameValue("param", 0x4d), new NameValue("action",bn))); }	// bn: 0 = 1-32, 1 = 33-64
+	{ d.send(System.toSysexMessage(ch, new SysexHandler.NameValue("param", 0x4d), new SysexHandler.NameValue("action",bn))); }	// bn: 0 = 1-32, 1 = 33-64
 
 	// choose voice mode ('single' button)
 	protected static void chVoiceMode(Driver d, byte ch)					// port, channel
-	{ d.send(Button.toSysexMessage(ch, new NameValue("switch", 0x24), new NameValue("OnOff", 0x7f))); }	// switch 36
+	{ d.send(Button.toSysexMessage(ch, new SysexHandler.NameValue("switch", 0x24), new SysexHandler.NameValue("OnOff", 0x7f))); }	// switch 36
 }

@@ -27,7 +27,6 @@
 package synthdrivers.RolandMT32;
 import core.Driver;
 import core.JSLFrame;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 
@@ -131,7 +130,7 @@ public class RolandMT32SingleDriver extends Driver {
 
     public void requestPatchDump(int bankNum, int timNum) {
       // timNum misuses patchNum
-        NameValue nv[]=new NameValue[5];
+        SysexHandler.NameValue nv[]=new SysexHandler.NameValue[5];
         int timbreAddr = timNum * 0xF6;
         int timSizeH = 0x00;
         int timSizeM = 0x01;
@@ -139,12 +138,12 @@ public class RolandMT32SingleDriver extends Driver {
         int timAddrH = 0x04;
         int timAddrM = timbreAddr / 0x80;
         int timAddrL = timbreAddr & 0x7F;
-        nv[0]=new NameValue("partAddrM", timAddrM);
-        nv[1]=new NameValue("partAddrL", timAddrL);
+        nv[0]=new SysexHandler.NameValue("partAddrM", timAddrM);
+        nv[1]=new SysexHandler.NameValue("partAddrL", timAddrL);
         int checkSum = ( 0 - (timAddrH + timAddrM + timAddrL + timSizeH + timSizeM + timSizeL)) & 0x7F;
-        nv[2]=new NameValue("checkSum",checkSum);
-        nv[3]=new NameValue("bankNum", bankNum << 1);
-        nv[4]=new NameValue("timNum", timNum );
+        nv[2]=new SysexHandler.NameValue("checkSum",checkSum);
+        nv[3]=new SysexHandler.NameValue("bankNum", bankNum << 1);
+        nv[4]=new SysexHandler.NameValue("timNum", timNum );
         
         send(SYS_REQ.toSysexMessage(getChannel(),  nv));
     }

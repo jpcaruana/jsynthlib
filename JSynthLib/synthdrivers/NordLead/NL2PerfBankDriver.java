@@ -107,8 +107,8 @@ public class NL2PerfBankDriver extends BankDriver {
     int devID = ((NordLeadDevice) (getDevice())).getGlobalChannel();
     for (int i = 0; i < NUM_IN_BANK; i++) {
       send(sysexRequestDump.toSysexMessage(devID,
-					   new NameValue("bankNum", 41),
-					   new NameValue("patchNum", i)));
+					   new SysexHandler.NameValue("bankNum", 41),
+					   new SysexHandler.NameValue("patchNum", i)));
       try {
         Thread.sleep(250); // it takes some time for each performance to be sent
       } catch (Exception e) {

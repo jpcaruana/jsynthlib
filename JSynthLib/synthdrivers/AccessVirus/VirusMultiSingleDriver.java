@@ -3,7 +3,6 @@
 package synthdrivers.AccessVirus;
 
 import core.Driver;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 /**
@@ -126,7 +125,7 @@ public class VirusMultiSingleDriver extends Driver {
 
   public void requestPatchDump(int bankNum, int patchNum) {
     send(sysexRequestDump.toSysexMessage(getDeviceID(),
-         new NameValue("bankNum", 1), new NameValue("patchNum", patchNum)));
+         new SysexHandler.NameValue("bankNum", 1), new SysexHandler.NameValue("patchNum", patchNum)));
   }
 }
 

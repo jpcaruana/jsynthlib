@@ -200,7 +200,7 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
                     this.sysexRequestDump = new SysexHandler( QuasarConstants.SYSEX_PERFORMANCE_REQUEST[count] );
 
                     send(sysexRequestDump.toSysexMessage(getDeviceID(),
-                         new NameValue("perfNumber", patchNo + QuasarConstants.SYSEX_PERFORMANCE_OFFSET)
+                         new SysexHandler.NameValue("perfNumber", patchNo + QuasarConstants.SYSEX_PERFORMANCE_OFFSET)
                                                         )
                     );
 

@@ -9,7 +9,6 @@
 package synthdrivers.Line6Pod20;
 
 import core.*;
-import javax.swing.*;
 
 // Note that on the Pod, the edit buffer patch has an 8 byte header and the program patch has a 9 byte header. 
 // The only reason for having this driver is to be able to request an edit buffer patch. As soon as the edit buffer
@@ -44,7 +43,7 @@ public class Line6Pod20EdBufDriver extends Line6Pod20SingleDriver {
     public void requestPatchDump(int bankNum, int patchNum) {
         int progNum = 0;
         send(SYS_REQ.toSysexMessage(getChannel(),
-                                    new NameValue("progNum", progNum)));
+                                    new SysexHandler.NameValue("progNum", progNum)));
     }
     
     public JSLFrame editPatch(Patch p)

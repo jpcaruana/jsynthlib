@@ -4,7 +4,6 @@ package synthdrivers.NordLead;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 
@@ -119,8 +118,8 @@ public class NLPatchSingleDriver extends Driver {
 
   public void requestPatchDump(int bankNum, int patchNum) {
     send(sysexRequestDump.toSysexMessage(((NordLeadDevice) getDevice()).getGlobalChannel(),
-					 new NameValue("bankNum", bankNum + 11),
-					 new NameValue("patchNum", patchNum)));
+					 new SysexHandler.NameValue("bankNum", bankNum + 11),
+					 new SysexHandler.NameValue("patchNum", patchNum)));
   }
 }
 

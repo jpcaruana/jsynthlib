@@ -4,7 +4,6 @@ package synthdrivers.NordLead;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.PatchEdit;
 import core.SysexHandler;
@@ -108,8 +107,8 @@ public class NLPatchBankDriver extends BankDriver {
     int devID = ((NordLeadDevice) getDevice()).getGlobalChannel();
     for (int i = 0; i < NUM_IN_BANK; i++) {
       send(sysexRequestDump.toSysexMessage(devID,
-					   new NameValue("bankNum", bankNum + 11),
-					   new NameValue("patchNum", i)));
+					   new SysexHandler.NameValue("bankNum", bankNum + 11),
+					   new SysexHandler.NameValue("patchNum", i)));
       try {
         Thread.sleep(50);
       } catch (Exception e) {

@@ -4,7 +4,6 @@ package synthdrivers.AccessVirus;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.PatchEdit;
 import core.SysexHandler;
@@ -128,7 +127,7 @@ public class VirusMultiBankDriver extends BankDriver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    send(sysexRequestDump.toSysexMessage(getDeviceID(), new NameValue("bankNum", 1)));
+    send(sysexRequestDump.toSysexMessage(getDeviceID(), new SysexHandler.NameValue("bankNum", 1)));
   }
 }
 

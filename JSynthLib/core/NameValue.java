@@ -3,7 +3,7 @@ package core;
 /**
  * Use SysexHandler.NameValue instead of this class. This class exists only for
  * backward compatibility.
- * 
+ * @deprecated Use SysexHandler.NameValue instead of this class.
  * @see SysexHandler
  * @see SysexHandler.NameValue
  */

@@ -4,7 +4,6 @@ package synthdrivers.NordLead;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
 
@@ -229,8 +228,8 @@ public class NLDrumSingleDriver extends Driver {
     setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
     setPatchNum(patchNum + 99); // select drum sound, then get data from edit buffer
     send(sysexRequestDump.toSysexMessage(((NordLeadDevice) getDevice()).getGlobalChannel(),
-					 new NameValue("bankNum", 10),
-					 new NameValue("patchNum", 0)));
+					 new SysexHandler.NameValue("bankNum", 10),
+					 new SysexHandler.NameValue("patchNum", 0)));
   }
 }
 
