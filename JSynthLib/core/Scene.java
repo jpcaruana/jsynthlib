@@ -11,6 +11,11 @@ import java.io.*;
 import java.awt.datatransfer.*;
 import javax.swing.JComboBox;
 /**
+ * A scene is a container for all patches and their explicite
+ * bank/patch locations at the synths for a concrete singular
+ * song/sound.  You can put all needed patches of all used synths in
+ * one scene and transfer the whole stuff in one step to your synths.
+ *
  * @version $Id$
  * @author  Gerrit Gehnen
  */
