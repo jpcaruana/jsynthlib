@@ -22,7 +22,7 @@ import core.SysexWidget;
 public class XMLDriver implements IPatchDriver {
     private String authors;
     private XMLPatch base_patch;
-
+    
     private XMLDevice device;
     private XMLDriverImplementation imp;
     private String manufacturer;
@@ -35,7 +35,7 @@ public class XMLDriver implements IPatchDriver {
     private final String[] bank_numbers;
     private final String[] writable_bank_numbers;
     
-
+    
     XMLDriver(final String[] patch_numbers,
             final String[] writable_patch_numbers, final String[] bank_numbers,
             final String[] writable_bank_numbers, XMLPatch p, XMLDriverImplementation imp) {
@@ -52,25 +52,25 @@ public class XMLDriver implements IPatchDriver {
         base_patch = p;
         this.imp = imp;
     }
-
+    
     /* TODO
-    public String[] getBankNumbersForStore() {
-        return writable_bank_numbers;
-    }
-    */
+     public String[] getBankNumbersForStore() {
+     return writable_bank_numbers;
+     }
+     */
     
     public void calculateChecksum(IPatch patch) {
         ((XMLPatch)patch).calculateChecksum();
     }
-
+    
     public boolean canCreatePatch() {
         return true;
     }
-
+    
     public IPatch createPatch() {
         return base_patch.newPatch();
     }
-
+    
     public IPatch createPatch(byte[] sysex) {
         SysexMessage[] msgs;
         try {
@@ -80,11 +80,11 @@ public class XMLDriver implements IPatchDriver {
         }
         return createPatch(msgs);
     }
-
+    
     public IPatch[] createPatches(SysexMessage[] msgs) {
         return new IPatch[] { createPatch(msgs) };
     }
-
+    
     private IPatch createPatch(SysexMessage[] msgs) {
         XMLPatch np = base_patch.newEmptyPatch();
         try {
@@ -95,59 +95,59 @@ public class XMLDriver implements IPatchDriver {
             return null;
         }
     }
-
+    
     public JSLFrame edit(IPatch p) {
-    	EditorDescription editor = getEditor();
-    	try {
-    		if (editor != null)
-    			return new XMLEditor(editor, (XMLPatch) p);
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		if (e.getCause() != null)
-    			e.getCause().printStackTrace();
-    		ErrorMsg.reportError("Error Creating Editor", "There was an error creating the patch editor", e);
-    	}
-    	return null;
+        EditorDescription editor = getEditor();
+        try {
+            if (editor != null)
+                return new XMLEditor(editor, (XMLPatch) p);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (e.getCause() != null)
+                e.getCause().printStackTrace();
+            ErrorMsg.reportError("Error Creating Editor", "There was an error creating the patch editor", e);
+        }
+        return null;
     }
     
     private EditorDescription getEditor() {
-    	EditorParser p = new EditorParser();
-    	try {
-    		p.parse(editorPath);
-    	} catch (SAXException e) {
-    		Exception ex = e;
-    		if (e.getException() != null)
-    			ex = e.getException();
-    		e.printStackTrace();
-    		ErrorMsg.reportError("Parse Error", "Error parsing editor", ex);
-    		return null;
-    	}catch (Exception e) {
-    		e.printStackTrace();
-    		ErrorMsg.reportError("Parse Error", "Error parsing editor", e);
-    		return null;
-    	}
-    	return p.getEditor();
+        EditorParser p = new EditorParser();
+        try {
+            p.parse(editorPath);
+        } catch (SAXException e) {
+            Exception ex = e;
+            if (e.getException() != null)
+                ex = e.getException();
+            e.printStackTrace();
+            ErrorMsg.reportError("Parse Error", "Error parsing editor", ex);
+            return null;
+        }catch (Exception e) {
+            e.printStackTrace();
+            ErrorMsg.reportError("Parse Error", "Error parsing editor", e);
+            return null;
+        }
+        return p.getEditor();
     }
     
     public boolean hasEditor() {
-    	return (editorPath != null) && editorPath.canRead();
+        return (editorPath != null) && editorPath.canRead();
     }
-
+    
     public String getAuthors() {
         return authors;
     }
     void setAuthors(String s) {
         authors = s;
     }
-
+    
     public String[] getBankNumbers() {
         return bank_numbers;
     }
-
+    
     public int getChannel() {
         return device.getChannel();
     }
-
+    
     public Device getDevice() {
         return device;
     }
@@ -155,11 +155,11 @@ public class XMLDriver implements IPatchDriver {
     public int getInPort() {
         return device.getInPort();
     }
-
+    
     public String getManufacturerName() {
         return manufacturer;
     }
-
+    
     void setManufacturerName(String s) {
         manufacturer = s;
     }
@@ -167,23 +167,23 @@ public class XMLDriver implements IPatchDriver {
     public String getModelName() {
         return model;
     }
-
+    
     void setModelName(String s) {
         model = s;
     }
-
+    
     public String[] getPatchNumbers() {
         return patch_numbers;
     }
-
+    
     public String[] getPatchNumbersForStore() {
         return writable_patch_numbers;
     }
-
+    
     public int getPatchSize() {
         return base_patch.getSize();
     }
-
+    
     public String getPatchType() {
         return name;
     }
@@ -194,25 +194,25 @@ public class XMLDriver implements IPatchDriver {
     public void play(IPatch patch) {
         imp.playPatch((XMLPatch)patch);
     }
-
+    
     public void requestPatchDump(int bankNum, int patchNum) {
         imp.requestPatchDump(device, bankNum, patchNum);
-    
+        
     }
-
+    
     public void send(MidiMessage msg) {
         device.send(msg);
     }
-
+    
     public void sendParameter(IPatch patch, SysexWidget.IParameter param) {
         imp.sendParameter((XMLPatch)patch, (XMLParameter)param);
-    
+        
     }
-
+    
     public void send(IPatch patch) {
         imp.sendPatch((XMLPatch)patch);
     }
-
+    
     public void setDevice(Device device) {
         this.device = (XMLDevice)device;
         if (manufacturer == null)
@@ -227,7 +227,7 @@ public class XMLDriver implements IPatchDriver {
     public void send(IPatch myPatch, int bankNum, int patchNum) {
         imp.storePatch((XMLPatch)myPatch, bankNum, patchNum);    
     }
-
+    
     public boolean supportsPatch(String patchString, byte[] sysex) {
         SysexMessage[] msgs;
         try {
@@ -237,34 +237,38 @@ public class XMLDriver implements IPatchDriver {
         }
         return base_patch.supportsMessages(msgs);
     }
-
+    
     public boolean supportsPatch(String patchString, IPatch patch) {
         return base_patch.supportsMessages(patch.getMessages());
     }
-
+    
     public final byte[] export(IPatch patch) {
         calculateChecksum(patch);
         return patch.getByteArray();
     }
-
+    
     public final boolean isSingleDriver() {
         return true;
     }
-
+    
     public final boolean isBankDriver() {
         return false;
     }
-
+    
     public final boolean isConverter() {
         return false;
     }
-
+    
     public String toString() {
         return getManufacturerName() + " " + getModelName() + " "
-            + getPatchType();
+        + getPatchType();
     }
-
-	public void setEditor(File file) {
-		editorPath = file;
-	}
+    
+    public void setEditor(File file) {
+        editorPath = file;
+    }
+    
+    XMLPatch getBasePatch() {
+        return base_patch;
+    }
 }

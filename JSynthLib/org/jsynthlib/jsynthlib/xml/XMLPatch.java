@@ -4,6 +4,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -63,7 +64,7 @@ public class XMLPatch implements ISinglePatch {
     }
 
     public String getType() {
-        return driver.getPatchType();
+        return getDriver().getPatchType();
     }
 
     protected void setSize(int size) {
@@ -103,15 +104,19 @@ public class XMLPatch implements ISinglePatch {
     }
 
     public IPatchDriver getDriver() {
+        if (driver == null)
+            return AppConfig.getNullDriver();
         return driver;
     }
 
     public void setDriver(IPatchDriver driver) {
         this.driver = (XMLDriver)driver;
+        if (driver != null)
+            this.device = (XMLDevice)driver.getDevice();
     }
 
     public final void setDriver() {
-        setDriver((IPatchDriver) DriverUtil.chooseDriver(sysex[0]));
+        setDriver((IPatchDriver) DriverUtil.chooseDriver(getByteArray()));
     }
 
     public String getPatchHeader() {
@@ -144,7 +149,7 @@ public class XMLPatch implements ISinglePatch {
     }
 
     public final boolean hasEditor() {
-        return driver.hasEditor();
+        return driver != null && driver.hasEditor();
     }
 
     public JSLFrame edit() {
@@ -152,10 +157,14 @@ public class XMLPatch implements ISinglePatch {
     }
 
     public void send(int bankNum, int patchNum) {
+        if (driver == null)
+            return;
         driver.send(this, bankNum, patchNum);
     }
 
     public final byte[] export() {
+        if (driver == null)
+            return null;
         return driver.export(this);
     }
 
@@ -169,11 +178,13 @@ public class XMLPatch implements ISinglePatch {
 
     // only for single patch
     public void play() {
-        driver.play(this);
+        if (driver != null)
+            driver.play(this);
     }
 
     public void send() {
-        driver.send(this);
+        if (driver != null)
+            driver.send(this);
     }
 
     // only for bank patch
@@ -264,6 +275,13 @@ public class XMLPatch implements ISinglePatch {
     
     protected XMLPatch newEmptyPatch() {
         return new XMLPatch(parameters, driver, device, groups, descs, size);
+    }
+
+    private void useBasePatch(XMLPatch basePatch) {
+        parameters = basePatch.parameters;
+        groups = basePatch.groups;
+        descs = basePatch.descs;
+        size = basePatch.size;
     }
     protected void setDriver(XMLDriver d) {
         driver = d;
@@ -374,6 +392,20 @@ public class XMLPatch implements ISinglePatch {
     }
 
     public boolean hasNullDriver() {
-        return driver == AppConfig.getNullDriver();
+        return driver == null;
     }
+    
+
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException  {
+        s.defaultReadObject();
+        setDriver();
+        if (driver == null) {
+            parameters = new HashMap();
+            descs = new SysexDesc[0];
+        } else {
+            useBasePatch(driver.getBasePatch());
+        }
+    }
+    
+
 }
