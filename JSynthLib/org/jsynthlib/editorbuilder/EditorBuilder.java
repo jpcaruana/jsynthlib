@@ -1,13 +1,26 @@
 package org.jsynthlib.editorbuilder;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.beans.DefaultPersistenceDelegate;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+
+import org.jsynthlib.editorbuilder.widgets.ContainerWidget;
 import org.jsynthlib.editorbuilder.widgets.Strut;
+import org.jsynthlib.editorbuilder.widgets.Widget;
 
-import java.awt.event.*;
 import core.CompatibleFileDialog;
-
-import java.io.*;
-import java.beans.*;
 
 public class EditorBuilder {
     
@@ -23,6 +36,8 @@ public class EditorBuilder {
                 new openDesigner(),
                 new saveDesigner(),
                 new export(),
+                null,
+                new refreshLayout(),
                 null,
                 new exit(),
             },
@@ -193,7 +208,24 @@ public class EditorBuilder {
                 dframe.export(chooser.getSelectedFile());
         }
     }
-    
+    protected static class refreshLayout extends AbstractAction {
+        public refreshLayout() { super("Refresh layout"); }
+        public void actionPerformed(ActionEvent e) {
+            validateWidget(dframe.getRootWidget());
+            dframe.validate();
+        }
+        private void validateWidget(Widget w) {
+            w.invalidate();
+            if (w instanceof ContainerWidget) {
+                ContainerWidget c = (ContainerWidget)w;
+                Widget kids[] = c.getWidgets();
+                for (int i = 0; i < kids.length; i++) {
+                    validateWidget(kids[i]);
+                }
+            }
+            w.validate();
+        }
+    }
     protected static class exit extends AbstractAction {
         public exit() { super("Exit"); }
         public void actionPerformed(ActionEvent e) {

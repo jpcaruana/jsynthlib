@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.swing.ComboBoxModel;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
@@ -136,15 +135,17 @@ public class GlassPane extends JPanel implements DropTargetListener,
         else if (id.startsWith("Label"))
             component = new LabelWidget();
         else if (id.startsWith("Panel")) {
-            ContainerWidget cw = new PanelWidget();
+            ContainerWidget cw = new PanelWidget(100,100);
             component = cw;
             //containers.add(component);
+            /*
             Strut s = new Strut(8, 100);
             addWidget(s);
             cw.addWidget(s,s.getConstraints());
-            new Anchor(s,Anchor.NORTH,cw,Anchor.NORTH,0);
-            new Anchor(s,Anchor.WEST,cw,Anchor.WEST,92);
-
+            s.getNSAnchor().setTarget(cw);
+            s.getEWAnchor().setTarget(cw);
+            s.getEWAnchor().setPadding(92);
+            */
         } else {
             Parameter pm = ParameterFrame.getParameter(id);
             switch (pm.getType()) {
@@ -166,7 +167,7 @@ public class GlassPane extends JPanel implements DropTargetListener,
         if (!(component instanceof Strut))
             c.addWidget(component);
         if (component instanceof AnchoredWidget)
-            setConstraints(component, p, c);
+            setConstraints((AnchoredWidget)component, p, c);
         addWidget(component);
         component.validateParents();
         //component.validate();
@@ -180,13 +181,13 @@ public class GlassPane extends JPanel implements DropTargetListener,
 
     }
 
-    protected void setConstraints(JComponent component, Point p, Container c) {
+    protected void setConstraints(AnchoredWidget component, Point p, Widget c) {
         Component parent;
         int xside, yside;
         SpringLayout layout = (SpringLayout) c.getLayout();
 
         parent = c.getComponentAt(p);
-        if (parent != c && parent != null) {
+        if (parent != c && parent != null && parent instanceof ContainerWidget) {
             // Dropped on a component -- it's the parent.
             yside = Anchor.CENTER;
             if (p.x - parent.getX() < parent.getWidth() / 2)
@@ -222,95 +223,64 @@ public class GlassPane extends JPanel implements DropTargetListener,
 
         }
         if (parent == c) {
-            new Anchor(component, Anchor.NORTH, c, Anchor.NORTH,
-                    default_padding * 2);
-            new Anchor(component, Anchor.WEST, c, Anchor.WEST,
-                    default_padding * 2);
+            Anchor a = component.getNSAnchor();
+            a.setTarget(c);
+            a.setPadding(default_padding * 2);
+            a = component.getEWAnchor();
+            a.setTarget(c);
+            a.setPadding(default_padding * 2);
         } else {
-            createNSAnchor(component, parent, yside);
-            createEWAnchor(component, parent, xside);
+            createNSAnchor(component, (AnchoredWidget) parent, yside);
+            createEWAnchor(component, (AnchoredWidget) parent, xside);
         }
     }
 
-    public void createNSAnchor(Component c, Component target, int side) {
+    public void createNSAnchor(AnchoredWidget c, AnchoredWidget target, int side) {
+        Anchor a = c.getNSAnchor();
         if (side == Anchor.CENTER) {
-            new Anchor(c, Anchor.NORTH, target, Anchor.NORTH, 0);
+            a.setTarget(target);
             return;
         }
-        Anchor ta = Anchor.getNSAnchor(target);
-        if (ta != null && ta.getConstrainedSide() == side) {
-            Component new_target = ta.getTargetComponent();
+        Anchor ta = target.getNSAnchor();
+        if (ta != null && ta.getSide() == side) {
+            Widget new_target = ta.getTarget();
             int target_side = ta.getTargetSide();
 
-            new Anchor(c, side, new_target, target_side, default_padding);
+            a.setTarget(new_target);
+            a.setTargetSide(target_side);
+            a.setPadding(default_padding);
 
             ta.setTargetSide(Anchor.opposite(side));
-            ta.setTargetComponent(c);
-            if (new_target != target.getParent()) {
-                Iterator it = Anchor.getSet(new_target, target_side).iterator();
-                while (it.hasNext()) {
-                    Anchor a = ((Anchor) it.next());
-                    if (a.getConstrainedComponent() != c) {
-                        it.remove();
-                        a.setTargetComponent(c);
-                    }
-                }
-            }
+            ta.setTarget(c);
         } else {
-            new Anchor(c, Anchor.opposite(side), target, side, default_padding);
-
-            if (ta != null) {
-                Iterator it = Anchor.getSet(target, side).iterator();
-                while (it.hasNext()) {
-                    Anchor a = ((Anchor) it.next());
-                    if (a.getConstrainedComponent() != c) {
-                        it.remove();
-                        a.setTargetComponent(c);
-                    }
-                }
-            }
+            a.setTarget(target);
+            a.setTargetSide(side);
+            a.setPadding(default_padding);
         }
     }
 
-    public void createEWAnchor(Component c, Component target, int side) {
+    public void createEWAnchor(AnchoredWidget c, AnchoredWidget target, int side) {
         if (side == Anchor.CENTER) {
-            new Anchor(c, Anchor.WEST, target, Anchor.WEST, 0);
+            c.getEWAnchor().setTarget(target);
             return;
         }
-        Anchor ta = Anchor.getEWAnchor(target);
-        if (ta != null && ta.getConstrainedSide() == side) {
-            Component new_target = ta.getTargetComponent();
+        Anchor ta = target.getEWAnchor();
+        if (ta != null && ta.getSide() == side) {
+            Widget new_target = ta.getTarget();
             int target_side = ta.getTargetSide();
             Spring padding = ta.getPaddingSpring();
 
-            new Anchor(c, side, new_target, target_side, padding);
+            c.getEWAnchor().setTarget(new_target);
+            c.getEWAnchor().setTargetSide(target_side);
+            c.getEWAnchor().setPadding(padding);
 
             ta.setTargetSide(Anchor.opposite(side));
-            ta.setTargetComponent(c);
+            ta.setTarget(c);
             ta.setPadding(default_padding);
-            if (new_target != target.getParent()) {
-                Iterator it = Anchor.getSet(new_target, target_side).iterator();
-                while (it.hasNext()) {
-                    Anchor a = ((Anchor) it.next());
-                    if (a.getConstrainedComponent() != c) {
-                        it.remove();
-                        a.setTargetComponent(c);
-                    }
-                }
-            }
         } else {
-            new Anchor(c, Anchor.opposite(side), target, side, default_padding);
-
-            if (ta != null) {
-                Iterator it = Anchor.getSet(target, side).iterator();
-                while (it.hasNext()) {
-                    Anchor a = ((Anchor) it.next());
-                    if (a.getConstrainedComponent() != c) {
-                        it.remove();
-                        a.setTargetComponent(c);
-                    }
-                }
-            }
+            c.getEWAnchor().setTarget(target);
+            c.getEWAnchor().setTargetSide(side);
+            c.getEWAnchor().setPadding(default_padding);
         }
     }
 
@@ -346,13 +316,13 @@ public class GlassPane extends JPanel implements DropTargetListener,
 
     public void paint(Graphics g) {
         try {
-            Component selected = (Component) designer.getSelectedWidget();
+            AnchoredWidget selected = (AnchoredWidget) designer.getSelectedWidget();
             if (selected != null) {
                 // todo: clip to viewport
-                Anchor a = Anchor.getNSAnchor(selected);
+                Anchor a = selected.getNSAnchor();
                 if (a != null)
                     a.drawConnector(this, g);
-                a = Anchor.getEWAnchor(selected);
+                a = selected.getEWAnchor();
                 if (a != null)
                     a.drawConnector(this, g);
 

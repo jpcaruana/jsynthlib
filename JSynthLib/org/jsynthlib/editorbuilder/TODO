@@ -7,3 +7,4 @@ Multiple frames
 Scripts
 Template widgets
 Custom widgets
+Convert property frame, editors, XMLWriter to be bean based

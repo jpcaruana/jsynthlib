@@ -28,6 +28,7 @@ public class EditorParser extends AdvDefaultHandler {
 		addGenerator("label", LabelDescription.class);
 		addGenerator("button", ButtonDescription.class);
 		addGenerator("panel", PanelDescription.class);
+		addGenerator("root", PanelDescription.class);
 		addGenerator("param", ParameterKey.class);
 		
 		Generator paramGen = new Generator() {

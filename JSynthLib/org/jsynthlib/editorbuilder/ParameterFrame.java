@@ -43,7 +43,7 @@ Serializable {
         JScrollPane sp = new JScrollPane(tree, 
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        
+        sp.setBorder(null);
         getContentPane().add(sp, BorderLayout.CENTER);
     }
     

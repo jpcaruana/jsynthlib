@@ -31,7 +31,12 @@ public class Strut extends AnchoredWidget {
         setBounds(getX(),getY(),getWidth(),height);
         validateParents();
     }
-
+    public int getHeight() {
+        return super.getHeight();
+    }
+    public int getWidth() {
+        return super.getWidth();
+    }
     protected void writeContent(XMLWriter xml) throws SAXException {
         super.writeContent(xml);
         xml.startElement("size");

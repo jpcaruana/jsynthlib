@@ -21,7 +21,7 @@ public class EditorDescription {
 	}
 
 	public Component loadRoot(XMLPatch patch) throws Exception {
-		return loadRoot("panel 0", patch);
+		return loadRoot("root 0", patch);
 	}
 	
 	public Component loadRoot(String id, XMLPatch patch) throws Exception {

@@ -1,45 +1,35 @@
 package org.jsynthlib.editorbuilder;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.jsynthlib.editorbuilder.widgets.AnchoredWidget;
-import org.jsynthlib.editorbuilder.widgets.ButtonWidget;
-import org.jsynthlib.editorbuilder.widgets.LabeledWidget;
-import org.jsynthlib.editorbuilder.widgets.PanelWidget;
-import org.jsynthlib.editorbuilder.widgets.ParameterWidget;
-import org.jsynthlib.editorbuilder.widgets.Strut;
 import org.jsynthlib.editorbuilder.widgets.Widget;
 
-public class PropertiesFrame extends JFrame implements ActionListener,
-ChangeListener,
-java.io.Serializable, WidgetListListener {
+public class PropertiesFrame extends JFrame implements java.io.Serializable, WidgetListListener, ActionListener, ChangeListener {
     
     protected JComboBox selection_cb;
     protected DesignerFrame designer = EditorBuilder.getDesignerFrame();
     protected JScrollPane sp;
-    protected Widget selection;
+    private Widget selection;
     
+    private BeanPropertySheet s = new BeanPropertySheet();
+    
+    /*
     protected JTextField id;
     protected JTextField label;
     protected JTextField cn;
     protected JTextField width;
     protected JTextField height;
-    protected AnchorEditor vanchor;
-    protected AnchorEditor hanchor;
+    protected OldAnchorEditor vanchor;
+    protected OldAnchorEditor hanchor;
     protected JComboBox type;
+    */
     private WidgetComboBoxModel model;
     
     public PropertiesFrame() {
@@ -54,20 +44,25 @@ java.io.Serializable, WidgetListListener {
         
         designer.addChangeListener(this);
         
-        selection = designer.getSelectedWidget();
+        setSelection(designer.getSelectedWidget());
         
-        if (selection == null)
-            selection = designer.getRootWidget();
+        if (getSelection() == null)
+            setSelection(designer.getRootWidget());
         
         model = new WidgetComboBoxModel(GlassPane.getCommonWidgets());
         selection_cb = new JComboBox(model);
-        setMaxSize(selection_cb);
+        //setMaxSize(selection_cb);
         selection_cb.addActionListener(this);
         getContentPane().add(selection_cb);
-        
-        createBox();
+        JScrollPane sp = new JScrollPane(s,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        sp.setBorder(null);
+        getContentPane().add(sp);
+        s.addActionListener(this);
+        //createBox();
     }
-    
+    /*
     protected void createBox() {
         if (sp != null)
             remove(sp);
@@ -85,60 +80,69 @@ java.io.Serializable, WidgetListListener {
         
         id = new JTextField();
         setMaxSize(id);
-        id.setText(selection.getId());
+        id.setText(getSelection().getId());
         id.addActionListener(this);
         row.add(id);
         
         box.add(row);
         
-        if (selection instanceof LabeledWidget) {
+        if (getSelection() instanceof LabeledWidget) {
             row = Box.createHorizontalBox();
             row.add(new JLabel("Label"));
             row.add(Box.createHorizontalGlue());
             label = new JTextField();
             setMaxSize(label);
-            label.setText( ((LabeledWidget)selection).getText() );
+            label.setText( ((LabeledWidget)getSelection()).getText() );
             label.addActionListener(this);
             row.add(label);
             
             box.add(row);
         }
         
-        if (selection instanceof ButtonWidget) {
+        if (getSelection() instanceof ButtonWidget) {
             box.add(new JLabel("Class to show:"));
             cn = new JTextField();
             setMaxSize(cn);
-            cn.setText(((ButtonWidget)selection).getClassName());
+            cn.setText(((ButtonWidget)getSelection()).getClassName());
             cn.addActionListener(this);
             box.add(cn);
         }
         
-        if (selection instanceof ParameterWidget) {
-            type = new JComboBox(((ParameterWidget)selection).getTypes());
+        if (getSelection() instanceof ParameterWidget) {
+            type = new JComboBox(((ParameterWidget)getSelection()).getTypes());
             type.addActionListener(this);
             box.add(type);
         }
         
-        if (selection instanceof PanelWidget && ((PanelWidget)selection).isRoot()){ 
-        }else if (selection instanceof AnchoredWidget) {
-            vanchor = new AnchorEditor(((AnchoredWidget)selection).getNSAnchor());
+        if (getSelection() instanceof RootPanelWidget) {
+        }else if (getSelection() instanceof AnchoredWidget) {
+            vanchor = new OldAnchorEditor(((AnchoredWidget)getSelection()).getNSAnchor());
             vanchor.addChangeListener(this);
             
-            hanchor = new AnchorEditor(((AnchoredWidget)selection).getEWAnchor());
+            hanchor = new OldAnchorEditor(((AnchoredWidget)getSelection()).getEWAnchor());
             hanchor.addChangeListener(this);
             
             box.add(vanchor);
             box.add(hanchor);
         }
 
-        if (selection instanceof Strut) {
+        if (getSelection() instanceof ContainerWidget) {
+            OldAnchorEditor ae = new OldAnchorEditor(((AnchoredWidget) getSelection()).getNSAnchor(getSelection()));
+            ae.addChangeListener(this);
+            box.add(ae);
+            ae = new OldAnchorEditor(((AnchoredWidget) getSelection()).getEWAnchor(getSelection()));
+            ae.addChangeListener(this);
+            box.add(ae);
+        }
+        
+        if (getSelection() instanceof Strut) {
             row = Box.createHorizontalBox();
             row.add(new JLabel("Width"));
             row.add(Box.createHorizontalGlue());
             
             width = new JTextField();
             setMaxSize(width);
-            width.setText("" + ((Strut)selection).getWidth());
+            width.setText("" + ((Strut)getSelection()).getWidth());
             width.addActionListener(this);
             row.add(width);
             
@@ -150,7 +154,7 @@ java.io.Serializable, WidgetListListener {
             
             height = new JTextField();
             setMaxSize(height);
-            height.setText("" + ((Strut)selection).getHeight());
+            height.setText("" + ((Strut)getSelection()).getHeight());
             height.addActionListener(this);
             row.add(height);
             
@@ -169,23 +173,25 @@ java.io.Serializable, WidgetListListener {
                 (int)tf.getPreferredSize().getHeight()));
         
     }
+    */
     
     public void stateChanged(ChangeEvent e) {
-        if (e.getSource() instanceof AnchorEditor) {
+        /*
+        if (e.getSource() instanceof OldAnchorEditor) {
             designer.validate();
             designer.repaint();
         } else {
+        */
             Widget new_selection = designer.getSelectedWidget();
             if (new_selection == null)
                 new_selection = designer.getRootWidget();
-            if (new_selection != selection) {
-                selection = new_selection;
-                selection_cb.setSelectedItem(selection.getId());
-                createBox();
+            if (new_selection != getSelection()) {
+                setSelection(new_selection);
+                selection_cb.setSelectedItem(getSelection().getId());
+                //createBox();
             }
-        }
+        //}
     }
-    
     public void actionPerformed(ActionEvent e) {
         Object source  = e.getSource();
         if (source == null)
@@ -193,8 +199,8 @@ java.io.Serializable, WidgetListListener {
         
         if (source == selection_cb) {
             if (model.isNotifying()) {
-                if (!selection.getId().equals(selection_cb.getSelectedItem()))
-                    selection_cb.setSelectedItem(selection.getId());
+                if (!getSelection().getId().equals(selection_cb.getSelectedItem()))
+                    selection_cb.setSelectedItem(getSelection().getId());
                 return;
             }
             Widget new_selection = ((GlassPane)designer.getGlassPane())
@@ -202,38 +208,52 @@ java.io.Serializable, WidgetListListener {
             if (new_selection != designer.getRootWidget())
                 designer.setSelectedWidget(new_selection);
             return;
+        } else if (source == s) {
+            GlassPane.updateWidgetLists();
+            designer.validate();
+            designer.repaint();
         }
+        /*
         if (source == type) {
-            ((ParameterWidget)selection).setType((String)type.getSelectedItem());
+            ((ParameterWidget)getSelection()).setType((String)type.getSelectedItem());
         } else if (source == id) {
-            selection.setId(id.getText());
+            getSelection().setId(id.getText());
             GlassPane.updateWidgetLists();
         } else if (source == label) {
-            ((LabeledWidget)selection).setText(label.getText());
+            ((LabeledWidget)getSelection()).setText(label.getText());
         } else if (source == cn) {
-            ((ButtonWidget)selection).setClassName(cn.getText());
+            ((ButtonWidget)getSelection()).setClassName(cn.getText());
         } else if (source == width) {
             try {
-                ((Strut)selection).setWidth(Integer.parseInt(width.getText()));
+                ((Strut)getSelection()).setWidth(Integer.parseInt(width.getText()));
             } catch (Exception ex) {}
-            width.setText("" + ((Strut)selection).getWidth());
+            width.setText("" + ((Strut)getSelection()).getWidth());
         } else if (source == height) {
             try {
-                ((Strut)selection).setHeight(Integer.parseInt(height.getText()));
+                ((Strut)getSelection()).setHeight(Integer.parseInt(height.getText()));
             } catch (Exception ex) {}
-            height.setText("" + ((Strut)selection).getHeight());
+            height.setText("" + ((Strut)getSelection()).getHeight());
         }
+        */
         designer.validate();
         designer.repaint();
     }
-    
     /* (non-Javadoc)
      * @see org.jsynthlib.editorbuilder.WidgetListListener#listChanged()
      */
     public void listChanged() {
         model.update(GlassPane.getCommonWidgets());
-        if (selection != null)
-            selection_cb.setSelectedItem(selection.getId());
+        if (getSelection() != null)
+            selection_cb.setSelectedItem(getSelection().getId());
+    }
+
+    protected void setSelection(Widget selection) {
+        this.selection = selection;
+        s.setBean(selection);
+    }
+
+    protected Widget getSelection() {
+        return selection;
     }
     
 }
