@@ -45,7 +45,7 @@ public class MidiConfigPanel extends ConfigPanel {
 	driverChangeListeners = new Vector();
 
 	setLayout (new core.ColumnLayout ());
-	setPreferredSize(new Dimension(500,250));
+	//setPreferredSize(new Dimension(500,250));
 
 	cbxEnMidi = new JCheckBox ("Enable MIDI Interface");
 	cbxEnMidi.addActionListener(new ActionListener() {
