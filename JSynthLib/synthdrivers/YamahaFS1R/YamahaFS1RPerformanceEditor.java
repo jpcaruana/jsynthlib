@@ -31,6 +31,7 @@ import core.Patch;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.SpinnerWidget;
+import core.ISingleDriver;
 
 /**
 	Editor for performance, ie group of 4 parts, each part holds a voice.
@@ -96,41 +97,47 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			oTabs.add(buildPartWindow(i), "Part "+i);
 		}
 
-		JSLFrameListener oList[] = getJSLFrameListeners();
-		removeJSLFrameListener(oList[0]);
-		addJSLFrameListener(new JSLFrameListener() {
-            public void JSLFrameClosing(JSLFrameEvent e) {}
-			public void JSLFrameOpened(JSLFrameEvent e) {}
-            public void JSLFrameActivated(JSLFrameEvent e) {
-				// send part voice if bank is int
-				for (int oPart = 0; oPart < 4; oPart++) {
-					if (mBankSelector[oPart].getValue() == 1)// && mPartChannel[oPart].getValue() != 17)
-					{
-						Patch oPatch = null;
-						if (mVoicesInEdit[oPart] != null) {
-							// voice currently in editing
-							oPatch = (Patch)mVoicesInEdit[oPart].getPatch();
-						}
-						else {
-							oPatch = (Patch)YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+mVoiceSelector[oPart].getValue());
-						}
-						//System.out.println("SEND VOICE "+oPart+" "+mVoiceSelector[oPart].getValue());
-						YamahaFS1RVoiceDriver.getInstance().sendPatch (oPatch, oPart+1);
-					}
-				}
-			}
-			public void JSLFrameClosed(JSLFrameEvent e) {}
-			public void JSLFrameDeactivated(JSLFrameEvent e) {}
-			public void JSLFrameDeiconified(JSLFrameEvent e) {}
-			public void JSLFrameIconified(JSLFrameEvent e) {}
-		});
-		addJSLFrameListener(oList[0]);
-
 		setSize(800, 600);
 
 		pack();
 		setVisible(true);
 	}
+
+	protected void frameOpened()
+	{
+		super.frameOpened();
+		// send performance FIRST
+		ISingleDriver d = (ISingleDriver)p.getDriver();
+		d.calculateChecksum(p);
+		d.sendPatch(p);
+		
+		for (int oPart = 0; oPart < 4; oPart++) 
+		{
+			// send part voice if bank is int
+			if (mBankSelector[oPart].getValue() == 1)// && mPartChannel[oPart].getValue() != 17)
+			{
+				Patch oPatch = null;
+				if (mVoicesInEdit[oPart] != null) {
+					// voice currently in editing
+					oPatch = (Patch)mVoicesInEdit[oPart].getPatch();
+				}
+				else 
+				{
+					oPatch = (Patch)YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+mVoiceSelector[oPart].getValue());
+				}
+				//System.out.println("SEND VOICE "+oPart+" "+mVoiceSelector[oPart].getValue());
+				YamahaFS1RVoiceDriver.getInstance().sendPatch (oPatch, oPart+1);
+			}
+		}
+	}
+	
+	protected void frameActivated()
+	{
+		// no sysex send here because if I send a performance, it will use the FS1R voices, 
+		// not the one in the jsynthlib bank
+	}
+
+
 
 	/**
 		Cree les tableaux contenant les noms des voices pour toutes les banques.
