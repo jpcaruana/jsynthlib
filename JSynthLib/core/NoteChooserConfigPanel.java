@@ -61,8 +61,8 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 	"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
     };
 
-    NoteChooserConfigPanel(PrefsDialog parent, AppConfig appConfig) {
-	super(parent, appConfig);
+    NoteChooserConfigPanel(PrefsDialog parent) {
+	super(parent);
 
 	setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -175,9 +175,9 @@ public class NoteChooserConfigPanel extends ConfigPanel {
     }
 
     void init() {
-	note     = appConfig.getNote();
-	velocity = appConfig.getVelocity();
-	delay    = appConfig.getDelay();
+	note     = AppConfig.getNote();
+	velocity = AppConfig.getVelocity();
+	delay    = AppConfig.getDelay();
 	if (note <= 0 || note > 127) {
 	    note = DEFAULT_NOTE;
 	}
@@ -195,8 +195,8 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 
 	if (useSequencer==true) {
 	    /* Sequencer related parts */
-            enabledSequencer.setSelected(appConfig.getSequencerEnable());
-	    t0.setText(appConfig.getSequencePath());
+            enabledSequencer.setSelected(AppConfig.getSequencerEnable());
+	    t0.setText(AppConfig.getSequencePath());
 	    
 	    setContainerEnabled(sequencePanel, enabledSequencer.isSelected());
             setContainerEnabled(notePanel, !enabledSequencer.isSelected());
@@ -206,13 +206,13 @@ public class NoteChooserConfigPanel extends ConfigPanel {
     void commitSettings() {
 	if (useSequencer==true) {
 	    /* Sequencer related parts */
-	    appConfig.setSequencerEnable(enabledSequencer.isSelected());
-	    appConfig.setSequencePath(t0.getText());
+	    AppConfig.setSequencerEnable(enabledSequencer.isSelected());
+	    AppConfig.setSequencePath(t0.getText());
 	}
 
-	appConfig.setNote(note);
-	appConfig.setVelocity(velocity);
-	appConfig.setDelay(delay);
+	AppConfig.setNote(note);
+	AppConfig.setVelocity(velocity);
+	AppConfig.setDelay(delay);
 	setModified(false);
     }
 

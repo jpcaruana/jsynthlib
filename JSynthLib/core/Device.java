@@ -128,8 +128,8 @@ public abstract class Device /*implements Serializable, Storable*/ {
     /** Called after Device(Preferences prefs) is called. */
     protected void setup() {
 	// set default MIDI in/out port
-	setInPort(prefs.getInt("inPort", PatchEdit.appConfig.getInitPortIn()));
-	setPort(prefs.getInt("port", PatchEdit.appConfig.getInitPortOut()));
+	setInPort(prefs.getInt("inPort", AppConfig.getInitPortIn()));
+	setPort(prefs.getInt("port", AppConfig.getInitPortOut()));
     }
 
     public Preferences getPreferences() {
@@ -256,7 +256,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @return Value of property port.
      */
     public int getPort () {
-	return prefs.getInt("port", PatchEdit.appConfig.getInitPortOut());
+	return prefs.getInt("port", AppConfig.getInitPortOut());
     }
 
     /**
@@ -298,7 +298,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @return Value of property inPort.
      */
     public int getInPort () {
-	return prefs.getInt("inPort", PatchEdit.appConfig.getInitPortIn());
+	return prefs.getInt("inPort", AppConfig.getInitPortIn());
     }
 
     /**
@@ -365,7 +365,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
 
     /** getter for device number. */
     int getDeviceNum() {
-	return PatchEdit.appConfig.getDeviceIndex(this);
+	return AppConfig.getDeviceIndex(this);
     }
 
     /**

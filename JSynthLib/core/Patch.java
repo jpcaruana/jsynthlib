@@ -164,7 +164,7 @@ public class Patch implements IPatch {
         //StringBuffer driverString = new StringBuffer();
         String patchString = getPatchHeader();
 
-        for (int idev = 0; idev < PatchEdit.appConfig.deviceCount(); idev++) {
+        for (int idev = 0; idev < AppConfig.deviceCount(); idev++) {
             // Outer Loop, iterating over all installed devices
             Device dev = AppConfig.getDevice(idev);
             for (int idrv = 0; idrv < dev.driverCount(); idrv++) {

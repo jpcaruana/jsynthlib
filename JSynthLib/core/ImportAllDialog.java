@@ -236,7 +236,7 @@ public class ImportAllDialog extends JDialog
         final String[] columnNames =
         {"Include?",
          "Driver"};
-         Boolean [] includeDevice = new Boolean[PatchEdit.appConfig.deviceCount ()];
+         Boolean [] includeDevice = new Boolean[AppConfig.deviceCount ()];
 
          public ImportModel ()
          {super(); for (int i=0;i<includeDevice.length;i++) includeDevice[i]=new Boolean (true);}
@@ -246,7 +246,7 @@ public class ImportAllDialog extends JDialog
          }
          public int getRowCount ()
          {
-             return PatchEdit.appConfig.deviceCount ();
+             return AppConfig.deviceCount ();
          }
 
          public String getColumnName (int col)

@@ -19,8 +19,8 @@ class DirectoryConfigPanel extends ConfigPanel {
     private final JTextField t1 = new JTextField(null, 20);
     private final JTextField t2 = new JTextField(null, 20);
 
-    DirectoryConfigPanel(PrefsDialog parent, AppConfig appConfig) {
-	super(parent, appConfig);
+    DirectoryConfigPanel(PrefsDialog parent) {
+	super(parent);
 	setLayout(new ColumnLayout());
 
 	t1.setEditable(false);
@@ -75,13 +75,13 @@ class DirectoryConfigPanel extends ConfigPanel {
     }
 
     void init() {
-	t1.setText(appConfig.getLibPath());
-	t2.setText(appConfig.getSysexPath());
+	t1.setText(AppConfig.getLibPath());
+	t2.setText(AppConfig.getSysexPath());
     }
 
     void commitSettings() {
-	appConfig.setLibPath(t1.getText());
-	appConfig.setSysexPath(t2.getText());
+	AppConfig.setLibPath(t1.getText());
+	AppConfig.setSysexPath(t2.getText());
 	setModified(false);
     }
 }

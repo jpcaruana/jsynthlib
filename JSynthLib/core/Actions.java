@@ -570,7 +570,7 @@ final class Actions {
 				".patchlib");
         fc2.addChoosableFileFilter(type1);
         fc2.setFileFilter(type1);
-        fc2.setCurrentDirectory(new File (PatchEdit.appConfig.getLibPath()));
+        fc2.setCurrentDirectory(new File (AppConfig.getLibPath()));
         if (fc2.showSaveDialog(PatchEdit.getInstance())
 	        != JFileChooser.APPROVE_OPTION)
             return null;
@@ -847,7 +847,7 @@ final class Actions {
             FileFilter type1 = new ExtensionFilter("Sysex Files (*.syx)", ".syx");
             fc3.addChoosableFileFilter(type1);
             fc3.setFileFilter(type1);
-            fc3.setCurrentDirectory(new File (PatchEdit.appConfig.getSysexPath()));
+            fc3.setCurrentDirectory(new File (AppConfig.getSysexPath()));
             if (fc3.showSaveDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
 		return;
 	    File file = fc3.getSelectedFile();
@@ -928,7 +928,7 @@ final class Actions {
             fc2.addChoosableFileFilter(type1);
             fc2.addChoosableFileFilter(type2);
             fc2.setFileFilter(type1);
-            fc2.setCurrentDirectory(new File(PatchEdit.appConfig.getSysexPath()));
+            fc2.setCurrentDirectory(new File(AppConfig.getSysexPath()));
             if (fc2.showOpenDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
 		return;
 	    File file = fc2.getSelectedFile();
@@ -989,7 +989,7 @@ final class Actions {
 						   new String[] {".patchlib", ".scenelib"});
             fc.addChoosableFileFilter(type1);
             fc.setFileFilter(type1);
-            fc.setCurrentDirectory(new File(PatchEdit.appConfig.getLibPath()));
+            fc.setCurrentDirectory(new File(AppConfig.getLibPath()));
             if (fc.showOpenDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
 		return;
 	    File file = fc.getSelectedFile();
@@ -1094,8 +1094,8 @@ final class Actions {
             try {
 		CompatibleFileDialog fc = new CompatibleFileDialog();
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		if (PatchEdit.appConfig.getLibPath() != null)
-		    fc.setSelectedFile(new File(PatchEdit.appConfig.getLibPath()));
+		if (AppConfig.getLibPath() != null)
+		    fc.setSelectedFile(new File(AppConfig.getLibPath()));
 		if (fc.showDialog(PatchEdit.getInstance(),
 				  "Choose Import All Directory") != JFileChooser.APPROVE_OPTION)
 		    return;

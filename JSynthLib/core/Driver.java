@@ -646,7 +646,7 @@ public class Driver implements ISingleDriver {
      * Currently the MIDI sequencer support isn't implemented!
      */
     protected void playPatch() {
-	if (PatchEdit.appConfig.getSequencerEnable()) playSequence();
+	if (AppConfig.getSequencerEnable()) playSequence();
 	else playNote();
     }
 
@@ -656,14 +656,14 @@ public class Driver implements ISingleDriver {
 	    Thread.sleep(100);
 	    ShortMessage msg = new ShortMessage();
 	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
-			   PatchEdit.appConfig.getNote(),
-			   PatchEdit.appConfig.getVelocity());
+			   AppConfig.getNote(),
+			   AppConfig.getVelocity());
 	    send(msg);
 
-	    Thread.sleep(PatchEdit.appConfig.getDelay());
+	    Thread.sleep(AppConfig.getDelay());
 
 	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
-			   PatchEdit.appConfig.getNote(),
+			   AppConfig.getNote(),
 			   0);	// expecting running status
 	    send(msg);
 	} catch (Exception e) {

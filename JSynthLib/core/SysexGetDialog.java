@@ -67,7 +67,7 @@ public class SysexGetDialog extends JDialog {
     // First Populate the Device/Driver List with all Device/Driver
     // combinations except converters
     // skip 0 (Generic Device)
-    for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++) {
+    for (int i=1; i < AppConfig.deviceCount(); i++) {
       Device device=AppConfig.getDevice(i);
       for (int j=0; j < device.driverCount(); j++) {
 	IDriver driver = device.getDriver(j);
@@ -176,7 +176,7 @@ public class SysexGetDialog extends JDialog {
       {
       testforDriver:
 	{
-	  for (int i = 0; i < PatchEdit.appConfig.deviceCount(); i++)
+	  for (int i = 0; i < AppConfig.deviceCount(); i++)
 	  {
 	    // first check the requested device.
 	    // then starting index '1'. (index 0 is 'generic driver')

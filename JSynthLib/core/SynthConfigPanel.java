@@ -44,8 +44,8 @@ class SynthConfigPanel extends ConfigPanel {
     private static final int MIDI_CHANNEL   = 4;
     private static final int MIDI_DEVICE_ID = 5;
 
-    SynthConfigPanel(PrefsDialog parent, AppConfig appConfig) {
-        super(parent, appConfig);
+    SynthConfigPanel(PrefsDialog parent) {
+        super(parent);
 	setLayout(new ColumnLayout());
 
 	// create synth driver table
@@ -137,7 +137,7 @@ class SynthConfigPanel extends ConfigPanel {
 	    (null, "Are you sure?", "Remove Device?",
 	     JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 	    return;
-	appConfig.removeDevice(table.getSelectedRow());
+	AppConfig.removeDevice(table.getSelectedRow());
 	revalidateLibraries();
 	((TableModel) table.getModel()).fireTableDataChanged();
 	table.repaint();
@@ -203,20 +203,20 @@ class SynthConfigPanel extends ConfigPanel {
 
     // ConfigPanel interface methods
     void init() {
-	multiMIDI = appConfig.getMultiMIDI();
+	multiMIDI = AppConfig.getMultiMIDI();
 	cbxMMI.setSelected(multiMIDI);
-	cbxMMI.setEnabled(appConfig.getMidiEnable());
+	cbxMMI.setEnabled(AppConfig.getMidiEnable());
 	//table.setRowSelectionInterval(0, 0); // why this does not work? Hiroo
 	((TableModel) table.getModel()).fireTableDataChanged();
     }
 
     void commitSettings() {
-	appConfig.setMultiMIDI(multiMIDI);
+	AppConfig.setMultiMIDI(multiMIDI);
  	((TableModel) table.getModel()).fireTableDataChanged();
 	if (!multiMIDI) {
-	    int out = appConfig.getInitPortOut();
-	    int in = appConfig.getInitPortIn();
-	    for (int i = 0; i < appConfig.deviceCount(); i++) {
+	    int out = AppConfig.getInitPortOut();
+	    int in = AppConfig.getInitPortIn();
+	    for (int i = 0; i < AppConfig.deviceCount(); i++) {
 		AppConfig.getDevice(i).setPort(out);
 		AppConfig.getDevice(i).setInPort(in);
 	    }
@@ -245,7 +245,7 @@ class SynthConfigPanel extends ConfigPanel {
 	    return columnNames[col];
 	}
 	public int getRowCount() {
-	    return appConfig.deviceCount();
+	    return AppConfig.deviceCount();
 	}
 	public Class getColumnClass(int c) {
 	    return getValueAt(0, c).getClass();
@@ -262,7 +262,7 @@ class SynthConfigPanel extends ConfigPanel {
 	    case MIDI_IN:
 		if (MidiUtil.isInputAvailable()) {
 		    int port = multiMIDI ?
-			myDevice.getInPort() : appConfig.getInitPortIn();
+			myDevice.getInPort() : AppConfig.getInitPortIn();
 		    return MidiUtil.getInputMidiDeviceInfo(port).getName();
 		} else {
 		    return "not available";
@@ -270,7 +270,7 @@ class SynthConfigPanel extends ConfigPanel {
 	    case MIDI_OUT:
 		if (MidiUtil.isOutputAvailable()) {
 		    int port = multiMIDI ?
-			myDevice.getPort() : appConfig.getInitPortOut();
+			myDevice.getPort() : AppConfig.getInitPortOut();
 		    return MidiUtil.getOutputMidiDeviceInfo(port).getName();
 		} else {
 		    return "not available";

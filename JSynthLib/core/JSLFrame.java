@@ -13,7 +13,7 @@ import java.awt.datatransfer.DataFlavor;
 public class JSLFrame {
     protected JSLFrameProxy proxy;
     private static boolean useIFrames =
-	(PatchEdit.appConfig.getGuiStyle() == 0);
+	(AppConfig.getGuiStyle() == 0);
 
     // for JSLJFrame
     private static JFrame lastselection = null;

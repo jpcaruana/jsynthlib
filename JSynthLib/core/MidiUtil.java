@@ -944,7 +944,7 @@ public final class MidiUtil {
 	}
 
 	try {
-	    File myMidiFile = new File(PatchEdit.appConfig.getSequencePath());
+	    File myMidiFile = new File(AppConfig.getSequencePath());
 	    Sequence mySeq = MidiSystem.getSequence(myMidiFile);
 	    sequencer.setSequence(mySeq);
 	} catch (Exception e) {

@@ -22,8 +22,8 @@ class RepositoryConfigPanel extends ConfigPanel {
     private final JTextField t2 = new JTextField(null, 20);
     private final JPasswordField t3 = new JPasswordField(null, 20);
 
-    RepositoryConfigPanel(PrefsDialog parent, AppConfig appConfig) {
-	super(parent, appConfig);
+    RepositoryConfigPanel(PrefsDialog parent) {
+	super(parent);
 	setLayout(new ColumnLayout());
 
 	JLabel ll0 = new JLabel("Before you can upload patches to a repository, You will need to go to there");
@@ -61,15 +61,15 @@ class RepositoryConfigPanel extends ConfigPanel {
     }
 
     void init() {
-	t1.setText(appConfig.getRepositoryURL());
-	t2.setText(appConfig.getRepositoryUser());
-	t3.setText(appConfig.getRepositoryPass());
+	t1.setText(AppConfig.getRepositoryURL());
+	t2.setText(AppConfig.getRepositoryUser());
+	t3.setText(AppConfig.getRepositoryPass());
     }
 
     public void commitSettings() {
-	appConfig.setRepositoryURL(t1.getText());
-	appConfig.setRepositoryUser(t2.getText());
-	appConfig.setRepositoryPass(new String(t3.getPassword()));
+	AppConfig.setRepositoryURL(t1.getText());
+	AppConfig.setRepositoryUser(t2.getText());
+	AppConfig.setRepositoryPass(new String(t3.getPassword()));
 	setModified(false);
     }
 }

@@ -22,8 +22,8 @@ public class GeneralConfigPanel extends ConfigPanel {
 	installedLF = UIManager.getInstalledLookAndFeels();
     }
 
-    public GeneralConfigPanel(PrefsDialog parent, AppConfig appConfig) {
-	super(parent, appConfig);
+    public GeneralConfigPanel(PrefsDialog parent) {
+	super(parent);
 	setLayout(new core.ColumnLayout());
 
 	JLabel l0 = new JLabel("Application Look and Feel:");
@@ -57,18 +57,18 @@ public class GeneralConfigPanel extends ConfigPanel {
     }
 
     void init() {
-	cbLF.setSelectedIndex(appConfig.getLookAndFeel());
-	cbGS.setSelectedIndex(appConfig.getGuiStyle());
+	cbLF.setSelectedIndex(AppConfig.getLookAndFeel());
+	cbGS.setSelectedIndex(AppConfig.getGuiStyle());
     }
 
     void commitSettings() {
-	if (appConfig.getLookAndFeel() != cbLF.getSelectedIndex()
-	    || appConfig.getGuiStyle() != cbGS.getSelectedIndex())
+	if (AppConfig.getLookAndFeel() != cbLF.getSelectedIndex()
+	    || AppConfig.getGuiStyle() != cbGS.getSelectedIndex())
 	    JOptionPane.showMessageDialog
 		(null,
 		 "You must exit and restart the program for your changes to take effect",
 		 "Changing L&F / Platform", JOptionPane.INFORMATION_MESSAGE);
-	appConfig.setLookAndFeel(cbLF.getSelectedIndex());
-	appConfig.setGuiStyle(cbGS.getSelectedIndex());
+	AppConfig.setLookAndFeel(cbLF.getSelectedIndex());
+	AppConfig.setGuiStyle(cbGS.getSelectedIndex());
     }
 }

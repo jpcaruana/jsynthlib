@@ -94,7 +94,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
         setSize(600, 400);
         moveToDefaultLocation();
 
-        faderInEnable(PatchEdit.appConfig.getFaderEnable());
+        faderInEnable(AppConfig.getFaderEnable());
 
         scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
@@ -359,7 +359,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     private void faderInEnable(boolean enable) {
         if (enable) {
             // get transmitter
-            trns = MidiUtil.getTransmitter(PatchEdit.appConfig.getFaderPort());
+            trns = MidiUtil.getTransmitter(AppConfig.getFaderPort());
             rcvr = new FaderReceiver();
             trns.setReceiver(rcvr);
         } else {
@@ -401,8 +401,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                 for (int i = 0; i < Constants.NUM_FADERS; i++) {
                     // faderChannel: 0:channel l, ..., 15:channel 16, 16:off
                     // faderController: 0 <= value < 120, 120:off
-                    if ((PatchEdit.appConfig.getFaderChannel(i) == channel)
-                        && (PatchEdit.appConfig.getFaderControl(i) == controller)) {
+                    if ((AppConfig.getFaderChannel(i) == channel)
+                        && (AppConfig.getFaderControl(i) == controller)) {
                         faderMoved(i, msg.getData2());
                         break;
                     }

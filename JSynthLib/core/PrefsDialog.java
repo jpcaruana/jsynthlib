@@ -45,20 +45,20 @@ public class PrefsDialog extends JDialog {
      * @param buttonsAllowed Either {@link #OK OK}, {@link #APPLY
      * APPLY}, and/or {@link #CANCEL CANCEL}.
      */
-    public PrefsDialog(JFrame parent, AppConfig appConfig, int buttonsAllowed) {
+    public PrefsDialog(JFrame parent, int buttonsAllowed) {
         super(parent, "User Preferences", true);
 	this.buttonsAllowed = buttonsAllowed;
 
 	// Add the configuration panels
 	configpanels = new Vector();
-        addPanel(new GeneralConfigPanel(this, appConfig));
-	addPanel(new DirectoryConfigPanel(this, appConfig));
-	addPanel(new MidiConfigPanel(this, appConfig));
+        addPanel(new GeneralConfigPanel(this));
+	addPanel(new DirectoryConfigPanel(this));
+	addPanel(new MidiConfigPanel(this));
 	// FaderBoxConfigPanel() have to be called after MidiIn is initialized.
-	addPanel(new FaderBoxConfigPanel(this, appConfig));
-	addPanel(new SynthConfigPanel(this, appConfig));
-	addPanel(new NoteChooserConfigPanel(this, appConfig));
-	addPanel(new RepositoryConfigPanel(this, appConfig));
+	addPanel(new FaderBoxConfigPanel(this));
+	addPanel(new SynthConfigPanel(this));
+	addPanel(new NoteChooserConfigPanel(this));
+	addPanel(new RepositoryConfigPanel(this));
 
 	init();
     }
@@ -68,8 +68,8 @@ public class PrefsDialog extends JDialog {
      * and {@link #CANCEL CANCEL} button are enabled.
      * @param parent the parent JFrame
      */
-    public PrefsDialog(JFrame parent, AppConfig appConfig) {
-	this(parent, appConfig, OK | CANCEL | APPLY);
+    public PrefsDialog(JFrame parent) {
+	this(parent, OK | CANCEL | APPLY);
     }
 
     /**

@@ -29,8 +29,8 @@ class FaderBoxConfigPanel extends ConfigPanel {
     private int[] control = new int[Constants.NUM_FADERS];
     private int[] channel = new int[Constants.NUM_FADERS];
 
-    FaderBoxConfigPanel(PrefsDialog parent, AppConfig appConfig) {
-	super(parent, appConfig);
+    FaderBoxConfigPanel(PrefsDialog parent) {
+	super(parent);
 	setLayout(new GridBagLayout());
 	GridBagConstraints gbc = new GridBagConstraints();
 
@@ -173,34 +173,34 @@ class FaderBoxConfigPanel extends ConfigPanel {
 	try {
 	    if (MidiUtil.isInputAvailable())
 		// index 0 may be unavailable
-		cbFdr.setSelectedIndex(appConfig.getFaderPort());
+		cbFdr.setSelectedIndex(AppConfig.getFaderPort());
 	} catch (IllegalArgumentException e) {
 	    cbFdr.setSelectedIndex(0);
 	}
 
 	// copy into the temporary array.
 	for (int i = 0; i < Constants.NUM_FADERS; i++) {
-	    control[i] = appConfig.getFaderControl(i);
-	    channel[i] = appConfig.getFaderChannel(i);
+	    control[i] = AppConfig.getFaderControl(i);
+	    channel[i] = AppConfig.getFaderChannel(i);
 	}
 	lstSl.setSelectedIndex(slider);
 	cbControl.setSelectedIndex(control[slider]);
 	cbChannel.setSelectedIndex(channel[slider]);
 
-	enabledBox.setSelected(appConfig.getFaderEnable());
+	enabledBox.setSelected(AppConfig.getFaderEnable());
 	enabledBox.setEnabled(MidiUtil.isInputAvailable()
-			      && appConfig.getMidiEnable());
+			      && AppConfig.getMidiEnable());
 
 	setContainerEnabled(faderPanel,
 			    enabledBox.isEnabled() && enabledBox.isSelected());
     }
 
     void commitSettings() {
-	appConfig.setFaderEnable(enabledBox.isSelected());
-	appConfig.setFaderPort(cbFdr.getSelectedIndex());
+	AppConfig.setFaderEnable(enabledBox.isSelected());
+	AppConfig.setFaderPort(cbFdr.getSelectedIndex());
 	for (int i = 0; i < Constants.NUM_FADERS; i++) {
-	    appConfig.setFaderControl(i, control[i]);
-	    appConfig.setFaderChannel(i, channel[i]);
+	    AppConfig.setFaderControl(i, control[i]);
+	    AppConfig.setFaderChannel(i, channel[i]);
 	}
 	setModified(false);
     }

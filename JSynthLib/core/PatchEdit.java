@@ -17,11 +17,9 @@ import javax.swing.JFrame;
 
 public final class PatchEdit  {
     static DevicesConfig devConfig;
-    static AppConfig appConfig;
 
     private static PrefsDialog prefsDialog;
     private static WaitDialog waitDialog;
-
 
     /** Initialize Application: */
     public PatchEdit() {
@@ -34,8 +32,7 @@ public final class PatchEdit  {
 	devConfig = new DevicesConfig();
 
 	// Load config file (JSynthLib.properties).
-	appConfig = new AppConfig();
-        boolean loadPrefsSuccessfull = appConfig.loadPrefs();
+        boolean loadPrefsSuccessfull = AppConfig.loadPrefs();
 
 	// define event actions
 	Actions.createActions();
@@ -55,7 +52,7 @@ public final class PatchEdit  {
 	Actions.createPopupMenu();
 
 	// set up Preference Dialog Window
-	prefsDialog = new PrefsDialog(JSLDesktop.getSelectedWindow(), appConfig);
+	prefsDialog = new PrefsDialog(JSLDesktop.getSelectedWindow());
 
         //Set up a silly little dialog we can pop up for the user to
         //gawk at while we do time consuming work later on.
@@ -63,11 +60,11 @@ public final class PatchEdit  {
 
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music
-	masterInEnable(appConfig.getMasterInEnable());
+	masterInEnable(AppConfig.getMasterInEnable());
     }
 
     static void exit() {
-	appConfig.savePrefs();
+	AppConfig.savePrefs();
 	System.exit(0);
     }
 
@@ -176,10 +173,10 @@ public final class PatchEdit  {
 	    // disable previous master in port if enabled.
 	    masterInEnable(false);
 	    // get transmitter
-	    trns = MidiUtil.getTransmitter(appConfig.getMasterController());
+	    trns = MidiUtil.getTransmitter(AppConfig.getMasterController());
 	    // create output receiver
 	    try {
-		Receiver rcvr = MidiUtil.getReceiver(appConfig.getInitPortOut());
+		Receiver rcvr = MidiUtil.getReceiver(AppConfig.getInitPortOut());
 		rcvr1 = new MasterReceiver(rcvr);
 		trns.setReceiver(rcvr1);
 //		ErrorMsg.reportStatus("masterInEnable.rcvr: " +  rcvr);

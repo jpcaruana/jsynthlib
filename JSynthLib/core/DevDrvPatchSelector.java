@@ -77,7 +77,7 @@ public class DevDrvPatchSelector extends JDialog {
         int nDriver = 0;
 
 
-        for (int i=0; i < PatchEdit.appConfig.deviceCount(); i++) {
+        for (int i=0; i < AppConfig.deviceCount(); i++) {
             Device device = AppConfig.getDevice(i);
             boolean newDevice = true;
             for (int j=0, m=0; j<device.driverCount();j++) {

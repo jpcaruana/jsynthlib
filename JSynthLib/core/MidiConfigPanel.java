@@ -35,8 +35,8 @@ class MidiConfigPanel extends ConfigPanel {
     /** button for loop-back test. */
     private JButton testButton;
 
-    MidiConfigPanel(PrefsDialog parent, AppConfig appConfig) {
-	super(parent, appConfig);
+    MidiConfigPanel(PrefsDialog parent) {
+	super(parent);
 
 	setLayout(new ColumnLayout());
 
@@ -161,13 +161,13 @@ class MidiConfigPanel extends ConfigPanel {
     }
 
     void init() {
-	cbxEnMidi.setSelected(appConfig.getMidiEnable());
-	cbxEnMC.setSelected(appConfig.getMasterInEnable());
+	cbxEnMidi.setSelected(AppConfig.getMidiEnable());
+	cbxEnMC.setSelected(AppConfig.getMasterInEnable());
 
 	try {
-	    cbOut.setSelectedIndex(PatchEdit.appConfig.getInitPortOut());
-	    cbIn.setSelectedIndex(PatchEdit.appConfig.getInitPortIn());
-	    cbMC.setSelectedIndex(PatchEdit.appConfig.getMasterController());
+	    cbOut.setSelectedIndex(AppConfig.getInitPortOut());
+	    cbIn.setSelectedIndex(AppConfig.getInitPortIn());
+	    cbMC.setSelectedIndex(AppConfig.getMasterController());
 	} catch (IllegalArgumentException e) {
 	    ErrorMsg.reportStatus(e);
 	}
@@ -175,7 +175,7 @@ class MidiConfigPanel extends ConfigPanel {
 	// disable MIDI when either MIDI input or MIDI output is unavailable.
 	cbxEnMidi.setEnabled(MidiUtil.isOutputAvailable()
 			     || MidiUtil.isInputAvailable());
-	setEnable(appConfig.getMidiEnable());
+	setEnable(AppConfig.getMidiEnable());
     }
 
     /**
@@ -196,23 +196,23 @@ class MidiConfigPanel extends ConfigPanel {
 
     void commitSettings() {
 	if (cbxEnMidi.isSelected()) {
-	    appConfig.setMidiEnable(true);
-	    appConfig.setMasterController(cbMC.getSelectedIndex());
-	    appConfig.setMasterInEnable(cbxEnMC.isSelected());
+	    AppConfig.setMidiEnable(true);
+	    AppConfig.setMasterController(cbMC.getSelectedIndex());
+	    AppConfig.setMasterInEnable(cbxEnMC.isSelected());
 
 	    int out = cbOut.getSelectedIndex();
 	    int in  = cbIn.getSelectedIndex();
-	    appConfig.setInitPortOut(out);
-	    appConfig.setInitPortIn(in);
-	    if (!appConfig.getMultiMIDI()) {
+	    AppConfig.setInitPortOut(out);
+	    AppConfig.setInitPortIn(in);
+	    if (!AppConfig.getMultiMIDI()) {
 		// change MIDI ports of all Devices
-		for (int i = 0; i < appConfig.deviceCount(); i++) {
+		for (int i = 0; i < AppConfig.deviceCount(); i++) {
 		    AppConfig.getDevice(i).setPort(out);
 		    AppConfig.getDevice(i).setInPort(in);
 		}
 	    }
 	} else {
-	    appConfig.setMidiEnable(false);
+	    AppConfig.setMidiEnable(false);
 	}
 	setModified(false);
     }

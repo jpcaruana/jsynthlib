@@ -21,7 +21,6 @@ abstract class ConfigPanel extends JPanel {
     /** The root of the namespace in appConfig that the settings go under. */
     protected String nameSpace;
 
-    protected AppConfig appConfig;
     private PrefsDialog parent;
 
     /**
@@ -39,9 +38,8 @@ abstract class ConfigPanel extends JPanel {
 
      * @param appConfig The application's configuration setting storage
      */
-    ConfigPanel(PrefsDialog parent, AppConfig appConfig) {
+    ConfigPanel(PrefsDialog parent) {
 	this.parent = parent;
-	this.appConfig = appConfig;
     }
 
     /**
@@ -63,7 +61,7 @@ abstract class ConfigPanel extends JPanel {
      */
     ConfigPanel(PrefsDialog parent, AppConfig appConfig,
 		String panelName, String nameSpace) {
-	this(parent, appConfig);
+	this(parent);
 	// Set these AFTER calling this(), since the default values
 	// are set there... and we need to replace those.
 	this.panelName = panelName;
@@ -113,7 +111,7 @@ abstract class ConfigPanel extends JPanel {
      */
     final void showInFrame(JFrame parent) { // not used now
 	// Make a new, empty prefsDialog just for us.
-	PrefsDialog myOwnDialog = new PrefsDialog(parent, appConfig);
+	PrefsDialog myOwnDialog = new PrefsDialog(parent);
 	myOwnDialog.setTitle(getPanelName());
 	myOwnDialog.add(this);
 	myOwnDialog.show();

@@ -53,13 +53,13 @@ public class UploadPatchDialog extends JDialog {
 
 	JLabel l4 = new JLabel("Repository:");
 	t4=new JTextField(20);
-	t4.setText(PatchEdit.appConfig.getRepositoryURL());
+	t4.setText(AppConfig.getRepositoryURL());
 	JLabel l5 = new JLabel("Contributor: ");
 	t5=new JTextField(20);
-	t5.setText(PatchEdit.appConfig.getRepositoryUser());
+	t5.setText(AppConfig.getRepositoryUser());
 	JLabel l6 = new JLabel("Contributor Password: ");
 	t6=new JPasswordField(20);
-	t6.setText(PatchEdit.appConfig.getRepositoryPass());
+	t6.setText(AppConfig.getRepositoryPass());
 
 	JLabel l3 = new JLabel("Description: ");
 	t3 = new JTextArea(4,50);
