@@ -26,7 +26,7 @@ public class Scene extends java.lang.Object implements Serializable, Transferabl
     
     /** Creates a new instance of Scene */
     public Scene() {
-        patch=new Patch();
+        patch=new Patch(new byte[1024], (Driver) null);
         bankNumber=0;
         patchNumber=0;
         comment=new StringBuffer();
