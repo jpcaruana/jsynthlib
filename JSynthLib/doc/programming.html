@@ -28,6 +28,7 @@
 <font face="Verdana,arial,helvetica" size="-1">
 
 <h1>JSynthLib Programmer's Guide</h1>
+<p>Last modified:  $Date$</p>
 
 Go to <a href="documentation.html">JSynthLib User's Guide</a>.
 
@@ -124,8 +125,8 @@ Add javadoc on important members (methods and fields).
 <var>public</var> and </var>protected</var> member must be documented.
 
 <h3>I.c. Proper Use of Access Control Modifier</h3>
-This is important for codes under "core/". I believe this will help programmers best.
-It would be much easier for me to write my driver if methods and fields were used properly.
+This is important for codes under "core/".
+It would be much easier for programmers to write a driver if the methods and the fields were used properly.
 
 I see many easy use of public or package (default) modifier in files under "core/".
 If private or protected is used properly I don't have to do grep all files to see how a method or a field is used.<p>
@@ -1250,9 +1251,9 @@ called.
 For indentation level, any level is OK.  But we need a standard to
 work in a team.  We choose the coding style used in "Programming
 Language Java" out of respect for the creators of Java language as
-the standard.  Therefor we recommend the indentation level of 4.<p>
+the standard.  Therefore we recommend the indentation level of 4.<p>
 
-The reason for displayed tab width of 8 is compatibility with the
+The reason for a displayed tab width of 8 is compatibility with the
 following essential tools:
 
 <ul>
@@ -1261,7 +1262,7 @@ following essential tools:
   <li>... Unix command line tools like cat, less, tail, ...</li>
 </ul>
 
-We believe most of tool can support the setting above.
+Most tools support the settings above.
 An open source IDE that supports these settings is e.g. <a href="#setupEclipse">Eclipse</a>.
 Text editors that also support it are e.g. <a href="http://www.jedit.org/">jEdit</a> and
 <a href="http://scintilla.sourceforge.net/SciTE.html">SciTE</a> which are both open source and availabe for Linux, Mac OS X and Windows like Eclipse.
@@ -1279,14 +1280,14 @@ Here is the setting I'm using for Eclipse 3.0.
 <li> On <kbd>Project->Java Build Path->Library</kbd> tab, add
 <kbd>groovy.jar</kbd> and <kbd>asm.jar</kbd>.
 
-<li> If you installed the Javadoc of JDK,
+<li> For using the Javadoc generation go to
 <kbd>Preferences->Java->Installed JREs->Edit->Javadoc URL</kbd> set to
-the directory where you installed the Javadoc. You can see short
-description by moving mouse cursor on a class or a member.  You can
-see full documentation by hitting <kbd>Shift-F2</kbd> after selecting
+the directory where you installed the Javadoc. A short
+description is shown when moving the mouse cursor on a class or a member.  You can
+see the full documentation by hitting <kbd>Shift-F2</kbd> after selecting
 a class or member.
 
-<li> Don't forget to generate javadoc of JSynthlib by
+<li> Don't forget to generate the Javadocs for JSynthlib with
 <kbd>Project->Generate Javadoc...</kbd>.
 
 </ol>
