@@ -65,9 +65,11 @@ public class Patch extends Object implements Serializable,Transferable
         StringBuffer patchString= new StringBuffer ("F0");
         for (int i=1;i<16;i++)
         {
-            if (sysex[i]<16) patchString.append ("0");
-            patchString.append (intg.toHexString (sysex[i]));
-        }
+            if (sysex.length>i) {
+                if (sysex[i]<16) 
+                    patchString.append ("0");
+               patchString.append (intg.toHexString (sysex[i]&0xff));
+            }
         StringBuffer driverString=new StringBuffer ();
         for ( int i =0;i<PatchEdit.deviceList.size (); i++)
         {
@@ -85,6 +87,9 @@ public class Patch extends Object implements Serializable,Transferable
                 }
             }
         }
+        // Unkown patch, try to guess at least the manufacturer
+        comment=new StringBuffer("Probably a "+LookupManufacturer.get(sysex[1],sysex[2],sysex[3])+" Patch");
+        
     }
     
     public java.lang.Object getTransferData (java.awt.datatransfer.DataFlavor p1) throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException
@@ -95,7 +100,10 @@ public class Patch extends Object implements Serializable,Transferable
     public boolean isDataFlavorSupported (final java.awt.datatransfer.DataFlavor p1)
     {
         //      System.out.println ("isDataFlavorSupported "+driverNum);
-        if( p1.equals (new DataFlavor (((Device)PatchEdit.deviceList.get (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.deviceList.get (driverNum)).driverList.get (driverNum).toString ())))
+        if( p1.equals (
+        new DataFlavor (getDriver().getClass (),getDriver().toString ())
+        //new DataFlavor (((Device)PatchEdit.deviceList.get (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.deviceList.get (driverNum)).driverList.get (driverNum).toString ())
+        ) )
         {
             return true;
         }
@@ -106,7 +114,8 @@ public class Patch extends Object implements Serializable,Transferable
     {
         //      System.out.println ("getTransferDataFlavors "+driverNum);
         DataFlavor[] df=new DataFlavor[1];
-        df[0]= new DataFlavor (((Device)PatchEdit.deviceList.get (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.deviceList.get (driverNum)).driverList.get (driverNum).toString ());
+//        df[0]= new DataFlavor (((Device)PatchEdit.deviceList.get (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.deviceList.get (driverNum)).driverList.get (driverNum).toString ());
+          df[0]= new DataFlavor (getDriver().getClass (),getDriver().toString ());
         
         return df;
     }

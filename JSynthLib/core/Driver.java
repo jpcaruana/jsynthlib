@@ -122,6 +122,7 @@ public class Driver extends Object implements Serializable
         if ((patchSize!=p.sysex.length) && (patchSize!=0)) return false;
         StringBuffer driverString=new StringBuffer (sysexID);
         StringBuffer compareString=new StringBuffer ();
+        if (patchString.length()<driverString.length()) return false;
         for (int j=0, i=0;j<driverString.length ();j++,i++)
         {
             switch (driverString.charAt (j))
