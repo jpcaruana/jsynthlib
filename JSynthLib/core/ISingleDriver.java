@@ -9,7 +9,7 @@ public interface ISingleDriver extends IPatchDriver {
      * @param patch a <code>Patch</code> value, which isn't used! !!!FIXIT!!!
      * @Xdeprecated Use playPatch().
      */
-    public abstract void playPatch(IPatch patch);
+    void playPatch(IPatch patch);
 
     /**
      * Sends a patch to the synth's edit buffer.<p>
@@ -18,5 +18,10 @@ public interface ISingleDriver extends IPatchDriver {
      * be sent to the user (aka if the particular synth does not have
      * a edit buffer or it is not MIDI accessable).
      */
-    public abstract void sendPatch(IPatch patch);
+    void sendPatch(IPatch patch);
+
+    /**
+     * Returns the maximum size of patch name.
+     */
+    int getPatchNameSize();
 }

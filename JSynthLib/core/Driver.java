@@ -372,6 +372,9 @@ public class Driver implements ISingleDriver {
         calculateChecksum(p);	// Is this required here?
     }
 
+    public int getPatchNameSize() {
+        return patchNameSize;
+    }
     /**
      * Caluculate check sum of a <code>Patch</code>.
      * <p>

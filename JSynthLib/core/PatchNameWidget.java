@@ -20,8 +20,7 @@ public class PatchNameWidget extends SysexWidget {
      * @param patch a <code>Patch</code>, which is edited.
      */
     public PatchNameWidget(String label, IPatch patch) {
-        // FIXME define ISingleDriver.getPatchNameSize()
-        this(label, patch, ((Driver)patch.getDriver()).patchNameSize);
+        this(label, patch, ((ISingleDriver) patch.getDriver()).getPatchNameSize());
     }
 
     /**
