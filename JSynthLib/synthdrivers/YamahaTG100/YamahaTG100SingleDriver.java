@@ -181,9 +181,9 @@ public class YamahaTG100SingleDriver extends Driver {
         sysex[11] = (byte) 0x40;
         sysex[12] = (byte) 0x01;
         sysex[13] = (byte) 0x0F;
-        sysex[14] = (byte) 0x00;
+        sysex[14] = (byte) 0x00; // don't care
         sysex[15] = (byte) 0x00;
-        sysex[16] = (byte) 0x00;
+        sysex[16] = (byte) 0x00; // don't care
         sysex[17] = (byte) 0x00;
         sysex[18] = (byte) 0x3C;
         sysex[19] = (byte) 0x40;
@@ -226,7 +226,7 @@ public class YamahaTG100SingleDriver extends Driver {
         sysex[58] = (byte) 0x3F; // P-EG R2 (Rate 2)
         sysex[59] = (byte) 0x3F; // P-EG R3 (Rate 3)
         sysex[60] = (byte) 0x3F; // P-EG RR (Release Rate)
-        sysex[61] = (byte) 0x40; // P-EG L0 (Level 0)
+        sysex[61] = (byte) 0x40; // P-EG LO (Level Offset???)
         sysex[62] = (byte) 0x40; // P-EG L1 (Level 1)
         sysex[63] = (byte) 0x40; // P-EG L2 (Level 2)
         sysex[64] = (byte) 0x40; // P-EG L3 (Level 3)
@@ -274,6 +274,10 @@ public class YamahaTG100SingleDriver extends Driver {
         Patch p = new Patch(sysex);
         
         return p;
+    }
+    
+    public JSLFrame editPatch(Patch p) {
+	    return new YamahaTG100SingleEditor(p);
     }
 }
 
