@@ -47,7 +47,9 @@ public class SynthTableModel extends AbstractTableModel {
 		    + " " + myDevice.getModelName());
 	case MIDI_IN:
 	    if (PatchEdit.newMidiAPI) {
-		return MidiUtil.getInputMidiDeviceInfo(myDevice.getInPort()).getName();
+		return MidiUtil.isInputAvailable()
+		    ? MidiUtil.getInputMidiDeviceInfo(myDevice.getInPort()).getName()
+		    : "not available";
 	    } else {
 		try {
 		    return (myDevice.getInPort ()
@@ -59,7 +61,9 @@ public class SynthTableModel extends AbstractTableModel {
 	    }
 	case MIDI_OUT:
 	    if (PatchEdit.newMidiAPI) {
-		return MidiUtil.getOutputMidiDeviceInfo(myDevice.getPort()).getName();
+		return MidiUtil.isOutputAvailable()
+		    ? MidiUtil.getOutputMidiDeviceInfo(myDevice.getPort()).getName()
+		    : "not available";
 	    } else {
 		try {
 		    return (myDevice.getPort ()

@@ -229,7 +229,8 @@ public class MidiConfigPanel extends ConfigPanel {
     public void init() {
 	if (!PatchEdit.newMidiAPI)
 	    setComboBox(cbDriver, PatchEdit.appConfig.getMidiPlatform());
-	if (MidiUtil.unavailable()) {
+	if (!MidiUtil.isOutputAvailable() && !MidiUtil.isInputAvailable()) {
+	    appConfig.setMidiEnable(false);
 	    cbxEnMidi.setSelected(false);
 	    cbxEnMidi.setEnabled(false);
 	} else {
@@ -245,6 +246,17 @@ public class MidiConfigPanel extends ConfigPanel {
 	} else {
 	    resetPortComboBoxes();
 	}
+
+	// master controller requires both MIDI input and output
+	if (!MidiUtil.isOutputAvailable() || !MidiUtil.isInputAvailable()) {
+	    appConfig.setMasterInEnable(false);
+	    cbxEnMC.setEnabled(false);
+	    cbxEnMC.setSelected(false);
+	    cbMC.setEnabled(false);
+	}
+
+	cbOut.setEnabled(MidiUtil.isOutputAvailable());
+	cbIn.setEnabled(MidiUtil.isInputAvailable());
 	//midiDriverSelected((MidiWrapper) cbDriver.getSelectedItem());
     }
 

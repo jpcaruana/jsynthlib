@@ -154,16 +154,18 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
      */
     public void init() {
 	try {
-	    cb4.setSelectedIndex (appConfig.getFaderPort());
+	    if (MidiUtil.isInputAvailable())
+		cb4.setSelectedIndex (appConfig.getFaderPort());
+	} catch (IllegalArgumentException e) {
+	    cb4.setSelectedIndex(0);
+	    appConfig.setFaderPort(0);
 	} catch (Exception e) {
-	    core.ErrorMsg.reportError ("Warning",
-				       "Values for MidiPorts are out of range!\n"
-				       + "Please fix this in the "
-				       + getPanelName() + " configuration panel.", e);
+	    ErrorMsg.reportStatus(e);
 	}
 	cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
 	cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
-	enabledBox.setSelected (appConfig.getFaderEnable());
+	enabledBox.setSelected(MidiUtil.isInputAvailable() && appConfig.getFaderEnable());
+	enabledBox.setEnabled(MidiUtil.isInputAvailable());
 	faderPortWas = appConfig.getFaderPort();
 	resetComboBoxes();
     }
