@@ -93,7 +93,7 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
     }
     
     public void requestPatchDump(int bankNum, int patchNum) {
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel, patchNum+0x30);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,0);
         
         SysexHandler.send(port, sysex);
     }

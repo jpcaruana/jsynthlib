@@ -126,7 +126,11 @@ public class KorgWavestationSinglePatchDriver extends Driver {
     }
     
     public void requestPatchDump(int bankNum, int patchNum) {
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel, patchNum+0x30);
+          NameValue nv[]=new NameValue[2];
+        nv[0]=new NameValue("bankNum",bankNum);
+        nv[1]=new NameValue("patchNum",patchNum);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        //byte[] sysex = sysexRequestDump.toByteArray((byte)channel, patchNum+0x30);
         
         SysexHandler.send(port, sysex);
     }

@@ -70,11 +70,13 @@ public class Patch extends Object implements Serializable,Transferable
                     patchString.append ("0");
                patchString.append (intg.toHexString (sysex[i]&0xff));
             }
+        }
         StringBuffer driverString=new StringBuffer ();
         for ( int i =0;i<PatchEdit.deviceList.size (); i++)
         {
             // Outer Loop, iterating over all installed devices
             dev=(Device)PatchEdit.deviceList.get (i);
+
             for (int j=0;j<dev.driverList.size ();j++)
             {
                 // Inner Loop, iterating over all Drivers of a device
@@ -88,7 +90,7 @@ public class Patch extends Object implements Serializable,Transferable
             }
         }
         // Unkown patch, try to guess at least the manufacturer
-        comment=new StringBuffer("Probably a "+LookupManufacturer.get(sysex[1],sysex[2],sysex[3])+" Patch");
+        comment=new StringBuffer("Probably a "+LookupManufacturer.get(sysex[1],sysex[2],sysex[3])+" Patch, Size: "+sysex.length);
         
     }
     
@@ -112,7 +114,7 @@ public class Patch extends Object implements Serializable,Transferable
     
     public java.awt.datatransfer.DataFlavor[] getTransferDataFlavors ()
     {
-        //      System.out.println ("getTransferDataFlavors "+driverNum);
+        // System.out.println ("getTransferDataFlavors deviceNum"+deviceNum+" driverNum: "+driverNum);
         DataFlavor[] df=new DataFlavor[1];
 //        df[0]= new DataFlavor (((Device)PatchEdit.deviceList.get (deviceNum)).driverList.get (driverNum).getClass (),((Device)PatchEdit.deviceList.get (driverNum)).driverList.get (driverNum).toString ());
           df[0]= new DataFlavor (getDriver().getClass (),getDriver().toString ());

@@ -9,8 +9,8 @@ package synthdrivers.KawaiK4;
 import core.*;
 /**
  *
- * @author  Administrator
- * @version
+ * @author  Gerrit Gehnen
+ * @version $Id$
  */
 public class K4Device extends Device
 {
