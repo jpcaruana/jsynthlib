@@ -85,6 +85,12 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 	* not assured that the GUI's are not set to a state that
 	* does NOT match the internal data (in cases where the user
 	* changes some stuff and then hits "Cancel".
+	*
+	* NOTE:On the current implementation the description above is
+	* wrong.  This method is called only initialization time of
+	* JSynthLib.  I think we need another method which is called
+	* every time a dialog box is opened.  show() may be
+	* used. -- Mar.06, 2004 Hiroo
 	*/
 	public abstract void init();
 	
@@ -112,7 +118,7 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 	* be in the future.
 	* @deprecated
 	*/
-	public final void showInFrame(JFrame parent) {
+	public final void showInFrame(JFrame parent) { // not used now
 		// Make a new, empty prefsDialog just for us.
 		PrefsDialog myOwnDialog = new PrefsDialog(parent);
 		myOwnDialog.setTitle(getPanelName());
@@ -145,7 +151,7 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 	 * it can trigger a repack of the window that it's in. - emenaker 2003.03.19
 	 *
 	 */
-	protected void repackContainer() {
+	protected void repackContainer() { // now called by MidiConfigPanel.initNewMidiDriver
 		java.awt.Container cont = getParent();
 		// As long as we keep finding parents that aren't a window....
 		while(cont != null && ! (cont instanceof java.awt.Window)) {
@@ -159,3 +165,4 @@ public abstract class ConfigPanel extends javax.swing.JPanel {
 		}
 	}
 }
+//(setq c-basic-offset 8)
