@@ -321,7 +321,8 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		}
 
 		/**
-		 * make a MidiMessage object and add it to input list.
+		 * convert a MIDI byte stream into MidiMessage objects
+		 * and add them to input list, <code>list</code>.
 		 *
 		 * @author Hiroo Hayashi
 		 * @see "MIDI 1.0 Detailed Specification, Page A-3"
@@ -346,6 +347,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			    list.add(msg);
 			} else {
 			    thirdByte = false;
+			    runningStatus = c;
 			    switch (c) {
 			    case ShortMessage.END_OF_EXCLUSIVE:
 				if (runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
@@ -356,21 +358,18 @@ public class LinuxMidiWrapper extends MidiWrapper {
 				    ((SysexMessage) msg).setMessage(d, size);
 				    list.add(msg);
 				}
-				runningStatus = 0;
 				break;
 			    case ShortMessage.TUNE_REQUEST: // 0xf6
 				// 0 byte message
 				msg = (MidiMessage) new ShortMessage();
 				((ShortMessage) msg).setMessage(c);
 				list.add(msg);
-				runningStatus = c; // 0?
 				break;
 			    case SysexMessage.SYSTEM_EXCLUSIVE:
 				size = 1;
 				// FALLTHROUGH
 			    default:
 				buf[0] = (byte) c;
-				runningStatus = c;
 			    }
 			}
 		    } else {
@@ -383,9 +382,6 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			    list.add(msg);
 			} else {
 			    switch (runningStatus < 0xf0 ? runningStatus & 0xf0 : runningStatus) {
-			    case 0:
-				break; // ignore
-
 			    case ShortMessage.SONG_POSITION_POINTER: // 0xf2
 				// 2 byte message
 				runningStatus = 0;
@@ -428,9 +424,9 @@ public class LinuxMidiWrapper extends MidiWrapper {
 				}
 				break;
 
-			    default: // 0xf4 (undef), 0xf5 (undef), 0xf6 (Tune Request), 0xf7 (EOX)
+			    default: // 0, 0xf4 (undef), 0xf5 (undef), 0xf6 (Tune Request), 0xf7 (EOX)
 				runningStatus = 0;
-				// ignore Status
+				// ignore data
 			    }
 			}
 		    }
