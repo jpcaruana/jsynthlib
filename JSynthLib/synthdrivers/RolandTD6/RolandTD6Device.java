@@ -56,31 +56,25 @@ public final class RolandTD6Device extends Device {
      *
      */
     public RolandTD6Device() {
-	manufacturerName = "Roland";
-	/** The modelName is the fixed name of the model, as stated on the
-	    type plate of the engine. */
-	modelName	= "TD6";
-	/** The synthName is your personal naming of the device. You can
-	    change it in the first column of the Synth-Configuration
-	    dialog. As default they are the same at the creation. */
+	super("Roland", "TD6",
+	      "F07E**0602413F01000000020000f7",
+	      "Driver for TD-6 Roland Percussion Sound Module.\n"
+	      + "This driver is still under development.\n"
+	      + "This driver uses Drum Kit 99 as edit buffer.\n"
+	      + "Set \"Sync Mode\" to \"EXT\" to stop sending Timing Clock system real time message (0xF8).",
+	      "Hiroo Hayashi <hiroo.hayashi@computer.org>");
 	setSynthName("TD6");
-	//synthName	= "TD6";
-	inquiryID	= "F07E**0602413F01000000020000f7";
-	infoText	=
-	    "Driver for TD-6 Roland Percussion Sound Module.\n"
-	    + "This driver is still under development.\n"
-	    + "This driver uses Drum Kit 99 as edit buffer.\n"
-	    + "Set \"Sync Mode\" to \"EXT\" to stop sending Timing Clock system real time message (0xF8).";
-	authors	= "Hiroo Hayashi <hiroo.hayashi@computer.org>";
-	/** default Device ID */
-	channel	= 17;
+// 	setChannel(17);		// default Device ID
+	setDeviceID(17);	// default Device ID
 
-	addDriver(new TD6SingleDriver());
-	addDriver(new TD6BankDriver());
+	// add drivers
+	TD6SingleDriver singleDriver = new TD6SingleDriver();
+	addDriver(singleDriver);
+	addDriver(new TD6BankDriver(singleDriver));
     }
 
     /**
-     * Create configuration pannel.
+     * Create a configuration pannel.
      *
      * @return a <code>JPanel</code> value
      */
@@ -143,7 +137,7 @@ public final class RolandTD6Device extends Device {
      *
      * @return a <code>PadInfo[]</code> value
      */
-    public PadInfo[] activePadInfo() {
+    PadInfo[] activePadInfo() {
 	// count number of active pads
 	int padNum = 0;
 	for (int i = 0; i < padinfo.length; i++) {
@@ -163,6 +157,7 @@ public final class RolandTD6Device extends Device {
 	}
 	return activePad;
     }
+
     /*
     // config variable getter
     public String getPadName(int i) {

@@ -22,7 +22,6 @@
 package synthdrivers.RolandTD6;
 import core.*;
 import java.io.UnsupportedEncodingException;
-import javax.swing.JOptionPane;
 
 /**
  * Bank Driver for Roland Percussion Sound Module TD-6
@@ -31,92 +30,59 @@ import javax.swing.JOptionPane;
  * @version $Id$
  */
 public class TD6BankDriver extends BankDriver {
-    /** reference to single driver. This is not necessary if 'static' is
-	used properly by Driver class. */
-    private TD6SingleDriver singleDriver;
+    /** Size of a single patch */
+    private static final int SINGLE_SIZE = 37 + 55 * 12;
+    /** Number of patches. */
+    private static final int NUM_PATCH = 99;
+    /** Offset of patch name. */
+    private static final int NAME_OFFSET = 10;
+    /** Size of patch name. */
+    private static final int NAME_SIZE = 8;
 
-    public TD6BankDriver() {
-	manufacturer	= "Roland";
-	model		= "TD6";
-	patchType	= "Bank";
-	id		= "TD6";
+    /** Size of patches. */
+    private static final int PATCH_SIZE = SINGLE_SIZE * NUM_PATCH;
+    /** Number of columns for displaying the patches in a table. */
+    private static final int NUM_COLUMNS = 9;
+
+    private final TD6SingleDriver singleDriver;
+
+    public TD6BankDriver(TD6SingleDriver singleDriver) {
+	super("Bank", "Hiroo Hayashi <hiroo.hayashi@computer.org>",
+	      NUM_PATCH, NUM_COLUMNS);
+
+ 	this.singleDriver = singleDriver;
+	patchNameSize	= NAME_SIZE;
+	bankNumbers	= new String[] {"Internal"};
+	patchNumbers	= new String[NUM_PATCH];
+	for (int i = 1; i <= NUM_PATCH; i++)
+	    patchNumbers[i - 1] = (i < 10 ? "0" : "") +  String.valueOf(i);
+	patchSize	= PATCH_SIZE;
+
 	sysexID		= "F041**003F12";
-	//inquiryID	= "F07E**0602413F01000000020000f7";
+	// deviceIDoffset	= 2;	// This cannot work...
+
 	// Request data 1 RQ1 (11H)
 	sysexRequestDump = new SysexHandler
 	    ("F0 41 @@ 00 3F 11 41 7F 00 00 00 00 00 00 40 F7");
 
-	deviceIDoffset	= 2;	// This cannot work...
-
-	bankNumbers		= new String[] {"Internal"};
-	patchNumbers	= new String[99];
-	for (int i = 0; i < 99; i++)
-	    patchNumbers[i] = (i < 9 ? "0" : "") +  String.valueOf(i + 1);
-
-	numPatches	= patchNumbers.length;
-	numColumns	= 5;
 	singleSysexID	= "F041**003F12";
-
-	singleSize	= 37 + 55 * 12;
-	patchSize	= singleSize * numPatches;
-	patchNameSize	= 8;
-	authors		= "Hiroo Hayashi <hiroo.hayashi@computer.org>";
-
-	singleDriver	= new synthdrivers.RolandTD6.TD6SingleDriver();
+	singleSize	= SINGLE_SIZE;
     }
 
-
     /**
-     * Return the offset address of SysEX message (packet) specified by <code>pkt</code>.
+     * Return the offset address of SysEX message (packet) specified
+     * by <code>pkt</code>.
      *
      * @param patchNum patch number
      * @param pkt specifies the SysEX message
      * @return offset address of the message
      */
-    private int getPktOfst(int patchNum, int pkt) {
-	return singleSize * patchNum + ((pkt == 0) ? 0 : 37 + (pkt - 1) * 55);
-    }
-
-    /**
-     * Return the size of SysEX message (packet) specified by <code>pkt</code>.
-     *
-     * @param pkt specifies the SysEX message
-     * @return size of the message
-     */
-    private int getPktSize(int pkt) {
-	return pkt == 0 ? 37 : 55;
-    }
-
-
-    /**
-     * Return the offset address of the check sum in a SysEX message
-     * (packet) specified by <code>pkt</code>.
-     *
-     * @param patchNum patch number
-     * @param pkt specifies the SysEX message
-     * @return offset address of check sum
-     */
-    private int getChkSumOfst(int patchNum, int pkt) {
-	return singleSize * patchNum + ((pkt == 0) ? 37 : 37 + pkt * 55) - 2;
-    }
-
-    /**
-     * Calculate checksum from <code>start</code> to <code>end</code>.
-     *
-     * @param b a byte array
-     * @param start start offset
-     * @param end end offset
-     * @return a <code>byte</code> value
-     */
-    private static byte calcChkSum(byte[] b, int start, int end) {
-	int sum = 0;
-	for (int i = start; i <= end; i++)
-	    sum += b[i];
-	return (byte) (-sum & 0x7f);
+    private static int getPktOfst(int patchNum, int pkt) {
+	return SINGLE_SIZE * patchNum + ((pkt == 0) ? 0 : 37 + (pkt - 1) * 55);
     }
 
     public String getPatchName(Patch p, int patchNum) {
-	int nameOfst = singleSize * patchNum + 10;
+	int nameOfst = SINGLE_SIZE * patchNum + NAME_OFFSET;
 	try {
 	    return new String(p.sysex, nameOfst, patchNameSize, "US-ASCII");
 	} catch (UnsupportedEncodingException e) {
@@ -125,7 +91,7 @@ public class TD6BankDriver extends BankDriver {
     }
 
     public void setPatchName(Patch p, int patchNum, String name) {
-	int nameOfst = singleSize * patchNum + 10;
+	int nameOfst = SINGLE_SIZE * patchNum + NAME_OFFSET;
 	name += "       ";
 	byte[] namebytes = name.getBytes();
 	for (int i = 0; i < patchNameSize; i++)
@@ -133,62 +99,47 @@ public class TD6BankDriver extends BankDriver {
     }
 
     public void calculateChecksum (Patch p) {
-	for (int i = 0; i < numPatches; i++)
-	    for (int j = 0; j < 13; j++) {
-		int chkSumIdx = getChkSumOfst(i, j);
-		p.sysex[chkSumIdx] = calcChkSum(p.sysex,
-						getPktOfst(i, j) + 6, chkSumIdx - 1);
-	    }
+	for (int i = 0; i < NUM_PATCH; i++)
+	    singleDriver.calcChkSum(p.sysex, SINGLE_SIZE * i);
     }
 
     public void putPatch(Patch bank, Patch p, int patchNum) {
-	//ErrorMsg.reportStatus("putPatch : patchNum : " + patchNum);
-	if (!canHoldPatch(p)) {	// This check should be done by superclass.
-	    // This is a callers job. Driver should just throw Exception.
-	    JOptionPane.showMessageDialog(null,
-					  "This type of patch does not fit in to this type of bank.",
-					  "Error", JOptionPane.ERROR_MESSAGE);
-	    return;
-	}
-	for (int i = 0; i < 13; i++) {
-	    int pktOfst = getPktOfst(patchNum, i);
-	    System.arraycopy(p.sysex, 0, bank.sysex, pktOfst, getPktSize(i));
+	System.arraycopy(p.sysex, 0,
+			 bank.sysex, SINGLE_SIZE * patchNum, SINGLE_SIZE);
+	for (int i = 0; i < TD6SingleDriver.NUM_PKT; i++) {
 	    // adjust address field
-	    bank.sysex[pktOfst + 7] = (byte) patchNum;
-	    // calculate check sum
-	    int chkSumIdx = getChkSumOfst(patchNum, i);
-	    bank.sysex[chkSumIdx] = calcChkSum(bank.sysex, pktOfst + 6, chkSumIdx - 1);
+	    bank.sysex[getPktOfst(patchNum, i) + 7] = (byte) patchNum;
 	}
+	singleDriver.calcChkSum(bank.sysex, SINGLE_SIZE * patchNum);
     }
 
     public Patch getPatch(Patch bank, int patchNum) {
-	byte[] sysex = new byte[singleSize];
+	byte[] sysex = new byte[SINGLE_SIZE];
 	System.arraycopy(bank.sysex, getPktOfst(patchNum, 0),
-			 sysex, 0, singleSize);
-	return new Patch(sysex);
+			 sysex, 0, SINGLE_SIZE);
+ 	return new Patch(sysex, singleDriver);
     }
 
     public Patch createNewPatch() {
-	byte[] sysex = new byte[patchSize];
-	Patch bank = new Patch(sysex);
+	byte[] sysex = new byte[PATCH_SIZE];
+	Patch bank = new Patch(sysex, this);
 	Patch p = singleDriver.createNewPatch();
-	for (int i = 0; i < numPatches; i++) {
-	    for (int j = 0; j < 13; j++)
-		p.sysex[getPktOfst(0, j) + 7] = (byte) i; // adjust address field
-	    singleDriver.calculateChecksum(p);
+	for (int i = 0; i < NUM_PATCH; i++)
 	    putPatch(bank, p, i);
-	}
 	return bank;
     }
 
-    // bankNum or patchNum are not used.
+    // bankNum nor patchNum are not used.
     public void requestPatchDump(int bankNum, int patchNum) {
-	sysexRequestDump.send(port, (byte) channel);
+	sysexRequestDump.send(getPort(), (byte) getDeviceID());
     }
 
-    // bankNum or patchNum are not used.
+    // bankNum nor patchNum are not used.
     public void storePatch (Patch p, int bankNum, int patchNum) {
-	for (int i = 0; i < numPatches; i++)
-	    singleDriver.storePatch(p, 0, i);
+	int ofst = 0;
+	for (int i = 0; i < NUM_PATCH; i++, ofst += SINGLE_SIZE) {
+	    singleDriver.storePatch(p.sysex, ofst,
+				    i, getDeviceID(), getPort());
+	}
     }
 }

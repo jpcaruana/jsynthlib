@@ -29,14 +29,12 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 
 /**
- * TD6SingleEditor.java
- *
  * Single Patch Editor for Roland TD-6 Percussion Module.
  *
  * @author <a href="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
  */
-public final class TD6SingleEditor extends PatchEditorFrame {
+final class TD6SingleEditor extends PatchEditorFrame {
     /** selected pad */
     private int pad;
     /** false : head is selected, true : rim is relected */
@@ -47,19 +45,17 @@ public final class TD6SingleEditor extends PatchEditorFrame {
     private TreeWidget treeWidget;
     /** slider number */
     private int snum = 0;
-    
+
     /**
      * Creates a new <code>TD6SingleEditor</code> instance.
      *
      * @param patch a <code>Patch</code> value
      */
-    public TD6SingleEditor(Patch patch) {
+    TD6SingleEditor(Patch patch) {
 	super ("Roland TD-6 Single Editor", patch);
-	//ErrorMsg.reportStatus(patch.sysex);
 
 	// defined here since padList is used by TD6PadModel()
-	padList = ((RolandTD6Device)
-		   PatchEdit.appConfig.getDevice(patch.deviceNum)).activePadInfo();
+	padList = ((RolandTD6Device) patch.getDevice()).activePadInfo();
 	// create treeWidget here since treeWidget.getNode() is called for
 	// pad list initialization.
 	treeWidget = new TreeWidget("Instrument", patch, new Instrument(),
@@ -76,7 +72,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 	gbc.gridx = 0; gbc.gridy = 0;
 	scrollPane.add(topPane, gbc);
 	addWidget(topPane,
-		  new PatchNameWidget(patch, "Drum Kit Name "),
+		  new PatchNameWidget("Drum Kit Name ", patch),
 		  0, 0, 1, 1, 0);
 	/*
 	 * Tabbed Pane
@@ -84,7 +80,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 	JTabbedPane tabbedPane = new JTabbedPane();
 	gbc.gridx = 0; gbc.gridy = 1;
 	scrollPane.add(tabbedPane, gbc);
-	
+
 	/*
 	 * Pad Pane
 	 */
@@ -248,7 +244,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 				      new TD6PadModel(patch, 0xe),
 				      new TD6PadSender(0xe)),
 		  1, 2, 1, 1, snum++);
-	
+
 	/*
 	 * Mixer Pane
 	 */
@@ -325,7 +321,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 					   panText),
 		      0, 0, 1, 1, snum++);
 	}
-	
+
 	/*
 	 * Effect Pane
 	 */
@@ -471,7 +467,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 	pack();
 	show();
     }
-    
+
     /**
      * SysexSender for a selected pad.  Used by widgets in padParamPane.
      */
@@ -599,7 +595,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 	}
     }
 
-    // Only for debugging.
+    /** Only for debugging. */
     public static void main(String[] args) {
 	//TD6SetupSender s = new TD6SetupSender(0xbebeef);
 	//s.generate(0xa8);
@@ -613,23 +609,23 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 	//    k.generate(0x20);		// cause illegal argument exception
 
 	/*
-	  JFrame frame = new JFrame("TD6 Single Editor Test");
-	  //...create the components to go into the frame...
-	  //...stick them in a container named contents...
-	  TD6SingleDriver td6sd = new TD6SingleDriver();
-	  Patch p = td6sd.createNewPatch();
-	  TD6SingleEditor se = new TD6SingleEditor(p);
+	JFrame frame = new JFrame("TD6 Single Editor Test");
+	//...create the components to go into the frame...
+	//...stick them in a container named contents...
+	TD6SingleDriver td6sd = new TD6SingleDriver();
+	Patch p = td6sd.createNewPatch();
+	TD6SingleEditor se = new TD6SingleEditor(p);
 
-	  frame.getContentPane().add(se, BorderLayout.CENTER);
+	frame.getContentPane().add(se, BorderLayout.CENTER);
 
-	  //Finish setting up the frame, and show it.
-	  frame.addWindowListener(new WindowAdapter() {
-	  public void windowClosing(WindowEvent e) {
-	  System.exit(0);
-	  }
-	  });
-	  frame.pack();
-	  frame.setVisible(true);
+	//Finish setting up the frame, and show it.
+	frame.addWindowListener(new WindowAdapter() {
+		public void windowClosing(WindowEvent e) {
+		    System.exit(0);
+		}
+	    });
+	frame.pack();
+	frame.setVisible(true);
 	*/
     }
 }
@@ -727,11 +723,10 @@ class TD6KitModel extends ParamModel { // extended by TD6PadModel
      * @param nibbled true if nibbled (4 byte) data
      */
     TD6KitModel(Patch patch, int param, boolean nibbled) {
-	ofs = getOffset(param);
-
-	this.patch = patch;
+	super(patch, getOffset(param));
 	this.nibbled = nibbled;		// need to check if 1 or 4?
     }
+
     /**
      * Creates a new <code>TD6KitModel</code> instance for 1 byte data.
      *
@@ -749,7 +744,7 @@ class TD6KitModel extends ParamModel { // extended by TD6PadModel
      * @param param offset address in kit paramters.
      * @return an <code>int</code> value
      */
-    protected int getOffset(int param) {
+    static int getOffset(int param) {
 	//    ErrorMsg.reportStatus("TD6KitModel.getoffset(): param =  " + param
 	//			  + "(0x" + Integer.toHexString(param) +")");
 	int base = (param >> 8) & 0xf;
@@ -771,7 +766,7 @@ class TD6KitModel extends ParamModel { // extended by TD6PadModel
 	    patch.sysex[ofs]     = (byte) ((d >> 12) & 0xf);
 	    patch.sysex[ofs + 1] = (byte) ((d >>  8) & 0xf);
 	    patch.sysex[ofs + 2] = (byte) ((d >>  4) & 0xf);
-	    patch.sysex[ofs + 3] = (byte) ( d	     & 0xf);
+	    patch.sysex[ofs + 3] = (byte)  (d	     & 0xf);
 	} else {
 	    patch.sysex[ofs] = (byte) d;
 	}

@@ -31,41 +31,50 @@ import java.io.*;
  * @version $Id$
  */
 public final class TD6SingleDriver extends Driver {
+    /** Size of a single patch */
+    private static final int SINGLE_SIZE = 37 + 55 * 12;
+    /** Number of patches. */
+    private static final int NUM_PATCH = 99;
+    /** Offset of patch name. */
+    private static final int NAME_OFFSET = 10;
+    /** Size of patch name. */
+    private static final int NAME_SIZE = 8;
+
+    /** patch file name for createNewPatch() */
+    private static final String patchFileName = "synthdrivers/RolandTD6/newpatch.syx";
+    /**
+     * Patch must be sent in 13 packets.  data packet for the 1st
+     * packet is 37 byte, and one for others is 55 byte.
+     */
+    private static final int[] PKT_SIZE = {37,
+					   55, 55, 55, 55, 55, 55,
+					   55, 55, 55, 55, 55, 55};
+    /** Number of packets in a single patch. */
+    static final int NUM_PKT = PKT_SIZE.length;
+
     /**
      * Creates a new <code>TD6SingleDriver</code> instance.
      *
      */
     public TD6SingleDriver() {
-	manufacturer	= "Roland";
-	model		= "TD6";
-	patchType	= "Drumkit";
-	id		= "TD6";
+	super("Drumkit", "Hiroo Hayashi <hiroo.hayashi@computer.org>");
+
+	patchNameStart	= NAME_OFFSET;
+	patchNameSize	= NAME_SIZE;
+
+	bankNumbers	= new String[] {"Internal"};
+	patchNumbers	= new String[NUM_PATCH];
+	for (int i = 1; i <= NUM_PATCH; i++)
+	    patchNumbers[i - 1] = (i < 10 ? "0" : "") + String.valueOf(i);
+	patchSize	= SINGLE_SIZE;
+
 	// Data set 1 DT1 followed by 4 byte address (MSB first) and data
 	//		   0 1 2 3 4 5
 	sysexID		= "F041**003F12";
-	// obsoleted
-	inquiryID	= "F07E**0602413F01000000020000f7";
-
-	patchNameStart	= 10;	// offset 0
-	patchNameSize	= 8;
 	deviceIDoffset	= 2;
-
-	// can be replaced by patch name???
-	patchNumbers	= new String[99];
-	for (int i = 0; i < 99; i++)
-	    patchNumbers[i] = (i < 9 ? "0" : "") +  String.valueOf(i + 1);
-
-	//bankNumbers =new String[] {"0-Internal"}; //???
-
-	patchSize	= 37 + 55 * 12;
-	numSysexMsgs	= 13;	// Who use this?
-
-	// channel	= 17;	// default Device ID
-
 	// Request data 1 RQ1 (11H)
 	sysexRequestDump = new SysexHandler
 	    ("F0 41 @@ 00 3F 11 41 *patchNum* 00 00 00 00 00 00 *checkSum* F7");
-	authors		= "Hiroo Hayashi <hiroo.hayashi@computer.org>";
     }
 
     /**
@@ -86,28 +95,44 @@ public final class TD6SingleDriver extends Driver {
      * @param patchNum drum kit number (0: drum kit 1, ..., 98: drum kit 99)
      */
     public void storePatch (Patch p, int bankNum, int patchNum) {
-	int i, size, ofst;
-	// Patch must be sent in 13 packets.  data packet for the 1st
-	// packet is 13 byte, and one for others is 55 byte.
-	for (i = ofst = 0; i < 13; i++, ofst += size) {
-	    // create a Patch data for each packet
-	    size = (i == 0) ? 37 : 55; // SysEX data size
-	    byte [] tmpSysex = new byte [size];
-	    System.arraycopy(p.sysex, ofst, tmpSysex, 0, size);
+// 	ErrorMsg.reportStatus("storePatch: " + p);
+//  	ErrorMsg.reportStatus("storePatch: " + device);
+	storePatch(p.sysex, 0, patchNum, getDeviceID(), getPort());
+    }
 
+    /**
+     * Send a patch (bulk dump system exclusive message) to MIDI device.
+     *
+     * @param sysex SysEX byte array.
+     * @param offset offset index in <code>sysex</code>.
+     * @param patchNum the patch number.
+     * @param channel device ID
+     * @param port MIDI out port number
+     */
+    static void storePatch (byte[] sysex, int offset,
+			    int patchNum, int channel, int port) {
+	int size;
+	for (int i = 0; i < NUM_PKT; i++, offset += size) {
+	    // create a Patch data for each packet
+	    size = PKT_SIZE[i];
+	    byte [] tmpSysex = new byte [size];
+	    System.arraycopy(sysex, offset, tmpSysex, 0, size);
+
+	    tmpSysex[2] = (byte) (channel - 1);	// set channel (device ID)
 	    // Drum kit : kk,  address 41 kk ii 00
 	    tmpSysex[6] = (byte) 0x41;
 	    tmpSysex[7] = (byte) patchNum;
 	    tmpSysex[8] = (byte) i;
 	    tmpSysex[size - 2] = calcChkSum(tmpSysex, 6, size - 3);
-
-	    // send created patch to synthersizer
-	    Patch tmpPatch = new Patch(tmpSysex);
-	    //ErrorMsg.reportStatus(tmpPatch.toString());
-	    sendPatchWorker(tmpPatch);
+	    try {
+		PatchEdit.MidiOut.writeLongMessage(port, tmpSysex);
+	    } catch (Exception e) {
+		ErrorMsg.reportStatus(e);
+	    }
 	    try {
 		Thread.sleep(50);	// wait at least 50 milliseconds.
-	    } catch (Exception e) {	// What's this?
+	    } catch (Exception e) {
+		ErrorMsg.reportStatus(e);
 	    }
 	}
     }
@@ -121,7 +146,7 @@ public final class TD6SingleDriver extends Driver {
      * @param p a <code>Patch</code> value
      */
     public void sendPatch (Patch p) {
-	storePatch (p, 0, 99 - 1);
+	storePatch (p, 0, NUM_PATCH - 1);
     }
 
     /**
@@ -133,6 +158,7 @@ public final class TD6SingleDriver extends Driver {
      * @return a <code>byte</code> value
      */
     private static byte calcChkSum(byte[] b, int start, int end) {
+// 	ErrorMsg.reportStatus("  start = " + start + ", end = " + end);
 	int sum = 0;
 	for (int i = start; i <= end; i++)
 	    sum += b[i];
@@ -142,64 +168,46 @@ public final class TD6SingleDriver extends Driver {
     /**
      * Calculate and update checksum of a Patch.
      *
-     * @param p a <code>Patch</code> value
+     * @param p a <code>Patch</code> value.
+     * @param offset offset index to calculate the check sum.
      */
-    public void calculateChecksum(Patch p) {
-	for (int i = 0; i < 13; i++) {
-	    int ofst = (i == 0) ? 0 : 37 + (i - 1) * 55;
-	    int chkSumIdx = ofst + (i == 0 ? 37 : 55) - 2;
-	    p.sysex[chkSumIdx] = calcChkSum(p.sysex, ofst + 6, chkSumIdx - 1);
+    static void calcChkSum(byte[] sysex, int offset) {
+// 	ErrorMsg.reportStatus("offset = " + offset);
+	int size;
+	for (int i = 0; i < NUM_PKT; i++, offset += size) {
+	    size = PKT_SIZE[i];
+	    int chkSumIdx = offset + size - 2;
+	    sysex[chkSumIdx] = calcChkSum(sysex, offset + 6, chkSumIdx - 1);
 	}
     }
 
-    /** patch file name for createNewPatch() */
-    private final static String patchFileName = "synthdrivers/RolandTD6/newpatch.syx";
     /**
-     * Create new patch using "synthdrivers/RolandTD6/newpatch.syx".
+     * Calculate and update checksum of a Patch.
      *
-     * This can be defined in Driver.java. !!!FIXIT!!!
+     * @param p a <code>Patch</code> value
+     */
+    public void calculateChecksum(Patch p) {
+	calcChkSum(p.sysex, 0);
+    }
+
+    /**
+     * Create new patch using a patch file <code>patchFileName</code>.
+     *
      * @return a <code>Patch</code> value
      */
+    // This can be defined in Driver.java. !!!FIXIT!!!
     public Patch createNewPatch() { // Borrowed from DR660 driver
 	try {
 	    FileInputStream fileIn = new FileInputStream(new File(patchFileName));
-	    byte [] buffer = new byte [patchSize];
+	    byte[] buffer = new byte [SINGLE_SIZE];
 	    fileIn.read(buffer);
 	    fileIn.close();
-
-	    Patch p = new Patch(buffer);
-	    //p.ChooseDriver(); done by Patch(buffer)
-	    return p;
+	    return new Patch(buffer, this);
 	} catch (Exception e) {
 	    ErrorMsg.reportError("Error", "Unable to open " + patchFileName, e);
 	    return null;
 	}
     }
-
-    /*
-    public Patch createNewPatch () {
-	byte [] sysex = new byte[37+55*12];	// 37+55*12=697
-	for (int i = 0; i < 13; i++) {
-	    int ofst = (i == 0) ? 0 : 37 + (i-1)*55;
-	    sysex[ofst+0] = (byte)0xF0;
-	    sysex[ofst+1] = (byte)0x41; // Roland
-	    sysex[ofst+2] = (byte)0x10; // device ID (default 17)
-	    sysex[ofst+3] = (byte)0x00; // model ID (TD6)
-	    sysex[ofst+4] = (byte)0x3F;
-	    sysex[ofst+5] = (byte)0x12; // command ID (DT1)
-	    sysex[ofst+6] = (byte)0x41; // address 0x41 mm 00 00
-	    sysex[ofst+7] = (byte)i;
-	    sysex[ofst+8] = (byte)0x00;
-	    sysex[ofst+9] = (byte)0x00;
-	    sysex[ofst+(i == 0 ? 37 : 55)-1] = (byte)0xF7;
-	}
-	Patch p = new Patch(sysex);
-	p.ChooseDriver();
-	setPatchName(p, "New Patch");
-	calculateChecksum(p);
-	return p;
-    }
-    */
 
     /**
      * Request a Patch (bulk dump system exclusive message) to MIDI
@@ -212,7 +220,7 @@ public final class TD6SingleDriver extends Driver {
 	// checksum depends on drum kit number (patchNum).
 	int checkSum = -(0x41 + patchNum) & 0x7f;
 	// see core/SysexHandler.java
-	sysexRequestDump.send(port, (byte) channel,
+	sysexRequestDump.send(getPort(), (byte) getDeviceID(),
 			      new NameValue("patchNum", patchNum),
 			      new NameValue("checkSum", checkSum));
     }
@@ -224,6 +232,7 @@ public final class TD6SingleDriver extends Driver {
      * @return a <code>JInternalFrame</code> value
      */
     public JInternalFrame editPatch(Patch p) {
+// 	ErrorMsg.reportStatus("editPatch: " + device);
 	return new TD6SingleEditor(p);
     }
 }
