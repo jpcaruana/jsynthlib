@@ -27,6 +27,11 @@ public class QSParamModel extends ParamModel
 	 */
 	public QSParamModel(Patch patch, int startBit, int bitSize,
 						boolean signed) {
+		if (startBit<0)
+			throw new IllegalArgumentException("Starting bit must be >= 0");
+		if (startBit+bitSize-1>patch.sysex.length*8-1)
+			throw new IllegalArgumentException("Endbit > sysex length");
+
 		this.patch = patch;
 		this.startBit = startBit;
 		this.bitSize = bitSize;
@@ -46,6 +51,17 @@ public class QSParamModel extends ParamModel
 	 */
 	public QSParamModel(Patch patch, int startByte, int startBit,
 						int endByte, int endBit, boolean signed) {
+		if (startByte<0)
+			throw new IllegalArgumentException("Starting byte must be >= 0");
+		if ((startBit<0) || (startBit>7))
+			throw new IllegalArgumentException("Starting bit must be 0-7");
+		if ((endBit<0) || (endBit>7))
+			throw new IllegalArgumentException("Ending bit must be 0-7");
+		if ((startByte>endByte) || ((startByte==endByte) && (startBit>endBit)))
+			throw new IllegalArgumentException("Start > end");
+		if (endByte>=patch.sysex.length)
+			throw new IllegalArgumentException("Ending byte > sysex length");
+
 		this.patch = patch;
 		this.startBit = startByte * 8 + startBit;
 		this.bitSize = (endByte * 8 + endBit) - this.startBit + 1;
