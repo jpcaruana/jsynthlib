@@ -21,8 +21,15 @@
 
 package synthdrivers.CasioCZ1000;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.prefs.Preferences;
 
+import javax.swing.JPanel;
+
+import core.ComboBoxWidget;
 import core.Device;
 
 
@@ -44,8 +51,8 @@ public class CasioCZ1000Device extends Device
     private static final String INFO_TEXT =
         "Casio CZ-101/1000." +
         "  CZ-101 is the base unit; the 1000 is the same, but with" +
-        " larger keys.  Single driver works, bank driver not" +
-        " tested, editor under construction.  Parts were developed" +
+        " larger keys.  Single driver works, editors works, but " +
+        " no bank driver as the CZ has no bank features.  Parts were developed" +
         " variously on 101 and 1000, but should work on both." +
         "  No work done at all for the CZ-5000, though it's" +
         " fundamentally the same." +
@@ -53,10 +60,21 @@ public class CasioCZ1000Device extends Device
         " in the editor don't update the synth live.  You'll need to" +
         " double-click the patch in the library to send the whole thing" +
         " over." +
-        "\n    Note also that in the editor source code, you can enable" +
-        " HACK_MODE to reveal full access to all sysex bits and bytes." +
-        " There no good place for this switch in the GUI, right now.";
+        "\n    There are two GUI modes:  \"Stacked\" keeps a small, tight" +
+        " window by using nested tabs.  \"Wide\" keeps more parameters visible" +
+        " at once." +
+        "\n    There are also two parameter modes:  \"Extended\"" +
+        " reveals full access to all sysex bits and bytes." +
+        "  \"Normal\" restricts GUI to official limits.";
 
+    static final String[] GUI_OPTIONS = new String[] {
+        "Stacked", "Wide"
+    };
+    static final String[] PARAM_OPTIONS = new String[] {
+        "Normal", "Extended"
+    };
+    
+    
     public CasioCZ1000Device ()
     {
         super ("Casio", "CZ-101/1000",
@@ -69,6 +87,40 @@ public class CasioCZ1000Device extends Device
         this();
         this.prefs = prefs;
         addDriver(new CasioCZ1000SingleDriver());
-        addDriver(new CasioCZ1000BankDriver());
+        addDriver(new CasioCZ1000RcvConverter());
+        // CZ has no bank features.
     }
+    
+    /** Return custom config panel. */
+    public JPanel config() {
+    	JPanel panel = new JPanel();
+    	panel.setLayout(new GridBagLayout());
+
+    	GridBagConstraints c = new GridBagConstraints();
+    	c.weightx = 1;
+
+    	final ComboBoxWidget guiMode = new ComboBoxWidget(
+    	        "GUI Style", null, null, null, GUI_OPTIONS);
+    	guiMode.setValue( "Wide".equals(prefs.get("guiMode",null)) ? 1 : 0 );
+    	guiMode.addEventListener(new ItemListener() {
+    	    public void itemStateChanged(ItemEvent ev) {
+    	        prefs.put( "guiMode", (String)ev.getItem() );
+    	    }
+    	});
+    	c.gridx = 0; c.gridy = 0;
+    	panel.add( guiMode, c );
+    	
+    	ComboBoxWidget paramMode = new ComboBoxWidget(
+    	        "Parameter Set", null, null, null, PARAM_OPTIONS);
+    	paramMode.setValue( "Extended".equals(prefs.get("paramMode",null)) ? 1 : 0);
+    	paramMode.addEventListener(new ItemListener() {
+    	    public void itemStateChanged(ItemEvent ev) {
+    	        prefs.put( "paramMode", (String)ev.getItem() );
+    	    }
+    	});
+    	c.gridx = 0; c.gridy = 1;
+    	panel.add( paramMode, c );
+    	
+    	return panel;
+    }    
 }

@@ -29,7 +29,6 @@ package synthdrivers.CasioCZ1000;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 
@@ -166,7 +165,7 @@ public class CasioCZ1000SingleDriver extends Driver
         } catch (Exception e) {};
     }
 
- 
+/*TODO delete me
     public boolean supportsPatch(String patchString, byte[] sysex) {
         // Gross cheat .. patches coming from the synth are 263 bytes;
         // all other cases are 264 bytes.  I hope we're not threaded..
@@ -190,6 +189,7 @@ public class CasioCZ1000SingleDriver extends Driver
         }
         return new Patch(sysex, this);
     }
+*/
     
     public JSLFrame editPatch(Patch p) {
         return new CasioCZ1000SingleEditor(p);

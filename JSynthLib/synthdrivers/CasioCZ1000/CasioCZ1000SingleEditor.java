@@ -53,15 +53,23 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     /** Offset to first data byte in sysex. */
     public static final int TONE_DATA = 7;
     /** TRUE to edit all bits in sysex, FALSE to stick to official limits. */
-    public static final boolean HACK_MODE = false;
-
+    protected boolean hackMode = false;
+    /** FALSE for 'stack', TRUE for 'wide' */
+    protected boolean wideGui = false;
     
     public CasioCZ1000SingleEditor(Patch patch) {
         super("Casio CZ-101/1000 Patch Editor", patch);
 
+        hackMode =
+            "Extended".equals(
+                    patch.getDevice().getPreferences().get("paramMode",null));
+        wideGui =
+            "Wide".equals(
+                    patch.getDevice().getPreferences().get("guiMode",null));
+        
 		gbc.gridx=0;
 		gbc.gridy=0;
-        if(false) {
+        if(wideGui) {
 	        scrollPane.add(getWideGUI(patch),gbc);
         }
         else {
@@ -141,7 +149,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     protected JPanel getDca2Panel(Patch patch) {
         JPanel dca2Panel = new JPanel();
 		dca2Panel.setLayout(new GridBagLayout());
-		if(HACK_MODE)
+		if(hackMode)
 		    addWidget(dca2Panel,new ScrollBarWidget("Key Follow",patch,0,0xFFFF,0,new WordFieldModel(patch,CZModel.SAMD,0xFFFF),null),0,0,7,1,0);
 		else
 		    addWidget(dca2Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowAModel(patch,CZModel.SAMD),null),0,0,7,1,0);
@@ -152,7 +160,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     protected JPanel getDcw2Panel(Patch patch) {
         JPanel dcw2Panel = new JPanel();
 		dcw2Panel.setLayout(new GridBagLayout());
-		if(HACK_MODE)
+		if(hackMode)
 		    addWidget(dcw2Panel,new ScrollBarWidget("Key Follow",patch,0,0xFFFF,0,new WordFieldModel(patch,CZModel.SWMD,0xFFFF),null),0,0,7,1,0);
 		else
 		    addWidget(dcw2Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowWModel(patch,CZModel.SWMD),null),0,0,7,1,0);
@@ -177,7 +185,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     protected JPanel getDca1Panel(Patch patch) {
         JPanel dca1Panel = new JPanel();
 		dca1Panel.setLayout(new GridBagLayout());
-		if(HACK_MODE)
+		if(hackMode)
 		    // direct access to computed value
 		    addWidget(dca1Panel,new ScrollBarWidget("Key Follow",patch,0,0xFF,0,new CZModel(patch,TONE_DATA+CZModel.MAMV),null),0,0,7,1,0);
 		else
@@ -190,7 +198,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     protected JPanel getDcw1Panel(Patch patch) {
         JPanel dcw1Panel = new JPanel();
 		dcw1Panel.setLayout(new GridBagLayout());
-		if(HACK_MODE)
+		if(hackMode)
 		    // direct access to computed value
 		    addWidget(dcw1Panel,new ScrollBarWidget("Key Follow",patch,0,0xFF,0,new CZModel(patch,TONE_DATA+CZModel.MWMV),null),0,0,7,1,0);
 		else
@@ -212,7 +220,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
                 new String[] {"1","2","1+1'","1+2'"}),
                 0,++row,7,1,0);
 
-		if(HACK_MODE) {
+		if(hackMode) {
 			addWidget(miscPane,new CheckBoxWidget("Ring",  patch,new BitModel(patch,CZModel.MFW+2,5),null),0,++row,1,1,0);
 		    addWidget(miscPane,new CheckBoxWidget("Noise1",patch,new BitModel(patch,CZModel.MFW+2,4),null),1,row,1,1,0);
 		    addWidget(miscPane,new CheckBoxWidget("Noise2",patch,new BitModel(patch,CZModel.MFW+2,3),null),2,row,1,1,0);
@@ -226,7 +234,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
 	                0,++row,7,1,0);
 		}
 
-		if(HACK_MODE)
+		if(hackMode)
 		    addWidget(miscPane,new ScrollBarWidget("Detune Step",patch,-127,127,0,80,new DetuneStepModel(patch),null),0,++row,7,1,0);
 		else
 		    addWidget(miscPane,new ScrollBarWidget("Detune Step",patch,-47,47,0,80,new DetuneStepModel(patch),null),0,++row,7,1,0);
@@ -270,7 +278,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
                 new String[] { "OFF", "1 Tri", "2 Up", "3 Dn", "4 Pul" }),
                 0,row,7,1,0);
 
-        if(HACK_MODE) {
+        if(hackMode) {
             // Rate is limited by the computed 16-bit value
             addWidget(panel,new ScrollBarWidget("Delay",patch,0,255,0,width,new VibratoDelayModel(patch),null),0,++row,7,1,0);
             addWidget(panel,new ScrollBarWidget("Rate",patch,0,142,0,width,new VibratoRateModel(patch),null),0,++row,7,1,0);
@@ -333,7 +341,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         EnvelopeModel model = new EnvelopeModel(patch, firstOffset);
         int row=-1, width=40, maxval;
         // models are sensitive to hack mode too
-        if(HACK_MODE)
+        if(hackMode)
             maxval = 127;
         else
             maxval = 99;
@@ -379,7 +387,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         panel.setLayout(new GridBagLayout());
         EnvelopeModel model = new EnvelopeModel(patch, firstOffset);
         // models are sensitive to hack mode too
-        if(HACK_MODE)
+        if(hackMode)
             maxval = 127;
         else
             maxval = 99;
@@ -779,13 +787,13 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         public SysexWidget.IParamModel getRateModel(final int stage) {
             return new SysexWidget.IParamModel() {
                 public void set(int value) {
-                    if(!HACK_MODE)
+                    if(!hackMode)
                         value = 119 * value / 99;
                     setRate(stage, value);
                 }
                 public int get() {
                     int value = getRate(stage);
-                    if(!HACK_MODE) {
+                    if(!hackMode) {
                         if(value == 0x77)
                             value = 99;
                         else if(value>0)
@@ -798,7 +806,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         public SysexWidget.IParamModel getLevelModel(final int stage) {
             return new SysexWidget.IParamModel() {
                 public void set(int value) {
-                    if(!HACK_MODE) {
+                    if(!hackMode) {
                         if(value == 1)
                             value = 0x10;
                         else if(value > 0)
@@ -808,7 +816,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
                 }
                 public int get() {
                     int value = getLevel(stage);
-                    if(!HACK_MODE) {
+                    if(!hackMode) {
                         if(value < 0x10)
                             value = 0;
                         else if (value < 0x1E)
