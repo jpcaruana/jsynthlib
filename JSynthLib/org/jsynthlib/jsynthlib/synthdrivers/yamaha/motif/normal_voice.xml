@@ -88,7 +88,7 @@
         <name>Voice Name</name>
         <id>name</id>
         <charset>ASCII</charset>
-        <size>10</size>
+        <length>10</length>
       </string>
       <constant>
         <name>reserved</name>

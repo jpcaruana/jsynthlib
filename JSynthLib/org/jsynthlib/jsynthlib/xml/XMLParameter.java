@@ -1,6 +1,5 @@
 package org.jsynthlib.jsynthlib.xml;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.jsynthlib.plugins.Decoder;
@@ -21,7 +20,7 @@ public class XMLParameter implements SysexWidget.IParameter {
     private int min;
     private int max;
     private String[] values = null;
-    private int length = -1;
+    private int length = 1;
     private int sysex_index;
     private Decoder decoder;
     private int def= 0;
@@ -30,32 +29,31 @@ public class XMLParameter implements SysexWidget.IParameter {
         this.decoder = decoder;
     }
 
-    public int get(IPatch _p) {
+    // XXX: Overriden by EditorBuilder
+    public /*final*/ int get(IPatch _p) {
         XMLPatch p = (XMLPatch)_p;
-        HashMap c = p.getCache();
-        if (!c.containsKey(this)) {
-            c.put(this,new Integer(decoder.decode(this,p.getMessage(sysex_index))));
-        }
-        return ((Integer)c.get(this)).intValue();
+        if (!p.isCached(this))
+            p.cache(this, new ParamCacheEntry(decoder.decode(this,p.getMessage(sysex_index)),true));
+
+        return p.getCached(this).getInt();
     }
 
     // should this check range?
-    public void set(IPatch p, int val) {
+    public final void set(IPatch p, int val) {
         if (type == CONSTANT)
             val = def;
-        ((XMLPatch)p).getCache().put(this, new Integer(val));
+        ((XMLPatch)p).cache(this, new ParamCacheEntry(val, false));
     }
 
-    public String getString(IPatch _p) {
+    public final String getString(IPatch _p) {
         XMLPatch p = (XMLPatch)_p;
-        HashMap c = p.getCache();
-        if (!c.containsKey(this))
-            c.put(this,decoder.decodeString(this,p.getMessage(sysex_index)));
-        return (String)c.get(this);
+        if (!p.isCached(this))
+            p.cache(this, new ParamCacheEntry(decoder.decodeString(this,p.getMessage(sysex_index)),true));
+        return p.getCached(this).getString();
     }
 
-    public void set(IPatch p, String stringval) {
-        ((XMLPatch)p).getCache().put(this, stringval);
+    public final void set(IPatch p, String stringval) {
+        ((XMLPatch)p).cache(this, new ParamCacheEntry(stringval, false));
     }
 
     protected String getId() {
@@ -126,12 +124,16 @@ public class XMLParameter implements SysexWidget.IParameter {
         return def;
     }
     
-    public void store(XMLPatch p) {
+    public final void store(XMLPatch p) {
+        ParamCacheEntry e = p.getCached(this);
+        if (e == null || e.isClean())
+            return;
         if (type == STRING) {
-            decoder.encodeString(getString(p), this, p.getMessage(sysex_index));
+            decoder.encodeString(e.getString(), this, p.getMessage(sysex_index));
         } else {
-            decoder.encode(get(p), this, p.getMessage(sysex_index));
+            decoder.encode(e.getInt(), this, p.getMessage(sysex_index));
         }
+        e.setClean(true);
     }
     public byte[] getMessage(XMLPatch p) {
         return p.getMessage(sysex_index);

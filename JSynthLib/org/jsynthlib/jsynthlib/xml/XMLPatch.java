@@ -27,6 +27,9 @@ import core.PatchTransferHandler;
  * @author ribrdb
  */
 public class XMLPatch implements ISinglePatch {
+    
+    static final long serialVersionUID = 1;
+    
     private byte[][] sysex;
 
     private String date, author, comment;
@@ -140,6 +143,9 @@ public class XMLPatch implements ISinglePatch {
 
     public void setName(String name) {
         this.name = name;
+        XMLParameter p = getParameter("name");
+        if (p != null)
+            p.set(this, name);
     }
 
     public void calculateChecksum() {
@@ -263,14 +269,18 @@ public class XMLPatch implements ISinglePatch {
 	}
 	p.sysex = (byte[][]) sysex.clone();
     	p.cache = (HashMap) cache.clone();
+    	p.name = name;
         return p;
     }
 
-    public void useSysexFromPatch(IPatch p) {
-        if (p.getClass() != XMLPatch.class) {
+    public void useSysexFromPatch(IPatch _p) {
+        if (!(_p instanceof XMLPatch)) {
             throw new IllegalArgumentException();
         }
-        sysex = ((XMLPatch) p).sysex;
+        XMLPatch p = (XMLPatch)_p;
+        sysex = p.sysex;
+        cache = (HashMap) p.cache.clone();
+        name = p.name;
     }
     
     protected XMLPatch newEmptyPatch() {
@@ -314,12 +324,14 @@ public class XMLPatch implements ISinglePatch {
             if (!found)
                 throw new IllegalArgumentException("Unrecognized message with header "+header);
         }
+        String s;
         try {
             XMLParameter p = getParameter("name");
-            setName(p.getString(this));
+            s = p.getString(this);
         } catch (Exception ex) {
-            setName("Unknown");
+            s ="Unknown";
         }
+        setName(s);
     }
     boolean supportsMessages(SysexMessage[] messages) {
         if (messages.length != descs.length) {
@@ -346,9 +358,17 @@ public class XMLPatch implements ISinglePatch {
         }
         return true;
     }
-    protected HashMap getCache() {
-        return cache;
+    
+    public boolean isCached(XMLParameter p) {
+        return cache.containsKey(p);
     }
+    public void cache(XMLParameter p, ParamCacheEntry e) {
+        cache.put(p, e);
+    }
+    public ParamCacheEntry getCached(XMLParameter p) {
+        return (ParamCacheEntry)cache.get(p);
+    }
+    
     /**
      * @param sysex_index
      * @return
@@ -361,7 +381,8 @@ public class XMLPatch implements ISinglePatch {
         Iterator it = cache.keySet().iterator();
         while (it.hasNext()) {
             ((XMLParameter)it.next()).store(this);
-            it.remove();
+            // Should these still be removed?
+            //it.remove();
         }
     }
 
