@@ -46,9 +46,14 @@ public class PatchNameWidget extends SysexWidget {
     }
     
     protected void createWidgets() {
-	if (getDriver ()!= null) {
+        
+	IParameter p = getParameter();
+	if (p != null) {
+	    name = new JTextField(p.getString(getPatch()),patchNameSize);
+	} else if (getDriver ()!= null) {
+	    
 	    name = new JTextField(getPatch().getName(),
-				  patchNameSize);
+	            patchNameSize);
 	} else {
 	    name = new JTextField("Patch Name", 0);
 	}
@@ -68,6 +73,9 @@ public class PatchNameWidget extends SysexWidget {
      */
     protected void eventListener(FocusEvent e) {
 	IPatchDriver driver = getDriver();
+	/* XXX: Need to handle the parameter case here,
+	 * but we need param listeners first
+	 */
 	if (driver != null)
 	    getPatch().setName(name.getText());
     }
