@@ -192,7 +192,6 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
         /** Generate method for sending entire patch.
             */
         public byte[] generate (int value) {
-            patch.sysex[0] = (byte)0xF0;
             return patch.sysex;
         }
     }
