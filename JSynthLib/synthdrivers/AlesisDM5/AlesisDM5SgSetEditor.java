@@ -131,10 +131,12 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         selectedNoteWidgetPanel.setLayout(new BorderLayout());
         panel.add(selectedNoteWidgetPanel,gbc);
         
+        NRPNSender selectedNoteSender = new NRPNSender(NRPNSender.PREVIEW_NOTE, 60);
         selectedNoteWidget = new DM5ScrollBarLookupWidget("Selected Note", patch, 0, 60, -1,
                                                                         null,
-                                                                        new NRPNSender(NRPNSender.PREVIEW_NOTE, 60),
+                                                                        selectedNoteSender,
                                                                         rootNoteWidget.getValue(), 61);
+        selectedNoteSender.send(patch.getDriver(), 0);
         addWidget(panel, selectedNoteWidget, ctrlBase++, 0, 1, 1, widgetCount++);
         selectedNoteWidget.addEventListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
@@ -223,14 +225,14 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     public void familyChanged(ActionEvent e) {
         JComboBox cb = (JComboBox)e.getSource();
         int selectedIndex = cb.getSelectedIndex();
-        ((DM5ComboBoxWidget)sysexWidget[1]).updateComboBoxWidgetList(selectedIndex);
+        ((DM5ComboBoxWidget)sysexWidget[1]).updateComboBoxWidgetList(DM5SoundList.DRUM_NAME[selectedIndex]);
     }
     
     private void addParmWidgets(Patch patch, JPanel panel) {
         notePacketModel[2] = new PacketModel(patch, 36+4, BitModel.CRSE_TUNE_MASK);
         sysexWidget[2] = new ScrollBarLookupWidget("Coarse Tune", patch, 0, 7, -1,
                                                    notePacketModel[2],
-                                                   new NRPNSender(NRPNSender.NOTE_COARSE_TUNE, 7),
+                                                   new NRPNSender(NRPNSender.NOTE_COARSE_TUNE, new int [] {28, 42, 56, 71, 85, 99, 113, 127}),
                                                    new String[] {"-4", "-3", "-2", "-1", "0", "1", "2", "3"});
         addWidget(panel, sysexWidget[2], ctrlBase++, 0, 1, 1, widgetCount++);
         
