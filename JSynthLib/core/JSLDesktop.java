@@ -207,7 +207,7 @@ public class JSLDesktop {
 	    selected = e.getJSLFrame().getJFrame();
 	    ErrorMsg.reportStatus("\""+selected.getTitle()+"\" selected");
 	}
-	public void JSLFrameClosed(JSLFrameEvent e) {
+	public void JSLFrameClosing(JSLFrameEvent e) {
 	    windows.remove(e.getJSLFrame());
 	    if (windows.size() < 1) {
 		if (toolbar.isVisible()) {
@@ -220,11 +220,18 @@ public class JSLDesktop {
 		    // the whole JVM is going away.
 		    // unloadMidiDriver();
 		    System.exit(0);
+		} else {
+		    ErrorMsg.reportStatus("All windows closed, but invisible "+
+					  "frame exists. Not exiting.");
 		}
+	    } else {
+		ErrorMsg.reportStatus("\""+e.getJSLFrame().getTitle()+
+				      "\" closed. " + windows.size() + 
+				      " windows still open.");
 	    }
 		
 	}
-	public void JSLFrameClosing(JSLFrameEvent e) {}
+	public void JSLFrameClosed(JSLFrameEvent e) {}
 	public void JSLFrameDeactivated(JSLFrameEvent e) {}
 	public void JSLFrameDeiconified(JSLFrameEvent e) {}
 	public void JSLFrameIconified(JSLFrameEvent e) {}
