@@ -144,10 +144,14 @@ public class ImportAllDialog extends JDialog
                 if (buffer.length>16)
                 {
                     IPatch[] patarray = DriverUtil.createPatches(buffer);
+                    if(patarray == null) {
+                        System.out.println("WARNING: can't create a patch for file \""+files[i].getCanonicalPath()+"\"");
+                        continue;
+                    }
 
                     for (int k=0;k<patarray.length;k++) // Loop over all found sub-patches
                     {
-			IPatch pk = patarray[k];
+                        IPatch pk = patarray[k];
                         if (putName==1) pk.setDate(pk.getDate() + files[i].getName());
                         if (putName==2) pk.setAuthor(pk.getAuthor() + files[i].getName());
                         if (myModel.includeDevice[pk.getDriver().getDevice().getDeviceNum()].booleanValue ())
