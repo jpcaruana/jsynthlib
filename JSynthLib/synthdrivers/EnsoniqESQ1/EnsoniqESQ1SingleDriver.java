@@ -82,7 +82,7 @@ public void sendPatch (Patch p)
    sendPatchWorker(p);
    ErrorMsg.reportWarning("Ensoniq ESQ!","You must now hit 'exit' on the ESQ1's\nfront panel before you can\nsend another patch.");
   }
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  protected void calculateChecksum(Patch p,int start,int end,int ofs)
   {
 
         //This synth does not use a checksum

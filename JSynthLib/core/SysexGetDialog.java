@@ -70,7 +70,7 @@ public class SysexGetDialog extends JDialog {
     for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++) {
       Device device=AppConfig.getDevice(i);
       for (int j=0; j < device.driverCount(); j++) {
-	Driver driver = device.getDriver(j);
+	IDriver driver = device.getDriver(j);
         if (!(driver instanceof Converter)) { // Skipping a converter
 	  deviceComboBox.addItem(device);
 	  break;
@@ -161,8 +161,8 @@ public class SysexGetDialog extends JDialog {
     }
 
     // create Patch
-    Driver driver = (Driver) driverComboBox.getSelectedItem();
-    Patch p = new Patch(patchSysex, driver);
+    IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
+    IPatch p = driver.createPatch(patchSysex);
     // if Conveter for the patch exist, convert the patch.
     IPatch[] patarray = (IPatch[])p.dissect();
 
@@ -183,11 +183,11 @@ public class SysexGetDialog extends JDialog {
 	    Device device = (i == 0) ? pk.getDevice() : AppConfig.getDevice(i);
 	    for (int j=0;j<device.driverCount();j++)
 	    {
-	      Driver d = device.getDriver(j);
+	      IDriver d = device.getDriver(j);
 	      if (!(d instanceof Converter)
 		  && d.supportsPatch(patchString, pk)) {
 		// driver found
-		driver = d;
+		driver = (IPatchDriver)d;
 		pk.setDriver(driver);
 		driver.trimSysex(pk);
 		JOptionPane.showMessageDialog
@@ -248,7 +248,7 @@ public class SysexGetDialog extends JDialog {
 
        Device device = (Device) deviceComboBox.getSelectedItem();
        for (int i = 0; i < device.driverCount(); i++) {
-	 Driver driver = (Driver) device.getDriver(i);
+	 IDriver driver = (IDriver) device.getDriver(i);
 	 if (!(driver instanceof Converter)) {
 	   driverComboBox.addItem(driver);
 	 }
@@ -263,7 +263,7 @@ public class SysexGetDialog extends JDialog {
 
   public class DriverActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-      Driver driver = (Driver) driverComboBox.getSelectedItem();
+      IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
       //ErrorMsg.reportStatus("DriverActionListener->actionPerformed:" + driver);
       if (driver == null) 	// for driverComboBox.removeAllItems()
 	return;
@@ -286,7 +286,7 @@ public class SysexGetDialog extends JDialog {
 	}
       }
       // N.B. Do not enable patch selection for banks
-      patchNumComboBox.setEnabled(!(driver instanceof BankDriver)
+      patchNumComboBox.setEnabled(!(driver instanceof IBankDriver)
 				  && patchNumComboBox.getItemCount() > 1);
     }
   } // End InnerClass: DriverActionListener
@@ -310,7 +310,7 @@ public class SysexGetDialog extends JDialog {
 
   public class GetActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-      Driver driver = (Driver) driverComboBox.getSelectedItem();
+      IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
       int bankNum  = bankNumComboBox.getSelectedIndex();
       int patchNum = patchNumComboBox.getSelectedIndex();
       inPort = driver.getInPort();
@@ -327,7 +327,7 @@ public class SysexGetDialog extends JDialog {
       timeOut=(long)driver.getPatchSize();
       sysexSize = 0;
       queue = new ArrayList();	// clear queue
-      driver.clearMidiInBuffer();
+      MidiUtil.clearSysexInputQueue(driver.getInPort());
       timer.start();
       driver.requestPatchDump(bankNum, patchNum);
     }

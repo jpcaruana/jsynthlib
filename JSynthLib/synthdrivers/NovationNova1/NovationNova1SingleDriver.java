@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import core.ColumnLayout;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatchDriver;
 import core.Patch;
 import core.SysexHandler;
 
@@ -91,7 +92,7 @@ public class NovationNova1SingleDriver extends Driver
         }
     }
 
-    public void calculateChecksum(Patch p,int start,int end,int ofs)
+    protected void calculateChecksum(Patch p,int start,int end,int ofs)
     {
         // no checksum
     }
@@ -128,10 +129,10 @@ class NovationNova1PatchSender extends JDialog
     public static int channel = 0;
 
     // The Midi Out Port the user assigns
-    public Driver localDriver;
+    public IPatchDriver localDriver;
 
 
-    public NovationNova1PatchSender(JFrame Parent,Patch p, Driver driver)
+    public NovationNova1PatchSender(JFrame Parent,Patch p, IPatchDriver driver)
     {
         super(Parent,"Nova1 Patch Sender",true);
 

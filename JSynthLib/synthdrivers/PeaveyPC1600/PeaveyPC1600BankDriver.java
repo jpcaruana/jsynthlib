@@ -166,7 +166,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
     generateIndex((Patch)bank);
 
     // Set the <name>
-    setPatchName(bank, patchNum, p.getDriver().getPatchName(p));
+    setPatchName(bank, patchNum, p.getName());
 
     // Update the <data>
     int oldPatchSize = patchIndex[patchNum + 1] - patchIndex[patchNum];

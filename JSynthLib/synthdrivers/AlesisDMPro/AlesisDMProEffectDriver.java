@@ -62,7 +62,7 @@ public void sendPatch (Patch p)
    ((Patch)p).sysex[6] = 64;
    sendPatchWorker(p);
   }
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  protected void calculateChecksum(Patch p,int start,int end,int ofs)
   {
   }
   public Patch createNewPatch ()

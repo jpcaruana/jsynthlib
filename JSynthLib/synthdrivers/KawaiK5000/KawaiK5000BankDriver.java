@@ -148,15 +148,15 @@ public class KawaiK5000BankDriver extends BankDriver
 
   public void setPatchName(Patch bank, int patchNum, String name) {
     Patch p = getPatch(bank, patchNum);
-    Driver singleDriver = p.getDriver();
-    singleDriver.setPatchName(p, name);
+    IPatchDriver singleDriver = p.getDriver();
+    p.setName(name);
     singleDriver.calculateChecksum(p);
     putPatch(bank, p, patchNum);
   }
 
 //----- End phil@muqus.com
 
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  protected void calculateChecksum(Patch p,int start,int end,int ofs)
   {
 
   }

@@ -146,7 +146,7 @@ public class YamahaTG100SingleDriver extends Driver {
     }*/
 
     public Patch createNewPatch() {
-        Patch p = this.createNewPatch(0);
+        Patch p = createNewPatch(0);
         calculateChecksum(p);
         return p;
     }

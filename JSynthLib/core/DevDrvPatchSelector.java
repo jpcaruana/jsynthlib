@@ -81,7 +81,7 @@ public class DevDrvPatchSelector extends JDialog {
             Device device = AppConfig.getDevice(i);
             boolean newDevice = true;
             for (int j=0, m=0; j<device.driverCount();j++) {
-	        Driver driver = device.getDriver(j);
+	        IDriver driver = device.getDriver(j);
 	        if (!(driver instanceof Converter)
 	                && (driver.supportsPatch(patchString, p))) {
 	            if (newDevice) {	// only one entry for each supporting device
@@ -179,7 +179,7 @@ public class DevDrvPatchSelector extends JDialog {
             Device device = (Device) deviceComboBox.getSelectedItem();
             int nDriver = 0;
             for (int i = 0; i < device.driverCount(); i++) {
-	        Driver driver = device.getDriver(i);
+	        IDriver driver = device.getDriver(i);
                 if (!(driver instanceof Converter)
 	                && driver.supportsPatch(patchString, p)) {
                     driverComboBox.addItem (driver);
@@ -199,7 +199,7 @@ public class DevDrvPatchSelector extends JDialog {
     private class DriverActionListener implements ActionListener {
         public void actionPerformed (ActionEvent evt) {
 
-            Driver driver = (Driver)driverComboBox.getSelectedItem();
+            ISingleDriver driver = (ISingleDriver)driverComboBox.getSelectedItem();
             bankComboBox.removeAllItems();
             patchNumComboBox.removeAllItems();
 
@@ -222,7 +222,7 @@ public class DevDrvPatchSelector extends JDialog {
 
             bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
             // N.B. Do not enable patch selection for banks
-            patchNumComboBox.setEnabled(!(driver instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
+            patchNumComboBox.setEnabled(!(driver instanceof IBankDriver) && patchNumComboBox.getItemCount() > 1);
         }
     }
 
@@ -231,7 +231,7 @@ public class DevDrvPatchSelector extends JDialog {
      * to the dialog type (some have patch locations to which you can send but
      * not store)
      */
-    protected String[] getPatchNumbers(Driver driver)
+    protected String[] getPatchNumbers(ISingleDriver driver)
     {
         return driver.getPatchNumbers();
     }

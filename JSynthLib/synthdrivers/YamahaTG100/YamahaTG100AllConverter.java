@@ -38,7 +38,8 @@ public class YamahaTG100AllConverter extends Converter {
 
         this.sysexID = TG100Constants.SYSEX_ID;
         this.patchSize = TG100Constants.ALL_DUMP_SIZE;
-        this.deviceIDoffset = 0;
+        /* This doesn't seem to be used */
+        //this.deviceIDoffset = 0;
     }
 
     /**

@@ -176,7 +176,7 @@ public class DeviceDetailsDialog extends JDialog {
 	    return getValueAt (0, c).getClass ();
 	}
 	public Object getValueAt (int row, int col) {
-	    Driver myDriver = (Driver) d.getDriver(row);
+	    IDriver myDriver = (IDriver) d.getDriver(row);
 
 	    if (col == DRIVER_NAME) {
 		return (d.getManufacturerName() + " " + d.getModelName() + " "

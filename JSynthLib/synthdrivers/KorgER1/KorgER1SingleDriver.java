@@ -117,7 +117,7 @@ public class KorgER1SingleDriver extends Driver
         return p;
     }
     
-    public void calculateChecksum (Patch p,int start,int end,int ofs)
+    protected void calculateChecksum (Patch p,int start,int end,int ofs)
     {
         // no checksum
     }

@@ -30,9 +30,9 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
 	/** Return Device for this patch. */
 	public Device getDevice();
 	/** Return Driver for this patch. */
-	public Driver getDriver();
+	public IPatchDriver getDriver();
 	/** Set driver. */
-	public void setDriver(Driver driver);
+	public void setDriver(IPatchDriver driver);
     /**
      * Dissect an <code>IPatch</code> which has a <code>Converter</code>
      * driver into an array of <code>IPatch</code>.  Each patch in the
@@ -46,7 +46,7 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
 	/**
 	 * Return a hexadecimal string for Driver.supportsPatch at most 16
 	 * byte sysex data.
-	 * @see Driver#supportsPatch
+	 * @see IDriver#supportsPatch
 	 */
 	public StringBuffer getPatchHeader();
 	/**

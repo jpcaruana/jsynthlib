@@ -99,7 +99,10 @@ public class CrossBreedDialog extends JDialog {
     void play() {
 	IPatch p = crossBreeder.getCurrentPatch();
 	if (p == null) return;
-	p.getDriver().sendPatch(p);
-	p.getDriver().playPatch(p);
+	IPatchDriver d = p.getDriver();
+	if (d instanceof ISingleDriver) {
+	    ((ISingleDriver)d).sendPatch(p);
+	    ((ISingleDriver)d).playPatch(p);
+	}
     }
 }

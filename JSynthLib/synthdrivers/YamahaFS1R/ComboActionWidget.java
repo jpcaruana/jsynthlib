@@ -6,7 +6,6 @@ import java.awt.event.ItemListener;
 import core.ComboBoxWidget;
 import core.IPatch;
 import core.ParamModel;
-import core.Patch;
 import core.SysexSender;
 
 public class ComboActionWidget extends ComboBoxWidget {

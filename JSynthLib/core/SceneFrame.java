@@ -392,8 +392,11 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
     public void sendSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.getDriver().calculateChecksum(myPatch);
-        myPatch.getDriver().sendPatch(myPatch);
+	IPatchDriver d = myPatch.getDriver();
+	if (d instanceof ISingleDriver) {
+	    ((ISingleDriver)d).calculateChecksum(myPatch);
+	    ((ISingleDriver)d).sendPatch(myPatch);
+	}
     }
 
     public void sendToSelectedPatch() {
@@ -411,9 +414,12 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
     public void playSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.getDriver().calculateChecksum(myPatch);
-        myPatch.getDriver().sendPatch(myPatch);
-        myPatch.getDriver().playPatch(myPatch);
+	IPatchDriver d = myPatch.getDriver();
+	if (d instanceof ISingleDriver) {
+	    ((ISingleDriver)d).calculateChecksum(myPatch);
+	    ((ISingleDriver)d).sendPatch(myPatch);
+	    ((ISingleDriver)d).playPatch(myPatch);
+	}
     }
 
     public void storeSelectedPatch() {
@@ -455,7 +461,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             return;
         }
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        BankDriver myDriver = (BankDriver) myPatch.getDriver();
+        IBankDriver myDriver = (IBankDriver) myPatch.getDriver();
         for (int i = 0; i < myDriver.getNumPatches(); i++)
             if (myDriver.getPatch(myPatch, i) != null)
                 myModel.addPatch(myDriver.getPatch(myPatch, i));
@@ -571,7 +577,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
                     case TYPE:
                         return myScene.getPatch().getDriver().getPatchType();
                     case PATCH_NAME:
-                        return myScene.getPatch().getDriver().getPatchName(myScene.getPatch());
+                        return myScene.getPatch().getName();
                     case BANK_NUM:
                         return myScene.getPatch().getDriver().getBankNumbers()[myScene.getBankNumber()];
                     case PATCH_NUM:
@@ -740,7 +746,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         }
 
         protected void selectEditor(MouseEvent e) {
-            Driver driver;
+            IPatchDriver driver;
             int row, col;
 
             if (e == null) {

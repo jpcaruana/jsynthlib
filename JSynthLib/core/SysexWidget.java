@@ -81,7 +81,7 @@ public abstract class SysexWidget extends JPanel {
     /** <code>Device</code> associated with the <code>patch</code>. */
     private Device device;
     /** <code>Driver</code> associated with the <code>patch</code>. */
-    private Driver driver;
+    private IPatchDriver driver;
 
     /**
      * Creates a new <code>SysexWidget</code> instance.
@@ -267,7 +267,7 @@ public abstract class SysexWidget extends JPanel {
     }
 
     /** Return <code>driver</code> value. */
-    protected Driver getDriver() {
+    protected IPatchDriver getDriver() {
 	return driver;
     }
 

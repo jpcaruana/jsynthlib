@@ -32,7 +32,8 @@ public class YamahaDX7Converter extends Converter
 		
 		sysexID="F0430*00011B";
 		patchSize=275;
-		trimSize=275;
+		/* This doesn't seem to be used */
+		//trimSize=275;
 	}
     
 	

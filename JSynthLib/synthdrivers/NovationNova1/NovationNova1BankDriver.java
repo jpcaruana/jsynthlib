@@ -83,7 +83,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
     }
 
 
-    public void calculateChecksum(Patch p,int start,int end,int ofs)
+    protected void calculateChecksum(Patch p,int start,int end,int ofs)
     {
 
     }

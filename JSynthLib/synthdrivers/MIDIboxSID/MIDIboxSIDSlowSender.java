@@ -25,13 +25,13 @@
  */
 
 package synthdrivers.MIDIboxSID;
-import core.Driver;
 import core.ErrorMsg;
+import core.IPatchDriver;
 
 
 public class MIDIboxSIDSlowSender
 {
-    public void sendSysEx(Driver driver, byte[] buffer, int delay)
+    public void sendSysEx(IPatchDriver driver, byte[] buffer, int delay)
     {
 	try {
 	    //PatchEdit.MidiOut.writeLongMessage(port, buffer);
@@ -41,7 +41,7 @@ public class MIDIboxSIDSlowSender
 	try { Thread.sleep(delay); } catch (Exception e) {};
     }
 
-    public void sendParameter(Driver driver, int parameter, byte value, int delay)
+    public void sendParameter(IPatchDriver driver, int parameter, byte value, int delay)
     {
 	byte[]b = new byte[11];
 

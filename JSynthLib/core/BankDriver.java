@@ -2,11 +2,11 @@ package core;
 import javax.swing.JOptionPane;
 
 /** This is the base class for all Bank / Bulk Drivers. */
-public class BankDriver extends Driver {
+public class BankDriver extends Driver implements IBankDriver {
 /*XXX: I'm leaving this for now, until regular XML drivers work.  But
  *     I wonder if we should change this to use an IBankPatch instead.
  */
-	/**
+     /**
      * The Number of Patches the Bank holds.
      */
     private final int numPatches;
@@ -59,11 +59,11 @@ public class BankDriver extends Driver {
     }
     */
     /** Getter for property <code>numPatches</code>. */
-    protected int getNumPatches() {
+    public int getNumPatches() {
 	return numPatches;
     }
     /** Getter for property <code>numColumns</code>. */
-    protected int getNumColumns() {
+    public int getNumColumns() {
 	return numColumns;
     }
 
@@ -172,7 +172,7 @@ public class BankDriver extends Driver {
 
     /** Banks cannot play. */
     // Cannot we disable the menu for this?
-    public void playPatch(Patch p) {
+    protected void playPatch(Patch p) {
 	JOptionPane.showMessageDialog
 	    (null, "Can not Play Banks, only individual patches.",
 	     "Error", JOptionPane.ERROR_MESSAGE);

@@ -124,7 +124,7 @@ public class KorgX3BankDriver extends BankDriver
   /**
    * Not used in KorgX3.
    */
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  protected void calculateChecksum(Patch p,int start,int end,int ofs)
   {
   }
 

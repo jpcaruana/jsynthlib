@@ -140,8 +140,11 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                 }
 
                 public void JSLFrameActivated(JSLFrameEvent e) {
-                    p.getDriver().calculateChecksum(p);
-                    p.getDriver().sendPatch(p);
+                    // XXX: Do we really want to send the patch every
+                    //      time the editor gets focus?
+                    ISingleDriver d = (ISingleDriver)p.getDriver();
+                    d.calculateChecksum(p);
+                    d.sendPatch(p);
                     gotFocus();
 
                     Actions.setEnabled(false,
@@ -205,7 +208,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
     public void sendSelectedPatch() {
         p.getDriver().calculateChecksum(p);
-        p.getDriver().sendPatch(p);
+        ((ISingleDriver)p.getDriver()).sendPatch(p);
     }
 
     public void sendToSelectedPatch() {
@@ -220,8 +223,9 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
     public void playSelectedPatch() {
         p.getDriver().calculateChecksum(p);
-        p.getDriver().sendPatch(p);
-        p.getDriver().playPatch(p);
+        ISingleDriver d = (ISingleDriver)p.getDriver();
+        d.sendPatch(p);
+        d.playPatch(p);
     }
 
     public void storeSelectedPatch() {

@@ -17,7 +17,7 @@ public class XMLPatch implements IPatch {
 	private String date, author, comment;
 	private String name;
 	private transient HashMap parameters;
-	private transient Driver driver;
+	private transient IPatchDriver driver;
 	private transient Device device;
 	private transient XMLDecoder decoder;
 	
@@ -80,14 +80,14 @@ public class XMLPatch implements IPatch {
 	/* (non-Javadoc)
 	 * @see core.IPatch#getDriver()
 	 */
-	public Driver getDriver() {
+	public IPatchDriver getDriver() {
 		return driver;
 	}
 
 	/* (non-Javadoc)
 	 * @see core.IPatch#setDriver(core.Driver)
 	 */
-	public void setDriver(Driver driver) {
+	public void setDriver(IPatchDriver driver) {
 		this.driver = driver;
 	}
 

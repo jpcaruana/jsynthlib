@@ -384,6 +384,6 @@ final public class AppConfig {
      * driver is not found.
      */
     static Driver getNullDriver() {
-	return getDevice(0).getDriver(0);
+	return (Driver)getDevice(0).getDriver(0);
     }
 }

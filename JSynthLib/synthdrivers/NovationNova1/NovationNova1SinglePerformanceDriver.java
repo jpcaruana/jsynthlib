@@ -77,7 +77,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
     }
  
 
-    public void calculateChecksum(Patch p,int start,int end,int ofs)
+    protected void calculateChecksum(Patch p,int start,int end,int ofs)
     {
 
     }

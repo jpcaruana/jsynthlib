@@ -45,20 +45,11 @@ public class NewPatchDialog extends JDialog
 	for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++) {
 	    Device device = (Device) AppConfig.getDevice(i);
 	    for (int j=0; j < device.driverCount(); j++) {
-		Driver driver = device.getDriver(j);
-		if (!(driver instanceof Converter)) { // Skipping a converter
-		    try {
-			// If the actual driver doesn't override the
-			// method "createNewPatch" this command will
-			// throw an exception.  This means, that the
-			// driver doesn't support the creation of a
-			// new patch.
-			driver.getClass().getDeclaredMethod("createNewPatch", null);
+		IDriver driver = device.getDriver(j);
+		//XXX:Should be IPatchDriver
+		if (driver instanceof IPatchDriver) { // Skipping a converter
+		    if (((IPatchDriver)driver).canCreatePatch())
 			deviceComboBox.addItem(device);
-			break;
-		    } catch (Exception ex) {
-			// This is normal.  Simply do nothing....
-		    }
 		}
 	    }
 	}
@@ -88,7 +79,7 @@ public class NewPatchDialog extends JDialog
 	    {
 		public void actionPerformed(ActionEvent e)
 		{
-		    Driver driver = (Driver) driverComboBox.getSelectedItem();
+		    IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
 
 		    p = driver.createNewPatch();
 		    if (p != null) {
@@ -141,7 +132,7 @@ public class NewPatchDialog extends JDialog
 
 	    Device device = (Device) deviceComboBox.getSelectedItem();
 	    for (int i = 0; i < device.driverCount(); i++) {
-		Driver driver = device.getDriver(i);
+		IDriver driver = device.getDriver(i);
 		if (!(driver instanceof Converter)) {
 		    try {
 			// If the actual driver doesn't override the

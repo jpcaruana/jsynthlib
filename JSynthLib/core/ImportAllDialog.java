@@ -152,11 +152,11 @@ public class ImportAllDialog extends JDialog
 			IPatch pk = patarray[k];
                         if (putName==1) pk.setDate(pk.getDate() + files[i].getName());
                         if (putName==2) pk.setAuthor(pk.getAuthor() + files[i].getName());
-                        if (myModel.includeDevice[pk.getDriver().getDeviceNum()].booleanValue ())
+                        if (myModel.includeDevice[pk.getDriver().getDevice().getDeviceNum()].booleanValue ())
                         {
-                            if (extract && (pk.getDriver() instanceof BankDriver))
+                            if (extract && (pk.getDriver() instanceof IBankDriver))
                             {
-                                BankDriver myDriver=((BankDriver) pk.getDriver());
+                                IBankDriver myDriver=((IBankDriver) pk.getDriver());
 				String[] pn = myDriver.getPatchNumbers();
                                 for (int j=0;j<myDriver.getNumPatches();j++)
                                 {
@@ -197,8 +197,8 @@ public class ImportAllDialog extends JDialog
             String s1; String s2;
             if (field==0)
             {
-                s1=((IPatch) a1).getDriver().getPatchName((IPatch) a1);;
-                s2=((IPatch) a2).getDriver().getPatchName((IPatch) a2);;
+                s1=((IPatch) a1).getName();
+                s2=((IPatch) a2).getName();
             }
             else if (field==1)
             {

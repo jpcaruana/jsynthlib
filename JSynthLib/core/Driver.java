@@ -11,7 +11,7 @@ import java.text.*;
 // import java.util.Arrays;
 
 /**
- * This is the base class for all Drivers.<p>
+ * This is the base class for all Drivers which use Patch.<p>
  *
  * Compatibility Note: The following fields are now
  * <code>private</code>.  Use setter/getter method to access them.
@@ -35,7 +35,7 @@ import java.text.*;
  * @author Brian Klock
  * @version $Id$
  */
-public class Driver extends Object /*implements Serializable, Storable*/ {
+public class Driver implements ISingleDriver {
     /**
      * Which device does this driver go with?
      */
@@ -221,11 +221,11 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     // Setters and Getters
     //
     /** Setter for property <code>device</code>. */
-    void setDevice(Device d) {
+    public void setDevice(Device d) {
 	device = d;
     }
     /** Getter for property <code>device</code>. */
-    protected Device getDevice() {
+    public Device getDevice() {
 	return device;
     }
     /**
@@ -268,15 +268,15 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
  	return device.getDriverNum(this);
     }
     /** Getter for property <code>patchType</code>. */
-    protected String getPatchType() {
+    public String getPatchType() {
 	return patchType;
     }
     /** Getter for property <code>patchSize</code>. */
-    protected int getPatchSize() {
+    public int getPatchSize() {
 	return patchSize;
     }
     /** Getter for property <code>getAuthors</code>. */
-    protected String getAuthors() {
+    public String getAuthors() {
 	return authors;
     }
     /** Setter for property <code>port</code>. */
@@ -288,7 +288,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
     */
     /** Getter for property <code>port</code>. */
-    public int getPort() {	// called by bank driver
+    protected int getPort() {	// called by bank driver
 	return device.getPort();
     }
     /** Setter for property <code>inPort</code>. */
@@ -300,15 +300,15 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
     */
     /** Getter for property <code>inPort</code>. */
-    int getInPort() {	// was 'public' for storable interface
+    public int getInPort() {
 	return device.getInPort();
     }
     /** Getter for property <code>device.manufacturerName</code>. */
-    protected String getManufacturerName() {
+    public String getManufacturerName() {
 	return device.getManufacturerName();
     }
     /** Getter for property <code>device.modelName</code>. */
-    protected String getModelName() {
+    public String getModelName() {
 	return device.getModelName();
     }
     /** Getter for property <code>device.synthName</code>. */
@@ -386,7 +386,10 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @param ofs offset of the checksum data
      */
     protected void calculateChecksum(Patch patch, int start, int end, int ofs) {
-    	Patch p = (Patch)patch;
+        CalculateChecksum(patch, start, end, ofs);
+    }
+    
+    public final static void CalculateChecksum(Patch p, int start, int end, int ofs) {
     	// 	ErrorMsg.reportStatus("Driver:calcChecksum:1st byte is " + p.sysex[start]);
 // 	ErrorMsg.reportStatus("Last byte is " + p.sysex[end]);
 // 	ErrorMsg.reportStatus("Checksum was " + p.sysex[ofs]);
@@ -418,24 +421,27 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     /**
-     * Create a new Patch.
-     *
-     * Don't override this method unless your driver supports this.
-     * The caller checks if your driver support this by using
-     * getDeclaredMethod.
+     * Check if this driver supports creating a new patch.
+     * By default it uses reflection to test if the method createNewPatch
+     * is declared in the subclass of Driver.
+     * @return
      */
-    protected Patch createNewPatch() {
+    public boolean canCreatePatch() {
+        try {
+            getClass().getDeclaredMethod("createNewPatch", null);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+    
+    /**
+     * Create a new Patch.
+     */
+    public Patch createNewPatch() {
 	return null;
     }
 
-    /**
-     * This method trims a patch, containing more than one real
-     * patch to a correct size. Useful for files containg more than one
-     * bank for example. Some drivers are incompatible with this method
-     * so it reqires explicit activation with the trimSize variable.
-     * @param p the patch, which should be trimmed to the right size
-     * @return the size of the (modified) patch
-     */
     protected int trimSysex(Patch p) { // no driver overrides this now.
            if (trimSize > 0 && p.sysex.length > trimSize
 	    && p.sysex[trimSize - 1] == (byte) 0xf7) {
@@ -446,15 +452,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	return p.sysex.length;	// == trimSize
     }
 
-    /**
-     * Returns an Editor Window for this Patch. Don't override this
-     * method unless you implement the Editor.<p>
-     *
-     * Compatibility Note: The method returned
-     * <code>JInternalFrame</code>, but now returns
-     * <code>JSLFrame</code>.
-     * @see #hasEditor
-     */
     protected JSLFrame editPatch(Patch p) {
 	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
 	return null;
@@ -464,8 +461,8 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Returns true if an Editor is implemented.
      * @see #editPatch
      */
-    protected boolean hasEditor() {
-	if (this instanceof BankDriver)
+    public boolean hasEditor() {
+	if (this instanceof IBankDriver)
 	    return true;
 	else if (getClass().equals(Driver.class)) // ex. Generic Driver
 	    return false;
@@ -540,16 +537,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	choosePatch(p, 0, 0);
     }
 
-    /**
-     * Compares the header & size of a Patch to this driver to see if
-     * this driver is the correct one to support the patch.
-     *
-     * @param patchString the result of <code>p.getPatchHeader()</code>.
-     * @param p a <code>Patch</code> value
-     * @return <code>true</code> if this driver supports the Patch.
-     * @see #patchSize
-     * @see #sysexID
-     */
     protected boolean supportsPatch(StringBuffer patchString, Patch p) {
   	// check the length of Patch
         if ((patchSize != p.sysex.length) && (patchSize != 0))
@@ -606,10 +593,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	}
     }
 
-    /**
-     * Sends a patch to a set location on a synth.<p>
-     * Override this if required.
-     */
     // sendPatch(Patch) may be better name.
     protected void storePatch(Patch p, int bankNum, int patchNum) {
         setBankNum(bankNum);
@@ -617,13 +600,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         sendPatch(p);
     }
 
-    /**
-     * Sends a patch to the synth's edit buffer.<p>
-     *
-     * Override this in the subclass if parameters or warnings need to
-     * be sent to the user (aka if the particular synth does not have
-     * a edit buffer or it is not MIDI accessable.
-     */
     protected void sendPatch(Patch p) {
 	sendPatchWorker(p);
     }
@@ -641,15 +617,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	}
     }
 
-    /**
-     * clear MIDI input buffer.  Now called by
-     * SysexGetDialog.GetActionListener before requestPatchDump is
-     * called.
-     */
-    void clearMidiInBuffer() {
-	MidiUtil.clearSysexInputQueue(getInPort());
-    }
-
     //----- Start phil@muqus.com
     /**
      * Request MIDI synth to send a patch dump.  If
@@ -658,7 +625,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * window will prompt users.
      * @see SysexHandler
      */
-    protected void requestPatchDump(int bankNum, int patchNum) {
+    public void requestPatchDump(int bankNum, int patchNum) {
 	//clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
 	setBankNum(bankNum);
 	setPatchNum(patchNum);
@@ -676,11 +643,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
     //----- End phil@muqus.com
 
-    /** Play note. 
-     * @param p a <code>Patch</code> value, which isn't used! !!!FIXIT!!!
-     * @Xdeprecated Use playPatch().
-     */
-    public void playPatch(Patch p) { // called by core and some Editors
+    protected void playPatch(Patch p) { // called by core and some Editors
 	playPatch();
     }
     
@@ -688,7 +651,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * plays a MIDI file or a single note depending which preference is set.
      * Currently the MIDI sequencer support isn't implemented!
      */
-    public void playPatch() { // called by core and some Editors
+    protected void playPatch() { // called by core and some Editors
 	if (PatchEdit.appConfig.getSequencerEnable()) playSequence();
 	else playNote();
     }
@@ -725,6 +688,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     /** Send Sysex byte array data to MIDI outport. */
+    // Called from SysexWidget
     public final void send(byte[] sysex) {
 	try {
 	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
@@ -763,10 +727,11 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	    + getPatchType() + " | " + getSynthName() + " | " + getPatchName(p);
     }
 
-    /*
-     * Returns String .. full name for referring to this Driver for
+    /**
+     * Returns full name for referring to this Driver for
      * debugging purposes
      */
+    // Doesn't look like this is only for debugging.
     public String toString() {
 	return getManufacturerName() + " " + getModelName() + " "
 	    + getPatchType();
@@ -833,6 +798,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     // stub methods to convert IPatch -> Patch.
+
     public void calculateChecksum(IPatch myPatch) {
         calculateChecksum((Patch) myPatch);
     }
@@ -841,31 +807,59 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
          return editPatch((Patch) p);
     }
 
-    public String getPatchName(IPatch patch) {
-         return getPatchName((Patch) patch);
-    }
-
+    /** Play note. 
+     * @param p a <code>Patch</code> value, which isn't used! !!!FIXIT!!!
+     * @Xdeprecated Use playPatch().
+     */
     public void playPatch(IPatch p) {
         playPatch((Patch) p);
     }
 
+    /**
+     * Sends a patch to the synth's edit buffer.<p>
+     *
+     * Override this in the subclass if parameters or warnings need to
+     * be sent to the user (aka if the particular synth does not have
+     * a edit buffer or it is not MIDI accessable.
+     */
     public void sendPatch(IPatch p) {
         sendPatch((Patch) p);
     }
 
-    public void setPatchName(IPatch patch, String text) {
-        setPatchName((Patch) patch, text);
-    }
-
+    /**
+     * Sends a patch to a set location on a synth.<p>
+     * Override this if required.
+     */
     public void storePatch(IPatch myPatch, int bankNum, int patchNum) {
         storePatch((Patch) myPatch, bankNum, patchNum);
     }
     
+    /**
+     * Compares the header & size of a Patch to this driver to see if
+     * this driver is the correct one to support the patch.
+     *
+     * @param patchString the result of <code>p.getPatchHeader()</code>.
+     * @param p a <code>Patch</code> value
+     * @return <code>true</code> if this driver supports the Patch.
+     * @see #patchSize
+     * @see #sysexID
+     */
     public boolean supportsPatch(StringBuffer patchString, IPatch p) {
         return supportsPatch(patchString, (Patch) p);
     }
 
+    /**
+     * This method trims a patch, containing more than one real
+     * patch to a correct size. Useful for files containg more than one
+     * bank for example. Some drivers are incompatible with this method
+     * so it reqires explicit activation with the trimSize variable.
+     * @param p the patch, which should be trimmed to the right size
+     * @return the size of the (modified) patch
+     */
     public void trimSysex(IPatch pk) {
         trimSysex((Patch) pk);
+    }
+    public IPatch createPatch(byte[] sysex) {
+        return new Patch(sysex, this);
     }
 }

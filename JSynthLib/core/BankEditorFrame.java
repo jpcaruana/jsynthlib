@@ -27,7 +27,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
     protected IPatch bankData;
     /** bank driver. */
-    protected BankDriver bankDriver;
+    protected IBankDriver bankDriver;
     /** This BankEditorFrame instance. */
     protected final BankEditorFrame instance; // accessed by YamahaFS1RBankEditor
     /** A table model. */
@@ -58,7 +58,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	      true); // iconifiable
         instance = this;
 	bankData = p;
-        bankDriver = (BankDriver) p.getDriver();
+        bankDriver = (IBankDriver) p.getDriver();
         initBankEditorFrame();
     }
 
@@ -224,7 +224,9 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        p.getDriver().sendPatch(p);
+        IPatchDriver d = p.getDriver();
+        if (d instanceof ISingleDriver)
+            ((ISingleDriver)d).sendPatch(p);
     }
 
     public void sendToSelectedPatch() {
@@ -240,8 +242,11 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        p.getDriver().sendPatch(p);
-	p.getDriver().playPatch(p);
+        IPatchDriver d = p.getDriver();
+        if (d instanceof ISingleDriver) {
+            ((ISingleDriver)d).sendPatch(p);
+	   ((ISingleDriver)d).playPatch(p);
+        }
     }
 
     public void storeSelectedPatch() {
@@ -290,7 +295,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    }
 	    return;
 	}
-	bankDriver = (BankDriver) bankData.getDriver();
+	bankDriver = (IBankDriver) bankData.getDriver();
     }
 
     /** change state of Actions based on the state of the table. */
@@ -359,9 +364,9 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     class PatchGridModel extends AbstractTableModel {
 	public IPatch bankData;
-	public BankDriver bankDriver;
+	public IBankDriver bankDriver;
 
-	public PatchGridModel (IPatch p,BankDriver d) {
+	public PatchGridModel (IPatch p,IBankDriver d) {
 	    super();
 	    ErrorMsg.reportStatus("PatchGridModel");
 	    bankData=p;

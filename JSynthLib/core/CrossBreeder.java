@@ -26,7 +26,7 @@ public class CrossBreeder {
     public void generateNewPatch() {
 	try {
 	    Patch father = getRandomPatch();
-	    Driver drv = father.getDriver();
+	    Driver drv = (Driver)father.getDriver();
 	    byte[] sysex = new byte[father.sysex.length];
 	    p = new Patch(sysex, drv);
 	    ErrorMsg.reportStatus("num : " + father.sysex.length + ", " + sysex.length);

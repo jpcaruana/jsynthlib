@@ -159,7 +159,7 @@ public class EnsoniqVFXSingleDriver extends Driver
 	}
 
 
-	public void calculateChecksum(Patch p, int start, int end, int ofs)
+	protected void calculateChecksum(Patch p, int start, int end, int ofs)
 	{
 		//This synth does not use a checksum
 	}

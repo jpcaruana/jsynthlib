@@ -81,7 +81,7 @@ public void calculateChecksum(Patch ip)
       waveDataStart+=806;
     }
   }
-  public void calculateChecksum(Patch ip,int start,int end,int ofs)
+  protected void calculateChecksum(Patch ip,int start,int end,int ofs)
   {
   	Patch p = (Patch)ip;
   	int i;

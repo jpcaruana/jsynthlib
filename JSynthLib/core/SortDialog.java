@@ -99,8 +99,8 @@ public class SortDialog extends JDialog {
             String s1; String s2;
             if (field==0)
             {
-                s1=((IPatch) a1).getDriver().getPatchName((IPatch) a1).toLowerCase();
-                s2=((IPatch) a2).getDriver().getPatchName((IPatch) a2).toLowerCase();
+                s1=((IPatch) a1).getName().toLowerCase();
+                s2=((IPatch) a2).getName().toLowerCase();
             }
             else if (field==1)
             {

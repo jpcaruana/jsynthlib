@@ -485,7 +485,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 	// transmit OperatorState to Synth
 	private void SendOpState()
 	{
-		xmitVoiceOperatorState(p.getDriver(), OperatorState & 0x3f);
+		xmitVoiceOperatorState((Driver)p.getDriver(), OperatorState & 0x3f);
 	}
 
 	// It's not good idea to override PatchPasket method.
@@ -493,7 +493,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 	{
 		sendSelectedPatch();		// send Patch to Synth
 		SendOpState();			// transmit OperatorState to Synth
-		p.getDriver().playPatch(p);	// and now play the patch, Sam! (only NoteOn-NoteOff!)
+		((Driver)p.getDriver()).playPatch(p);	// and now play the patch, Sam! (only NoteOn-NoteOff!)
 	};
 
 

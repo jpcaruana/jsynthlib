@@ -15,8 +15,8 @@ package synthdrivers.RolandXV5080;
 import java.io.UnsupportedEncodingException;
 
 import core.BankDriver;
-import core.Driver;
 import core.ErrorMsg;
+import core.IPatchDriver;
 import core.Patch;
 import core.SysexHandler;
 import core.Utility;
@@ -98,8 +98,8 @@ public class RolandXV5080PerfBankDriver extends BankDriver {
 
   public void setPatchName(Patch bank, int patchNum, String name) {
     Patch p = getPatch(bank, patchNum);
-    Driver singleDriver = p.getDriver();
-    singleDriver.setPatchName(p, name);
+    IPatchDriver singleDriver = p.getDriver();
+    p.setName(name);
     singleDriver.calculateChecksum(p);
     putPatch(bank, p, patchNum);
   }

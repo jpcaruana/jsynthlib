@@ -43,7 +43,7 @@ public class UploadPatchDialog extends JDialog {
 	t1 = new JTextField(20);
 	JLabel l2 = new JLabel("Patch Name: ");
 	t2 = new JTextField(20);
-	t2.setText(q.getDriver().getPatchName(q));
+	t2.setText(q.getName());
 	t1.setEditable(false);
 
 	patchType= q.getDriver().getManufacturerName();
@@ -233,9 +233,11 @@ public class UploadPatchDialog extends JDialog {
 	    PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
 	    IPatch p = library.getSelectedPatch();
 
-	    if (p==null) return;
-	    p.getDriver().sendPatch(p);
-	    p.getDriver().playPatch(p);
+	    if (p==null || !(p.getDriver() instanceof ISingleDriver))
+	        return;
+	    ISingleDriver d = (ISingleDriver)p.getDriver();
+	    d.sendPatch(p);
+	    d.playPatch(p);
 	} catch (Exception ex) {
 	    JOptionPane.showMessageDialog(null, "Patch Must be Focused","Error", JOptionPane.ERROR_MESSAGE);
 	}

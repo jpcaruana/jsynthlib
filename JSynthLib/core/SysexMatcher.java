@@ -99,7 +99,7 @@ public class SysexMatcher extends Object {
 //    If no match, or no detectable problem, return empty string
 //----------------------------------------------------------------------------------------------------------------------
 
-  public String detectCorruptSysex(Driver driver, IPatch patch, String sysexID, int size, int numSysexMsgs) {
+  public String detectCorruptSysex(IDriver driver, IPatch patch, String sysexID, int size, int numSysexMsgs) {
     if (!matches(sysexID, 0, 0))                            // Not a match
       return "";
 

@@ -85,7 +85,7 @@ public class VirusMultiSingleDriver extends Driver {
     patchNumbers = PATCH_LIST;
   }
 
-  public void calculateChecksum(Patch ip, int start, int end, int ofs) {
+  protected void calculateChecksum(Patch ip, int start, int end, int ofs) {
   	Patch p = (Patch)ip;
   	int sum = 0;
     for (int i = start; i <= end; i++) {
@@ -112,7 +112,7 @@ public class VirusMultiSingleDriver extends Driver {
     sendPatch((Patch)p, 1, patchNum);
   }
 
-  public void playPatch(Patch p) {
+  protected void playPatch(Patch p) {
     Patch p2 = new Patch(((Patch)p).sysex);
     p2.sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
     p2.sysex[BANK_NUM_OFFSET] = 0; // edit buffer

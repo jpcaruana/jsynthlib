@@ -31,7 +31,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
     // A6 doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs)
+  protected void calculateChecksum(Patch p, int start, int end, int ofs)
   {
     // A6 doesn't use checksum
   }

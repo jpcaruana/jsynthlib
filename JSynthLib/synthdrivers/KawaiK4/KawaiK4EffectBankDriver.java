@@ -51,7 +51,7 @@ public class KawaiK4EffectBankDriver extends BankDriver {
 	return s;
     }
 
-    public void calculateChecksum(Patch ip, int start, int end, int ofs) {
+    protected void calculateChecksum(Patch ip, int start, int end, int ofs) {
     	    Patch p = (Patch)ip;
     	    int sum = 0;
         for (int i = start; i <= end; i++)

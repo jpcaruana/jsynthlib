@@ -38,7 +38,8 @@ public class QuasimidiQuasarTemporaryConverter extends Converter {
 
         this.sysexID = QuasarConstants.SYSEX_ID;
         this.patchSize = QuasarConstants.TEMPORARY_SIZE;
-        this.deviceIDoffset = QuasarConstants.ARRAY_DEVICE_ID_OFFSET;
+        /* This doesn't seem to be used */
+        //this.deviceIDoffset = QuasarConstants.ARRAY_DEVICE_ID_OFFSET; 
     }
 
     /**

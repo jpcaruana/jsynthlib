@@ -43,8 +43,8 @@ public class VirusMultiBankDriver extends BankDriver {
     sysex[ofs] = (byte)(sum & 0x7F);
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs) {
-    calculateChecksum(((Patch)p).sysex, start, end, ofs);
+  protected void calculateChecksum(Patch p, int start, int end, int ofs) {
+    calculateChecksum(p.sysex, start, end, ofs);
   }
 
   public void storePatch (Patch p, int bankNum, int patchNum) {

@@ -156,7 +156,7 @@ public class SearchDialog extends JDialog {
 
 		match = false;
 		if (field == 0 || field == 4) {
-		    s = p.getDriver().getPatchName(p).toLowerCase();
+		    s = p.getName().toLowerCase();
 		    match = (s.indexOf(text) != -1);
 		    if (match) break;
 		}

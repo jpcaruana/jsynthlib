@@ -12,34 +12,30 @@ import javax.swing.JTextField;
 public class PatchNameWidget extends SysexWidget {
     /** JTextField object */
     protected JTextField name;
+    protected int patchNameSize;
 
     /**
      * Creates a new <code>PatchNameWidget</code> instance.
-     *
      * @param label a label text.
      * @param patch a <code>Patch</code>, which is edited.
+     * @param patchNameSize TODO
      */
     public PatchNameWidget(String label, IPatch patch) {
-	super(label, patch, null, null);
-
-	createWidgets();
-        layoutWidgets();
+        this(label, patch, ((Driver)patch.getDriver()).patchNameSize);
     }
 
-    /** @deprecated Use PatchNameWidget(String, Patch) */
-    // The order of argument is not consistent with others.
-    public PatchNameWidget(IPatch patch, String label) {
-	super(label, patch, null, null);
-
-	createWidgets();
+    public PatchNameWidget(String label, IPatch patch, int _patchNameSize) {
+        super(label, patch, null, null);
+        
+        patchNameSize = _patchNameSize;
+        createWidgets();
         layoutWidgets();
     }
-
+    
     protected void createWidgets() {
-	Driver driver = getDriver();
-	if (driver != null) {
-	    name = new JTextField(driver.getPatchName(getPatch()),
-				  driver.patchNameSize);
+	if (getDriver ()!= null) {
+	    name = new JTextField(getPatch().getName(),
+				  patchNameSize);
 	} else {
 	    name = new JTextField("Patch Name", 0);
 	}
@@ -58,9 +54,9 @@ public class PatchNameWidget extends SysexWidget {
      * <code>driver.setPatchName()</code> is called.
      */
     protected void eventListener(FocusEvent e) {
-	Driver driver = getDriver();
+	IPatchDriver driver = getDriver();
 	if (driver != null)
-	    driver.setPatchName(getPatch(), name.getText());
+	    getPatch().setName(name.getText());
     }
 
     /** Adds an <code>FocusListener</code> to the JTextField. */

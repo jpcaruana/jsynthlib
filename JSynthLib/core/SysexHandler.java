@@ -43,7 +43,7 @@ import javax.sound.midi.SysexMessage;
  * </pre>
  * @see NameValue
  * @see Driver#sysexRequestDump
- * @see Driver#requestPatchDump
+ * @see IPatchDriver#requestPatchDump
  */
 // Modifications by: phil@muqus.com - 07/2001
 public class SysexHandler /*implements Serializable*/ {

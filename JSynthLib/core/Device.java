@@ -44,7 +44,7 @@ import javax.swing.JPanel;
  * Created on 5. Oktober 2001, 21:59
  * @author Gerrit Gehnen
  * @version $Id$
- * @see Driver
+ * @see IDriver
  */
 public abstract class Device /*implements Serializable, Storable*/ {
 
@@ -325,8 +325,9 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param driver Driver to be added.
      * @see Converter
      */
-    protected void addDriver(Driver driver) {
-	driver.setDevice(this);
+    protected void addDriver(IDriver driver) {
+        if (driver instanceof IPatchDriver)
+            ((IPatchDriver)driver).setDevice(this);
         driverList.add(driver);
     }
 
@@ -337,7 +338,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param driver Driver to be added.
      * @deprecated Call <code>addDriver(Driver)</code> in order.
      */
-    protected void addDriver(int index, Driver driver) {
+    protected void addDriver(int index, IPatchDriver driver) {
 	driver.setDevice(this);
         driverList.add(index, driver);
     }
@@ -348,18 +349,18 @@ public abstract class Device /*implements Serializable, Storable*/ {
     }
 
     /** Indexed getter for driverList elements. */
-    protected Driver getDriver(int i) {
-	return (Driver) this.driverList.get(i);
+    protected IDriver getDriver(int i) {
+	return (IDriver) this.driverList.get(i);
     }
 
     /** Returns the index of a Driver */
-    int getDriverNum(Driver drv) {
+    int getDriverNum(IDriver drv) {
  	return driverList.indexOf(drv);
     }
 
     /** Remover for driverList elements. */
-    Driver removeDriver(int i) {
-	return (Driver) this.driverList.remove(i);
+    IDriver removeDriver(int i) {
+	return (IDriver) this.driverList.remove(i);
     }
 
     /** getter for device number. */

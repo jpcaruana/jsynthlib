@@ -125,7 +125,7 @@ public class Patch implements IPatch {
 
         for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
 	    // iterating over all Drivers of the given device
-	    Driver drv = dev.getDriver(idrv);
+	    IPatchDriver drv = (IPatchDriver)dev.getDriver(idrv);
 	    if (drv.supportsPatch(patchString, this)) {
 		drv.trimSysex(this);
 		setDriver(drv);
@@ -149,7 +149,7 @@ public class Patch implements IPatch {
             // Outer Loop, iterating over all installed devices
 	    Device dev = AppConfig.getDevice(idev);
 	    for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-		Driver drv = dev.getDriver(idrv);
+		IPatchDriver drv = (IPatchDriver)dev.getDriver(idrv);
                 // Inner Loop, iterating over all Drivers of a device
 		if (drv.supportsPatch(patchString, this)) {
                     drv.trimSysex(this);
@@ -194,12 +194,12 @@ public class Patch implements IPatch {
 	return driver.getDevice();
     }
 
-    public Driver getDriver() {
+    public IPatchDriver getDriver() {
 	return driver;
     }
 
-    public void setDriver(Driver driver) {
-  	this.driver = (driver == null) ? AppConfig.getNullDriver() : driver;
+    public void setDriver(IPatchDriver driver) {
+  	this.driver = (driver == null) ? AppConfig.getNullDriver() : (Driver)driver;
     }
 
     public byte[] getByteArray() {
@@ -256,7 +256,7 @@ public class Patch implements IPatch {
 	    StringBuffer patchString = this.getPatchHeader();
 
 	    for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-		Driver drv = dev.getDriver(idrv);
+		IDriver drv = dev.getDriver(idrv);
 		if ((drv instanceof Converter)
 		    && drv.supportsPatch(patchString, this)) {
 		    patarray = ((Converter) drv).extractPatch(this);
@@ -273,7 +273,7 @@ public class Patch implements IPatch {
 	for (int i = 0; i < patarray.length; i++) {
 	    StringBuffer patchString = patarray[i].getPatchHeader();
 	    for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {
-		Driver drv = dev.getDriver(jdrv);
+		IPatchDriver drv = (IPatchDriver)dev.getDriver(jdrv);
 		if (drv.supportsPatch(patchString, patarray[i]))
 		    patarray[i].setDriver(drv);
 	    }
@@ -312,11 +312,11 @@ public class Patch implements IPatch {
     }
     
     public String getName() {
-    		return getDriver().getPatchName(this);
+    		return driver.getPatchName(this);
     }
     
     public void setName(String s) {
-    		getDriver().setPatchName(this, s);
+    		driver.setPatchName(this, s);
     }
 	public void useSysexFromPatch(IPatch ip) {
 		byte[] s = ip.getByteArray();

@@ -28,7 +28,7 @@ public class AlesisA6MixSingleDriver extends Driver
     // A6 doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs)
+  protected void calculateChecksum(Patch p, int start, int end, int ofs)
   {
     // A6 doesn't use checksum
   }
@@ -91,7 +91,7 @@ public class AlesisA6MixSingleDriver extends Driver
 
   // Kludge: A6 doesn't seem to receive edit buffer dump, so user mix 127
   // is being used for that purpose.
-  public void playPatch(Patch p)
+  protected void playPatch(Patch p)
   {
     byte sysex[] = new byte[1182];
     System.arraycopy(((Patch)p).sysex, 0, sysex, 0, 1180);

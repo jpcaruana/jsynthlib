@@ -1,12 +1,20 @@
 package core;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.filechooser.FileFilter;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * ConfigPanel for play note.  Gives the user a way to change the note

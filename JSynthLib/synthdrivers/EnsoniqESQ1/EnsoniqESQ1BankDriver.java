@@ -76,7 +76,7 @@ public class EnsoniqESQ1BankDriver extends BankDriver
   }
  
 
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  protected void calculateChecksum(Patch p,int start,int end,int ofs)
   {
 
 

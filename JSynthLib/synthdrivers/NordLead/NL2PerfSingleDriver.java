@@ -134,7 +134,7 @@ public class NL2PerfSingleDriver extends Driver {
     // doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs) {
+  protected void calculateChecksum(Patch p, int start, int end, int ofs) {
     // doesn't use checksum
   }
 
@@ -161,7 +161,7 @@ public class NL2PerfSingleDriver extends Driver {
     setPatchNum(patchNum); // send program change to get new sound in edit buffer
   }
 
-  public void playPatch(Patch p) {
+  protected void playPatch(Patch p) {
     byte sysex[] = new byte[patchSize];
     System.arraycopy(((Patch)p).sysex, 0, sysex, 0, patchSize);
     sysex[BANK_NUM_OFFSET] = 30; // edit buffer

@@ -388,8 +388,11 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 
     public void sendSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.getDriver().calculateChecksum(myPatch);
-        myPatch.getDriver().sendPatch(myPatch);
+	IPatchDriver d = myPatch.getDriver();
+	if (d instanceof ISingleDriver) {
+	    ((ISingleDriver)d).calculateChecksum(myPatch);
+	    ((ISingleDriver)d).sendPatch(myPatch);
+	}
     }
 
     public void sendToSelectedPatch() {
@@ -406,10 +409,13 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     public void playSelectedPatch() {
-	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
+        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
-        myPatch.getDriver().sendPatch(myPatch);
-	myPatch.getDriver().playPatch(myPatch);
+        IPatchDriver d = myPatch.getDriver();
+        if (d instanceof ISingleDriver) {
+            ((ISingleDriver)d).sendPatch(myPatch);
+            ((ISingleDriver)d).playPatch(myPatch);
+        }
     }
 
     public void storeSelectedPatch() {
@@ -448,7 +454,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	    return;
 	}
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        BankDriver myDriver = (BankDriver) myPatch.getDriver();
+        IBankDriver myDriver = (IBankDriver) myPatch.getDriver();
         for (int i = 0; i < myDriver.getNumPatches(); i++)
             if (myDriver.getPatch(myPatch, i) != null)
 		myModel.addPatch(myDriver.getPatch(myPatch, i));
@@ -591,7 +597,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	    case TYPE:
 		return myPatch.getDriver().getPatchType();
 	    case PATCH_NAME:
-		return myPatch.getDriver().getPatchName(myPatch);
+		return myPatch.getName();
 	    case FIELD1:
 		return myPatch.getDate();
 	    case FIELD2:
@@ -637,7 +643,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	    IPatch myPatch = (IPatch) list.get(row);
 	    switch (col) {
 	    case PATCH_NAME:
-		myPatch.getDriver().setPatchName(myPatch, (String) value);
+		myPatch.setName((String)value);
 		break;
 	    case FIELD1:
 		myPatch.setDate((String) value);

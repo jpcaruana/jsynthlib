@@ -65,7 +65,7 @@ public class KawaiK4MultiDriver extends Driver {
 	sendPatchWorker(p);
     }
 
-    public void calculateChecksum(Patch ip, int start, int end, int ofs) {
+    protected void calculateChecksum(Patch ip, int start, int end, int ofs) {
     	Patch p = (Patch)ip;
     	int sum = 0;
 	for (int i = start; i <= end; i++) {
