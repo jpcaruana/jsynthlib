@@ -7,7 +7,7 @@
  * @version $Id$
  */
 
-package core;
+package core; //TODO org.jsynthlib.midi;
 import javax.sound.midi.*;
 import java.util.*;
 
@@ -15,22 +15,27 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     private int currentOutport;
     private int currentInport;
     private int faderPort;
-    private MidiDevice.Info[] mdi;
     private Vector sourceInfoVector;
     private Vector destinationInfoVector;
-    private MidiDevice sourceDevice;
-    private MidiDevice destinationDevice;
     private Transmitter input=null;
     private Transmitter fader=null;
     private Receiver output=null;
-    private MidiDevice md;
     private List list = Collections.synchronizedList(new LinkedList());
     private boolean initialized;
+    /**
+     * MIDI Output buffer size.  If set to '0', Whole Sysex data is
+     * sent in one packet.  Set '0' unless you have problem.
+     */
+    private static final int BUFSIZE = 0;
+
+    /* this(0,0); Mustn't do this. We need to be able to instantiate
+       without trying to grab any ports - emenaker 2003.09.01 */
+    public JavasoundMidiWrapper() throws Exception {}
 
     // This used to be the constructor with (int,int) params
     // I needed to change the (int,int) constructor to some non-constructor thing, because I neede to
     // have an instance of every eligible midi wrapper ahead of time. - emenaker 2003.03.12
-    public void init(int inport, int outport) throws DriverInitializationException, MidiUnavailableException {
+    public void init(int inport, int outport) throws /*DriverInitializationException,*/ MidiUnavailableException {
         initialized = false;
         currentInport=inport;
         currentOutport=outport;
@@ -38,12 +43,13 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 
         sourceInfoVector=new Vector();
         destinationInfoVector=new Vector();
+// 	ErrorMsg.reportStatus("WireMidiWrapper.init" + sourceInfoVector + ", " + inport + ", " + outport);
 
-        mdi=MidiSystem.getMidiDeviceInfo();
+	MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
 
         for (int i=0;i<mdi.length;i++) {
             try {
-                md=MidiSystem.getMidiDevice(mdi[i]);
+		MidiDevice md = MidiSystem.getMidiDevice(mdi[i]);
                 md.open(); // This can really throw an MidiUnavailableException on my System
 
                 if (md.getMaxReceivers()!=0) {
@@ -78,31 +84,27 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
         initialized = true;
     }
 
-    public  JavasoundMidiWrapper() throws Exception {
-        /* this(0,0); Mustn't do this. We need to be able to instantiate without trying to grab any ports - emenaker 2003.09.01 */
-    }
-
     //this gets called whenever a midimessage arrives at input
     public void send(MidiMessage msg,long l) {
-        if (msg instanceof ShortMessage) {
-            //ErrorMsg.reportStatus("Status: "+((ShortMessage)msg).getStatus());
-            // Filter out Active Sensing
-            if (((ShortMessage)msg).getStatus()==ShortMessage.ACTIVE_SENSING)
-                return;
-        }
-        //ErrorMsg.reportStatus("JavasoundMidiWrapper:Got Message length "+msg.getLength()+" Status "+msg.getStatus());
-        if (msg instanceof SysexMessage) {
-            ErrorMsg.reportStatus("SYSEX: Status: "+msg.getStatus()+" Last Byte "+msg.getMessage()[msg.getMessage().length-1]);
-        }
+	// ignore System Real Time Message
+	if ((msg.getStatus() & 0xf8) == 0xf8)
+	    return;
+	//System.out.println("MidiWrapper:Got Message length "+msg.getLength());
         list.add(msg);
     }
 
     public void close() {
         if (input!=null) {input.setReceiver(null); /*input.close();*/}
-        if (fader!=null) {fader.setReceiver(null);/* fader.close();*/}
+        if (fader!=null) {fader.setReceiver(null); /*fader.close();*/}
         /*   if (output!=null) { output.close();}*/
+	MidiDevice.Info[] mdi = MidiSystem.getMidiDeviceInfo();
         for (int i=0;i<mdi.length;i++) {
-            md.close();
+	    try {
+		MidiDevice md = MidiSystem.getMidiDevice(mdi[i]);
+		md.close();
+	    } catch (MidiUnavailableException e) {
+		;		// ignore
+	    }
         }
     }
 
@@ -115,100 +117,66 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
             if ((port==PatchEdit.appConfig.getFaderPort()) && (fader!=null)) {
                 MidiDevice srcDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(port));
                 fader=srcDevice.getTransmitter();
-
                 return;
-            };
+            }
 
             if (currentInport!=port) {
                 input.setReceiver(null);
-                //        input.close ();
+                // input.close();
+// 		ErrorMsg.reportStatus(sourceInfoVector + ", " + port);
                 MidiDevice srcDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(port));
-                //        srcDevice.open();
+                // srcDevice.open();
                 input=srcDevice.getTransmitter();
                 input.setReceiver(this);
             }
             currentInport=port;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            ErrorMsg.reportError("Error","Wire MIDI is flipping out.",e);}
+        } catch (Exception e) {
+// 	    e.printStackTrace();
+            ErrorMsg.reportError("Error","Wire MIDI is flipping out.",e);
+	}
     }
 
     private void setOutputDeviceNum(int port) throws MidiUnavailableException {
         if (currentOutport!=port) {
-            //output.close ();
+            //output.close();
             MidiDevice destDevice=MidiSystem.getMidiDevice((MidiDevice.Info)destinationInfoVector.get(port));
             output=destDevice.getReceiver();
-            if (destDevice.isOpen())
+            if (destDevice.isOpen()) // !!!FIXIT!!!
                 destDevice.open();
             ErrorMsg.reportStatus("Outport: "+destDevice.getDeviceInfo().getName()+" is Open: "+destDevice.isOpen());
+	    currentOutport=port;
         }
-        currentOutport=port;
     }
 
-    public void send(int port, MidiMessage msg) throws MidiUnavailableException {
-        setOutputDeviceNum(port);
-        output.send(msg, -1);
-    }
-    /*
-    public  void writeLongMessage(int port,byte []sysex)
-	throws InvalidMidiDataException, MidiUnavailableException {
-        writeLongMessage(port,sysex,sysex.length);
-    }
+    public void send(int port, MidiMessage msg)
+	throws MidiUnavailableException, InvalidMidiDataException {
+	setOutputDeviceNum(port);
+	int size = msg.getLength();
 
-    public  void writeLongMessage(int port,byte []sysex,int size)
-	throws InvalidMidiDataException, MidiUnavailableException {
-        //ErrorMsg.reportStatus("JavaSoundMapper:Writing to port "+port);
-
-        setOutputDeviceNum(port);
-        if (size==2) {
-            writeShortMessage(port,sysex[0],sysex[1]);
-            return;
-        }
-        if (size==3) {
-            writeShortMessage(port,sysex[0],sysex[1],sysex[2]);
-            return;
-        }
-
-	// System Exclusive Message
-	SysexMessage msg = new SysexMessage ();
-	//final int BUFSIZE = 250;
-	final int BUFSIZE = 0;
-	if (BUFSIZE == 0) {
-	    msg.setMessage(sysex, size);
+	if (BUFSIZE == 0 || size <= BUFSIZE) {
 	    output.send(msg, -1);
 	    MidiUtil.logOut(port, msg);
 	} else {
+	    // divide large System Exclusive Message into multiple
+	    // small messages.
+	    byte[] sysex = msg.getMessage();
 	    byte[] tmpArray = new byte[BUFSIZE + 1];
 	    for (int i = 0; size > 0; i += BUFSIZE, size -= BUFSIZE) {
 		int s = Math.min(size, BUFSIZE);
-// 		ErrorMsg.reportStatus("writeLongMessage: size = " + size + ", s = " + s);
+
 		if (i == 0) {
 		    System.arraycopy(sysex, i, tmpArray, 0, s);
-		    msg.setMessage(tmpArray, s);
+		    ((SysexMessage) msg).setMessage(tmpArray, s);
 		} else {
 		    tmpArray[0] = (byte) SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
 		    System.arraycopy(sysex, i, tmpArray, 1, s);
-		    msg.setMessage(tmpArray, ++s);
+		    ((SysexMessage) msg).setMessage(tmpArray, ++s);
 		}
 		output.send(msg, -1);
 		MidiUtil.logOut(port, msg);
 	    }
 	}
     }
-    public  void writeShortMessage(int port, byte b1, byte b2)
-	throws InvalidMidiDataException, MidiUnavailableException {
-        writeShortMessage(port,b1,b2,(byte)0);
-    }
-
-    public  void writeShortMessage(int port,byte b1, byte b2,byte b3)
-	throws InvalidMidiDataException, MidiUnavailableException {
-        setOutputDeviceNum(port);
-        ShortMessage msg=new ShortMessage();
-	msg.setMessage ((int) (b1 & 0xff), (int) (b2 & 0xff), (int) (b3 & 0xff));
-        output.send(msg,-1);
-    }
-    */
 
     public  int getNumInputDevices() {
         return sourceInfoVector.size();
@@ -232,28 +200,11 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     }
 
     public void clearMidiInBuffer(int port) {
-	while (! list.isEmpty())
+	while (!list.isEmpty())
 	    list.remove(0);
     }
 
-    /*
-    public  int readMessage(int port,byte []sysex,int maxSize)throws Exception {
-        setInputDeviceNum(port);
-        MidiMessage msg = (MidiMessage) list.get(0);
-        list.remove(0);
-        //ErrorMsg.reportStatus("MidiMessagelength:"+msg.getLength());
-        //ErrorMsg.reportStatus("MidiMessage: "+msg.getMessage()[0]);
-        if (msg.getMessage()[0]==-9) {
-            System.arraycopy(msg.getMessage(),1,sysex,0,msg.getLength()-1);
-            logMidi(port,true,sysex,msg.getLength()-1);
-            return msg.getLength()-1;
-        }
-        System.arraycopy(msg.getMessage(),0,sysex,0,msg.getLength());
-        logMidi(port,true,sysex,msg.getLength());
-        return msg.getLength();
-    }
-    */
-    MidiMessage getMessage (int port) {
+    MidiMessage getMessage(int port) {
 	setInputDeviceNum(port);
 
 	// pop the oldest message
