@@ -195,7 +195,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
             {
                 if(e.isPopupTrigger())
                 {
-                    PatchEdit.menuPatchPopup.show(table2, e.getX(), e.getY());
+                    PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
                     table2.setRowSelectionInterval(
                     table2.rowAtPoint(new Point(e.getX(),e.getY())),
                     table2.rowAtPoint(new Point(e.getX(),e.getY()))
@@ -207,7 +207,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
             {
                 if(e.isPopupTrigger())
                 {
-                    PatchEdit.menuPatchPopup.show(table2, e.getX(), e.getY());
+                    PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
                     table2.setRowSelectionInterval(
                     table2.rowAtPoint(new Point(e.getX(),e.getY())),
                     table2.rowAtPoint(new Point(e.getX(),e.getY()))
@@ -486,14 +486,14 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
 
     public void save() throws Exception
     {
-        PatchEdit.waitDialog.show();
+        PatchEdit.showWaitDialog();
         FileOutputStream f = new FileOutputStream(filename);
         ObjectOutputStream s = new ObjectOutputStream(f);
         s.writeObject(myModel.PatchList);
         s.flush();
         s.close();
         f.close();
-        PatchEdit.waitDialog.hide();
+        PatchEdit.hideWaitDialog();
         changed=false;
     }
 
@@ -527,7 +527,7 @@ return;
 
     public void open(File file) throws Exception
     {
-        PatchEdit.waitDialog.show();
+        PatchEdit.showWaitDialog();
         setTitle(file.getName());
         filename=file;
         FileInputStream f = new FileInputStream(file);
@@ -537,7 +537,7 @@ return;
             ((Patch)myModel.PatchList.get(i)).chooseDriver();
         s.close();
         f.close();
-        PatchEdit.waitDialog.hide();
+        PatchEdit.hideWaitDialog();
         statusBar.setText(myModel.PatchList.size()+" Patches");
     }
 

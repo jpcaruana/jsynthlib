@@ -84,12 +84,12 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         table.addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
 		    if (e.isPopupTrigger())
-			PatchEdit.menuPatchPopup.show(table2, e.getX(), e.getY());
+			PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
 		}
 
 		public void mouseReleased(MouseEvent e) {
 		    if (e.isPopupTrigger())
-			PatchEdit.menuPatchPopup.show(table2, e.getX(), e.getY());
+			PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
 		}
 		public void mouseClicked(MouseEvent e) {
 		    if (e.getClickCount() == 2)

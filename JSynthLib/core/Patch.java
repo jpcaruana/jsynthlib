@@ -335,7 +335,9 @@ public class Patch extends Object
 
     /** Return Driver for this patch. */
     public Driver getDriver() {
-	return PatchEdit.getDriver(deviceNum, driverNum);
+	if (PatchEdit.appConfig == null)
+	    return null;
+        return PatchEdit.appConfig.getDevice(deviceNum).getDriver(driverNum);
 // 	return driver;
     }
 

@@ -198,7 +198,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if(e.isPopupTrigger()) {
-                    PatchEdit.menuPatchPopup.show(table2, e.getX(), e.getY());
+                    PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
                     table2.setRowSelectionInterval(
                     table2.rowAtPoint(new java.awt.Point(e.getX(),e.getY())),
                     table2.rowAtPoint(new java.awt.Point(e.getX(),e.getY()))
@@ -208,7 +208,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
             public void mouseReleased(MouseEvent e) {
                 if(e.isPopupTrigger()) {
-                    PatchEdit.menuPatchPopup.show(table2, e.getX(), e.getY());
+                    PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
                     table2.setRowSelectionInterval(
                     table2.rowAtPoint(new java.awt.Point(e.getX(),e.getY())),
                     table2.rowAtPoint(new java.awt.Point(e.getX(),e.getY()))
@@ -473,14 +473,14 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
      * @throws Exception
      */
     public void save() throws Exception {
-        PatchEdit.waitDialog.show();
+        PatchEdit.showWaitDialog();
         java.io.FileOutputStream f = new java.io.FileOutputStream(filename);
         java.io.ObjectOutputStream s = new java.io.ObjectOutputStream(f);
         s.writeObject(myModel.sceneList);
         s.flush();
         s.close();
         f.close();
-        PatchEdit.waitDialog.hide();
+        PatchEdit.hideWaitDialog();
         changed=false;
     }
 
@@ -503,7 +503,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
      * @throws Exception
      */
     public void open(File file) throws Exception {
-        PatchEdit.waitDialog.show();
+        PatchEdit.showWaitDialog();
         setTitle(file.getName());
         filename=file;
         java.io.FileInputStream f = new java.io.FileInputStream(file);
@@ -513,7 +513,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             ((Scene)myModel.sceneList.get(i)).getPatch().chooseDriver();
         s.close();
         f.close();
-        PatchEdit.waitDialog.hide();
+        PatchEdit.hideWaitDialog();
     }
 
     public java.util.ArrayList getPatchCollection() {

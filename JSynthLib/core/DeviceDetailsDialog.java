@@ -152,7 +152,7 @@ public class DeviceDetailsDialog extends JDialog
 	JSLFrame[] jList =JSLDesktop.getAllFrames ();
 	if (jList.length >0)
 	{
-	  PatchEdit.waitDialog.show();
+	  PatchEdit.showWaitDialog();
 	  for (int i=0;i<jList.length;i++)
 	  {
 	    if (jList[i] instanceof LibraryFrame) ((LibraryFrame)(jList[i])).revalidateDrivers();
@@ -160,7 +160,7 @@ public class DeviceDetailsDialog extends JDialog
 	    if (jList[i] instanceof PatchEditorFrame) ((PatchEditorFrame)(jList[i])).revalidateDriver();
 	    
 	  }
-	  PatchEdit.waitDialog.hide();
+	  PatchEdit.hideWaitDialog();
 	}
     }
 

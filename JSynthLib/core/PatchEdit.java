@@ -1,9 +1,9 @@
 /**
- * This is the main Application object.  It's called PatchEdit, which
- * is probably ambiguous, but probably to late to change now.
+ * This is the main JSynthLib application object.  It's called
+ * PatchEdit, which is probably ambiguous, but probably to late to
+ * change now.
+ * @version $Id$
  */
-
-/* @version $Id$ */
 
 package core;
 import java.io.File;
@@ -25,15 +25,11 @@ import com.apple.eawt.ApplicationEvent;
 public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     // This field will be removed when new MIDI API become stable.
     static boolean newMidiAPI = false;
-
     static MidiWrapper MidiOut;
     static MidiWrapper MidiIn;
-    public static AppConfig appConfig;
-    // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
-    public static WaitDialog waitDialog; // define showWaitDialog() and hideWaitDialog()
-
-    static JPopupMenu menuPatchPopup; // define showMenuPatchPopup()
     static javax.swing.Timer echoTimer;
+
+    static AppConfig appConfig;
 
     // accessed by BankEditorFrame
     static ExtractAction extractAction;
@@ -75,10 +71,11 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     private static JToolBar toolBar;
     private static PrefsDialog prefsDialog;
     private static SearchDialog searchDialog;
+    private static WaitDialog waitDialog;
     private static DocumentationWindow documentationWindow;
+    private static JPopupMenu menuPatchPopup;
 
     private static Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
-
 
     /** Initialize Application: */
     public PatchEdit() {
@@ -134,7 +131,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         PrefsDialog prefsDialog = new PrefsDialog(JSLDesktop.getSelectedWindow());
 	// Add the configuration panels to the prefsDialog
         prefsDialog.addPanel(new GeneralConfigPanel(appConfig));
-
 	prefsDialog.addPanel(new DirectoryConfigPanel(appConfig));
 
 	MidiConfigPanel midiConfigPanel = null;
@@ -213,9 +209,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	// create "File" Menu
         JMenu menuFile = new JMenu("File");
 	mnemonics.put(menuFile, new Integer(KeyEvent.VK_F));
-	mi = menuFile.add(newAction);
-	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
-        menuFile.add(newSceneAction);
         mi = menuFile.add(openAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, mask));
         mi = menuFile.add(saveAction);
@@ -243,6 +236,11 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         menuLib.add(sortAction);
         menuLib.add(searchAction);
         menuLib.add(dupAction);
+        menuLib.addSeparator();
+
+	mi = menuLib.add(newAction);
+	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
+        menuLib.add(newSceneAction);
 	menuBar.add(menuLib);
 
 	// create "Patch" Menu
@@ -268,16 +266,18 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         menuPatch.add(receiveAction); // phil@muqus.com
         menuPatch.addSeparator();
 
-        mi = menuPatch.add(playAction);
-        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, mask));
         mi = menuPatch.add(editAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, mask));
+        mi = menuPatch.add(playAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, mask));
         menuPatch.addSeparator();
 
  	menuPatch.add(reassignAction);
         menuPatch.add(crossBreedAction);
-        menuPatch.add(newPatchAction);
         menuPatch.add(extractAction);
+        menuPatch.addSeparator();
+
+        menuPatch.add(newPatchAction);
 	menuPatch.add(uploadAction);
         menuBar.add(menuPatch);
 	menuPatch.addMenuListener(new MenuListener() {
@@ -343,6 +343,11 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	return popup;
     }
 
+    /** show popup menu for patch. */
+    public static void showMenuPatchPopup(JTable tbl, int x, int y) {
+	menuPatchPopup.show(tbl, x, y);
+    }
+
     private static JToolBar createToolBar() {
 	// create tool bar
         toolBar = new JToolBar();
@@ -374,14 +379,14 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         return toolBar;
     }
 
-    protected static JButton createToolBarButton(Action a, String label, String tooltip) {
+    private static JButton createToolBarButton(Action a, String label, String tooltip) {
 	String label2 = label.toLowerCase();
 	URL u1 = PatchEdit.class.getResource("/images/" + label2 + ".png");
 	URL u2 = PatchEdit.class.getResource("/images/disabled-"+label2+".png");
 	//Create and initialize the button.
 	JButton button = new JButton(a);
 	button.setToolTipText(tooltip);
-	
+
 	if (u1 != null) {                      //image found
 	    button.setText(null);
 	    button.setIcon(new ImageIcon(u1, label));
@@ -394,7 +399,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
 	return button;
     }
-    
+
     private static void initForMac(final ExitAction exitAction,
 				   final PrefsAction prefsAction,
 				   final AboutAction aboutAction) {
@@ -601,7 +606,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	MidiIn = MidiOut = driver;
     }
     */
-    // make this method obsoleted.!!!FIXIT!!!
+    /** @deprecated Don't use this. */
     public static Driver getDriver(int deviceNumber, int driverNumber) {
 	if (appConfig == null)
 	    return null;
@@ -806,7 +811,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		    if (frm != null) {
 			frm.setVisible(true);
 			JSLDesktop.add(frm);
-			// What's this??? sliderList is used only this. !!!FIXIT!!!
+			// hack for old Java bug
 			/*
 			if (frm instanceof PatchEditorFrame)
 			    for (int i = 0; i < ((PatchEditorFrame) frm).sliderList.size(); i++) {
@@ -1304,6 +1309,15 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	    }
 	}
         return (ImageIcon) icon;
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    public static void showWaitDialog() {
+	waitDialog.show();
+    }
+
+    public static void hideWaitDialog() {
+	waitDialog.hide();
     }
 
     ////////////////////////////////////////////////////////////////////////
