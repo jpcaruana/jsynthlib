@@ -26,6 +26,8 @@ import org.jsynthlib.jsynthlib.xml.XMLDeviceFactory;
 
 
 class DevicesConfig {
+    /* enable XML Device which are still under development. */
+    private static final boolean 	useXMLDevice = false;
 
     /** Character used in the Preferences as file separator for xml files */
     private static final char XML_FILE_SEPARATOR = ':';
@@ -120,7 +122,7 @@ class DevicesConfig {
 		*/
 	    }
 	}
-	String[][] xmldevices = XMLDeviceFactory.getDeviceNames();
+	String[][] xmldevices = useXMLDevice ? XMLDeviceFactory.getDeviceNames() : null;
 	if (xmldevices != null) {
 	    for (int i = 0; i < xmldevices.length; i++) {
 	        String deviceName = xmldevices[i][0];
