@@ -12,53 +12,108 @@ import java.io.Serializable;
  */
 public abstract class Device implements Serializable, Storable {
     // All field should be private.
-    /** The company which made the Synthesizer. */
+    /**
+     * The company which made the Synthesizer.
+     * @deprecated Use the getter method.
+     */
+    // This can be "private static final".
     protected String manufacturerName;
-    /** The models supported by this driver. eg TG33/SY22 */
+    /**
+     * The fixed name of the model supported by this driver, as stated
+     * on the type plate of the engine. eg TG33/SY22
+     * @deprecated Use the getter method.
+     */
+    // This can be "private static final".
     protected String modelName;
     /**
      * The response to the Universal Inquiry Message.  It can have
-     * wildcards (*). It can be up to 16 bytes.
+     * wildcards (*). It can be up to 16 bytes.<p>
+     * Ex. <code>"F07E**0602413F01000000020000f7"</code>
+     * @deprecated Use the getter method.
      */
+    // This can be "private static final".
     protected String inquiryID;
 
-    /** Information about Device. */
+    /**
+     * Information about Device.
+     * @deprecated Use the getter method.
+     */
+    // This can be "private static final".
     protected String infoText;
-    /** Authors of the device driver. */
+    /**
+     * Authors of the device driver.
+     * @deprecated Use the getter method.
+     */
+    // This can be "private static final".
     protected String authors;
 
-    // Fields above can be final.
-
-    /** Holds value of property synthName. */
+    /**
+     * The synthName is your personal naming of the device. You can
+     * change it in the first column of the Synth-Configuration
+     * dialog. As default they are the same at the creation.
+     * @deprecated Use the getter/setter method.
+     */
     protected String synthName;
 
-    /** The channel (device ID) the user assigns to this driver. */
+    /**
+     * The channel (device ID) the user assigns to this driver.
+     * @deprecated Use the getter/setter method.
+     */
     protected int channel = 1;
 
-    /** The MIDI input port number, where the cable <B>to</B> the
-	device is connected. */
+    /**
+     * The MIDI input port number, where the cable <B>to</B> the
+     * device is connected.
+     * @deprecated Use the getter/setter method.
+     */
     // For simplicity every driver contains the port number as well.
     // So the setter must set the port in all drivers
     protected int inPort;
-    /** The MIDI output port number, where the cable <B>to</B> the
-	device is connected. */
+    /**
+     * The MIDI output port number, where the cable <B>to</B> the
+     * device is connected.
+     * @deprecated Use the getter/setter method.
+     */
     protected int port;   //outport
 
-    /** The List for all available drivers of this device. */
-    public ArrayList driverList = new ArrayList ();
+    /**
+     * The List for all available drivers of this device.
+     */
+    ArrayList driverList = new ArrayList ();
     //private ListIterator li;
 
-    /** Creates new Device. */
-    // will be deprecated
+    /**
+     * The index of this device in appConfig.deviceList. Used by
+     * getDeviceNum().
+     */
+    private int deviceIndex = -1;
+
+    /**
+     * Creates new Device.
+     * @deprecated Use Device(String, String, String, String, String).
+     */
     public Device () {
         inquiryID = "NONE";
 	infoText = "There is no information about this Device.";
+	// set default MIDI port number
 	inPort = PatchEdit.appConfig.getInitPortIn();
 	port = PatchEdit.appConfig.getInitPortOut();
     }
 
-    /** Create a new Device. */
-    public Device (String manufactuerName, String modelName,
+    /**
+     * Creates a new <code>Device</code> instance.
+     *
+     * @param manufacturerName The company which made the Synthesizer.
+     * @param modelName The fixed name of the model supported by
+     * this driver, as stated on the type plate of the engine. eg
+     * TG33/SY22
+     * @param inquiryID The response to the Universal Inquiry Message.
+     * It can have wildcards (*). It can be up to 16 bytes.
+     * Ex. <code>"F07E**0602413F01000000020000f7"</code>
+     * @param infoText Information about Device.
+     * @param authors Authors of the device driver.
+     */
+    public Device (String manufacturerName, String modelName,
 		   String inquiryID, String infoText, String authors) {
 	this.manufacturerName = manufacturerName;
 	this.modelName = modelName;
@@ -66,14 +121,16 @@ public abstract class Device implements Serializable, Storable {
 	this.infoText = (infoText == null)
 	    ? "There is no information about this Device." : infoText;
 	this.authors = authors;
+	// set default MIDI port number
 	inPort = PatchEdit.appConfig.getInitPortIn();
 	port = PatchEdit.appConfig.getInitPortOut();
     }
 
     /**
-     * Show configration Panel.  Overwrite if reqiured.
+     * Create a configration panel.  Override this if your device
+     * supports a configration panel.
      */
-    public JPanel config() {
+    protected JPanel config() {
 	JPanel panel = new JPanel();
 	panel.add(new JLabel("This Device has no configuration options."));
 	return panel;
@@ -83,7 +140,7 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property getManufacturerName.
      * @return Value of property getManufacturerName.
      */
-    public String getManufacturerName () {
+    public /*static*/ String getManufacturerName () {
         return manufacturerName;
     }
 
@@ -91,7 +148,7 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property modelName.
      * @return Value of property modelName.
      */
-    public  String getModelName () {
+    public /*static*/ String getModelName () {
         return modelName;
     }
 
@@ -99,14 +156,15 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property inquiryID.
      * @return Value of property inquiryID.
      */
-    public String getInquiryID() {
+    public /*static*/ String getInquiryID() {
 	return inquiryID;
     }
 
-    /** Getter for property infoText.
+    /**
+     * Getter for property infoText.
      * @return Value of property infoText.
      */
-    public String getInfoText() {
+    public /*static*/ String getInfoText() {
 	return infoText;
     }
 
@@ -114,7 +172,7 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property authors.
      * @return Value of property authors.
      */
-    public String getAuthors() {
+    public /*static*/ String getAuthors() {
 	return authors;
     }
 
@@ -130,7 +188,7 @@ public abstract class Device implements Serializable, Storable {
      * Setter for property synthName.
      * @param synthName New value of property synthName.
      */
-    public void setSynthName (String synthName) {
+    public void setSynthName (String synthName) { // public for storable
         this.synthName = synthName;
     }
 
@@ -146,11 +204,10 @@ public abstract class Device implements Serializable, Storable {
      * Setter for property channel.
      * @param channel New value of property channel.
      */
-    public void setChannel (int channel) {
+    public void setChannel (int channel) { // public for storable
         this.channel = channel;
-	// remove the following lines when 'driver.channel' becomes 'private'.
-	Iterator iter;
-	iter = driverList.iterator();
+	// Remove the following lines when 'driver.channel' becomes 'private'.
+	Iterator iter = driverList.iterator();
 	while (iter.hasNext()) {
  	    ((Driver) iter.next()).setChannel(channel);
 	}
@@ -176,11 +233,10 @@ public abstract class Device implements Serializable, Storable {
      * Setter for property port.
      * @param port New value of property port.
      */
-    public void setPort (int port) {
+    public void setPort (int port) { // public for storable
         this.port = port;
 	// remove the following lines when 'driver.port' becomes 'private'.
-        Iterator iter;
-        iter = driverList.iterator();
+        Iterator iter = driverList.iterator();
         while (iter.hasNext ())
             ((Driver) iter.next()).setPort(port);
     }
@@ -189,73 +245,85 @@ public abstract class Device implements Serializable, Storable {
      * Setter for property inPort.
      * @param inPort New value of property inPort.
      */
-    public void setInPort (int inPort) {
+    public void setInPort (int inPort) { // public for storable
         this.inPort = inPort;
 	// remove the following lines when 'driver.inPort' becomes 'private'.
-        Iterator iter;
-        iter = driverList.iterator();
+        Iterator iter = driverList.iterator();
         while (iter.hasNext())
-            ((Driver) iter.next()).inPort = inPort;
+            ((Driver) iter.next()).setInPort(inPort);
     }
 
     // Getters/Setters, etc for Drivers
     /**
-     * Add Driver.
+     * Add Driver.  Usually a constructor of a subclass of
+     * <code>Device</code> calls this.  Bulk converters must be added
+     * before simple drivers!
      * @param driver Driver to be added.
+     * @see Converter
      */
-    protected void addDriver (Driver driver) {
-        driver.setChannel (channel);
-        driver.setPort (port);
-        driver.inPort = inPort;
-        driverList.add (driver);
+    protected void addDriver(Driver driver) {
+        driver.setChannel(channel);
+        driver.setPort(port);
+        driver.setInPort(inPort);
 	driver.setDevice(this);
+        driverList.add(driver);
     }
 
     /**
      * Add Driver at the <code>index</code>.
-     * @param index The index, where the driver is added in the list
+     * @param index The index, where the driver is added in the list.
      * Bulk converters must be added before simple drivers!
      * @param driver Driver to be added.
      */
-    protected void addDriver (int index, Driver driver) {
-        driver.setChannel (channel);
-        driver.setPort (port);
-	// intensionally omitted?
-        //driver.inPort = inPort;
-        driverList.add (index, driver);
-	//driver.setDevice(this);
+    // Is this method necessary?  Just calling addDriver(Driver) in
+    // order should be enough.  -- Hiroo
+    // @deprecated
+    protected void addDriver(int index, Driver driver) {
+        driver.setChannel(channel);
+        driver.setPort(port);
+        driver.setInPort(inPort);
+	driver.setDevice(this);
+        driverList.add(index, driver);
     }
 
     /** Indexed getter for driverList elements. */
-    public Driver getDriver(int i) {
+    protected Driver getDriver(int i) {
 	return (Driver) this.driverList.get(i);
     }
 
     /** Indexed setter for driverList elements. */
-    public Driver setDriver(int i, Driver drv) {
+    protected Driver setDriver(int i, Driver drv) {
 	return (Driver) this.driverList.set(i, drv);
     }
 
-    /** Getter for driverList. */
-    public Driver[] getDriver() {
+    /** Getter for driverList. ??? */
+    public Driver[] getDriver() { // public for storable
 	return (Driver[]) this.driverList.toArray(new Driver[0]);
     }
 
     /** setter for driverList. */
-    public void setDriver(Driver[] drivers) {
+    public void setDriver(Driver[] drivers) { // public for storable
 	ArrayList newList = new ArrayList();
 	newList.addAll(Arrays.asList(drivers));
 	this.driverList = newList;
     }
 
     /** Remover for driverList elements. */
-    public Driver removeDriver(int i) {
+    Driver removeDriver(int i) {
 	return (Driver) this.driverList.remove(i);
     }
 
     /** Size query for driverList. */
-    public int driverCount() {
+    int driverCount() {
 	return this.driverList.size();
+    }
+
+    /** getter for device number. */
+    int getDeviceNum() {
+	if (deviceIndex == -1) { // the first call
+	    deviceIndex = PatchEdit.appConfig.getDeviceIndex(this);
+	}
+	return deviceIndex;
     }
 
     // For storable interface
@@ -266,19 +334,22 @@ public abstract class Device implements Serializable, Storable {
     public Set storedProperties() {
 	final String[] storedPropertyNames = {
 	    "inPort", "synthName", "port", "channel",
-	    "driver",
+	    "driver",		// Is "driver" necessary?
 	};
 	HashSet set = new HashSet();
 	set.addAll(Arrays.asList(storedPropertyNames));
 	return set;
     }
 
-    /**
-     * Method that will be called after loading.
-     */
+    /** Method that will be called after loading. */
     public void afterRestore() {
-	// do nothing
+	Iterator iter = driverList.iterator();
+	while (iter.hasNext()) {
+ 	    ((Driver) iter.next()).setDevice(this);
+	}
+//  	ErrorMsg.reportStatus("Device.afterRestore: " + this + " : " + driverList);
     }
+    // end of storable interface
 
     /**
      * Getter for DeviceName.
@@ -315,16 +386,19 @@ public abstract class Device implements Serializable, Storable {
     /**
      * Compares the header & size of a Patch to this driver to see if
      * this driver is the correct one to support the patch.
-     * @param patchString
+     * @param patchString A sysex string like
+     * <code>"F07E010602413F01000000020000f7"</code>.
      * @return true if the patchString matches the ID of the device
      */
-    public boolean checkInquiry (StringBuffer patchString) {
-        StringBuffer inquiryString = new StringBuffer (inquiryID);
-	if (inquiryString.length () > patchString.length())
-	    return false;
-	for (int j = 0; j < inquiryString.length(); j++)
-            if (inquiryString.charAt(j) == '*')
-		inquiryString.setCharAt(j, patchString.charAt(j));
-        return (inquiryString.toString().equalsIgnoreCase(patchString.toString().substring(0, inquiryString.length())));
-    }
+    // commented out since not used.  If you need, change the argument
+    // patchString String instead of StringBuffer.
+//     public /*static*/ boolean checkInquiry (StringBuffer patchString) {
+//         StringBuffer inquiryString = new StringBuffer (inquiryID);
+// 	if (inquiryString.length () > patchString.length())
+// 	    return false;
+// 	for (int j = 0; j < inquiryString.length(); j++)
+//             if (inquiryString.charAt(j) == '*')
+// 		inquiryString.setCharAt(j, patchString.charAt(j));
+//         return (inquiryString.toString().equalsIgnoreCase(patchString.toString().substring(0, inquiryString.length())));
+//     }
 }
