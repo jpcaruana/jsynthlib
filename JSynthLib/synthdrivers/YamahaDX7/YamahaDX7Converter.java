@@ -24,28 +24,28 @@
 package synthdrivers.YamahaDX7;
 import core.*;
 
-public class YamahaDX7Converter extends Converter {
-    public YamahaDX7Converter () {
-        
-        manufacturer="Yamaha";
-        model="DX7";
-        patchType="Singel Dump Converter";
-        authors="Torsten Tittmann";
-        sysexID="F0430*00011B";
-    }
+public class YamahaDX7Converter extends Converter
+{
+	public YamahaDX7Converter ()
+	{
+		super("SER7-Converter","Torsten Tittmann");
+		
+		sysexID="F0430*00011B";
+	}
     
-    public Patch[] extractPatch (Patch p) {
-        
-        byte[] sx=new byte [163]; //single voice
+	
+	public Patch[] extractPatch (Patch p)
+	{
+		byte[] sx=new byte [163]; //single voice
        
-        System.arraycopy (p.sysex,0,sx,0,163);  // Copy single voice data into the single voice patch
-                                                // and drop the rest of data, which is sent by SER-7 ROM
+		System.arraycopy (p.sysex,0,sx,0,163);	// Copy single voice data into the single voice patch
+						// and drop the rest of data, which is sent by SER-7 ROM
 
-        Patch[] pf=new Patch[1];
+		Patch[] pf=new Patch[1];
 
-        pf[0] = new Patch(sx);
+		pf[0] = new Patch(sx);
 
-        return pf;
-    }
+		return pf;
+	}
 }
 

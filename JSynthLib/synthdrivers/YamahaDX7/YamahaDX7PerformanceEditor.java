@@ -1,10 +1,8 @@
 /*
  * JSynthlib - "Performance" Editor for Yamaha DX7 Mark-I
  * ======================================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    YamahaDX7PerformanceEditor.java
- * date:    25.02.2003
- * @version 0.2
  *
  * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
  *
@@ -22,16 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *
- * comment: The underlaying patch is identical for the DX1, DX5, DX7, TX7 and TX816.
- *          But only those parameters are displayed, which are evaluated by the DX7 Mark-I.
- *
- * history:
- *         31.10.2002 v0.1: first published release
- *         25.02.2003 v0.2: - driver name changed (YamahaTX7SinglePerformanceEditor -> YamahaTX7PerformanceEditor)
- * 
  */
-
 package synthdrivers.YamahaDX7;
 import core.*;
 import java.lang.String.*;
@@ -112,7 +101,7 @@ class YamahaDX7PerformanceEditor extends PatchEditorFrame
 
     JPanel cmnPane= new JPanel();
     cmnPane.setLayout(new GridBagLayout());gbc.weightx=0;
-    addWidget(cmnPane,new PatchNameWidget(patch,"Performance Name (30 Char.)"),0,0,7,1,1);
+    addWidget(cmnPane,new PatchNameWidget("Performance Name (30 Char.)", patch),0,0,7,1,1);
 
     addWidget(cmnPane,new ComboBoxWidget("Corresponding Voice Number?",patch,new ParamModel(patch,6+0),null,VoiceNumberName),0,2,3,1,3);
     gbc.gridx=4;gbc.gridy=2;gbc.gridwidth=3;gbc.gridheight=1;gbc.anchor=gbc.EAST;
