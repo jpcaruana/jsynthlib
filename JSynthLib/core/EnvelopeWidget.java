@@ -25,8 +25,8 @@ public class EnvelopeWidget extends SysexWidget
         // super.setup();
         
         setLayout (new BorderLayout ());
-        valueLabels=new JLabel [8];
-        values=new JTextField[8];
+        valueLabels=new JLabel [10];
+        values=new JTextField[10];
         int j=0;
         for (int i=0; i<nodes.length;i++)
         {
