@@ -346,28 +346,31 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			    list.add(msg);
 			} else {
 			    thirdByte = false;
-			    if (c == SysexMessage.SYSTEM_EXCLUSIVE) {
-				runningStatus = c;
-				buf[0] = (byte) c;
-				size = 1;
-			    } else if (c == ShortMessage.END_OF_EXCLUSIVE
-				       && runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
+			    switch (c) {
+			    case ShortMessage.END_OF_EXCLUSIVE:
+				if (runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
+				    byte[] d = new byte[size + 1];
+				    System.arraycopy(buf, 0, d, 0, size);
+				    d[size++] = (byte) c;
+				    msg = (MidiMessage) new SysexMessage();
+				    ((SysexMessage) msg).setMessage(d, size);
+				    list.add(msg);
+				}
 				runningStatus = 0;
-				byte[] d = new byte[size + 1];
-				System.arraycopy(buf, 0, d, 0, size);
-				d[size++] = (byte) c;
-				msg = (MidiMessage) new SysexMessage();
-				((SysexMessage) msg).setMessage(d, size);
-				list.add(msg);
-			    } else if (c == ShortMessage.TUNE_REQUEST) { // 0xf6
+				break;
+			    case ShortMessage.TUNE_REQUEST: // 0xf6
 				// 0 byte message
-				runningStatus = c;
 				msg = (MidiMessage) new ShortMessage();
 				((ShortMessage) msg).setMessage(c);
 				list.add(msg);
-			    } else {
-				runningStatus = c;
+				runningStatus = c; // 0?
+				break;
+			    case SysexMessage.SYSTEM_EXCLUSIVE:
+				size = 1;
+				// FALLTHROUGH
+			    default:
 				buf[0] = (byte) c;
+				runningStatus = c;
 			    }
 			}
 		    } else {
