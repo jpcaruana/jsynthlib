@@ -21,28 +21,35 @@
 
 package synthdrivers.YamahaTG100;
 
+/**
+ * Model for the Yamaha TG-100 synthdriver
+ *
+ * @author  Joachim Backhaus
+ * @version $Id$
+ */
+
 import core.ParamModel;
 import core.Patch;
 
 public class TG100Model extends ParamModel {
     private boolean has2ByteValue = false;
-    
+
     public TG100Model(Patch patch, int offset) {
         this(patch, offset, false);
     }
-    
+
     public TG100Model(Patch patch, int offset, boolean has2ByteValue) {
 	    super(patch, offset);
-	    
+
 	    this.has2ByteValue = has2ByteValue;
     }
-    
-    /** Set a parameter value <code>i</code>. */
+
+    /** Set a parameter value <code>int</code>. */
     public void set(int value) {
-        if(this.has2ByteValue) {                
+        if(this.has2ByteValue) {
             // Data
             patch.sysex[ofs]      = (byte)((value & TG100Constants.BITMASK_11110000) >> 4);
-            patch.sysex[ofs + 1]  = (byte) (value & TG100Constants.BITMASK_1111);	        
+            patch.sysex[ofs + 1]  = (byte) (value & TG100Constants.BITMASK_1111);
 	    }
 	    else {
 	        patch.sysex[ofs] = (byte) value;
@@ -53,10 +60,10 @@ public class TG100Model extends ParamModel {
     public int get() {
         if(this.has2ByteValue) {
             int iTemp;
-            
+
             iTemp = patch.sysex[ofs] << 4;
             iTemp += patch.sysex[ofs + 1];
-            
+
 	        return iTemp;
 	    }
 	    else {

@@ -18,13 +18,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA
  */
-/*
- * Device class for the Yamaha TG-100
- *
- * YamahaTG100Device.java
- *
- * Created on 31. July 2004, 21:39
- */
 
 package synthdrivers.YamahaTG100;
 

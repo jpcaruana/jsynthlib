@@ -20,6 +20,13 @@
  */
 package synthdrivers.YamahaTG100;
 
+/**
+ * Sender for the Yamaha TG-100 synthdriver
+ *
+ * @author  Joachim Backhaus
+ * @version $Id$
+ */
+
 import core.SysexSender;
 
 public class TG100Sender extends SysexSender {
@@ -49,7 +56,7 @@ public class TG100Sender extends SysexSender {
             // Checksum
             sysex[9] = (byte) 0x00;
 
-            sysex[10] = (byte) 0xF7;
+            sysex[10] = TG100Constants.SYSEX_END_BYTE;
         }
         else {
             sysex = new byte[SYSEX_1BYTE_LENGTH];
@@ -57,10 +64,10 @@ public class TG100Sender extends SysexSender {
             // Checksum
             sysex[8] = (byte) 0x00;
 
-            sysex[9] = (byte) 0xF7;
+            sysex[9] = TG100Constants.SYSEX_END_BYTE;
         }
 
-        sysex[0]  = (byte) 0xF0;
+        sysex[0]  = TG100Constants.SYSEX_START_BYTE;
         sysex[1]  = (byte) 0x43;
         sysex[2]  = channel; // Device number
         sysex[3]  = (byte) 0x27;
