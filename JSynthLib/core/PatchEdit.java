@@ -62,7 +62,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
     private static JToolBar toolBar;
     private static int currentPort;
-    private static int[] newFaderValue = new int[33];
+    //private static int[] newFaderValue = new int[33];
     private static PrefsDialog prefsDialog;
     private SearchDialog searchDialog;
     private DocumentationWindow documentationWindow;
@@ -1205,8 +1205,6 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
     protected void beginEcho() {
         echoTimer = new javax.swing.Timer(5, new ActionListener() {
-		byte[] buffer = new byte[128];
-		Patch p;
 		public void actionPerformed(ActionEvent evt) {
 		    try {
 			//FIXME there is a bug in the javaMIDI classes
@@ -1214,42 +1212,43 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 			//the faderbox as well as the master
 			//controller. I cant figure out a way to fix
 			//it so let's just handle them here.
-			if (appConfig.getMasterController() > -1
-			    && appConfig.getMasterController() < MidiIn.getNumInputDevices()) {
-			    if ((appConfig.getFaderEnable())
-				&& (PatchEdit.MidiIn.messagesWaiting(appConfig.getMasterController()) > 0)) {
-				for (int i = 0; i < 33; i++)
-				    newFaderValue[i] = 255;
-				while (PatchEdit.MidiIn.messagesWaiting(appConfig.getMasterController()) > 0) {
-				    int size;
-				    int port;
-				    size = PatchEdit.MidiIn.readMessage(appConfig.getMasterController(), buffer, 128);
-				    p = PatchEdit.Clipboard;
-				    if ((desktop.getSelectedFrame() instanceof PatchBasket)
-					&& (!(desktop.getSelectedFrame() instanceof PatchEditorFrame))) {
-					if ((desktop.getSelectedFrame() instanceof LibraryFrame)
-					    && ((LibraryFrame) ((desktop.getSelectedFrame()))).table.getSelectedRowCount() == 0)
-					    break;
-					((PatchBasket) desktop.getSelectedFrame()).CopySelectedPatch();
-				    } else
-					Clipboard = ((PatchEditorFrame) desktop.getSelectedFrame()).p;
-				    //port = (PatchEdit.deviceList.get(Clipboard.deviceNum)).
-				    port = Clipboard.getDevice().getPort();
-				    if ((appConfig.getFaderEnable())
-					&& (desktop.getSelectedFrame() instanceof PatchEditorFrame)
-					&& (buffer[0] & 0xF0) == 0xB0)
-					sendFaderMessage(buffer[0], buffer[1], buffer[2]);
-				    else
-					if ((buffer[0] & 0xF0) == 0xD0) {
-					    //do nothing for now
-					} else {
-					    if (((buffer[0] & 0xF0) > 0x70)
-						&& ((buffer[0] & 0xF0) < 0xF0))
-						buffer[0] = (byte) ((buffer[0] & 0xF0) + Clipboard.getDevice().getChannel() - 1);
-					    PatchEdit.MidiOut.writeLongMessage(port, buffer, size);
+			int mstPort = appConfig.getMasterController();
+			if (appConfig.getMasterControllerEnable() || appConfig.getFaderEnable()) {
+			    while (PatchEdit.MidiIn.messagesWaiting(mstPort) > 0) {
+ 				MidiMessage msg = PatchEdit.MidiIn.readMessage(mstPort);
+				Patch p = PatchEdit.Clipboard; // save Clipboard
+				//???
+				if (desktop.getSelectedFrame() instanceof PatchBasket
+				    && (!(desktop.getSelectedFrame() instanceof PatchEditorFrame))) {
+				    if (desktop.getSelectedFrame() instanceof LibraryFrame
+					&& ((LibraryFrame) ((desktop.getSelectedFrame()))).table.getSelectedRowCount() == 0)
+					break; // Is this OK for master controller?
+				    ((PatchBasket) desktop.getSelectedFrame()).CopySelectedPatch();
+				} else
+				    Clipboard = ((PatchEditorFrame) desktop.getSelectedFrame()).p;
+
+				if (msg.getStatus() == SysexMessage.SYSTEM_EXCLUSIVE) {
+				    PatchEdit.MidiOut.writeLongMessage(Clipboard.getDevice().getPort(),
+								       (SysexMessage) msg);
+				} else {
+				    ShortMessage smsg = (ShortMessage) msg;
+				    int cmd = smsg.getCommand();
+
+				    if (appConfig.getFaderEnable()
+					&& desktop.getSelectedFrame() instanceof PatchEditorFrame
+					&& cmd == ShortMessage.CONTROL_CHANGE) {
+					sendFaderMessage(smsg);
+				    } else if (cmd == ShortMessage.CHANNEL_PRESSURE) {
+					//do nothing for now
+				    } else {
+					if ((0x80 <= cmd) && (cmd < 0xF0)) { // MIDI channel Voice Message
+					    smsg.setMessage(cmd, Clipboard.getDevice().getChannel() - 1,
+							    smsg.getData1(), smsg.getData2());
 					}
-				    PatchEdit.Clipboard = p;
+					PatchEdit.MidiOut.writeShortMessage(Clipboard.getDevice().getPort(), smsg);
+				    }
 				}
+				PatchEdit.Clipboard = p; // restore Clipboard
 			    }
 			}
 		    } catch (Exception ex) {
@@ -1260,16 +1259,15 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         echoTimer.start();
     }
 
-    void sendFaderMessage(byte status, byte controller, byte value) {
-        byte channel = (byte) (status & 0x0F);
-        byte i = 0;
-        while (i < 33) {
+    void sendFaderMessage(ShortMessage msg) {
+        int channel = msg.getChannel();
+	int controller = msg.getData1();
+        for (int i = 0; i < 33; i++) {
 	    if ((appConfig.getFaderController(i) == controller)
 		&& (appConfig.getFaderChannel(i) == channel)) {
-		((PatchEditorFrame) desktop.getSelectedFrame()).faderMoved(i, value);
-		break;		// don't increment `i'
+		((PatchEditorFrame) desktop.getSelectedFrame()).faderMoved((byte) i, (byte) msg.getData2());
+		break;
 	    }
-	    i++;
 	}
     }
 

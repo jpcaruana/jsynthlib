@@ -4,6 +4,7 @@
 
 package core;
 
+import javax.sound.midi.SysexMessage;
 // import javax.swing.*;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -36,7 +37,7 @@ public class SysexGetDialog extends JDialog {
   /** MIDI input port from which SysEX messages come. */
   private int inPort;
 
-  private static byte[] buffer = new byte[256*1024]; // N.B. WireMidiWrapper ignores MaxSize parameter of readMessage
+  // private static byte[] buffer = new byte[256*1024]; // N.B. WireMidiWrapper ignores MaxSize parameter of readMessage
   private static byte[] sysex  = new byte[256*1024];
 
   private javax.swing.Timer timer;
@@ -338,12 +339,10 @@ public class SysexGetDialog extends JDialog {
 
       //----- Clear MidiIn buffer
       try {
-      	if(PatchEdit.MidiIn == null) {
-	  System.err.println("Yup... it's null!");
-      	}
-        while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
-          PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
-
+// 	if(PatchEdit.MidiIn == null) {
+// 	  System.err.println("Yup... it's null!");
+// 	}
+	PatchEdit.MidiIn.clearMidiInBuffer(inPort);
       } catch (Exception ex) {
         ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
       }
@@ -364,8 +363,11 @@ public class SysexGetDialog extends JDialog {
     public void actionPerformed (ActionEvent evt) {
       try {
         while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0) {
-          int size = PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
-// 	  ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + size);
+	  // create list of SysexMessage instead of mearging into sysex array. !!!FIXIT!!!
+          SysexMessage msg = (SysexMessage) PatchEdit.MidiIn.readMessage(inPort);
+	  byte[] buffer = msg.getMessage();
+          int size = msg.getLength();
+//  	  ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + size);
           System.arraycopy (buffer, 0, sysex, sysexSize, size);
           sysexSize += size;
           myLabel.setText(sysexSize + " Bytes Received");

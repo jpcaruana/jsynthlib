@@ -19,7 +19,7 @@ public class MidiScan extends  Thread {
     
     private static Object lock=new Object();
     
-    final int MAXCHANNEL=16;
+    final int MAXCHANNEL=16;	// should be 0x7D, but...
     final int WAITFORRESPONSE=100; // Wait at least 100ms for a response from a device
     
     public SynthTableModel model;
@@ -47,10 +47,9 @@ public class MidiScan extends  Thread {
     public void run() {
         byte idData[]=  // The magical ID-Request Message
         {(byte)0xf0,(byte)0x7e,(byte)0,(byte)0x06,(byte)0x01,(byte)0xf7};
-        byte answerData[]=new byte[50]; // That should be enough
         
         int maxin=0,maxout=0;	// Counters for Loops
-        MidiWrapper inarray[];
+//         MidiWrapper inarray[];
         String se;
         boolean found=false;
         boolean anyUnkown=false;
@@ -62,8 +61,10 @@ public class MidiScan extends  Thread {
             // System.out.println ("Iterating "+maxin+" Inputs and "+maxout+" Outputs");
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
-        inarray=new MidiWrapper[maxin];
-        if (pb!=null) pb.setMaximum(maxin+maxout-1);// Preparation for a progress bar
+//         inarray=new MidiWrapper[maxin];
+//         if (pb!=null) pb.setMaximum(maxin+maxout-1);// Preparation for a progress bar
+        if (pb!=null) pb.setMaximum(maxout-1);// Preparation for a progress bar
+	/*
         try {
             for (int i=0;i<maxin;i++) // Create an array of receivers for all In-Ports
             {
@@ -73,21 +74,28 @@ public class MidiScan extends  Thread {
             }
         } catch(Exception e)
         {ErrorMsg.reportStatus(e);}
-        
+        */
         if (pb!=null) pb.setNote("Scanning Midi Devices");
         
         try {
             for (int j=0;j<maxout;j++)   // For all Outputs
             {
+ 		ErrorMsg.reportStatus("Out port : " + j);
                 if (pb!=null) pb.setProgress(j+maxin-1);
                 for (channel=0;channel<MAXCHANNEL;channel++) // every channel
                 {
+		    ErrorMsg.reportStatus("  device ID : " + channel);
                     idData[2]=channel; // Set the transmit channel
                     
                     try {
+                        for (int i=0;i<maxin;i++)
+			    PatchEdit.MidiIn.clearMidiInBuffer(i);
+
                         PatchEdit.MidiOut.writeLongMessage(j,idData);
                         sleep(WAITFORRESPONSE);
-                        for (int i=0;i<maxin;i++) {
+                        for (int i=0;i<maxin;i++) { // For all Inputs
+			    ErrorMsg.reportStatus("    in port : " + i);
+			    /*
                             byte buffer[]=new byte[50];
                             int sysexSize=0;
                             int msgsize=0;
@@ -97,17 +105,33 @@ public class MidiScan extends  Thread {
                                 System.arraycopy(buffer, 0, answerData, sysexSize, msgsize);
                                 sysexSize+=msgsize;
                             }
-                            
+                            */
+                            if (PatchEdit.MidiIn.messagesWaiting(i) == 0)
+				continue;
+
+			    ErrorMsg.reportStatus("    Message Received");
+			    SysexMessage msg;
+			    try {
+// 				msg = (SysexMessage) inarray[i].readMessage(i, 10);
+				msg = (SysexMessage) PatchEdit.MidiIn.readMessage(i, 10);
+			    } catch (MidiWrapper.TimeoutException e) {
+				continue;
+			    }
+			    int sysexSize = msg.getLength();
+			    byte [] answerData = msg.getMessage();
                             if (sysexSize>0) {
-                                sleep(100);
+                                //sleep(100);
                                 synthisenum=devconf.IDStrings();//=new RecognizerEnumeration();
                                 //int msgsize=inarray[i].readMessage (i,answerData,answerData.length);
-                                msgsize=sysexSize;
+                                int msgsize=sysexSize;
                                 //System.out.println ("msgSize "+msgsize);
                                 found=false;
                                 // Look in all loaded modules
                                 StringBuffer responseString= new StringBuffer("F0");
-                                if (((answerData[0]&0xff)==0xf0)&&(answerData[1]==0x7e)&&(answerData[3]==6)&&(answerData[4]==2)) {  // check, wether it is really an inquiry response
+                                if (((answerData[0]&0xff)==0xf0)
+				    &&(answerData[1]==0x7e)
+				    &&(answerData[3]==0x06)
+				    &&(answerData[4]==0x02)) { // check, wether it is really an inquiry response
                                     for (int k=1;k<msgsize;k++) {
                                         if ((answerData[k]<16)&&(answerData[k]>=0)) responseString.append("0");
                                         responseString.append(Integer.toHexString(0xff&answerData[k]));
@@ -185,10 +209,10 @@ public class MidiScan extends  Thread {
          ErrorMsg.reportStatus(e);}	// This produces "null"
         
         if (pb!=null) pb.setProgress(maxout+maxin);
-        
-        for (int i=0;i<maxin;i++) {
-            inarray[i].close();
-        }
+
+//         for (int i=0;i<maxin;i++) {
+//             inarray[i].close();
+//         }
         if (anyUnkown&& (parent!=null)) {
             ScanUnkownReportDialog surd=new ScanUnkownReportDialog(parent,true);
             surd.addToReport(report);

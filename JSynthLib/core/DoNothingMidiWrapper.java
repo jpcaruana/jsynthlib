@@ -1,5 +1,6 @@
 // Create a subclass of this in order to support a new platform. These are the functions you must implement.
 package core; //TODO org.jsynthlib.midi;
+import javax.sound.midi.MidiMessage;
 
 public class DoNothingMidiWrapper extends MidiWrapper {
 	public void init (int inport, int outport) throws Exception {}
@@ -17,7 +18,8 @@ public class DoNothingMidiWrapper extends MidiWrapper {
 	public  String getInputDeviceName(int port)throws Exception{return "No Devices";}
 	public  String getOutputDeviceName(int port)throws Exception{return "No Devices";}
 	public  int messagesWaiting(int port)throws Exception{return 0;}
-	public  int readMessage(int port,byte []sysex,int maxSize)throws Exception{return 0;}
+// 	public  int readMessage(int port,byte []sysex,int maxSize)throws Exception{return 0;}
+ 	public  MidiMessage getMessage(int port) {return null;}
 	public String getWrapperName() {return("No Midi Enabled");}
 	// Cause the comboboxes to get greyed-out when using this driver.
 	public boolean isReady() {

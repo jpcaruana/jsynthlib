@@ -610,6 +610,12 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     protected void requestPatchDump(int bankNum, int patchNum) {
 	setBankNum(bankNum);
 	setPatchNum(patchNum);
+
+	try {
+	    PatchEdit.MidiIn.clearMidiInBuffer(inPort);
+	} catch (Exception ex) {
+	    ErrorMsg.reportError("Error", "Error Clearing MIDI In buffer.", ex);
+	}
 	if (sysexRequestDump == null) {
 	    JOptionPane.showMessageDialog
 		(PatchEdit.instance,
@@ -617,13 +623,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 		 + " driver does not support patch getting.\n\n"
 		 + "Please start the patch dump manually...",
 		 "Get Patch", JOptionPane.WARNING_MESSAGE);
-	    byte[] buffer = new byte[256 * 1024];
-	    try {
-		while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
-		    PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
-	    } catch (Exception ex) {
-		ErrorMsg.reportError("Error", "Error Clearing MIDI In buffer.", ex);
-	    }
 	} else
 	    sysexRequestDump.send(port, (byte) channel,
 				  new NameValue("bankNum", bankNum),
