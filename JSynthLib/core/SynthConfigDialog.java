@@ -29,14 +29,14 @@ public class SynthConfigDialog extends JDialog
         super(Parent,"Synthesizer Configuration",true);
         JPanel container= new JPanel ();
         container.setLayout (new BorderLayout ());
-        
+
         SynthTableModel dataModel = new SynthTableModel ();
         JTable table = new JTable (dataModel);
         table2=table;
         table.setPreferredScrollableViewportSize (new Dimension (650, 150));
         JScrollPane scrollpane = new JScrollPane (table);
         container.add (scrollpane, BorderLayout.CENTER);
-        
+
         TableColumn column = null;
         column = table.getColumnModel ().getColumn (0);
         column.setPreferredWidth (75);
@@ -52,7 +52,7 @@ public class SynthConfigDialog extends JDialog
             column.setCellEditor (new DefaultCellEditor (comboBox2));
         } catch (Exception e)
         {}
-    
+
         column = table.getColumnModel ().getColumn (3);
         column.setPreferredWidth (150);
 
@@ -66,7 +66,7 @@ public class SynthConfigDialog extends JDialog
         {}
         column = table.getColumnModel ().getColumn (4);
         column.setPreferredWidth (75);
-        
+
         JPanel buttonPanel = new JPanel ();
         buttonPanel.setLayout ( new FlowLayout (FlowLayout.CENTER) );
         // BUTTON ADDED BY GERRIT GEHNEN
@@ -82,10 +82,10 @@ public class SynthConfigDialog extends JDialog
 		// individual midi wrappers (like JavaMidiWrapper). Second, the scan button is
 		// *always* there... it's just either enabled or disabled. Having GUI items appear
 		// and disappear is probably not a good idea, because a user might go back to where
-		// they *think* they saw a button once, and not find it... leading to general 
+		// they *think* they saw a button once, and not find it... leading to general
 		// confusion regarding the interface. - emenaker 2003.03.13
 		buttonPanel.add ( scan );
-		scan.enable( PatchEdit.MidiOut.supportsScanning());
+		scan.setEnabled(PatchEdit.MidiOut.supportsScanning());
         // END OF ADDED BUTTON
 
         JButton add = new JButton ("Add Device");
@@ -97,7 +97,7 @@ public class SynthConfigDialog extends JDialog
             }
         });
         buttonPanel.add ( add );
-        
+
         JButton rem = new JButton ("Remove Device");
         rem.addActionListener (new ActionListener ()
         {
@@ -116,7 +116,7 @@ public class SynthConfigDialog extends JDialog
             }
         });
         buttonPanel.add ( detail );
-                
+
         JButton ok = new JButton ("Close");
         ok.addActionListener (new ActionListener ()
         {
@@ -126,16 +126,16 @@ public class SynthConfigDialog extends JDialog
             }
         });
         buttonPanel.add ( ok );
-        
-        
+
+
         getRootPane ().setDefaultButton (ok);
-        
+
         container.add (buttonPanel, BorderLayout.SOUTH);
         getContentPane ().add (container);
         pack ();
         centerDialog ();
     }
-    
+
     protected void centerDialog ()
     {
         Dimension screenSize = this.getToolkit ().getScreenSize ();
@@ -148,7 +148,7 @@ public class SynthConfigDialog extends JDialog
         int x = screenSize.width - size.width;
         this.setLocation (x,y);
     }
-    
+
     void OKPressed ()
     {this.setVisible (false);}
     void RemovePressed ()
@@ -168,12 +168,12 @@ public class SynthConfigDialog extends JDialog
     }
     void DetailPressed ()
     {
-        table=table2; 
+        table=table2;
         if ((table2.getSelectedRow ()==-1)) return;
-        ((Device)(PatchEdit.appConfig.getDevice(table2.getSelectedRow()))).showDetails();  
-        ((SynthTableModel)table.getModel ()).fireTableDataChanged ();  
+        ((Device)(PatchEdit.appConfig.getDevice(table2.getSelectedRow()))).showDetails();
+        ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
     }
-    
+
     void AddPressed ()
     {
         table=table2;
@@ -182,7 +182,7 @@ public class SynthConfigDialog extends JDialog
         reassignDeviceDriverNums();
         revalidateLibraries();
 	((SynthTableModel)table.getModel ()).fireTableDataChanged ();
-        
+
     }
     void revalidateLibraries()
     {
@@ -195,7 +195,7 @@ public class SynthConfigDialog extends JDialog
 	    if (jList[i] instanceof LibraryFrame) ((LibraryFrame)(jList[i])).revalidateDrivers();
 	    if (jList[i] instanceof BankEditorFrame) ((BankEditorFrame)(jList[i])).revalidateDriver();
 	    if (jList[i] instanceof PatchEditorFrame) ((PatchEditorFrame)(jList[i])).revalidateDriver();
-	    
+
 	  }
 	  PatchEdit.waitDialog.hide();
 	}
@@ -226,19 +226,19 @@ public class SynthConfigDialog extends JDialog
     void ScanPressed ()
     {
         table=table2;
-        
+
         if (JOptionPane.showConfirmDialog (null,"Scanning the System for supported Synthesizers may take\na few minutes if you have many Midi devices. During the scan\nit is normal for the system to be unresponsive.\nDo you wish to scan?","Scan for Synthesizers",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-        
+
         if (midiScan!=null)
         {
             midiScan.close ();
         }
-        
+
         ProgressMonitor pm = new ProgressMonitor (null,
         "Scanning for SupportedSynthesizers",
         "Initializing Midi Devices",0,100);
         midiScan=new MidiScan ((SynthTableModel)table.getModel (),pm,this);
-        
+
         midiScan.start ();
         reassignDeviceDriverNums();
         revalidateLibraries();
