@@ -1,3 +1,4 @@
+/*$Id$*/
 package core;
 import javax.swing.JInternalFrame;
 import java.awt.*;
@@ -14,8 +15,10 @@ public interface PatchBasket
    public void DeleteSelectedPatch();
    public void CopySelectedPatch();
    public void SendSelectedPatch();
+   public void SendToSelectedPatch();
    public void PlaySelectedPatch();
    public void StoreSelectedPatch();
+   public void ReassignSelectedPatch();
    public JInternalFrame EditSelectedPatch();
    public void PastePatch();
    public ArrayList getPatchCollection();   //returns collection of all patches in basket

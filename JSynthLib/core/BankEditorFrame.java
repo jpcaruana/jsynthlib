@@ -1,3 +1,4 @@
+/* $Id$ */
 package core;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -65,6 +66,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 
                 PatchEdit.extractAction.setEnabled (true);
                 PatchEdit.sendAction.setEnabled (true);
+                PatchEdit.sendToAction.setEnabled (false);	// not available yet!
+                PatchEdit.reassignAction.setEnabled (false);	// not available yet!
                 PatchEdit.playAction.setEnabled (true);
                 PatchEdit.storeAction.setEnabled (true);
                 Patch myPatch=((Patch)myModel.getPatchAt(0,0)); // All entries are of the same type, so we can check the first one....
@@ -138,6 +141,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 {
                     PatchEdit.extractAction.setEnabled (true);
                     PatchEdit.sendAction.setEnabled (true);
+                    PatchEdit.sendToAction.setEnabled (false);	// not available yet!
+                    PatchEdit.reassignAction.setEnabled (false);// not available yet!
                     PatchEdit.playAction.setEnabled (true);
                     PatchEdit.storeAction.setEnabled (true);
                     Patch myPatch=((Patch)myModel.getPatchAt(0,0)); // All entries are of the same type, so we can check the first one....
@@ -176,6 +181,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 //PatchEdit.receiveAction.setEnabled (false);
                 PatchEdit.extractAction.setEnabled (false);
                 PatchEdit.sendAction.setEnabled (false);
+                PatchEdit.sendToAction.setEnabled (false);
+                PatchEdit.reassignAction.setEnabled (false);
                 PatchEdit.playAction.setEnabled (false);
                 PatchEdit.storeAction.setEnabled (false);
                 PatchEdit.editAction.setEnabled (false);
@@ -277,6 +284,10 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         PatchEdit.getDriver (p.deviceNum,p.driverNum).sendPatch (p);
     }
 
+    public void SendToSelectedPatch() {}
+
+    public void ReassignSelectedPatch() {}
+
     public void PlaySelectedPatch ()
     {
         if (!checkSelected ()) return;
@@ -293,8 +304,9 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         Patch p=getSelectedPatch ();
         if (p==null)
         {ErrorMsg.reportError ("Error","That patch is blank.");return;}
-        PatchEdit.getDriver(p.deviceNum,p.driverNum).choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com    
-}
+        //PatchEdit.getDriver(p.deviceNum,p.driverNum).choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com    
+        new SysexStoreDialog(p,table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow() );
+    }
 
     public JInternalFrame EditSelectedPatch ()
     {

@@ -118,6 +118,7 @@ public class Patch extends Object implements Serializable,Transferable
     public Patch[] dissect ()
     {
         Device dev;
+        Driver drv;
         int looplength;
         Patch[] patarray=null;
         StringBuffer patchString=this.getPatchHeader();
@@ -151,6 +152,20 @@ public class Patch extends Object implements Serializable,Transferable
             patarray=new Patch[1];
             patarray[0]=this;
         }
+
+ 	// assign the original deviceNum/driverNum to each patch of patarray
+ 	for (int i=0; i<looplength; i++)
+ 	{
+ 	  patarray[i].deviceNum=this.deviceNum;
+           dev=(Device)PatchEdit.appConfig.getDevice(patarray[i].deviceNum);
+ 	  patchString = patarray[i].getPatchHeader();
+ 
+ 	  for (int j=0; j<dev.driverList.size();j++)
+ 	  {
+ 	    if ( ((Driver)dev.driverList.get(j)).supportsPatch(patchString,patarray[i]) ) patarray[i].driverNum=j;
+ 	  }
+ 	}
+ 
         return patarray;
     }
 public Driver getDriver()

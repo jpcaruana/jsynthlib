@@ -69,7 +69,6 @@ public class BankDriver extends Driver
    public boolean canHoldPatch(Patch p) {         
         if ((singleSize!=p.sysex.length) && (singleSize!=0)) return false;
 
-      Integer intg=new Integer(0);
         StringBuffer patchString= p.getPatchHeader();
 
         StringBuffer driverString=new StringBuffer(singleSysexID);

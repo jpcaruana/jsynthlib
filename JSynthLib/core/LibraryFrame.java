@@ -159,8 +159,11 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 {
                     PatchEdit.extractAction.setEnabled(true);
                     PatchEdit.sendAction.setEnabled(true);
+                    PatchEdit.sendToAction.setEnabled(true);
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
+ 		    PatchEdit.reassignAction.setEnabled(true);
+                    
                     
                     Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
                     try{
@@ -199,8 +202,10 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 PatchEdit.receiveAction.setEnabled(false);
                 PatchEdit.extractAction.setEnabled(false);
                 PatchEdit.sendAction.setEnabled(false);
+                PatchEdit.sendToAction.setEnabled(false);
                 PatchEdit.playAction.setEnabled(false);
                 PatchEdit.storeAction.setEnabled(false);
+      		PatchEdit.reassignAction.setEnabled(false);
                 PatchEdit.editAction.setEnabled(false);
                 PatchEdit.saveAction.setEnabled(false);
                 PatchEdit.menuSaveAs.setEnabled(false);
@@ -358,8 +363,10 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 {
                     PatchEdit.extractAction.setEnabled(true);                    
                     PatchEdit.sendAction.setEnabled(true);
+                    PatchEdit.sendToAction.setEnabled(true);
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
+ 		    PatchEdit.reassignAction.setEnabled(true);
 
                     Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
                     try{
@@ -384,8 +391,10 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 {
                     PatchEdit.extractAction.setEnabled(false);
                     PatchEdit.sendAction.setEnabled(false);
+                    PatchEdit.sendToAction.setEnabled(false);
                     PatchEdit.playAction.setEnabled(false);
                     PatchEdit.storeAction.setEnabled(false);
+ 		    PatchEdit.reassignAction.setEnabled(false);
                     PatchEdit.editAction.setEnabled(false);
                     PatchEdit.copyAction.setEnabled(false);
                     PatchEdit.cutAction.setEnabled(false);
@@ -402,7 +411,9 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
         int offset=0;
         
         if (ImportMidiFile.doImport(file))
+        {
           return;
+        }
         
         FileInputStream fileIn= new FileInputStream(file);
         byte [] buffer =new byte [(int)file.length()];
@@ -486,7 +497,21 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).sendPatch(myPatch);
     }
-    
+    public void SendToSelectedPatch()
+     {
+         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
+         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+ 	 new SysexSendToDialog(myPatch);
+     }
+  
+     public void ReassignSelectedPatch()
+     {
+         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
+         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+ 	 new ReassignPatchDialog(myPatch);
+ 	 myModel.fireTableDataChanged();
+     }
+
     public void PlaySelectedPatch()
     {
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
@@ -499,16 +524,17 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
     {
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).choosePatch(myPatch);
+         //PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).choosePatch(myPatch);
+ 	new SysexStoreDialog(myPatch);
     }
     
     public JInternalFrame EditSelectedPatch()
     {
         if (table.getSelectedRowCount()==0)
         {
-ErrorMsg.reportError("Error", "No Patch Selected.");
-return null;
-}
+           ErrorMsg.reportError("Error", "No Patch Selected.");
+           return null;
+        }
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
         changed=true;
         return(PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).editPatch(myPatch));

@@ -33,7 +33,9 @@ public class PatchEdit extends JFrame
     public static MidiMonitor midiMonitor;    
     public static ExtractAction extractAction;
     public static SendAction sendAction;
+    public static SendToAction sendToAction;
     public static StoreAction storeAction;
+    public static ReassignAction reassignAction;
     public static EditAction editAction;
     public static PlayAction playAction;
     public static GetAction receiveAction;
@@ -203,7 +205,8 @@ public class PatchEdit extends JFrame
         menuPatch.add (sendAction);
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
         KeyStroke.getKeyStroke (KeyEvent.VK_T, KeyEvent.CTRL_MASK));
-        
+        sendToAction=new SendToAction ();
+        menuPatch.add (sendToAction);       
         storeAction=new StoreAction ();
         menuPatch.add (storeAction);
         receiveAction=new GetAction();
@@ -219,6 +222,8 @@ public class PatchEdit extends JFrame
         menuPatch.getItem (menuPatch.getItemCount ()-1).setAccelerator (
         KeyStroke.getKeyStroke (KeyEvent.VK_E, KeyEvent.CTRL_MASK));
         menuPatch.add (new JSeparator ());
+        reassignAction=new ReassignAction();
+ 	menuPatch.add (reassignAction);
         crossBreedAction=new CrossBreedAction ();
         menuPatch.add (crossBreedAction);
         newPatchAction=new NewPatchAction ();
@@ -273,8 +278,10 @@ public class PatchEdit extends JFrame
         menuPatchPopup.add (playAction);
         menuPatchPopup.add (editAction);
         menuPatchPopup.add (new JSeparator ());
+        menuPatchPopup.add (reassignAction);
         menuPatchPopup.add (storeAction);
         menuPatchPopup.add (sendAction);
+        menuPatchPopup.add (sendToAction);
         menuPatchPopup.add (new JSeparator ());
         menuPatchPopup.add (cutAction);
         menuPatchPopup.add (copyAction);
@@ -336,6 +343,11 @@ public class PatchEdit extends JFrame
         b.setToolTipText ("Go to Next Fader Bank");
         b.setIcon (loadIcon ("images/Forward24.gif"));
         b.setText (null);
+        
+        
+
+
+
         
         
         getContentPane ().add (toolBar,BorderLayout.NORTH);
@@ -583,6 +595,22 @@ public class PatchEdit extends JFrame
 /* Now we start with the various action classes. Each of these preforms one of the menu commands and are called either from
    the menubar, popup menu or toolbar.*/
     
+     class ReassignAction extends AbstractAction
+     {
+         public ReassignAction ()
+         {super ("Reassign",null);
+          //putValue (Action.MNEMONIC_KEY, new Integer ('R'));
+          setEnabled (false);
+         }
+         public void actionPerformed (ActionEvent e)
+         {
+             try
+             {
+                 ((PatchBasket)desktop.getSelectedFrame ()).ReassignSelectedPatch ();
+             } catch (Exception ex)
+             {ErrorMsg.reportError ("Error","Patch to Reassign must be highlighted in the focused Window.",ex);};
+         }
+     }
     
     class PlayAction extends AbstractAction
     {
@@ -615,7 +643,7 @@ public class PatchEdit extends JFrame
             {
                 ((PatchBasket)desktop.getSelectedFrame ()).StoreSelectedPatch ();
             } catch (Exception ex)
-            {ErrorMsg.reportError ("Error", "Patch to Send must be highlighted in the focused Window.",ex);};
+             {ErrorMsg.reportError ("Error", "Patch to Store must be highlighted in the focused Window.",ex);};
         }
     }
     
@@ -637,6 +665,24 @@ public class PatchEdit extends JFrame
         }
     }
     
+     class SendToAction extends AbstractAction
+     {
+         public SendToAction ()
+         {
+             super ("Send to...",null);
+             //putValue (Action.MNEMONIC_KEY, new Integer ('S'));
+             setEnabled (false);
+         }
+         public void actionPerformed (ActionEvent e)
+         {
+             try
+             {
+                 ((PatchBasket)desktop.getSelectedFrame ()).SendToSelectedPatch ();
+             } catch (Exception ex)
+             {ErrorMsg.reportError ("Error","Patch to 'Send to...' must be highlighted in the focused Window.",ex);};
+         }
+     }
+     
     class DeleteAction extends AbstractAction
     {
         public DeleteAction ()
@@ -820,7 +866,9 @@ public class PatchEdit extends JFrame
         {
             JFileChooser fc2=new JFileChooser ();
             javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("Sysex Files",".syx");
+            javax.swing.filechooser.FileFilter type2 = new ExtensionFilter ("MIDI Files" ,".mid");	// core.ImportMidiFile extracts Sysex Messages from MidiFile
             fc2.addChoosableFileFilter (type1);
+            fc2.addChoosableFileFilter (type2);
             fc2.setCurrentDirectory (new File (appConfig.getSysexPath()));
             fc2.setFileFilter (type1);
             int returnVal = fc2.showOpenDialog (PatchEdit.this);
@@ -1026,6 +1074,7 @@ public class PatchEdit extends JFrame
         }
         
         public void actionPerformed (ActionEvent e)
+
         {
             try
             {

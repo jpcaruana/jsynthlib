@@ -1,3 +1,4 @@
+/* $Id$ */
 package core;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,7 +10,7 @@ import javax.swing.border.*;
 public class PatchEditorFrame extends JInternalFrame implements PatchBasket
 {
   public  Patch p;         //this is the patch we are working on
-  final byte [] originalPatch = new byte[32000];; // this is a copy of the patch when we started editing (in case user wants to revert)
+  final byte [] originalPatch = new byte[32000]; // this is a copy of the patch when we started editing (in case user wants to revert)
                  //i hope this is big enough, it really should be dynamically allocated to the size of p.sysex, but cannot be due
 		 // to a design "feature" in Java
   public GridBagLayout layout;
@@ -77,9 +78,11 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket
 	       PatchEdit.receiveAction.setEnabled (false);
                PatchEdit.pasteAction.setEnabled (false);
                PatchEdit.sendAction.setEnabled (true);
+               PatchEdit.sendToAction.setEnabled (true);
                PatchEdit.playAction.setEnabled (true);
                PatchEdit.storeAction.setEnabled (true);
                PatchEdit.copyAction.setEnabled (true);
+               PatchEdit.reassignAction.setEnabled (true);
                PatchEdit.exportAction.setEnabled (true);
 	     
 	     };
@@ -88,10 +91,11 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket
 	       PatchEdit.sendAction.setEnabled (false);
                PatchEdit.playAction.setEnabled (false);
                PatchEdit.storeAction.setEnabled (false);
+               PatchEdit.sendToAction.setEnabled (false);
                PatchEdit.copyAction.setEnabled (false);
+               PatchEdit.reassignAction.setEnabled (false);
                PatchEdit.exportAction.setEnabled (false);
                lostFocus();
-
 
 	     };
 	     public void internalFrameDeiconified(InternalFrameEvent e) {};
@@ -117,10 +121,23 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket
  }catch (Exception e) {};
  };
  public void SendSelectedPatch()
-        {((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
-	 ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).sendPatch(p); };
+         {
+ 	  ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
+ 	  ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).sendPatch(p);
+ 	};
+  public void SendToSelectedPatch()
+         {
+ 	  ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
+ 	  new SysexSendToDialog(p);
+ 	};
+  public void ReassignSelectedPatch()
+         {
+ 	  ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
+ 	  new ReassignPatchDialog(p);
+ 	};
  public void PlaySelectedPatch()
-        {((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
+         {
+         ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
 	 ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).sendPatch(p);
          ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).playPatch(p);
 	};
