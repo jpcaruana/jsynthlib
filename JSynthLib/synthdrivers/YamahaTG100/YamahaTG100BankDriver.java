@@ -93,7 +93,7 @@ public class YamahaTG100BankDriver extends BankDriver {
             // Wait a little bit else the TG-100 can't handle the SysEx
             Thread.sleep(30);
         } catch (Exception ex) {
-            ErrorMsg.reportError("Error", "Error requesting all Quasar RAM performances.", ex);
+            ErrorMsg.reportError("Error", "Error requesting the internal bank.", ex);
         }
     }
 
@@ -157,7 +157,7 @@ public class YamahaTG100BankDriver extends BankDriver {
 
             return p;
         } catch (Exception e) {
-            ErrorMsg.reportError("Error", "Error in Quasar Bank Driver", e);
+            ErrorMsg.reportError("Error", "Error in Yamaha TG-100 Bank Driver", e);
             return null;
         }
     }
