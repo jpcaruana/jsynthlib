@@ -989,7 +989,10 @@ different way of setting up your working environment, feel free to use
 it, but this works for me.
 
 <p>First, decompress JSynthLib.zip to the directory you are going to work
-in (such as C:\JSynthLib).  Next, open up a DOS prompt set to 50 row
+in (such as C:\JSynthLib).  Or you can get the latest source code via
+CVS. See "How to Compile File Checked Out from CVS".
+
+Next, open up a DOS prompt set to 50 row
 display and set it to that directory. This is used to run JSynthLib
 for testing (the 50 row display helps keep error messages from
 scrolling off the screen too fast). Make sure that the java.exe and
@@ -1037,6 +1040,12 @@ sit in the main JSynthLib directory and type
 <kbd>javac synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java</kbd>.
 Don't enter that directory and just type 
 <kbd>javac BossDR660DrumkitDriver.java</kbd>, it won't work.
+
+You can make API document by executing;
+<pre>
+javadoc -locale en_US -breakiterator -quiet -d html -use -author -version core/*.java
+</pre>
+View html/index.html with your favarite browser.
 
 <h4>Section 4: The Four Areas of Synthesizer Support</h4>
 
