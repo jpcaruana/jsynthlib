@@ -165,7 +165,7 @@ public class JSLFrame {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
 	    // Enable pasteAction
-	    PatchEdit.pasteAction.setEnabled(true);
+	    PatchEdit.setEnabled(true, Actions.EN_PASTE);
 	}
 	public void internalFrameClosed(InternalFrameEvent e) {
 	    JSLFrameEvent fe = 
@@ -287,7 +287,7 @@ public class JSLFrame {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
 	    // Enable pasteAction
-	    PatchEdit.pasteAction.setEnabled(true);
+	    PatchEdit.setEnabled(true, Actions.EN_PASTE);
 	}
 	public void windowClosed(WindowEvent e) {
 	    JSLFrameEvent fe = 

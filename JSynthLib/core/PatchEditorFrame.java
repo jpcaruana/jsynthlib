@@ -144,28 +144,33 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 		    p.getDriver().calculateChecksum(p);
 		    p.getDriver().sendPatch(p);
 		    gotFocus();
-		    PatchEdit.getAction.setEnabled(false);
-		    PatchEdit.pasteAction.setEnabled(false);
-		    PatchEdit.sendAction.setEnabled(true);
-		    PatchEdit.sendToAction.setEnabled(true);
-		    PatchEdit.playAction.setEnabled(true);
-		    PatchEdit.storeAction.setEnabled(true);
-		    PatchEdit.copyAction.setEnabled(true);
-		    PatchEdit.reassignAction.setEnabled(true);
-		    PatchEdit.exportAction.setEnabled(true);
+
+		    PatchEdit.setEnabled(false,
+					 Actions.EN_GET
+					 | Actions.EN_PASTE);
+
+		    PatchEdit.setEnabled(true,
+					 Actions.EN_COPY
+					 | Actions.EN_EXPORT
+					 | Actions.EN_PLAY
+					 | Actions.EN_REASSIGN
+					 | Actions.EN_SEND
+					 | Actions.EN_SEND_TO
+					 | Actions.EN_STORE);
 		}
 
 		public void JSLFrameClosed(JSLFrameEvent e) {
 		}
 
 		public void JSLFrameDeactivated(JSLFrameEvent e) {
-		    PatchEdit.sendAction.setEnabled(false);
-		    PatchEdit.playAction.setEnabled(false);
-		    PatchEdit.storeAction.setEnabled(false);
-		    PatchEdit.sendToAction.setEnabled(false);
-		    PatchEdit.copyAction.setEnabled(false);
-		    PatchEdit.reassignAction.setEnabled(false);
-		    PatchEdit.exportAction.setEnabled(false);
+		    PatchEdit.setEnabled(false,
+					 Actions.EN_COPY
+					 | Actions.EN_EXPORT
+					 | Actions.EN_PLAY
+					 | Actions.EN_REASSIGN
+					 | Actions.EN_SEND
+					 | Actions.EN_SEND_TO
+					 | Actions.EN_STORE);
 		    lostFocus();
 		}
 

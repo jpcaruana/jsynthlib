@@ -21,51 +21,84 @@ import java.net.URL;
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 
-//TODO import /*TODO org.jsynthlib.*/midi.*;
-public final class PatchEdit /*implements MidiDriverChangeListener*/ {
+public final class PatchEdit  {
     static final String VERSION = "0.20-alpha";
 
     static DevicesConfig devConfig;
     static AppConfig appConfig;
 
-    // accessed by BankEditorFrame
-    static Action extractAction;
-    static Action sendAction;
-    static Action sendToAction;
-    static Action storeAction;
-    static Action reassignAction;
-    static Action editAction;
-    static Action playAction;
-    static Action getAction;
-    static Action saveAction;
-    static Action saveAsAction;
-    static Action sortAction;
-    static Action searchAction;
-    static Action deleteDuplicatesAction;
-    static Action copyAction;
-    static Action cutAction;
-    static Action pasteAction;
-    static Action deleteAction;
-    static Action importAction;
-    static Action exportAction;
-    static Action importAllAction;
-    static Action newPatchAction;
-    static Action crossBreedAction;
-
-    static Action monitorAction;
-    static Action transferSceneAction;
-    static Action prefsAction;
-    static Action exitAction;
-    static Action uploadAction;
-
+    private static Action aboutAction;
+    private static Action copyAction;
+    private static Action crossBreedAction;
+    private static Action cutAction;
+    private static Action deleteAction;
+    private static Action deleteDuplicatesAction;
     private static Action docsAction;
-    private static Action licenseAction;
+    private static Action editAction;
+    private static Action exitAction;
+    private static Action exportAction;
+    private static Action extractAction;
+    private static Action getAction;
     private static Action homePageAction;
+    private static Action importAction;
+    private static Action importAllAction;
+    private static Action licenseAction;
+    static Action monitorAction; // refered by JSLDesktop and JSLWindowMenu
+    private static Action newAction;
+    private static Action newPatchAction;
     private static Action newSceneAction;
     private static Action nextFaderAction;
-    private static Action newAction;
     private static Action openAction;
-    private static Action aboutAction;
+    private static Action pasteAction;
+    private static Action playAction;
+    static Action prefsAction; // refered by JSLDesktop and JSLWindowMenu
+    private static Action reassignAction;
+    private static Action saveAction;
+    private static Action saveAsAction;
+    private static Action searchAction;
+    private static Action sendAction;
+    private static Action sendToAction;
+    private static Action sortAction;
+    private static Action storeAction;
+    private static Action transferSceneAction;
+    private static Action uploadAction;
+
+    // temporally defined here until Actions are moved to Actions class.
+    static final long EN_ABOUT			= 0x0000000000000001L;
+    static final long EN_COPY			= 0x0000000000000002L;
+    static final long EN_CROSSBREED		= 0x0000000000000004L;
+    static final long EN_CUT			= 0x0000000000000008L;
+    static final long EN_DELETE			= 0x0000000000000010L;
+    static final long EN_DELETE_DUPLICATES	= 0x0000000000000020L;
+    static final long EN_DOCS			= 0x0000000000000040L;
+    static final long EN_EDIT			= 0x0000000000000080L;
+    static final long EN_EXIT			= 0x0000000000000100L;
+    static final long EN_EXPORT			= 0x0000000000000200L;
+    static final long EN_EXTRACT		= 0x0000000000000400L;
+    static final long EN_GET			= 0x0000000000000800L;
+    static final long EN_HOME_PAGE		= 0x0000000000001000L;
+    static final long EN_IMPORT			= 0x0000000000002000L;
+    static final long EN_IMPORT_ALL		= 0x0000000000004000L;
+    static final long EN_LICENSE		= 0x0000000000008000L;
+    static final long EN_MONITOR		= 0x0000000000010000L;
+    static final long EN_NEW			= 0x0000000000020000L;
+    static final long EN_NEW_PATCH		= 0x0000000000040000L;
+    static final long EN_NEW_SCENE		= 0x0000000000080000L;
+    static final long EN_NEXT_FADER		= 0x0000000000100000L;
+    static final long EN_OPEN			= 0x0000000000200000L;
+    static final long EN_PASTE			= 0x0000000000400000L;
+    static final long EN_PLAY			= 0x0000000000800000L;
+    static final long EN_PREFS			= 0x0000000001000000L;
+    static final long EN_REASSIGN		= 0x0000000002000000L;
+    static final long EN_SAVE			= 0x0000000004000000L;
+    static final long EN_SAVE_AS		= 0x0000000008000000L;
+    static final long EN_SEARCH			= 0x0000000010000000L;
+    static final long EN_SEND			= 0x0000000020000000L;
+    static final long EN_SEND_TO		= 0x0000000040000000L;
+    static final long EN_SORT			= 0x0000000080000000L;
+    static final long EN_STORE			= 0x0000000100000000L;
+    static final long EN_TRANSFER_SCENE		= 0x0000000200000000L;
+    static final long EN_UPLOAD			= 0x0000000400000000L;
 
     private static MidiMonitor midiMonitor;
     private static JToolBar toolBar;
@@ -438,6 +471,86 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		    e.setHandled(true);
 		}
 	    });
+    }
+
+    /**
+     * Enable/disable Actions.
+     * @param b <code>true</code> to enable Actions,
+     * <code>false</code> to disable them.
+     * @param v Specify Actions to be enabled/disabled.  Use constants
+     * <code>EN_*</code>.
+     */
+    static void setEnabled(boolean b, long v) {
+	if ((v & EN_ABOUT) != 0)
+	    aboutAction.setEnabled(b);
+	if ((v & EN_COPY) != 0)
+	    copyAction.setEnabled(b);
+	if ((v & EN_CROSSBREED) != 0)
+	    crossBreedAction.setEnabled(b);
+	if ((v & EN_CUT) != 0)
+	    cutAction.setEnabled(b);
+	if ((v & EN_DELETE) != 0)
+	    deleteAction.setEnabled(b);
+	if ((v & EN_DELETE_DUPLICATES) != 0)
+	    deleteDuplicatesAction.setEnabled(b);
+	if ((v & EN_DOCS) != 0)
+	    docsAction.setEnabled(b);
+	if ((v & EN_EDIT) != 0)
+	    editAction.setEnabled(b);
+	if ((v & EN_EXIT) != 0)
+	    exitAction.setEnabled(b);
+	if ((v & EN_EXPORT) != 0)
+	    exportAction.setEnabled(b);
+	if ((v & EN_EXTRACT) != 0)
+	    extractAction.setEnabled(b);
+	if ((v & EN_GET) != 0)
+	    getAction.setEnabled(b);
+	if ((v & EN_HOME_PAGE) != 0)
+	    homePageAction.setEnabled(b);
+	if ((v & EN_IMPORT) != 0)
+	    importAction.setEnabled(b);
+	if ((v & EN_IMPORT_ALL) != 0)
+	    importAllAction.setEnabled(b);
+	if ((v & EN_LICENSE) != 0)
+	    licenseAction.setEnabled(b);
+	if ((v & EN_MONITOR) != 0)
+	    monitorAction.setEnabled(b);
+	if ((v & EN_NEW) != 0)
+	    newAction.setEnabled(b);
+	if ((v & EN_NEW_PATCH) != 0)
+	    newPatchAction.setEnabled(b);
+	if ((v & EN_NEW_SCENE) != 0)
+	    newSceneAction.setEnabled(b);
+	if ((v & EN_NEXT_FADER) != 0)
+	    nextFaderAction.setEnabled(b);
+	if ((v & EN_OPEN) != 0)
+	    openAction.setEnabled(b);
+	if ((v & EN_PASTE) != 0)
+	    pasteAction.setEnabled(b);
+	if ((v & EN_PLAY) != 0)
+	    playAction.setEnabled(b);
+	if ((v & EN_PREFS) != 0)
+	    prefsAction.setEnabled(b);
+	if ((v & EN_REASSIGN) != 0)
+	    reassignAction.setEnabled(b);
+	if ((v & EN_SAVE) != 0)
+	    saveAction.setEnabled(b);
+	if ((v & EN_SAVE_AS) != 0)
+	    saveAsAction.setEnabled(b);
+	if ((v & EN_SEARCH) != 0)
+	    searchAction.setEnabled(b);
+	if ((v & EN_SEND) != 0)
+	    sendAction.setEnabled(b);
+	if ((v & EN_SEND_TO) != 0)
+	    sendToAction.setEnabled(b);
+	if ((v & EN_SORT) != 0)
+	    sortAction.setEnabled(b);
+	if ((v & EN_STORE) != 0)
+	    storeAction.setEnabled(b);
+	if ((v & EN_TRANSFER_SCENE) != 0)
+	    transferSceneAction.setEnabled(b);
+	if ((v & EN_UPLOAD) != 0)
+	    uploadAction.setEnabled(b);
     }
 
     /** This creates a new [empty] Library Window */

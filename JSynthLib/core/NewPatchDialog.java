@@ -57,8 +57,7 @@ public class NewPatchDialog extends JDialog
 			deviceComboBox.addItem(device);
 			break;
 		    } catch (Exception ex) {
-			// Simply do nothing....
-			// ErrorMsg.reportStatus(ex.toString());
+			// This is normal.  Simply do nothing....
 		    }
 		}
 	    }
@@ -144,7 +143,17 @@ public class NewPatchDialog extends JDialog
 	    for (int i = 0; i < device.driverCount(); i++) {
 		Driver driver = device.getDriver(i);
 		if (!(driver instanceof Converter)) {
-		    driverComboBox.addItem (driver);
+		    try {
+			// If the actual driver doesn't override the
+			// method "createNewPatch" this command will
+			// throw an exception.  This means, that the
+			// driver doesn't support the creation of a
+			// new patch.
+			driver.getClass().getDeclaredMethod("createNewPatch", null);
+			driverComboBox.addItem (driver);
+		    } catch (Exception ex) {
+			// This is normal.  Simply do nothing....
+		    }
 		}
 	    }
 	    driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);

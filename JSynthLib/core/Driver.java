@@ -446,16 +446,37 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     /**
-     * Returns an Editor Window for this Patch. Overwrite this to
-     * invoke your Patch Editor if made it.<p>
+     * Returns an Editor Window for this Patch. Don't override this
+     * method unless you implement the Editor.<p>
      *
      * Compatibility Note: The method returned
      * <code>JInternalFrame</code>, but now returns
      * <code>JSLFrame</code>.
+     * @see #hasEditor
      */
     protected JSLFrame editPatch(Patch p) {
 	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
 	return null;
+    }
+
+    /**
+     * Returns true if an Editor is implemented.
+     * @see #editPatch
+     */
+    protected boolean hasEditor() {
+	if (this instanceof BankDriver)
+	    return true;
+	else if (getClass().equals(Driver.class)) // ex. Generic Driver
+	    return false;
+	else {
+	    try {
+		getClass().getDeclaredMethod("editPatch",
+					     new Class[] {Patch.class});
+		return true;
+	    } catch (NoSuchMethodException e) {
+		return false;
+	    }
+	}
     }
 
     /**

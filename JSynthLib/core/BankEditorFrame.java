@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -69,15 +70,16 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         table2 = table;
 	table.setTransferHandler(pth);
 	table.setDragEnabled(true);
-	//table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	// Only one patch can be handled.
+	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
-        //table.setRowSelectionAllowed(false);
-        //table.setColumnSelectionAllowed(false);
+        //table.setRowSelectionAllowed(true);
+        //table.setColumnSelectionAllowed(true);
 	table.setCellSelectionEnabled(true);
 	table.setAutoResizeMode(autoResizeMode);
 	ListSelectionListener lsl = new ListSelectionListener() {
 		public void valueChanged(ListSelectionEvent e) {
-		    enableMenus();
+		    enableActions();
 		}
 	    };
 	table.getSelectionModel().addListSelectionListener(lsl);
@@ -109,21 +111,16 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		public void JSLFrameIconified(JSLFrameEvent e) {
 		}
 		public void JSLFrameActivated(JSLFrameEvent e) {
-		    	PatchEdit.getAction.setEnabled(false);
-			PatchEdit.importAction.setEnabled(true);
-			PatchEdit.importAllAction.setEnabled(true);
-			PatchEdit.newPatchAction.setEnabled(true);
-
-			if (table.getRowCount() > 0) {
-			    PatchEdit.saveAction.setEnabled(true);
-			    PatchEdit.saveAsAction.setEnabled(true);
-			    PatchEdit.searchAction.setEnabled(true);
-			}
-			if (table.getRowCount() > 1) {
-			    PatchEdit.sortAction.setEnabled(true);
-			    PatchEdit.deleteDuplicatesAction.setEnabled(true);
-			}
-		    enableMenus();
+		    PatchEdit.setEnabled(false,
+					 Actions.EN_GET
+					 // not available yet!
+					 | Actions.EN_SEND_TO
+					 | Actions.EN_REASSIGN);
+		    PatchEdit.setEnabled(true,
+					 Actions.EN_IMPORT
+					 | Actions.EN_IMPORT_ALL
+					 | Actions.EN_NEW_PATCH);
+		    enableActions();
 		}
 		public void JSLFrameClosing(JSLFrameEvent e) {
 		    JSLFrame[] jList = JSLDesktop.getAllFrames();
@@ -141,7 +138,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		}
 
 		public void JSLFrameDeactivated(JSLFrameEvent e) {
-		    disableMenus();
+		    PatchEdit.setEnabled(false, Actions.EN_ALL);
 		}
 	    });
 
@@ -269,7 +266,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     public void pastePatch() {
 	if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
-	    PatchEdit.pasteAction.setEnabled(false);
+	    PatchEdit.setEnabled(false, Actions.EN_PASTE);
     }
     public void pastePatch(Patch p) {
 	pth.importData(table, p);
@@ -292,56 +289,34 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	bankDriver = (BankDriver) bankData.getDriver();
     }
 
-    protected void disableMenus() {
-	//PatchEdit.getAction.setEnabled(false);
-	PatchEdit.extractAction.setEnabled(false);
-	PatchEdit.sendAction.setEnabled(false);
-	PatchEdit.sendToAction.setEnabled(false);
-	PatchEdit.reassignAction.setEnabled(false);
-	PatchEdit.playAction.setEnabled(false);
-	PatchEdit.storeAction.setEnabled(false);
-	PatchEdit.editAction.setEnabled(false);
-	PatchEdit.saveAction.setEnabled(false);
-	PatchEdit.saveAsAction.setEnabled(false);
-	PatchEdit.sortAction.setEnabled(false);
-	PatchEdit.searchAction.setEnabled(false);
-	PatchEdit.deleteDuplicatesAction.setEnabled(false);
-	PatchEdit.cutAction.setEnabled(false);
-	PatchEdit.copyAction.setEnabled(false);
-	PatchEdit.deleteAction.setEnabled(false);
-	PatchEdit.importAction.setEnabled(false);
-	PatchEdit.importAllAction.setEnabled(false);
-	PatchEdit.exportAction.setEnabled(false);
-	PatchEdit.newPatchAction.setEnabled(false);
-    }
+    /** change state of Actions based on the state of the table. */
+    private void enableActions() {
+	PatchEdit.setEnabled(table.getRowCount() > 0,
+			     Actions.EN_SAVE
+			     | Actions.EN_SAVE_AS
+			     | Actions.EN_SEARCH);
+	PatchEdit.setEnabled(table.getRowCount() > 1,
+			     Actions.EN_SORT
+			     | Actions.EN_DELETE_DUPLICATES);
 
-    protected void enableMenus() {
-	boolean b = (table.getSelectedRowCount() > 0);
-	PatchEdit.extractAction.setEnabled(b);
-	PatchEdit.sendAction.setEnabled(b);
-	PatchEdit.sendToAction.setEnabled(false); // not available yet!
-	PatchEdit.reassignAction.setEnabled(false); // not available yet!
-	PatchEdit.playAction.setEnabled(b);
-	PatchEdit.storeAction.setEnabled(b);
+	// Why don't we select select at relase one item?
+	PatchEdit.setEnabled(table.getSelectedRowCount() > 0,
+			     Actions.EN_COPY
+			     | Actions.EN_CUT
+			     | Actions.EN_DELETE
+			     | Actions.EN_EXPORT
+			     | Actions.EN_EXTRACT
+			     | Actions.EN_PLAY
+			     | Actions.EN_SEND
+			     | Actions.EN_STORE);
 
 	// All entries are of the same type, so we can check the first one....
-	if (b) {
-	    Patch myPatch = ((Patch) myModel.getPatchAt(0, 0));
-	    try {
-		myPatch.getDriver().getClass().getDeclaredMethod("editPatch", new Class[] {myPatch.getClass()});
-		PatchEdit.editAction.setEnabled(true);
-	    } catch (NoSuchMethodException ex) {
-		if (myPatch.getDriver() instanceof BankDriver)
-		    PatchEdit.editAction.setEnabled(true);
-	    }
-	} else {
-	    PatchEdit.editAction.setEnabled(false);
-	}
-	PatchEdit.cutAction.setEnabled(b);
-	PatchEdit.copyAction.setEnabled(b);
-	PatchEdit.deleteAction.setEnabled(b);
-	PatchEdit.exportAction.setEnabled(b);
+	Patch myPatch = myModel.getPatchAt(0, 0);
+	PatchEdit.setEnabled(table.getSelectedRowCount() > 0
+			     && myPatch.getDriver().hasEditor(),
+			     Actions.EN_EDIT);
     }
+
     // Enable pasting
     public boolean canImport(java.awt.datatransfer.DataFlavor[] flavors) {
 	// changed by Hiroo July 5th, 2004
