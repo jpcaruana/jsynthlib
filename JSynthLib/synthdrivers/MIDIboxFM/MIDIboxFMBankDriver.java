@@ -79,7 +79,7 @@ public class MIDIboxFMBankDriver extends BankDriver
 //    }
 
     public int getPatchStart(int patchNum) {
-	int start=(256*patchNum) + 10;
+	int start=(256*patchNum) + 9;
 	return start;
     }
 
