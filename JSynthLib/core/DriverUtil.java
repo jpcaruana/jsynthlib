@@ -39,7 +39,7 @@ public class DriverUtil {
      * Factory method of Patch. Look up the driver for sysex byte array, and
      * create a patch by using the driver found.
      */
-    static IPatch[] createPatch(byte[] sysex) {
+    public static IPatch[] createPatch(byte[] sysex) {
         IDriver driver = chooseDriver(sysex);
         return driver != null ? driver.createPatch(sysex) : null;
     }
@@ -50,7 +50,7 @@ public class DriverUtil {
      * @return Driver object chosen
      * @see IDriver#supportsPatch
      */
-    static IDriver chooseDriver(byte[] sysex) {
+    public static IDriver chooseDriver(byte[] sysex) {
         String patchString = getPatchHeader(sysex);
     
         for (int idev = 0; idev < AppConfig.deviceCount(); idev++) {
@@ -73,7 +73,7 @@ public class DriverUtil {
      * @return Driver object chosen
      * @see IDriver#supportsPatch
      */
-    static IDriver chooseDriver(byte[] sysex, Device dev) {
+    public static IDriver chooseDriver(byte[] sysex, Device dev) {
         String patchString = getPatchHeader(sysex);
         for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
             IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
@@ -91,7 +91,7 @@ public class DriverUtil {
      * 
      * @see IDriver#supportsPatch
      */
-    static String getPatchHeader(byte[] sysex) {
+    public static String getPatchHeader(byte[] sysex) {
         StringBuffer patchstring = new StringBuffer("F0");
     
         // Some Sysex Messages are shorter than 16 Bytes!
