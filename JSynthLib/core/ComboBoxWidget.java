@@ -29,28 +29,28 @@ public class ComboBoxWidget extends SysexWidget {
     }
     /**
      * Constructor for setting up the ComboBoxWidget.
-     * @param l Label for the Widget.
-     * @param p The patch, which is edited.
+     * @param label Label for the Widget.
+     * @param patch The patch, which is edited.
      * @param min The minimum value (default 0).
-     * @param ofs Offset of the parameter in the patch.
-     * @param s SysexSender for transmitting the value at editing the
+     * @param pmodel sysex parameter model.
+     * @param sender SysexSender for transmitting the value at editing the
      * parameter.
-     * @param o Array, which contains the list of the options in the combobox.
+     * @param options Array, which contains the list of the options in the combobox.
      * @see SysexWidget
      */
-    public ComboBoxWidget(String l, IPatch p, int min,
-			  ParamModel ofs, SysexSender s, Object[] o) {
-	super(l, p, min, min + o.length - 1, ofs, s);
-        options = o;
+    public ComboBoxWidget(String label, IPatch patch, int min,
+			  IParamModel pmodel, ISender sender, Object[] options) {
+	super(label, patch, min, min + options.length - 1, pmodel, sender);
+        this.options = options;
 
 	createWidgets();
         layoutWidgets();
     }
 
     /** <code>min</code> is set to 0. */
-    public ComboBoxWidget(String l, IPatch p,
-			  ParamModel ofs, SysexSender s, Object [] o) {
-        this(l, p, 0, ofs, s, o);
+    public ComboBoxWidget(String label, IPatch patch,
+			  IParamModel pmodel, ISender sender, Object [] options) {
+        this(label, patch, 0, pmodel, sender, options);
     }
 
     protected void createWidgets() {

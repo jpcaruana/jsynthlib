@@ -44,16 +44,16 @@ public class EnvelopeWidget extends SysexWidget {
     /**
      * Creates a new <code>SysexWidget</code> instance.
      *
-     * @param l a label text for the sysexWidget.
-     * @param p a <code>Patch</code>, which is edited.
-     * @param n an array of Node.
+     * @param label a label text for the sysexWidget.
+     * @param patch a <code>Patch</code>, which is edited.
+     * @param nodes an array of Node.
      * @param xpad horizontal padding value.
      * @param ypad vertical padding value.
      */
-    public EnvelopeWidget(String l, IPatch p, Node[] n,
+    public EnvelopeWidget(String label, IPatch patch, Node[] nodes,
 			  int xpad, int ypad) {
-	super(l, p, null, null);
-	nodes = n;
+	super(label, patch, null, null);
+	this.nodes = nodes;
 	xpadding = xpad;
 	ypadding = ypad;
 
@@ -62,8 +62,8 @@ public class EnvelopeWidget extends SysexWidget {
     }
 
     /** <code>xpad</code> and <code>ypad</code> are set to zero. */
-    public EnvelopeWidget(String l, IPatch p, Node[] n) {
-	this(l, p, n, 0, 0);
+    public EnvelopeWidget(String label, IPatch patch, Node[] options) {
+	this(label, patch, options, 0, 0);
     }
 
     protected void createWidgets() {
@@ -436,10 +436,10 @@ public class EnvelopeWidget extends SysexWidget {
 	private int minY;
 	private int maxX;
 	private int maxY;
-	private ParamModel ofsX;
-	private ParamModel ofsY;
-	private SysexSender senderX;
-	private SysexSender senderY;
+	private IParamModel ofsX;
+	private IParamModel ofsY;
+	private ISender senderX;
+	private ISender senderY;
 	private boolean invertX;
 	private int baseY;
 	private String nameX;
@@ -479,9 +479,9 @@ public class EnvelopeWidget extends SysexWidget {
 	 * @param invertx Sometimes on an X-axis-riding attribute 0 is the
 	 * fastest, other times it is the slowest. This allows you to choose.
 	 *
-	 * @param x The SysexSender which send system exclusive messages
+	 * @param x The ISender which send system exclusive messages
 	 * to the synths when the Node is moved on the X axis direction.
-	 * @param y The SysexSender which send system exclusive messages
+	 * @param y The ISender which send system exclusive messages
 	 * to the synths when the Node is moved on the Y axis direction.
 	 *
 	 * @param namex The names of the X-axis parameters riding each
@@ -491,10 +491,10 @@ public class EnvelopeWidget extends SysexWidget {
 	 *
 	 * @see EnvelopeWidget
 	 */
-	public Node(int minx, int maxx, ParamModel ofsx,
-		    int miny, int maxy, ParamModel ofsy,
+	public Node(int minx, int maxx, IParamModel ofsx,
+		    int miny, int maxy, IParamModel ofsy,
 		    int basey, boolean invertx,
-		    SysexSender x, SysexSender y,
+		    ISender x, ISender y,
 		    String namex, String namey) {
 	    baseY = basey;
 	    minX = minx;

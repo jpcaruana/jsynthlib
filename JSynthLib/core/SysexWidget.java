@@ -1,8 +1,5 @@
 package core;
 import java.awt.Insets;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.SysexMessage;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -13,9 +10,9 @@ import javax.swing.JPanel;
  * an example of extended {@link ScrollBarWidget} class.
  * <pre>
  *    class MyScrollBarWidget extends ScrollBarWidget {
- *        MyScrollBarWidget(String l, Patch p, int min, int max, int b,
- *                          ParamModel ofs, SysexSender s) {
- *            super(l, p, min, max, b, ofs, s);
+ *        MyScrollBarWidget(String label, IPatch patch, int min, int max, int base,
+ *                          IParamModel pmodel, ISender sender) {
+ *            super(lable, patch, min, max, base, pmodel, sender);
  *        }
  *
  *        protected void layoutWidgets() {
@@ -57,15 +54,16 @@ public abstract class SysexWidget extends JPanel {
     /** <code>Patch</code> associated with the widget. */
     private IPatch patch;
 
-    /** System exclusive message sender. */
-    private SysexSender sysexSender;
+    /** MIDI message sender. */
+    private ISender sender;
 
     /**
-     * System exclusive modeler.
-     * @deprecated This will be 'private'.  Driver does not have to
-     * use this as far as I see. (Hiroo)
+     * Parameter Model for this widget.
+     * 
+     * @deprecated This was changed to 'private'. Driver does not have to use
+     *             this as far as I see. (Hiroo)
      */
-    private ParamModel paramModel; // accessed by some drivers unnecessarily.
+    private IParamModel paramModel;
 
     /**
      * New flyweight parameter model. Used with XML drivers.
@@ -98,23 +96,23 @@ public abstract class SysexWidget extends JPanel {
     /**
      * Creates a new <code>SysexWidget</code> instance.
      *
-     * @param l a label text for the sysexWidget.
-     * @param p a <code>Patch</code>, which is edited.
+     * @param label a label text for the sysexWidget.
+     * @param patch a <code>Patch</code>, which is edited.
      * @param min mininum value.
      * @param max maxinum value.
-     * @param ofs a <code>ParamModel</code> instance.
-     * @param s SysexSender for transmitting the value at editing
+     * @param pmodel a <code>ParamModel</code> instance.
+     * @param sender ISender for transmitting the value at editing
      * the parameter.
      */
-    protected SysexWidget(String l, IPatch p, int min, int max,
-			  ParamModel ofs, SysexSender s) {
+    protected SysexWidget(String label, IPatch patch, int min, int max,
+			  IParamModel pmodel, ISender sender) {
         super();
-	label = l;
-	patch = p;
+	this.label = label;
+	this.patch = patch;
 	valueMin = min;
 	valueMax = max;
-	paramModel = ofs;
-	sysexSender = s;
+	paramModel = pmodel;
+	this.sender = sender;
 
 	// If patch.deviceNum or patch.driverNum can be changed after
 	// the constructor is called, the following code have to be
@@ -132,22 +130,22 @@ public abstract class SysexWidget extends JPanel {
      * <code>min</code> is set to <code>Integer.MIN_VALUE</code> and
      * <code>max</code> is set to <code>Integer.MAX_VALUE</code>.
      */
-    protected SysexWidget(String l, IPatch p, ParamModel ofs, SysexSender s) {
-	this(l, p, Integer.MIN_VALUE, Integer.MAX_VALUE, ofs, s);
+    protected SysexWidget(String label, IPatch patch, IParamModel pmodel, ISender sender) {
+	this(label, patch, Integer.MIN_VALUE, Integer.MAX_VALUE, pmodel, sender);
     }
 
     /**
      * @deprecated use <code>SysexWidget(l, p, null, null)</code>
      */
-    protected SysexWidget(String l, IPatch p) {
-	this(l, p, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
+    protected SysexWidget(String label, IPatch patch) {
+	this(label, patch, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
     }
 
     /**
      * @deprecated use <code>SysexWidget(l, null, null, null)</code>
      */
-    protected SysexWidget(String l) {
-	this(l, null, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
+    protected SysexWidget(String label) {
+	this(label, null, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
     }
 
     /*
@@ -168,7 +166,7 @@ public abstract class SysexWidget extends JPanel {
     // current implementation of setValue(Patch p) and sendSysex()
     // requires ParamModel.
     public SysexWidget(String l, Patch p, int min, int max,
-		       SysexSender s) {
+		       ISender s) {
 	this(l, p, min, max, null, s);
     }
 
@@ -230,43 +228,40 @@ public abstract class SysexWidget extends JPanel {
     }
 
     /**
-     * Set value and send System Exclusive message of the value to a
-     * MIDI port.  An extended class calls this when widget state is
-     * chagned.  This method does not update the widget state.
+     * Set value and send MIDI messages for the value to the MIDI port of
+     * <code>driver</code>. An extended class calls this when widget state is
+     * chagned.
+     * <p>
+     * This method does not update the widget state.
      */
-    protected void sendSysex(int v) {
-	_setValue(v);
-	if (parameter == null) {
-	    // Don't use 'v' instead of 'valueCurr'.
-	    if (paramModel != null)
-	        paramModel.set(valueCurr);
-	    sendSysex(sysexSender, valueCurr);
-	} else {
-	    driver.sendParameter(patch, parameter);
-	}
+    protected void sendSysex(int value) {
+        _setValue(value);
+        if (parameter == null) {
+            // Don't use 'value' instead of 'valueCurr'.
+            if (paramModel != null)
+                paramModel.set(valueCurr);
+            if (sender != null) {
+                // do it only if there is a sysex-sender available
+                sender.send(driver, value);
+            }
+        } else {
+            driver.sendParameter(patch, parameter);
+        }
     }
 
     /**
-     * Send a System Exclusive message of the value to a MIDI port using
-     * SysexSender <code>s</code>.  An extended class calls this when
-     * widget state is chagned.<p>
-     * This method does not do min/max range check.  It is caller's
-     * responsibility.
-     * 
+     * Set value and send MIDI messages for the value to the MIDI port of
+     * <code>driver</code>. An extended class calls this when widget state is
+     * chagned.
+     * <p>
+     * This method does not update the widget state nor do min/max range check.
+     * It is caller's responsibility to do that.
      * XXX: Should be private once EnvelopeWidget is updated.
      */
     // for ExnvelopeWidget
-    protected void sendSysex(SysexSender s, int v) {
-        if (s != null) { // do it only if there is a sysex-sender available
-	    s.channel = (byte) device.getDeviceID();
-	    byte[] sysex = s.generate(v); 
-	    SysexMessage m = new SysexMessage();
-	    try {
-                m.setMessage(sysex, sysex.length);
-            } catch (InvalidMidiDataException e) {
-                ErrorMsg.reportStatus(e);
-            }
-	    driver.send(m);
+    protected void sendSysex(ISender sender, int value) {
+        if (sender != null) { // do it only if there is a sysex-sender available
+            sender.send(driver, value);
         }
     }
 
@@ -407,5 +402,42 @@ public abstract class SysexWidget extends JPanel {
     // Used by Envelopwidget only.
     public Insets getInsets() {
 	return new Insets(0, 0, 0, 0);
+    }
+
+    /**
+     * Interface for Paramer Model.
+     * 
+     * Paramter Model keeps track of the changes to the patch so that when we
+     * next call up this patch the changes are there. This is also used to set
+     * the widgets to the correct values for a particular patch when the Single
+     * Editor is opened.
+     *
+     * @see SysexWidget
+     * @see ParamModel
+     */
+    public interface IParamModel {
+        /** Set a parameter value <code>value</code>. */
+        void set(int value);
+
+        /** Get a parameter value. */
+        int get();
+    }
+
+    /**
+     * Interface for Sender.
+     * 
+     * Sender sends MidiMessage[s] by using <code>send(IPatchDriver, int)</code>
+     * method. Every time a widget moves, its Sender gets told. The MidiMessage
+     * will be sent to the synth informing it of the change. Usually a Single
+     * Editor will have one or more Sender. Sometimes more than one is used
+     * because a synth uses more than one method to transfer the data.
+     */
+    public interface ISender {
+        /**
+         * Send MIDI message[s] for <code>value</code>.
+         *
+         * @param value an <code>int</code> value
+         */
+        void send(IPatchDriver driver, int value);
     }
 }

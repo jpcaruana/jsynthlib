@@ -26,6 +26,8 @@ import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.ShortMessage;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -36,12 +38,13 @@ import javax.swing.border.TitledBorder;
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
 import core.EnvelopeWidget;
+import core.ErrorMsg;
+import core.IPatchDriver;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
 import core.ScrollBarLookupWidget;
 import core.ScrollBarWidget;
-import core.SysexSender;
 import core.SysexWidget;
 
 class WaldorfPulseSingleEditor extends PatchEditorFrame
@@ -1163,7 +1166,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
             return patch.sysex[ofs] / 2;
         }
     }
-
+/*
     class WaldorfPulseSender extends SysexSender
     {        
         private byte []b = new byte [3];
@@ -1185,6 +1188,31 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
             b[0] = (byte)(b[0] & (byte)0xf0 | (byte)(channel-1));
             b[2] = (byte)(value*mult);
             return b;
+        }
+    }
+*/
+    class WaldorfPulseSender implements SysexWidget.ISender {
+        private int param;
+        private int mult;
+
+        public WaldorfPulseSender(int param) {
+            this(param, 1);
+        }
+
+        public WaldorfPulseSender(int param, int multiplier) {
+            this.param = param;
+            this.mult = multiplier;
+        }
+
+        public void send(IPatchDriver driver, int value) {
+            ShortMessage msg = new ShortMessage();
+            try {
+                msg.setMessage(ShortMessage.CONTROL_CHANGE,
+                        driver.getChannel() - 1, param, value * mult);
+                driver.send(msg);
+            } catch (InvalidMidiDataException e) {
+                ErrorMsg.reportStatus(e);
+            }
         }
     }
 }

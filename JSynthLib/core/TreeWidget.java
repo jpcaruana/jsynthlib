@@ -68,7 +68,7 @@ public class TreeWidget extends SysexWidget {
      * editing the parameter.
      */
     public TreeWidget(String label, IPatch patch, Nodes treeNodes,
-		      ParamModel paramModel, SysexSender sysexString) {
+		      IParamModel paramModel, ISender sysexString) {
 	super(label, patch, paramModel, sysexString);
 	this.treeNodes = treeNodes;
 

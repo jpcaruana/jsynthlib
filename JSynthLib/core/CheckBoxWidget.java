@@ -21,14 +21,14 @@ public class CheckBoxWidget extends SysexWidget {
     /**
      * Creates a new <code>CheckBoxWidget</code> instance.
      *
-     * @param l a label text for JCheckBox widget..
-     * @param p a <code>Patch</code>, which is edited.
-     * @param ofs a <code>ParamModel</code> instance.
-     * @param s a <code>SysexSender</code> instance.
+     * @param label a label text for JCheckBox widget..
+     * @param patch a <code>Patch</code>, which is edited.
+     * @param pmodel a <code>IParamModel</code> instance.
+     * @param sender a <code>SysexSender</code> instance.
      * @see SysexWidget
      */
-    public CheckBoxWidget(String l, IPatch p, ParamModel ofs, SysexSender s) {
-	super(l, p, 0, 1, ofs, s);
+    public CheckBoxWidget(String label, IPatch patch, IParamModel pmodel, ISender sender) {
+	super(label, patch, 0, 1, pmodel, sender);
 
 	createWidgets();
         layoutWidgets();

@@ -26,19 +26,19 @@ public class SpinnerWidget extends SysexWidget {
     }
     /**
      * Constructor for setting up the SpinnerWidget.
-     * @param l Label for the Widget.
-     * @param p The patch, which is edited.
+     * @param label Label for the Widget.
+     * @param patch The patch, which is edited.
      * @param min Minimum value.
      * @param max Maximum value.
-     * @param b base value. This value is added to the actual value
+     * @param base base value. This value is added to the actual value
      * for display purposes.
-     * @param ofs a <code>ParamModel</code> instance.
-     * @param s sysexSender for transmitting the value at editing the parameter
+     * @param pmodel a <code>ParamModel</code> instance.
+     * @param sender sysexSender for transmitting the value at editing the parameter
      */
-    public SpinnerWidget(String l, IPatch p, int min, int max, int b,
-			 ParamModel ofs, SysexSender s) {
-        super(l, p, min, max, ofs, s);
-        base = b;
+    public SpinnerWidget(String label, IPatch patch, int min, int max, int base,
+			 IParamModel pmodel, ISender sender) {
+        super(label, patch, min, max, pmodel, sender);
+        this.base = base;
 
 	createWidgets();
         layoutWidgets();

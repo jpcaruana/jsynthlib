@@ -1,16 +1,18 @@
 package core;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.SysexMessage;
+
 /**
- * Every time a widget moves, its Sender gets told. The job of the
- * Sender is to return a Sysex data (an array of <code>byte</code>) by
- * using <code>generate(int)</code> method.  The Sysex string will be
- * sent to the synth informing it of the change. Usually a Single
- * Editor will have one or more Sender. Sometimes more than one is
- * used because a synth uses more than one method to transfer the
- * data.
+ * An implementation of SysexWidget.ISender.
+ * @see SysexWidget.ISender
  */
-public class SysexSender {
-    /** channel (Device ID) [1-128]. Set by SysexWidgets.*/
+public class SysexSender implements SysexWidget.ISender {
+    /**
+     * Device ID [1-128]. Used by generate(int). Wrong name and should be
+     * private. But it's too late, because many synthdriver's subclasses are
+     * using this.
+     */
     protected byte channel;
     private String sysex;
 
@@ -21,15 +23,21 @@ public class SysexSender {
     }
 
     /**
-     * Creates a new <code>SysexSender</code> instance which uses
-     * default <code>generate</code> method.
-     *
-     * @param sysex a <code>String</code> value like
-     * <code>"F041##0123**"</code>. Each two letters replesents a hex
-     * byte data.  <code>"**"</code> is replaced by <code>value</code>
-     * passed to the <code>generate</code> method.  <code>"@@"</code> is
-     * replaced by <code>(channel - 1)</code>.  <code>"##"</code> is
-     * replaced by <code>(channel - 1 + 16)</code>.
+     * Creates a new <code>SysexSender</code> instance which uses default
+     * <code>generate</code> method.
+     * 
+     * @param sysex
+     *            A <code>String</code> value like <code>"F041##0123**"</code>.
+     *            Each two letters replesents a hex byte data.
+     *            <dl>
+     *            <dt><code>"**"</code>
+     *            <dd>replaced by <code>value</code> passed to the
+     *            <code>generate</code> method.
+     *            <dt><code>"@@"</code>
+     *            <dd>replaced by <code>(channel - 1)</code>.
+     *            <dt><code>"##"</code>
+     *            <dd>replaced by <code>(channel - 1 + 16)</code>.
+     *            </dl>
      */
     public SysexSender(String sysex) {
 	this.sysex = sysex;
@@ -41,7 +49,7 @@ public class SysexSender {
      * @param value an <code>int</code> value
      * @return a <code>byte[]</code> value
      */
-    public byte[] generate(int value) {
+    protected byte[] generate(int value) {
 	byte[] b = new byte[sysex.length() / 2];
 	for (int i = 0; i < sysex.length(); i += 2) {
 	    if (sysex.charAt(i) == '*')
@@ -56,5 +64,18 @@ public class SysexSender {
 	    }
 	}
 	return b;
+    }
+
+    // SysexWidget.ISender method
+    public void send(IPatchDriver driver, int value) {
+        channel = (byte) driver.getDevice().getDeviceID();
+        byte[] sysex = generate(value);
+        SysexMessage m = new SysexMessage();
+        try {
+            m.setMessage(sysex, sysex.length);
+            driver.send(m);
+        } catch (InvalidMidiDataException e) {
+            ErrorMsg.reportStatus(e);
+        }
     }
 }

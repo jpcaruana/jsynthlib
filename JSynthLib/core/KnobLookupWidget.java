@@ -22,19 +22,19 @@ public class KnobLookupWidget extends KnobWidget {
     /**
      * Creates a new <code>KnobWidget</code> instance.
      *
-     * @param l label String.
-     * @param p a <code>Patch</code> value.
+     * @param label label String.
+     * @param patch a <code>Patch</code> value.
      * @param min minimum value.
      * @param max maximum value. (Why this is required? This can be
      * calculated by using valueLabels.legnth.)
-     * @param ofs a <code>ParamModel</code> object.
-     * @param s a <code>SysexSender</code> object.
+     * @param pmodel a <code>ParamModel</code> object.
+     * @param sender a <code>SysexSender</code> object.
      * @param valueLabels an array of labels for the knob values.
      */
-    public KnobLookupWidget(String l, IPatch p, int min, int max,
-			    ParamModel ofs, SysexSender s,
+    public KnobLookupWidget(String label, IPatch patch, int min, int max,
+			    IParamModel pmodel, ISender sender,
 			    String[] valueLabels) {
-	super(l, p, min, max, 0, ofs, s);
+	super(label, patch, min, max, 0, pmodel, sender);
         //mBase = 0;
 	mValueLabels = valueLabels;
 	mKnob.setToolTipText(mValueLabels[getValue()]);
@@ -43,27 +43,27 @@ public class KnobLookupWidget extends KnobWidget {
     /**
      * Creates a new <code>KnobWidget</code> instance.
      *
-     * @param l label String.
-     * @param p a <code>Patch</code> value.
+     * @param label label String.
+     * @param patch a <code>Patch</code> value.
      * @param min minimum value.
-     * @param ofs a <code>ParamModel</code> object.
-     * @param s a <code>SysexSender</code> object.
+     * @param pmodel a <code>ParamModel</code> object.
+     * @param sender a <code>SysexSender</code> object.
      * @param valueLabels an array of labels for the knob values.
      */
-    public KnobLookupWidget(String l, IPatch p, int min,
-			    ParamModel ofs, SysexSender s,
+    public KnobLookupWidget(String label, IPatch patch, int min,
+			    IParamModel pmodel, ISender sender,
 			    String[] valueLabels) {
-	super(l, p, min, min + valueLabels.length - 1, 0, ofs, s);
+	super(label, patch, min, min + valueLabels.length - 1, 0, pmodel, sender);
         //mBase = 0;
 	mValueLabels = valueLabels;
 	mKnob.setToolTipText(mValueLabels[getValue()]);
     }
 
     /** <code>min</code> is set to 0. */
-    public KnobLookupWidget(String l, IPatch p,
-			    ParamModel ofs, SysexSender s,
+    public KnobLookupWidget(String label, IPatch patch,
+			    IParamModel pmodel, ISender sender,
 			    String[] valueLabels) {
-	this(l, p, 0, ofs, s, valueLabels);
+	this(label, patch, 0, pmodel, sender, valueLabels);
     }
 
     /** invoked when the knob is moved. */

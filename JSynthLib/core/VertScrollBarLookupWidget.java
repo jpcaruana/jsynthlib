@@ -51,19 +51,19 @@ public class VertScrollBarLookupWidget extends ScrollBarLookupWidget {
      */
     public VertScrollBarLookupWidget(String label, IPatch patch, int min, int max,
                  int labelWidth,
-                 ParamModel pmodel, SysexSender sender,
+                 IParamModel pmodel, ISender sender,
                  String[] options) {
         super(label, patch, min, max, labelWidth, pmodel, sender, options);        
     }
 
     public VertScrollBarLookupWidget(String label, IPatch patch, int min, int max,
-                 ParamModel pmodel, SysexSender sender,
+                 IParamModel pmodel, ISender sender,
                  String[] options) {
         this(label, patch, min, max, -1, pmodel, sender, options);
     }
 
     public VertScrollBarLookupWidget(String label, IPatch patch,
-                 ParamModel pmodel, SysexSender sender,
+                 IParamModel pmodel, ISender sender,
                  String[] options) {
         this(label, patch, 0, options.length, -1, pmodel, sender, options);
     }

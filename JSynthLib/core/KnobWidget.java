@@ -40,17 +40,17 @@ public class KnobWidget extends SysexWidget {
     /**
      * Creates a new <code>KnobWidget</code> instance.
      *
-     * @param l label String.
-     * @param p a <code>Patch</code> value.
+     * @param label label String.
+     * @param patch a <code>Patch</code> value.
      * @param min minimum value.
      * @param max maximum value.
      * @param base value display offset.
-     * @param ofs a <code>ParamModel</code> object.
-     * @param s a <code>SysexSender</code> object.
+     * @param pmodel a <code>ParamModel</code> object.
+     * @param sender a <code>ISender</code> object.
      */
-    public KnobWidget(String l, IPatch p, int min, int max, int base,
-		      ParamModel ofs, SysexSender s) {
-	super(l, p, min, max, ofs, s);
+    public KnobWidget(String label, IPatch patch, int min, int max, int base,
+		      IParamModel pmodel, ISender sender) {
+	super(label, patch, min, max, pmodel, sender);
         mBase = base;
 
 	createWidgets();
@@ -61,9 +61,9 @@ public class KnobWidget extends SysexWidget {
      * Display an image to the right of the value.
      * @param aImages array of images corresponding to each value.
      */
-    public KnobWidget(String l, IPatch p, int min, int max, int base,
-		      ParamModel ofs, SysexSender s, ImageIcon[] aImages) {
-	super(l, p, min, max, ofs, s);
+    public KnobWidget(String label, IPatch patch, int min, int max, int base,
+		      IParamModel pmodel, ISender sender, ImageIcon[] aImages) {
+	super(label, patch, min, max, pmodel, sender);
         mBase = base;
 	mImages = aImages;
 
@@ -75,9 +75,9 @@ public class KnobWidget extends SysexWidget {
      * Special constructor for derived classes.
      * @deprecated
      */
-    protected KnobWidget(String l, IPatch p, int min, int max,
-			 ParamModel ofs, SysexSender s) {
-	super(l, p, min, max, ofs, s);
+    protected KnobWidget(String label, IPatch patch, int min, int max,
+			 IParamModel pmodel, ISender sender) {
+	super(label, patch, min, max, pmodel, sender);
 
 	createWidgets();
         layoutWidgets();
