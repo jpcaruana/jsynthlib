@@ -49,21 +49,25 @@ public class WireMidiWrapper extends MidiWrapper implements Receiver
         }
       }
       catch (Exception e)
-      {e.printStackTrace ();}
+            { ErrorMsg.reportError("Error","No Midi ports avaliable\nIs WireProvider installed?",e);
+    
     }
+        }
+        try {
+            MidiDevice destDevice=MidiSystem.getMidiDevice((MidiDevice.Info)destinationInfoVector.get(outport));
+            output=destDevice.getReceiver();
     
-    MidiDevice destDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)destinationInfoVector.get (outport));
-    output=destDevice.getReceiver ();
-    
-    MidiDevice sourceDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)sourceInfoVector.get (inport));
-    input=sourceDevice.getTransmitter ();
-    input.setReceiver (this);
-    
-    if (faderPort!=inport)
-    {
-      sourceDevice=MidiSystem.getMidiDevice ((MidiDevice.Info)sourceInfoVector.get (faderPort));
-      fader=sourceDevice.getTransmitter ();
-      fader.setReceiver (this);
+            MidiDevice sourceDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(inport));
+            input=sourceDevice.getTransmitter();
+            input.setReceiver(this);
+        }
+        catch (Exception e) {
+            ErrorMsg.reportError("Error","No Midi ports avaliable\nIs WireProvider installed?",e);
+        }
+        if (faderPort!=inport) {
+            sourceDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(faderPort));
+            fader=sourceDevice.getTransmitter();
+            fader.setReceiver(this);
     }
   }
   
