@@ -35,7 +35,6 @@ import javax.swing.border.TitledBorder;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.EnvelopeNode;
 import core.EnvelopeWidget;
 import core.ParamModel;
 import core.Patch;
@@ -558,17 +557,17 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                     new EnvelopeWidget(
                         "",
                         patch,
-                        new EnvelopeNode []
+                        new EnvelopeWidget.Node []
                         {
-                            new EnvelopeNode(0, 0, null, 0, 0, null, envBase,
+                            new EnvelopeWidget.Node(0, 0, null, 0, 0, null, envBase,
                                              false, null, null, null, null),
-                            new EnvelopeNode(0, 127,
+                            new EnvelopeWidget.Node(0, 127,
                                              new ParamModel(patch, 27 + 6*e),
                                              127, 127, null, envBase, false,
                                              new WaldorfPulseSender(14 + 4*e),
                                              null,
                                              "Attack", null),
-                            new EnvelopeNode(0, 127,
+                            new EnvelopeWidget.Node(0, 127,
                                              new ParamModel(patch, 28 + 6*e),
                                              0, 127,
                                              new ParamModel(patch, 29 + 6*e),
@@ -576,12 +575,12 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                                              new WaldorfPulseSender(15 + 4*e),
                                              new WaldorfPulseSender(16 + 4*e),
                                              "Decay", "Sustain"),
-                            new EnvelopeNode(127, 127, null,
-                                             EnvelopeNode.SAME,
-                                             EnvelopeNode.SAME, null,
+                            new EnvelopeWidget.Node(127, 127, null,
+                                             EnvelopeWidget.Node.SAME,
+                                             EnvelopeWidget.Node.SAME, null,
                                              envBase, false,
                                              null, null, null, null),
-                            new EnvelopeNode(0, 127,
+                            new EnvelopeWidget.Node(0, 127,
                                              new ParamModel(patch, 30 + 6*e),
                                              0, 0, null, envBase, false,
                                              new WaldorfPulseSender(17 + 4*e),

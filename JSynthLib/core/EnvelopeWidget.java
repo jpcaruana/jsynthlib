@@ -13,14 +13,18 @@ import javax.swing.JTextField;
 import javax.swing.event.MouseInputAdapter;
 
 /**
- * A SysexWidget implements an envelope editing function.
+ * A SysexWidget implements an envelope editing function.<p>
+ *
+ * Compatibility Note: <code>EnvelopeNode</code> class was replaced by
+ * <code>EnvelopWidget.Node</code> class.
+ *
  * @version $Id$
+ * @see Node
  * @see SysexWidget
- * @see EnvelopeNode
  */
 public class EnvelopeWidget extends SysexWidget {
     /** Array of EnvelopNodes provied by constructor */
-    protected EnvelopeNode[] nodes;
+    protected Node[] nodes;
     /**
      * Array of JLabel widgets which show the names of the X/Y axis
      * parameters riding each access.
@@ -42,23 +46,23 @@ public class EnvelopeWidget extends SysexWidget {
      *
      * @param l a label text for the sysexWidget.
      * @param p a <code>Patch</code>, which is edited.
-     * @param n an array of EnvelopeNode.
+     * @param n an array of Node.
      * @param xpad horizontal padding value.
      * @param ypad vertical padding value.
      */
-    public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n,
+    public EnvelopeWidget(String l, Patch p, Node[] n,
 			  int xpad, int ypad) {
 	super(l, p, null, null);
 	nodes = n;
-	xpadding=xpad;
-	ypadding=ypad;
+	xpadding = xpad;
+	ypadding = ypad;
 
 	createWidgets();
         layoutWidgets();
     }
 
     /** <code>xpad</code> and <code>ypad</code> are set to zero. */
-    public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n) {
+    public EnvelopeWidget(String l, Patch p, Node[] n) {
 	this(l, p, n, 0, 0);
     }
 
@@ -194,8 +198,8 @@ public class EnvelopeWidget extends SysexWidget {
     }
 
     /** Actual canvas for the envelop lines. */
-    final class EnvelopeCanvas extends JPanel {
-        private EnvelopeNode[] nodes;
+    private final class EnvelopeCanvas extends JPanel {
+        private Node[] nodes;
         private JTextField[] values;
 	/** X coordinates on the canvas. */
         private int[] nodeX;
@@ -208,7 +212,7 @@ public class EnvelopeWidget extends SysexWidget {
 
 	private static final int DELTA = 5;
 
-        private EnvelopeCanvas(EnvelopeNode[] e, JTextField[] f) {
+        private EnvelopeCanvas(Node[] e, JTextField[] f) {
 	    super();
 	    values = f;
 	    nodes = e;
@@ -226,8 +230,8 @@ public class EnvelopeWidget extends SysexWidget {
             for (int i = 0; i < nodes.length; i++) {
 		width += nodes[i].maxX;
 		if ((nodes[i].maxY + nodes[i].baseY > height)
-		    && nodes[i].minY != EnvelopeNode.SAME
-		    && nodes[i].maxY != EnvelopeNode.SAME)
+		    && nodes[i].minY != Node.SAME
+		    && nodes[i].maxY != Node.SAME)
 		    height = nodes[i].maxY + nodes[i].baseY;
 	    }
         }
@@ -286,14 +290,14 @@ public class EnvelopeWidget extends SysexWidget {
         }
 
 	/*
-	 * Using <code>EnvelopeNode.SAME</code> for <code>miny</code>
+	 * Using <code>Node.SAME</code> for <code>miny</code>
 	 * or <code>maxy</code> means that the height remains at
 	 * whatever the previous node was at.
 	 */
 	/** Return Y axis value of <code>node[i]</code>. */
         private int getY(int i) {
-	    if (nodes[i].minY == EnvelopeNode.SAME
-		|| nodes[i].maxY == EnvelopeNode.SAME)
+	    if (nodes[i].minY == Node.SAME
+		|| nodes[i].maxY == Node.SAME)
 		return getY(i - 1);
 	    if (nodes[i].minY == nodes[i].maxY)
 		return nodes[i].minY + nodes[i].baseY;
@@ -303,7 +307,7 @@ public class EnvelopeWidget extends SysexWidget {
         private class MyListener extends MouseInputAdapter {
 	    /** dragging node number */
             private int dragNodeIdx;
-	    private EnvelopeNode dragNode;
+	    private Node dragNode;
 
             private int oldx;
 	    private int oldy;
@@ -406,6 +410,104 @@ public class EnvelopeWidget extends SysexWidget {
 		if (dragNode.ofsY != null)
 		    sendSysex(dragNode.senderY, dragNode.ofsY.get());
 	    }
+	}
+    }
+
+    /**
+     * A data type used by EnvelopeWidget which stores information about a
+     * single node (point) in the Widget.<p>
+     *
+     * Each <code>Node</code> is one of the movable squares on the
+     * envelope. Some of these nodes are stationary, some contain two
+     * parameters on the synth and can be moved vertically and
+     * horizontally, and others contain only one parameter and can
+     * therefore be moved in only one direction.
+     * @see EnvelopeWidget
+     */
+    public static class Node {
+	/**
+	 * Using <code>Node.SAME</code> for <code>miny</code> or
+	 * <code>maxy</code> means that the height remains at whatever
+	 * the previous node was at.
+	 */
+	public static final int SAME = 5000;
+
+	private int minX;
+	private int minY;
+	private int maxX;
+	private int maxY;
+	private ParamModel ofsX;
+	private ParamModel ofsY;
+	private SysexSender senderX;
+	private SysexSender senderY;
+	private boolean invertX;
+	private int baseY;
+	private String nameX;
+	private String nameY;
+
+	/**
+	 * Construcutor for a <code>Node</code>.<p>
+	 *
+	 * Using <code>null</code>s for the Models and Senders and setting
+	 * min to max means that a node is stationary on that axis and has
+	 * no related parameter.<p>
+	 *
+	 * Using <code>Node.SAME</code> for <code>miny</code> or
+	 * <code>maxy</code> means that the height remains at whatever
+	 * the previous node was at.
+	 *
+	 * @param minx The minimum value permitted by the synth
+	 * parameter which rides the X axis of the node.
+	 * @param maxx The maximum value permitted by the synth
+	 * parameter which rides the X axis of the node.
+	 * @param ofsx The Parameter Model which provides reading/writing
+	 * abilities to the sysex data representing the parameter.
+	 *
+	 * @param miny The minimum value permitted by the synth
+	 * parameter which rides the Y axis of the node.
+	 * @param maxy The maximum value permitted by the synth
+	 * parameter which rides the Y axis of the node.
+	 * @param ofsy The Parameter Model which provides reading/writing
+	 * abilities to the sysex data representing the parameter.
+	 *
+	 * @param basey The value will be added to all Y values.  This
+	 * doesn't change the function of the EnvelopeWidget, but makes it
+	 * look nicer and possibly be more intuitive to use.  Sometimes
+	 * you don't want zero on a Y-axis-riding-parameter to be all the
+	 * way down at the bottom. This gives it a little bit of rise.
+	 *
+	 * @param invertx Sometimes on an X-axis-riding attribute 0 is the
+	 * fastest, other times it is the slowest. This allows you to choose.
+	 *
+	 * @param x The SysexSender which send system exclusive messages
+	 * to the synths when the Node is moved on the X axis direction.
+	 * @param y The SysexSender which send system exclusive messages
+	 * to the synths when the Node is moved on the Y axis direction.
+	 *
+	 * @param namex The names of the X-axis parameters riding each
+	 * access.
+	 * @param namey The names of the Y-axis parameters riding each
+	 * access.
+	 *
+	 * @see EnvelopeWidget
+	 */
+	public Node(int minx, int maxx, ParamModel ofsx,
+		    int miny, int maxy, ParamModel ofsy,
+		    int basey, boolean invertx,
+		    SysexSender x, SysexSender y,
+		    String namex, String namey) {
+	    baseY = basey;
+	    minX = minx;
+	    maxX = maxx;
+	    minY = miny;
+	    maxY = maxy;
+	    ofsX = ofsx;
+	    ofsY = ofsy;
+	    senderX = x;
+	    senderY = y;
+	    nameX = namex;
+	    nameY = namey;
+	    invertX = invertx;
 	}
     }
 }

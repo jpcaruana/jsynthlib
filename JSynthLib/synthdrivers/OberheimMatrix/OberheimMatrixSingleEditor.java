@@ -185,13 +185,13 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
 // Envelope 1								*
   JPanel env1Pane=new JPanel();
   env1Pane.setLayout(new GridBagLayout());gbc.weightx=1;
-    addWidget(env1Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeNode [] {
-        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
-	new EnvelopeNode(0,63,new MtxModel(patch,50),0,0,null,0,false,new MtxSender(50),null,"Dly",null),
-	new EnvelopeNode(0,63,new MtxModel(patch,51),63,63,null,25,false,new MtxSender(51),null,"A",null),
-	new EnvelopeNode(0,63,new MtxModel(patch,52),0,63,new MtxModel(patch,53),25,false,new MtxSender(52),new MtxSender(53),"D","S"),
-        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),
-	new EnvelopeNode(0,63,new MtxModel(patch,54),0,0,null,0,false,new MtxSender(54),null,"R",null),
+    addWidget(env1Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeWidget.Node [] {
+        new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,50),0,0,null,0,false,new MtxSender(50),null,"Dly",null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,51),63,63,null,25,false,new MtxSender(51),null,"A",null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,52),0,63,new MtxModel(patch,53),25,false,new MtxSender(52),new MtxSender(53),"D","S"),
+        new EnvelopeWidget.Node(63,63,null,5000,5000,null,0,false,null,null,null,null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,54),0,0,null,0,false,new MtxSender(54),null,"R",null),
       }     ),0,0,7,5,49);
   addWidget(env1Pane,new CheckBoxWidget("Reset Tr",patch,new BitModel(patch,49,0),new BitSender(patch,57,49)),0,6,1,1,-49);
   addWidget(env1Pane,new CheckBoxWidget("Multi Tr",patch,new BitModel(patch,49,1),new BitSender(patch,57,49)),2,6,1,1,-50);
@@ -206,13 +206,13 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
 // Envelope 2								*
   JPanel env2Pane=new JPanel();
   env2Pane.setLayout(new GridBagLayout());gbc.weightx=1;
-    addWidget(env2Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeNode [] {
-        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
-	new EnvelopeNode(0,63,new MtxModel(patch,59),0,0,null,0,false,new MtxSender(60),null,"Dly",null),
-	new EnvelopeNode(0,63,new MtxModel(patch,60),63,63,null,25,false,new MtxSender(61),null,"A",null),
-	new EnvelopeNode(0,63,new MtxModel(patch,61),0,63,new MtxModel(patch,62),25,false,new MtxSender(62),new MtxSender(63),"D","S"),
-        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),
-	new EnvelopeNode(0,63,new MtxModel(patch,63),0,0,null,0,false,new MtxSender(64),null,"R",null),
+    addWidget(env2Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeWidget.Node [] {
+        new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,59),0,0,null,0,false,new MtxSender(60),null,"Dly",null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,60),63,63,null,25,false,new MtxSender(61),null,"A",null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,61),0,63,new MtxModel(patch,62),25,false,new MtxSender(62),new MtxSender(63),"D","S"),
+        new EnvelopeWidget.Node(63,63,null,5000,5000,null,0,false,null,null,null,null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,63),0,0,null,0,false,new MtxSender(64),null,"R",null),
       }     ),0,0,7,5,54);
   addWidget(env2Pane,new CheckBoxWidget("Reset Tr",patch,new BitModel(patch,58,0),new BitSender(patch,67,58)),0,6,1,1,-56);
   addWidget(env2Pane,new CheckBoxWidget("Multi Tr",patch,new BitModel(patch,58,1),new BitSender(patch,67,58)),2,6,1,1,-57);
@@ -227,13 +227,13 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
 // Envelope 3								*
   JPanel env3Pane=new JPanel();
   env3Pane.setLayout(new GridBagLayout());gbc.weightx=1;
-    addWidget(env3Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeNode [] {
-        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
-	new EnvelopeNode(0,63,new MtxModel(patch,68),0,0,null,0,false,new MtxSender(70),null,"Dly",null),
-	new EnvelopeNode(0,63,new MtxModel(patch,69),63,63,null,25,false,new MtxSender(71),null,"A",null),
-	new EnvelopeNode(0,63,new MtxModel(patch,70),0,63,new MtxModel(patch,71),25,false,new MtxSender(72),new MtxSender(73),"D","S"),
-        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),
-	new EnvelopeNode(0,63,new MtxModel(patch,72),0,0,null,0,false,new MtxSender(74),null,"R",null),
+    addWidget(env3Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeWidget.Node [] {
+        new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,68),0,0,null,0,false,new MtxSender(70),null,"Dly",null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,69),63,63,null,25,false,new MtxSender(71),null,"A",null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,70),0,63,new MtxModel(patch,71),25,false,new MtxSender(72),new MtxSender(73),"D","S"),
+        new EnvelopeWidget.Node(63,63,null,5000,5000,null,0,false,null,null,null,null),
+	new EnvelopeWidget.Node(0,63,new MtxModel(patch,72),0,0,null,0,false,new MtxSender(74),null,"R",null),
       }     ),0,0,7,5,59);
   addWidget(env3Pane,new CheckBoxWidget("Reset Tr",patch,new BitModel(patch,67,0),new BitSender(patch,77,67)),0,6,1,1,-33);
   addWidget(env3Pane,new CheckBoxWidget("Multi Tr",patch,new BitModel(patch,67,1),new BitSender(patch,77,67)),2,6,1,1,-34);
@@ -393,12 +393,12 @@ MtxModel(patch,104),new ModSender(patch,0),source);
 
 //   Set up Tracking Generator
 
-   addWidget(modPanel,new EnvelopeWidget("Tracking Generator Function",patch,new EnvelopeNode [] {
-        new EnvelopeNode(0,0,    null,0,63,new MtxModel(patch,77),0,false,null,new MtxSender(34),null,"1"),
-	new EnvelopeNode(100,100,  null,0,63,new MtxModel(patch,78),0,false,null,new MtxSender(35),null,"2"),
-	new EnvelopeNode(100,100,null,0,63,new MtxModel(patch,79),0,false,null,new MtxSender(36),null,"3"),
-	new EnvelopeNode(100,100,null,0,63,new MtxModel(patch,80),0,false,null,new MtxSender(37),null,"4"),
-        new EnvelopeNode(100,100,null,0,63,new MtxModel(patch,81),0,false,null,new MtxSender(38),null,"5"),
+   addWidget(modPanel,new EnvelopeWidget("Tracking Generator Function",patch,new EnvelopeWidget.Node [] {
+        new EnvelopeWidget.Node(0,0,    null,0,63,new MtxModel(patch,77),0,false,null,new MtxSender(34),null,"1"),
+	new EnvelopeWidget.Node(100,100,  null,0,63,new MtxModel(patch,78),0,false,null,new MtxSender(35),null,"2"),
+	new EnvelopeWidget.Node(100,100,null,0,63,new MtxModel(patch,79),0,false,null,new MtxSender(36),null,"3"),
+	new EnvelopeWidget.Node(100,100,null,0,63,new MtxModel(patch,80),0,false,null,new MtxSender(37),null,"4"),
+        new EnvelopeWidget.Node(100,100,null,0,63,new MtxModel(patch,81),0,false,null,new MtxSender(38),null,"5"),
       }     ),11,11,8,3,2);
    addWidget(modPanel,new ComboBoxWidget("Tracking Generator Source ",patch,new MtxModel(patch,76),new MtxSender(33),source
       			   ),11,10,8,1,1);

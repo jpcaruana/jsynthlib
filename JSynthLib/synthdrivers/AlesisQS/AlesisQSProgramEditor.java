@@ -38,7 +38,6 @@ import javax.swing.border.TitledBorder;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.EnvelopeNode;
 import core.EnvelopeWidget;
 import core.Patch;
 import core.PatchEditorFrame;
@@ -442,20 +441,20 @@ class AlesisQSProgramEditor extends PatchEditorFrame
 
         addWidget(this,
                     new EnvelopeWidget("Envelope", p,
-                            new EnvelopeNode[] {
-                                new EnvelopeNode(0, 100,
+                            new EnvelopeWidget.Node[] {
+                                new EnvelopeWidget.Node(0, 100,
                                         new SoundModel(p,snd,7,56,4+ofs),
                                         0,0,null,
                                         1,false,
                                         new ProgSender(snd,12,1,0),null,
                                         "Delay",null),
-                                new EnvelopeNode(0,99,
+                                new EnvelopeWidget.Node(0,99,
                                         new SoundModel(p,snd,7,53,ofs),
                                         99,99,null,
                                         0, false,
                                         new ProgSender(snd,12,0,0),null,
                                         "Attack", null),
-                                new EnvelopeNode(0,99,
+                                new EnvelopeWidget.Node(0,99,
                                         new SoundModel(p,snd,7,53,7+ofs),
                                         0,99,
                                         new SoundModel(p,snd,7,54,6+ofs),
@@ -463,13 +462,13 @@ class AlesisQSProgramEditor extends PatchEditorFrame
                                         new ProgSender(snd,12,0,1),
                                         new ProgSender(snd,12,0,2),
                                         "Decay", "Sustain"),
-                                new EnvelopeNode(50,50,null,
+                                new EnvelopeWidget.Node(50,50,null,
                                         0,99,
                                         new SoundModel(p,snd,7,57,3+ofs),
                                         0, false,
                                         null, new ProgSender(snd,12,1,1),
                                         null, "Sustain decay"),
-                                new EnvelopeNode(0,99,
+                                new EnvelopeWidget.Node(0,99,
                                         new SoundModel(p,snd,7,55,5+ofs),
                                         0,0,null,
                                         0, false,

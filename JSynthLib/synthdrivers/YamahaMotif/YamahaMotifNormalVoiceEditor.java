@@ -21,7 +21,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import core.ComboBoxWidget;
-import core.EnvelopeNode;
 import core.EnvelopeWidget;
 import core.ErrorMsg;
 import core.ParamModel;
@@ -52,11 +51,11 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
   protected ComboBoxWidget addCombo(String name, int address, String[] options){
     return addCombo(name, address, 0, false, options);
   }
-  protected ComboBoxWidget addCombo(String name, int address, boolean _short, 
+  protected ComboBoxWidget addCombo(String name, int address, boolean _short,
 				    String[] options) {
     return addCombo(name, address, 0, _short, options);
   }
-  protected ComboBoxWidget addCombo(String name, int address, int mid, 
+  protected ComboBoxWidget addCombo(String name, int address, int mid,
 				    String[] options) {
     return addCombo(name, address, mid, false, options);
   }
@@ -65,8 +64,8 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     int sendaddress = address;
     if ( (byte)(address >> 8) == (byte) -1)
       sendaddress = (address & 0x7f007f) | (mid << 8);
-    ComboBoxWidget combo = 
-      new ComboBoxWidget(name, p, 
+    ComboBoxWidget combo =
+      new ComboBoxWidget(name, p,
 			 new MotifParamModel(p, address, mid, _short),
 			 new ParamSender(sendaddress, _short), options);
     addWidget(panel, combo, slidercount++ );
@@ -75,15 +74,15 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
   protected ScrollBarWidget addSlider(String name, int address,int min,int max){
     return addSlider(name, address, 0, false, min, max, 0);
   }
-  protected ScrollBarWidget addSlider(String name, int address, int min, 
+  protected ScrollBarWidget addSlider(String name, int address, int min,
 				      int max, int offset) {
     return addSlider(name, address, 0, false, min, max, offset);
   }
-  protected ScrollBarWidget addSlider(String name, int address, boolean _short, 
+  protected ScrollBarWidget addSlider(String name, int address, boolean _short,
 				      int min, int max, int offset){
     return addSlider(name, address, 0, _short, min, max, offset);
   }
-  protected ScrollBarWidget addSlider(String name, int address, int mid, 
+  protected ScrollBarWidget addSlider(String name, int address, int mid,
 				      int min, int max, int offset){
     return addSlider(name, address, mid, false, min, max, offset);
   }
@@ -170,7 +169,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
   public void addWidget(Container parent, SysexWidget widget, int slidernum) {
     addWidget(parent, widget, slidernum, true);
   }
-  public void addWidget(Container parent, SysexWidget widget, int slidernum, 
+  public void addWidget(Container parent, SysexWidget widget, int slidernum,
 			boolean alignleft) {
     try {
       if (parent != null)
@@ -191,7 +190,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       */
       widgetList.add(widget);
     }
-    catch (Exception e) {ErrorMsg.reportStatus(e);}     
+    catch (Exception e) {ErrorMsg.reportStatus(e);}
 
   }
 
@@ -215,8 +214,8 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       //panel = Box.createHorizontalBox();
       //c.add(panel);
       ComboBoxWidget cat, sub;
-      cat = 
-	addCombo("Category", 0x40700C, 
+      cat =
+	addCombo("Category", 0x40700C,
 		  new String[] {"--","A. Piano","Keyboard","Organ","Guitar",
 				"Bass","Strings","Brass","Reed/Pipe",
 				"Synth Lead","Syn Pad/Choir","Synth Comp",
@@ -237,10 +236,10 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       addCombo("",0x400003,new String[]{"Mono","Poly"});
       addHGlue();
       addCombo("Note Mode",0x400002, new String[]{"Single","Multi"});
-      
+
       panel = Box.createHorizontalBox();
       c.add(panel);
-      addCombo("Tuning",0x400004, 
+      addCombo("Tuning",0x400004,
 	       new String[] { "Equal Temp","Pure Major C","Pure Major C#",
 			      "Pure Major D","Pure Major D#","Pure Major E",
 			      "Pure Major F","Pure Major F#","Pure Major G",
@@ -322,7 +321,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       addLabeledSlider("Sustain", 0x407028,0, false, 0, 0x7f, -64);
       addLabeledSlider("Release", 0x40703a,0, false, 0, 0x7f, -64);
       //addHGlue();
-      
+
       c = new ControlPanel("Filter EG Offsets");
       row.add(c);
       addFiller(row, 0, 5);
@@ -351,7 +350,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       addLabeledSlider("Knob 2", 0x407036,0, false, 0, 127, -64);
       //addHGlue();
 
-      
+
       c = new ControlPanel("Misc.");
       row.add(c);
       addFiller(row, 0, 5);
@@ -376,7 +375,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     }
   }
   class CategoryActionListener implements ActionListener {
-    final String[][] subs = 
+    final String[][] subs =
       new String[][] { {"--"},
 		       {"--","A. Piano","E. Grand","Other"},
 		       {"--","E. Piano","Clavi","Other"},
@@ -437,7 +436,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       addCombo("",0x407015,new String[] {"Off", "On"});
       addCombo("Hold",0x407016, new String[] {"sync-off","off","on"});
       addCombo("Bank",0x407013, new String[] {"Pre 1", "Pre 2", "User"});
-      ComboBoxWidget cw = 
+      ComboBoxWidget cw =
 	addCombo("Arp. #", 0x407014, new String[] {""});
       cw.cb.setModel(new NumberComboBoxModel(128));
       cw.setValue(cw.getValue());
@@ -483,28 +482,28 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       arp = new ControlPanel("LFO");
       arp.setAlignmentX(Component.LEFT_ALIGNMENT);
       add(arp);
-      EnvelopeWidget w = 
+      EnvelopeWidget w =
 	new EnvelopeWidget("Envelope", p,
-			   new EnvelopeNode[] {
-			     new EnvelopeNode(0, 127,
+			   new EnvelopeWidget.Node[] {
+			     new EnvelopeWidget.Node(0, 127,
 					      new MotifParamModel(p,0x400605),
 					      5,5, null,
 					      0, false,
 					      new ParamSender(0x400605),null,
 					      "Delay",null),
-			     new EnvelopeNode(0,127,
+			     new EnvelopeWidget.Node(0,127,
 					      new MotifParamModel(p,0x400606),
 					      30,30,null,
 					      0, false,
 					      new ParamSender(0x400606),null,
 					      "Fade In", null),
-			     new EnvelopeNode(0,127,
+			     new EnvelopeWidget.Node(0,127,
 					      new MotifParamModel(p,0x400607),
 					      30,30,null,
 					      0, false,
 					      new ParamSender(0x400607),null,
 					      "Hold", null),
-			     new EnvelopeNode(0,127,
+			     new EnvelopeWidget.Node(0,127,
 					      new MotifParamModel(p,0x400608),
 					      5,5,null,
 					      0, false,
@@ -567,16 +566,16 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 		       0,4,0);
       panel = Box.createHorizontalBox();
       c.add(panel);
-      addWidget(panel, new 
-		EnvelopeWidget("Amp Envelope", p, new EnvelopeNode[] { new
-			       EnvelopeNode(0,127,
+      addWidget(panel, new
+		EnvelopeWidget("Amp Envelope", p, new EnvelopeWidget.Node[] { new
+			       EnvelopeWidget.Node(0,127,
 					    new MotifParamModel(p,0x41ff11,
 								element),
 					    0,0,null,
 					    0, false,
 					    new ParamSender(0x41ff11,element)
  					    ,null,"Delay", null), new
-			       EnvelopeNode(10,10,null,
+			       EnvelopeWidget.Node(10,10,null,
 					    0,127,
 					    new MotifParamModel(p,0x41ff28,
 								element),
@@ -584,12 +583,12 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 					    null,new
 					    ParamSender(0x41ff28, element),
 					    null,"Init"), new
-			       EnvelopeNode(0,127,new
+			       EnvelopeWidget.Node(0,127,new
 					    MotifParamModel(p,0x41ff24,element),
 					    127,127,null,0,false,new
 					    ParamSender(0x41ff24, element),
 					    null,"Attack",null), new
-			       EnvelopeNode(0,127,new
+			       EnvelopeWidget.Node(0,127,new
 					    MotifParamModel(p,0x41ff25,element),
 					    0,127,new
 					    MotifParamModel(p,0x41ff2a,element),
@@ -597,7 +596,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 					    ParamSender(0x41ff25, element),
  					    new ParamSender(0x41ff25,element),
 					    "Decay 1 Time", "Decay 1 Level"),
-			       new EnvelopeNode(0,127,new
+			       new EnvelopeWidget.Node(0,127,new
 					    MotifParamModel(p,0x41ff26,element),
 					    0,127,new
 					    MotifParamModel(p,0x41ff2b,element),
@@ -605,11 +604,11 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
                                             ParamSender(0x410025, element),
  					    new ParamSender(0x41ff25,element),
 					    "Decay 2", "Sustain"), new
-			       EnvelopeNode(100,100,null,
-					    EnvelopeNode.SAME,EnvelopeNode.SAME,
+			       EnvelopeWidget.Node(100,100,null,
+					    EnvelopeWidget.Node.SAME,EnvelopeWidget.Node.SAME,
 					    null,0,false,null,
 					    null,null,null), new
-			       EnvelopeNode(0,127,new
+			       EnvelopeWidget.Node(0,127,new
 					    MotifParamModel(p,0x41ff27,element),
 					    0,0,
 					    null,0,false,new
@@ -715,7 +714,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     protected void setAddress( int mid ) {
        if ( (byte)(ofs >> 8) == -1 )
  	ofs = (ofs & 0x7f007f) | (mid << 8);
-     }	
+     }
     public void set(int value) {
       if (twobytes)
 	YamahaMotifSysexUtility.setShortParameter(patch.sysex, ofs, value);
@@ -750,8 +749,8 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     public Object getSelectedItem() {
       return Integer.toString(selected + offset);
     }
-    public int getSize() { 
-      return size; 
+    public int getSize() {
+      return size;
     }
     public Object getElementAt(int i) {
       return Integer.toString(i + offset);
@@ -779,7 +778,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 	while (it.hasNext())
 	  ((ListDataListener)(it.next())).intervalAdded(e);
       } else {
-	e = new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, new_size, 
+	e = new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, new_size,
 			      size - 1);
 	while (it.hasNext())
 	  ((ListDataListener)(it.next())).intervalRemoved(e);

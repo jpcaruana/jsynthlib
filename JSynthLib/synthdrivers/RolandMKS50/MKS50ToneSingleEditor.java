@@ -11,7 +11,6 @@ import javax.swing.border.TitledBorder;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.EnvelopeNode;
 import core.EnvelopeWidget;
 import core.ParamModel;
 import core.Patch;
@@ -116,15 +115,15 @@ class MKS50ToneSingleEditor extends PatchEditorFrame
 
     JPanel envPane = new JPanel();
     envPane.setLayout(new GridBagLayout());
-    addWidget(envPane, new EnvelopeWidget(" ", patch, new EnvelopeNode [] {
-      new EnvelopeNode(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-      new EnvelopeNode(0, 127, new ParamModel(patch, 33), 0, 127,
+    addWidget(envPane, new EnvelopeWidget(" ", patch, new EnvelopeWidget.Node [] {
+      new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+      new EnvelopeWidget.Node(0, 127, new ParamModel(patch, 33), 0, 127,
         new ParamModel(patch, 34), 10, false, new MKSToneSender(26), new MKSToneSender(27), " T1", " L1"),
-      new EnvelopeNode(0, 127, new ParamModel(patch, 35), 0, 127,
+      new EnvelopeWidget.Node(0, 127, new ParamModel(patch, 35), 0, 127,
         new ParamModel(patch, 36), 10, false, new MKSToneSender(28), new MKSToneSender(29), " T2", " L2"),
-      new EnvelopeNode(0, 127, new ParamModel(patch, 37), 0, 127,
+      new EnvelopeWidget.Node(0, 127, new ParamModel(patch, 37), 0, 127,
         new ParamModel(patch, 38), 10, false, new MKSToneSender(30), new MKSToneSender(31), " T3", " L3"),
-      new EnvelopeNode(0, 127, new ParamModel(patch, 39), 0, 0,
+      new EnvelopeWidget.Node(0, 127, new ParamModel(patch, 39), 0, 0,
         null, 0, false, new MKSToneSender(32), null, " T4", null),
     }     ), 3, 0, 3, 5, 18);
     addWidget(envPane, new ScrollBarWidget("Key Follow", patch, 0, 15, 0,

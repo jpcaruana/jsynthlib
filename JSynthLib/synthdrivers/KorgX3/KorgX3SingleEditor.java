@@ -5,19 +5,19 @@ import java.awt.*;
 import javax.swing.border.*;
 /**
  * Class for editing Korg X3 Program sounds
- * 
+ *
  * Includes at the moment all the basic sound setting properties,
  * as the multisounds, VDA EG and VDF EG editing for both oscillators
  * as well as Pitch EG.
  * Does not implement all features as pan positioning etc. Easy to add however.
- * 
+ *
  * @author Juha Tukkinen
  * @version $Id$
- */ 
+ */
 class KorgX3SingleEditor extends PatchEditorFrame
 {
- 
-  private final static String [] multiSounds = 
+
+  private final static String [] multiSounds =
     new String [] {"000 A.Piano 1 ","001 A.Piano1LP","002 A.Piano 2 ","003 E.Piano 1 ","004 E.Piano1LP",
 		   "005 E.Piano 2 ","006 E.Piano2LP","007 Soft EP   ","008 Soft EP LP","009 Hard EP   ",
 		   "010 Hard Ep LP","011 PianoPad 1","012 PianoPad 2","013 Clav      ","014 Clav LP   ",
@@ -96,7 +96,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
    */
   public KorgX3SingleEditor(Patch patch)
   {
-    super ("Korg X3 Single Editor",patch);   
+    super ("Korg X3 Single Editor",patch);
 
     /** The tab pane under which all other JPanels lie */
     JTabbedPane tabPane = new JTabbedPane();
@@ -129,17 +129,17 @@ class KorgX3SingleEditor extends PatchEditorFrame
     JPanel globalPane = new JPanel();
     globalPane.setLayout(new GridBagLayout());
     addWidget(globalPane, new PatchNameWidget(" Name  ",patch),0,0,1,1,0);
-    addWidget(globalPane, new ComboBoxWidget("Osc Mode",patch,new X3Model(patch,10), 
+    addWidget(globalPane, new ComboBoxWidget("Osc Mode",patch,new X3Model(patch,10),
 					     new X3Sender(10),new String []{"SINGLE","DOUBLE","DRUMS"}),1,0,1,1,1);
-    addWidget(globalPane, new ComboBoxWidget("Assign",patch,new X3Model(patch,11,0), 
+    addWidget(globalPane, new ComboBoxWidget("Assign",patch,new X3Model(patch,11,0),
 					     new X3Sender(11),new String []{"POLY","MONO"}),2,0,1,1,2);
-    addWidget(globalPane, new ComboBoxWidget("hold",patch,new X3Model(patch,11,1), 
+    addWidget(globalPane, new ComboBoxWidget("hold",patch,new X3Model(patch,11,1),
 					     new X3Sender(11),new String []{"OFF","ON"}),3,0,1,1,3);
     gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=4;gbc.gridheight=2;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.EAST;
     globalPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Global",TitledBorder.CENTER,TitledBorder.CENTER));
     globalTabPane.add(globalPane,gbc);
-    
-    
+
+
     /* Osc1 setup pane under globalTabPane */
 
     JPanel osc1setupPane = new JPanel();
@@ -147,15 +147,15 @@ class KorgX3SingleEditor extends PatchEditorFrame
     addWidget(osc1setupPane,new ComboBoxWidget("Multisound",patch,new MultiSoundModel(patch, 12),new MultiSoundSender(12),multiSounds),0,0,1,1,4);
     addWidget(osc1setupPane,new ScrollBarWidget("Octave",patch,-2,1,0,new X3Model(patch,14),new X3Sender(14)),1,0,1,1,5);
     addWidget(osc1setupPane,new ScrollBarWidget("Level",patch,0,99,0,new X3Model(patch,65),new X3Sender(65)),0,1,2,1,6);
-    
+
 
     addWidget(osc1setupPane,new ScrollBarWidget("Pitch EG Int",patch,-99,99,0,new X3Model(patch,40),new X3Sender(40)),0,2,2,1,7);
 
     gbc.gridx=0;gbc.gridy=6;gbc.gridwidth=4;gbc.gridheight=2;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.EAST;
-    osc1setupPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Osc1 setup",TitledBorder.CENTER,TitledBorder.CENTER));  
+    osc1setupPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Osc1 setup",TitledBorder.CENTER,TitledBorder.CENTER));
 
     globalTabPane.add(osc1setupPane, gbc);
-    
+
     /* Osc2 setup pane under globalTabPane */
 
     JPanel osc2setupPane = new JPanel();
@@ -170,10 +170,10 @@ class KorgX3SingleEditor extends PatchEditorFrame
     addWidget(osc2setupPane,new ScrollBarWidget("Delay",patch,0,99,0,new X3Model(patch,20),new X3Sender(20)),0,5,2,1,14);
 
     gbc.gridx=0;gbc.gridy=11;gbc.gridwidth=1;gbc.gridheight=2;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.EAST;
-    osc2setupPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Osc2 setup",TitledBorder.CENTER,TitledBorder.CENTER));  
-    
+    osc2setupPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Osc2 setup",TitledBorder.CENTER,TitledBorder.CENTER));
+
     globalTabPane.add(osc2setupPane, gbc);
-    
+
     /** Pitch EG Tab */
 
     JPanel pitchegPane = new JPanel();
@@ -183,11 +183,11 @@ class KorgX3SingleEditor extends PatchEditorFrame
     addWidget(pitchegPane,new ScrollBarWidget("Level Vel.",patch,-99,99,0,new X3Model(patch,28),new X3Sender(28)),0,1,1,1,15);
     addWidget(pitchegPane,new ScrollBarWidget("Time Vel.",patch,-99,99,0,new X3Model(patch,27),new X3Sender(27)),0,2,1,1,16);
 
-    addWidget(pitchegPane,new EnvelopeWidget("PITCHEG",patch,new EnvelopeNode [] {
-      new EnvelopeNode(0,0,null,-99,99,new X3Model(patch,21),99,false,null,new X3Sender(21),null,"SL"),
-      new EnvelopeNode(0,99,new X3Model(patch,22),-99,99,new X3Model(patch,23),99,false,new X3Sender(22),new X3Sender(23),"AT","AL"),
-      new EnvelopeNode(0,99,new X3Model(patch,24),99,99,null,0,false,new X3Sender(24),null,"DT",null),
-      new EnvelopeNode(0,99,new X3Model(patch,25),-99,99,new X3Model(patch,26),99,false,new X3Sender(25),new X3Sender(26),"RT","RL")
+    addWidget(pitchegPane,new EnvelopeWidget("PITCHEG",patch,new EnvelopeWidget.Node [] {
+      new EnvelopeWidget.Node(0,0,null,-99,99,new X3Model(patch,21),99,false,null,new X3Sender(21),null,"SL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,22),-99,99,new X3Model(patch,23),99,false,new X3Sender(22),new X3Sender(23),"AT","AL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,24),99,99,null,0,false,new X3Sender(24),null,"DT",null),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,25),-99,99,new X3Model(patch,26),99,false,new X3Sender(25),new X3Sender(26),"RT","RL")
 
     }),0,0,1,1,17);
     gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=7;gbc.gridheight=9;
@@ -195,7 +195,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
 
     pitchTabPane.add(pitchegPane, gbc);
 
-    
+
     /** OSC 1 Tab */
 
     // VDF1EG pane under osc1TabPane
@@ -204,12 +204,12 @@ class KorgX3SingleEditor extends PatchEditorFrame
     gbc.weightx=1;
     addWidget(vdf1egPane,new ScrollBarWidget("Fc",patch,0,99,0,new X3Model(patch,50),new X3Sender(50)),0,1,1,1,23);
     addWidget(vdf1egPane,new ScrollBarWidget("EGint",patch,-99,99,0,new X3Model(patch,53),new X3Sender(53)),0,2,1,1,24);
-    addWidget(vdf1egPane,new EnvelopeWidget("VDF1EG",patch,new EnvelopeNode [] {
-      new EnvelopeNode(0,0,null,99,99,null,0,false,null,null,null,null),     
-      new EnvelopeNode(0,99,new X3Model(patch,57),-99,99,new X3Model(patch,58),99,false,new X3Sender(57),new X3Sender(58),"AT","AL"),
-      new EnvelopeNode(0,99,new X3Model(patch,59),-99,99,new X3Model(patch,60),99,false,new X3Sender(59),new X3Sender(60),"DT","BP"),
-      new EnvelopeNode(0,99,new X3Model(patch,61),-99,99,new X3Model(patch,62),99,false,new X3Sender(61),new X3Sender(62),"ST","SL"),
-      new EnvelopeNode(0,99,new X3Model(patch,63),-99,99,new X3Model(patch,64),99,false,new X3Sender(63),new X3Sender(64),"RT","RL")
+    addWidget(vdf1egPane,new EnvelopeWidget("VDF1EG",patch,new EnvelopeWidget.Node [] {
+      new EnvelopeWidget.Node(0,0,null,99,99,null,0,false,null,null,null,null),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,57),-99,99,new X3Model(patch,58),99,false,new X3Sender(57),new X3Sender(58),"AT","AL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,59),-99,99,new X3Model(patch,60),99,false,new X3Sender(59),new X3Sender(60),"DT","BP"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,61),-99,99,new X3Model(patch,62),99,false,new X3Sender(61),new X3Sender(62),"ST","SL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,63),-99,99,new X3Model(patch,64),99,false,new X3Sender(63),new X3Sender(64),"RT","RL")
     }),0,0,1,1,25);
     gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=7;gbc.gridheight=9;
     vdf1egPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"VDF1 EG",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -219,12 +219,12 @@ class KorgX3SingleEditor extends PatchEditorFrame
     JPanel vda1egPane = new JPanel();
     vda1egPane.setLayout(new GridBagLayout());
     gbc.weightx=1;
-    addWidget(vda1egPane,new EnvelopeWidget("VDA1EG",patch,new EnvelopeNode [] {
-      new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),     
-      new EnvelopeNode(0,99,new X3Model(patch,71),0,99,new X3Model(patch,72),0,false,new X3Sender(71),new X3Sender(72),"AT","AL"),
-      new EnvelopeNode(0,99,new X3Model(patch,73),0,99,new X3Model(patch,74),0,false,new X3Sender(73),new X3Sender(74),"DT","BP"),
-      new EnvelopeNode(0,99,new X3Model(patch,75),0,99,new X3Model(patch,76),0,false,new X3Sender(75),new X3Sender(76),"ST","SL"),
-      new EnvelopeNode(0,99,new X3Model(patch,77),0,0,null,0,false,new X3Sender(77),null,"RT",null)
+    addWidget(vda1egPane,new EnvelopeWidget("VDA1EG",patch,new EnvelopeWidget.Node [] {
+      new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,71),0,99,new X3Model(patch,72),0,false,new X3Sender(71),new X3Sender(72),"AT","AL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,73),0,99,new X3Model(patch,74),0,false,new X3Sender(73),new X3Sender(74),"DT","BP"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,75),0,99,new X3Model(patch,76),0,false,new X3Sender(75),new X3Sender(76),"ST","SL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,77),0,0,null,0,false,new X3Sender(77),null,"RT",null)
     }),0,0,1,1,33);
     gbc.gridx=10;gbc.gridy=10;gbc.gridwidth=7;gbc.gridheight=9;
     vda1egPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"VDA1 EG",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -239,12 +239,12 @@ class KorgX3SingleEditor extends PatchEditorFrame
     gbc.weightx=1;
     addWidget(vdf2egPane,new ScrollBarWidget("Fc",patch,0,99,0,new X3Model(patch,97),new X3Sender(97)),0,1,1,1,39);
     addWidget(vdf2egPane,new ScrollBarWidget("EGint",patch,-99,99,0,new X3Model(patch,100),new X3Sender(100)),0,2,1,1,40);
-    addWidget(vdf2egPane,new EnvelopeWidget("VDF2EG",patch,new EnvelopeNode [] {
-      new EnvelopeNode(0,0,null,99,99,null,0,false,null,null,null,null),     
-      new EnvelopeNode(0,99,new X3Model(patch,104),-99,99,new X3Model(patch,105),99,false,new X3Sender(104),new X3Sender(105),"AT","AL"),
-      new EnvelopeNode(0,99,new X3Model(patch,106),-99,99,new X3Model(patch,107),99,false,new X3Sender(106),new X3Sender(107),"DT","BP"),
-      new EnvelopeNode(0,99,new X3Model(patch,108),-99,99,new X3Model(patch,109),99,false,new X3Sender(108),new X3Sender(109),"ST","SL"),
-      new EnvelopeNode(0,99,new X3Model(patch,110),-99,99,new X3Model(patch,111),99,false,new X3Sender(110),new X3Sender(111),"RT","RL")
+    addWidget(vdf2egPane,new EnvelopeWidget("VDF2EG",patch,new EnvelopeWidget.Node [] {
+      new EnvelopeWidget.Node(0,0,null,99,99,null,0,false,null,null,null,null),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,104),-99,99,new X3Model(patch,105),99,false,new X3Sender(104),new X3Sender(105),"AT","AL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,106),-99,99,new X3Model(patch,107),99,false,new X3Sender(106),new X3Sender(107),"DT","BP"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,108),-99,99,new X3Model(patch,109),99,false,new X3Sender(108),new X3Sender(109),"ST","SL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,110),-99,99,new X3Model(patch,111),99,false,new X3Sender(110),new X3Sender(111),"RT","RL")
     }),0,0,1,1,41);
     gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=7;gbc.gridheight=9;
     vdf2egPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"VDF2 EG",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -254,12 +254,12 @@ class KorgX3SingleEditor extends PatchEditorFrame
     JPanel vda2egPane = new JPanel();
     vda2egPane.setLayout(new GridBagLayout());
     gbc.weightx=1;
-    addWidget(vda2egPane,new EnvelopeWidget("VDA2EG",patch,new EnvelopeNode [] {
-      new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),     
-      new EnvelopeNode(0,99,new X3Model(patch,118),0,99,new X3Model(patch,119),0,false,new X3Sender(118),new X3Sender(119),"AT","AL"),
-      new EnvelopeNode(0,99,new X3Model(patch,120),0,99,new X3Model(patch,121),0,false,new X3Sender(120),new X3Sender(121),"DT","BP"),
-      new EnvelopeNode(0,99,new X3Model(patch,122),0,99,new X3Model(patch,123),0,false,new X3Sender(122),new X3Sender(123),"ST","SL"),
-      new EnvelopeNode(0,99,new X3Model(patch,124),0,0,null,0,false,new X3Sender(125),null,"RT",null)
+    addWidget(vda2egPane,new EnvelopeWidget("VDA2EG",patch,new EnvelopeWidget.Node [] {
+      new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,118),0,99,new X3Model(patch,119),0,false,new X3Sender(118),new X3Sender(119),"AT","AL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,120),0,99,new X3Model(patch,121),0,false,new X3Sender(120),new X3Sender(121),"DT","BP"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,122),0,99,new X3Model(patch,123),0,false,new X3Sender(122),new X3Sender(123),"ST","SL"),
+      new EnvelopeWidget.Node(0,99,new X3Model(patch,124),0,0,null,0,false,new X3Sender(125),null,"RT",null)
     }),0,0,1,1,49);
     gbc.gridx=10;gbc.gridy=10;gbc.gridwidth=7;gbc.gridheight=9;
     vda2egPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"VDA2 EG",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -270,7 +270,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
 
     JPanel pitch1ModPane = new JPanel();
     pitch1ModPane.setLayout(new GridBagLayout());
-    addWidget(pitch1ModPane, new ComboBoxWidget("Waveform",patch,new X3Model(patch,41,0,3), 
+    addWidget(pitch1ModPane, new ComboBoxWidget("Waveform",patch,new X3Model(patch,41,0,3),
 						new X3Sender(41),new String []{"TRI","SAW UP","SAW DOWN","SQR1","RAND","SQR2"}),0,0,1,1,56);
     addWidget(pitch1ModPane, new CheckBoxWidget("Key Sync",patch,new X3Model(patch,41,7),new X3Sender(41)),1,0,1,1,57);
     addWidget(pitch1ModPane,new ScrollBarWidget("Frequency",patch,0,99,0,new X3Model(patch,42),new X3Sender(42)),0,1,2,1,57);
@@ -288,7 +288,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
 
     JPanel pitch2ModPane = new JPanel();
     pitch2ModPane.setLayout(new GridBagLayout());
-    addWidget(pitch2ModPane, new ComboBoxWidget("Waveform",patch,new X3Model(patch,88,0,3), 
+    addWidget(pitch2ModPane, new ComboBoxWidget("Waveform",patch,new X3Model(patch,88,0,3),
 						new X3Sender(87),new String []{"TRI","SAW UP","SAW DOWN","SQR1","RAND","SQR2"}),0,0,1,1,56);
     addWidget(pitch2ModPane, new CheckBoxWidget("Key Sync",patch,new X3Model(patch,88,7),new X3Sender(88)),1,0,1,1,57);
     addWidget(pitch2ModPane,new ScrollBarWidget("Frequency",patch,0,99,0,new X3Model(patch,89),new X3Sender(89)),0,1,2,1,57);
@@ -308,7 +308,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
 
     JPanel vdfModPane = new JPanel();
     vdfModPane.setLayout(new GridBagLayout());
-    addWidget(vdfModPane, new ComboBoxWidget("Waveform",patch,new X3Model(patch,29,0,3), 
+    addWidget(vdfModPane, new ComboBoxWidget("Waveform",patch,new X3Model(patch,29,0,3),
 						new X3Sender(29),new String []{"TRI","SAW UP","SAW DOWN","SQR1","RAND","SQR2"}),0,0,1,1,65);
     addWidget(vdfModPane, new CheckBoxWidget("OSC1 MG",patch,new X3Model(patch,29,5),new X3Sender(29)),1,0,1,1,66);
     addWidget(vdfModPane, new CheckBoxWidget("OSC2 MG",patch,new X3Model(patch,29,6),new X3Sender(29)),2,0,1,1,67);
@@ -320,7 +320,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
     gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=4;gbc.gridheight=5;
     vdfModPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"VDF Modulation",TitledBorder.CENTER,TitledBorder.CENTER));
 
-    vdfmodTabPane.add(vdfModPane, gbc);  
+    vdfmodTabPane.add(vdfModPane, gbc);
 
     // ---
 
@@ -333,7 +333,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
     gbc.gridx=0;gbc.gridy=5;gbc.gridwidth=4;gbc.gridheight=5;
     atModPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"After Touch Control",TitledBorder.CENTER,TitledBorder.CENTER));
 
-    vdfmodTabPane.add(atModPane, gbc);  
+    vdfmodTabPane.add(atModPane, gbc);
 
     // ---
 
@@ -345,7 +345,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
     gbc.gridx=0;gbc.gridy=10;gbc.gridwidth=4;gbc.gridheight=5;
     jtModPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Joystick Control",TitledBorder.CENTER,TitledBorder.CENTER));
 
-    vdfmodTabPane.add(jtModPane, gbc);  
+    vdfmodTabPane.add(jtModPane, gbc);
 
 
     // show tab
@@ -372,7 +372,7 @@ class X3Sender extends SysexSender
   public X3Sender(int param) {
     this.param=param;
   }
-  
+
   public X3Sender(int param, int src) {
     this.param=param;
     this.src=src;
@@ -412,7 +412,7 @@ class X3Model extends ParamModel
   }
 
   /**
-   * Constructor for setting just one bit of byte 
+   * Constructor for setting just one bit of byte
    *
    * @param p Patch
    * @param o Offset
@@ -423,7 +423,7 @@ class X3Model extends ParamModel
     patch = p;
     this.bit = bit;
   }
-  
+
   /**
    * Constructor for setting <code>bits</code> bits starting from bit <code>bit</code>
    *
@@ -445,7 +445,7 @@ class X3Model extends ParamModel
    * If variable bit is different from -1, that bit
    * will be changed. If variable bits is set,
    * that many bits starting from 'bit' will be set.
-   * 
+   *
    * @param i value to be set
    */
   public void set(int i) {
@@ -473,10 +473,10 @@ class X3Model extends ParamModel
       }
     }
   }
-  
+
   /**
    * The appropriate getter. See set() and constructors for examples.
-   * 
+   *
    * @return either all 8 bits, 1 bit or n bits
    */
   public int get() {
@@ -485,7 +485,7 @@ class X3Model extends ParamModel
     } else {
       if(bits==-1) {
 	//using just one bit of byte
-	return (byte)((patch.sysex[ofs+KorgX3SingleDriver.EXTRA_HEADER] & (byte)(1<<bit)) >> bit)  ;	
+	return (byte)((patch.sysex[ofs+KorgX3SingleDriver.EXTRA_HEADER] & (byte)(1<<bit)) >> bit)  ;
       } else {
 	//using 'bits' bits
 	byte mask=(byte)0x00;

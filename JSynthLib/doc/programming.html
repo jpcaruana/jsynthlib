@@ -617,51 +617,48 @@ is its first fader number, and it will take as many as it needs starting at
 that one to represent all of it's parameters.
 
 <p>The constructor for an envelope widget takes a list
-of EnvelopeNodes, each with its own constructor. Each EnvelopeNode is
+of EnvelopeWidget.Nodes. Each Node is
 one of the movable squares on the envelope. Some of these nodes are
 stationary, some contain two parameters on the synth and can be moved
 vertically and horizontally, and others contain only one parameter and
 can therefore be moved in only one direction. Here is an example:
 
 <pre>
+    EnvelopeWidget.Node[] nodes = new EnvelopeWidget.Node[] {
+	new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+	new EnvelopeWidget.Node(0, 100,
+				new K4Model(patch, 30 + i), 0, 0, null, 0, false,
+				new K4Sender(34, i), null, "Dly", null),
+	new EnvelopeWidget.Node(0, 100,
+				new K4Model(patch, 62 + i), 100, 100, null, 25, false,
+				new K4Sender(45, i), null, "A", null),
+	new EnvelopeWidget.Node(0, 100,
+				new K4Model(patch, 66 + i), 0, 100,
+				new K4Model(patch, 70 + i), 25, false,
+				new K4Sender(46, i),
+				new K4Sender(47, i), "D", "S"),
+	new EnvelopeWidget.Node(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
+	new EnvelopeWidget.Node(0, 100,
+				new K4Model(patch, 74 + i), 0, 0, null, 0, false,
+				new K4Sender(48, i), null, "R", null),
+    };
     addWidget(panel,
-              new EnvelopeWidget("Envelope", patch,
-                                 new EnvelopeNode[] {
-                                   new EnvelopeNode(0, 0, null,
-                                                    0, 0, null,
-                                                    0, false,
-                                                    null, null, null, null),
-                                   new EnvelopeNode(0, 31, new ParamModel(patch, i*13+47),
-                                                    30,30, null,
-                                                    10, true,
-                                                    new VcedSender(i*13), null, " AR", null),
-                                   new EnvelopeNode(0, 31, new ParamModel(patch, i*13+48),
-                                                    0, 15, new ParamModel(patch, i*13+51),
-                                                    25, true,
-                                                    new VcedSender(i*13+1), new VcedSender(i*13+4), "D1R", "D1L"),
-                                   new EnvelopeNode(0, 31,new ParamModel(patch, i*13+49),
-                                                    0, 0, null,
-                                                    10, true,
-                                                    new VcedSender(i*13+2), null, "D2R", null),
-                                   new EnvelopeNode(1, 15, new ParamModel(patch, i*13+50),
-                                                    0, 0, null,
-                                                    0, true,
-                                                    new VcedSender(i*13+3), null, "RR", null),
-                                }),
-              3, 0, 3, 5, 10);
+	      new EnvelopeWidget("DCA Envelope", patch, nodes),
+	      0, 0, 3, 5, 33);
 </pre>
 
 As you can see, the Envelope Widget takes a label, followed by
-<var>patch</var> and then an array of EnvelopeNodes. The parameters
-given to the EnvelopeNodes constructor have the following meaning:
+<var>patch</var> and then an array of EnvelopeWidget.Node objects. The
+parameters given to the EnvelopeWidget.Node constructor have the
+following meaning:
 
 <pre>
-    public EnvelopeNode(int minx, int maxx, ParamModel ofsx, 
-                        int miny, int maxy, ParamModel ofsy,
-                        int basey,
-                        boolean invertx,
-                        SysexSender x, SysexSender y,
-                        String namex, String namey)
+    public Node(int minx, int maxx, ParamModel ofsx, 
+                int miny, int maxy, ParamModel ofsy,
+                int basey,
+                boolean invertx,
+                SysexSender x, SysexSender y,
+                String namex, String namey)
 </pre>
 
 <small>
@@ -692,7 +689,7 @@ the Node is moved.
 that a node is stationary on that axis and has no related
 parameter.
 
-**Using EnvelopeNode.SAME (or 5000) for miny & maxy means that the
+**Using EnvelopeWidget.Node.SAME (or 5000) for miny & maxy means that the
 height remains at whatever the previous node was at.
 </small>
 

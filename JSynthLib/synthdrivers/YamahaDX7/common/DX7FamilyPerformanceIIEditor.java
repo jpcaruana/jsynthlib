@@ -30,7 +30,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import core.ComboBoxWidget;
-import core.EnvelopeNode;
 import core.EnvelopeWidget;
 import core.ParamModel;
 import core.Patch;
@@ -261,12 +260,12 @@ public class DX7FamilyPerformanceIIEditor extends PatchEditorFrame
 		addWidget(cmnPane,new ComboBoxWidget("Control Assign"	   ,patch,new ParamModel(patch,16+22),new PerformanceSender(22),PanAssignName) ,8,24,4,1,24);
 
 		gbc.gridx=0;gbc.gridy=24;gbc.gridwidth=1;gbc.gridheight=1; cmnPane.add(new JLabel(" "),gbc);
-		addWidget(cmnPane,new EnvelopeWidget("Pan Envelope Generator",patch,new EnvelopeNode [] {
-			new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
-			new EnvelopeNode(0,99,new ParamModel(patch,16+23),0,99,new ParamModel(patch,16+27),0,true,new PerformanceSender(23),new PerformanceSender(27),"R1","L1"),
-			new EnvelopeNode(0,99,new ParamModel(patch,16+24),0,99,new ParamModel(patch,16+28),0,true,new PerformanceSender(24),new PerformanceSender(28),"R2","L2"),
-			new EnvelopeNode(0,99,new ParamModel(patch,16+25),0,99,new ParamModel(patch,16+29),0,true,new PerformanceSender(25),new PerformanceSender(29),"R3","L3"),
-			new EnvelopeNode(0,99,new ParamModel(patch,16+26),0,99,new ParamModel(patch,16+30),0,true,new PerformanceSender(26),new PerformanceSender(30),"R4","L4"),
+		addWidget(cmnPane,new EnvelopeWidget("Pan Envelope Generator",patch,new EnvelopeWidget.Node [] {
+			new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),
+			new EnvelopeWidget.Node(0,99,new ParamModel(patch,16+23),0,99,new ParamModel(patch,16+27),0,true,new PerformanceSender(23),new PerformanceSender(27),"R1","L1"),
+			new EnvelopeWidget.Node(0,99,new ParamModel(patch,16+24),0,99,new ParamModel(patch,16+28),0,true,new PerformanceSender(24),new PerformanceSender(28),"R2","L2"),
+			new EnvelopeWidget.Node(0,99,new ParamModel(patch,16+25),0,99,new ParamModel(patch,16+29),0,true,new PerformanceSender(25),new PerformanceSender(29),"R3","L3"),
+			new EnvelopeWidget.Node(0,99,new ParamModel(patch,16+26),0,99,new ParamModel(patch,16+30),0,true,new PerformanceSender(26),new PerformanceSender(30),"R4","L4"),
 		}),0,26,10,9,25);
 
 

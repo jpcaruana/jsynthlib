@@ -281,26 +281,26 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	    JPanel panel = new JPanel();
 	    panel.setLayout(new GridBagLayout());
 	    oscPane.addTab("Source" + (i + 1), panel); gbc.weightx = 0;
+	    EnvelopeWidget.Node[] nodes = new EnvelopeWidget.Node[] {
+		new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+		new EnvelopeWidget.Node(0, 100,
+					new K4Model(patch, 30 + i), 0, 0, null, 0, false,
+					new K4Sender(34, i), null, "Dly", null),
+		new EnvelopeWidget.Node(0, 100,
+					new K4Model(patch, 62 + i), 100, 100, null, 25, false,
+					new K4Sender(45, i), null, "A", null),
+		new EnvelopeWidget.Node(0, 100,
+					new K4Model(patch, 66 + i), 0, 100,
+					new K4Model(patch, 70 + i), 25, false,
+					new K4Sender(46, i),
+					new K4Sender(47, i), "D", "S"),
+		new EnvelopeWidget.Node(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
+		new EnvelopeWidget.Node(0, 100,
+					new K4Model(patch, 74 + i), 0, 0, null, 0, false,
+					new K4Sender(48, i), null, "R", null),
+	    };
 	    addWidget(panel,
-		      new EnvelopeWidget("DCA Envelope", patch,
-					 new EnvelopeNode[] {
-					     new EnvelopeNode(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-					     new EnvelopeNode(0, 100,
-							      new K4Model(patch, 30 + i), 0, 0, null, 0, false,
-							      new K4Sender(34, i), null, "Dly", null),
-					     new EnvelopeNode(0, 100,
-							      new K4Model(patch, 62 + i), 100, 100, null, 25, false,
-							      new K4Sender(45, i), null, "A", null),
-					     new EnvelopeNode(0, 100,
-							      new K4Model(patch, 66 + i), 0, 100,
-							      new K4Model(patch, 70 + i), 25, false,
-							      new K4Sender(46, i),
-							      new K4Sender(47, i), "D", "S"),
-					     new EnvelopeNode(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
-					     new EnvelopeNode(0, 100,
-							      new K4Model(patch, 74 + i), 0, 0, null, 0, false,
-							      new K4Sender(48, i), null, "R", null),
-					 }),
+		      new EnvelopeWidget("DCA Envelope", patch, nodes),
 		      0, 0, 3, 5, 33);
 	    addWidget(panel,
 		      new ScrollBarWidget("Level", patch, 0, 100, 0, lw,
@@ -400,22 +400,22 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	    JPanel panel = new JPanel();
 	    panel.setLayout(new GridBagLayout());
 	    dcfPane.addTab("Filter" + (i + 1), panel); gbc.weightx = 0;
+	    EnvelopeWidget.Node[] nodes = new EnvelopeWidget.Node[] {
+		new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+		new EnvelopeWidget.Node(0, 100,
+					new K4Model(patch, 116 + i), 100, 100, null, 25, false,
+					new K4Sender(63, i), null, "A", null),
+		new EnvelopeWidget.Node(0, 100,
+					new K4Model(patch, 118 + i), 0, 100,
+					new K4Model(patch, 120 + i), 25, false,
+					new K4Sender(64, i), new K4Sender(65, i), "D", "S"),
+		new EnvelopeWidget.Node(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
+		new EnvelopeWidget.Node(0, 100,
+					new K4Model(patch, 122 + i), 0, 0, null, 0, false,
+					new K4Sender(66, i), null, "R", null),
+	    };
 	    addWidget(panel,
-		      new EnvelopeWidget("DCF Envelope", patch,
-					 new EnvelopeNode[] {
-					     new EnvelopeNode(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-					     new EnvelopeNode(0, 100,
-							      new K4Model(patch, 116 + i), 100, 100, null, 25, false,
-							      new K4Sender(63, i), null, "A", null),
-					     new EnvelopeNode(0, 100,
-							      new K4Model(patch, 118 + i), 0, 100,
-							      new K4Model(patch, 120 + i), 25, false,
-							      new K4Sender(64, i), new K4Sender(65, i), "D", "S"),
-					     new EnvelopeNode(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
-					     new EnvelopeNode(0, 100,
-							      new K4Model(patch, 122 + i), 0, 0, null, 0, false,
-							      new K4Sender(66, i), null, "R", null),
-					 }),
+		      new EnvelopeWidget("DCF Envelope", patch, nodes),
 		      0, 0, 3, 5, 51);
 	    addWidget(panel,
 		      new ScrollBarWidget("Cutoff", patch, 0, 100, 0, lw,

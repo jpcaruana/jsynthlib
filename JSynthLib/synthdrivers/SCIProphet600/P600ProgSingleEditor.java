@@ -10,7 +10,6 @@ import javax.swing.border.TitledBorder;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.EnvelopeNode;
 import core.EnvelopeWidget;
 import core.ParamModel;
 import core.Patch;
@@ -136,13 +135,13 @@ class P600ProgSingleEditor extends PatchEditorFrame {
     addWidget(envPane, new ComboBoxWidget("Kybd Track", patch,
       new P6002FieldModel(patch, 14, 0x08, 3, 0x04, 1),
       null, new String [] {"Off", "1/2", "Full"}), 0, 3, 1, 1, 0);
-    addWidget(envPane, new EnvelopeWidget(" ", patch, new EnvelopeNode [] {
-      new EnvelopeNode(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-      new EnvelopeNode(0, 15, new P6001ByteModel(patch, 10, 0x1E, 1), 15, 15,
+    addWidget(envPane, new EnvelopeWidget(" ", patch, new EnvelopeWidget.Node [] {
+      new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+      new EnvelopeWidget.Node(0, 15, new P6001ByteModel(patch, 10, 0x1E, 1), 15, 15,
         null, 0, false, null, null, "Attack", null),
-      new EnvelopeNode(0, 15, new P6002ByteModel(patch, 9, 0xE0, 5, 0x01, 3), 0, 15,
+      new EnvelopeWidget.Node(0, 15, new P6002ByteModel(patch, 9, 0xE0, 5, 0x01, 3), 0, 15,
         new P6001ByteModel(patch, 9, 0x1E, 1), 0, false, null, null, "Decay", "Sustain"),
-      new EnvelopeNode(0, 15, new P6002ByteModel(patch, 8, 0xE0, 5, 0x01, 3), 0, 0,
+      new EnvelopeWidget.Node(0, 15, new P6002ByteModel(patch, 8, 0xE0, 5, 0x01, 3), 0, 0,
         null, 0, false, null, null, "Release", null),
     }     ), 0, 4, 3, 4, 0);
     gbc.gridx = 0;
@@ -155,13 +154,13 @@ class P600ProgSingleEditor extends PatchEditorFrame {
 
     JPanel ampPane = new JPanel();
     ampPane.setLayout(new GridBagLayout());
-    addWidget(ampPane, new EnvelopeWidget(" ", patch, new EnvelopeNode [] {
-      new EnvelopeNode(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-      new EnvelopeNode(0, 15, new P6001ByteModel(patch, 12, 0x1E, 1), 15, 15,
+    addWidget(ampPane, new EnvelopeWidget(" ", patch, new EnvelopeWidget.Node [] {
+      new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+      new EnvelopeWidget.Node(0, 15, new P6001ByteModel(patch, 12, 0x1E, 1), 15, 15,
         null, 0, false, null, null, "Attack", null),
-      new EnvelopeNode(0, 15, new P6002ByteModel(patch, 11, 0xE0, 5, 0x01, 3), 0, 15,
+      new EnvelopeWidget.Node(0, 15, new P6002ByteModel(patch, 11, 0xE0, 5, 0x01, 3), 0, 15,
         new P6001ByteModel(patch, 11, 0x1E, 1), 0, false, null, null, "Decay", "Sustain"),
-      new EnvelopeNode(0, 15, new P6002ByteModel(patch, 10, 0xE0, 5, 0x01, 3), 0, 0,
+      new EnvelopeWidget.Node(0, 15, new P6002ByteModel(patch, 10, 0xE0, 5, 0x01, 3), 0, 0,
         null, 0, false, null, null, "Release", null),
     }     ), 0, 0, 3, 4, 0);
     gbc.gridx = 0;
