@@ -56,18 +56,17 @@ public class AlesisDM5PrChgEditor extends PatchEditorFrame {
     private void addWidgets(JPanel panel, Patch patch, int prgChgNum) {
         addWidget(panel, new ComboBoxWidget(String.valueOf(prgChgNum), patch,
                                             new ParamModel(patch, headerSize + prgChgNum),
-                                            new DM5SysInfoSender(patch, 1), setNums), prgChgNum / 16,
+                                            new DM5ProgChgSender(patch, 1), setNums), prgChgNum / 16,
                   prgChgNum % 16, 1, 1, prgChgNum);
     }
     
     /** A sender which sends the whole patch. */
-    private class DM5SysInfoSender extends SysexSender {
-        int parameter;
-        
+    private class DM5ProgChgSender extends SysexSender {
+        int parameter;        
         Patch patch;
         
-        /** Constructs a DM5SysInfoSender. */
-        public DM5SysInfoSender(Patch p, int param) {
+        /** Constructs a DM5ProgChgSender. */
+        public DM5ProgChgSender(Patch p, int param) {
             parameter = param;
             patch = p;
         }
@@ -75,6 +74,7 @@ public class AlesisDM5PrChgEditor extends PatchEditorFrame {
         /** Generate method for sending entire patch. */
         public byte[] generate(int value) {
             patch.sysex[0] = (byte) 0xF0;
+            ((AlesisDM5PrChgDriver)(patch.getDriver())).calculateChecksum(patch);
             return patch.sysex;
         }
     }
