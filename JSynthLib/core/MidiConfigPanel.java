@@ -51,7 +51,8 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 		public void itemStateChanged (ItemEvent e) {
 		    if (e.getStateChange ()==ItemEvent.SELECTED) {
 			System.out.println("itemStateChanged");
-			resetPortComboBoxes();
+			resetMidiDriver();
+			//resetPortComboBoxes();
 			//midiDriverSelected((MidiWrapper) ((JComboBox)e.getSource()).getSelectedItem());
 		    }
 		}
@@ -75,7 +76,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	gridbag.setConstraints(l3, gbc);
         cbPanel.add (l3);
 	// Output Port/Input Port selection
-	gbc.gridx=0; gbc.gridy=3; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	gbc.gridx=0; gbc.gridy=3; gbc.gridheight=1; gbc.gridwidth=3; //gbc.gridwidth=gbc.REMAINDER;
         JLabel cbLabel = new JLabel ("Run Startup Initialization on MIDI Ports:");
 	gridbag.setConstraints(cbLabel, gbc);
 	cbPanel.add (cbLabel);
@@ -115,17 +116,24 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	gridbag.setConstraints(l0, gbc);
         cbPanel.add (l0);
 	// master controller selection
-	gbc.gridx=0; gbc.gridy=8; gbc.gridheight=1; gbc.gridwidth=3;
+	gbc.gridx=0; gbc.gridy=8; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER; // gbc.gridwidth=3;
 	JLabel l1=new JLabel ("Receive from Master Controller on MIDI Port:");
 	gridbag.setConstraints(l1, gbc);
         cbPanel.add (l1);
 
 	enabledBox = new JCheckBox ("Enable Master Controller");
-	gbc.gridx = 3; gbc.gridy = 8; gbc.gridwidth = 1; gbc.gridheight = 1;
+	gbc.gridx = 1; gbc.gridy = 9; gbc.gridwidth = 1; gbc.gridheight = 1;
 	cbPanel.add(enabledBox, gbc);
+	enabledBox.addActionListener(new ActionListener() {
+		public void actionPerformed (ActionEvent e) {
+			JCheckBox chb = (JCheckBox)e.getSource();
+			cb3.setEnabled(enabledBox.isSelected());
+		}
+	});
 
-	gbc.gridx=1; gbc.gridy=9; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	gbc.gridx=1; gbc.gridy=10; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
         cb3 = new JComboBox ();
+	cb3.setEnabled(enabledBox.isEnabled() && enabledBox.isSelected());
 	gridbag.setConstraints(cb3, gbc);
         cbPanel.add (cb3);
 
@@ -192,9 +200,25 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
     public void init() {
 	setComboBox(cbDriver, PatchEdit.appConfig.getMidiPlatform());
 	enabledBox.setSelected(appConfig.getMasterInEnable());
+	resetPortComboBoxes();
 	//midiDriverSelected((MidiWrapper) cbDriver.getSelectedItem());
     }
 
+
+    /**
+     * This set the choosen Midi driver from the "Midi Access Method" ComboBox,
+     * notify all MidiDriverChangeListener about the change and
+     * reset the port-selector combo boxes of the now current Midi driver.
+     */
+    private void resetMidiDriver() {
+	appConfig.setMidiPlatform(cbDriver.getSelectedIndex());
+	// Notify all listeners
+	for(int i = 0; i < driverChangeListeners.size(); i++) {
+	    ((MidiDriverChangeListener) driverChangeListeners.elementAt(i)).midiDriverChanged(AppConfig.getMidiWrapper());
+	}
+	resetPortComboBoxes();
+    }
+    
     /**
      * This clears the port-selector combo boxes and re-populates them with the
      * ports available from the current MIDI driver - emenaker 2003.03.19
@@ -225,7 +249,10 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	setComboBox(cb1, PatchEdit.appConfig.getInitPortOut());
 	setComboBox(cb2, PatchEdit.appConfig.getInitPortIn());
 	setComboBox(cb3, PatchEdit.appConfig.getMasterController());
+	enabledBox.setSelected(PatchEdit.appConfig.getMasterInEnable());
 	setContainerEnabled(channelPanel,currentDriver.isReady());
+	// if cb3 is enabled/disabled depends from enabledBox
+	cb3.setEnabled(enabledBox.isEnabled() && enabledBox.isSelected());
     }
 
     /**

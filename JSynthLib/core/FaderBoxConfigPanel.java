@@ -30,18 +30,35 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	super(appConfig);
 	setLayout (new GridBagLayout ());
 	GridBagConstraints gbc = new GridBagConstraints ();
+	gbc.fill=gbc.HORIZONTAL; gbc.ipadx=1; gbc.anchor=gbc.WEST;
+
+	// Fader Port selection
 	JLabel l0 = new JLabel ("Receive Faders from Midi Port:  ");
-	gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 3; gbc.gridheight = 1;
+	gbc.gridx = 0; gbc.gridy = 1; gbc.gridheight = 1; gbc.gridwidth = 4;
 	add (l0, gbc);
+	
+	enabledBox = new JCheckBox ("Enable Faders");
+	gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth = 2;
+	add (enabledBox, gbc);
+	enabledBox.addActionListener(new ActionListener() {
+                public void actionPerformed (ActionEvent e) {
+			JCheckBox chb = (JCheckBox)e.getSource();
+	    		cb4.setEnabled(enabledBox.isSelected());
+		}
+	});
+	
 	cb4 = new JComboBox ();
 	resetComboBoxes();
-
-	gbc.gridx = 3; gbc.gridy = 1; gbc.gridwidth = 3; gbc.gridheight = 1;
+	gbc.gridx = 1; gbc.gridy = 3; gbc.gridheight = 1; gbc.gridwidth=gbc.REMAINDER; // gbc.gridwidth = 3;
 	add (cb4, gbc);
-	enabledBox = new JCheckBox ("Enable Faders");
-	gbc.gridx = 6; gbc.gridy = 1; gbc.gridwidth = 1; gbc.gridheight = 1;
-	add (enabledBox, gbc);
 
+	// make a space
+	gbc.gridx=0; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=1;
+	JLabel l3=new JLabel ("        ");
+	add (l3, gbc);
+
+	// Fader Slider settings
+	// left side
 	String[] n = new String[Constants.NUM_FADERS];
 	n[0] = "Active Slider";
 	for (int i = 0; i < 16; i++)
@@ -78,21 +95,23 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.gridheight = 3;
 	JScrollPane scroll = new JScrollPane (lb1);
 	add (scroll, gbc);
+	// right side
 	JPanel dataPanel = new JPanel ();
 	dataPanel.setLayout (new GridBagLayout ());
 	gbc.anchor = GridBagConstraints.EAST;
-	gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1; gbc.gridheight = 1;
+	gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2; gbc.gridheight = 1;
 	dataPanel.add (new JLabel ("Midi Controller #  "), gbc);
-	gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1; gbc.gridheight = 1;
+	gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2; gbc.gridheight = 1;
 	dataPanel.add (new JLabel ("Midi Channel    #  "), gbc);
-	gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 1; gbc.gridheight = 1;
+	gbc.gridx = 2; gbc.gridy = 1; gbc.gridwidth = 2; gbc.gridheight = 1;
 	dataPanel.add (cbController, gbc);
-	gbc.gridx = 1; gbc.gridy = 2; gbc.gridwidth = 1; gbc.gridheight = 1;
+	gbc.gridx = 2; gbc.gridy = 2; gbc.gridwidth = 2; gbc.gridheight = 1;
 	dataPanel.add (cbChannel, gbc);
 	gbc.gridx = 2; gbc.gridy = 5; gbc.gridwidth = 5; gbc.gridheight = 3;
 	gbc.fill = GridBagConstraints.BOTH;
 	dataPanel.setBorder (new EtchedBorder (EtchedBorder.RAISED));
 	add (dataPanel, gbc);
+	// lower preset  Buttons
 	JPanel buttonPanel = new JPanel ();
 	JButton b1 = new JButton ("Peavey PC1600x Preset");
 	JButton b2 = new JButton ("Kawai K5000 Knobs Preset");
@@ -134,6 +153,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
 	enabledBox.setSelected (appConfig.getFaderEnable());
 	faderPortWas = appConfig.getFaderPort();
+	resetComboBoxes();
     }
 
     /**
@@ -174,6 +194,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	resetComboBoxes();
     }
 
+    
     /**
      * This method re-populates the combobox(es) that contain things that depend upon which
      * midi driver we're using. This is called by the constructor and also by the
@@ -181,12 +202,18 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
      *
      */
     private void resetComboBoxes() {
+	MidiWrapper currentDriver = appConfig.getMidiWrapper();
+	
 	cb4.removeAllItems();
 	try {
-	    for (int j = 0; j < core.PatchEdit.MidiIn.getNumInputDevices (); j++)
-		cb4.addItem (j + ": " + core.PatchEdit.MidiIn.getInputDeviceName (j));
+	    for (int j = 0; j < currentDriver.getNumInputDevices (); j++)
+		cb4.addItem (j + ": " + currentDriver.getInputDeviceName (j));
+	    //for (int j = 0; j < core.PatchEdit.MidiIn.getNumInputDevices (); j++)
+	    //	cb4.addItem (j + ": " + core.PatchEdit.MidiIn.getInputDeviceName (j));
 	} catch (Exception e) {
 	}
+	enabledBox.setEnabled(currentDriver.isReady());
+	cb4.setEnabled(enabledBox.isEnabled() && enabledBox.isSelected());
     }
 
     /**
