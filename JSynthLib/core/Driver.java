@@ -673,7 +673,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     // MIDI in/out mothods to encapsulate lower MIDI layer
-    /** Send ShortMessage to MIDI outport. */
+    /** Send MidiMessage to MIDI outport. */
     protected final void send(MidiMessage msg) throws Exception {
 	if (PatchEdit.newMidiAPI)
 	    device.send(msg);
@@ -689,6 +689,18 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 		device.send(a[i]);
 	} else
 	    PatchEdit.MidiOut.writeLongMessage(getPort(), sysex);
+    }
+
+    /** Send ShortMessage to MIDI outport. */
+    protected final void send(int status, int d1, int d2) throws Exception {
+	ShortMessage msg = new ShortMessage();
+	msg.setMessage(status, d1, d2);
+	send(msg);
+    }
+
+    /** Send ShortMessage to MIDI outport. */
+    protected final void send(int status, int d1) throws Exception {
+	send(status, d1, 0);
     }
 
     /**
