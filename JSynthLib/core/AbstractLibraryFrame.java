@@ -362,7 +362,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
 
     // for open/save/save-as actions
     void save() throws IOException {
-        PatchEdit.showWaitDialog();
+        PatchEdit.showWaitDialog("Saving " + filename + "...");
         try {
             FileOutputStream f = new FileOutputStream(filename);
             ObjectOutputStream s = new ObjectOutputStream(f);
@@ -371,10 +371,10 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
             s.close();
             f.close();
             changed = false;
-            PatchEdit.hideWaitDialog();
         } catch (IOException e) {
-            PatchEdit.hideWaitDialog();
             throw e;
+        } finally {
+            PatchEdit.hideWaitDialog();
         }
     }
 

@@ -504,7 +504,7 @@ final class Actions {
     /** Create a new Library Window and load a Library from disk to
 	fill it! Fun! */
     static void openFrame(File file) {
-        PatchEdit.showWaitDialog();
+        PatchEdit.showWaitDialog("Loading " + file + " ...");
         AbstractLibraryFrame frame = new LibraryFrame(file);
         // try LibraryFrame then SceneFrame
         try {
@@ -519,6 +519,8 @@ final class Actions {
                 return;
             }
         }
+        PatchEdit.hideWaitDialog();
+
         frame.setVisible(true);
         JSLDesktop.add(frame);
         try {
@@ -526,7 +528,6 @@ final class Actions {
         } catch (PropertyVetoException e) {
             ErrorMsg.reportStatus(e);
         }
-        PatchEdit.hideWaitDialog();
     }
 
     /** This one saves a Library to Disk */
@@ -1083,13 +1084,15 @@ final class Actions {
 		 "Delete Duplicate Patches",
 		 JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 		return;
-	    PatchEdit.showWaitDialog();
+	    PatchEdit.showWaitDialog("Deleting duplicates...");
             try {
 		((LibraryFrame) JSLDesktop.getSelectedFrame()).deleteDuplicates();
 	    } catch (Exception ex) {
+	        PatchEdit.hideWaitDialog();
 		ErrorMsg.reportError("Error", "Library to Delete Duplicates in must be Focused", ex);
+		return;
 	    }
-            PatchEdit.hideWaitDialog();
+	    PatchEdit.hideWaitDialog();
         }
     }
 

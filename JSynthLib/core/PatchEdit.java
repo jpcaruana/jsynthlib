@@ -16,7 +16,6 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 public final class PatchEdit  {
@@ -140,20 +139,15 @@ public final class PatchEdit  {
 
     ////////////////////////////////////////////////////////////////////////
     public static void showWaitDialog() {
-	waitDialog.setVisible(true);
+	waitDialog.showDialog("Please wait until the operation is completed.");
+    }
+
+    public static void showWaitDialog(String s) {
+	waitDialog.showDialog(s);
     }
 
     public static void hideWaitDialog() {
-	waitDialog.setVisible(false);
-    }
-
-    private class WaitDialog extends JDialog {
-	WaitDialog(JFrame parent) {
-	    super(parent,
-		  "Please wait while the operation is completed", false);
-	    setSize(350, 24);
-	    Utility.centerDialog(this);
-	}
+	waitDialog.hideDialog();
     }
 
     ////////////////////////////////////////////////////////////////////////
