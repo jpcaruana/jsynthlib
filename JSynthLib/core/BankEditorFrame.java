@@ -88,12 +88,12 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         table.addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
 		    if (e.isPopupTrigger())
-			PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
+			Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
 		}
 
 		public void mouseReleased(MouseEvent e) {
 		    if (e.isPopupTrigger())
-			PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
+			Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
 		}
 		public void mouseClicked(MouseEvent e) {
 		    if (e.getClickCount() == 2)
@@ -111,15 +111,15 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		public void JSLFrameIconified(JSLFrameEvent e) {
 		}
 		public void JSLFrameActivated(JSLFrameEvent e) {
-		    PatchEdit.setEnabled(false,
-					 Actions.EN_GET
-					 // not available yet!
-					 | Actions.EN_SEND_TO
-					 | Actions.EN_REASSIGN);
-		    PatchEdit.setEnabled(true,
-					 Actions.EN_IMPORT
-					 | Actions.EN_IMPORT_ALL
-					 | Actions.EN_NEW_PATCH);
+		    Actions.setEnabled(false,
+				       Actions.EN_GET
+				       // not available yet!
+				       | Actions.EN_SEND_TO
+				       | Actions.EN_REASSIGN);
+		    Actions.setEnabled(true,
+				       Actions.EN_IMPORT
+				       | Actions.EN_IMPORT_ALL
+				       | Actions.EN_NEW_PATCH);
 		    enableActions();
 		}
 		public void JSLFrameClosing(JSLFrameEvent e) {
@@ -138,7 +138,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		}
 
 		public void JSLFrameDeactivated(JSLFrameEvent e) {
-		    PatchEdit.setEnabled(false, Actions.EN_ALL);
+		    Actions.setEnabled(false, Actions.EN_ALL);
 		}
 	    });
 
@@ -266,7 +266,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     public void pastePatch() {
 	if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
-	    PatchEdit.setEnabled(false, Actions.EN_PASTE);
+	    Actions.setEnabled(false, Actions.EN_PASTE);
     }
     public void pastePatch(Patch p) {
 	pth.importData(table, p);
@@ -291,30 +291,30 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     /** change state of Actions based on the state of the table. */
     private void enableActions() {
-	PatchEdit.setEnabled(table.getRowCount() > 0,
-			     Actions.EN_SAVE
-			     | Actions.EN_SAVE_AS
-			     | Actions.EN_SEARCH);
-	PatchEdit.setEnabled(table.getRowCount() > 1,
-			     Actions.EN_SORT
-			     | Actions.EN_DELETE_DUPLICATES);
+	Actions.setEnabled(table.getRowCount() > 0,
+			   Actions.EN_SAVE
+			   | Actions.EN_SAVE_AS
+			   | Actions.EN_SEARCH);
+	Actions.setEnabled(table.getRowCount() > 1,
+			   Actions.EN_SORT
+			   | Actions.EN_DELETE_DUPLICATES);
 
 	// Why don't we select select at relase one item?
-	PatchEdit.setEnabled(table.getSelectedRowCount() > 0,
-			     Actions.EN_COPY
-			     | Actions.EN_CUT
-			     | Actions.EN_DELETE
-			     | Actions.EN_EXPORT
-			     | Actions.EN_EXTRACT
-			     | Actions.EN_PLAY
-			     | Actions.EN_SEND
-			     | Actions.EN_STORE);
+	Actions.setEnabled(table.getSelectedRowCount() > 0,
+			   Actions.EN_COPY
+			   | Actions.EN_CUT
+			   | Actions.EN_DELETE
+			   | Actions.EN_EXPORT
+			   | Actions.EN_EXTRACT
+			   | Actions.EN_PLAY
+			   | Actions.EN_SEND
+			   | Actions.EN_STORE);
 
 	// All entries are of the same type, so we can check the first one....
 	Patch myPatch = myModel.getPatchAt(0, 0);
-	PatchEdit.setEnabled(table.getSelectedRowCount() > 0
-			     && myPatch.getDriver().hasEditor(),
-			     Actions.EN_EDIT);
+	Actions.setEnabled(table.getSelectedRowCount() > 0
+			   && myPatch.getDriver().hasEditor(),
+			   Actions.EN_EDIT);
     }
 
     // Enable pasting

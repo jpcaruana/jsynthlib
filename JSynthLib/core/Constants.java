@@ -6,6 +6,9 @@ package core;
  * @version $Id$
  */
 public class Constants {
+    /** JSynthLib version number */
+    static final String VERSION = "0.20-alpha";
+
     /** Devices Config properties file name */
     public static final String RESOURCE_NAME_DEVICES_CONFIG =
     "synthdrivers.properties";

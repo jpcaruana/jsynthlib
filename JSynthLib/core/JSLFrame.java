@@ -41,7 +41,7 @@ public class JSLFrame {
 	frame_count++;
     }
     static void resetFrameCount() { frame_count = 0; }
-    JFrame getJFrame() { 
+    JFrame getJFrame() {
 	if (proxy instanceof JFrame)
 	    return (JFrame)proxy;
 	else
@@ -155,20 +155,20 @@ public class JSLFrame {
 	public void addJSLFrameListener(JSLFrameListener l) {
 	    listeners.add(l);
 	}
-	
+
 	public void internalFrameActivated(InternalFrameEvent e) {
 	    ErrorMsg.reportStatus("\""+getTitle()+"\" activated.");
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.ACTIVATED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
 	    // Enable pasteAction
-	    PatchEdit.setEnabled(true, Actions.EN_PASTE);
+	    Actions.setEnabled(true, Actions.EN_PASTE);
 	}
 	public void internalFrameClosed(InternalFrameEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.CLOSED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -176,7 +176,7 @@ public class JSLFrame {
 	    }
 	}
 	public void internalFrameClosing(InternalFrameEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.CLOSING);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -187,7 +187,7 @@ public class JSLFrame {
 	}
 	public void internalFrameDeactivated(InternalFrameEvent e) {
 	    ErrorMsg.reportStatus("\""+getTitle()+"\" deactivated.");
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEACTIVATED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -195,7 +195,7 @@ public class JSLFrame {
 	    }
 	}
 	public void internalFrameDeiconified(InternalFrameEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEICONIFIED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -203,7 +203,7 @@ public class JSLFrame {
 	    }
 	}
 	public void internalFrameIconified(InternalFrameEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.ICONIFIED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -211,7 +211,7 @@ public class JSLFrame {
 	    }
 	}
 	public void internalFrameOpened(InternalFrameEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.OPENED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -258,17 +258,17 @@ public class JSLFrame {
 	public void addJSLFrameListener(JSLFrameListener l) {
 	    listeners.add(l);
 	}
-	
+
 	public void setVisible(boolean b) {
 	    if (MacUtils.isMac()) {
 		if (b && getJMenuBar() == null) {
-		    setJMenuBar(PatchEdit.createMenuBar());
+		    setJMenuBar(Actions.createMenuBar());
 		} else if (!b) {
 		    // Remove menubar so frame can be disposed.
 		    // http://archives:archives@lists.apple.com/archives/java-dev/2003/Dec/04/disposingofjframesusescr.001.txt
 		    JMenuBar mb = getJMenuBar();
 		    setJMenuBar(null);
-		    
+
 		    JSLDesktop.getInvisible().getJFrame().requestFocus();
 		    requestFocus();
 		}
@@ -279,7 +279,7 @@ public class JSLFrame {
 	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
 				  +"\" activated.");
 
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(),
 				  JSLFrameEvent.ACTIVATED);
 	    Iterator it = listeners.iterator();
@@ -287,10 +287,10 @@ public class JSLFrame {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
 	    // Enable pasteAction
-	    PatchEdit.setEnabled(true, Actions.EN_PASTE);
+	    Actions.setEnabled(true, Actions.EN_PASTE);
 	}
 	public void windowClosed(WindowEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.CLOSED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -298,7 +298,7 @@ public class JSLFrame {
 	    }
 	}
 	public void windowClosing(WindowEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.CLOSING);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -310,7 +310,7 @@ public class JSLFrame {
 	public void windowDeactivated(WindowEvent e) {
 	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
 				  +"\" deactivated.");
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEACTIVATED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -318,7 +318,7 @@ public class JSLFrame {
 	    }
 	}
 	public void windowDeiconified(WindowEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEICONIFIED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -326,7 +326,7 @@ public class JSLFrame {
 	    }
 	}
 	public void windowIconified(WindowEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.ICONIFIED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -334,7 +334,7 @@ public class JSLFrame {
 	    }
 	}
 	public void windowOpened(WindowEvent e) {
-	    JSLFrameEvent fe = 
+	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.OPENED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
@@ -354,7 +354,7 @@ public class JSLFrame {
 	    JSLDesktop d = JSLDesktop.getInstance();
 	    JFrame f = JSLDesktop.getSelectedWindow();
 	    return (f == this)
-		|| (f == JSLDesktop.getToolBar().getJFrame() 
+		|| (f == JSLDesktop.getToolBar().getJFrame()
 		    && JSLDesktop.getLastSelectedWindow() == this);
 	}
 	void fakeActivate() {

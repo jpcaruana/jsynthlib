@@ -145,32 +145,32 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 		    p.getDriver().sendPatch(p);
 		    gotFocus();
 
-		    PatchEdit.setEnabled(false,
-					 Actions.EN_GET
-					 | Actions.EN_PASTE);
+		    Actions.setEnabled(false,
+				       Actions.EN_GET
+				       | Actions.EN_PASTE);
 
-		    PatchEdit.setEnabled(true,
-					 Actions.EN_COPY
-					 | Actions.EN_EXPORT
-					 | Actions.EN_PLAY
-					 | Actions.EN_REASSIGN
-					 | Actions.EN_SEND
-					 | Actions.EN_SEND_TO
-					 | Actions.EN_STORE);
+		    Actions.setEnabled(true,
+				       Actions.EN_COPY
+				       | Actions.EN_EXPORT
+				       | Actions.EN_PLAY
+				       | Actions.EN_REASSIGN
+				       | Actions.EN_SEND
+				       | Actions.EN_SEND_TO
+				       | Actions.EN_STORE);
 		}
 
 		public void JSLFrameClosed(JSLFrameEvent e) {
 		}
 
 		public void JSLFrameDeactivated(JSLFrameEvent e) {
-		    PatchEdit.setEnabled(false,
-					 Actions.EN_COPY
-					 | Actions.EN_EXPORT
-					 | Actions.EN_PLAY
-					 | Actions.EN_REASSIGN
-					 | Actions.EN_SEND
-					 | Actions.EN_SEND_TO
-					 | Actions.EN_STORE);
+		    Actions.setEnabled(false,
+				       Actions.EN_COPY
+				       | Actions.EN_EXPORT
+				       | Actions.EN_PLAY
+				       | Actions.EN_REASSIGN
+				       | Actions.EN_SEND
+				       | Actions.EN_SEND_TO
+				       | Actions.EN_STORE);
 		    lostFocus();
 		}
 

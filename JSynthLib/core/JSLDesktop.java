@@ -93,16 +93,16 @@ public class JSLDesktop {
 	    putClientProperty("JDesktopPane.dragMode", "outline");
 	    c.add(this, BorderLayout.CENTER);
 
-	    selected.setJMenuBar(PatchEdit.createMenuBar());
+	    selected.setJMenuBar(Actions.createMenuBar());
 	    selected.setVisible(true);
 	}
 	public JMenu createWindowMenu() {
 	    JMenu menuWindow = new JMenu("Window");
 	    if (!MacUtils.isMac()) {
-		menuWindow.add(PatchEdit.prefsAction);
+		menuWindow.add(Actions.prefsAction);
 		menuWindow.setMnemonic(KeyEvent.VK_W);
 	    }
-	    menuWindow.add(PatchEdit.monitorAction);
+	    menuWindow.add(Actions.monitorAction);
 	    return menuWindow;
 	}
 	public void registerFrame(JSLFrame f) {}
@@ -157,7 +157,7 @@ public class JSLDesktop {
 	public void setupInitialMenuBar(JToolBar tb) {
 	    if (invisible != null) {
 		selected = invisible.getJFrame();
-		selected.setJMenuBar(PatchEdit.createMenuBar());
+		selected.setJMenuBar(Actions.createMenuBar());
 		selected.setSize(0,0);
 		selected.setUndecorated(true);
 		//selected.setLocation(0,0x7FFFFFFF);
@@ -168,7 +168,7 @@ public class JSLDesktop {
 
 	    registerFrame(toolbar);
 	    //toolbar.addJSLFrameListener(this);
-	    toolbar.setJMenuBar(PatchEdit.createMenuBar());
+	    toolbar.setJMenuBar(Actions.createMenuBar());
 	    tb.setFloatable(false);
 	    toolbar.getContentPane().add(tb);
 	    toolbar.pack();
@@ -203,7 +203,7 @@ public class JSLDesktop {
 		    ((JSLWindowMenu)it.next()).add(jf);
 		}
 		windows.add(f);
-		jf.setJMenuBar(PatchEdit.createMenuBar());
+		jf.setJMenuBar(Actions.createMenuBar());
 	    }
 	}
 	public void add(JSLFrame f) { registerFrame(f); }
@@ -237,7 +237,7 @@ public class JSLDesktop {
 	    synchronized (in_fake_activation) {
 		if (in_fake_activation.booleanValue())
 		    return;
-		if (f == toolbar && last_selected != null 
+		if (f == toolbar && last_selected != null
 		    && last_selected != toolbar.getJFrame()) {
 		    in_fake_activation = Boolean.TRUE;
 		    last_selected.fakeActivate();
@@ -276,7 +276,7 @@ public class JSLDesktop {
 		}
 	    } else {
 		ErrorMsg.reportStatus("\""+e.getJSLFrame().getTitle()+
-				      "\" closed. " + (windows.size() - 1) + 
+				      "\" closed. " + (windows.size() - 1) +
 				      " windows still open.");
 	    }
 	}

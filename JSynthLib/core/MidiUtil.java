@@ -749,7 +749,7 @@ public final class MidiUtil {
      * @param s string to be output
      */
     public static void log(String s) {
-	PatchEdit.midiMonitorLog(s);
+	Actions.midiMonitorLog(s);
     }
 
     public static void log(String str, MidiMessage msg) {

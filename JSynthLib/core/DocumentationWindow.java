@@ -72,7 +72,7 @@ public class DocumentationWindow extends JDialog
 		try {
 		    // try jar file first
 		    jt.setPage(new java.net.URL("jar:file:JSynthLib-"
-						+ PatchEdit.VERSION
+						+ Constants.VERSION
 						+ ".jar!/"
 						+ url.substring(5)));
 		} catch (java.util.zip.ZipException e) {

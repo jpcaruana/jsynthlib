@@ -34,10 +34,10 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
     public JSLWindowMenu() {
 	super("Window");
 	if (!MacUtils.isMac()) {
-	    add(PatchEdit.prefsAction);
+	    add(Actions.prefsAction);
 	    setMnemonic(KeyEvent.VK_W);
 	}
-	add(PatchEdit.monitorAction);
+	add(Actions.monitorAction);
 	//add(JSLDesktop.toolBarAction);
 	addSeparator();
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -45,7 +45,7 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, mask));
 	addSeparator();
     }
-    public void add(JFrame f) { 
+    public void add(JFrame f) {
 	if (f == null)
 	    return;
 	f.addWindowListener(this);
@@ -65,7 +65,7 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
     public void setSelectedWindow(JFrame f) {
 	if (!windows.containsKey(f))
 	    bg.setSelected(none, true);
-	else 
+	else
 	    bg.setSelected((JSLWindowMenuItem)windows.get(f), true);
     }
 

@@ -105,7 +105,7 @@ public abstract class PatchTransferHandler extends TransferHandler {
     /* Enable  paste action when copying to clipboard. */
     public void exportToClipboard(JComponent comp, Clipboard clip, int action){
 	super.exportToClipboard(comp, clip, action);
-	PatchEdit.setEnabled(true, Actions.EN_PASTE);
+	Actions.setEnabled(true, Actions.EN_PASTE);
     }
 
     /* Transferable containing patch and it's transient information. */

@@ -157,28 +157,28 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 		return;
 
 	    moveToFront();
-	    PatchEdit.saveFrame();
+	    Actions.saveFrame();
 	}
 
 	public void JSLFrameOpened(JSLFrameEvent e) { }
 
 	public void JSLFrameActivated(JSLFrameEvent e) {
-	    PatchEdit.setEnabled(true,
-				 Actions.EN_GET
-				 | Actions.EN_IMPORT
-				 | Actions.EN_IMPORT_ALL
-				 | Actions.EN_NEW_PATCH);
+	    Actions.setEnabled(true,
+			       Actions.EN_GET
+			       | Actions.EN_IMPORT
+			       | Actions.EN_IMPORT_ALL
+			       | Actions.EN_NEW_PATCH);
 	    // not implemented
-	    PatchEdit.setEnabled(false,
-				 Actions.EN_DELETE_DUPLICATES
-				 | Actions.EN_SORT);
+	    Actions.setEnabled(false,
+			       Actions.EN_DELETE_DUPLICATES
+			       | Actions.EN_SORT);
 	    enableActions();
 	}
 
 	public void JSLFrameClosed(JSLFrameEvent e) { }
 
 	public void JSLFrameDeactivated(JSLFrameEvent e) {
-	    PatchEdit.setEnabled(false, Actions.EN_ALL);
+	    Actions.setEnabled(false, Actions.EN_ALL);
 	}
 
 	public void JSLFrameDeiconified(JSLFrameEvent e) { }
@@ -197,7 +197,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 	table.addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
 		    if (e.isPopupTrigger()) {
-			PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
+			Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
 			table2.setRowSelectionInterval
 			    (table2.rowAtPoint(new Point(e.getX(), e.getY())),
 			     table2.rowAtPoint(new Point(e.getX(), e.getY())));
@@ -206,7 +206,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
 		public void mouseReleased(MouseEvent e) {
 		    if (e.isPopupTrigger()) {
-			PatchEdit.showMenuPatchPopup(table2, e.getX(), e.getY());
+			Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
 			table2.setRowSelectionInterval
 			    (table2.rowAtPoint(new Point(e.getX(), e.getY())),
 			     table2.rowAtPoint(new Point(e.getX(), e.getY())));
@@ -245,17 +245,17 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 		    statusBar.setText(myModel.getRowCount() + " Patches");
 		    /*
 		    int c = ((AbstractPatchListModel) e.getSource()).getRowCount();
-		    PatchEdit.setEnabled(c > 0,
-					 Actions.EN_EXPORT
-					 | Actions.EN_SAVE
-					 | Actions.EN_SAVE_AS
-					 | Actions.EN_SEARCH
- 					 | Actions.EN_TRANSFER_SCENE);
+		    Actions.setEnabled(c > 0,
+				       Actions.EN_EXPORT
+				       | Actions.EN_SAVE
+				       | Actions.EN_SAVE_AS
+				       | Actions.EN_SEARCH
+				       | Actions.EN_TRANSFER_SCENE);
 
-		    PatchEdit.setEnabled(c > 1,
-					 Actions.EN_CROSSBREED
-					 | Actions.EN_DELETE_DUPLICATES
-					 | Actions.EN_SORT);
+		    Actions.setEnabled(c > 1,
+				       Actions.EN_CROSSBREED
+				       | Actions.EN_DELETE_DUPLICATES
+				       | Actions.EN_SORT);
 		    */
 		    enableActions();
 		}
@@ -266,22 +266,22 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 		    //ErrorMsg.reportStatus ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
 		    /*
 		    int i = ((ListSelectionModel) e.getSource()).getMaxSelectionIndex();
-		    PatchEdit.setEnabled(i >= 0,
-					 Actions.EN_COPY
-					 | Actions.EN_CUT
-					 | Actions.EN_DELETE
-					 | Actions.EN_EXPORT
-					 | Actions.EN_EXTRACT
-					 | Actions.EN_PLAY
-					 | Actions.EN_REASSIGN
-					 | Actions.EN_SEND
-					 | Actions.EN_SEND_TO
-					 | Actions.EN_STORE
-					 | Actions.EN_UPLOAD);
+		    Actions.setEnabled(i >= 0,
+				       Actions.EN_COPY
+				       | Actions.EN_CUT
+				       | Actions.EN_DELETE
+				       | Actions.EN_EXPORT
+				       | Actions.EN_EXTRACT
+				       | Actions.EN_PLAY
+				       | Actions.EN_REASSIGN
+				       | Actions.EN_SEND
+				       | Actions.EN_SEND_TO
+				       | Actions.EN_STORE
+				       | Actions.EN_UPLOAD);
 
-		    PatchEdit.setEnabled(i >= 0
-					 && myModel.getPatchAt(table.getSelectedRow()).getDriver().hasEditor(),
-					 Actions.EN_EDIT);
+		    Actions.setEnabled(i >= 0
+				       && myModel.getPatchAt(table.getSelectedRow()).getDriver().hasEditor(),
+				       Actions.EN_EDIT);
 		    */
 		    enableActions();
 		}
@@ -291,31 +291,31 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
     /** change state of Actions based on the state of the table. */
     private void enableActions() {
-	PatchEdit.setEnabled(table.getRowCount() > 0,
-			     Actions.EN_SAVE
-			     | Actions.EN_SAVE_AS
-			     | Actions.EN_SEARCH
- 			     | Actions.EN_TRANSFER_SCENE);
+	Actions.setEnabled(table.getRowCount() > 0,
+			   Actions.EN_SAVE
+			   | Actions.EN_SAVE_AS
+			   | Actions.EN_SEARCH
+			   | Actions.EN_TRANSFER_SCENE);
 
-	PatchEdit.setEnabled(table.getRowCount() > 1,
-			     Actions.EN_CROSSBREED);
+	Actions.setEnabled(table.getRowCount() > 1,
+			   Actions.EN_CROSSBREED);
 
-	PatchEdit.setEnabled(table.getSelectedRowCount() > 0,
-			     Actions.EN_COPY
-			     | Actions.EN_CUT
-			     | Actions.EN_DELETE
-			     | Actions.EN_EXPORT
-			     | Actions.EN_EXTRACT
-			     | Actions.EN_PLAY
-			     | Actions.EN_REASSIGN
-			     | Actions.EN_SEND
-			     | Actions.EN_SEND_TO
-			     | Actions.EN_STORE
-			     | Actions.EN_UPLOAD);
+	Actions.setEnabled(table.getSelectedRowCount() > 0,
+			   Actions.EN_COPY
+			   | Actions.EN_CUT
+			   | Actions.EN_DELETE
+			   | Actions.EN_EXPORT
+			   | Actions.EN_EXTRACT
+			   | Actions.EN_PLAY
+			   | Actions.EN_REASSIGN
+			   | Actions.EN_SEND
+			   | Actions.EN_SEND_TO
+			   | Actions.EN_STORE
+			   | Actions.EN_UPLOAD);
 
-	PatchEdit.setEnabled(table.getSelectedRowCount() > 0
-			     && myModel.getPatchAt(table.getSelectedRow()).getDriver().hasEditor(),
-			     Actions.EN_EDIT);
+	Actions.setEnabled(table.getSelectedRowCount() > 0
+			   && myModel.getPatchAt(table.getSelectedRow()).getDriver().hasEditor(),
+			   Actions.EN_EDIT);
     }
 
     // begin PatchBasket methods
@@ -340,15 +340,15 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
                 }
             } else {
 		// No conversion. Try just the original patch....
-                if  (table.getSelectedRowCount() == 0)
-                    myModel.list.add(firstpat);
-                else
-                    myModel.list.add(table.getSelectedRow(), firstpat);
-            }
-        }
-        myModel.fireTableDataChanged();
-        changed = true;
-        //statusBar.setText(myModel.getRowCount() + " Patches");
+		if  (table.getSelectedRowCount() == 0)
+		    myModel.list.add(firstpat);
+		else
+		    myModel.list.add(table.getSelectedRow(), firstpat);
+	    }
+	}
+	myModel.fireTableDataChanged();
+	changed = true;
+	//statusBar.setText(myModel.getRowCount() + " Patches");
     }
 
     public void exportPatch(File file) throws IOException, FileNotFoundException {
@@ -381,7 +381,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
     public void pastePatch() {
 	if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
-	    PatchEdit.setEnabled(false, Actions.EN_PASTE);
+	    Actions.setEnabled(false, Actions.EN_PASTE);
     }
 
     public void pastePatch(Patch p) {
