@@ -109,39 +109,11 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
                   1, 3,
                   fdrNbrBase+5);
     }
-    
-/*    
-    private void addWidgets(JPanel panel, Patch patch) {
-        int i = 0;
-        EnvelopeWidget.Node[] nodes = new EnvelopeWidget.Node[] {
-            new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-            new EnvelopeWidget.Node(0, 100,
-                                    new ParamModel(patch, 30 + i), 0, 0, null, 0, false,
-                                    new CCSender(34, i), null, "Dly", null),
-            new EnvelopeWidget.Node(0, 100,
-                                    new ParamModel(patch, 62 + i), 100, 100, null, 25, false,
-                                    new CCSender(45, i), null, "A", null),
-            new EnvelopeWidget.Node(0, 100,
-                                    new ParamModel(patch, 66 + i), 0, 100,
-                                    new ParamModel(patch, 10 + i), 25, false,
-                                    new CCSender(46, i),
-                                    new CCSender(47, i), "D", "S"),
-            new EnvelopeWidget.Node(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
-            new EnvelopeWidget.Node(0, 100,
-                                    new ParamModel(patch, 55 + i), 0, 0, null, 0, false,
-                                    new CCSender(48, i), null, "R", null),
-        };
-        addWidget(panel,
-                  new EnvelopeWidget("DCA Envelope", patch, nodes),
-                  0, 0, 3, 5, 33);
-    }
-*/
-    private int getLabelWidth(String s) {
-        return (int) (new JLabel(s)).getPreferredSize().getWidth();
-    }
 }
 
 class DM5Sender implements SysexWidget.ISender {
+    private final static int maxTrigNum = 11;
+    private static int lastTrigNum = 99;
     private int param;
     private int trigNum;
     private int max;
@@ -153,30 +125,42 @@ class DM5Sender implements SysexWidget.ISender {
     }
     
     public void send(IPatchDriver driver, int value) {
-        ShortMessage msgMSB = new ShortMessage();
-        ShortMessage msgTrigNumLSB = new ShortMessage();
-        ShortMessage msgTrigNumDataEntry = new ShortMessage();
+        if (trigNum != lastTrigNum) {
+            ShortMessage msgMSB = new ShortMessage();
+            ShortMessage msgTrigNumLSB = new ShortMessage();
+            ShortMessage msgTrigNumDataEntry = new ShortMessage();
+            try {
+                msgMSB.setMessage(ShortMessage.CONTROL_CHANGE,
+                                  driver.getDevice().getChannel() - 1, 99, 0);
+                
+                msgTrigNumLSB.setMessage(ShortMessage.CONTROL_CHANGE,
+                                         driver.getDevice().getChannel() - 1, 98, 0);
+                
+                msgTrigNumDataEntry.setMessage(ShortMessage.CONTROL_CHANGE,
+                                               driver.getDevice().getChannel() - 1, 6, trigNum * 127 / maxTrigNum);
+                
+                driver.send(msgMSB);
+                driver.send(msgTrigNumLSB);
+                driver.send(msgTrigNumDataEntry);
+            } catch  (InvalidMidiDataException e) {
+                ErrorMsg.reportStatus(e);
+            }
+            lastTrigNum = trigNum;            
+
+            try {
+                Thread.sleep (50);
+            } catch (Exception e) {}
+        }
+
         ShortMessage msgParamLSB = new ShortMessage();
         ShortMessage msgValueDataEntry = new ShortMessage();
         try {
-            msgMSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                           driver.getDevice().getChannel() - 1, 99, 0);
-            
-            msgTrigNumLSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                                     driver.getDevice().getChannel() - 1, 98, 0);
-            
-            msgTrigNumDataEntry.setMessage(ShortMessage.CONTROL_CHANGE,
-                                           driver.getDevice().getChannel() - 1, 6, trigNum);
-            
             msgParamLSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                           driver.getDevice().getChannel() - 1, 98, param);
+                                   driver.getDevice().getChannel() - 1, 98, param);
             
             msgValueDataEntry.setMessage(ShortMessage.CONTROL_CHANGE,
-                           driver.getDevice().getChannel() - 1, 6, value * 127 / max);
+                                         driver.getDevice().getChannel() - 1, 6, value * 127 / max);
 
-            driver.send(msgMSB);
-            driver.send(msgTrigNumLSB);
-            driver.send(msgTrigNumDataEntry);
             driver.send(msgParamLSB);
             driver.send(msgValueDataEntry);
         } catch (InvalidMidiDataException e) {
