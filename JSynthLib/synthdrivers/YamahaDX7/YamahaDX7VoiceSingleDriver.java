@@ -53,7 +53,7 @@ public class YamahaDX7VoiceSingleDriver extends Driver
     checksumEnd=160;
     patchNumbers = DX7Constants.PATCH_NUMBERS_VOICE;
     bankNumbers  = DX7Constants.BANK_NUMBERS_SINGLE_VOICE;
-    patchSize=163;
+    //patchSize=163;
     trimSize=163;
     numSysexMsgs=1;         
     sysexRequestDump=new SysexHandler("F0 43 @@ 00 F7");	// theoretically, but not implemented

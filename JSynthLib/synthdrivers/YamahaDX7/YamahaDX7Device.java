@@ -61,7 +61,7 @@ public class YamahaDX7Device extends Device
     infoText=DX7Strings.INFO_TEXT;
 
     // DX7 voice patch - basic patch for all modells of the DX7 family
-    addDriver (0, new YamahaDX7Converter());
+    //addDriver (0, new YamahaDX7Converter());
     addDriver (new YamahaDX7VoiceSingleDriver());
     addDriver (new YamahaDX7VoiceBankDriver());
 
