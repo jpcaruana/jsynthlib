@@ -131,7 +131,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
     /** invoked when the slider is moved. */
     protected void eventListener(ChangeEvent e) {
 	int v = slider.getValue();
-	text.setText(options[v]);
+	text.setText(options[v-getValueMin()]);
 	sendSysex(v);
     }
     /** invoked when mouse wheel is moved. */
@@ -170,7 +170,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
     public void changeOptions(String[] o) {
 	if (o != options) {
 	    options = o;
-	    text.setText(options[getValue()]);
+	    text.setText(options[getValue()-getValueMin()]);
 	}
     }
 }
