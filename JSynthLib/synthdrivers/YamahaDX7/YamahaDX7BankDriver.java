@@ -2,10 +2,25 @@
  * JSynthlib-BankDriver for Yamaha DX7 Mark-I (with Firmware IG114690)
  * =====================================================================
  * @author  Torsten Tittmann
- * email:   Torsten.Tittmann@t-online.de
  * file:    YamahaDX7BankDriver.java
- * date:    15.01.2002
+ * date:    20.05.2002
  * @version 0.1
+ *
+ * Copyright (C) 2002  Torsten.Tittmann@t-online.de
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 package synthdrivers.YamahaDX7;
@@ -53,6 +68,15 @@ public class YamahaDX7BankDriver extends BankDriver
         "Get "+getDriverName()+" Patch",
         JOptionPane.WARNING_MESSAGE
       );
+
+      byte buffer[] = new byte[256*1024];
+      try {
+            while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
+              PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
+          } catch (Exception ex)
+            {
+              ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
+            }
   }
 
 
@@ -441,7 +465,6 @@ public class YamahaDX7BankDriver extends BankDriver
       Patch p = new Patch(sysex);
       p.ChooseDriver();
       PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
-//      ((Driver) (PatchEdit.DriverList.get(p.DriverNum))).calculateChecksum(p);
       return p;
     }catch (Exception e) {ErrorMsg.reportError("Yamaha DX7","Error in DX7 Bank Driver",e);return null;}
   }

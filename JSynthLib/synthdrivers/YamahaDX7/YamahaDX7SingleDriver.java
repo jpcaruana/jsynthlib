@@ -2,10 +2,25 @@
  * JSynthlib-SingleDriver for Yamaha DX7 Mark-I (with Firmware IG114690)
  * =====================================================================
  * @author  Torsten Tittmann
- * email:   Torsten.Tittmann@t-online.de
  * file:    YamahaDX7SingleDriver.java
- * date:    15.01.2002
+ * date:    20.05.2002
  * @version 0.1
+ *
+ * Copyright (C) 2002  Torsten.Tittmann@t-online.de
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 package synthdrivers.YamahaDX7;
@@ -23,7 +38,7 @@ public class YamahaDX7SingleDriver extends Driver
     id="DX7";
     sysexID= "F0430*00011B";
     authors="Torsten Tittmann";
-    // inquiryID= NONE ;         // The DX7-Mark I didn't know dump request!
+    // inquiryID= NONE ;         // The DX7 Mark-I didn't know dump request!
     patchNameStart=151;
     patchNameSize=10;
     deviceIDoffset=2;
@@ -41,13 +56,13 @@ public class YamahaDX7SingleDriver extends Driver
 
   public void storePatch (Patch p, int bankNum,int patchNum)
   {
-    setPatchNum(patchNum);
+    //setPatchNum(patchNum);          // this cause the DX7 to send the sysex of the choosen patch number!
     sendPatch(p);
 
     JOptionPane.showMessageDialog(PatchEdit.instance,
       "The patch has been placed in the edit buffer!\n\nYou must now hold the 'STORE' button on the DX7\nand choose a location (1-32) to store the patch.\n\n(Since the DX7 itself makes no distinction between\nthe 'send'- and 'store'-method of JSynthlib,\nyou can store your patch in the same way\nwith the 'send'-Method, still without the\nPatch-Location-Chooser!)",
       getDriverName()+" Driver",
-      JOptionPane.WARNING_MESSAGE
+      JOptionPane.INFORMATION_MESSAGE
     );
   }
 
@@ -59,6 +74,15 @@ public class YamahaDX7SingleDriver extends Driver
         "Get "+getDriverName()+" Patch",
         JOptionPane.WARNING_MESSAGE
       );
+
+      byte buffer[] = new byte[256*1024];
+      try {
+            while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
+              PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
+          } catch (Exception ex)
+            {
+              ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
+            }
   }
 
 

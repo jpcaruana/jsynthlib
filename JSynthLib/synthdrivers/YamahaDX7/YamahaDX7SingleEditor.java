@@ -2,10 +2,25 @@
  * JSynthlib-SingleEditor for Yamaha DX7 Mark-I (with Firmware IG114690)
  * =====================================================================
  * @author  Torsten Tittmann
- * email:   Torsten.Tittmann@t-online.de
  * file:    YamahaDX7SingleEditor.java
- * date:    15.01.2002
+ * date:    20.05.2002
  * @version 0.1
+ *
+ * Copyright (C) 2002  Torsten.Tittmann@t-online.de
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 package synthdrivers.YamahaDX7;
@@ -20,6 +35,12 @@ import javax.swing.event.*;
 
 class YamahaDX7SingleEditor extends PatchEditorFrame
 {
+  CheckBoxWidget[] OpStatus = new CheckBoxWidget[6];
+
+  int OperatorStatus;  //voice parameter OPERATOR ON/OFF (#155), which isn't stored with the voice.
+
+  DX7OpSender OpStatusSender;
+
   final String [] OnOffName = new String [] {"Off","On"};
 
   final String [] KeyTransposeName = new String [] {"C1","C#1","D1","D#1","E1","F1","F#1","G1","G#1","A1","A#1","B1",
@@ -84,7 +105,8 @@ class YamahaDX7SingleEditor extends PatchEditorFrame
                                                      "C8"};
 
   final String [] KbdCurveName = new String [] {"-Lin","-Exp","+Exp","+Lin"};
-  ImageIcon algoIcon[]=new ImageIcon[32];;
+  ImageIcon algoIcon[]=new ImageIcon[32];
+
 
   public YamahaDX7SingleEditor(Patch patch)
   {
@@ -123,6 +145,10 @@ class YamahaDX7SingleEditor extends PatchEditorFrame
     algoIcon[31]=new ImageIcon("synthdrivers/YamahaDX7/gif/algo32.gif");
     final JLabel l=new JLabel(algoIcon[patch.sysex[6+134]]);
 
+    OperatorStatus = 0x3F;      // binary: 0011 1111, all 6 Operators on; this is default, if a patch is transmitted.
+
+    OpStatusSender = new DX7OpSender(patch, 0); // transmits the Operator status;
+                                                // bitmask=0 to send all 6 bits of OperatorStatus
    
     /*
      *   DX7 Voice Parameter - Common settings
@@ -131,7 +157,7 @@ class YamahaDX7SingleEditor extends PatchEditorFrame
     JPanel cmnPane= new JPanel();
     cmnPane.setLayout(new GridBagLayout());gbc.weightx=0;
     final ScrollBarWidget algo=new ScrollBarWidget("Algorithm",patch,0,31,1,new ParamModel(patch,6+134),new VcedSender(134));
-    addWidget(cmnPane,algo,1,2,7,1,17);
+    addWidget(cmnPane,algo,1,2,6,1,17);
     algo.slider.addChangeListener(new ChangeListener()
     {
       public void stateChanged(ChangeEvent e)
@@ -139,9 +165,9 @@ class YamahaDX7SingleEditor extends PatchEditorFrame
         l.setIcon(algoIcon[algo.slider.getValue()]);
       }
     });
-    addWidget(cmnPane,new ScrollBarWidget("Feedback",patch,0,7,0,new ParamModel(patch,6+135),new VcedSender(135)),1,3,7,1,18);
-    addWidget(cmnPane,new ScrollBarLookupWidget("Key Transpose",patch,0,48,new ParamModel(patch,6+144),new VcedSender(144),KeyTransposeName),1,1,7,1,19);
-    addWidget(cmnPane,new PatchNameWidget(patch,"Name (10 Char.)"),1,0,7,1,0);
+    addWidget(cmnPane,new ScrollBarWidget("Feedback",patch,0,7,0,new ParamModel(patch,6+135),new VcedSender(135)),1,3,6,1,18);
+    addWidget(cmnPane,new ScrollBarLookupWidget("Key Transpose",patch,0,48,new ParamModel(patch,6+144),new VcedSender(144),KeyTransposeName),1,1,6,1,19);
+    addWidget(cmnPane,new PatchNameWidget(patch,"Name (10 Char.)"),1,0,6,1,0);
     gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=1;gbc.gridheight=1;
     cmnPane.add(new JLabel(" "),gbc);
     gbc.gridx=0;gbc.gridy=5;gbc.gridwidth=1;gbc.gridheight=1;
@@ -151,32 +177,15 @@ class YamahaDX7SingleEditor extends PatchEditorFrame
     gbc.gridx=0;gbc.gridy=7;gbc.gridwidth=1;gbc.gridheight=1;
     cmnPane.add(new JLabel(" "),gbc);
 
-    gbc.gridx=1;gbc.gridy=5;gbc.gridwidth=7;gbc.gridheight=1;
+    gbc.gridx=1;gbc.gridy=5;gbc.gridwidth=6;gbc.gridheight=1;
     cmnPane.add(new JLabel("Operator on/off ( not stored as voice-parameter )"),gbc);
-    final CheckBoxWidget op_init = new CheckBoxWidget("1-6       ",patch,new DX7OpModel(patch,0x3F),new DX7OpSender(patch,0x3F));
-    addWidget(cmnPane,op_init,1,6,1,2,-9);
-    op_init.cb.addActionListener (new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          SysexWidget w;
-          for (int i=0; i<widgetList.size();i++)
-          {
-            w= ((SysexWidget)widgetList.get(i));
-	    if (w.paramModel!=null)
-            {
-              w.setValue(p);
-              if (w instanceof CheckBoxWidget) ((CheckBoxWidget)w).cb.setSelected((w.getValue()>0));
-            }
-          }
-        }
-      });
-    addWidget(cmnPane,new CheckBoxWidget("1  ",patch,new DX7OpModel(patch,32),new DX7OpSender(patch,32)),2,6,1,2,-10);
-    addWidget(cmnPane,new CheckBoxWidget("2  ",patch,new DX7OpModel(patch,16),new DX7OpSender(patch,16)),3,6,1,2,-11);
-    addWidget(cmnPane,new CheckBoxWidget("3  ",patch,new DX7OpModel(patch, 8),new DX7OpSender(patch, 8)),4,6,1,2,-12);
-    addWidget(cmnPane,new CheckBoxWidget("4  ",patch,new DX7OpModel(patch, 4),new DX7OpSender(patch, 4)),5,6,1,2,-13);
-    addWidget(cmnPane,new CheckBoxWidget("5  ",patch,new DX7OpModel(patch, 2),new DX7OpSender(patch, 2)),6,6,1,2,-14);
-    addWidget(cmnPane,new CheckBoxWidget("6  ",patch,new DX7OpModel(patch, 1),new DX7OpSender(patch, 1)),7,6,1,2,-15);
+    OpStatus[0] = new CheckBoxWidget("1  ",patch,new DX7OpModel(patch,32),new DX7OpSender(patch,32));
+    OpStatus[1] = new CheckBoxWidget("2  ",patch,new DX7OpModel(patch,16),new DX7OpSender(patch,16));
+    OpStatus[2] = new CheckBoxWidget("3  ",patch,new DX7OpModel(patch, 8),new DX7OpSender(patch, 8));
+    OpStatus[3] = new CheckBoxWidget("4  ",patch,new DX7OpModel(patch, 4),new DX7OpSender(patch, 4));
+    OpStatus[4] = new CheckBoxWidget("5  ",patch,new DX7OpModel(patch, 2),new DX7OpSender(patch, 2));
+    OpStatus[5] = new CheckBoxWidget("6  ",patch,new DX7OpModel(patch, 1),new DX7OpSender(patch, 1));
+    for (int i=0; i<6; i++) addWidget(cmnPane,OpStatus[i],i+1,6,1,2,-10-i);
     gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=6;
     cmnPane.add(l,gbc);
     gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=8;
@@ -378,8 +387,21 @@ class YamahaDX7SingleEditor extends PatchEditorFrame
     pack();
     show();
   }
-}
 
+  public void gotFocus()
+  {
+    p.sysex[6+155] = (byte) OperatorStatus;  // restore Operatorstatus to patch of activated PatchEditorFrame
+
+    for (int i=0; i<6; i++) OpStatus[i].cb.setSelected(OpStatus[i].paramModel.get()>0);
+                                             // synchronize OperatorStatus of Checkboxes and the DX7 synthesizer
+  }
+
+  public void lostFocus()
+  {
+    OperatorStatus = (byte)(p.sysex[6+155]);  // save OperatorStatus of patch of deactivated PatchEditorFrame
+  }
+
+}
 
 /*
  * SysexSender - Voice Parameter
@@ -414,7 +436,7 @@ class VcedSender extends SysexSender
 
 /*
  * SysexSender - Funktion Parameter (are not stored as part of a voice)
- *                                 (Poly/Mono, Pitchbend, Portamento, Modulation Wheel, ...)
+ *               (Poly/Mono, Pitchbend, Portamento, Modulation Wheel, ...)
  */
 class AcedSender extends SysexSender
 {
@@ -439,9 +461,8 @@ class AcedSender extends SysexSender
 
 
 /*
- * SysexSender & ParamModel - Workaround for Operator On/Off Function
- * (since the Operator on/off function isn't stored at a part of the voice
- *  this ParamModel only meet the requirement of CheckBoxWidget()!)
+ * SysexSender & ParamModel for OPERATOR On/Off Function
+ * (OPERATOR parameter is bitmasked)
  */
 class DX7OpSender extends SysexSender
 {
@@ -452,7 +473,7 @@ class DX7OpSender extends SysexSender
 
   public DX7OpSender(Patch p,int bm)
   {
-    patch=p;
+    patch = p;
     bitmask=bm;
     b[0]=(byte)0xF0;
     b[1]=(byte)0x43;
@@ -463,7 +484,10 @@ class DX7OpSender extends SysexSender
 
   public byte [] generate (int value)
   {
+    patch.sysex[6+155] &= 0x3F;  // binary: 11 1111
+
     b[2]=(byte)(16+channel-1);
+
     if (value == 1)
     {
       b[5]=(byte)(patch.sysex[6+155] | bitmask);
@@ -503,6 +527,7 @@ class DX7OpModel extends ParamModel
   public void set(int i)
   {
     patch.sysex[6+155] &= 0x3F;  // binary: 11 1111
+
     if (i == 1)
     {
       patch.sysex[6+155]=(byte)(patch.sysex[6+155] | (bitmask));
