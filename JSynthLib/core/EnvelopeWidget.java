@@ -255,13 +255,10 @@ public class EnvelopeWidget extends SysexWidget {
 
             int sumX = insets.left + DELTA;
             for (int i = 0; i < nodes.length; i++) {
-		int x = getX(i);
-		int y = getY(i);
-
-		sumX += x;
+		sumX += getX(i);
 		// calculate coordinates
 		nodeX[i] = (int) (sumX * scaleX);
-		nodeY[i] = currentHeight - (int) (y * scaleY);
+		nodeY[i] = currentHeight - (int) (getY(i) * scaleY);
 		// draw a rectangle and a line
 		if (g != null) {
 		    g.fillRect(nodeX[i] - 3, nodeY[i] - 3, 6, 6);
@@ -279,13 +276,6 @@ public class EnvelopeWidget extends SysexWidget {
 	    if (nodes[i].invertX)
 		return (nodes[i].maxX - nodes[i].pmodelX.get());
 	    return (nodes[i].pmodelX.get());
-	    // I think the following is the correct code. We need to
-	    // consider min==max && invertX case, don't we?  Hiroo.
-	    /*
-	    int v = (nodes[i].minX == nodes[i].maxX
-		     ? nodes[i].minX : nodes[i].pmodelX.get());
-	    return nodes[i].invertX ? nodes[i].maxX - v : v;
-	    */
         }
 
 	/*
@@ -339,44 +329,59 @@ public class EnvelopeWidget extends SysexWidget {
                 if ((x == oldx) && (y == oldy))
 		    return;
 		// move the selected node one dot by one dot. (Why? Hiroo)
-                if (x - oldx > 0) { // X+
-		    while ((x - nodeX[dragNodeIdx] > DELTA)
-			   && (getX(dragNodeIdx) < dragNode.maxX)
-			   && (dragNode.pmodelX != null)) {
-			if (dragNode.invertX)
-			    dragNode.pmodelX.set(dragNode.pmodelX.get() - 1);
-			else
-			    dragNode.pmodelX.set(dragNode.pmodelX.get() + 1);
-			paintComponent(null);
-		    }
-		} else if (x - oldx < 0) {	// X-
-		    while ((x - nodeX[dragNodeIdx] < -DELTA)
-			   && (getX(dragNodeIdx) > dragNode.minX)
-			   && (dragNode.pmodelX != null)) {
-			if (dragNode.invertX)
-			    dragNode.pmodelX.set(dragNode.pmodelX.get() + 1);
-			else
-			    dragNode.pmodelX.set(dragNode.pmodelX.get() - 1);
-			paintComponent(null);
-		    }
-		}
-                if (y - oldy < 0) { // Y-
-		    while ((y - nodeY[dragNodeIdx] < -DELTA)
-			   && (getY(dragNodeIdx) < dragNode.maxY + dragNode.baseY)
-			   && (dragNode.pmodelY != null)) {
-			dragNode.pmodelY.set(dragNode.pmodelY.get() + 1);
-			paintComponent(null);
-		    }
-		} else if (y - oldy > 0) { // Y+
-		    while ((y - nodeY[dragNodeIdx] > DELTA)
-			   && (getY(dragNodeIdx) > dragNode.minY + dragNode.baseY)
-			   && (dragNode.pmodelY != null)) {
-			dragNode.pmodelY.set(dragNode.pmodelY.get() - 1);
-			paintComponent(null);
-		    }
-		}
-		oldx = x;
-		oldy = y;
+                // and send Sysex Message (added Jan. 7, 2005)
+                if (x != oldx) {
+                    if (x > oldx) { // X+
+                        while ((x - nodeX[dragNodeIdx] > DELTA)
+                                && (getX(dragNodeIdx) < dragNode.maxX)
+                                && (dragNode.pmodelX != null)) {
+                            if (dragNode.invertX)
+                                dragNode.pmodelX
+                                        .set(dragNode.pmodelX.get() - 1);
+                            else
+                                dragNode.pmodelX
+                                        .set(dragNode.pmodelX.get() + 1);
+                            paintComponent(null);
+                        }
+                    } else { // X-
+                        while ((x - nodeX[dragNodeIdx] < -DELTA)
+                                && (getX(dragNodeIdx) > dragNode.minX)
+                                && (dragNode.pmodelX != null)) {
+                            if (dragNode.invertX)
+                                dragNode.pmodelX
+                                        .set(dragNode.pmodelX.get() + 1);
+                            else
+                                dragNode.pmodelX
+                                        .set(dragNode.pmodelX.get() - 1);
+                            paintComponent(null);
+                        }
+                    }
+                    if (dragNode.pmodelX != null)
+                        sendSysex(dragNode.senderX, dragNode.pmodelX.get());
+                    oldx = x;
+                }
+                if (y != oldy) {
+                    if (y < oldy) { // Y-
+                        while ((y - nodeY[dragNodeIdx] < -DELTA)
+                                && (getY(dragNodeIdx) < dragNode.maxY
+                                        + dragNode.baseY)
+                                && (dragNode.pmodelY != null)) {
+                            dragNode.pmodelY.set(dragNode.pmodelY.get() + 1);
+                            paintComponent(null);
+                        }
+                    } else { // Y+
+                        while ((y - nodeY[dragNodeIdx] > DELTA)
+                                && (getY(dragNodeIdx) > dragNode.minY
+                                        + dragNode.baseY)
+                                && (dragNode.pmodelY != null)) {
+                            dragNode.pmodelY.set(dragNode.pmodelY.get() - 1);
+                            paintComponent(null);
+                        }
+                    }
+                    if (dragNode.pmodelY != null)
+                        sendSysex(dragNode.senderY, dragNode.pmodelY.get());
+                    oldy = y;
+                }
 
 		// update JTextField
                 int j = 0;
@@ -401,15 +406,15 @@ public class EnvelopeWidget extends SysexWidget {
                 repaint();
 	    }
 
-            public void mouseReleased(MouseEvent e) {
-		if (dragNode == null)
-		    return;
-		// Send System Exclusive message
-		if (dragNode.pmodelX != null)
-		    sendSysex(dragNode.senderX, dragNode.pmodelX.get());
-		if (dragNode.pmodelY != null)
-		    sendSysex(dragNode.senderY, dragNode.pmodelY.get());
-	    }
+//            public void mouseReleased(MouseEvent e) {
+//		if (dragNode == null)
+//		    return;
+//		// Send System Exclusive message
+//		if (dragNode.pmodelX != null)
+//		    sendSysex(dragNode.senderX, dragNode.pmodelX.get());
+//		if (dragNode.pmodelY != null)
+//		    sendSysex(dragNode.senderY, dragNode.pmodelY.get());
+//	    }
 	}
     }
 
