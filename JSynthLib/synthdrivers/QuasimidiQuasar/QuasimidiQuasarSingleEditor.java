@@ -37,102 +37,102 @@ import javax.swing.border.TitledBorder;
  * @version $Id$
  */
 public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
-
+    
     // Needed here to disable the "Part 2-4" parameters
     private static JTabbedPane oTabs;
-
+    
     private KnobWidget perfValueWidget;
     private KnobWidget[] fx1ParWidgets = new KnobWidget[6];
     private KnobWidget[] fx2ParWidgets = new KnobWidget[9];
-
+    
     public QuasimidiQuasarSingleEditor(Patch iPatch) {
-	    super ("Quasimidi Quasar Performance Editor", iPatch);
-
-	    Patch patch = (Patch) iPatch;
-
+        super ("Quasimidi Quasar Performance Editor", iPatch);
+        
+        Patch patch = (Patch) iPatch;
+        
         oTabs = new JTabbedPane();
         scrollPane.add(oTabs);
-
+        
         // Common Parameter
         oTabs.add(buildCommonWindow(patch), "Performance common");
         // Modulation Matrix
         oTabs.add(buildModulationMatrix(patch), "Modulation matrix");
         // FX 1
         oTabs.add(buildFX1Window(patch), "FX 1");
-	    // FX 2
+        // FX 2
         oTabs.add(buildFX2Window(patch), "FX 2");
-	    // Arpeggiator
-	    oTabs.add(buildArpWindow(patch), "Arpeggiator");
+        // Arpeggiator
+        oTabs.add(buildArpWindow(patch), "Arpeggiator");
         // Part Parameter x 4
-		for (int i = 1; i <= 4; i++) {
-			oTabs.add(buildPartWindow(i, patch), "Part " + i);
-		}
-
-		// Needed for initial tab enabling/disabling
-		changePerfMode	( (int)patch.sysex[9]);
-		changeFX1		( (int)patch.sysex[50]);
-		changeFX2		( (int)patch.sysex[58]);
-
+        for (int i = 1; i <= 4; i++) {
+            oTabs.add(buildPartWindow(i, patch), "Part " + i);
+        }
+        
+        // Needed for initial tab enabling/disabling
+        changePerfMode	( (int)patch.sysex[9]);
+        changeFX1		( (int)patch.sysex[50]);
+        changeFX2		( (int)patch.sysex[58]);
+        
         setSize(500, 600);
-		pack();
-		setVisible(true);
+        pack();
+        setVisible(true);
     }
-
+    
     /**
-    * Common parameter tab
-    */
-	private Container buildCommonWindow(Patch patch) {
-		Box verticalBox = Box.createVerticalBox();
-		GridBagLayout gridbag = new GridBagLayout();
+     * Common parameter tab
+     */
+    private Container buildCommonWindow(Patch patch) {
+        Box verticalBox = Box.createVerticalBox();
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,2,5,2);  // padding
-
-		JPanel commonPanel =  new JPanel();
-		commonPanel.setLayout(gridbag);
-		// Name
-		gbc.gridx = 0;
+        
+        JPanel commonPanel =  new JPanel();
+        commonPanel.setLayout(gridbag);
+        // Name
+        gbc.gridx = 0;
         gbc.gridy = 0;
-		commonPanel.add(new PatchNameWidget("Name", p), gbc);
-		// Performance level
-		gbc.gridx = 1;
+        commonPanel.add(new PatchNameWidget("Name", p), gbc);
+        // Performance level
+        gbc.gridx = 1;
         gbc.gridy = 0;
-		commonPanel.add(new KnobWidget("Performance level", p, 0, 127, 0, new ParamModel(patch, 8), new QuasarSender(0x00, 0x00) ), gbc );
-		// Performance mode
-		gbc.gridx = 2;
+        commonPanel.add(new KnobWidget("Performance level", p, 0, 127, 0, new ParamModel(patch, 8), new QuasarSender(0x00, 0x00) ), gbc );
+        // Performance mode
+        gbc.gridx = 2;
         gbc.gridy = 0;
         ComboBoxWidget perfModeWidget = new ComboBoxWidget("Performance mode", p, new ParamModel(patch, 9), new QuasarSender(0x00, 0x01), QuasarConstants.PERFORMANCE_MODES);
         perfModeWidget.addEventListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					JComboBox oComboBox = (JComboBox)e.getSource();
-					int iPerfMode = oComboBox.getSelectedIndex();
-
-					changePerfMode(iPerfMode);
-				}
-			}
-		});
-		commonPanel.add(perfModeWidget, gbc );
-		commonPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Name, etc.", TitledBorder.CENTER, TitledBorder.CENTER));
-		verticalBox.add(commonPanel, gbc);
-
-		commonPanel =  new JPanel();
-		commonPanel.setLayout(gridbag);
-		// Performance value (Splitkey, detune)
-		gbc.gridx = 1;
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    JComboBox oComboBox = (JComboBox)e.getSource();
+                    int iPerfMode = oComboBox.getSelectedIndex();
+                    
+                    changePerfMode(iPerfMode);
+                }
+            }
+        });
+        commonPanel.add(perfModeWidget, gbc );
+        commonPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Name, etc.", TitledBorder.CENTER, TitledBorder.CENTER));
+        verticalBox.add(commonPanel, gbc);
+        
+        commonPanel =  new JPanel();
+        commonPanel.setLayout(gridbag);
+        // Performance value (Splitkey, detune)
+        gbc.gridx = 1;
         gbc.gridy = 0;
         perfValueWidget = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 10), new QuasarSender(0x00, 0x02) );
-		commonPanel.add(perfValueWidget, gbc );
-		// Free controller number (0 - 97)
-		gbc.gridx = 2;
+        commonPanel.add(perfValueWidget, gbc );
+        // Free controller number (0 - 97)
+        gbc.gridx = 2;
         gbc.gridy = 0;
-		commonPanel.add(new KnobWidget("Free ctrl. no.", p, 0, 97, 0, new ParamModel(patch, 12), new QuasarSender(0x00, 0x04) ), gbc );
-		commonPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Diverse", TitledBorder.CENTER, TitledBorder.CENTER));
-		verticalBox.add(commonPanel, gbc);
-
-		JPanel footCtrlPanel =  new JPanel(new FlowLayout(FlowLayout.CENTER));
-		// Foot controller number
-		footCtrlPanel.add(new KnobWidget("Controller no.", p, 0, 127, 0, new ParamModel(patch, 13), new QuasarSender(0x00, 0x05) ) );
+        commonPanel.add(new KnobWidget("Free ctrl. no.", p, 0, 97, 0, new ParamModel(patch, 12), new QuasarSender(0x00, 0x04) ), gbc );
+        commonPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Diverse", TitledBorder.CENTER, TitledBorder.CENTER));
+        verticalBox.add(commonPanel, gbc);
+        
+        JPanel footCtrlPanel =  new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // Foot controller number
+        footCtrlPanel.add(new KnobWidget("Controller no.", p, 0, 127, 0, new ParamModel(patch, 13), new QuasarSender(0x00, 0x05) ) );
         // Foot control on value
         footCtrlPanel.add(new KnobWidget("On value", p, 0, 127, 0, new ParamModel(patch, 14), new QuasarSender(0x00, 0x06) ) );
         // Foot control off value
@@ -140,29 +140,29 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         // Foot control toggle mode (00h = off, 01h = on)
         footCtrlPanel.add(new ComboBoxWidget("Toggle mode", p, new ParamModel(patch, 16), new QuasarSender(0x00, 0x08), QuasarConstants.SWITCH) );
         footCtrlPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), "Foot controller", TitledBorder.CENTER, TitledBorder.CENTER));
-		verticalBox.add(footCtrlPanel);
-
-		return verticalBox;
-	}
-
-	/**
-	* Modulation matrix tab
-	*/
-	private Container buildModulationMatrix(Patch patch) {
-	    Box verticalBox = Box.createVerticalBox();
-		GridBagLayout gridbag = new GridBagLayout();
+        verticalBox.add(footCtrlPanel);
+        
+        return verticalBox;
+    }
+    
+    /**
+     * Modulation matrix tab
+     */
+    private Container buildModulationMatrix(Patch patch) {
+        Box verticalBox = Box.createVerticalBox();
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,2,5,2);  // padding
-
-		JPanel modPanel =  new JPanel();
-		modPanel.setLayout(gridbag);
-
-		int offset = 0;
-
-		// Sources
-		gbc.gridwidth = 2;
-		gbc.gridx = 0;
+        
+        JPanel modPanel =  new JPanel();
+        modPanel.setLayout(gridbag);
+        
+        int offset = 0;
+        
+        // Sources
+        gbc.gridwidth = 2;
+        gbc.gridx = 0;
         gbc.gridy = 1;
         modPanel.add(new JLabel("Mod. wheel"), gbc );
         gbc.gridx = 0;
@@ -174,7 +174,7 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         gbc.gridx = 0;
         gbc.gridy = 4;
         modPanel.add(new JLabel("Free ctrl."), gbc );
-
+        
         // Destinations
         gbc.gridwidth = 1;
         gbc.gridx = 2;
@@ -201,9 +201,9 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         gbc.gridx = 9;
         gbc.gridy = 0;
         modPanel.add(new JLabel("ARPGT"), gbc );
-
+        
         // Values
-		for(int count = 1; count <= 4; count++) {
+        for(int count = 1; count <= 4; count++) {
             // mod.depth[SOURCEx][DEST1]
             gbc.gridx = 2;
             gbc.gridy = count;
@@ -236,81 +236,81 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
             gbc.gridx = 9;
             gbc.gridy = count;
             modPanel.add(new SpinnerWidget("", p, 0, 127, 0, new ParamModel(patch, 24 + offset), new QuasarSender(0x00, 0x10 + offset ) ), gbc );
-
+            
             offset += 8;
         }
-
-		verticalBox.add(modPanel);
-
-		return verticalBox;
-	}
-
-	/**
-	* FX 1 tab
-	*/
-	private Container buildFX1Window(Patch patch) {
-	    Box verticalBox = Box.createVerticalBox();
-		GridBagLayout gridbag = new GridBagLayout();
+        
+        verticalBox.add(modPanel);
+        
+        return verticalBox;
+    }
+    
+    /**
+     * FX 1 tab
+     */
+    private Container buildFX1Window(Patch patch) {
+        Box verticalBox = Box.createVerticalBox();
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,2,5,2);  // padding
-
+        
         fx1ParWidgets[0] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 51), new QuasarSender(0x00, 0x2B) );
         fx1ParWidgets[1] = new KnobWidget(" ", p, 0, 63, 0, new ParamModel(patch, 52), new QuasarSender(0x00, 0x2C) );
         fx1ParWidgets[2] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 53), new QuasarSender(0x00, 0x2D) );
         fx1ParWidgets[3] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 54), new QuasarSender(0x00, 0x2E) );
         fx1ParWidgets[4] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 55), new QuasarSender(0x00, 0x2F) );
         fx1ParWidgets[5] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 56), new QuasarSender(0x00, 0x30) );
-
-		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		// FX1 Activity
-		tempPanel.add(new CheckBoxWidget("FX 1 activity", p, new ParamModel(patch, 49), new QuasarSender(0x00, 0x29) ) );
-		// FX1 effect typ
-		ComboBoxWidget fx1TypWidget = new ComboBoxWidget("FX 1 typ", p, new ParamModel(patch, 50), new QuasarSender(0x00, 0x2A), QuasarConstants.FX1_EFFECTS );
-		fx1TypWidget.addEventListener(new ItemListener() {
-			public void itemStateChanged (ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					JComboBox oComboBox = (JComboBox)e.getSource();
-					int fx1 = oComboBox.getSelectedIndex();
-
-					changeFX1(fx1);
-				}
-			}
-		});
-		tempPanel.add(fx1TypWidget);
-		verticalBox.add(tempPanel);
-
-		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		// FX1 parameter[Page1][Par1]
-		tempPanel.add(fx1ParWidgets[0]);
-		// FX1 parameter[Page1][Par2]
-		tempPanel.add(fx1ParWidgets[1]);
-		// FX1 parameter[Page1][Par3]
-		tempPanel.add(fx1ParWidgets[2]);
-		verticalBox.add(tempPanel);
-
-		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		// FX1 parameter[Page2][Par1]
-		tempPanel.add(fx1ParWidgets[3]);
-		// FX1 parameter[Page2][Par2]
-		tempPanel.add(fx1ParWidgets[4]);
-		// FX1 parameter[Page2][Par3]
-		tempPanel.add(fx1ParWidgets[5]);
-		verticalBox.add(tempPanel);
-
-		return verticalBox;
-	}
-
-	/**
-	* FX 2 tab
-	*/
-	private Container buildFX2Window(Patch patch) {
-	    Box verticalBox = Box.createVerticalBox();
-		GridBagLayout gridbag = new GridBagLayout();
+        
+        JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // FX1 Activity
+        tempPanel.add(new CheckBoxWidget("FX 1 activity", p, new ParamModel(patch, 49), new QuasarSender(0x00, 0x29) ) );
+        // FX1 effect typ
+        ComboBoxWidget fx1TypWidget = new ComboBoxWidget("FX 1 typ", p, new ParamModel(patch, 50), new QuasarSender(0x00, 0x2A), QuasarConstants.FX1_EFFECTS );
+        fx1TypWidget.addEventListener(new ItemListener() {
+            public void itemStateChanged (ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    JComboBox oComboBox = (JComboBox)e.getSource();
+                    int fx1 = oComboBox.getSelectedIndex();
+                    
+                    changeFX1(fx1);
+                }
+            }
+        });
+        tempPanel.add(fx1TypWidget);
+        verticalBox.add(tempPanel);
+        
+        tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // FX1 parameter[Page1][Par1]
+        tempPanel.add(fx1ParWidgets[0]);
+        // FX1 parameter[Page1][Par2]
+        tempPanel.add(fx1ParWidgets[1]);
+        // FX1 parameter[Page1][Par3]
+        tempPanel.add(fx1ParWidgets[2]);
+        verticalBox.add(tempPanel);
+        
+        tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // FX1 parameter[Page2][Par1]
+        tempPanel.add(fx1ParWidgets[3]);
+        // FX1 parameter[Page2][Par2]
+        tempPanel.add(fx1ParWidgets[4]);
+        // FX1 parameter[Page2][Par3]
+        tempPanel.add(fx1ParWidgets[5]);
+        verticalBox.add(tempPanel);
+        
+        return verticalBox;
+    }
+    
+    /**
+     * FX 2 tab
+     */
+    private Container buildFX2Window(Patch patch) {
+        Box verticalBox = Box.createVerticalBox();
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,2,5,2);  // padding
-
+        
         fx2ParWidgets[0] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 59), new QuasarSender(0x00, 0x33) );
         fx2ParWidgets[1] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 60), new QuasarSender(0x00, 0x34) );
         fx2ParWidgets[2] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 61), new QuasarSender(0x00, 0x35) );
@@ -320,165 +320,162 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         fx2ParWidgets[6] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 65), new QuasarSender(0x00, 0x39) );
         fx2ParWidgets[7] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 66), new QuasarSender(0x00, 0x3A) );
         fx2ParWidgets[8] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 67), new QuasarSender(0x00, 0x3B) );
-
-		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		// FX2 Activity
-		tempPanel.add(new CheckBoxWidget("FX 2 activity", p, new ParamModel(patch, 57), new QuasarSender(0x00, 0x31) ) );
-		// FX2 effect typ
-		ComboBoxWidget fx2TypWidget = new ComboBoxWidget("FX 2 typ", p, new ParamModel(patch, 58), new QuasarSender(0x00, 0x32), QuasarConstants.FX2_EFFECTS );
-		fx2TypWidget.addEventListener(new ItemListener() {
-			public void itemStateChanged (ItemEvent e) {
-				JComboBox oComboBox = (JComboBox)e.getSource();
-				int fx2 = oComboBox.getSelectedIndex();
-
-				changeFX2(fx2);
-			}
-		});
-		tempPanel.add(fx2TypWidget);
-		verticalBox.add(tempPanel);
-
-		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		// FX2 parameter[Page1][Par1]
-		tempPanel.add(fx2ParWidgets[0]);
-		// FX2 parameter[Page1][Par2]
-		tempPanel.add(fx2ParWidgets[1]);
-		// FX2 parameter[Page1][Par3]
-		tempPanel.add(fx2ParWidgets[2]);
-		verticalBox.add(tempPanel);
-
-		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		// FX2 parameter[Page2][Par1]
-		tempPanel.add(fx2ParWidgets[3]);
-		// FX2 parameter[Page2][Par2]
-		tempPanel.add(fx2ParWidgets[4]);
-		// FX2 parameter[Page2][Par3]
-		tempPanel.add(fx2ParWidgets[5]);
-		verticalBox.add(tempPanel);
-
-		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		// FX2 parameter[Page3][Par1]
-		tempPanel.add(fx2ParWidgets[6]);
-		// FX2 parameter[Page3][Par2]
-		tempPanel.add(fx2ParWidgets[7]);
-		// FX2 parameter[Page3][Par3]
-		tempPanel.add(fx2ParWidgets[8]);
-		verticalBox.add(tempPanel);
-
-		return verticalBox;
-	}
-
-	/**
-	* FX 1 tab
-	*/
-	private Container buildArpWindow(Patch patch) {
-	    Box verticalBox = Box.createVerticalBox();
-		GridBagLayout gridbag = new GridBagLayout();
+        
+        JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // FX2 Activity
+        tempPanel.add(new CheckBoxWidget("FX 2 activity", p, new ParamModel(patch, 57), new QuasarSender(0x00, 0x31) ) );
+        // FX2 effect typ
+        ComboBoxWidget fx2TypWidget = new ComboBoxWidget("FX 2 typ", p, new ParamModel(patch, 58), new QuasarSender(0x00, 0x32), QuasarConstants.FX2_EFFECTS );
+        fx2TypWidget.addEventListener(new ItemListener() {
+            public void itemStateChanged (ItemEvent e) {
+                JComboBox oComboBox = (JComboBox)e.getSource();
+                int fx2 = oComboBox.getSelectedIndex();
+                
+                changeFX2(fx2);
+            }
+        });
+        tempPanel.add(fx2TypWidget);
+        verticalBox.add(tempPanel);
+        
+        tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // FX2 parameter[Page1][Par1]
+        tempPanel.add(fx2ParWidgets[0]);
+        // FX2 parameter[Page1][Par2]
+        tempPanel.add(fx2ParWidgets[1]);
+        // FX2 parameter[Page1][Par3]
+        tempPanel.add(fx2ParWidgets[2]);
+        verticalBox.add(tempPanel);
+        
+        tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // FX2 parameter[Page2][Par1]
+        tempPanel.add(fx2ParWidgets[3]);
+        // FX2 parameter[Page2][Par2]
+        tempPanel.add(fx2ParWidgets[4]);
+        // FX2 parameter[Page2][Par3]
+        tempPanel.add(fx2ParWidgets[5]);
+        verticalBox.add(tempPanel);
+        
+        tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // FX2 parameter[Page3][Par1]
+        tempPanel.add(fx2ParWidgets[6]);
+        // FX2 parameter[Page3][Par2]
+        tempPanel.add(fx2ParWidgets[7]);
+        // FX2 parameter[Page3][Par3]
+        tempPanel.add(fx2ParWidgets[8]);
+        verticalBox.add(tempPanel);
+        
+        return verticalBox;
+    }
+    
+    /**
+     * FX 1 tab
+     */
+    private Container buildArpWindow(Patch patch) {
+        Box verticalBox = Box.createVerticalBox();
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,2,5,2);  // padding
-
-		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-
-		// Arp on/off & Arpeggiator resolution
-		MultiWidgetParams[] arpPak1Params = new MultiWidgetParams[2];
-		arpPak1Params[0] = new MultiWidgetParams("On/Off", 2);
-		arpPak1Params[1] = new MultiWidgetParams("Resolution", 0, 1, QuasarConstants.ARP_RESOLUTIONS);
-		tempPanel.add(new MultiWidget(arpPak1Params, p, new ParamModel(patch, 68), new QuasarSender(0x00, 0x3C)) );
-		//tempPanel.add(new ArpPak1Widget("On/Off", p, new ParamModel(patch, 68), new QuasarSender(0x00, 0x3C)) );
-
-		// Arpeggiator speed
-
-		// This is needed because the ComboBoxWidget constructor accepts no int arrays
-		Integer[] tempArray = new Integer[QuasarConstants.ARP_SPEED.length];
-		for (int count = 0; count < QuasarConstants.ARP_SPEED.length; count++) {
-			tempArray[count] = new Integer(QuasarConstants.ARP_SPEED[count]);
-		}
-		tempPanel.add(new ComboBoxWidget("Speed", p, new ParamModel(patch, 69), new QuasarSender(0x00, 0x3D), tempArray) );
-		// Arpeggiator gate
-		tempPanel.add(new KnobWidget("Gate", p, 0, 127, 0, new ParamModel(patch, 70), new QuasarSender(0x00, 0x3E) ) );
-		verticalBox.add(tempPanel);
-
-		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		MultiWidgetParams[] arpPak2Params = new MultiWidgetParams[5];
-		arpPak2Params[0] = new MultiWidgetParams("Sync", 5, 6, QuasarConstants.ARP_SYNC);
-		arpPak2Params[1] = new MultiWidgetParams("Direction", 3, 4, QuasarConstants.ARP_DIRECTIONS);
-		arpPak2Params[2] = new MultiWidgetParams("Sort", 2);
-		arpPak2Params[3] = new MultiWidgetParams("Hold", 1);
-		arpPak2Params[4] = new MultiWidgetParams("Dyn", 0);
-		tempPanel.add(new MultiWidget(arpPak2Params, p, new ParamModel(patch, 71), new QuasarSender(0x00, 0x3F)) );
-		//tempPanel.add(new ArpPak2Widget("", p, new ParamModel(patch, 71), new QuasarSender(0x00, 0x3F)) );
-		verticalBox.add(tempPanel);
-
-		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		MultiWidgetParams[] arpPak3Params = new MultiWidgetParams[4];
-		arpPak3Params[0] = new MultiWidgetParams("Track", 3, 6, QuasarConstants.ARP_TRACKS);
-		arpPak3Params[1] = new MultiWidgetParams("Thru", 2);
-		arpPak3Params[2] = new MultiWidgetParams("Out", 1);
-		arpPak3Params[3] = new MultiWidgetParams("Freeze", 0);
-		tempPanel.add(new MultiWidget(arpPak3Params, p, new ParamModel(patch, 72), new QuasarSender(0x00, 0x40)) );
-		//tempPanel.add(new ArpPak3Widget("", p, new ParamModel(patch, 72), new QuasarSender(0x00, 0x40)) );
-		verticalBox.add(tempPanel);
-
-		return verticalBox;
-	}
-
-	/**
-    * Performance part parameter tab
-    */
-	private Container buildPartWindow(final int partNo, Patch patch) {
-	    int offset = QuasarConstants.PART_SIZE * (partNo - 1);
-
-		Box verticalBox = Box.createVerticalBox();
-		GridBagLayout gridbag = new GridBagLayout();
+        
+        JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        
+        // Arp on/off & Arpeggiator resolution
+        MultiWidgetParams[] arpPak1Params = new MultiWidgetParams[2];
+        arpPak1Params[0] = new MultiWidgetParams("On/Off", 2);
+        arpPak1Params[1] = new MultiWidgetParams("Resolution", 0, 1, QuasarConstants.ARP_RESOLUTIONS);
+        tempPanel.add(new MultiWidget(arpPak1Params, p, new ParamModel(patch, 68), new QuasarSender(0x00, 0x3C)) );
+        
+        // Arpeggiator speed
+        
+        // This is needed because the ComboBoxWidget constructor accepts no int arrays
+        Integer[] tempArray = new Integer[QuasarConstants.ARP_SPEED.length];
+        for (int count = 0; count < QuasarConstants.ARP_SPEED.length; count++) {
+            tempArray[count] = new Integer(QuasarConstants.ARP_SPEED[count]);
+        }
+        tempPanel.add(new ComboBoxWidget("Speed", p, new ParamModel(patch, 69), new QuasarSender(0x00, 0x3D), tempArray) );
+        // Arpeggiator gate
+        tempPanel.add(new KnobWidget("Gate", p, 0, 127, 0, new ParamModel(patch, 70), new QuasarSender(0x00, 0x3E) ) );
+        verticalBox.add(tempPanel);
+        
+        tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        MultiWidgetParams[] arpPak2Params = new MultiWidgetParams[5];
+        arpPak2Params[0] = new MultiWidgetParams("Sync", 5, 6, QuasarConstants.ARP_SYNC);
+        arpPak2Params[1] = new MultiWidgetParams("Direction", 3, 4, QuasarConstants.ARP_DIRECTIONS);
+        arpPak2Params[2] = new MultiWidgetParams("Sort", 2);
+        arpPak2Params[3] = new MultiWidgetParams("Hold", 1);
+        arpPak2Params[4] = new MultiWidgetParams("Dyn", 0);
+        tempPanel.add(new MultiWidget(arpPak2Params, p, new ParamModel(patch, 71), new QuasarSender(0x00, 0x3F)) );        
+        verticalBox.add(tempPanel);
+        
+        tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        MultiWidgetParams[] arpPak3Params = new MultiWidgetParams[4];
+        arpPak3Params[0] = new MultiWidgetParams("Track", 3, 6, QuasarConstants.ARP_TRACKS);
+        arpPak3Params[1] = new MultiWidgetParams("Thru", 2);
+        arpPak3Params[2] = new MultiWidgetParams("Out", 1);
+        arpPak3Params[3] = new MultiWidgetParams("Freeze", 0);
+        tempPanel.add(new MultiWidget(arpPak3Params, p, new ParamModel(patch, 72), new QuasarSender(0x00, 0x40)) );
+        verticalBox.add(tempPanel);
+        
+        return verticalBox;
+    }
+    
+    /**
+     * Performance part parameter tab
+     */
+    private Container buildPartWindow(final int partNo, Patch patch) {
+        int offset = QuasarConstants.PART_SIZE * (partNo - 1);
+        
+        Box verticalBox = Box.createVerticalBox();
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,2,5,2);  // padding
-
-		JPanel partPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-
-		int cardInFirstSlot		= ( (QuasimidiQuasarDevice)p.getDevice() ).getCardInFirstSlot();
-		int cardInSecondSlot	= ( (QuasimidiQuasarDevice)p.getDevice() ).getCardInSecondSlot();
-		int banks = QuasarConstants.BANK_NAMES.length;
-
-		// If a card is in the second slot it is not relevant
-		// for the number of banks if a card is also in the first slot
-		// so process this first
-		if (cardInSecondSlot > 0) {
-			banks += 4;
-		}
-		else if (cardInFirstSlot > 0) {
-			banks += 2;
-		}
-
-		String bankNames[] = new String[banks];
-		// Copy the bank names from the default banks to the temporary array
-		int count = 0;
-		for ( ; count < QuasarConstants.BANK_NAMES.length; count++) {
-			bankNames[count] = QuasarConstants.BANK_NAMES[count];
-		}
-
-		if (banks > QuasarConstants.BANK_NAMES.length) {
-			if (cardInFirstSlot > 0) {
-				// No ++count here as the count is incremented enough in the for loop!
-				bankNames[count] = QuasarConstants.CARDS[cardInFirstSlot] + " Bank 1";
-				bankNames[++count] = QuasarConstants.CARDS[cardInFirstSlot] + " Bank 2";
-			}
-			// There is no card in slot 1 but one in slot 2
-			else if (cardInSecondSlot > 0) {
-				bankNames[++count] = "No card in slot 1";
-				bankNames[++count] = "No card in slot 1";
-			}
-
-			if (cardInSecondSlot > 0) {
-				bankNames[++count] = QuasarConstants.CARDS[cardInSecondSlot] + " Bank 1";
-				bankNames[++count] = QuasarConstants.CARDS[cardInSecondSlot] + " Bank 2";
-			}
-		}
-
-		// Bank number (up to 7 w/o cards, up to 11 with cards)
-		partPanel.add(new ComboBoxWidget("Bank No.", p, new ParamModel(patch, 82 + offset), new QuasarSender(partNo, 0x00), bankNames) );
-		// Patch number
-		partPanel.add(new SpinnerWidget("Patch No.", p, 0, 127, 0, new ParamModel(patch, 83 + offset), new QuasarSender(partNo, 0x01) ) );
+        
+        JPanel partPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        
+        int cardInFirstSlot		= ( (QuasimidiQuasarDevice)p.getDevice() ).getCardInFirstSlot();
+        int cardInSecondSlot	= ( (QuasimidiQuasarDevice)p.getDevice() ).getCardInSecondSlot();
+        int banks = QuasarConstants.BANK_NAMES.length;
+        
+        // If a card is in the second slot it is not relevant
+        // for the number of banks if a card is also in the first slot
+        // so process this first
+        if (cardInSecondSlot > 0) {
+            banks += 4;
+        }
+        else if (cardInFirstSlot > 0) {
+            banks += 2;
+        }
+        
+        String bankNames[] = new String[banks];
+        // Copy the bank names from the default banks to the temporary array
+        int count = 0;
+        for ( ; count < QuasarConstants.BANK_NAMES.length; count++) {
+            bankNames[count] = QuasarConstants.BANK_NAMES[count];
+        }
+        
+        if (banks > QuasarConstants.BANK_NAMES.length) {
+            if (cardInFirstSlot > 0) {
+                // No ++count here as the count is incremented enough in the for loop!
+                bankNames[count] = QuasarConstants.CARDS[cardInFirstSlot] + " Bank 1";
+                bankNames[++count] = QuasarConstants.CARDS[cardInFirstSlot] + " Bank 2";
+            }
+            // There is no card in slot 1 but one in slot 2
+            else if (cardInSecondSlot > 0) {
+                bankNames[++count] = "No card in slot 1";
+                bankNames[++count] = "No card in slot 1";
+            }
+            
+            if (cardInSecondSlot > 0) {
+                bankNames[++count] = QuasarConstants.CARDS[cardInSecondSlot] + " Bank 1";
+                bankNames[++count] = QuasarConstants.CARDS[cardInSecondSlot] + " Bank 2";
+            }
+        }
+        
+        // Bank number (up to 7 w/o cards, up to 11 with cards)
+        partPanel.add(new ComboBoxWidget("Bank No.", p, new ParamModel(patch, 82 + offset), new QuasarSender(partNo, 0x00), bankNames) );
+        // Patch number
+        partPanel.add(new SpinnerWidget("Patch No.", p, 0, 127, 0, new ParamModel(patch, 83 + offset), new QuasarSender(partNo, 0x01) ) );
         // Trackmode (00h = muted, 01h = poly, 02h = mono)
         partPanel.add(new ComboBoxWidget("Trackmode", p, new ParamModel(patch, 84 + offset), new QuasarSender(partNo, 0x02), QuasarConstants.TRACKMODE) );
         // Level
@@ -486,11 +483,11 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         // Panorama
         partPanel.add(new ComboBoxWidget("Pan", p, new ParamModel(patch, 86 + offset), new QuasarSender(partNo, 0x04), QuasarConstants.PANORAMA) );
         verticalBox.add(partPanel);
-
+        
         partPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-         // FX1 Send
+        // FX1 Send
         partPanel.add(new KnobWidget("FX1 Send", p, 0, 63, 0, new ParamModel(patch, 87 + offset), new QuasarSender(partNo, 0x05) ) );
-         // FX2 Send
+        // FX2 Send
         partPanel.add(new KnobWidget("FX2 Send", p, 0, 63, 0, new ParamModel(patch, 88 + offset), new QuasarSender(partNo, 0x06) ) );
         // Transpose (18h = no transpose, 00h = -24, 30h = +24)
         partPanel.add(new KnobWidget("Transpose", p, 0, 48, -24, new ParamModel(patch, 89 + offset), new QuasarSender(partNo, 0x07) ) );
@@ -501,7 +498,7 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         // Resonance (Offset value, -64 ... +63, 40h = 0)
         partPanel.add(new KnobWidget("Resonance", p, 0, 127, -64, new ParamModel(patch, 92 + offset), new QuasarSender(partNo, 0x0A) ) );
         verticalBox.add(partPanel);
-
+        
         partPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // EG Attack (Offset value, -64 ... +63, 40h = 0)
         partPanel.add(new KnobWidget("EG Attack", p, 0, 127, -64, new ParamModel(patch, 93 + offset), new QuasarSender(partNo, 0x0B) ) );
@@ -516,7 +513,7 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         // Vibrato delay (Offset value, -64 ... +63, 40h = 0)
         partPanel.add(new KnobWidget("Vibrato delay", p, 0, 127, -64, new ParamModel(patch, 98 + offset), new QuasarSender(partNo, 0x10) ) );
         verticalBox.add(partPanel);
-
+        
         partPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // Velocity curve
         partPanel.add(new ComboBoxWidget("Velocity curve", p, new ParamModel(patch, 99 + offset), new QuasarSender(partNo, 0x11), QuasarConstants.VELOCITY_CURVES) );
@@ -533,81 +530,81 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         // Portamento time
         partPanel.add(new KnobWidget("Portamento time", p, 0, 127, 0, new ParamModel(patch, 105 + offset), new QuasarSender(partNo, 0x17) ) );
         verticalBox.add(partPanel);
-
-		return verticalBox;
-	}
-
-	private void changePerfMode(final int iPerfMode) {
-		int activatedParts = QuasarConstants.PERFORMANCE_HELPER[iPerfMode][0];
-
-		for (int count = 1; count <= 4; count++) {
-			if (count <= activatedParts) {
-				oTabs.setEnabledAt(4 + count, true);
-			}
-			else {
-				oTabs.setEnabledAt(4 + count, false);
-			}
-		}
-		int performanceValue = QuasarConstants.PERFORMANCE_HELPER[iPerfMode][1];
-
-		if (performanceValue > -1) {
-			perfValueWidget.setEnabled(true);
-			perfValueWidget.setLabel(QuasarConstants.PERF_VALUE_HELPER[performanceValue]);
-		}
-		else {
-			perfValueWidget.setEnabled(false);
-			perfValueWidget.setLabel(" ");
-		}
-	}
-
-	private void changeFX1(final int fx1) {
-		int parameterIndex = QuasarConstants.FX1_HELPER[fx1];
-
-		if (parameterIndex > -1) {
-			int maxPar = QuasarConstants.FX1_EFFECTS_PARAMETER[parameterIndex].length;
-
-			for (int count = 0; count < fx1ParWidgets.length; count++) {
-				if (count < maxPar) {
-					fx1ParWidgets[count].setEnabled(true);
-					fx1ParWidgets[count].setLabel(QuasarConstants.FX1_EFFECTS_PARAMETER[parameterIndex][count]);
-				}
-				else {
-					fx1ParWidgets[count].setEnabled(false);
-					fx1ParWidgets[count].setLabel(" ");
-				}
-			}
-		}
-		else {
-			for (int count = 0; count < fx1ParWidgets.length; count++) {
-				fx1ParWidgets[count].setEnabled(false);
-				fx1ParWidgets[count].setLabel(" ");
-			}
-		}
-	}
-
-	private void changeFX2(final int fx2) {
-		int parameterIndex = QuasarConstants.FX2_HELPER[fx2];
-
-		if (parameterIndex > -1) {
-			int maxPar = QuasarConstants.FX2_EFFECTS_PARAMETER[parameterIndex].length;
-
-			for (int count = 0; count < fx2ParWidgets.length; count++) {
-				if (count < maxPar) {
-					fx2ParWidgets[count].setEnabled(true);
-					fx2ParWidgets[count].setLabel(QuasarConstants.FX2_EFFECTS_PARAMETER[parameterIndex][count]);
-				}
-				else {
-					fx2ParWidgets[count].setEnabled(false);
-					fx2ParWidgets[count].setLabel(" ");
-				}
-			}
-		}
-		else {
-			for (int count = 0; count < fx2ParWidgets.length; count++) {
-				fx2ParWidgets[count].setEnabled(false);
-				fx2ParWidgets[count].setLabel(" ");
-			}
-		}
-	}
-
+        
+        return verticalBox;
+    }
+    
+    private void changePerfMode(final int iPerfMode) {
+        int activatedParts = QuasarConstants.PERFORMANCE_HELPER[iPerfMode][0];
+        
+        for (int count = 1; count <= 4; count++) {
+            if (count <= activatedParts) {
+                oTabs.setEnabledAt(4 + count, true);
+            }
+            else {
+                oTabs.setEnabledAt(4 + count, false);
+            }
+        }
+        int performanceValue = QuasarConstants.PERFORMANCE_HELPER[iPerfMode][1];
+        
+        if (performanceValue > -1) {
+            perfValueWidget.setEnabled(true);
+            perfValueWidget.setLabel(QuasarConstants.PERF_VALUE_HELPER[performanceValue]);
+        }
+        else {
+            perfValueWidget.setEnabled(false);
+            perfValueWidget.setLabel(" ");
+        }
+    }
+    
+    private void changeFX1(final int fx1) {
+        int parameterIndex = QuasarConstants.FX1_HELPER[fx1];
+        
+        if (parameterIndex > -1) {
+            int maxPar = QuasarConstants.FX1_EFFECTS_PARAMETER[parameterIndex].length;
+            
+            for (int count = 0; count < fx1ParWidgets.length; count++) {
+                if (count < maxPar) {
+                    fx1ParWidgets[count].setEnabled(true);
+                    fx1ParWidgets[count].setLabel(QuasarConstants.FX1_EFFECTS_PARAMETER[parameterIndex][count]);
+                }
+                else {
+                    fx1ParWidgets[count].setEnabled(false);
+                    fx1ParWidgets[count].setLabel(" ");
+                }
+            }
+        }
+        else {
+            for (int count = 0; count < fx1ParWidgets.length; count++) {
+                fx1ParWidgets[count].setEnabled(false);
+                fx1ParWidgets[count].setLabel(" ");
+            }
+        }
+    }
+    
+    private void changeFX2(final int fx2) {
+        int parameterIndex = QuasarConstants.FX2_HELPER[fx2];
+        
+        if (parameterIndex > -1) {
+            int maxPar = QuasarConstants.FX2_EFFECTS_PARAMETER[parameterIndex].length;
+            
+            for (int count = 0; count < fx2ParWidgets.length; count++) {
+                if (count < maxPar) {
+                    fx2ParWidgets[count].setEnabled(true);
+                    fx2ParWidgets[count].setLabel(QuasarConstants.FX2_EFFECTS_PARAMETER[parameterIndex][count]);
+                }
+                else {
+                    fx2ParWidgets[count].setEnabled(false);
+                    fx2ParWidgets[count].setLabel(" ");
+                }
+            }
+        }
+        else {
+            for (int count = 0; count < fx2ParWidgets.length; count++) {
+                fx2ParWidgets[count].setEnabled(false);
+                fx2ParWidgets[count].setLabel(" ");
+            }
+        }
+    }
+    
 }
