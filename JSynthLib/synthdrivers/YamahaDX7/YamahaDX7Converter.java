@@ -4,7 +4,7 @@
  * @version $Id$
  * @author  Torsten Tittmann
  *
- * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2004 Torsten.Tittmann@gmx.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,8 @@ public class YamahaDX7Converter extends Converter
 		super("SER7-Converter","Torsten Tittmann");
 		
 		sysexID="F0430*00011B";
+		patchSize=275;
+		trimSize=275;
 	}
     
 	

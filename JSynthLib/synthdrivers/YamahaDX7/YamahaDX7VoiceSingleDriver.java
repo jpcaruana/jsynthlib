@@ -4,7 +4,7 @@
  * @version $Id$
  * @author  Torsten Tittmann
  *
- * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2004 Torsten.Tittmann@gmx.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,44 +22,38 @@
  *
  */
 package synthdrivers.YamahaDX7;
+import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import	synthdrivers.YamahaDX7.common.DX7FamilyVoiceSingleDriver;
 import core.*;
 import javax.swing.*;
 
-public class YamahaDX7VoiceSingleDriver extends Driver
+public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 {
-	protected static byte[] initSysex = DX7Constants.INIT_VOICE;
-
 	public YamahaDX7VoiceSingleDriver()
 	{
-		super ("Single","Torsten Tittmann");
-    
-		sysexID= "F0430*00011B";
-		// inquiryID= NONE ;
-		patchNameStart=151;
-		patchNameSize=10;
-		deviceIDoffset=2;
-		checksumOffset=161;
-		checksumStart=6;
-		checksumEnd=160;
-		patchNumbers = DX7Constants.PATCH_NUMBERS_VOICE;
-		bankNumbers  = DX7Constants.BANK_NUMBERS_SINGLE_VOICE;
-		//patchSize=163;	// disabled, because of the behaviour of the SER-7 firmware
-		trimSize=163;
-		numSysexMsgs=1;		
-		sysexRequestDump=new SysexHandler("F0 43 @@ 00 F7");	// theoretically, but not implemented
+		super (	YamahaDX7VoiceConstants.INIT_VOICE,
+			YamahaDX7VoiceConstants.SINGLE_VOICE_PATCH_NUMBERS,
+			YamahaDX7VoiceConstants.SINGLE_VOICE_BANK_NUMBERS
+		);
+	}
+
+
+	public Patch createNewPatch()
+	{
+		return super.createNewPatch();
 	}
 
 
 	public void sendPatch (Patch p)
 	{
-		if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getSwOffMemProtFlag()==1 ) {
+		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 ) {
 			// switch off memory protection of internal voices
-			DX7ParamChanges.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)(0x21), (byte)(0x25));
+			YamahaDX7SysexHelper.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)(0x21), (byte)(0x25));
 		}
 
-		if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDX7sPBPflag()==1 ) {
+		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
 			// make Sys Info available
-			DX7ParamChanges.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
+			YamahaDX7SysexHelper.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
 		}
 
 		sendPatchWorker (p);
@@ -68,115 +62,89 @@ public class YamahaDX7VoiceSingleDriver extends Driver
 
 	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
-		if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getSwOffMemProtFlag()==1 ) {
+		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 ) {
 			// switch off memory protection of internal/cartridge voices
-			DX7ParamChanges.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum+0x21), (byte)(bankNum+0x25));
+			YamahaDX7SysexHelper.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum+0x21), (byte)(bankNum+0x25));
 		} else {
-			if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-				// Information
-				JOptionPane.showMessageDialog(PatchEdit.instance,
-				      getDriverName()+"Driver:"+ DX7Strings.MEMORY_PROTECTION_STRING,
-				      getDriverName()+"Driver",
-				      JOptionPane.INFORMATION_MESSAGE);
+			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
+				// show Information
+				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.MEMORY_PROTECTION_STRING);
 		}
 
 		
-		if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDX7sPBPflag()==1 ) {
+		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
 			// make Sys Info available
-			DX7ParamChanges.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
-			//place patch in the edit buffer 
+			YamahaDX7SysexHelper.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
+			// place patch in the edit buffer 
 			sendPatchWorker(p);
 
 			// internal memory or RAM cartridge?
-			DX7ParamChanges.chBank(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum+0x25));
-			//start storing ...	     (depress Store button)
-			DX7ParamChanges.depressStore.send(getPort(),(byte)(getChannel()+0x10));
-			//put patch in the patch number
-			DX7ParamChanges.chPatch(getPort(), (byte)(getChannel()+0x10), (byte)(patchNum));
-			//... finish storing	     (release Store button)
-			DX7ParamChanges.releaseStore.send(getPort(),(byte)(getChannel()+0x10));
+			YamahaDX7SysexHelper.chBank(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum+0x25));
+			// start storing ...	     (depress Store button)
+			YamahaDX7SysexHelper.depressStore.send(getPort(),(byte)(getChannel()+0x10));
+			// put patch in the patch number
+			YamahaDX7SysexHelper.chPatch(getPort(), (byte)(getChannel()+0x10), (byte)(patchNum));
+			// ... finish storing	     (release Store button)
+			YamahaDX7SysexHelper.releaseStore.send(getPort(),(byte)(getChannel()+0x10));
 		} else {
-			if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-				// Information
-				JOptionPane.showMessageDialog(PatchEdit.instance,
-				      getDriverName()+"Driver:"+ DX7Strings.RECEIVE_STRING,
-				      getDriverName()+"Driver",
-				      JOptionPane.INFORMATION_MESSAGE);
+			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
+				// show Information
+				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.RECEIVE_STRING);
 
-				sendPatchWorker(p);
+			sendPatchWorker(p);
 
-			if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-				// Information
-				JOptionPane.showMessageDialog(PatchEdit.instance,
-				      getDriverName()+"Driver:"+ DX7Strings.STORE_SINGLE_VOICE_STRING,
-				      getDriverName()+"Driver",
-				      JOptionPane.INFORMATION_MESSAGE);
+			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
+				// show Information
+				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.STORE_SINGLE_VOICE_STRING);
 		}
 	}
 
 
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
-		if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDX7sPBPflag()==1 ) {
+		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
 			// make Sys Info available
-			DX7ParamChanges.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
-			// internal memory or RAM cartridge?
-			DX7ParamChanges.chBank(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum+0x25));
+			YamahaDX7SysexHelper.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
+			// internal memory or cartridge?
+			YamahaDX7SysexHelper.chBank(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum+0x25));
 			// which patch do you want
-			DX7ParamChanges.chPatch(getPort(), (byte)(getChannel()+0x10), (byte)(patchNum));
+			YamahaDX7SysexHelper.chPatch(getPort(), (byte)(getChannel()+0x10), (byte)(patchNum));
 		} else {
-			if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-				// Information
-				JOptionPane.showMessageDialog(PatchEdit.instance,
-				      getDriverName()+"Driver:"+ DX7Strings.REQUEST_VOICE_STRING,
-				      "Get "+getDriverName()+"Patch",
-				      JOptionPane.WARNING_MESSAGE);
+			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
+				// show Information
+				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.REQUEST_VOICE_STRING);
 
 			byte buffer[] = new byte[256*1024];
 			try {
 				while (PatchEdit.MidiIn.messagesWaiting(getInPort()) > 0)
 					PatchEdit.MidiIn.readMessage(getInPort(), buffer, 1024);
-				} catch (Exception ex) {
-					ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
-				}
+			} catch (Exception ex) {
+				ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
+			}
 		}
-	}
-
-
-	public Patch createNewPatch()
-	{
-		Patch p = new Patch(initSysex,this);
-
-		return p;
 	}
 
 
 	public JInternalFrame editPatch(Patch p)
 	{
-		if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getSwOffMemProtFlag()==1 ) {
+		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 ) {
 			// switch off memory protection of internal/cartridge voices
-			DX7ParamChanges.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)(0x21), (byte)(0x25));
+			YamahaDX7SysexHelper.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)(0x21), (byte)(0x25));
 		} else {
-			if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-				// Information
-				JOptionPane.showMessageDialog(PatchEdit.instance,
-				      getDriverName()+"Driver:"+ DX7Strings.MEMORY_PROTECTION_STRING,
-				      getDriverName()+"Driver",
-				      JOptionPane.INFORMATION_MESSAGE);
+			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
+				// show Information
+				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.MEMORY_PROTECTION_STRING);
 		}
 
-		if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDX7sPBPflag()==1 ) {
+		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
 			// make Sys Info available
-			DX7ParamChanges.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
+			YamahaDX7SysexHelper.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
 		} else {
-			if ( ((YamahaDX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-				// Information
-				JOptionPane.showMessageDialog(PatchEdit.instance,
-				      getDriverName()+"Driver:"+ DX7Strings.RECEIVE_STRING,
-				      getDriverName()+"Driver",
-				      JOptionPane.INFORMATION_MESSAGE);
+			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
+				// show Information
+				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.RECEIVE_STRING);
 		}
 
-		return new YamahaDX7VoiceEditor(p);
+		return super.editPatch(p);
 	}
 }
