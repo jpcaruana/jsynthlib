@@ -21,8 +21,6 @@
 
 package synthdrivers.AlesisDM5;
 import core.*;
-import java.io.UnsupportedEncodingException;
-import javax.swing.*;
 
 /** Line6 Single Driver. Used for Line6 program patch.
 * @author Jeff Weber

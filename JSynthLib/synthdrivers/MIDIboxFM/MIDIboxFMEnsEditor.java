@@ -35,7 +35,6 @@ import core.CheckBoxWidget;
 import core.ComboBoxWidget;
 import core.PatchEditorFrame;
 import core.ScrollBarWidget;
-import core.KnobWidget;
 
 class MIDIboxFMEnsEditor extends PatchEditorFrame
 {

@@ -255,7 +255,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	    addWidget(panel,new CheckBoxWidget("Decay", patch,new SIDModel(patch,0x15,1+i*4),new SIDSender(patch,0x15,1+i*4)),5,6,1,1,-101);
 	    addWidget(panel,new CheckBoxWidget("Release", patch,new SIDModel(patch,0x15,2+i*4),new SIDSender(patch,0x15,2+i*4)),5,7,1,1,-102);
 	}
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=2;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=2;
 	scrollPane.add(ENVPane,gbc);
 
 
@@ -273,7 +273,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	    addWidget(panel,new ComboBoxWidget("Mode",patch,new SIDModel(patch,0x60+i*3,0,0x7,new int[]{0x0,0x01,0x3,0x7}),new SIDSender(patch,0x60+i*3,0,0x7,new int[]{0x0,0x01,0x3,0x7}),new String []{"off", "unsynced","Sync w/ assigned notes","Sync w/ all notes"}),2,0,5,1,42);
 	    addWidget(panel,new ComboBoxWidget("Waveform",patch,new SIDModel(patch,0x60+i*3,4,0x7),new SIDSender(patch,0x60+i*3,4,0x7),new String []{"SINE", "TRIANGLE","SAW","PULSE","RANDOM"}),3,1,5,1,43);
 	}
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
 	scrollPane.add(LFOPane,gbc);
 
 
@@ -306,7 +306,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
   	addWidget(AFTAPane,new ScrollBarWidget("Init Value",patch,0,127,0,new SIDModel(patch,0x57),new SIDSender(patch,0x57)),0,1,5,1,11);
   	addWidget(AFTAPane,new ScrollBarWidget("Depth",patch,0,127,-64,new SIDModel(patch,0x58),new SIDSender(patch,0x58)),0,2,5,1,12);
 
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
 	scrollPane.add(assignPane,gbc);
 
 
@@ -401,7 +401,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 		    viewPressed();
 		}
 	    });
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
         WAVTPane.add(switchViewButton, gbc);
 
 	// JButton updateWavetableButton = new JButton("Update Wavetable");	
@@ -412,10 +412,10 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 		    sendDumpChanges();
 		}
 	    });
-	gbc.gridx=1;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
+	gbc.gridx=1;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
         WAVTPane.add(updateWavetableButton, gbc);
 
-	gbc.gridx=5;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
+	gbc.gridx=5;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
 	WAVTPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Wavetable",TitledBorder.CENTER,TitledBorder.CENTER));  
 	scrollPane.add(WAVTPane,gbc);
 
@@ -442,7 +442,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	addWidget(FILTPane,new CheckBoxWidget("BP",patch,new SIDModel(patch,0x19,2),new SIDSender(patch,0x19,2)),2,4,1,1,-19);
 	addWidget(FILTPane,new CheckBoxWidget("3O",patch,new SIDModel(patch,0x19,3),new SIDSender(patch,0x19,3)),3,4,1,1,-20);
 
-	gbc.gridx=10;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
+	gbc.gridx=10;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
 	FILTPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Filter",TitledBorder.CENTER,TitledBorder.CENTER));  
 	scrollPane.add(FILTPane,gbc);
 
@@ -500,7 +500,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	addWidget(MODMPane,new CheckBoxWidget("",patch,new SIDModel(patch,0x1c,4),new SIDSender(patch,0x1c,4)),7,7,1,1,-62);
 	addWidget(MODMPane,new CheckBoxWidget("",patch,new SIDModel(patch,0x1c,5),new SIDSender(patch,0x1c,5)),8,7,1,1,-63);
 
-	gbc.gridx=10;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
+	gbc.gridx=10;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
 	MODMPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Modulation Matrix",TitledBorder.CENTER,TitledBorder.CENTER));  
 	scrollPane.add(MODMPane,gbc);
 
@@ -515,7 +515,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	addWidget(CLKPane,new CheckBoxWidget("LFOs", patch,new SIDModel(patch,0x13,1),new SIDSender(patch,0x13,1)),1,2,1,1,-11);
 	addWidget(CLKPane,new CheckBoxWidget("ENVs", patch,new SIDModel(patch,0x13,2),new SIDSender(patch,0x13,2)),1,3,1,1,-12);
 
-	gbc.gridx=10;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
+	gbc.gridx=10;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
 	CLKPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"MIDI Clock Synchronization",TitledBorder.CENTER,TitledBorder.CENTER));  
 	scrollPane.add(CLKPane,gbc);
 

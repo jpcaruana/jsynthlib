@@ -50,7 +50,6 @@ class NRPNSender implements SysexWidget.ISender {
     
     public NRPNSender(int param, int[] conValues) {
         this.param = param;
-        this.max = max;
         this.ccMap = conValues;
     }
     

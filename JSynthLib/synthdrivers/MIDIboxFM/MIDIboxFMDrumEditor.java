@@ -36,9 +36,7 @@ import javax.swing.event.ChangeEvent;
 import core.Patch;
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.EnvelopeWidget;
 import core.PatchEditorFrame;
-import core.ScrollBarWidget;
 import core.KnobWidget;
 
 class MIDIboxFMDrumEditor extends PatchEditorFrame

@@ -40,8 +40,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ChangeListener;
@@ -261,7 +259,7 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 	    addWidget(panel,new CheckBoxWidget("LFOs", patch,new MIDIboxFMModel(patch,0x72,1),new MIDIboxFMSender(patch,0x00,0x72,1)),3,1,1,1,-4);
 	    addWidget(panel,new CheckBoxWidget("EG5", patch,new MIDIboxFMModel(patch,0x72,2),new MIDIboxFMSender(patch,0x00,0x72,2)),6,1,1,1,-5);
 	}
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=2;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=2;
 	LeftPanel.add(syncPane,gbc);
 
 
@@ -323,7 +321,7 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 			viewPressed();
 		    }
 		});
-	    gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
+	    gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
 	    panel.add(switchViewButton, gbc);
 
 	    // JButton updateWavetableButton = new JButton("Update Wavetable");	
@@ -334,10 +332,10 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 			sendDumpChanges();
 		    }
 		});
-	    gbc.gridx=1;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
+	    gbc.gridx=1;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
 	    panel.add(updateWavetableButton, gbc);
 	}
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=10;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=10;
 	LeftPanel.add(WAVTPane,gbc);
 
 
@@ -570,7 +568,7 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 	    gbc.gridx=0;gbc.gridy=7;gbc.gridwidth=10;gbc.gridheight=3;
 	    panel.add(potpanel,gbc);
 	}
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
         RightPanel.add(EGPane,gbc);
 
 
@@ -592,7 +590,7 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 	    addWidget(panel,new ComboBoxWidget("Mode",patch,new MIDIboxFMModel(patch,0x40+i*16,0,0x7,new int[]{0x0,0x01,0x05}),new MIDIboxFMSender(patch,0x00,0x40+i*16,0,0x7,new int[]{0x0,0x01,0x05}),new String []{"off", "unsynced","synced"}),0,3,2,1,-30);
 	    addWidget(panel,new ComboBoxWidget("Waveform",patch,new MIDIboxFMModel(patch,0x40+i*16,4,0x7),new MIDIboxFMSender(patch,0x00,0x40+i*16,4,0x7),new String []{"SINE", "TRIANGLE","SAW","PULSE","RANDOM"}),2,3,3,1,-31);
 	}
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=2;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=2;
 	RightPanel.add(LFOPane,gbc);
 
 
@@ -625,7 +623,7 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
   	addWidget(AFTAPane,new ScrollBarWidget("Init Value",patch,0,127,0,new MIDIboxFMModel(patch,0x5d),new MIDIboxFMSender(patch,0x00,0x5d)),0,1,5,1,69);
   	addWidget(AFTAPane,new ScrollBarWidget("Depth",patch,0,127,-64,new MIDIboxFMModel(patch,0x5e),new MIDIboxFMSender(patch,0x00,0x5e)),0,2,5,1,70);
 
-	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
+	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
 	RightPanel.add(assignPane,gbc);
 
 

@@ -26,9 +26,6 @@ package synthdrivers.MIDIboxFM;
 
 import core.*;
 
-import java.io.*;
-import javax.swing.*;
-
 import synthdrivers.MIDIboxFM.MIDIboxFMBankDriver;
 import synthdrivers.MIDIboxFM.MIDIboxFMPatchDriver;
 
