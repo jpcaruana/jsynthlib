@@ -65,7 +65,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
 
         // create Table
         myModel = createTableModel();
-        table = createTable();
+        createTable();
 
         //Create the scroll pane and add the table to it.
         final JScrollPane scrollPane = new JScrollPane(table);
@@ -101,8 +101,8 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     abstract void frameActivated();
     abstract void enableActions();
 
-    private JTable createTable() {
-        final JTable table = new JTable(myModel);
+    private void createTable() {
+        table = new JTable(myModel);
 
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.addMouseListener(new MouseAdapter() {
@@ -150,7 +150,6 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
                         enableActions();
                     }
                 });
-        return table;
     }
 
     private class MyFrameListener implements JSLFrameListener {
