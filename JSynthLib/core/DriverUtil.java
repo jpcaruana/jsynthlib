@@ -145,7 +145,7 @@ public class DriverUtil {
      *            end offset
      * @param ofs
      *            offset of the checksum data
-     * @see IPatchDriver#calculateChecksum(IPatch)
+     * @see Driver#calculateChecksum(Patch)
      */
     public static void calculateChecksum(byte[] sysex, int start, int end, int ofs) {
         int sum = 0;

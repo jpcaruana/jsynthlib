@@ -190,7 +190,6 @@ public class SysexRoutines
    *                    compression starts after the header
    * @param msBit the starting (most significant) bit
    * @param bitSize the number of bits to return - 1 to 8
-   * @return int the value of the requested bits
    */
   public static void setBits(int value, byte[] sysex, int headerCount,
 							 int msBit, int bitSize)

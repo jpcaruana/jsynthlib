@@ -76,7 +76,7 @@ public class SysexHandler /*implements Serializable*/ {
 
     /**
      * Set Sysex String.
-     * @see #SysexHandler
+     * @see #SysexHandler(String)
      */
     private void setSysex(String src) {
 	//----- Reset instance variables
@@ -306,9 +306,10 @@ public class SysexHandler /*implements Serializable*/ {
     }
 
     /**
-     * Return a byte array where <code>@@</code>, <code>**</code>
-     * etc.. have been replaced by 0.
-     * @see #toSysexMessage(int 0, int 0)
+     * Return a byte array where <code>@@</code>,<code>**</code> etc..
+     * have been replaced by 0. This is equivalent with
+     * <code>toByteArray(0, 0)</code>.
+     * @see #toSysexMessage(int, int)
      */
     public byte[] toByteArray() {
 	return toByteArray(0, 0);

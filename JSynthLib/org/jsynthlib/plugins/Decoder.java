@@ -60,7 +60,6 @@ public abstract class Decoder implements Cloneable {
     /**
      * Size (in bytes) of the sysex message data, not including the
      * leading 0xF0 or ending 0xF7.
-     * @author ribrdb
      */
     abstract public int getSize();
     /**

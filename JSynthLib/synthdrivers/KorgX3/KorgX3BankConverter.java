@@ -30,7 +30,7 @@ public class KorgX3BankConverter extends Converter {
    * The actual conversion. In MIDI data, every 7th byte has
    * the next seven bytes' uppest bits.
    *
-   * @param ip Patch to be converted
+   * @param p Patch to be converted
    * @return Converted patch
    */
   public Patch[] extractPatch (Patch p) {

@@ -9,9 +9,6 @@
 
 package core;
 
-//import java.io.FileNotFoundException;
-//import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -93,7 +90,7 @@ public final class AppConfig {
     }
 
     /**
-     * @throws FileNotFoundException
+     * @throws BackingStoreException
      */
     private static void store() throws BackingStoreException {
     	// This shouldn't be necessary unless the jvm crashes.

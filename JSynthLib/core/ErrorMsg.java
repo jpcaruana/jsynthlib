@@ -3,9 +3,8 @@ import javax.swing.*;
 
 /**
  * This class handles error or warning conditions and debug
- * messages. {@link #reportWarning reportWarning} and {@link
- * #reportError reportError} methods show warning/error message
- * dialogs to the users.  {@link #reportStatus reportStatus} methods
+ * messages. <code>reportWarning</code> and <code>reportError</code> methods show warning/error message
+ * dialogs to the users.  <code>reportStatus</code> methods
  * show debug information to console if a flag is set.<p>
  *
  * The Meaning for the <code>debug</code> variable flag is: (Each

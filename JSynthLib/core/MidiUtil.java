@@ -786,7 +786,6 @@ public final class MidiUtil {
      *
      * @param port port number
      * @param msg MidiMessage
-     * @exception InvalidMidiDataException if an error occurs
      */
     public static void logIn(int port, MidiMessage msg) {
 	log("Port: " + port + " RECV ", msg);
@@ -802,7 +801,6 @@ public final class MidiUtil {
      *
      * @param port port number
      * @param msg MidiMessage
-     * @exception InvalidMidiDataException if an error occurs
      */
     public static void logOut(int port, MidiMessage msg) {
 	log("Port: " + port + " XMIT ", msg);
