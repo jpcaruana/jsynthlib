@@ -25,8 +25,13 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     Receiver output=null;
     MidiDevice md;
     List list = Collections.synchronizedList(new LinkedList());
+    boolean initialized;
     
-    public  JavasoundMidiWrapper(int inport, int outport) throws Exception {
+        // This used to be the constructor with (int,int) params
+	// I needed to change the (int,int) constructor to some non-constructor thing, because I neede to
+	// have an instance of every eligible midi wrapper ahead of time. - emenaker 2003.03.12
+	public void init(int inport, int outport) throws DriverInitializationException, MidiUnavailableException {
+        initialized = false; 
         currentInport=inport;
         currentOutport=outport;
         faderPort=PatchEdit.appConfig.getFaderPort();
@@ -42,11 +47,11 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
                 md.open(); // This can really throw an MidiUnavailableException on my System
                 
                 if (md.getMaxReceivers()!=0) {
-                    //System.out.println("is possible Destination");
+                    System.out.println("is possible Destination");
                     destinationInfoVector.add(mdi[i]);
                 }
                 if (md.getMaxTransmitters()!=0) {
-                    //System.out.println("is possible Source");
+                    System.out.println("is possible Source");
                     sourceInfoVector.add(mdi[i]);
                 }
             }
@@ -70,6 +75,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
             fader=sourceDevice.getTransmitter();
             fader.setReceiver(this);
         }
+        initialized = true;
     }
     
     public  JavasoundMidiWrapper() throws Exception {
@@ -245,9 +251,14 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	}
 
 	public static boolean supportsPlatform(String platform) {
+            //TODO Add check for JRE 1.4.2 or higher!
 		if(platform.length()==0 || platform.indexOf("Windows")>-1) {
 			return(true);
 		}
 		return(false);
+	}
+        
+        public boolean isReady() {
+		return(initialized);
 	}
 }
