@@ -45,6 +45,7 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
         show();
     }
     
+    /** Adds the System Info pane.*/
     private void addTrigPane(Patch patch) {
         JPanel dm5EditPanel = new JPanel();        
         dm5EditPanel.setLayout(new BoxLayout(dm5EditPanel, BoxLayout.Y_AXIS));
@@ -53,6 +54,7 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
         scrollPane.add(dm5EditPanel,gbc);        
     }
     
+    /** Adds the the widgets to the System Info pane.*/
     private void addWidgets(JPanel panel, Patch patch) {
         addWidget(panel,
                   new CheckBoxWidget("Omni Enable", patch,
@@ -121,11 +123,18 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
                   2);
     }
     
+    /** Model for all parameters of the system info patch
+        */
     class DM5SysInfoModel extends ParamModel {
         public int bitmask;
         public int mult;
         public boolean reverse;
         
+        /** Creates a new DM5SysInfoModel instance. Input is the patch,
+            the offset of the data within the patch, the selected bit of the
+            data, represented by a power of two, and a boolean representing 
+            whether the values are reversed (low to high).
+            */
         public DM5SysInfoModel(Patch p, int o, int b, boolean r) {
             ofs = o; patch = p; bitmask = b; reverse = r;
             if ((bitmask&  1) ==   1) mult =   1; else
@@ -138,6 +147,9 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
                                         if ((bitmask&128) == 128) mult = 128;
         }
         
+        /** Overrides the standard set method to reverse the parameter if reverse
+            = true and then set the selected bit to the value.
+            */
         public void set(int i) {
             if (reverse) {
                 i = (i - 1) * -1;
@@ -145,6 +157,9 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
             patch.sysex[ofs] = (byte) ((i*mult) + (patch.sysex[ofs]&(~bitmask)));
         }
 
+        /** Overrides the standard get method to get the value from the selected
+            bit and then reverse the value if reverse = true .
+            */
         public int get() {
             int returnVal = (patch.sysex[ofs]&bitmask)/mult;
             if (reverse) {
@@ -154,13 +169,18 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
         }
     }
     
-    class DM5SysInfoSender extends SysexSender {
+    /** A sender which sends the whole patch. */
+    private class DM5SysInfoSender extends SysexSender {
         int parameter;
         Patch patch;
+        
+        /** Constructs a DM5SysInfoSender. */
         public DM5SysInfoSender(Patch p, int param) {
             parameter = param;
             patch = p;
         }
+        
+        /** Generate method for sending entire patch. */
         public byte[] generate (int value) {
             patch.sysex[0] = (byte)0xF0;
             return patch.sysex;
