@@ -468,6 +468,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	    frame.open(file);
 	    desktop.add(frame);
 	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
 	    SceneFrame frame2 = new SceneFrame(file);
 	    try {
 		frame2.setVisible(true);
