@@ -103,7 +103,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
 		    eventListener(e);
 		}
 	    });
-	text = new JTextField(options[getValue()], 4);
+	text = new JTextField(options[getValue()-super.getValueMin()], 4);
 	text.setEditable(false);
 
 	if (labelWidth > 0) {
@@ -123,7 +123,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
     /** invoked when the slider is moved. */
     protected void eventListener(ChangeEvent e) {
 	int v = slider.getValue();
-	text.setText(options[v]);
+	text.setText(options[v-getValueMin()]);
 	sendSysex(v);
     }
 
@@ -155,7 +155,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
     public void changeOptions(String[] o) {
 	if (o != options) {
 	    options = o;
-	    text.setText(options[getValue()]);
+	    text.setText(options[getValue()-getValueMin()]);
 	}
     }
 }
