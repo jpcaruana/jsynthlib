@@ -329,7 +329,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		 */
 		private int runningStatus = 0;
 		private boolean thirdByte = false;
-		private final int BUFSIZE = 1024;
+		private static final int BUFSIZE = 1024;
 		private byte[] buf = new byte[BUFSIZE]; // data buffer
 		private int size; // only for Sysex
 
@@ -346,11 +346,11 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			    list.add(msg);
 			} else {
 			    thirdByte = false;
-			    if (c == SysexMessage.SYSTEM_EXCLUSIVE) { // f0
+			    if (c == SysexMessage.SYSTEM_EXCLUSIVE) {
 				runningStatus = c;
 				buf[0] = (byte) c;
 				size = 1;
-			    } else if (c == ShortMessage.END_OF_EXCLUSIVE // f7
+			    } else if (c == ShortMessage.END_OF_EXCLUSIVE
 				       && runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
 				runningStatus = 0;
 				byte[] d = new byte[size + 1];
@@ -359,7 +359,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 				msg = (MidiMessage) new SysexMessage();
 				((SysexMessage) msg).setMessage(d, size);
 				list.add(msg);
-			    } else if (c == ShortMessage.TUNE_REQUEST) { // f6
+			    } else if (c == ShortMessage.TUNE_REQUEST) { // 0xf6
 				// 0 byte message
 				runningStatus = c;
 				msg = (MidiMessage) new ShortMessage();
@@ -378,49 +378,57 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			    ((ShortMessage) msg).setMessage((int) (buf[0] & 0xff),
 							    (int) (buf[1] & 0xff), c);
 			    list.add(msg);
-			} else if (runningStatus == 0) {
-			    ;	// ignore
-			} else if (runningStatus < ShortMessage.PROGRAM_CHANGE // 0xc0
-				   || (runningStatus >= ShortMessage.PITCH_BEND // 0xe0
-				       && runningStatus < SysexMessage.SYSTEM_EXCLUSIVE)) { // 0xf0
-			    // 2 byte message
-			    thirdByte = true;
-			    buf[1] = (byte) c;
-			} else if (runningStatus == ShortMessage.SONG_POSITION_POINTER) { // 0xf2
-			    // 2 byte message
-			    runningStatus = 0;
-			    thirdByte = true;
-			    buf[1] = (byte) c;
-			} else if (runningStatus >= ShortMessage.PROGRAM_CHANGE // 0xc0
-				   && runningStatus < ShortMessage.PITCH_BEND) { // 0xe0
-			    // 1 byte message
-			    msg = (MidiMessage) new ShortMessage();
-			    ((ShortMessage) msg).setMessage((int) (buf[0] & 0xff), c, 0);
-			    list.add(msg);
-			} else if (runningStatus == ShortMessage.MIDI_TIME_CODE // 0xf1
-				   || runningStatus == ShortMessage.SONG_SELECT) { // 0xf3
-			    // 1 byte message
-			    runningStatus = 0;
-			    msg = (MidiMessage) new ShortMessage();
-			    ((ShortMessage) msg).setMessage((int) (buf[0] & 0xff), c, 0);
-			    list.add(msg);
-			} else if (runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) { // 0xf0
-			    buf[size++] = (byte) c;
-			    if (size == buf.length) {
-				// Sysex data buffer is full
-				byte[] d = new byte[size];
-				System.arraycopy(buf, 0, d, 0, size);
-				msg = (MidiMessage) new SysexMessage();
-				((SysexMessage) msg).setMessage(d, size);
-				list.add(msg);
-				// See SysexMessage document.
-				buf[0] = (byte) SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
-				size = 1;
-			    }
 			} else {
-			    // f4 (undef), f5 (undef), f6 (Tune Request), f7 (EOX)
-			    runningStatus = 0;
-			    // ignore Status
+			    switch (runningStatus < 0xf0 ? runningStatus & 0xf0 : runningStatus) {
+			    case 0:
+				break; // ignore
+
+			    case ShortMessage.SONG_POSITION_POINTER: // 0xf2
+				// 2 byte message
+				runningStatus = 0;
+				// FALLTHROUGH
+			    case ShortMessage.NOTE_OFF:		// 0x8n
+			    case ShortMessage.NOTE_ON:		// 0x9n
+			    case ShortMessage.POLY_PRESSURE:	// 0xAn
+			    case ShortMessage.CONTROL_CHANGE:	// 0xBn
+			    case ShortMessage.PITCH_BEND:	// 0xEn
+				// 2 byte message
+				thirdByte = true;
+				buf[1] = (byte) c;
+				break;
+
+			    case ShortMessage.MIDI_TIME_CODE:	// 0xf1
+			    case ShortMessage.SONG_SELECT:	// 0xf3
+				// 1 byte message
+				runningStatus = 0;
+				// FALLTHROUGH
+			    case ShortMessage.PROGRAM_CHANGE:	// 0xCn
+			    case ShortMessage.CHANNEL_PRESSURE:	// 0xDn
+				// 1 byte message
+				msg = (MidiMessage) new ShortMessage();
+				((ShortMessage) msg).setMessage((int) (buf[0] & 0xff), c, 0);
+				list.add(msg);
+				break;
+
+			    case SysexMessage.SYSTEM_EXCLUSIVE:	// 0xf0
+				buf[size++] = (byte) c;
+				if (size == buf.length) {
+				    // Sysex data buffer is full
+				    byte[] d = new byte[size];
+				    System.arraycopy(buf, 0, d, 0, size);
+				    msg = (MidiMessage) new SysexMessage();
+				    ((SysexMessage) msg).setMessage(d, size);
+				    list.add(msg);
+				    // See SysexMessage document.
+				    buf[0] = (byte) SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
+				    size = 1;
+				}
+				break;
+
+			    default: // 0xf4 (undef), 0xf5 (undef), 0xf6 (Tune Request), 0xf7 (EOX)
+				runningStatus = 0;
+				// ignore Status
+			    }
 			}
 		    }
 		}
