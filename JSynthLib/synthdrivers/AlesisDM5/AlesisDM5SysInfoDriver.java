@@ -82,12 +82,10 @@ public class AlesisDM5SysInfoDriver extends Driver {
                                     new SysexHandler.NameValue("channel", getChannel())));
     }
     
-    /** Resets the first byte of the sysex data back to F0. This is done because there
-        is a bug in the core code that sometimes wipes the first few bits. 
+    /** Alesis DM5SysInfoDriver patch does not have checksum. This is overridden
+        * by a null method. 
         */
-    protected void sendPatch(Patch p) {
-        p.sysex[0] = (byte)0xf0;
-        super.sendPatch(p);
+    protected void calculateChecksum(Patch p) {
     }
 
     /** Creates a new system info patch with default values.
