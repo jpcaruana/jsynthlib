@@ -19,6 +19,10 @@ import javax.swing.ProgressMonitor;
 import javax.swing.table.TableColumn;
 ////TODO import org.jsynthlib.midi.*;
 
+/**
+ * @author ???
+ * @version $Id$
+ */
 public class SynthConfigDialog extends JDialog {
     private JTable table;
     private JTable table2;
@@ -44,32 +48,14 @@ public class SynthConfigDialog extends JDialog {
         column = table.getColumnModel ().getColumn (2);
         column.setPreferredWidth (150);
 	JComboBox comboBox;
-	if (PatchEdit.newMidiAPI)
-	    comboBox = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
-	else {
-	    comboBox = new JComboBox();
-	    try {
-		for (int j = 0; j < PatchEdit.MidiOut.getNumInputDevices (); j++)
-		    comboBox.addItem (j + ": " + PatchEdit.MidiOut.getInputDeviceName (j));
-	    } catch (Exception e) {
-		ErrorMsg.reportStatus(e);
-	    }
-	}
+	comboBox = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+
 	column.setCellEditor (new DefaultCellEditor (comboBox));
         column = table.getColumnModel ().getColumn (3);
         column.setPreferredWidth (150);
 
-	if (PatchEdit.newMidiAPI)
-	    comboBox = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
-	else {
-	    comboBox = new JComboBox();
-	    try {
-		for (int j = 0; j < PatchEdit.MidiOut.getNumOutputDevices (); j++)
-		    comboBox.addItem (j + ": " + PatchEdit.MidiOut.getOutputDeviceName (j));
-	    } catch (Exception e) {
-		ErrorMsg.reportStatus(e);
-	    }
-	}
+	comboBox = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
+
 	column.setCellEditor (new DefaultCellEditor (comboBox));
         column = table.getColumnModel ().getColumn (4);
         column.setPreferredWidth (75);
@@ -83,15 +69,7 @@ public class SynthConfigDialog extends JDialog {
 		    scanPressed ();
 		}
 	    });
-
-	// I changed this around a little bit. First, we're no longer comparing against
-	// individual midi wrappers (like JavaMidiWrapper). Second, the scan button is
-	// *always* there... it's just either enabled or disabled. Having GUI items appear
-	// and disappear is probably not a good idea, because a user might go back to where
-	// they *think* they saw a button once, and not find it... leading to general
-	// confusion regarding the interface. - emenaker 2003.03.13
 	buttonPanel.add (scan);
-	scan.setEnabled(MidiWrapper.supportsScanning());
         // END OF ADDED BUTTON
 
         JButton add = new JButton ("Add Device");

@@ -23,13 +23,7 @@ import com.apple.eawt.ApplicationEvent;
 
 //TODO import /*TODO org.jsynthlib.*/midi.*;
 public final class PatchEdit /*implements MidiDriverChangeListener*/ {
-    static final String VERSION = "0.19-alpha";
-
-    // This field will be removed when new MIDI API become stable.
-    static boolean newMidiAPI = true;
-    static MidiWrapper MidiOut;
-    static MidiWrapper MidiIn;
-    static javax.swing.Timer echoTimer;
+    static final String VERSION = "0.20-alpha";
 
     static DevicesConfig devConfig;
     static AppConfig appConfig;
@@ -117,12 +111,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music
-	if (newMidiAPI) {
-	    if (appConfig.getMasterInEnable())
-		enableMasterIn();
-	} else {
-	    beginEcho();
-	}
+	if (appConfig.getMasterInEnable())
+	    enableMasterIn();
     }
 
     // PatchEdit.getInstance() can/should be replaced by
@@ -145,7 +135,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
 	// FaderBoxConfigPanel() have to be called after MidiIn is initialized.
 	FaderBoxConfigPanel faderbox = new FaderBoxConfigPanel(appConfig);
-	midiConfigPanel.addDriverChangeListener(faderbox); // Notify the faderbox, too... - emenaker 2003.03.19
 	prefsDialog.addPanel(faderbox);
 
 	prefsDialog.addPanel(new NoteChooserConfigPanel(appConfig));
@@ -902,12 +891,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	// GetAction->actionPerformed
 	//-----------------------------------------------------------------
 	public void actionPerformed(ActionEvent e) {
-	    if (!newMidiAPI)
-		echoTimer.stop();
 	    SysexGetDialog myDialog = new SysexGetDialog(PatchEdit.getInstance());
 	    myDialog.show();
-	    if (!newMidiAPI)
-		echoTimer.start();
 	}
 
     } // End SubClass: GetAction
@@ -1384,75 +1369,5 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     protected void finalize() {	// ???
 	disableMasterIn();
-    }
-
-    ////////////////////////////////////////////////////////////////////////
-    private static void beginEcho() {
-        echoTimer = new javax.swing.Timer(5, new ActionListener() {
-		public void actionPerformed(ActionEvent evt) {
-		    Patch patch;
-
-		    try {
-			//FIXME there is a bug in the javaMIDI classes
-			//so this routine gets the input messages from
-			//the faderbox as well as the master
-			//controller. I cant figure out a way to fix
-			//it so let's just handle them here.
-			int mstPort = appConfig.getMasterController();
-			if (appConfig.getMasterInEnable() || appConfig.getFaderEnable()) {
-			    while (PatchEdit.MidiIn.messagesWaiting(mstPort) > 0) {
- 				MidiMessage msg = PatchEdit.MidiIn.readMessage(mstPort);
-				ErrorMsg.reportStatus("beginEcho: " + msg);
-				// When no frame is selected this code cose error. Hiroo
-				if (JSLDesktop.getSelectedFrame() instanceof PatchBasket
-				    && (!(JSLDesktop.getSelectedFrame() instanceof PatchEditorFrame))) {
-				    if (JSLDesktop.getSelectedFrame() instanceof LibraryFrame
-					&& ((LibraryFrame) ((JSLDesktop.getSelectedFrame()))).table.getSelectedRowCount() == 0)
-					break; // Is this OK for master controller?
-
-				    patch = ((PatchBasket) JSLDesktop.getSelectedFrame()).GetSelectedPatch();
-				} else
-				    patch = ((PatchEditorFrame) JSLDesktop.getSelectedFrame()).p;
-				if (msg.getStatus() == SysexMessage.SYSTEM_EXCLUSIVE) {
-				    PatchEdit.MidiOut.send(ClipboardUtil.getPatch().getDevice().getPort(),
-							   (SysexMessage) msg);
-				} else {
-				    ShortMessage smsg = (ShortMessage) msg;
-				    int cmd = smsg.getCommand();
-
-				    if (appConfig.getFaderEnable()
-					&& JSLDesktop.getSelectedFrame() instanceof PatchEditorFrame
-					&& cmd == ShortMessage.CONTROL_CHANGE) {
-					sendFaderMessage(smsg);
-				    } else if (cmd == ShortMessage.CHANNEL_PRESSURE) {
-					//do nothing for now
-				    } else {
-					if ((0x80 <= cmd) && (cmd < 0xF0)) { // MIDI channel Voice Message
-					    smsg.setMessage(cmd, patch.getDevice().getChannel() - 1,
-							    smsg.getData1(), smsg.getData2());
-					}
-					PatchEdit.MidiOut.send(patch.getDevice().getPort(), smsg);
-				    }
-				}
-			    }
-			}
-		    } catch (Exception ex) {
-			ErrorMsg.reportStatus(ex);
-		    }
-		}
-	    });
-        echoTimer.start();
-    }
-
-    private static void sendFaderMessage(ShortMessage msg) {
-        int channel = msg.getChannel();
-	int controller = msg.getData1();
-        for (int i = 0; i < Constants.NUM_FADERS; i++) {
-	    if ((appConfig.getFaderController(i) == controller)
-		&& (appConfig.getFaderChannel(i) == channel)) {
-		((PatchEditorFrame) JSLDesktop.getSelectedFrame()).faderMoved((byte) i, (byte) msg.getData2());
-		break;
-	    }
-	}
     }
 }

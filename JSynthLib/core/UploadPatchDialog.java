@@ -27,7 +27,8 @@ public class UploadPatchDialog extends JDialog {
   final JTextArea  t3;
   final JTextField t4;
   final JTextField t5;
-  final JPasswordField t6;
+  //final JPasswordField t6;
+  final JTextField t6;
 
 
   public UploadPatchDialog(JFrame Parent) {
@@ -36,11 +37,11 @@ public class UploadPatchDialog extends JDialog {
 
     String patchType;
     PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-    Patch q	= library.GetSelectedPatch(); 
-    
+    Patch q	= library.GetSelectedPatch();
+
     JPanel container= new JPanel();
     container.setLayout (new BorderLayout());
-    JPanel p4 = new JPanel();   
+    JPanel p4 = new JPanel();
     p4.setLayout (new ColumnLayout());
     JLabel l1 = new JLabel("Patch Type: ");
     t1 = new JTextField(20);
@@ -53,7 +54,7 @@ public class UploadPatchDialog extends JDialog {
     patchType+=" ";
     patchType+=q.getDriver().getModelName();
     t1.setText(patchType);
-	
+
     JLabel l4 = new JLabel("Repository:");
      t4=new JTextField(20);
     t4.setText(PatchEdit.appConfig.getRepositoryURL());
@@ -61,14 +62,15 @@ public class UploadPatchDialog extends JDialog {
      t5=new JTextField(20);
     t5.setText(PatchEdit.appConfig.getRepositoryUser());
     JLabel l6 = new JLabel("Contributor Password: ");
-     t6=new JPasswordField(20);
+    //t6=new JPasswordField(20);
+     t6=new JTextField(20);
     t6.setText(PatchEdit.appConfig.getRepositoryPass());
 
     JLabel l3 = new JLabel("Description: ");
      t3 = new JTextArea(4,50);
      t3.setText(q.getComment());
-    
-    
+
+
     JPanel buttonPanel = new JPanel();
     JButton upload = new JButton("Upload");
     upload.addActionListener(new ActionListener() {
@@ -86,7 +88,7 @@ public class UploadPatchDialog extends JDialog {
 		play();
 	    }});
     buttonPanel.add(play);
-    
+
     JButton ok = new JButton("Cancel");
     ok.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -100,16 +102,16 @@ public class UploadPatchDialog extends JDialog {
     p4.add(l1);p4.add(t1);
     p4.add(l2);p4.add(t2);
     p4.add(l3);p4.add(t3);
-  
-    
+
+
     container.add(p4,BorderLayout.NORTH);
     container.add(buttonPanel,BorderLayout.SOUTH);
     getContentPane().add(container);
     // setSize(400,300);
     pack();
     centerDialog();
-    
-    
+
+
 }
    public void show()
    {
@@ -139,7 +141,8 @@ void uploadPatch(Patch p)
     String desc=t3.getText();
     String repository=t4.getText();
     String userName=t5.getText();
-    String passwd=new String(t6.getPassword());
+    //String passwd=new String(t6.getPassword());
+    String passwd=t6.getText();
     byte [] sysex = p.sysex;
     if (patchName.length()<4)
 	ErrorMsg.reportError("Error","Patch Name must be at least 4 characters.");
@@ -160,7 +163,7 @@ void uploadPatch(Patch p)
 	    mime += makeMime("synthName",patchType);
 	    mime += mimeBoundary();
 	    try{
-	    String filestr=new String (sysex,"ISO-8859-1");	    
+	    String filestr=new String (sysex,"ISO-8859-1");
 	    mime += makeMime("file",filestr);
 	    } catch (Exception e) {System.out.println("UploadPatchDialog encoding failed.");}
 	    mime += mimeBoundary();
@@ -177,7 +180,7 @@ void uploadPatch(Patch p)
 	    if (postData(repository,mime)==1)
 		setVisible(false);
 	}
-	
+
 
 }
 
@@ -188,7 +191,7 @@ void uploadPatch(Patch p)
 	s +=body1;
 	s+="\r\n";
 	return s;
-	
+
     }
 
     int postData(String repository,String mime)
@@ -211,14 +214,14 @@ void uploadPatch(Patch p)
 	    while (( str = in.readLine()) != null)
 		{
 		    //     System.out.println("Server: "+str);
-		    
+
 		    if (str.indexOf("<h2")>-1)
 		    {
 			int st = str.indexOf(">");
 			int en = str.indexOf("</h");
 			if (st<0 || en<0)
 			    ErrorMsg.reportError("Error","Can not Understand Server Response: "+str);
-			else 
+			else
 			    {
 				if (str.indexOf("Success")>-1)
 				    {
@@ -227,15 +230,15 @@ void uploadPatch(Patch p)
 				    }
 				else
 				    ErrorMsg.reportError("Error",str.substring(st+1,en));
-			    }						 
+			    }
 		    }
-		      
-			
+
+
 		}
-   in.close();    
-	    
+   in.close();
+
 	} catch (Exception e){ ErrorMsg.reportStatus(e);}
-	
+
 		    return 0;
     }
 
@@ -249,12 +252,12 @@ void uploadPatch(Patch p)
     try{
 	    PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
 	     Patch p = library.GetSelectedPatch();
-      		       
+
 		       if (p==null) return;
 		       p.getDriver().sendPatch(p);
 		       p.getDriver().playPatch(p);
    }catch (Exception ex){JOptionPane.showMessageDialog(null, "Patch Must be Focused","Error", JOptionPane.ERROR_MESSAGE);}
-	
+
  }
 
 }

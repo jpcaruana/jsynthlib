@@ -88,10 +88,6 @@ public abstract class Device /*implements Serializable, Storable*/ {
     //private int inPort = -1;
     /** set to true when initialization of MIDI input is done. */
     private boolean initInPort = false;
-    /** The input MIDI Device. */
-    //private JSLMidiDevice midiIn;
-    /** The output MIDI Device. */
-    //private JSLMidiDevice midiOut;
 
     /** The List for all available drivers of this device. */
     private ArrayList driverList = new ArrayList ();
@@ -268,15 +264,13 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param port New value of property port.
      */
     protected void setPort (int port) {
-    	if (PatchEdit.newMidiAPI) {
-	    if (!initPort || getPort() != port) {
-		if (rcvr != null)
-		    rcvr.close();
-		try {
-		    rcvr = MidiUtil.getReceiver(port);
-		} catch (MidiUnavailableException e) {
-		    ErrorMsg.reportStatus(e);
-		}
+	if (!initPort || getPort() != port) {
+	    if (rcvr != null)
+		rcvr.close();
+	    try {
+		rcvr = MidiUtil.getReceiver(port);
+	    } catch (MidiUnavailableException e) {
+		ErrorMsg.reportStatus(e);
 	    }
 	}
 	prefs.putInt("port", port);
@@ -309,9 +303,8 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param inPort New value of property inPort.
      */
     protected void setInPort (int inPort) {
-	if (PatchEdit.newMidiAPI)
-	    if (!initInPort || getInPort() != inPort)
-		MidiUtil.setSysexInputQueue(inPort);
+	if (!initInPort || getInPort() != inPort)
+	    MidiUtil.setSysexInputQueue(inPort);
 	prefs.putInt("inPort", inPort);
 	initInPort = true;
     }
@@ -361,77 +354,20 @@ public abstract class Device /*implements Serializable, Storable*/ {
 	return (Driver) this.driverList.remove(i);
     }
 
-    // The following methods are obsoleted since 'driver' is not
-    // Storable now.
-    /** Indexed setter for driverList elements. */
-    /*
-    protected Driver setDriver(int i, Driver drv) {
-	return (Driver) this.driverList.set(i, drv);
-    }
-    */
-    /** Set an array of Drivers on driverList. */
-    /*
-    void setDriver(Driver[] drivers) {
-	ArrayList newList = new ArrayList();
-	newList.addAll(Arrays.asList(drivers));
-	this.driverList = newList;
-    }
-    */
-    /** Returns an array of all Drivers of driverList. */
-    /*
-    protected Driver[] getDriver() {
-	return (Driver[]) this.driverList.toArray(new Driver[0]);
-    }
-    */
     /** getter for device number. */
     int getDeviceNum() {
 	return PatchEdit.appConfig.getDeviceIndex(this);
     }
-
-    /*
-    public JSLMidiDevice getMidiIn() {
-	return midiIn;
-    }
-    public void setMidiIn(JSLMidiDevice midiIn) {
-	this.midiIn = midiIn;
-    }
-    public JSLMidiDevice getMidiOut() {
-	return midiIn;
-    }
-    public void setMidiOut(JSLMidiDevice midiOut) {
-	this.midiOut = midiOut;
-	// Do we need a separate method?
-	if (rcvr != null)	// close previous Receiver
-	    rcvr.close();
-	try {
-	    rcvr = midiOut.getReceiver();
-	} catch (MidiUnavailableException e) {
-	    ErrorMsg.reportError("Error", "setMidiOut: ", e);
-	}
-    }
-    */
 
     /**
      * Getter for DeviceName.
      * @return String of Device Name with inPort and Channel.
      */
     public String getDeviceName() {
-	try {
-	    if (PatchEdit.newMidiAPI) {
-		return getManufacturerName() + " " + getModelName()
-		    + " <" + getSynthName() + ">  -  MIDI Out Port: "
-		    + MidiUtil.getOutputMidiDeviceInfo(getPort()).getName()
-		    + "  -  MIDI Channel: " + getChannel();
-	    } else {
-		return getManufacturerName() + " " + getModelName()
-		    + " <" + getSynthName() + ">  -  MIDI Out Port: "
-		    + PatchEdit.MidiOut.getOutputDeviceName(getPort())
-		    + "  -  MIDI Channel: " + getChannel();
-	    }
-	} catch (Exception e) {
-	    return getManufacturerName() + " " + getModelName() + ": "
-		+ getSynthName();
-	}
+	return getManufacturerName() + " " + getModelName()
+	    + " <" + getSynthName() + ">  -  MIDI Out Port: "
+	    + MidiUtil.getOutputMidiDeviceInfo(getPort()).getName()
+	    + "  -  MIDI Channel: " + getChannel();
     }
 
     /**

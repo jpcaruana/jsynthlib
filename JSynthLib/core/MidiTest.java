@@ -24,11 +24,10 @@ public class MidiTest implements Runnable {
 	 * midi cable and it basically tries to send one of every kind of message and it checks to see if
 	 * those messages get back to the "in" port intact. - emenake 2003.03.20
 	 *
-	 * @param midiDriver The midiwrapper that we're using
 	 * @param inport The number of the port for receiving
 	 * @param outport The number of the port for sending
 	 */
-	static boolean runLoopbackTest(MidiWrapper midiDriver, int inport, int outport) {
+	static boolean runLoopbackTest(int inport, int outport) {
 		ErrorMsg.reportWarning("Before we start",
 				       "This process is designed to test the communication of\n" +
 				       "your MIDI ports. Please connect a MIDI cable from the\n" +
@@ -39,8 +38,7 @@ public class MidiTest implements Runnable {
 				       "5 to 10 seconds, so be patient.\n");
 
 		try {
-			if (PatchEdit.newMidiAPI)
-				rcvr = MidiUtil.getReceiver(outport);
+			rcvr = MidiUtil.getReceiver(outport);
 			Vector msgList = getMidiMessages();
 
 			/*
@@ -64,7 +62,7 @@ public class MidiTest implements Runnable {
 */
 			for(int i=0; i<msgList.size(); i++) {
 				//pbar.setValue(i);
-				runLoopbackTest(midiDriver, inport, outport, (MidiMessage) msgList.elementAt(i));
+				runLoopbackTest(inport, outport, (MidiMessage) msgList.elementAt(i));
 			}
 
 			// If we get this far, then things must have gone okay....
@@ -78,8 +76,7 @@ public class MidiTest implements Runnable {
 					     "connected to each other with a MIDI cable.",e);
 			return(false);
 		}
-		if (PatchEdit.newMidiAPI)
-			rcvr.close();
+		rcvr.close();
 		return(true);
 	}
 
@@ -88,11 +85,8 @@ public class MidiTest implements Runnable {
 	 * midi cable and it basically tries to send one of every kind of message and it checks to see if
 	 * those messages get back to the "in" port intact.
 	 */
-	static void runLoopbackTest(MidiWrapper midiDriver, int inport, int outport, MidiMessage msg) throws Exception {
-		if (PatchEdit.newMidiAPI)
-			MidiUtil.clearSysexInputQueue(inport);
-		else
-			midiDriver.clearMidiInBuffer(inport);
+	static void runLoopbackTest(int inport, int outport, MidiMessage msg) throws Exception {
+		MidiUtil.clearSysexInputQueue(inport);
 
 		// If it's a sysex message, we need to make sure that it's got a 0xF7 on the end.
 		// If not, we'll put one on...
@@ -113,18 +107,11 @@ public class MidiTest implements Runnable {
 		}
 
 		// Send it
-		if (PatchEdit.newMidiAPI)
-			MidiUtil.send(rcvr, msg);
-		else
-			midiDriver.send(outport,msg);
+		MidiUtil.send(rcvr, msg);
 
 		try {
 			// 1 sec =~ 4KB sysex data
-			MidiMessage inmsg;
-			if (PatchEdit.newMidiAPI)
-				inmsg = MidiUtil.getMessage(inport, 1000);
-			else
-				inmsg = midiDriver.readMessage(inport, 1000);
+			MidiMessage inmsg = MidiUtil.getMessage(inport, 1000);
 			if (areEqual(msg,inmsg)) {
 				return;
 			} else {
@@ -136,7 +123,7 @@ public class MidiTest implements Runnable {
 						     + MidiUtil.midiMessageToString(msg));
 				throw new Exception("Data mismatch");
 			}
-		} catch (MidiWrapper.TimeoutException e) {
+		} catch (MidiUtil.TimeoutException e) {
 			ErrorMsg.reportError("Warning","Didn't see anything come into the input");
 			throw e;
 			//throw(new Exception("Time expired without seeing any message come in"));
@@ -156,6 +143,7 @@ public class MidiTest implements Runnable {
 	private static Vector getMidiMessages() throws Exception {
 		Vector msgList = new Vector();
 		ShortMessage msg = new ShortMessage();
+		/*
 		if (testShortMessage && !PatchEdit.newMidiAPI) {
 			// Make a bunch of messages and try sending
 			// them. Why use data bytes 0x4B, 0x70?  Well,
@@ -184,16 +172,16 @@ public class MidiTest implements Runnable {
 
 			// System Real-Time Messages (all 0 byte data)
 			// commented out since some Wrappers filter them out
-			/*
-			msg.setMessage(ShortMessage.TIMING_CLOCK, 0x4B, 0x70);
-			msgList.addElement(msg.clone());
-			msg.setMessage(ShortMessage.START, 0x4B, 0x70);
-			msgList.addElement(msg.clone());
-			msg.setMessage(ShortMessage.CONTINUE, 0x4B, 0x70);
-			msgList.addElement(msg.clone());
-			msg.setMessage(ShortMessage.STOP, 0x4B, 0x70);
-			msgList.addElement(msg.clone());
-			*/
+
+			//msg.setMessage(ShortMessage.TIMING_CLOCK, 0x4B, 0x70);
+			//msgList.addElement(msg.clone());
+			//msg.setMessage(ShortMessage.START, 0x4B, 0x70);
+			//msgList.addElement(msg.clone());
+			//msg.setMessage(ShortMessage.CONTINUE, 0x4B, 0x70);
+			//msgList.addElement(msg.clone());
+			//msg.setMessage(ShortMessage.STOP, 0x4B, 0x70);
+			//msgList.addElement(msg.clone());
+
 			// Active sensing didn't work on for me with
 			// JavaMidi... so I'm omitting it here -
 			// emenaker 2003.03.20
@@ -208,6 +196,7 @@ public class MidiTest implements Runnable {
 			msg.setMessage(ShortMessage.SONG_SELECT, 0x4B, 0x70); // 1B
 			msgList.addElement(msg.clone());
 		}
+		*/
 		if (testSysexMessage) {
 			// Sysex messages
 			SysexMessage sysexmsg = new SysexMessage();

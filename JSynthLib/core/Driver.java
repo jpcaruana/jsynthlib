@@ -485,37 +485,34 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	int patch = 0;
 	String bankstr;
 	String patchstr;
-	try {
-	    // choose bank number
-	    if (bankNumbers.length > 1) {
-		bankstr = (String) JOptionPane.showInputDialog
-		    (null, "Please Choose a Bank", "Storing Patch",
-		     JOptionPane.QUESTION_MESSAGE, null,
-		     bankNumbers, bankNumbers[bankNum]);
-		if (bankstr == null) // canceled
-		    return;
-		for (int i = 0; i < bankNumbers.length; i++)
-		    if (bankstr.equals(bankNumbers[i])) {
-			bank = i;
-			break;
-		    }
-	    }
-	    // choose patch number
-	    if (patchNumbers.length > 1) {
-		patchstr = (String) JOptionPane.showInputDialog
-		    (null, "Please Choose a Patch Location", "Storing Patch",
-		     JOptionPane.QUESTION_MESSAGE, null,
-		     patchNumbers, patchNumbers[patchNum]); // phil@muqus.com
-		if (patchstr == null) // canceled
-		    return;
-		for (int i = 0; i < patchNumbers.length; i++)
-		    if (patchstr.equals(patchNumbers[i])) {
-			patch = i;
-			break;
-		    }
-	    }
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
+
+	// choose bank number
+	if (bankNumbers.length > 1) {
+	    bankstr = (String) JOptionPane.showInputDialog
+		(null, "Please Choose a Bank", "Storing Patch",
+		 JOptionPane.QUESTION_MESSAGE, null,
+		 bankNumbers, bankNumbers[bankNum]);
+	    if (bankstr == null) // canceled
+		return;
+	    for (int i = 0; i < bankNumbers.length; i++)
+		if (bankstr.equals(bankNumbers[i])) {
+		    bank = i;
+		    break;
+		}
+	}
+	// choose patch number
+	if (patchNumbers.length > 1) {
+	    patchstr = (String) JOptionPane.showInputDialog
+		(null, "Please Choose a Patch Location", "Storing Patch",
+		 JOptionPane.QUESTION_MESSAGE, null,
+		 patchNumbers, patchNumbers[patchNum]); // phil@muqus.com
+	    if (patchstr == null) // canceled
+		return;
+	    for (int i = 0; i < patchNumbers.length; i++)
+		if (patchstr.equals(patchNumbers[i])) {
+		    patch = i;
+		    break;
+		}
 	}
 	ErrorMsg.reportStatus("Driver:ChoosePatch  Bank = " + bank
 			      + "  Patch = " + patch);
@@ -628,11 +625,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     protected final void sendPatchWorker(Patch p) {
         if (deviceIDoffset > 0)
 	    p.sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
-        try {
-	    send(p.sysex);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
+	send(p.sysex);
     }
 
     /**
@@ -641,14 +634,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * called.
      */
     void clearMidiInBuffer() {
-	try {
-	    if (PatchEdit.newMidiAPI)
-		MidiUtil.clearSysexInputQueue(getInPort());
-	    else
-		PatchEdit.MidiIn.clearMidiInBuffer(getInPort());
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
+	MidiUtil.clearSysexInputQueue(getInPort());
     }
 
     //----- Start phil@muqus.com
@@ -703,26 +689,16 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     // MIDI in/out mothods to encapsulate lower MIDI layer
     /** Send MidiMessage to MIDI outport. */
     public final void send(MidiMessage msg) {
-	try {
-	    if (PatchEdit.newMidiAPI)
-		device.send(msg);
-	    else
-		PatchEdit.MidiOut.send(getPort(), msg);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
+	device.send(msg);
     }
 
     /** Send Sysex byte array data to MIDI outport. */
     public final void send(byte[] sysex) {
 	try {
-	    if (PatchEdit.newMidiAPI) {
-		SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
-		for (int i = 0; i < a.length; i++)
-		    device.send(a[i]);
-	    } else
-		PatchEdit.MidiOut.writeLongMessage(getPort(), sysex);
-	} catch (Exception e) {
+	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
+	    for (int i = 0; i < a.length; i++)
+		device.send(a[i]);
+	} catch (InvalidMidiDataException e) {
 	    ErrorMsg.reportStatus(e);
 	}
     }
@@ -742,29 +718,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     public final void send(int status, int d1) {
 	send(status, d1, 0);
     }
-
-    // For storable interface
-    /**
-     * Get the names of properties that should be stored and loaded.
-     * @return a Set of field names
-     */
-    /*
-    public Set storedProperties() {
-	final String[] storedPropertyNames = {
-	    "deviceNum", "driverNum", "port", "inPort", "channel"
-	};
-	HashSet set = new HashSet();
-	set.addAll(Arrays.asList(storedPropertyNames));
-	return set;
-    }
-    */
-    /** Method that will be called after loading. */
-    /*
-    public void afterRestore() {
-	// do nothing
-    }
-    */
-    // end of storable interface
 
     //
     // For debugging.

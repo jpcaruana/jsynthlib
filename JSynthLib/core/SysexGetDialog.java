@@ -1,7 +1,3 @@
-//=========================================================================
-// Summary: SysexGetDialog.java
-//=========================================================================
-
 package core;
 
 import javax.sound.midi.SysexMessage;
@@ -17,10 +13,6 @@ import javax.swing.JPanel;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.*;
-
-//=========================================================================
-// Class: SysexGetDialog
-//=========================================================================
 
 /**
  * Dialog to choose the Device, Driver, BankNumber and PatchNumber of
@@ -138,8 +130,6 @@ public class SysexGetDialog extends JDialog {
     dialogPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     //===================================== Timer ==========================
-    if (!PatchEdit.newMidiAPI)
-      PatchEdit.echoTimer.stop();
     timer = new javax.swing.Timer(0, new TimerActionListener());
 
     //===== Listener
@@ -254,8 +244,6 @@ public class SysexGetDialog extends JDialog {
       timer.stop();
       pasteIntoSelectedFrame();
       setVisible(false);
-      if (!PatchEdit.newMidiAPI)
-	PatchEdit.echoTimer.start();
     }
   } // End InnerClass: DoneActionListener
 
@@ -341,17 +329,7 @@ public class SysexGetDialog extends JDialog {
 			    + " | bankNum: " + bankNum + " | patchNum: " + patchNum);
 
       //----- Clear MidiIn buffer
-      try {
-// 	if(PatchEdit.MidiIn == null) {
-// 	  System.err.println("Yup... it's null!");
-// 	}
-	if (PatchEdit.newMidiAPI)
-	  MidiUtil.clearSysexInputQueue(inPort);
-	else
-	  PatchEdit.MidiIn.clearMidiInBuffer(inPort);
-      } catch (Exception ex) {
-        ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
-      }
+      MidiUtil.clearSysexInputQueue(inPort);
 
       //----- Start timer and request dump
       myLabel.setText("Getting sysex dump...");
@@ -370,15 +348,7 @@ public class SysexGetDialog extends JDialog {
 //--------------------------------------------------------------------------
 
   private boolean isEmpty() {
-    if (PatchEdit.newMidiAPI)
-      return MidiUtil.isSysexInputQueueEmpty(inPort);
-    else
-      try {
-	return PatchEdit.MidiIn.messagesWaiting(inPort) <= 0;
-      } catch (Exception e) {
-	ErrorMsg.reportStatus(e);
-	return true;
-      }
+    return MidiUtil.isSysexInputQueueEmpty(inPort);
   }
 
   public class TimerActionListener implements ActionListener {
@@ -386,10 +356,7 @@ public class SysexGetDialog extends JDialog {
       try {
         while (!isEmpty()) {
           SysexMessage msg;
-	  if (PatchEdit.newMidiAPI)
-	    msg = (SysexMessage) MidiUtil.getMessage(inPort, timeOut);
-	  else
-	    msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(inPort, timeOut);
+	  msg = (SysexMessage) MidiUtil.getMessage(inPort, timeOut);
 	  queue.add(msg);
 //  	  ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + msg.getLength());
           sysexSize += msg.getLength();

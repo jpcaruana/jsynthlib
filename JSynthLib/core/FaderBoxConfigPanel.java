@@ -16,7 +16,7 @@ import java.awt.event.*;
  * @version $Id$
  */
 
-public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChangeListener {
+public class FaderBoxConfigPanel extends ConfigPanel {
     private JPanel faderPanel;
     private JComboBox cb4 = new JComboBox();
     private JCheckBox enabledBox;
@@ -49,10 +49,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	// create own Fader/Slider Panel
 	faderPanel = new JPanel(new BorderLayout(5,5));
 	// upper side
-	if (PatchEdit.newMidiAPI)
-	    cb4 = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
-	else
-	    cb4 = new JComboBox();
+	cb4 = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
 	resetComboBoxes();
 	//gbc.gridx = 1; gbc.gridy = 3; gbc.gridheight = 1; gbc.gridwidth=gbc.REMAINDER; // gbc.gridwidth = 3;
 	faderPanel.add (cb4, BorderLayout.NORTH);
@@ -196,33 +193,12 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
     }
 
     /**
-     * Resets the Fader Midi Port ComboBox after changing midi driver
-     * (Is it really needed?)
-     */
-    public void midiDriverChanged(MidiWrapper driver) {
-	resetComboBoxes();
-    }
-
-    /**
      * This method re-populates the combobox(es) that contain things that depend upon which
      * midi driver we're using. This is called by the constructor and also by the
      * midiDriverChanged(MidiWrapper) callback method - emenaker 2003.03.18
      *
      */
     private void resetComboBoxes() {
-	if (!PatchEdit.newMidiAPI) {
-	    MidiWrapper currentDriver = AppConfig.getMidiWrapper();
-	    cb4.removeAllItems();
-	    try {
-		for (int j = 0; j < currentDriver.getNumInputDevices (); j++)
-		    cb4.addItem (j + ": " + currentDriver.getInputDeviceName (j));
-	    } catch (Exception e) {
-		ErrorMsg.reportError("Error",
-				     "FaderBoxConfigPanel.resetComboBox: " + e
-				     + "\ncurrentDriver: " + currentDriver);
-	    }
-	    enabledBox.setEnabled(currentDriver.isReady());
-	}
 	setContainerEnabled(faderPanel,enabledBox.isEnabled() && enabledBox.isSelected());
     }
 

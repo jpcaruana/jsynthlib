@@ -15,7 +15,8 @@ import javax.swing.JTextField;
 public class RepositoryConfigPanel extends ConfigPanel {
 	private final JTextField t1=new JTextField (null,20);
 	private final JTextField t2=new JTextField (null,20);
-	private final JPasswordField t3=new JPasswordField (null,20);
+    //private final JPasswordField t3=new JPasswordField (null,20);
+	private final JTextField t3=new JTextField (null,20);
 
 	public RepositoryConfigPanel(core.AppConfig appConfig) {
 		super(appConfig);
@@ -65,7 +66,8 @@ public class RepositoryConfigPanel extends ConfigPanel {
 	public void commitSettings() {
 		appConfig.setRepositoryURL(t1.getText());
 		appConfig.setRepositoryUser(t2.getText());
-		appConfig.setRepositoryPass(new String(t3.getPassword()));
+		//appConfig.setRepositoryPass(new String(t3.getPassword()));
+		appConfig.setRepositoryPass(t3.getText());
 	}
 	
 	/**

@@ -4,6 +4,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.SysexMessage;
 
 /**
@@ -387,15 +388,13 @@ public class SysexHandler /*implements Serializable*/ {
     public static void send(int port, byte[] sysex) {
 	try {
 	    ErrorMsg.reportStatus("static SysexHandler->send | port: " + port, sysex);
-	    if (PatchEdit.newMidiAPI) {
-		SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
-		for (int i = 0; i < a.length; i++)
-		    MidiUtil.send(MidiUtil.getReceiver(port), a[i]);
-	    } else {
-		PatchEdit.MidiOut.writeLongMessage(port, sysex);
-	    }
-	} catch (Exception ex) {
-	    ErrorMsg.reportStatus(ex);
+	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
+	    for (int i = 0; i < a.length; i++)
+		MidiUtil.send(MidiUtil.getReceiver(port), a[i]);
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
 	}
     }
 } // End Class: SysexHandler

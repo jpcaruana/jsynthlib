@@ -157,7 +157,7 @@ public class JSLFrame {
 	}
 	
 	public void internalFrameActivated(InternalFrameEvent e) {
-	    ErrorMsg.reportStatus("\""+getTitle()+"\" activated.");
+	    //ErrorMsg.reportStatus("\""+getTitle()+"\" activated.");
 	    JSLFrameEvent fe = 
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.ACTIVATED);
 	    Iterator it = listeners.iterator();
@@ -186,7 +186,7 @@ public class JSLFrame {
 		proxy.dispose();
 	}
 	public void internalFrameDeactivated(InternalFrameEvent e) {
-	    ErrorMsg.reportStatus("\""+getTitle()+"\" deactivated.");
+	    //ErrorMsg.reportStatus("\""+getTitle()+"\" deactivated.");
 	    JSLFrameEvent fe = 
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEACTIVATED);
 	    Iterator it = listeners.iterator();
@@ -276,8 +276,8 @@ public class JSLFrame {
 	    super.setVisible(b);
 	}
 	public void windowActivated(WindowEvent e) {
-	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
-				  +"\" activated.");
+// 	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
+// 				  +"\" activated.");
 
 	    JSLFrameEvent fe = 
 		new JSLFrameEvent(getJSLFrame(),
@@ -308,8 +308,8 @@ public class JSLFrame {
 	    //	proxy.dispose();
 	}
 	public void windowDeactivated(WindowEvent e) {
-	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
-				  +"\" deactivated.");
+// 	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
+// 				  +"\" deactivated.");
 	    JSLFrameEvent fe = 
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEACTIVATED);
 	    Iterator it = listeners.iterator();

@@ -95,10 +95,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	setSize(600, 400);
 	moveToDefaultLocation();
 
-	if (PatchEdit.newMidiAPI) {
-	    if (PatchEdit.appConfig.getFaderEnable())
-		enableFaderIn();
-	}
+	if (PatchEdit.appConfig.getFaderEnable())
+	    enableFaderIn();
 
 	scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {

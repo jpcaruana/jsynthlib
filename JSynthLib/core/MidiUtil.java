@@ -25,8 +25,6 @@ import javax.sound.midi.*;
 import java.util.*;
 
 /**
- * MidiUtil.java
- *
  * MIDI Utility Routines.  This class contains methods and inner
  * classes for Java Sound API.<p>
  * Examples:<p>

@@ -25,17 +25,12 @@ import org.jsynthlib.jsynthlib.Dummy;
 
 final public class AppConfig {
     private static ArrayList deviceList = new ArrayList();
-    private static MidiWrapper midiWrapper = null;
     private static Transmitter masterInTrns;
     private static Transmitter faderInTrns;
 
     private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
     private static Preferences prefsDev = prefs.node("devices");
 
-    static Vector midiWrappers;
-    {
-	midiWrappers = MidiWrapper.getSuitableWrappers();
-    }
     /**
      * Initialize.
      */
@@ -45,7 +40,6 @@ final public class AppConfig {
 	} catch (BackingStoreException e) {
 	    ErrorMsg.reportStatus(e);
 	}
-        setMidiPlatform(getMidiPlatform());
         setLookAndFeel(getLookAndFeel());
 
 	masterInTrns = MidiUtil.getTransmitter(getMasterController());
@@ -196,59 +190,6 @@ final public class AppConfig {
         prefs.putInt("guiStyle", guiStyle);
     }
 
-    /** Getter for midiPlatform */
-    public int getMidiPlatform() { return  prefs.getInt("midiPlatform", 0); }
-
-    /** Setter for midiPlatform */
-    public void setMidiPlatform(int midiPlatform) {
-	if (midiPlatform < 0 || PatchEdit.newMidiAPI)
-	    midiPlatform = 0;
-	MidiWrapper mw = (MidiWrapper) midiWrappers.elementAt(midiPlatform);
-	ErrorMsg.reportStatus("Something selected \"" + mw + "\"");
-	MidiWrapper currentDriver = getMidiWrapper();
-	if (currentDriver != null) {
-	    if (currentDriver.toString().equals(mw.toString())) {
-		ErrorMsg.reportStatus("We're already using that driver");
-		return;
-	    }
-	    currentDriver.close();
-	}
-	// initialize selected MIDI wrapper
-	ErrorMsg.reportStatus("Initializing driver:" + mw.toString());
-	try {
-	    if (!PatchEdit.newMidiAPI)
-		mw.init(getInitPortIn(), getInitPortOut());
-
-	    prefs.putInt("midiPlatform", midiPlatform);
-	    PatchEdit.MidiIn = PatchEdit.MidiOut = midiWrapper = mw;
-	} catch (DriverInitializationException e) {
-	    core.ErrorMsg.reportError
-		("Error",
-		 "There was an error initializing the MIDI Wrapper!", e);
-	    //e.printStackTrace ();
-	    setMidiEnable(false);
-	    setMidiPlatform(0); // DoNothingMidiWrapper
-	} catch (Exception e) {
-	    core.ErrorMsg.reportError
-		("Error",
-		 "There was an unspecified problem while initializing the driver!", e);
-	    e.printStackTrace ();
-	    setMidiEnable(false);
-	    setMidiPlatform(0); // DoNothingMidiWrapper
-	}
-    }
-
-    /**
-     * This returns the currently-selected midi wrapper. At present,
-     * it's only used by the main app to obtain the midi driver after
-     * the initial instantiation (ie, before it ever gets a
-     * midiDriverChanged() callback).
-     * @return a MidiWrapper object
-     */
-    public static MidiWrapper getMidiWrapper() {
-	return (midiWrapper);
-    }
-
     /** Getter for midiEnable */
     public boolean getMidiEnable() { return prefs.getBoolean("midiEnable", false); }
     /** Setter for midiEnable */
@@ -288,9 +229,9 @@ final public class AppConfig {
     }
     /** Setter for masterController */
     public void setMasterController(int masterController) {
-	if (masterController < 0) masterController = 0;
-	if (PatchEdit.newMidiAPI
-	    && (getMasterController() != masterController)) {
+	if (masterController < 0)
+	    masterController = 0;
+	if (getMasterController() != masterController) {
 	    // others may be using
 	    //if (masterInTrns != null) masterInTrns.close();
 	    masterInTrns = MidiUtil.getTransmitter(masterController);
@@ -318,8 +259,9 @@ final public class AppConfig {
     }
     /** Setter for faderPort */
     public void setFaderPort(int faderPort) {
-	if (faderPort < 0) faderPort = 0;
-	if (PatchEdit.newMidiAPI && (getFaderPort() != faderPort)) {
+	if (faderPort < 0)
+	    faderPort = 0;
+	if (getFaderPort() != faderPort) {
 	    // others may be using (true?)
 	    //if (faderInTrns != null) faderInTrns.close();
 	    faderInTrns = MidiUtil.getTransmitter(getFaderPort());
@@ -418,16 +360,6 @@ final public class AppConfig {
 	} catch (BackingStoreException e) {
 	    ErrorMsg.reportStatus(e);
 	}
-	/*
-	int size = deviceList.size();
-	while (i < size) {
-	    devices.put("device" + (i), devices.get("device" + (i+1),""));
-	    devices.put("node" + (i), devices.get("node" + (i+1),""));
-	}
-	devices.remove("device" + size);
-	devices.remove("node"+ size);
-	devices.putInt("count", size);
-	*/
 	return ret;
     }
 
@@ -436,37 +368,10 @@ final public class AppConfig {
 	return this.deviceList.size();
     }
 
-    /*
-    private Preferences getPreferences(int i) {
-	String key = devices.get("node" + i,null);
-	if (key == null)
-	    return null;
-	return devices.node(key);
-    }
-    */
-    /*
-    private String getNextDeviceNode() {
-	int i = devices.getInt("next_node", 0);
-	devices.putInt("next_node", i + 1);
-	return Integer.toString(i);
-    }
-    */
-
     /** Getter for the index of <code>device</code>. */
     int getDeviceIndex(Device device) {
 	return deviceList.indexOf(device);
     }
-
-    /** Getter/setter for MidiDevice.info */
-    // These are experimental code.
-    //public JSLMidiDevice getMidiIn() { return midiIn; }
-    //public JSLMidiDevice getMidiOut() { return midiOut; }
-    //public JSLMidiDevice getMidiMasterIn() { return midiMasterIn; }
-    //public JSLMidiDevice getMidiFaderIn() { return midiFaderIn; }
-    //public void setMidiIn(JSLMidiDevice midiIn) { this.midiIn = midiIn; }
-    //public void setMidiOut(JSLMidiDevice midiOut) { this.midiOut = midiOut; }
-    //public void setMidiMasterIn(JSLMidiDevice midiMasterIn) { this.midiMasterIn = midiMasterIn; }
-    //public void setMidiFaderIn(JSLMidiDevice midiFaderIn) { this.midiFaderIn = midiFaderIn; }
 
     // Shall we define JSLUtil for these mothods?
     // Returns the "os.name" system property - emenaker 2003.03.13

@@ -235,18 +235,9 @@ public abstract class SysexWidget extends JPanel {
      */
     // for ExnvelopeWidget
     protected void sendSysex(SysexSender s, int v) {
-        if (s != null) {
-	    // do it only if there is a sysex-sender available
-            try {
-		s.channel = (byte) device.getDeviceID();
-		if (PatchEdit.newMidiAPI)
-		    driver.send(s.generate(v));
-		else
-		    PatchEdit.MidiOut.writeLongMessage(device.getPort(),
-						       s.generate(v));
-            } catch (Exception e) {
-		ErrorMsg.reportStatus(e);
-	    }
+        if (s != null) { // do it only if there is a sysex-sender available
+	    s.channel = (byte) device.getDeviceID();
+	    driver.send(s.generate(v));
         }
     }
 
