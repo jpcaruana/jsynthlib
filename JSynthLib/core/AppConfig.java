@@ -52,10 +52,38 @@ public class AppConfig implements Storable {
 	}
 
 	/**
-	 * Load the properties from the file
+	 * This one loads the settings from the config file.
+	 */
+	public boolean loadPrefs() {
+		/*
+		 * These are handled by the individual ConfigPanels now - emenaker 2003.03.25
+		 appConfig.setInitPortIn(0);
+		 appConfig.setInitPortOut(0);
+		 appConfig.setLibPath("");
+		 appConfig.setSysexPath("");
+		 appConfig.setNote(60);
+		 appConfig.setVelocity(100);
+		 appConfig.setDelay(500);
+		*/
+
+		try {
+			// Load the appconfig
+			load();
+			return true;
+		} catch (Exception e) {
+			return false;
+		} finally {
+			if (deviceCount() == 0) {
+				addDevice(new synthdrivers.Generic.GenericDevice());
+			}
+		}
+	}
+
+	/**
+	 * Load the properties from the file.
 	 * @throws IOException
 	 */
-	public void load() throws IOException
+	private void load() throws IOException
 	{
 		// Load in the properties file
 		Properties props = new Properties();
@@ -64,7 +92,20 @@ public class AppConfig implements Storable {
 
 		// Use the properties object to restore the configuration
 		Storage.restore(this, props);
-		System.out.println("Config Loaded");
+		ErrorMsg.reportStatus("Config Loaded");
+	}
+
+	/**
+	 * This routine just saves the current settings in the config
+	 * file. Its called when the user quits the app.
+	 */
+	public void savePrefs() {
+		try {
+			// Save the appconfig
+			store();
+		} catch (Exception e) {
+			ErrorMsg.reportError("Error", "Unable to Save Preferences", e);
+		}
 	}
 
 	/**
@@ -72,7 +113,7 @@ public class AppConfig implements Storable {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public void store() throws IOException, FileNotFoundException
+	private void store() throws IOException, FileNotFoundException
 	{
 		// Store the current configuration in a properties object
 		Properties props = new Properties();
@@ -281,3 +322,4 @@ public class AppConfig implements Storable {
 // 		ErrorMsg.reportStatus("AppConfig: " + deviceList);
 	}
 }
+//(setq c-basic-offset 8)
