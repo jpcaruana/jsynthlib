@@ -238,7 +238,7 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
         JPanel modelDescPanel = new JPanel();
         modelDesc = new JLabel();
         modelDescPanel.add(modelDesc);
-        patchSelector = new ComboBoxWidget("Amp Model",    patch, new AmpModelModel(patch, 3 + pgmDumpheaderSize),new CCAmpModelSender(12), ampModel);
+        patchSelector = new ComboBoxWidget("Amp Model",    patch, new AmpModelModel(patch, 3 + pgmDumpheaderSize),new AmpModelSender(patch), ampModel);
         addWidget(patchSelPane, patchSelector, 0,0,1,1,3);
         patchSelPane.add(modelDescPanel);
         
@@ -547,25 +547,33 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
         addWidget(parmPanel,new KnobWidget("Release",    patch, 0, 127, 0,new ScaledParamModel(patch, 27 + pgmDumpheaderSize, 127, 127),new CCSender(63)),6,0,1,1,55);
     }
     
-    /** CCSender class for amp model. The behavior is the same as the CCSender
-        *  class except that the send method will also call the setCtrlVisibility
-        *  method, which determines if the mid sweep knob should be visible or not.
+    /** A subclass of SysexSender used for the Amp Model parameter only. Originally,
+        * this sender sent a CC 12 for the amp model change. It was later found that
+        * when the POD receives a CC 12, it not only changes the amp model but it 
+        * also resets all the other values to defaults for the particular amp model
+        * that was selected. This caused the POD to be out of sync with the editor.
+        * To remedy this situation, this class was changed to send the whole patch
+        * instead. This causes the POD to retain all the settings in the editor.
         */
-    class CCAmpModelSender extends CCSender {
-        /** Constructs a CCAmpModelSender. */
-        private CCAmpModelSender(int param) {
-            super(param);
+    private class AmpModelSender extends SysexSender {
+        Patch patch;
+        
+        /** Constructs a AmpModelSender given the patch.
+        */
+        public AmpModelSender(Patch p) {
+            patch = p;
         }
         
-        /** Sends the CC message for the amp model and calls the setCtrlVisibility
-        * method, which determines if the mid sweep knob should be visible or not.
-        */
+        /** calls the setCtrlVisibility method, which determines if the mid sweep
+            * knobshould be visible or not for the selected amp model and sends
+            * the patch as an edit buffer patch.
+            */
         public void send(IPatchDriver driver, int value) {
             setCtrlVisibility(value);            
-            super.send(driver, value);
+            ((Line6BassPodSingleDriver)driver).sendPatch(patch);
         }
     }
-
+    
     /** ParamModel class for amp model. Gets and sets the amp model value in the
         * sysex record. Also the get method calls the setCtrlVisibility method,
         * which determines if the mid sweep knob should be visible or not.
