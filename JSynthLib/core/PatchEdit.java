@@ -19,7 +19,11 @@ import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 
 //TODO import /*TODO org.jsynthlib.*/midi.*;
-public class PatchEdit implements MidiDriverChangeListener {
+public final class PatchEdit /*implements MidiDriverChangeListener*/ {
+    // This field will be removed when new MIDI API become stable.
+    // When you try to set this 'true', you must select 'Javasound'.
+    static boolean newMidiAPI = false;
+
     public static MidiWrapper MidiOut;
     public static MidiWrapper MidiIn;
     public static AppConfig appConfig;
@@ -73,39 +77,60 @@ public class PatchEdit implements MidiDriverChangeListener {
     private static MidiMonitor midiMonitor;
     private static JToolBar toolBar;
     private static int currentPort;
-    //private static int[] newFaderValue = new int[33];
     private static PrefsDialog prefsDialog;
     private static SearchDialog searchDialog;
     private static DocumentationWindow documentationWindow;
 
     /** Initialize Application: */
     public PatchEdit() {
-	/*
-	 * Initialize JFrame
-	 */
-        //super("JSynthLib");
-	// phil@muqus.com (so can pop-up windows with PatchEdit as the
-        //instance = this;
-
-	/*
-	 * Load config file (JSynthLib.properties).
-	 */
+	// Load config file (JSynthLib.properties).
 	appConfig = new AppConfig();
         boolean loadPrefsSuccessfull = appConfig.loadPrefs();
 
-	// Set up the GUI.
+	// define event actions
 	createActions();
 
+	// Set up the GUI.
 	desktop = JSLDesktop.getInstance();
 	desktop.setupInitialMenuBar(createToolBar());
 	if (MacUtils.isMac())
 	    initForMac(exitAction, prefsAction, aboutAction);
 
+	// Show dialog for the 1st invokation.
+        if (!loadPrefsSuccessfull)
+            ErrorMsg.reportError
+		("Error",
+		 "Unable to load user preferences. Defaults loaded.\n"
+		 + "If you've just installed or just upgraded this software, "
+		 + "this is normal.");
 
-	/*
-	 * Setup preference dialog window.
-	 */
-        prefsDialog = new PrefsDialog(desktop.getSelectedWindow());
+	// popup menu for Library window, etc.
+	menuPatchPopup = createPopupMenu();
+
+	// set up Preference Dialog Window
+	prefsDialog = initPrefsDialog();
+
+        //Set up a silly little dialog we can pop up for the user to
+        //gawk at while we do time consuming work later on.
+        waitDialog = new WaitDialog(desktop.getSelectedWindow());
+
+        // Start pumping MIDI information from Input --> Output so the
+        // user can play a MIDI Keyboard and make pretty music
+	if (newMidiAPI) {
+	    if (appConfig.getMasterInEnable())
+		enableMasterIn();
+	} else {
+	    beginEcho();
+	}
+    }
+
+    public static JFrame getInstance() {return JSLDesktop.getSelectedWindow();}
+
+    /**
+     * Setup preference dialog window.
+     */
+    private static PrefsDialog initPrefsDialog() {
+        PrefsDialog prefsDialog = new PrefsDialog(desktop.getSelectedWindow());
 	// Add the configuration panels to the prefsDialog
         prefsDialog.addPanel(new GeneralConfigPanel(appConfig));
 
@@ -113,9 +138,8 @@ public class PatchEdit implements MidiDriverChangeListener {
 
 	MidiConfigPanel midiConfigPanel = null;
 	midiConfigPanel = new MidiConfigPanel(appConfig);
-	midiConfigPanel.addDriverChangeListener(this);
+	//midiConfigPanel.addDriverChangeListener(this);
 	prefsDialog.addPanel(midiConfigPanel);
-	MidiIn = MidiOut = midiConfigPanel.getMidiWrapper();
 
 	// FaderBoxConfigPanel() have to be called after MidiIn is initialized.
 	FaderBoxConfigPanel faderbox = new FaderBoxConfigPanel(appConfig);
@@ -127,31 +151,10 @@ public class PatchEdit implements MidiDriverChangeListener {
 	// Create preference dialog window and initialize each config
 	// panel.
 	prefsDialog.init();
-
-
-	// popup menu for Library window, etc.
-	menuPatchPopup = createPopupMenu();
-
-	/*
-	 * Show dialog for the 1st invokation.
-	 */
-        if (!loadPrefsSuccessfull)
-            ErrorMsg.reportError("Error",
-				 "Unable to load user preferences. Defaults loaded\n"
-				 + "If you've just installed or just upgraded this software, this is normal.");
-
-        //Set up a silly little dialog we can pop up for the user to
-        //gawk at while we do time consuming work later on.
-        waitDialog = new WaitDialog(desktop.getSelectedWindow());
-
-        // Start pumping MIDI information from Input --> Output so the
-        // user can play a MIDI Keyboard and make pretty music
-        beginEcho();
+	return prefsDialog;
     }
 
-    public static JFrame getInstance() {return JSLDesktop.getSelectedWindow();}
-
-    private void createActions() {
+    private static void createActions() {
         HashMap mnemonics = new HashMap();
 
         newAction		= new NewAction(mnemonics);
@@ -305,7 +308,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    private JPopupMenu createPopupMenu() {
+    private static JPopupMenu createPopupMenu() {
 	// crate popup menu
         JPopupMenu popup = new JPopupMenu();
         popup.add(playAction);
@@ -324,7 +327,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	return popup;
     }
 
-    private JToolBar createToolBar() {
+    private static JToolBar createToolBar() {
 	// create tool bar
         JButton b;
         toolBar = new JToolBar();
@@ -389,9 +392,9 @@ public class PatchEdit implements MidiDriverChangeListener {
         return toolBar;
     }
 
-    private void initForMac(final ExitAction exitAction,
-			    final PrefsAction prefsAction,
-			    final AboutAction aboutAction) {
+    private static void initForMac(final ExitAction exitAction,
+				   final PrefsAction prefsAction,
+				   final AboutAction aboutAction) {
 	MacUtils.init(new ApplicationAdapter() {
 		public void handleAbout(ApplicationEvent e) {
 		    final ActionEvent event =
@@ -442,7 +445,7 @@ public class PatchEdit implements MidiDriverChangeListener {
     }
 
     /** This creates a new [empty] Library Window */
-    private void createLibraryFrame() {
+    private static void createLibraryFrame() {
         LibraryFrame frame = new LibraryFrame();
         frame.setVisible(true);
         desktop.add(frame);
@@ -452,7 +455,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    private void createSceneFrame() {
+    private static void createSceneFrame() {
         SceneFrame frame = new SceneFrame();
         frame.setVisible(true);
         desktop.add(frame);
@@ -464,7 +467,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 
     /** Create a new Library Window and load a Library from disk to
 	fill it! Fun! */
-    private void openFrame(File file) {
+    private static void openFrame(File file) {
         LibraryFrame frame = new LibraryFrame(file);
         try {
 	    // Does this need to be before open?
@@ -495,7 +498,7 @@ public class PatchEdit implements MidiDriverChangeListener {
     }
 
     /** This one saves a Library to Disk */
-    private void saveFrame() {
+    private static void saveFrame() {
 	File fn = null;
 	try {
 	    JSLFrame oFrame = desktop.getSelectedFrame();
@@ -515,7 +518,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    private File showSaveDialog() {
+    private static File showSaveDialog() {
 	CompatibleFileDialog fc2 = new CompatibleFileDialog();
         FileFilter type1 =
 	    new ExtensionFilter("PatchEdit Library Files (*.patchlib)",
@@ -523,7 +526,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         fc2.addChoosableFileFilter(type1);
         fc2.setFileFilter(type1);
         fc2.setCurrentDirectory(new File (appConfig.getLibPath()));
-        if (fc2.showSaveDialog(PatchEdit.getInstance()) 
+        if (fc2.showSaveDialog(PatchEdit.getInstance())
 	        != JFileChooser.APPROVE_OPTION)
             return null;
         File file = fc2.getSelectedFile();
@@ -541,9 +544,9 @@ public class PatchEdit implements MidiDriverChangeListener {
 		return null;
 	return file;
     }
-    
+
     /** Save and specify a file name */
-    private void saveFrameAs() {
+    private static void saveFrameAs() {
 	try {
 	    JSLFrame oFrame = desktop.getSelectedFrame();
 	    File fn = showSaveDialog();
@@ -560,14 +563,14 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    private void saveFrame(LibraryFrame lf, File file) throws Exception {
+    private static void saveFrame(LibraryFrame lf, File file) throws Exception {
 	if (file == null)
 	    lf.save();
 	else
 	    lf.save(file);
     }
 
-    private void saveFrame(SceneFrame sf, File file) throws Exception {
+    private static void saveFrame(SceneFrame sf, File file) throws Exception {
 	if (file == null)
 	    sf.save();
 	else
@@ -577,11 +580,12 @@ public class PatchEdit implements MidiDriverChangeListener {
     // Generally the app is started by running JSynthLib, so the
     // following few lines are not necessary, but I won't delete them
     // just yet.
+    /*
     public static void main(String[] args) {
         PatchEdit frame = new PatchEdit();
         //frame.setVisible(true);
     }
-
+    */
     /**
      * This used to be loadMidiDriver() but it is now a callback
      * method that gets notified by MidiConfigPanel if the user
@@ -589,10 +593,12 @@ public class PatchEdit implements MidiDriverChangeListener {
      * handled by the drivers themselves. - emenaker 2003.03.12
      * @param driver The new MidiWrapper
      */
+    /*
     public void midiDriverChanged(MidiWrapper driver) {
 	MidiIn = MidiOut = driver;
     }
-
+    */
+    // make this method obsoleted.!!!FIXIT!!!
     public static Driver getDriver(int deviceNumber, int driverNumber) {
 	if (appConfig == null)
 	    return null;
@@ -616,7 +622,7 @@ public class PatchEdit implements MidiDriverChangeListener {
      * preforms one of the menu commands and are called either from
      * the menubar, popup menu or toolbar.
      */
-    public class AboutAction extends AbstractAction {
+    static class AboutAction extends AbstractAction {
 	public AboutAction(Map mnemonics) {
 	    super("About");
 	    mnemonics.put(this, new Integer('A'));
@@ -631,7 +637,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    public class ReassignAction extends AbstractAction {
+    static class ReassignAction extends AbstractAction {
 	public ReassignAction(Map mnemonics) {
 	    super("Reassign", null); // show a dialog frame???
 	    // mnemonics.put(this, new Integer('R'));
@@ -646,7 +652,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    public class PlayAction extends AbstractAction {
+    static class PlayAction extends AbstractAction {
         public PlayAction(Map mnemonics) {
             super("Play", null);
             mnemonics.put(this, new Integer('P'));
@@ -661,7 +667,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class StoreAction extends AbstractAction {
+    static class StoreAction extends AbstractAction {
         public StoreAction(Map mnemonics) {
             super("Store...", null);
             mnemonics.put(this, new Integer('R'));
@@ -676,7 +682,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class SendAction extends AbstractAction {
+    static class SendAction extends AbstractAction {
         public SendAction(Map mnemonics) {
             super("Send", null);
 	    mnemonics.put(this, new Integer('S'));
@@ -691,7 +697,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class SendToAction extends AbstractAction {
+    static class SendToAction extends AbstractAction {
 	public SendToAction(Map mnemonics) {
 	    super("Send to...", null);
 	    // mnemonics.put(this, new Integer('S'));
@@ -706,7 +712,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    public class DeleteAction extends AbstractAction {
+    static class DeleteAction extends AbstractAction {
         public DeleteAction(Map mnemonics) {
             super("Delete", null);
             setEnabled(false);
@@ -722,7 +728,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class CopyAction extends AbstractAction {
+    static class CopyAction extends AbstractAction {
         public CopyAction(Map mnemonics) {
             super("Copy", null);
             setEnabled(false);
@@ -737,7 +743,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class CutAction extends AbstractAction {
+    static class CutAction extends AbstractAction {
         public CutAction(Map mnemonics) {
             super("Cut", null);
             setEnabled(false);
@@ -753,7 +759,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class PasteAction extends AbstractAction {
+    static class PasteAction extends AbstractAction {
         public PasteAction(Map mnemonics) {
             super("Paste", null);
             setEnabled(false);
@@ -768,7 +774,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class EditAction extends AbstractAction {
+    static class EditAction extends AbstractAction {
         public EditAction(Map mnemonics) {
             super("Edit...", null);
 	    mnemonics.put(this, new Integer('E'));
@@ -808,7 +814,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    public class ExportAction extends AbstractAction {
+    static class ExportAction extends AbstractAction {
         public ExportAction(Map mnemonics) {
             super("Export...", null);
             mnemonics.put(this, new Integer('O'));
@@ -825,12 +831,17 @@ public class PatchEdit implements MidiDriverChangeListener {
 	    File file = fc3.getSelectedFile();
 	    try {
 		if (desktop.getSelectedFrame() == null) {
-		    ErrorMsg.reportError("Error", "Patch to export must be hilighted\n in the currently focuses Library");
+		    ErrorMsg.reportError("Error",
+					 "Patch to export must be hilighted\n"
+					 + "in the currently focuses Library");
 		} else {
 		    if (!file.getName().toUpperCase().endsWith(".SYX"))
 			file = new File(file.getPath() + ".syx");
 		    if (file.exists())
-			if (JOptionPane.showConfirmDialog(null, "Are you sure?", "File Exists", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+			if (JOptionPane.showConfirmDialog(null,
+							  "Are you sure?",
+							  "File Exists",
+							  JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 			    return;
 
 		    ((PatchBasket) desktop.getSelectedFrame()).ExportPatch(file);
@@ -846,7 +857,7 @@ public class PatchEdit implements MidiDriverChangeListener {
     // Sub Class: GetAction
     //=====================================================================
 
-    public class GetAction extends AbstractAction {
+    static class GetAction extends AbstractAction {
 	//-----------------------------------------------------------------
 	// Constructor: GetAction
 	//-----------------------------------------------------------------
@@ -870,7 +881,7 @@ public class PatchEdit implements MidiDriverChangeListener {
     //------ End phil@muqus.com
 
     // denis: mis en public toutes les classes Action
-    public class ImportAction extends AbstractAction {
+    static class ImportAction extends AbstractAction {
         public ImportAction(Map mnemonics) {
             super("Import...", null);
             mnemonics.put(this, new Integer('I'));
@@ -899,7 +910,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    public class NewAction extends AbstractAction {
+    static class NewAction extends AbstractAction {
         public NewAction(Map mnemonics) {
 	    super("New Library", null);
 	    mnemonics.put(this, new Integer('N'));
@@ -910,7 +921,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    public class NewSceneAction extends AbstractAction {
+    static class NewSceneAction extends AbstractAction {
         public NewSceneAction(Map mnemonics) {
             super("New Scene", null);
         }
@@ -920,7 +931,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class TransferSceneAction extends AbstractAction {
+    static class TransferSceneAction extends AbstractAction {
         public TransferSceneAction(Map mnemonics) {
             super("Transfer Scene", null); // show a dialog frame???
             // mnemonics.put(this, new Integer('S'));
@@ -935,7 +946,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class OpenAction extends AbstractAction {
+    static class OpenAction extends AbstractAction {
         public OpenAction(Map mnemonics) {
             super("Open...", null);
             mnemonics.put(this, new Integer('O'));
@@ -954,7 +965,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class SaveAction extends AbstractAction {
+    static class SaveAction extends AbstractAction {
         public SaveAction(Map mnemonics) {
 	    super("Save", null);
 	    setEnabled(false);
@@ -966,7 +977,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class SaveAsAction extends AbstractAction {
+    static class SaveAsAction extends AbstractAction {
         public SaveAsAction(Map mnemonics) {
 	    super("Save As...", null);
 	    setEnabled(false);
@@ -978,7 +989,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class ExitAction extends AbstractAction {
+    static class ExitAction extends AbstractAction {
         public ExitAction(Map mnemonics) {
 	    super("Exit", null);
 	    mnemonics.put(this, new Integer('X'));
@@ -993,7 +1004,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    public class ExtractAction extends AbstractAction {
+    static class ExtractAction extends AbstractAction {
         public ExtractAction(Map mnemonics) {
             super("Extract", null);
             mnemonics.put(this, new Integer('E'));
@@ -1009,7 +1020,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class SortAction extends AbstractAction {
+    static class SortAction extends AbstractAction {
         public SortAction(Map mnemonics) {
             super("Sort...", null);
             setEnabled(false);
@@ -1026,7 +1037,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class SearchAction extends AbstractAction {
+    static class SearchAction extends AbstractAction {
         public SearchAction(Map mnemonics) {
             super("Search...", null);
             setEnabled(false);
@@ -1044,7 +1055,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class ImportAllAction extends AbstractAction {
+    static class ImportAllAction extends AbstractAction {
         public ImportAllAction(Map mnemonics) {
             super("Import All...", null);
             setEnabled(false);
@@ -1069,7 +1080,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class DeleteDuplicatesAction extends AbstractAction {
+    static class DeleteDuplicatesAction extends AbstractAction {
         public DeleteDuplicatesAction(Map mnemonics) {
             super("Delete Dups...", null);
             setEnabled(false);
@@ -1121,7 +1132,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class NewPatchAction extends AbstractAction {
+    static class NewPatchAction extends AbstractAction {
         public NewPatchAction(Map mnemonics) {
             super("New Patch...", null);
             setEnabled(false);
@@ -1140,7 +1151,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class PrefsAction extends AbstractAction {
+    static class PrefsAction extends AbstractAction {
         public PrefsAction(Map mnemonics) {
             super("Preferences...", null);
 	    mnemonics.put(this, new Integer('P'));
@@ -1151,7 +1162,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class SynthAction extends AbstractAction {
+    static class SynthAction extends AbstractAction {
         public SynthAction(Map mnemonics) {
             super("Synths...", null);
 	    mnemonics.put(this, new Integer('S'));
@@ -1182,7 +1193,7 @@ public class PatchEdit implements MidiDriverChangeListener {
       }
     */
 
-    public class CrossBreedAction extends AbstractAction {
+    static class CrossBreedAction extends AbstractAction {
         public CrossBreedAction(Map mnemonics) {
             super("Cross Breed...", null);
             setEnabled(false);
@@ -1198,7 +1209,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class NextFaderAction extends AbstractAction {
+    static class NextFaderAction extends AbstractAction {
         public NextFaderAction(Map mnemonics) {
 	    super("Go to Next Fader Bank", null);
 	    mnemonics.put(this, new Integer('F'));
@@ -1212,7 +1223,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class DocsAction extends AbstractAction {
+    static class DocsAction extends AbstractAction {
         public DocsAction(Map mnemonics) {
 	    super("Help", null);
 	    setEnabled(true);
@@ -1229,7 +1240,7 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
     }
 
-    public class MonitorAction extends AbstractAction {
+    static class MonitorAction extends AbstractAction {
         public MonitorAction(Map mnemonics) {
 	    super("MIDI Monitor", null);
 	    setEnabled(true);
@@ -1241,14 +1252,14 @@ public class PatchEdit implements MidiDriverChangeListener {
 		    midiMonitor = new MidiMonitor();
 		midiMonitor.show();
 	    } catch (Exception ex) {
-		ErrorMsg.reportError("Error", "Unable to show Midi Monitor)", ex);
+		ErrorMsg.reportError("Error", "Unable to show MIDI Monitor)", ex);
 	    }
         }
     }
 
     ////////////////////////////////////////////////////////////////////////
     // This allows icons to be loaded even if they are inside a Jar file
-    private ImageIcon loadIcon(String name) {
+    private static ImageIcon loadIcon(String name) {
         Object icon;
         String jarName = null;
         icon = new ImageIcon(name);
@@ -1256,7 +1267,8 @@ public class PatchEdit implements MidiDriverChangeListener {
 	    jarName = new String("/");
 	    jarName = jarName.concat(name);
 	    try {
-		icon = new ImageIcon(this.getClass().getResource(jarName));
+		//icon = new ImageIcon(this.getClass().getResource(jarName));
+		icon = new ImageIcon(PatchEdit.class.getClass().getResource(jarName));
 	    } catch (java.lang.NullPointerException e) {
 		ErrorMsg.reportStatus("ImageIcon:LoadIcon Could not find: " + name);
 	    }
@@ -1264,7 +1276,53 @@ public class PatchEdit implements MidiDriverChangeListener {
         return (ImageIcon) icon;
     }
 
-    private void beginEcho() {
+
+    ////////////////////////////////////////////////////////////////////////
+    // MIDI Master Input
+    private static class MasterReceiver implements Receiver {
+	private Receiver rcvr;
+
+	MasterReceiver(Receiver rcvr) {
+	    this.rcvr = rcvr;
+	}
+
+	//Receiver interface
+	public void close() {
+	    this.rcvr.close();
+	}
+
+	public void send(MidiMessage message, long timeStamp) {
+	    int status = message.getStatus();
+	    if ((0x80 <= status) && (status < 0xF0))  // MIDI channel Voice Message
+		// I believe Sysex message must be ignored.
+		//|| status == SysexMessage.SYSTEM_EXCLUSIVE)
+		ErrorMsg.reportStatus("MasterIN: " + message);
+		this.rcvr.send(message, timeStamp);
+	}
+    }
+
+    private static Transmitter trns;
+    private static Receiver rcvr;
+
+    static void enableMasterIn() {
+	try {
+	    trns = appConfig.getMidiMasterIn().getTransmitter();
+	    rcvr = new MasterReceiver(appConfig.getMidiOut().getReceiver());
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportError("Error", "Master Controller", e);
+	}
+	trns.setReceiver(rcvr);
+    }
+
+    static void disableMasterIn() {
+	if (trns != null)
+	    trns.close();
+	if (rcvr != null)
+	    rcvr.close();
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    private static void beginEcho() {
         echoTimer = new javax.swing.Timer(5, new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {
 		    try {
@@ -1274,11 +1332,12 @@ public class PatchEdit implements MidiDriverChangeListener {
 			//controller. I cant figure out a way to fix
 			//it so let's just handle them here.
 			int mstPort = appConfig.getMasterController();
-			if (appConfig.getMasterControllerEnable() || appConfig.getFaderEnable()) {
+			if (appConfig.getMasterInEnable() || appConfig.getFaderEnable()) {
 			    while (PatchEdit.MidiIn.messagesWaiting(mstPort) > 0) {
  				MidiMessage msg = PatchEdit.MidiIn.readMessage(mstPort);
+				ErrorMsg.reportStatus("beginEcho: " + msg);
 				Patch p = PatchEdit.Clipboard; // save Clipboard
-				//???
+				// When no frame is selected this code cose error. Hiroo
 				if (desktop.getSelectedFrame() instanceof PatchBasket
 				    && (!(desktop.getSelectedFrame() instanceof PatchEditorFrame))) {
 				    if (desktop.getSelectedFrame() instanceof LibraryFrame
@@ -1287,7 +1346,6 @@ public class PatchEdit implements MidiDriverChangeListener {
 				    ((PatchBasket) desktop.getSelectedFrame()).CopySelectedPatch();
 				} else
 				    Clipboard = ((PatchEditorFrame) desktop.getSelectedFrame()).p;
-
 				if (msg.getStatus() == SysexMessage.SYSTEM_EXCLUSIVE) {
 				    PatchEdit.MidiOut.send(Clipboard.getDevice().getPort(),
 							   (SysexMessage) msg);
@@ -1320,10 +1378,10 @@ public class PatchEdit implements MidiDriverChangeListener {
         echoTimer.start();
     }
 
-    private void sendFaderMessage(ShortMessage msg) {
+    private static void sendFaderMessage(ShortMessage msg) {
         int channel = msg.getChannel();
 	int controller = msg.getData1();
-        for (int i = 0; i < 33; i++) {
+        for (int i = 0; i < Constants.NUM_FADERS; i++) {
 	    if ((appConfig.getFaderController(i) == controller)
 		&& (appConfig.getFaderChannel(i) == channel)) {
 		((PatchEditorFrame) desktop.getSelectedFrame()).faderMoved((byte) i, (byte) msg.getData2());
