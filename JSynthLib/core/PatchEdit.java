@@ -23,7 +23,7 @@ import com.apple.eawt.ApplicationEvent;
 
 //TODO import /*TODO org.jsynthlib.*/midi.*;
 public final class PatchEdit /*implements MidiDriverChangeListener*/ {
-    static final String VERSION = "0.19-alpha";
+    static final String VERSION = "0.19-pre1";
 
     // This field will be removed when new MIDI API become stable.
     static boolean newMidiAPI = true;
