@@ -208,7 +208,7 @@ You can compile them by the following steps.
 
 <pre>
     # On Windows use semicolon (;) instead of colon (:).
-    javac -classpath '.:groovy.jar.jar' org/jsynthlib/*/*/*.java org/jsynthlib/*/*.java
+    javac -classpath '.:groovy.jar' org/jsynthlib/*/*/*.java org/jsynthlib/*/*.java
     javac core/*.java
     javac synthdrivers/*/*/*.java synthdrivers/*/*.java
     javac *.java
@@ -1344,28 +1344,59 @@ Text editors that also support it are e.g. <a href="http://www.jedit.org/">jEdit
 
 <h3><a name="setupEclipse"></a>How to set up <a href="http://www.eclipse.org/">Eclipse</a> for JSynthLib?</h3>
 
-Here is the setting I'm using for Eclipse 3.0.
 <ol>
-<li> <kbd>Preferences->Java->Editor->Displayed tab width</kbd> set to '8'.
+<li>Creating a Project
+  <ol>
+  <li>From the File menu choose <kbd>New</kbd> then <kbd>Project</kbd>.</li>
+  <li>Under <kbd>CVS</kbd> choose <kbd>Checkout projects from CVS</kbd>, then click <kbd>Next</kbd>.</li>
+  <li>Select <kbd>Create a new repository location</kbd> and click <kbd>Next</kbd></li>
+  <li>Enter the settings in the table below. (These are the settings
+  for anonymous CVS. I'm assuming that if you have developer access
+  you can figure out how to change the user and connection type)</li>
 
-<li> On <kbd>Project->Java Build Path->Source</kbd> tab, select
-<kbd>Excluded...</kbd>, and click <kbd>Edit...</kbd>.  Add
-<kbd>midiprovider/**</kbd> onto <kbd>Exclusion patterns:</kbd>.
+    <table border="1">
+    <tr><td>Host</td><td>cvs.sf.net</td></tr>
+    <tr><td>Repository Path</td><td>/cvsroot/jsynthlib</td></tr>
+    <tr><td>User</td><td>anonymous</td></tr>
+    <tr><td>Connection Type</td><td>pserver</td></tr>
+    </table>
 
-<li> On <kbd>Project->Java Build Path->Library</kbd> tab, add
-<kbd>groovy.jar</kbd>.
+  <li>Leave <kbd>Password</kbd> blank, and check the <kbd>Save Sassword</kbd> box, then click <kbd>Next</kbd>.</li>
+  <li>Type <kbd>JSynthLib</kbd> into the <kbd>Use specified module name</kbd> box and click <kbd>Next</kbd>.</li>
+  <li>Make sure <kbd>Check out as a project configured using the New Project Wizard</kbd> is checked, then click <kbd>Finish</kbd>.</li>
+  <li>Choose <kbd>Java Project</kbd> and click <kbd>Next</kbd>.</li>
+  <li>Type <kbd>JSynthLib</kbd> into the name box and click <kbd>Finish</kbd>.</li>
+  </ol>
+<li>Setting up the Library Setting and Excluding MidiProvider
+  <ol>
+  <li>Right click (Ctrl-Click on a Mac) on the new project and choose Properties.</li>
+  <li>Choose <kbd>Java Build Path</kbd>, then the <kbd>Libraries</kbd> tab.</li>
+  <li>Click <kbd>Add JARs...</kbd>.</li>
+  <li>Click the arrow next to <kbd>JSynthLib</kbd> and select <kbd>groovy.jar</kbd>, then click <kbd>OK</kbd>.</li>
+  <li>Click on the <kbd>Source</kbd> tab.</li>
+  <li>Click the arrow next to <kbd>JSynthLib</kbd>, then <kbd>Excluded: (None)</kbd>, then <kbd>Edit...</kbd>.</li>
+  <li>At the bottom of the window, next to the box that says <kbd>Exclusion patterns</kbd>, click <kbd>Add Multiple...</kbd>.</li>
+  <li>Choose <kbd>midiprovider</kbd>, then click <kbd>OK</kbd> three
+  times to close all the Properties windows.</li>
+  </ol>
+<li> <kbd>Preferences->Java->Editor->Displayed tab width</kbd> set to
+  '8'.  <a href="#tabWidthFAQ">(Why?)</a>
 
-<li> For using the Javadocs for the JDK (e.g. the "J2SE 5.0 Documentation") go to
-<kbd>Preferences->Java->Installed JREs->Edit->Javadoc URL</kbd> set to
-the directory where you installed the Javadocs. A short
-description is shown when moving the mouse cursor on a class or a member.  You can
-see the full documentation by hitting <kbd>Shift-F2</kbd> after selecting
-a class or member.
-
-<li> Don't forget to generate the Javadocs for JSynthlib with
-<kbd>Project->Generate Javadoc...</kbd>.
-
+<li>Setting up Javadocs (Optional, but recommended)
+  <ol>
+  <li> For using the Javadocs for the JDK (e.g. the "J2SE 5.0 Documentation") go to
+  <kbd>Preferences->Java->Installed JREs->Edit->Javadoc URL</kbd> set to
+  the directory where you installed the Javadocs. A short
+  description is shown when moving the mouse cursor on a class or a member.  You can
+  see the full documentation by hitting <kbd>Shift-F2</kbd> after selecting
+  a class or member.
+  
+  <li> Don't forget to generate the Javadocs for JSynthlib with
+  <kbd>Project->Generate Javadoc...</kbd>.
+  </ol>
 </ol>
+
+Congratulations. Now you're ready to start hacking.
 
 <h2><a name="links" href="#toc">VI. Related Documentation</a></h2>
 
