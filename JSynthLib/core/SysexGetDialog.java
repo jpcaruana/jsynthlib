@@ -46,7 +46,7 @@ public class SysexGetDialog extends JDialog {
   private JLabel myLabel;
   private JComboBox deviceComboBox;
   private JComboBox driverComboBox;
-  private JComboBox bankComboBox;
+  private JComboBox bankNumComboBox;
   private JComboBox patchNumComboBox;
 
 //--------------------------------------------------------------------------
@@ -69,7 +69,7 @@ public class SysexGetDialog extends JDialog {
     deviceComboBox.addActionListener(new DeviceActionListener());
     driverComboBox = new JComboBox();
     driverComboBox.addActionListener(new DriverActionListener());
-    bankComboBox = new JComboBox();
+    bankNumComboBox = new JComboBox();
     patchNumComboBox = new JComboBox();
 
     // First Populate the Device/Driver List with all Device/Driver
@@ -98,7 +98,7 @@ public class SysexGetDialog extends JDialog {
     JPanel fieldPanel = new JPanel(new GridLayout(0, 1));
     fieldPanel.add(deviceComboBox);
     fieldPanel.add(driverComboBox);
-    fieldPanel.add(bankComboBox);
+    fieldPanel.add(bankNumComboBox);
     fieldPanel.add(patchNumComboBox);
 
    //----- Create the comboPanel, labels on left, fields on right
@@ -285,20 +285,21 @@ public class SysexGetDialog extends JDialog {
 
   public class DriverActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-//       ErrorMsg.reportStatus("DriverActionListener->actionPerformed");
       Driver driver = (Driver) driverComboBox.getSelectedItem();
+      //ErrorMsg.reportStatus("DriverActionListener->actionPerformed:" + driver);
       if (driver == null) 	// for driverComboBox.removeAllItems()
 	return;
 
-      bankComboBox.removeAllItems();
+      bankNumComboBox.removeAllItems();
       patchNumComboBox.removeAllItems();
 
-      if (driver.bankNumbers != null && driver.bankNumbers.length > 1) {
-	for (int i = 0 ; i < driver.bankNumbers.length ; i++) {
-	  bankComboBox.addItem(driver.bankNumbers[i]);
+      String bankNumbers[] = driver.getBankNumbers();
+      if (bankNumbers != null && bankNumbers.length > 1) {
+	for (int i = 0 ; i < bankNumbers.length ; i++) {
+	  bankNumComboBox.addItem(bankNumbers[i]);
 	}
       }
-      bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
+      bankNumComboBox.setEnabled(bankNumComboBox.getItemCount() > 1);
 
       String patchNumbers[] = driver.getPatchNumbers();
       if (patchNumbers.length > 1) {
@@ -332,7 +333,7 @@ public class SysexGetDialog extends JDialog {
   public class GetActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
       Driver driver = (Driver) driverComboBox.getSelectedItem();
-      int bankNum = bankComboBox.getSelectedIndex();
+      int bankNum  = bankNumComboBox.getSelectedIndex();
       int patchNum = patchNumComboBox.getSelectedIndex();
       inPort = driver.getInPort();
 

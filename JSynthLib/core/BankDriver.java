@@ -147,6 +147,7 @@ public class BankDriver extends Driver {
     /**
      * Chooses which bank to put the patch into and stores the patch
      * in it .
+     * @deprecated Nobody uses this method now.
      */
     protected void choosePatch(Patch p) {
 	int bank = 0;

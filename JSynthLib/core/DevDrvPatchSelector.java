@@ -214,13 +214,14 @@ public class DevDrvPatchSelector extends JDialog {
             patchNumComboBox.removeAllItems();
 
             if (driver != null) {
-                if (driver.bankNumbers != null && driver.bankNumbers.length > 1) {
-                    for (int i = 0 ; i < driver.bankNumbers.length ; i++) {
-            	        bankComboBox.addItem(driver.bankNumbers[i]);
+		String[] bankNumbers = driver.getBankNumbers();
+                if (bankNumbers != null && bankNumbers.length > 1) {
+                    for (int i = 0 ; i < bankNumbers.length ; i++) {
+            	        bankComboBox.addItem(bankNumbers[i]);
                     }
                 }
 
-                String patchNumbers[] = getPatchNumbers(driver);
+                String[] patchNumbers = getPatchNumbers(driver);
                 if (patchNumbers.length > 1) {
                     for (int i = 0 ; i < patchNumbers.length ; i++) {
                         patchNumComboBox.addItem(patchNumbers[i]);

@@ -84,10 +84,11 @@ public class SceneTableCellEditor implements TableCellEditor, TableModelListener
             
             driver=((SceneListModel)table.getModel()).getSceneAt(row).getPatch().getDriver();
 	    String patchNumbers[] = driver.getPatchNumbers();
+	    String bankNumbers[]  = driver.getBankNumbers();
             if (patchNumbers.length > 1) {
                 if (col==3) {
-                    for (int i = 0 ; i < driver.bankNumbers.length ; i++) {
-                        box.addItem(driver.bankNumbers[i]);
+                    for (int i = 0 ; i < bankNumbers.length ; i++) {
+                        box.addItem(bankNumbers[i]);
                     }
                 }
                 if (col==4)

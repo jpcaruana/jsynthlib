@@ -58,6 +58,22 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      */
     private String authors;
 
+    /**
+     * Array holding names/numbers for all patches.  Used for comboBox
+     * selection.
+     * @see #getPatchNumbers
+     * @see #getPatchNumbersForStore
+     * @see #generateNumbers
+     */
+    protected String[] patchNumbers;
+    /**
+     * Array holding names or numbers for all banks.  Used for
+     * comboBox selection.
+     * @see #getBankNumbers
+     * @see #generateNumbers
+     */
+    protected String[] bankNumbers;
+
     /*
      * The following fields are used by default methods defined in
      * this file.  If your extending driver can use a default method
@@ -108,20 +124,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @see #trimSysex
      */
     protected int trimSize = 0;
-
-    // for default choosePatch methods
-    /**
-     * Array holding names/numbers/names for all banks.
-     * @see #choosePatch(Patch,int,int)
-     * @see #choosePatch(Patch)
-     */
-    protected String[] bankNumbers;
-    /**
-     * Array holding names/numbers for all patches.
-     * @see #choosePatch(Patch,int,int)
-     * @see #choosePatch(Patch)
-     */
-    protected String[] patchNumbers;
 
     // for default supportsPatch method
     /**
@@ -256,7 +258,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Use <code>new Patch(sysex, getDevice())</code> instead of
      * <code>new Patch(getDeviceNum(), sysex)</code>.
      */
-    protected int getDeviceNum() {
+    int getDeviceNum() {
 // 	return this.deviceNum;
 	return device.getDeviceNum();
     }
@@ -275,7 +277,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Use <code>new Patch(sysex, this)</code> instead of
      * <code>new Patch(sysex, getDeviceNum(), getDriverNum())</code>.
      */
-    protected int getDriverNum() {
+    int getDriverNum() {
  	return device.getDriverNum(this);
     }
     /** Getter for property <code>patchType</code>. */
@@ -472,8 +474,8 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @param p a <code>Patch</code> value
      * @param bankNum initially selected bank number.
      * @param patchNum initially selected patch number.
+     * @deprecated Nobody uses this method now.
      */
-    // Nobody extends this method now.
     protected void choosePatch(Patch p, int bankNum, int patchNum) {
 	int bank = 0;
 	int patch = 0;
@@ -522,6 +524,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * it.  Initially bank number '0' and patch number '0' are selected.
      *
      * @param p a <code>Patch</code> value
+     * @deprecated Nobody uses this method now.
      */
     protected void choosePatch(Patch p) {
 	choosePatch(p, 0, 0);
@@ -780,7 +783,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	    + getPatchType();
     }
 
-    /*
+    /**
      * Returns String[] returns full list of patchNumbers
      */
     public String[] getPatchNumbers()
@@ -788,12 +791,12 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         return patchNumbers;
     }
 
-    /*
+    /**
      * Returns String[] list of patch numbers for writable patches.
      * This can be overridden if some patch locations are read only.
      * e.g. the Waldorf Pulse has 100 patches, but only 0 to 39 are writable.
-     * Currently writable patches are assumed to start at patch location 0
-     * (This has nothing to with the "Storable" class in JSynthLib)
+     * Currently writable patches are assumed to start at patch location 0.
+     * (This has nothing to with the "Storable" class in JSynthLib.)
      */
     public String[] getPatchNumbersForStore()
     {
@@ -801,8 +804,35 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         return patchNumbers;
     }
 
-    /*
-     * Generates arrays of formatted numbers
+    /**
+     * Returns String[] returns full list of bankNumbers
+     */
+    public String[] getBankNumbers()
+    {
+        return bankNumbers;
+    }
+
+    /**
+     * A utility method to generates an array of formatted numbers.
+     * For example,
+     * <pre>
+     *   patchNumbers = generateNumbers(1, 10, "Patch 00");
+     * </pre>
+     * setups an array,
+     * <pre>
+     *   {
+     *     "Patch 01", "Patch 02", "Patch 03", "Patch 04", "Patch 05"
+     *     "Patch 06", "Patch 07", "Patch 08", "Patch 09", "Patch 10"
+     *   }
+     * </pre>
+     *
+     * @param min minumux value
+     * @param max maximum value
+     * @param format pattern String for java.text.DecimalFormat
+     * @return an array of formatted numbers.
+     * @see java.text.DecimalFormat
+     * @see #patchNumbers
+     * @see #bankNumbers
      */
     protected static String[] generateNumbers(int min, int max, String format){
         String retval[] = new String[max - min + 1];
