@@ -1,6 +1,5 @@
 package core;
 
-import jmidi.MidiPort;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;

@@ -1,11 +1,11 @@
 package core;
+import jmidi.*;
 import javax.swing.JList.*;
 import javax.swing.JScrollPane;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.JOptionPane;
 import javax.swing.JDialog;
-import jmidi.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.plaf.metal.*;

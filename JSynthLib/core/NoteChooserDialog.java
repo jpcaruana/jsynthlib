@@ -1,6 +1,5 @@
 package core;
 import javax.swing.JList;
-import jmidi.*;
 import javax.swing.JScrollPane;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;

@@ -12,7 +12,6 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import javax.sound.midi.*;
-import jmidi.*;
 public class PatchEdit extends JFrame
 {
     public static JDesktopPane desktop;

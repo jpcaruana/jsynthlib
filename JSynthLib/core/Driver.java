@@ -2,7 +2,6 @@
 
 package core;
 import java.io.*;
-import jmidi.MidiPort;
 import javax.swing.*;
 
 /**This is the base class for all Drivers*/
