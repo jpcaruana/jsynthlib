@@ -43,7 +43,6 @@ import core.SysexWidget;
 /**
  * Editor for a patch from a Casio CZ-101/1000.
  * Patch must be 264 bytes long, not the 263-byte version from the synth.
- * Detune Fine goes 0..63, while synth reads 0..60.
  * <P>
  * Released under GPL and all that.
  * 
@@ -234,10 +233,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
 	                0,++row,7,1,0);
 		}
 
-		if(hackMode)
-		    addWidget(miscPane,new ScrollBarWidget("Detune Step",patch,-127,127,0,80,new DetuneStepModel(patch),null),0,++row,7,1,0);
-		else
-		    addWidget(miscPane,new ScrollBarWidget("Detune Step",patch,-47,47,0,80,new DetuneStepModel(patch),null),0,++row,7,1,0);
+		addWidget(miscPane,getDetuneStepGUI(patch),0,++row,7,1,0);
         addWidget(miscPane,new ScrollBarWidget("Detune Fine",patch,  0,63,0,80,new DetuneFineModel(patch),null),0,++row,7,1,0);
         
         // Octave val==3 is same as 1 (+1 octave)
@@ -260,7 +256,20 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         parent.add(widget, gbc);
     }
 
-
+    
+    protected SysexWidget getDetuneStepGUI(Patch patch) {
+		int max = (hackMode ? 127 : 47);
+		String[] dsopts = new String[2*max+1];
+		dsopts[max] = "0";
+		for(int i=1; i<=max; i++) {
+		    dsopts[max+i] = "+"+i/12+"'"+i%12;
+		    dsopts[max-i] = "-"+i/12+"'"+i%12;
+		}
+	    return new ScrollBarLookupWidget("Detune Step", patch, -max, max, 80, new DetuneStepModel(patch), null, dsopts);
+	    //boring half-step number only:
+	    //return new ScrollBarWidget("Detune Step",patch,-max,max,0,80,new DetuneStepModel(patch),null);
+    }
+    
     protected JPanel getVibratoGUI(Patch patch) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
