@@ -27,8 +27,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -136,36 +135,34 @@ public class DX7FamilyDevice extends Device
 	/** Getter for sPBPflag */
 	public int getSPBPflag() { return this.sPBPflag; };
 	/** Setter for sPBPflag */
-	public void setSPBPflag(int sPBPflag) { this.sPBPflag = sPBPflag; };
+	public void setSPBPflag(int sPBPflag) {
+		this.sPBPflag = sPBPflag;
+		if (prefs != null)
+			prefs.putInt("sPBPflag", sPBPflag);
+	};
 
 	/** Getter for swOffMemProtFlag */
 	public int getSwOffMemProtFlag() { return this.swOffMemProtFlag; };
 	/** Setter for swOffMemProtFlag */
-	public void setSwOffMemProtFlag(int swOffMemProtFlag) { this.swOffMemProtFlag = swOffMemProtFlag; };
+	public void setSwOffMemProtFlag(int swOffMemProtFlag) {
+		this.swOffMemProtFlag = swOffMemProtFlag;
+		if (prefs != null)
+			prefs.putInt("swOffMemProtFlag", swOffMemProtFlag);
+	};
 
 	/** Getter for tipsMsgFlag */
 	public int getTipsMsgFlag() { return this.tipsMsgFlag; };
 	/** Setter for tipsMsgFlag */
-	public void setTipsMsgFlag(int tipsMsgFlag) { this.tipsMsgFlag = tipsMsgFlag; };
+	public void setTipsMsgFlag(int tipsMsgFlag) {
+		this.tipsMsgFlag = tipsMsgFlag;
+		if (prefs != null)
+			prefs.putInt("tipsMsgFlag", tipsMsgFlag);
+	};
 
-
-	/**
-	 * Get the names of properties that should be stored and loaded.
-	 * @return a Set of field names
-	 */
-	public Set storedProperties()
-	{
-		final String[] storedPropertyNames = {
-				 "sPBPflag", "swOffMemProtFlag", "tipsMsgFlag"
-		};
-		Set set = super.storedProperties();
-		set.addAll(Arrays.asList(storedPropertyNames));
-		return set;
+	public void setPreferences(Preferences p) {
+		super.setPreferences(p);
+		sPBPflag = prefs.getInt("sPBPflag", sPBPflag);
+		swOffMemProtFlag = prefs.getInt("swOffMemProtFlag", swOffMemProtFlag);
+		tipsMsgFlag = prefs.getInt("tipsMsgFlag", tipsMsgFlag);
 	}
-
-	/**
-	 * Method that will be called after loading
-	 */
-	public void afterRestore() {}
-
 }

@@ -8,8 +8,7 @@ package synthdrivers.YamahaDX100;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
@@ -79,19 +78,14 @@ public class YamahaDX100Device extends Device implements ItemListener
 	/** Getter for whichSynth */
 	public int getWhichSynth() { return this.whichSynth; };
 	/** Setter for whichSynth */
-	public void setWhichSynth(int whichSynth) { this.whichSynth = whichSynth; };
+	public void setWhichSynth(int whichSynth) {
+		this.whichSynth = whichSynth;
+		if (prefs != null)
+			prefs.putInt("whichSynth", whichSynth);
+	};
 
-	/**
-	 * Get the names of properties that should be stored and loaded.
-	 * @return a Set of field names
-	 */
-	public Set storedProperties() {
-		final String[] storedPropertyNames = {
-			"whichSynth",
-		};
-		Set set = super.storedProperties();
-		set.addAll(Arrays.asList(storedPropertyNames));
-		return set;
+	public void setPreferences(Preferences p) {
+		super.setPreferences(p);
+		whichSynth = prefs.getInt("whichSynth", whichSynth);
 	}
-
 }

@@ -1,9 +1,6 @@
 package core;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.prefs.Preferences;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
@@ -30,7 +27,11 @@ import javax.swing.JPanel;
  * @see Driver
  */
 public class Device /*implements Serializable, Storable*/ {
-    /** The company which made the Synthesizer. */
+
+	/** Preferences node for storing configuration options */
+	protected Preferences prefs = null;
+	
+	/** The company which made the Synthesizer. */
     private String manufacturerName;
     /**
      * The fixed name of the model supported by this driver, as stated
@@ -189,6 +190,8 @@ public class Device /*implements Serializable, Storable*/ {
      */
     public void setSynthName (String synthName) { // public for storable
         this.synthName = synthName;
+        if (prefs != null)
+        		prefs.put("synthName", synthName);
     }
 
     /**
@@ -210,6 +213,8 @@ public class Device /*implements Serializable, Storable*/ {
      */
     public void setChannel (int channel) { // public for storable
         this.channel = channel;
+        if (prefs != null)
+        		prefs.putInt("channel", channel);
 	// Remove the following lines when 'driver.channel' becomes 'private'.
 	/*
 	Iterator iter = driverList.iterator();
@@ -241,6 +246,8 @@ public class Device /*implements Serializable, Storable*/ {
      */
     public void setDeviceID(int deviceID) { // public for storable
         this.deviceID = deviceID;
+        if (prefs != null)
+        		prefs.putInt("devicID", deviceID);
     }
 
     /**
@@ -258,7 +265,10 @@ public class Device /*implements Serializable, Storable*/ {
      * @param port New value of property port.
      */
     public void setPort (int port) { // public for storable
-	if (PatchEdit.newMidiAPI) {
+    		_setPort(port, true);
+    }
+    private void _setPort(int port, boolean changePrefs) {
+    	if (PatchEdit.newMidiAPI) {
 	    if (this.port != port) {
 		if (rcvr != null)
 		    rcvr.close();
@@ -266,6 +276,8 @@ public class Device /*implements Serializable, Storable*/ {
 	    }
 	}
         this.port = port;
+        if (prefs != null && changePrefs)
+        		prefs.putInt("port", port);
     }
 
     /** send MidiMessage to MIDI output. Called by Driver.send(). */
@@ -294,9 +306,14 @@ public class Device /*implements Serializable, Storable*/ {
      * @param inPort New value of property inPort.
      */
     public void setInPort (int inPort) { // public for storable
-        this.inPort = inPort;
+    		_setInPort(inPort, true);
+    }
+    	private void _setInPort(int inPort, boolean changePrefs) {	
+    	this.inPort = inPort;
 	if (PatchEdit.newMidiAPI)
 	    MidiUtil.setSysexInputQueue(inPort);
+		if (prefs != null && changePrefs)
+			prefs.putInt("inPort", inPort);
     }
 
     // Getters/Setters, etc for Drivers
@@ -397,33 +414,15 @@ public class Device /*implements Serializable, Storable*/ {
     }
     */
 
-    // For Storable interface
-    /**
-     * Get the names of properties that should be stored and loaded.
-     * Only for Storable interface.
-     * @return a Set of field names.
-     */
-    public Set storedProperties() {
-	final String[] storedPropertyNames = {
-	    "inPort", "synthName", "port", "channel",
-	    "deviceID" //, "midiIn", "midiOut"
-	};
-	TreeSet set = new TreeSet();
-	set.addAll(Arrays.asList(storedPropertyNames));
-	return set;
-    }
-
-    /** Method that will be called after loading. Only for Storable
-	interface.*/
-    public void afterRestore() {
-	Iterator iter = driverList.iterator();
-	while (iter.hasNext()) {
- 	    ((Driver) iter.next()).setDevice(this);
-	}
-  	//ErrorMsg.reportStatus("Device.afterRestore: " + this + " : " + driverList);
-    }
-    // end of storable interface
-
+    	public void setPreferences(Preferences p) {
+    		prefs = p;
+    		_setInPort(prefs.getInt("inPort",inPort), false);
+    		synthName = prefs.get("synthName", synthName);
+    		_setPort(prefs.getInt("port", port), false);
+    		channel = prefs.getInt("channel", channel);
+    		deviceID = prefs.getInt("deviceID", deviceID);
+    	}
+    
     /**
      * Getter for DeviceName.
      * @return String of Device Name with inPort and Channel.

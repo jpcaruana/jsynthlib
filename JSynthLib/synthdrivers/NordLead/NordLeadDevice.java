@@ -5,8 +5,7 @@ package synthdrivers.NordLead;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -97,24 +96,11 @@ public class NordLeadDevice extends Device implements ItemListener {
    */
   public void setGlobalChannel(int globalChannel) {
       this.globalChannel = globalChannel;
+      if (prefs != null)
+      	prefs.putInt("globalChannel", globalChannel);
   }
-  
-  /**
-   * Get the names of properties that should be stored and loaded.
-   * @return a Set of field names
-   */
-  public Set storedProperties()
-  {
-    final String[] storedPropertyNames = {"globalChannel"};
-    Set set = super.storedProperties();
-    set.addAll(Arrays.asList(storedPropertyNames));
-    return set;
-  }
-
-  /**
-   * Method that will be called after loading
-   */
-  public void afterRestore()
-  {
+  public void setPreferences(Preferences p) {
+  	super.setPreferences(p);
+  	globalChannel = prefs.getInt("globalChannel", globalChannel);
   }
 }

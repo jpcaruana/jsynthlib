@@ -9,15 +9,11 @@
 
 package core;
 
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -28,6 +24,7 @@ import javax.swing.UIManager;
 import org.jsynthlib.jsynthlib.Dummy;
 
 public class AppConfig {
+	// static?
     private ArrayList deviceList = new ArrayList();
     private static MidiWrapper midiWrapper = null;
     private Transmitter masterInTrns;
@@ -35,6 +32,7 @@ public class AppConfig {
 
     
     private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
+    private static Preferences devices = prefs.node("devices");
 
     static Vector midiWrappers;
     {
@@ -63,44 +61,19 @@ public class AppConfig {
      * Load the properties from the file.
      * @throws IOException
      */
-    private void load() throws IOException, BackingStoreException {
+    private void load() throws IOException, BackingStoreException, NoSuchMethodException,
+		IllegalAccessException,	InstantiationException, InvocationTargetException {
         prefs.sync();
         // Call setters that act on the value.
         setMidiPlatform(getMidiPlatform());
         setLookAndFeel(getLookAndFeel());
-        // Load deviceList
-        Device[] ds = (Device[])getObject("deviceList");
-        setDevice(ds);
+        loadDevices();
         try {
         	    masterInTrns = MidiUtil.getTransmitter(getFaderPort());
             faderInTrns = MidiUtil.getTransmitter(getFaderPort());
         } catch (Exception e) {}
     }
 
-    protected Object getObject(String key) throws IOException, BackingStoreException {
-    	byte b[] = prefs.getByteArray(key, null);
-    	if (b == null)
-    	    return null;
-    	InputStream bis = new ByteArrayInputStream(b);
-    	XMLDecoder is = new XMLDecoder(bis);
-    	Object o = null;
-    	try {
-    	    o = is.readObject();
-    	} catch (ArrayIndexOutOfBoundsException e) {}
-    	is.close();
-    	bis.close();
-    	return o;
-    }
-    
-    protected void putObject(String key, Object o) throws IOException, BackingStoreException {
-    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    	XMLEncoder os = new XMLEncoder(bos);
-    	os.writeObject(o);
-    	os.close();
-    	prefs.putByteArray(key, bos.toByteArray());
-    	bos.close();
-    }
-    
     /**
      * This routine just saves the current settings in the config
      * file. Its called when the user quits the app.
@@ -120,9 +93,8 @@ public class AppConfig {
      * @throws FileNotFoundException
      */
     private void store() throws IOException, BackingStoreException {
-        // Save deviceList
-        putObject("deviceList",getDevice());
-        // Save prefs
+    	// This shouldn't be necessary unless the jvm crashes.
+    	// Save prefs
         prefs.flush();
      }
 
@@ -352,22 +324,6 @@ public class AppConfig {
     /** Indexed getter for deviceList elements */
     public Device getDevice(int i) { return (Device) this.deviceList.get(i); }
     /** Indexed setter for deviceList elements */
-    public Device setDevice(int i, Device dev) {
-	//reassignDeviceDriverNums(i, dev);
-	return (Device) this.deviceList.set(i, dev);
-    }
-    /** Getter for deviceList */
-    public Device[] getDevice() {
-	return (Device[]) this.deviceList.toArray(new Device[0]);
-    }
-    /** setter for deviceList */
-    public void setDevice(Device[] devices) {
-	ArrayList newList = new ArrayList();
-	if (devices != null)
-	    newList.addAll(Arrays.asList(devices));
-	this.deviceList = newList;
-	//reassignDeviceDriverNums();
-    }
 
     /**
      * Adder for deviceList elements.  Called by DeviceAddDialog and
@@ -376,19 +332,70 @@ public class AppConfig {
     public boolean addDevice(Device device) {
 	//reassignDeviceDriverNums(deviceList.size(), device);
 	// set default MIDI in/out port number
-	device.setPort(PatchEdit.appConfig.getInitPortOut());
-	device.setInPort(PatchEdit.appConfig.getInitPortIn());
-	return this.deviceList.add(device);
+    	if (this.deviceList.add(device)) {
+    		int i = deviceList.size() - 1;
+    		device.setPort(PatchEdit.appConfig.getInitPortOut());
+    		device.setInPort(PatchEdit.appConfig.getInitPortIn());
+    		devices.put("device" + i, device.getClass().getName());
+    		devices.put("node" + i, getNextDeviceNode());
+    		device.setPreferences(getPreferences(i));
+    		devices.putInt("count", deviceList.size());
+    		return true; 
+    	}
+    	return false;
     }
     /**
      * Remover for deviceList elements.
      * The caller must call reassignDeviceDriverNums and revalidateLibraries.
      * @return <code>Device</code> object removed.
      */
-    public Device removeDevice(int i) { return (Device) this.deviceList.remove(i); }
+    public Device removeDevice(int i) {
+    		Device ret = (Device) this.deviceList.remove(i);
+    		int size = deviceList.size();
+    		try {
+    			getPreferences(i).removeNode();
+    		} catch (BackingStoreException ex) {}
+    		while (i < size) {
+    			devices.put("device" + (i), devices.get("device" + (i+1),""));
+    			devices.put("node" + (i), devices.get("node" + (i+1),""));
+    		}
+    		devices.remove("device" + size);
+    		devices.remove("node"+ size);
+    		devices.putInt("count", size);
+    		return ret;
+    }
     /** Size query for deviceList */
     public int deviceCount() { return this.deviceList.size(); }
 
+    	private Preferences getPreferences(int i) {
+    		String key = devices.get("node" + i,null);
+    		if (key == null)
+    			return null;
+    		return devices.node(key);
+    	}
+    
+    	private void loadDevices() throws NoSuchMethodException, IllegalAccessException,
+			InstantiationException, InvocationTargetException {
+    		int size = devices.getInt("count",0);
+    		Class args[] = new Class[0];
+    		for (int i = 0; i < size; i++) {
+    			try {
+    				Class c = Class.forName(prefs.get("device" + (i),""));
+    				Constructor cons = c.getConstructor(args);
+    				Device dev = (Device)cons.newInstance(args);
+    				dev.setPreferences(getPreferences(i));
+    				deviceList.add(i, dev);
+    			} catch (ClassNotFoundException ex) {
+    			}
+    		}
+    	}
+    	
+    	private String getNextDeviceNode() {
+    		int i = devices.getInt("next_node", 0);
+    		devices.putInt("next_node", i + 1);
+    		return Integer.toString(i);
+    	}
+    
     // Moved from SynthConfigDialog.java
     /** Revalidate deviceNum element of drivers of each device */
     /*
