@@ -41,13 +41,14 @@ abstract public class Device implements Serializable
      * universal inquiry command.
      */    
     protected String inquiryID;
-    /**names of authors who wrote support for device*/
-    protected String authors;    
 
+    /**Information about Device*/
+    protected String infoText;
     /** Creates new Device */
     public Device ()
     {
         inquiryID="NONE";
+	infoText="There is no information about this Device.";
     }
     
     public String getManufacturerName ()
@@ -66,6 +67,7 @@ abstract public class Device implements Serializable
         driver.setPort (port);
         driver.inPort=inPort;        
         driverList.add (driver);
+	driver.setDevice(this);
     }
     /**
      * @param index The index, where the driver is added in the list
@@ -166,9 +168,13 @@ abstract public class Device implements Serializable
     }
    public void showDetails()
    {
-        JOptionPane.showMessageDialog(PatchEdit.instance,
-	"Device: "+ getManufacturerName()+' '+getModelName()+"\n",
-	"Device Details", JOptionPane.INFORMATION_MESSAGE);
-   
+        DeviceDetailsDialog ddd = new DeviceDetailsDialog(this);
+	ddd.show();   
+   }
+   public JPanel config()
+   {
+      JPanel panel= new JPanel();
+      panel.add(new JLabel("This Device has no configuration options."));
+      return panel;
    }
 }

@@ -1,6 +1,6 @@
 package core;
 
-//FIXME: DO NOT RELEASE UNTIL FIXED: Need to add device list for newest 3 synths!!!
+
 import synthdrivers.KawaiK4.*;
 import synthdrivers.KawaiK5000.*;
 import synthdrivers.EmuProteusMPS.*;
@@ -15,7 +15,7 @@ import synthdrivers.NovationNova1.*;
 import synthdrivers.CasioCZ1000.*;
 import synthdrivers.RolandXV5080.*;       // phil@muqus.com
 import synthdrivers.PeaveyPC1600.*;       // phil@muqus.com
-
+import synthdrivers.YamahaDX7.*;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JFrame;
@@ -47,6 +47,7 @@ String [] availibleDevices = {
                                "Peavey PC1600 Driver", // phil@muqus.com
                                "Roland XV5080 Driver", // phil@muqus.com
                                "Yamaha DX21 / DX27 / DX100 Driver", 
+                               "Yamaha DX7 / TX7 Driver", 
                                "Yamaha TG33 Driver",
                                "Yamaha TX81z Driver",
 
@@ -150,6 +151,9 @@ void OKPressed() {
      return;}
    if (s.equals("Yamaha DX21 / DX27 / DX100 Driver"))
      {PatchEdit.deviceList.add(new YamahaDX100Device());
+     return;}
+   if (s.equals("Yamaha DX7 / TX7 Driver"))
+     {PatchEdit.deviceList.add(new YamahaDX7Device());
      return;}
    if (s.equals("Korg ER1 Driver"))
      {PatchEdit.deviceList.add(new KorgER1Device());

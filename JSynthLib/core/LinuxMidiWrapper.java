@@ -121,6 +121,7 @@ public class LinuxMidiWrapper extends MidiWrapper
         {
         outStream[port].write (sysex,0,length);
         outStream[port].flush ();
+        logMidi(port,false,sysex,length);
         }
     }
     public void writeShortMessage (int port, byte b1, byte b2) throws Exception
@@ -173,9 +174,11 @@ public class LinuxMidiWrapper extends MidiWrapper
                 sysex[i++]=midiBuffer[readPos++];
                 readPos%=bufferSize;
                 sysEx=false;
-                return i;
+                logMidi(port,true,sysex,i);
+                 return i;
             }
-            return i;
+              logMidi(port,true,sysex,i);
+              return i;
         }
         
         statusByte=midiBuffer[readPos++];
@@ -199,7 +202,7 @@ public class LinuxMidiWrapper extends MidiWrapper
         }  //if msg not complete-- get more
         for (i=1;i<msgLen;i++) sysex[i]=midiBuffer[(readPos++)%bufferSize];
         readPos%=bufferSize;
-        
+        logMidi(port,true,sysex,msgLen);        
         return msgLen;
     }
     

@@ -147,6 +147,7 @@ public class SysexGetDialog extends JDialog {
     dialogPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     //===================================== Timer ========================================
+    PatchEdit.echoTimer.stop();
     timer = new javax.swing.Timer(0, new TimerActionListener());
 
     //===== Listener
@@ -180,17 +181,17 @@ public class SysexGetDialog extends JDialog {
       return;
 
     byte[] patchSysex;
-    if (sysex[0]==-16) //F0 
+       if (sysex[0]==-16) //F0 
     {  patchSysex= new byte[sysexSize];
        System.arraycopy(sysex, 0, patchSysex, 0, sysexSize);
     } else
-    { 
-      int i=0;
+     { 
+     int i=0;
       while ((sysex[i]!=-16) && (i<sysexSize)) i++;
       if (i==sysexSize) return;
-      patchSysex= new byte[sysexSize];
+      patchSysex= new byte[sysexSize-i];
       System.arraycopy(sysex, i, patchSysex, 0, sysexSize-i);
-    }
+     }
 	    
     Patch p = new Patch(patchSysex);
     Patch[] patarray = p.dissect();
@@ -212,6 +213,7 @@ public class SysexGetDialog extends JDialog {
     public void actionPerformed (ActionEvent evt) {
       setVisible(false);
       timer.stop();
+      PatchEdit.echoTimer.start();
       pasteIntoSelectedFrame();
     }
   } // End InnerClass: DoneActionListener

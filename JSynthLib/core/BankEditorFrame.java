@@ -24,7 +24,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
     DNDPatchTable table;
     DNDPatchTable table2;
     Patch  bankData;
-    BankDriver bankDriver;   
+    BankDriver bankDriver;
+    final BankEditorFrame instance;
     
     public BankEditorFrame (Patch p)
     {
@@ -33,7 +34,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         true, //closable
         true, //maximizable
         true);//iconifiable
-        bankData=p;
+        instance=this;
+	bankData=p;
         bankDriver=(BankDriver)PatchEdit.getDriver (p.deviceNum ,p.driverNum);
         InitBankEditorFrame ();
     }
@@ -140,6 +142,16 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
             }
             public void internalFrameClosing (InternalFrameEvent e)
             {
+              JInternalFrame[] jList =PatchEdit.desktop.getAllFrames ();
+	       for (int j=0;j<jList.length;j++)
+		    if (jList[j] instanceof PatchEditorFrame) 
+		     {
+    		             if (((PatchEditorFrame)(jList[j])).bankFrame==instance)
+			       { jList[j].moveToFront();
+			          try{jList[j].setSelected(true);
+			          jList[j].setClosed(true); }catch (Exception e1){}
+			       }
+		     }
             }
             
             public void internalFrameDeactivated (InternalFrameEvent e)
@@ -284,7 +296,11 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
     {
         return null;   //for now bank doesn't support this feature. Need to extract single and place in collection.
     }
-    
+  public void revalidateDriver()
+  {
+  bankData.ChooseDriver();
+  if (bankData.deviceNum==0) {try{setClosed(true);}catch (Exception e){}; return;}
+  bankDriver=(BankDriver)PatchEdit.getDriver(bankData.deviceNum,bankData.driverNum);}    
 }
 
 

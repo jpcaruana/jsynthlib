@@ -157,6 +157,7 @@ ErrorMsg.reportError ("Error","Wire MIDI is flipping out.",e);}
         if (((i+250))<sysex.length) msg.setMessage (tmpArray,251); else
           msg.setMessage (tmpArray,(sysex.length%250)+1);
       }
+       logMidi(port,false,sysex,size);
       output.send (msg,-1);
     }
   }
@@ -173,6 +174,7 @@ ErrorMsg.reportError ("Error","Wire MIDI is flipping out.",e);}
     ShortMessage msg=new ShortMessage ();
     msg.setMessage ((int)b1,(int)b2,(int)b3);
     output.send (msg,-1);
+     
   }
   
   public  int getNumInputDevices ()throws Exception
@@ -193,9 +195,11 @@ ErrorMsg.reportError ("Error","Wire MIDI is flipping out.",e);}
     if (msg.getMessage ()[0]==-9)
     {
       System.arraycopy (msg.getMessage (),1,sysex,0,msg.getLength ()-1);
+      logMidi(port,true,sysex,msg.getLength()-1);
       return msg.getLength ()-1;
     }
     System.arraycopy (msg.getMessage (),0,sysex,0,msg.getLength ());
+     logMidi(port,true,sysex,msg.getLength());
     return msg.getLength ();
   }
 }

@@ -55,7 +55,35 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
         {
             public void internalFrameClosing (InternalFrameEvent e)
             {
-                if (!changed) return;
+               
+	        if (!changed) return;
+                int i;
+	        JInternalFrame[] jList =PatchEdit.desktop.getAllFrames ();
+  	        for (int j=0;j<jList.length;j++)
+		 {
+	               if (jList[j] instanceof BankEditorFrame) 
+		     {
+    		        for (i=0;i<myModel.PatchList.size();i++)
+	                     if (((BankEditorFrame)(jList[j])).bankData==((Patch)(myModel.PatchList.get(i))))
+			     { jList[j].moveToFront();
+			     try{jList[j].setSelected(true);
+			     jList[j].setClosed(true); }catch (Exception e1){}
+			       break;}
+		     }
+		    
+		    if (jList[j] instanceof PatchEditorFrame) 
+		     {
+    		        for (i=0;i<myModel.PatchList.size();i++)
+	                     if (((PatchEditorFrame)(jList[j])).p==((Patch)(myModel.PatchList.get(i))))
+			     { jList[j].moveToFront();
+			     try{jList[j].setSelected(true);
+			     jList[j].setClosed(true); }catch (Exception e1){}
+			       break;}
+		     }
+		 }
+
+
+	      
                 if (JOptionPane.showConfirmDialog (null,"This Library may contain unsaved data.\nSave before closing?","Delete Duplicate Patches",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
                 if (getTitle ().startsWith ("Unsaved Library"))
                 {
@@ -318,33 +346,37 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
             }
         });
     }
-    
-    public void ImportPatch(File file) throws IOException,FileNotFoundException {
+/*    Old Code
+    public void ImportPatch (File file) throws IOException,FileNotFoundException
+    {
+        FileInputStream fileIn= new FileInputStream (file);
+        byte [] buffer =new byte [(int)file.length ()];
+        fileIn.read (buffer);
+        fileIn.close ();
+        if (table.getSelectedRowCount ()==0) myModel.PatchList.add (new Patch (buffer));
+        else myModel.PatchList.add (table.getSelectedRow (),new Patch (buffer));
+        myModel.fireTableDataChanged ();
+        changed=true;
+        statusBar.setText (myModel.PatchList.size ()+" Patches");
+    }
+ */
+    public void ImportPatch (File file) throws IOException,FileNotFoundException
+    {
         int i;
-        boolean hasMorePatches=true;
-        int startIndex=0;
-        int endIndex;
-        FileInputStream fileIn= new FileInputStream(file);
-        byte [] buffer =new byte [(int)file.length()];
-        fileIn.read(buffer);
-        fileIn.close();
-        while (hasMorePatches) {
-            // Search, if the file contains more than one Sysex-Message
-            for (endIndex=startIndex;endIndex<buffer.length;endIndex++) {
-                if (buffer[endIndex]==(byte)0xF7) // End of Message found
-                    break;
-            }
-            //Copy the Message into an separate buffer
-            byte [] partBuffer=new byte[endIndex-startIndex+1];
-            System.arraycopy(buffer,startIndex,partBuffer,0,endIndex-startIndex+1);
-            
-            Patch firstpat=new Patch(partBuffer);
-            
-            Patch[] patarray=firstpat.dissect();
-            
-            if (patarray.length>1) { // Conversion was sucessfull, we have at least one converted patch
-                for (int j=0;j<patarray.length;j++) {
-                    myModel.PatchList.add(patarray[j]); // add all converted patches
+        FileInputStream fileIn= new FileInputStream (file);
+        byte [] buffer =new byte [(int)file.length ()];
+        fileIn.read (buffer);
+        fileIn.close ();
+        
+        Patch firstpat=new Patch (buffer);
+        
+        Patch[] patarray=firstpat.dissect ();
+        
+        if (patarray.length>1)
+        { // Conversion was sucessfull, we have at least one converted patch
+            for (int j=0;j<patarray.length;j++)
+            {
+                myModel.PatchList.add (patarray[j]); // add all converted patches
             }
         }
         else
@@ -355,12 +387,8 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
             else
                 myModel.PatchList.add (table.getSelectedRow (),firstpat);
         }
-            startIndex=endIndex+1;
-            // If not the complete file is processed, proceed with the next part
-            if (endIndex>=buffer.length-1)
-                hasMorePatches=false;
-        }
-        myModel.fireTableDataChanged();
+        
+        myModel.fireTableDataChanged ();
         changed=true;
         statusBar.setText (myModel.PatchList.size ()+" Patches");
     }
@@ -512,5 +540,12 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
     {
         return myModel.PatchList;
     }
-    
+//Re-assigns drivers to all patches in libraryframe. Called after new drivers are added or or removed
+    protected void revalidateDrivers()
+      {
+        int i;
+	for (i=0;i<myModel.PatchList.size();i++)
+	  ((Patch)(myModel.PatchList.get(i))).ChooseDriver();
+	myModel.fireTableDataChanged();
+      }
 }

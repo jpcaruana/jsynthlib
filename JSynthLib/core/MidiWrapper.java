@@ -16,6 +16,11 @@ abstract public class MidiWrapper
   public abstract String getOutputDeviceName(int port)throws Exception;
   public abstract int messagesWaiting(int port)throws Exception;
   public abstract int readMessage(int port,byte []sysex,int maxSize)throws Exception;
+  public void logMidi(int port,boolean in,byte []sysex,int length)
+  {
+    if ((PatchEdit.midiMonitor!=null) && PatchEdit.midiMonitor.isVisible())
+	    PatchEdit.midiMonitor.log(port,in,sysex,length);
+  }
   public void close() {}
   
   

@@ -59,12 +59,19 @@ public class Driver extends Object implements Serializable
    /**SysexHandler object to request dump (see requestPatchDump) - phil@muqus.com*/
    public SysexHandler sysexRequestDump = null;
 
+   /**The names of the authors of this driver*/
+   protected String authors;
+  
+   /**Which device does this driver go with?*/
+   protected Device device;
+
     /**Constructs a generic Driver*/
     public Driver ()
     {
         sysexID="MATCHNONE";
         //    inquiryID="NONE";
-        manufacturer="Generic";
+        authors="Brian Klock";
+	manufacturer="Generic";
         model="";
         patchType="Sysex";
         id="???";
@@ -83,9 +90,12 @@ public class Driver extends Object implements Serializable
     {return patchType;}
     public String getSynthName ()
     {return id;}
+    public String getAuthors()
+    {return authors;}
     public void   setSynthName (String s)
     {id=s;}
-    
+    public void setDevice(Device d)
+    {device=d;}
     /**Gets the name of the patch from the sysex. If the patch uses some weird
      * format or encoding, this needs to be overidden in the particular driver*/
     public String getPatchName (Patch p)
@@ -198,7 +208,7 @@ public void choosePatch (Patch p, int patchNum)
         p.sysex[ofs]=(byte)(sum % 128);
         p.sysex[ofs]=(byte)(p.sysex[ofs]^127);
         p.sysex[ofs]=(byte)(p.sysex[ofs]+1);
-        
+        p.sysex[ofs]=(byte)(p.sysex[ofs]&127);   //to ensure that checksum is in range 0-127;         
         ErrorMsg.reportStatus ("Checksum is now "+p.sysex[ofs]);
         
     }

@@ -27,7 +27,7 @@ public class PatchEdit extends JFrame
     public static WaitDialog waitDialog;
     public static javax.swing.Timer echoTimer;
     public static int newFaderValue[] = new int[33];
-    
+    public static MidiMonitor midiMonitor;    
     public static ExtractAction extractAction;
     public static SendAction sendAction;
     public static StoreAction storeAction;
@@ -48,8 +48,11 @@ public class PatchEdit extends JFrame
     public static ImportAllAction importAllAction;
     public static NewPatchAction newPatchAction;
     public static CrossBreedAction crossBreedAction;    
+    public static DocsAction docsAction;
+    public static MonitorAction monitorAction;
     SearchDialog searchDialog;
-    public static PatchEdit instance;                        // phil@muqus.com
+    DocumentationWindow documentationWindow; 
+   public static PatchEdit instance;                        // phil@muqus.com
 
     // Initialize Application:                                  *
     public PatchEdit ()
@@ -227,21 +230,28 @@ public class PatchEdit extends JFrame
         menuConfig.add (prefsAction);
         NoteChooserAction noteChooserAction=new NoteChooserAction ();
         menuConfig.add (noteChooserAction);
+        MonitorAction monitorAction=new MonitorAction ();
+        menuConfig.add (monitorAction);
+
         menuBar.add (menuConfig);
         
         JMenu menuHelp = new JMenu ("Help");
         menuHelp.setMnemonic (KeyEvent.VK_H);
         JMenuItem menuAbout = new JMenuItem ("About");
         menuAbout.setMnemonic (KeyEvent.VK_A);
+       
+  
         menuAbout.addActionListener (new ActionListener ()
         {
             public void actionPerformed (ActionEvent e)
             {
-                JOptionPane.showMessageDialog (null, "JSynthLib Version 0.16\nCopyright (C) 2000-01 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info","About JSynthLib", JOptionPane.INFORMATION_MESSAGE);return;
+                JOptionPane.showMessageDialog (null, "JSynthLib Version 0.17\nCopyright (C) 2000-01 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info","About JSynthLib", JOptionPane.INFORMATION_MESSAGE);return;
             }
         }
         );
         menuHelp.add (menuAbout);
+        docsAction = new DocsAction();
+	menuHelp.add(docsAction);
         menuBar.add (menuHelp);
         
         menuPatchPopup=new JPopupMenu ();
@@ -984,48 +994,6 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class ReceiveAction extends AbstractAction
-    {
-        SysexReceiveDialog myDialog;
-        
-        public ReceiveAction ()
-        {super ("Receive",null);
-         putValue (Action.MNEMONIC_KEY, new Integer ('R'));
-         setEnabled (false);
-        }
-        public void actionPerformed (ActionEvent e)
-        {
-            int port;
-            byte [] junkBuffer = new byte[1024];
-            
-            try
-            {
-                String [] portList=new String[MidiIn.getNumInputDevices ()];
-                for (int i=0; i<MidiIn.getNumInputDevices ();i++)
-                    portList[i]=i+"- "+MidiIn.getInputDeviceName (i);
-                String portStr=(String)JOptionPane.showInputDialog (null,"Please Choose a Midi Device","Receive Midi Data",
-                JOptionPane.QUESTION_MESSAGE,null,portList,portList[0]);
-                if (portStr==null) return;
-                try
-                {
-                    port=new Integer (Integer.parseInt (((String)portStr).substring (0,2))).intValue ();
-                }catch (Exception e2)
-                {port=new Integer (Integer.parseInt (((String)portStr).substring (0,1))).intValue ();}
-                
-                echoTimer.stop ();
-                MidiIn.setInputDeviceNum (port);
-                Thread.sleep (100);
-                
-                while (MidiIn.messagesWaiting (port)>0) MidiIn.readMessage (port,junkBuffer,1024);
-                
-                myDialog=new SysexReceiveDialog (PatchEdit.this,port);
-                myDialog.show ();
-            } catch (Exception ex)
-            {ErrorMsg.reportError ("Error", "Error Receiveing Midi.",ex);};
-            echoTimer.start ();
-        }
-        
-    }
     
     class NewPatchAction extends AbstractAction
     {
@@ -1115,6 +1083,40 @@ public class PatchEdit extends JFrame
             if (!(desktop.getSelectedFrame () instanceof PatchEditorFrame)) return;
             PatchEditorFrame pf=(PatchEditorFrame)desktop.getSelectedFrame ();
             pf.faderBank=(pf.faderBank+1)% pf.numFaderBanks; pf.faderHighlight ();return;
+        }
+    }
+    class DocsAction extends AbstractAction
+    {
+        public DocsAction ()
+        {super ("Documentation",null);
+         setEnabled (true);
+         putValue (Action.MNEMONIC_KEY, new Integer ('D'));
+        }
+        public void actionPerformed (ActionEvent e)
+        {
+	    try
+            {
+                if (documentationWindow==null) documentationWindow = new DocumentationWindow ();
+                documentationWindow.show ();
+            } catch (Exception ex)
+            {ErrorMsg.reportError ("Error", "Unable to show Documentation)",ex);};
+        }
+    }
+    class MonitorAction extends AbstractAction
+    {
+        public MonitorAction ()
+        {super ("MIDI Monitor",null);
+         setEnabled (true);
+         putValue (Action.MNEMONIC_KEY, new Integer ('D'));
+        }
+        public void actionPerformed (ActionEvent e)
+        {
+	    try
+            {
+                if (midiMonitor==null) midiMonitor = new MidiMonitor ();
+                midiMonitor.show ();
+            } catch (Exception ex)
+            {ErrorMsg.reportError ("Error", "Unable to show Midi Monitor)",ex);};
         }
     }
     

@@ -17,6 +17,7 @@ public class CrossBreeder
          p.sysex[i]=source.sysex[i];
        }
      p.driverNum=father.driverNum;
+     p.deviceNum=father.deviceNum;
      PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
      //((Driver)(PatchEdit.DriverList.get(p.driverNum))).calculateChecksum(p);
    }catch (Exception e) {ErrorMsg.reportError("Error", "Source Library Must be Focused",e);}

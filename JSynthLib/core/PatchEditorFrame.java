@@ -24,7 +24,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket
   public JScrollPane scroller;
   //information about BankEditorFrame which created this PatchEditor frame
   //(if applicable) so we can update that frame with the edited data on close
-  BankEditorFrame bankFrame=null;
+  public BankEditorFrame bankFrame=null;
   int patchRow; int patchCol;  //which patch in bank we're editing
 
   public PatchEditorFrame(String name,Patch patch)
@@ -250,7 +250,12 @@ public void setBankEditorInformation (BankEditorFrame bf, int row,int col)
    patchRow=row;
    patchCol=col;
   }
-
+  public void revalidateDriver()
+  {
+  p.ChooseDriver();
+  if (p.deviceNum==0) {try{setClosed(true);}catch (Exception e){}; return;}
+  }
+  
 }
   
 	 

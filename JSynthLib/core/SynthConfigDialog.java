@@ -148,17 +148,13 @@ public class SynthConfigDialog extends JDialog
     void RemovePressed ()
     {
         table=table2;
-        if ((PatchEdit.desktop.getAllFrames ()).length >0)
-        { JOptionPane.showMessageDialog (null, "Driver Installation and Removal must be done\n with all Library and Patch Windows Closed\n (Opened Windows are using Drivers)","Error", JOptionPane.ERROR_MESSAGE);
-          return;
-        }
-        
         if ((table2.getSelectedRow ()==-1) ||(table2.getSelectedRow()==0)) return;
         if (JOptionPane.showConfirmDialog (null,"Are you sure?","Remove Device?",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-        try
+	try
         {
             PatchEdit.deviceList.remove (table2.getSelectedRow ());
-            ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
+            revalidateLibraries();
+	  ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
             table2.repaint ();
         }catch (Exception e)
         {}
@@ -168,22 +164,36 @@ public class SynthConfigDialog extends JDialog
         table=table2; 
         if ((table2.getSelectedRow ()==-1)) return;
         ((Device)(PatchEdit.deviceList.get(table2.getSelectedRow()))).showDetails();  
-       
+        ((SynthTableModel)table.getModel ()).fireTableDataChanged ();  
     }
     
     void AddPressed ()
     {
         table=table2;
-        if ((PatchEdit.desktop.getAllFrames ()).length >0)
-        { JOptionPane.showMessageDialog (null, "Device Installation and Removal must be done\n with all Library and Patch Windows Closed\n (Opened Windows are using Drivers)","Error", JOptionPane.ERROR_MESSAGE);
-          return;
-        }
-        DeviceAddDialog dad= new DeviceAddDialog (null);
+	DeviceAddDialog dad= new DeviceAddDialog (null);
         dad.show ();
-        ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
+        revalidateLibraries();
+	((SynthTableModel)table.getModel ()).fireTableDataChanged ();
         
     }
+    void revalidateLibraries()
+    {
+	JInternalFrame[] jList =PatchEdit.desktop.getAllFrames ();
+	if (jList.length >0)
+	{
+	  PatchEdit.waitDialog.show();
+	  for (int i=0;i<jList.length;i++)
+	  {
+	    if (jList[i] instanceof LibraryFrame) ((LibraryFrame)(jList[i])).revalidateDrivers();
+	    if (jList[i] instanceof BankEditorFrame) ((BankEditorFrame)(jList[i])).revalidateDriver();
+	    if (jList[i] instanceof PatchEditorFrame) ((PatchEditorFrame)(jList[i])).revalidateDriver();
+	    
+	  }
+	  PatchEdit.waitDialog.hide();
+	}
+    }
     // METHOD ADDED BY GERRIT GEHNEN
+
     void ScanPressed ()
     {
         table=table2;
@@ -201,6 +211,7 @@ public class SynthConfigDialog extends JDialog
         midiScan=new MidiScan ((SynthTableModel)table.getModel (),pm,this);
         
         midiScan.start ();
+        revalidateLibraries();
         ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
     }
     // END OF METHOD ADDED BY GERRIT GEHNEN
