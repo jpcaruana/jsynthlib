@@ -6,6 +6,16 @@ import java.util.*;
 
 // TODO: Lines marked with XXX are JSynthLib dependent code. They must be removed to
 // make this class a generic class.
+/**
+ * A virtual JDesktopPane class which supports both MDI (using JInternalFrame)
+ * and SDI (using JFrame) mothods. In MDI mode JDesktopPane is used. In SDI mode
+ * a ToolBar window is created and JDesktopPane methods are emulated. For the
+ * details of each method, refer the documentation of JDesktopPane.
+ * 
+ * @see JDesktopPane
+ * @see JSLFrame
+ * @author Rib Rdb
+ */
 public class JSLDesktop {
     private static JSLDesktopProxy proxy;
     protected static JFrame selected = null;
@@ -20,6 +30,7 @@ public class JSLDesktop {
     private static int xdecoration = 0, ydecoration = 0;
     private static JSLDesktop instance = null;
 
+    /** Creates a new JSLDesktop. */
     protected JSLDesktop() {
 	if (JSLFrame.useInternalFrames()) { // XXX
 	    proxy = new JSLJDesktop();
@@ -40,21 +51,49 @@ public class JSLDesktop {
 	}
 	return instance;
     }
-
+    // JDesktopPane compatible methods
+    /** Returns all JInternalFrames currently displayed in the desktop. */
     public static JSLFrame[] getAllFrames() { return proxy.getAllJSLFrames(); }
+    /**
+     * Returns the currently active JSLFrame, or null if no JSLFrame is
+     * currently active.
+     */
     public static JSLFrame getSelectedFrame() { return proxy.getSelectedJSLFrame(); }
-    public static JFrame getSelectedWindow() { return selected; }
-    static JFrame getLastSelectedWindow() { return proxy.getLastSelectedWindow(); }
+    /** Returns the size of this component in the form of a Dimension object. */
     public static Dimension getSize() { return proxy.getSize(); }
-    public static void add(JSLFrame f) { proxy.add(f); }
+
+    // original (non-JDesktopPane compatible) methods
+    /**
+     * Returns the JFrame created in constructor (for what?) in SDI mode. In MDI
+     * mode return the current active Frame including Toolbar frame.
+     */
+    public static JFrame getSelectedWindow() { return selected; }
+    /**
+     * Creates the Window Menu which is depenent on MDI/SDI mode. called by
+     * Actions.createMenuBar().
+     */
     public static JMenu createWindowMenu() { return proxy.createWindowMenu(); }
+    /**  */
+    public static void setupInitialMenuBar(JToolBar tb) { proxy.setupInitialMenuBar(tb); }
+
+    // XXX Cannot we do the job of add() and registerFrame() in the constructor of JSLFrame?
+    /** add frame in MDI mode. Do nothing in SDI mode. */
+    public static void add(JSLFrame f) { proxy.add(f); }
+    /** add frame in SDI mode. Do nothing in MDI mode. */
     static void registerFrame(JSLFrame f) { proxy.registerFrame(f); }
-    static void setupInitialMenuBar(JToolBar tb) { proxy.setupInitialMenuBar(tb); }
-    public static void showToolBar() { proxy.showToolBar(); }
+    /**  */
+    static JFrame getLastSelectedWindow() { return proxy.getLastSelectedWindow(); }
+    /**  */
     static JSLFrame getToolBar() { return proxy.getToolBar(); }
+    /**  */
     static JSLFrame getInvisible() { return proxy.getInvisible(); }
+    /**  */
     static int getXDecoration() { return xdecoration; }
+    /**  */
     static int getYDecoration() { return ydecoration; }
+    /**  */
+    private static void showToolBar() { proxy.showToolBar(); }
+
     private interface JSLDesktopProxy {
 	public JSLFrame[] getAllJSLFrames();
 	public JSLFrame getSelectedJSLFrame();
@@ -116,8 +155,7 @@ public class JSLDesktop {
 	}
 	public JSLFrame getSelectedJSLFrame() {
 	    try {
-		return (JSLFrame)
-		    ((JSLFrame.JSLFrameProxy)getSelectedFrame()).getJSLFrame();
+		return ((JSLFrame.JSLFrameProxy)getSelectedFrame()).getJSLFrame();
 	    } catch (Exception e) {
 		return null;
 	    }
