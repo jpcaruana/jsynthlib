@@ -20,6 +20,7 @@
  */
 package core;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -75,7 +76,7 @@ public class DriverUtil {
      */
     public static IDriver chooseDriver(byte[] sysex) {
         String patchString = getPatchHeader(sysex);
-    
+
         for (int idev = 0; idev < AppConfig.deviceCount(); idev++) {
             // Outer Loop, iterating over all installed devices
             Device dev = AppConfig.getDevice(idev);
@@ -111,12 +112,12 @@ public class DriverUtil {
      * Return a hexadecimal string for
      * {@link IDriver#supportsPatch IDriver.suppportsPatch} at most 16 byte
      * sysex data.
-     * 
+     *
      * @see IDriver#supportsPatch
      */
     public static String getPatchHeader(byte[] sysex) {
         StringBuffer patchstring = new StringBuffer("F0");
-    
+
         // Some Sysex Messages are shorter than 16 Bytes!
         // 	for (int i = 1; (sysex.length < 16) ? i < sysex.length : i < 16; i++)
         // {
@@ -131,12 +132,12 @@ public class DriverUtil {
     /**
      * Caluculate check sum of a byte array <code>sysex</code>.
      * <p>
-     * 
+     *
      * The checksum calculation method of this method is used by Roland, YAMAHA,
      * etc.<p>
-     * 
+     *
      * Compatibility Note: This method became 'static' method.
-     * 
+     *
      * @param sysex
      *            a byte array
      * @param start
@@ -195,7 +196,7 @@ public class DriverUtil {
 
     /**
      * Create new patch using a patch file <code>patchFileName</code>.
-     * 
+     *
      * @param driver IPatchDriver object
      * @param fileName file name (relative path to driver directory)
      * @param size Sysex data size
@@ -205,12 +206,18 @@ public class DriverUtil {
     public static IPatch createNewPatch(IPatchDriver driver, String fileName,
             int size) { // Borrowed from DR660 driver
         byte[] buffer = new byte[size];
+
         try {
-            InputStream fileIn = driver.getClass()
-                    .getResourceAsStream(fileName);
-            fileIn.read(buffer);
-            fileIn.close();
-            return driver.createPatch(buffer);
+            InputStream fileIn = driver.getClass().getResourceAsStream(fileName);
+
+			if (fileIn != null) {
+            	fileIn.read(buffer);
+            	fileIn.close();
+            	return driver.createPatch(buffer);
+            }
+            else {
+            	throw new FileNotFoundException("File: " + fileName + " does not exist!");
+            }
         } catch (IOException e) {
             ErrorMsg.reportError("Error", "Unable to open " + fileName, e);
             return null;
