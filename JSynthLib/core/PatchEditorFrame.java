@@ -1,4 +1,3 @@
-/* $Id$ */
 package core;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,48 +7,71 @@ import javax.swing.event.*;
 import java.io.*;
 import javax.swing.border.*;
 
+/**
+ * A base class of a patch editor.
+ *
+ * @author ???
+ * @version $Id$
+ */
 public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
-    /** this is the patch we are working on */
-    public Patch p;
-    /** this is a copy of the patch when we started editing (in case
-	user wants to revert)
+    /** This is the patch we are working on. */
+    public Patch p;	    // accessed by YamahaFS1RPerformanceEditor
+    /** Note that calling addWidget() method may change the value of this. */
+    protected GridBagConstraints gbc;
+    /** Scroll Pane for the editor frame. */
+    protected JPanel scrollPane;
+    /** A list of slider added by addWidget method.  Only for ScrollBarWidgets and EnvelopeWidget. */
+    protected ArrayList sliderList = new ArrayList(); //workaround for Java Swing Bug (What is this comment? Does anyone knows about this bug?)
+    /** A list of widget added by addWidget method. */
+    protected ArrayList widgetList = new ArrayList();
 
-	I hope this is big enough, it really should be dynamically
-	allocated to the size of p.sysex, but cannot be due to a
-	design "feature" in Java */
-    final byte[] originalPatch = new byte[32000];
-    public GridBagLayout layout;
-    public GridBagConstraints gbc;
-    public JPanel scrollPane;
-    public ArrayList sliderList = new ArrayList(); //workaround for Java Swing Bug (What is this comment? Does anyone knows about this bug?)
-    public ArrayList widgetList = new ArrayList();
-    public SysexWidget recentWidget;
-    public int faderBank;
-    public int numFaderBanks;
-    public byte lastFader;
-    public JScrollPane scroller;
+    /**
+     * Information about BankEditorFrame which created this
+     * PatchEditor frame (if applicable) so we can update that frame
+     * with the edited data on close.
+     */
+    public  BankEditorFrame bankFrame = null; // accessed by YamahaFS1RBankEditor
 
-    /** information about BankEditorFrame which created this
-	PatchEditor frame (if applicable) so we can update that frame
-	with the edited data on close */
-    public BankEditorFrame bankFrame = null;
-    int patchRow;
+    /** Bank of fader.  Set by faderMoved method. */
+    int faderBank;
+    /** Numfer of fader banks.  Set by show method. */
+    int numFaderBanks;
+
+    /**
+     * This is a copy of the patch when we started editing (in case
+     * user wants to revert).
+     */
+    private final byte[] originalPatch;
     /** which patch in bank we're editing */
-    int patchCol;
+    private int patchRow;
+    private int patchCol;
+    /** The last recently moved widget by fader. */
+    private SysexWidget recentWidget;
+    private byte lastFader;
+    private JScrollPane scroller;
 
-    public PatchEditorFrame(String name, Patch patch) {
+    /**
+     * Creates a new <code>PatchEditorFrame</code> instance.
+     *
+     * @param name a name to display in the title bar.
+     * @param patch a <code>Patch</code> value
+     */
+    protected PatchEditorFrame(String name, Patch patch) {
+	// create a resizable, closable, maximizable, and iconifiable frame.
 	super(name, true, true, true, true);
 	p = patch;
-	//make backup copy
+	// make a backup copy
+	originalPatch = new byte[p.sysex.length];
 	System.arraycopy(p.sysex, 0, originalPatch, 0, p.sysex.length);
-	layout = new GridBagLayout();
+
 	gbc = new GridBagConstraints();
 	scrollPane = new JPanel();
-	scrollPane.setLayout(layout);
+	scrollPane.setLayout(new GridBagLayout());
 	scrollPane.setSize(600, 400);
 	scroller = new JScrollPane(scrollPane);
 	getContentPane().add(scroller);
 	setSize(600, 400);
+
 	scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
 		}
@@ -72,18 +94,18 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		    };
 		    int choice = JOptionPane.CLOSED_OPTION;
 		    while (choice == JOptionPane.CLOSED_OPTION)
-			choice = JOptionPane.showOptionDialog((Component) null,
-							      "What do you wish to do with the changed copy of the Patch?",
-							      "Save Changes?",
-							      JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE,
-							      null, choices, choices[0]);
-		    if (choice == 0) {
-			if (bankFrame == null)
-			    return;
-			bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
+			choice = JOptionPane.showOptionDialog
+			    ((Component) null,
+			     "What do you wish to do with the changed copy of the Patch?",
+			     "Save Changes?",
+			     JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE,
+			     null, choices, choices[0]);
+		    if (choice == 0) { // "Keep Changes"
+			if (bankFrame != null)
+			    bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
 			return;
 		    }
-		    if (choice == 2)
+		    if (choice == 2) // "Place Changed Version on Clipboard"
 			//put on clipboard but don't 'return' just yet
 			CopySelectedPatch();
 		    //restore backup
@@ -94,8 +116,8 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		}
 
 		public void internalFrameActivated(InternalFrameEvent e) {
-		    ((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).calculateChecksum(p);
-		    ((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).sendPatch(p);
+		    p.getDriver().calculateChecksum(p);
+		    p.getDriver().sendPatch(p);
 		    gotFocus();
 		    PatchEdit.receiveAction.setEnabled(false);
 		    PatchEdit.pasteAction.setEnabled(false);
@@ -130,6 +152,8 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	    });
     }
 
+    // PatchBasket methods
+
     public ArrayList getPatchCollection() {
 	return null;
     }
@@ -156,24 +180,24 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
     }
 
     public void SendSelectedPatch() {
-	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).calculateChecksum(p);
-	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).sendPatch(p);
+	p.getDriver().calculateChecksum(p);
+	p.getDriver().sendPatch(p);
     }
 
     public void SendToSelectedPatch() {
-	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).calculateChecksum(p);
+	p.getDriver().calculateChecksum(p);
 	new SysexSendToDialog(p);
     }
 
     public void ReassignSelectedPatch() {
-	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).calculateChecksum(p);
+	p.getDriver().calculateChecksum(p);
 	new ReassignPatchDialog(p);
     }
 
     public void PlaySelectedPatch() {
-	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).calculateChecksum(p);
-	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).sendPatch(p);
-	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).playPatch(p);
+	p.getDriver().calculateChecksum(p);
+	p.getDriver().sendPatch(p);
+	p.getDriver().playPatch(p);
     }
 
     public void StoreSelectedPatch() {
@@ -186,44 +210,40 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
     public void PastePatch() {
     }
 
-    public void addWidget(SysexWidget widget,
-			  int gridx, int gridy, int gridwidth, int gridheight,
-			  int slidernum) {
+    // end of PatchBasket methods
+
+    /**
+     * Add <code>SysexWidget</code> <code>widget</code> to
+     * <code>JComponent</code> <code>parent</code> by using specified
+     * GridBagConstraints.
+     *
+     * @param parent a parent <code>JComponent</code> to which
+     * <code>widget</code> is added.
+     * @param widget a <code>SysexWidget</code> to be added.
+     * @param gridx see {@link GridBagConstraints#gridx}.
+     * @param gridy see {@link GridBagConstraints#gridy}.
+     * @param gridwidth see {@link GridBagConstraints#gridwidth}.
+     * @param gridheight see {@link GridBagConstraints#gridheight}.
+     * @param anchor see {@link GridBagConstraints#anchor}.
+     * @param fill see {@link GridBagConstraints#fill}.
+     * @param slidernum a slider number.  Only used by ScrollBar Widgets.
+     * @see GridBagConstraints
+     */
+    protected void addWidget(JComponent parent, SysexWidget widget,
+			     int gridx, int gridy, int gridwidth, int gridheight,
+			     int anchor, int fill,
+			     int slidernum) {
 	try {
-	    gbc.fill = gbc.BOTH;
-	    gbc.anchor = gbc.EAST;
 	    gbc.gridx = gridx;
 	    gbc.gridy = gridy;
 	    gbc.gridwidth = gridwidth;
 	    gbc.gridheight = gridheight;
-	    scrollPane.add(widget, gbc);
-
-	    widget.setSliderNum(slidernum);
-	    if (widget instanceof ScrollBarWidget)
-		sliderList.add(((ScrollBarWidget) widget).slider);
-	    if (widget instanceof VertScrollBarWidget)
-		sliderList.add(((VertScrollBarWidget) widget).slider);
-	    if (widget instanceof ScrollBarLookupWidget)
-		sliderList.add(((ScrollBarLookupWidget) widget).slider);
-
-	    widgetList.add(widget);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
-    }
-
-    public void addWidget(JComponent parent, SysexWidget widget,
-			  int gridx, int gridy, int gridwidth, int gridheight,
-			  int slidernum) {
-	try {
-	    gbc.fill = gbc.HORIZONTAL;
-	    gbc.anchor = gbc.NORTHEAST;
-	    gbc.gridx = gridx;
-	    gbc.gridy = gridy;
-	    gbc.gridwidth = gridwidth;
-	    gbc.gridheight = gridheight;
+	    gbc.anchor = anchor;
+	    gbc.fill = fill;
 	    parent.add(widget, gbc);
 
+	    widgetList.add(widget);
+
 	    widget.setSliderNum(slidernum);
 	    if (widget instanceof ScrollBarWidget)
 		sliderList.add(((ScrollBarWidget) widget).slider);
@@ -231,15 +251,44 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		sliderList.add(((VertScrollBarWidget) widget).slider);
 	    if (widget instanceof ScrollBarLookupWidget)
 		sliderList.add(((ScrollBarLookupWidget) widget).slider);
-
-	    widgetList.add(widget);
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
 	}
     }
 
-    public void faderMoved(byte fader, byte value) {
-	SysexWidget w;
+    /**
+     * Add <code>SysexWidget</code> <code>widget</code> to
+     * <code>JComponent</code> <code>parent</code> by using specified
+     * GridBagConstraints.<p>
+     *
+     * <code>NORTHEAST</code> is used for the <code>anchor</code>
+     * constraint and <code>HORIZONTAL</code> is used for the
+     * <code>fill</code> constraint.
+     */
+    protected void addWidget(JComponent parent, SysexWidget widget,
+			     int gridx, int gridy, int gridwidth, int gridheight,
+			     int slidernum) {
+	this.addWidget(parent, widget, gridx, gridy, gridwidth, gridheight,
+		       gbc.NORTHEAST, gbc.HORIZONTAL, slidernum);
+    }
+
+    /**
+     * Add <code>SysexWidget</code> <code>widget</code> to
+     * <code>scrollPane</code> by using specified
+     * GridBagConstraints.<p>
+     *
+     * <code>EAST</code> is used for the <code>anchor</code>
+     * constraint and <code>BOTH</code> is used for the
+     * <code>fill</code> constraint.
+     */
+    protected void addWidget(SysexWidget widget,
+			     int gridx, int gridy, int gridwidth, int gridheight,
+			     int slidernum) {
+	this.addWidget(scrollPane, widget, gridx, gridy, gridwidth, gridheight,
+		       gbc.EAST, gbc.BOTH, slidernum);
+    }
+
+    void faderMoved(byte fader, byte value) {
 	if (fader == 32) {
 	    faderBank = (faderBank + 1) % numFaderBanks;
 	    faderHighlight();
@@ -256,39 +305,41 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	    fader = (byte) (0 - (fader - 16) - (faderBank * 16));
 	else
 	    fader += (faderBank * 16);
+
 	if (recentWidget != null) {
+	    SysexWidget w = recentWidget;
 	    if (fader == faderBank * 16)
 		fader = lastFader;
-	    if (recentWidget.isShowing() && (recentWidget.getSliderNum() == fader)) {
-		if (recentWidget.getNumFaders() == 1)
-		    recentWidget.setValue((int) (recentWidget.getValueMin() + ((float) (value) / 127 * (recentWidget.getValueMax() - recentWidget.getValueMin()))));
-		else
-		    recentWidget.setFaderValue(fader, (int) value);
-		recentWidget.repaint();
+	    if (w.getSliderNum() == fader && w.isShowing()) {
+		if (w.getNumFaders() == 1)
+		    w.setValue((int) (w.getValueMin() + ((float) (value) / 127 * (w.getValueMax() - w.getValueMin()))));
+		else		// EnvelopeWidget
+		    w.setFaderValue(fader, (int) value);
+		w.repaint();
 		return;
 	    }
 	}
 	lastFader = fader;
+
 	for (int i = 0; i < widgetList.size(); i++) {
-	    w = (SysexWidget) widgetList.get(i);
+	    SysexWidget w = (SysexWidget) widgetList.get(i);
 	    if ((w.getSliderNum() == fader
 		 || (w.getSliderNum() < fader && w.getSliderNum() + w.getNumFaders() > fader))
 		&& w.isShowing()) {
+		if (w.getNumFaders() == 1)
+		    w.setValue((int) (w.getValueMin() + ((float) (value) / 127 * (w.getValueMax() - w.getValueMin()))));
+		else		// EnvelopeWidget
+		    w.setFaderValue(fader, (int) value);
+		w.repaint();
 		recentWidget = w;
-		if (recentWidget.getNumFaders() == 1)
-		    recentWidget.setValue((int) (recentWidget.getValueMin() + ((float) (value) / 127 * (recentWidget.getValueMax() - recentWidget.getValueMin()))));
-		else
-		    recentWidget.setFaderValue(fader, (int) value);
-		recentWidget.repaint();
 		return;
 	    }
 	}
     }
 
-    public void faderHighlight() {
-	SysexWidget w;
+    void faderHighlight() {
 	for (int i = 0; i < widgetList.size(); i++) {
-	    w = (SysexWidget) widgetList.get(i);
+	    SysexWidget w = (SysexWidget) widgetList.get(i);
 	    if (w.getLabel() != null) {
 		if (((Math.abs(w.getSliderNum() - 1) & 0xf0)) == faderBank * 16) {
 		    Color c = UIManager.getColor("controlText");
@@ -306,15 +357,16 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	}
     }
 
-    /** when showing the dialog, also check how many components there
-	are to determine the number of widget banks needed */
-    public void show() {
+    /**
+     * When showing the dialog, also check how many components there
+     * are to determine the number of widget banks needed.
+     */
+    public void show() {	// override a method of JInternalFrame
 	int high = 0;
-	SysexWidget x;
 	for (int i = 0; i < widgetList.size(); i++) {
-	    x = (SysexWidget) widgetList.get(i);
-	    if ((x.getSliderNum() + x.getNumFaders() - 1) > high)
-		high = x.getSliderNum() + x.getNumFaders() - 1;
+	    SysexWidget w = (SysexWidget) widgetList.get(i);
+	    if ((w.getSliderNum() + w.getNumFaders() - 1) > high)
+		high = w.getSliderNum() + w.getNumFaders() - 1;
 	}
 	numFaderBanks = (high / 16) + 1;
 	faderHighlight();
@@ -340,15 +392,17 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
         super.show();
     } // end of method
 
-    // Let bankeditorframe set information about itself when it
-    // creates a patch editor frame.
-    public void setBankEditorInformation(BankEditorFrame bf, int row, int col) {
+    /**
+     * Let bankeditorframe set information about itself when it
+     * creates a patch editor frame.
+     */
+    public void setBankEditorInformation(BankEditorFrame bf, int row, int col) { // accessed by YamahaFS1RBankEditor
 	bankFrame = bf;
 	patchRow = row;
 	patchCol = col;
     }
 
-    public void revalidateDriver() {
+    void revalidateDriver() {
 	p.ChooseDriver();
 	if (p.deviceNum == 0) {
 	    try {
@@ -359,9 +413,11 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	}
     }
 
-    public void gotFocus() {
+    /** A hook called when the frame is activated. */
+    protected void gotFocus() {
     }
 
-    public void lostFocus() {
+    /** A hook called when the frame is deactivated. */
+    protected void lostFocus() {
     }
 }
