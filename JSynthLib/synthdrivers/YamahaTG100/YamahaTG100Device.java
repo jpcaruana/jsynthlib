@@ -28,9 +28,9 @@
 
 package synthdrivers.YamahaTG100;
 
-import core.*;
-
 import java.util.prefs.Preferences;
+
+import core.Device;
 /**
  *
  * @author  Joachim Backhaus
@@ -38,8 +38,7 @@ import java.util.prefs.Preferences;
  */
 public class YamahaTG100Device extends Device {
 
-    private static final String INFO_TEXT
-    = "Currently only supporting the librarian features.";
+    private static final String INFO_TEXT = "Librarian & editor for the Yamaha TG-100.";
     
     /**
     * Constructor for DeviceListWriter.
@@ -63,7 +62,6 @@ public class YamahaTG100Device extends Device {
     */
     public YamahaTG100Device(Preferences prefs) {
         this();
-
         this.prefs = prefs;
 
         addDriver(new YamahaTG100AllConverter() );
