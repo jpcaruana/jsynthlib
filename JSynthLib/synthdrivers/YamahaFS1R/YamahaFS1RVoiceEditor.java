@@ -35,7 +35,6 @@ import core.KnobLookupWidget;
 import core.KnobWidget;
 import core.ParamModel;
 import core.Patch;
-import core.IPatch;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.SpinnerWidget;
@@ -104,7 +103,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 
 	protected int mBankNumber;
 	
-	protected IPatch mPatchCopy;
+	protected Patch mPatchCopy;
 	
 	/** list of operator widgets, used for operator copy */
 	protected ArrayList[] mOperatorWidgets = new ArrayList[8];
@@ -196,7 +195,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oCopyAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// make a copy of entire patch
-				mPatchCopy = (IPatch)p.clone();
+				mPatchCopy = (Patch) p.clone();
 			}
 		});
 		oCopyPane.add(oCopyAll);
@@ -207,7 +206,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 			{
 				if (mPatchCopy != null)
 				{
-					JDialog oDialog = new PasteDialog(core.PatchEdit.getInstance(), mPatchCopy, getPatch(), mPart, mOperatorWidgets);
+					JDialog oDialog = new PasteDialog(core.PatchEdit.getInstance(), mPatchCopy, (Patch) getPatch(), mPart, mOperatorWidgets);
 				}
 			}
 		});

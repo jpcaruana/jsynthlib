@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
-import core.IPatch;
+import core.Patch;
 import core.SysexWidget;
 
 
@@ -16,8 +16,8 @@ class PasteDialog extends JDialog
 {
 	private ButtonGroup rbg;
 	private JCheckBox mDest[] = new JCheckBox[8];
-	private IPatch mSourcePatch;
-	private IPatch mDestPatch;
+	private Patch mSourcePatch;
+	private Patch mDestPatch;
 	private int mPart;
 	private ArrayList[] mWidgets;
 	
@@ -25,7 +25,7 @@ class PasteDialog extends JDialog
 		@param aOwner owner for dialog
 		@param aWidgets table of operator widgets lists
 	*/
-	PasteDialog(Frame aOwner, IPatch aSource, IPatch aDest, int aPart, ArrayList aWidgets[])
+	PasteDialog(Frame aOwner, Patch aSource, Patch aDest, int aPart, ArrayList aWidgets[])
 	{
 		super(aOwner, "Paste operators", true);
 		
