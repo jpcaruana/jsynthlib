@@ -460,28 +460,36 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 		addWidget(panel,new CheckBoxWidget("",  patch,new MIDIboxFMModel(patch,0x10+j,2),new MIDIboxFMSender(patch,0x00,0x10+j,2)),3+2+5*j,29,3,1,-20-j);
 	    }
 
-	    gbc.gridx=0;gbc.gridy=30;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel(" "),gbc);
-	    gbc.gridx=0;gbc.gridy=31;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("LFO1->Volume"),gbc);
+	    gbc.gridx=0;gbc.gridy=30;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("KSR"),gbc);
 	    for(int j=0; j<4; ++j)
 	    {
 		gbc.gridx=3+0+j*5;gbc.gridy=30;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel("        "),gbc);
-		addWidget(panel,new KnobWidget("",patch,0,0x7f,-0x40,new MIDIboxFMModel(patch,0x44+j),new MIDIboxFMSender(patch,0x00,0x44+j)),3+1+5*j,30,3,3,36+j);
+		gbc.gridx=3+1+j*5;gbc.gridy=30;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel("     "),gbc);
+		addWidget(panel,new CheckBoxWidget("",  patch,new MIDIboxFMModel(patch,0x10+j,0),new MIDIboxFMSender(patch,0x00,0x10+j,0)),3+2+5*j,30,3,1,-21-j);
 	    }
 
-	    gbc.gridx=0;gbc.gridy=33;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel(" "),gbc);
-	    gbc.gridx=0;gbc.gridy=34;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("LFO2->Volume"),gbc);
+	    gbc.gridx=0;gbc.gridy=31;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel(" "),gbc);
+	    gbc.gridx=0;gbc.gridy=32;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("LFO1->Volume"),gbc);
 	    for(int j=0; j<4; ++j)
 	    {
-		gbc.gridx=3+0+j*5;gbc.gridy=33;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel("        "),gbc);
-		addWidget(panel,new KnobWidget("",patch,0,0x7f,-0x40,new MIDIboxFMModel(patch,0x54+j),new MIDIboxFMSender(patch,0x00,0x54+j)),3+1+5*j,33,3,3,40+j);
+		gbc.gridx=3+0+j*5;gbc.gridy=31;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel("        "),gbc);
+		addWidget(panel,new KnobWidget("",patch,0,0x7f,-0x40,new MIDIboxFMModel(patch,0x44+j),new MIDIboxFMSender(patch,0x00,0x44+j)),3+1+5*j,31,3,3,36+j);
 	    }
 
-	    gbc.gridx=0;gbc.gridy=36;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel(" "),gbc);
-	    gbc.gridx=0;gbc.gridy=37;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("EG5->Volume"),gbc);
+	    gbc.gridx=0;gbc.gridy=34;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel(" "),gbc);
+	    gbc.gridx=0;gbc.gridy=35;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("LFO2->Volume"),gbc);
 	    for(int j=0; j<4; ++j)
 	    {
-		gbc.gridx=3+0+j*5;gbc.gridy=36;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel("        "),gbc);
-		addWidget(panel,new KnobWidget("",patch,0,0x7f,-0x40,new MIDIboxFMModel(patch,0x6a+j),new MIDIboxFMSender(patch,0x00,0x6a+j)),3+1+5*j,36,3,3,44+j);
+		gbc.gridx=3+0+j*5;gbc.gridy=34;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel("        "),gbc);
+		addWidget(panel,new KnobWidget("",patch,0,0x7f,-0x40,new MIDIboxFMModel(patch,0x54+j),new MIDIboxFMSender(patch,0x00,0x54+j)),3+1+5*j,34,3,3,40+j);
+	    }
+
+	    gbc.gridx=0;gbc.gridy=37;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel(" "),gbc);
+	    gbc.gridx=0;gbc.gridy=38;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("EG5->Volume"),gbc);
+	    for(int j=0; j<4; ++j)
+	    {
+		gbc.gridx=3+0+j*5;gbc.gridy=37;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel("        "),gbc);
+		addWidget(panel,new KnobWidget("",patch,0,0x7f,-0x40,new MIDIboxFMModel(patch,0x6a+j),new MIDIboxFMSender(patch,0x00,0x6a+j)),3+1+5*j,37,3,3,44+j);
 	    }
 	}
 	gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=15;
@@ -552,10 +560,10 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 	    curvepanel.setLayout(new GridBagLayout());
 	    addWidget(curvepanel,new KnobWidget("Curve",patch,0,127,-64,new MIDIboxFMModel(patch,0x68+i*16),new MIDIboxFMSender(patch,0x00,0x68+i*16)),0,0,3,3,50);
 	    gbc.gridx=3;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=1; curvepanel.add(new JLabel("Curve used on"),gbc);
-	    addWidget(curvepanel,new CheckBoxWidget("Attack", patch,new MIDIboxFMModel(patch,0x60+i*16,0),new MIDIboxFMSender(patch,0x00,0x60+i*16,0)),6,0,1,1,-25);
-	    addWidget(curvepanel,new CheckBoxWidget("Decay1", patch,new MIDIboxFMModel(patch,0x60+i*16,1),new MIDIboxFMSender(patch,0x00,0x60+i*16,1)),6,1,1,1,-26);
-	    addWidget(curvepanel,new CheckBoxWidget("Decay2", patch,new MIDIboxFMModel(patch,0x60+i*16,2),new MIDIboxFMSender(patch,0x00,0x60+i*16,2)),6,2,1,1,-27);
-	    addWidget(curvepanel,new CheckBoxWidget("Release", patch,new MIDIboxFMModel(patch,0x60+i*16,3),new MIDIboxFMSender(patch,0x00,0x60+i*16,3)),6,3,1,1,-28);
+	    addWidget(curvepanel,new CheckBoxWidget("Attack", patch,new MIDIboxFMModel(patch,0x60+i*16,0),new MIDIboxFMSender(patch,0x00,0x60+i*16,0)),6,0,1,1,-26);
+	    addWidget(curvepanel,new CheckBoxWidget("Decay1", patch,new MIDIboxFMModel(patch,0x60+i*16,1),new MIDIboxFMSender(patch,0x00,0x60+i*16,1)),6,1,1,1,-27);
+	    addWidget(curvepanel,new CheckBoxWidget("Decay2", patch,new MIDIboxFMModel(patch,0x60+i*16,2),new MIDIboxFMSender(patch,0x00,0x60+i*16,2)),6,2,1,1,-28);
+	    addWidget(curvepanel,new CheckBoxWidget("Release", patch,new MIDIboxFMModel(patch,0x60+i*16,3),new MIDIboxFMSender(patch,0x00,0x60+i*16,3)),6,3,1,1,-29);
 	    gbc.gridx=0;gbc.gridy=3;gbc.gridwidth=10;gbc.gridheight=4;
 	    panel.add(curvepanel,gbc);
 
@@ -587,8 +595,8 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 	    addWidget(panel,new KnobWidget("->LFO" +((i+1)%2+1)+" D.",patch,0,127,-64,new MIDIboxFMModel(patch,0x48+i*16),new MIDIboxFMSender(patch,0x00,0x48+i*16)),3,0,1,3,57);
 	    addWidget(panel,new KnobWidget("AOUT D.",patch,0,127,-64,new MIDIboxFMModel(patch,0x49+i*16),new MIDIboxFMSender(patch,0x00,0x49+i*16)),4,0,1,3,58);
 
-	    addWidget(panel,new ComboBoxWidget("Mode",patch,new MIDIboxFMModel(patch,0x40+i*16,0,0x7,new int[]{0x0,0x01,0x05}),new MIDIboxFMSender(patch,0x00,0x40+i*16,0,0x7,new int[]{0x0,0x01,0x05}),new String []{"off", "unsynced","synced"}),0,3,2,1,-30);
-	    addWidget(panel,new ComboBoxWidget("Waveform",patch,new MIDIboxFMModel(patch,0x40+i*16,4,0x7),new MIDIboxFMSender(patch,0x00,0x40+i*16,4,0x7),new String []{"SINE", "TRIANGLE","SAW","PULSE","RANDOM"}),2,3,3,1,-31);
+	    addWidget(panel,new ComboBoxWidget("Mode",patch,new MIDIboxFMModel(patch,0x40+i*16,0,0x7,new int[]{0x0,0x01,0x05}),new MIDIboxFMSender(patch,0x00,0x40+i*16,0,0x7,new int[]{0x0,0x01,0x05}),new String []{"off", "unsynced","synced"}),0,3,2,1,-31);
+	    addWidget(panel,new ComboBoxWidget("Waveform",patch,new MIDIboxFMModel(patch,0x40+i*16,4,0x7),new MIDIboxFMSender(patch,0x00,0x40+i*16,4,0x7),new String []{"SINE", "TRIANGLE","SAW","PULSE","RANDOM"}),2,3,3,1,-32);
 	}
 	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=2;
 	RightPanel.add(LFOPane,gbc);
