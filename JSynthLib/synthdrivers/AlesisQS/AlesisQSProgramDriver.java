@@ -3,7 +3,7 @@
  *
  * Program program driver for Alesis QS series synths
  * March 2002
- * Authors: Zellyn Hunter (zellyn@bigfoot.com, zjh) 
+ * Authors: Zellyn Hunter (zellyn@bigfoot.com, zjh)
  *          Chris Halls <chris.halls@nikocity.de>
  * GPL v2
  */
@@ -23,9 +23,9 @@ public class AlesisQSProgramDriver extends Driver
 
   public AlesisQSProgramDriver()
   {
+    super("Program", "Zellyn Hunter/Chris Halls");
     manufacturer=QSConstants.MANUFACTURER;
     model=QSConstants.MODEL;
-    patchType="Program";
     id="QS";
     sysexID="F000000E0E**";
     sysexRequestDump=new SysexHandler("F0 00 00 0E 0E *opcode* *patchNum* F7");
@@ -117,10 +117,10 @@ public class AlesisQSProgramDriver extends Driver
     return p;
   }
 
-  //public JInternalFrame editPatch(Patch p)
-  // {
-  //     return new AlesisQSProgramEditor(p);
-  // }
+  public JInternalFrame editPatch(Patch p)
+  {
+       return new AlesisQSProgramEditor(p);
+  }
 
 
 

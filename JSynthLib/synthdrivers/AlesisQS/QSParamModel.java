@@ -13,36 +13,9 @@ public class QSParamModel extends ParamModel
 {
 	private int msBit;
 	private int bitSize;
-	private boolean signed;
+    private boolean signed;
+    private int offset;
 	// Patch patch defined in parent
-
-	/**
-	 * Create a new param model, given the starting bit and the size (in bits)
-	 * of the parameter.  Assumes the standard QS header of 7 bytes before
-	 * counting bits
-	 * @param patch the underlying patch to modify
-	 * @param msBit the starting (most significant) bit
-	 * @param bitSize the number of bits in the parameter
-	 * @param signed true if the value is signed, false otherwise
-	 */
-	public QSParamModel(Patch patch, int msBit, int bitSize,
-						boolean signed)
-	{
-		// count # of usable bits in the patch
-		int patchBits = (patch.sysex.length - QSConstants.HEADER) * 7;
-
-		if (msBit-bitSize+1<0)
-			throw new IllegalArgumentException("Starting bit must be >= 0");
-		if (bitSize<=0)
-			throw new IllegalArgumentException("Bit size must be > 0");
-		if (msBit>patchBits-1)
-			throw new IllegalArgumentException("msBit > sysex length");
-
-		this.patch = patch;
-		this.msBit = msBit;
-		this.bitSize = bitSize;
-		this.signed = signed;
-	}
 
 	/**
 	 * Create a new param model, given the starting and ending bytes and bits
@@ -76,6 +49,36 @@ public class QSParamModel extends ParamModel
 		this.msBit = msByte * 8 + msBit;
 		this.bitSize = this.msBit - (lsByte * 8 + lsBit) + 1;
 		this.signed = signed;
+        this.offset = 0;
+	}
+
+	/**
+	 * Create a new param model, given the starting bit and the size (in bits)
+	 * of the parameter.  Assumes the standard QS header of 7 bytes before
+	 * counting bits
+	 * @param patch the underlying patch to modify
+	 * @param msBit the starting (most significant) bit
+	 * @param bitSize the number of bits in the parameter
+	 * @param offset the value to add/subtract as given in sysex spec
+	 */
+	public QSParamModel(Patch patch, int msBit, int bitSize,
+						int offset)
+	{
+		// count # of usable bits in the patch
+		int patchBits = (patch.sysex.length - QSConstants.HEADER) * 7;
+
+		if (msBit-bitSize+1<0)
+			throw new IllegalArgumentException("Starting bit must be >= 0");
+		if (bitSize<=0)
+			throw new IllegalArgumentException("Bit size must be > 0");
+		if (msBit>patchBits-1)
+			throw new IllegalArgumentException("msBit > sysex length");
+
+		this.patch = patch;
+		this.msBit = msBit;
+		this.bitSize = bitSize;
+		this.offset = offset;
+        this.signed = false;
 	}
 
 	/**
@@ -86,7 +89,7 @@ public class QSParamModel extends ParamModel
 	public void set(int value) {
 		// Function header is followed by one normal byte, which is either
 		// 0 (for global dump), or the program #, effect #, etc.
-		SysexRoutines.setBits(value, this.patch.sysex, QSConstants.HEADER,
+		SysexRoutines.setBits(value-offset, this.patch.sysex, QSConstants.HEADER,
 							  this.msBit, this.bitSize);
 	}
 
@@ -101,12 +104,12 @@ public class QSParamModel extends ParamModel
 		//System.out.println("msBit=" + this.msBit +
 		//				   ", bitSize=" + this.bitSize +
 		//				   ", signed=" + this.signed);
-		int retVal =
+		int retVal = offset +
 			SysexRoutines.getBits(this.patch.sysex, QSConstants.HEADER,
-									 this.msBit, this.bitSize, this.signed);
+									 this.msBit, this.bitSize, false);
 
 		//System.out.println("Returning: " + retVal);
 		return retVal;
 	}
 
-} 
+}

@@ -3,7 +3,7 @@
  *
  * Synth driver for Alesis QS series synths
  * Feb 2002
- * Chris Halls <chris.halls@nikocity.de>
+ * Chris Halls <halls@debian.org>
  * GPL v2
  */
 
@@ -13,7 +13,7 @@ import core.*;
 /**
  *
  * @author  Chris Halls
- * @version 0.1
+ * @version 0.9
  */
 public class AlesisQSDevice extends Device
 {
@@ -21,11 +21,12 @@ public class AlesisQSDevice extends Device
     /** Creates new QSDevice */
     public AlesisQSDevice ()
     {
-        inquiryID="F07E7F060200000E0E000*00********f7";
-        authors="Chris Halls";
-        manufacturerName="Alesis";
-        modelName="QS7/QS8/QSR";
+        super("Alesis", "QS7/QS8/QSR", "F07E7F060200000E0E000*00********f7",
+              "Librarian support is working.  Work on editors is in progress.",
+              "Chris Halls/Zellyn Hunter");
+
         setSynthName("QS");
+
         addDriver (new AlesisQSProgramDriver ());
         addDriver (new AlesisQSMixDriver ());
         addDriver (new AlesisQSEffectsDriver ());
