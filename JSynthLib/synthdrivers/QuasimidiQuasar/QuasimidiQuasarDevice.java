@@ -41,7 +41,10 @@ import javax.swing.JPanel;
  */
 public class QuasimidiQuasarDevice extends Device {
     private static final String INFO_TEXT
-    = "Librarian & editor for single perfomances and performance banks.";
+    = "Librarian & editor for single perfomances and performance banks.\n\n"
+    + "If you have a card installed, please select the QuasimidiQuasar driver "
+    + "and click on 'Show Details' and then select the 'Configuration' tab.\n"
+    + "There you can specifiy which cards you have installed.";
 
     protected JComboBox	firstCardSlot;
     protected JComboBox	secondCardSlot;

@@ -146,9 +146,40 @@ public class QuasarConstants {
 	    "RAM"
 	};
 	
+	public static final int[] ARP_SPEED = { 
+		 51,  52,  53,  54,  55,  56,  57,  58,  59,  60,
+		 61,  62,  63,  64,  65,  67,  68,  69,  70,  71,
+		 72,  73,  74,  75,  77,  78,  79,  80,  81,  82, 
+		 84,  85,  86,  87,  88,  90,  91,  92,  93,  95,
+		 96,  97,  99, 100, 101, 102, 104, 105, 106, 108, 
+		109, 111, 112, 113, 115, 116, 117, 119, 120, 122, 
+		123, 125, 126, 128, 129, 131, 132, 134, 135, 137, 
+		138, 140, 141, 143, 144, 146, 147, 149, 151, 152, 
+		154, 156, 157, 159, 161, 162, 164, 166, 167, 169, 
+		171, 173, 174, 176, 178, 180, 181, 183, 185, 187, 
+		189, 191, 192, 194, 196, 198, 200, 202, 204, 206, 
+		208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 
+		228, 230, 232, 234, 236, 238, 240, 243		
+	};
+	
 	/** Arpeggiator resolutions */	
 	public static final String[] ARP_RESOLUTIONS = { 
 		"4", "8", "16", "32"
+	};
+	
+	public static final String[] ARP_SYNC = { 
+		"int", "ext1", "ext2"
+	};
+	
+	public static final String[] ARP_DIRECTIONS = { 
+		"up", "down", "up/down", "random"
+	};
+	
+	public static final String[] ARP_TRACKS = { 
+		"Part 1", "Part 2", "Part 3", "Part 4",
+		"Part 5", "Part 6", "Part 7", "Part 8",
+		"Part 9", "Part 10", "Part 11", "Part 12",
+		"Part 13", "Part 14", "Part 15", "Part 16"
 	};
 
 	/** The effect names for FX1 */
