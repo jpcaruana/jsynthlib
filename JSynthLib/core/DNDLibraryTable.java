@@ -1,7 +1,6 @@
 /*
- * DNDPatchList.java
+ * DNDLibraryTable.java
  *
- * Created on 18. Dezember 2000, 22:10
  */
 
 package core;
@@ -21,55 +20,55 @@ import javax.swing.table.TableModel;
 /**
  *
  * @author  Gerrit.Gehnen <Gerrit.Gehnen@gmx.de>
- * @version 0.1
+ * @version $Id$
  */
-public class DNDLibraryTable extends JTable implements DNDComponentInterface, DropTargetListener, DragSourceListener, DragGestureListener
-{
+
+public class DNDLibraryTable extends JTable implements DNDComponentInterface, DropTargetListener, DragSourceListener, DragGestureListener {
     /**
      * enables this component to be a dropTarget
      */
     
     DropTarget dropTarget = null;
-    PatchListModel plModel;
+    AbstractTableModel plModel;
+    
     /**
      * enables this component to be a Drag Source
      */
     DragSource dragSource = null;
     
-    public DNDLibraryTable ()
-    {
-        dropTarget = new DropTarget (this, this);
-        dragSource = new DragSource ();
-        dragSource.createDefaultDragGestureRecognizer ( this, DnDConstants.ACTION_COPY_OR_MOVE, this);
+    public DNDLibraryTable() {
+        dropTarget = new DropTarget(this, this);
+        dragSource = new DragSource();
+        dragSource.createDefaultDragGestureRecognizer( this, DnDConstants.ACTION_COPY_OR_MOVE, this);
     }
+    
     /**
      * @param dm  */
-    public DNDLibraryTable (PatchListModel dm)
-    {
+    public DNDLibraryTable(AbstractTableModel dm) {
         this();
         plModel=dm;
-        setModel (dm);
+        setModel(dm);
     }
-    /** Creates new DNDPatchTable */
-    public DNDLibraryTable (Patch soundType)
-    {
+  
+    /** Creates new DNDLibraryTable */
+    
+    public DNDLibraryTable(Patch soundType) {
         this();
-        setSoundType (soundType);
+        setSoundType(soundType);
     }
     
     /**
      * is invoked when you are dragging over the DropSite
      *
      */
-    public void setSoundType (Patch soundType)
-    {
+    public void setSoundType(Patch soundType) {
         // this.soundType=soundType;
     }
+    
     /**
      * @param event  */
-    public void dragEnter (DropTargetDragEvent event)
-    {
-        event.acceptDrag (DnDConstants.ACTION_COPY_OR_MOVE);
+    public void dragEnter(DropTargetDragEvent event) {
+        event.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
     }
     
     /**
@@ -77,9 +76,8 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      *
      */
     
-    public void dragExit (DropTargetEvent event)
-    {
-          System.out.println ( "DNDLibraryTable:dragExit");
+    public void dragExit(DropTargetEvent event) {
+   //     System.out.println( "DNDLibraryTable:DropTargetEvent:dragExit");
     }
     
     /**
@@ -87,64 +85,56 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      *
      */
     
-    public void dragOver (DropTargetDragEvent event)
-    {
-        event.acceptDrag (DnDConstants.ACTION_COPY_OR_MOVE);
+    public void dragOver(DropTargetDragEvent event) {
+        event.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
     }
     
     /**
      * a drop has occurred
      *
      */
+    public void drop(DropTargetDropEvent event) {
+   //     System.out.println("DNDLibraryTable drop");
     
+        try {
+//            Transferable transferable = event.getTransferable();
+            Patch pat=(Patch)((AbstractPatchListModel)getModel()).getPatchAt(this.rowAtPoint(event.getLocation()));
+
     
-    public void drop (DropTargetDropEvent event)
-    {
-        System.out.println ("DNDLibraryTable drop");
-        
-        try
-        {
-            Transferable transferable = event.getTransferable ();
-            Patch pat=(Patch)((PatchListModel)getModel ()).PatchList.get (this.rowAtPoint (event.getLocation ()));
-            
-            DataFlavor df=new DataFlavor (PatchEdit.getDriver(pat.deviceNum,pat.driverNum).getClass (),pat.toString ());
-            if (transferable.isDataFlavorSupported (df))
-            {
-                //System.out.println ("IsSupported");
-                Patch so=(Patch)event.getTransferable ().getTransferData (df);
-                so.ChooseDriver (); // Because the driverNum is transient in Patch
+            DataFlavor df=new DataFlavor(PatchEdit.getDriver(pat.deviceNum,pat.driverNum).getClass(),pat.toString());
+//            if (transferable.isDataFlavorSupported(df)) {
+                System.out.println ("IsSupported");
+                Patch so=(Patch)event.getTransferable().getTransferData(df);
+                so.ChooseDriver(); // Because the driverNum is transient in Patch
                 //System.out.println(so.getType()+" "+so.getName());
-                event.acceptDrop (DnDConstants.ACTION_COPY_OR_MOVE);
-                Point p=event.getLocation ();
+                event.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+                Point p=event.getLocation();
                 //System.out.println ("Zieltabelle Zeile: "+this.rowAtPoint (p));
-                ((PatchListModel)getModel ()).setPatchAt (so,this.rowAtPoint (p));
-/*            String s = (String)transferable.getTransferData ( DataFlavor.stringFlavor);
+//                ((PatchListModel)getModel()).setPatchAt(so,this.rowAtPoint(p));
+                ((AbstractPatchListModel)getModel()).addPatch(so);
+                /*            String s = (String)transferable.getTransferData ( DataFlavor.stringFlavor);
             addElement( s );
  */
-                event.getDropTargetContext ().dropComplete (true);
+                event.getDropTargetContext().dropComplete(true);
                 event.dropComplete(true);
-            }
-            else
-            {
+//            }
+//            else {
                 //System.out.println (transferable.toString ()+" "+df.getMimeType ());
                 //System.out.println ("DNDLibraryTable:rejectDrop");
-                event.rejectDrop ();
+//                event.rejectDrop();
+//            }
             }
-        }
-        
-        catch (IOException exception)
-        {
-            ErrorMsg.reportError ("Error", "IO Exception",exception);
+        catch (IOException exception) {
+            ErrorMsg.reportError("Error", "IO Exception",exception);
     //        exception.printStackTrace ();
       //      System.err.println ( "Exception" + exception.getMessage ());
-            event.rejectDrop ();
+            event.rejectDrop();
         }
-        catch (UnsupportedFlavorException ufException )
-        {
-            ErrorMsg.reportError ("Error", "Unsupported Dnd Flavor",ufException);
+        catch (UnsupportedFlavorException ufException ) {
+            ErrorMsg.reportError("Error", "Unsupported Dnd Flavor",ufException);
            // ufException.printStackTrace ();
            // System.err.println ( "Exception" + ufException.getMessage ());
-            event.rejectDrop ();
+            event.rejectDrop();
         }
     }
     
@@ -152,42 +142,35 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      * is invoked if the use modifies the current drop gesture
      *
      */
-    
-    public void dropActionChanged ( DropTargetDragEvent event )
-    {
+    public void dropActionChanged( DropTargetDragEvent event ) {
     }
     
     /**
      * a drag gesture has been initiated
      *
      */
-    
-    public void dragGestureRecognized ( DragGestureEvent event)
-    {
+    public void dragGestureRecognized( DragGestureEvent event) {
+   //     System.out.println("DNDLibraryTable dragGestureRecognized");
        Iterator iter;
         Object obj=new Object();
         if (((MouseEvent)(event.getTriggerEvent())).isPopupTrigger()) return;
         // Workaround for Java-Bug ID 4337114
         // Dnd doesn't work with JInternalFrame
         iter=event.iterator();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
            obj=iter.next(); 
            System.out.println(obj.toString());
         }
         
         if (((MouseEvent)obj).getID()==MouseEvent.MOUSE_EXITED) return;
-        int selR = getSelectedRow ();
-        int selC = getSelectedColumn ();
+        int selR = getSelectedRow();
+        int selC = getSelectedColumn();
     
-       
-        if ( selR != -1 )
-        {
-            Patch sing =((PatchListModel) getModel ()).getPatchAt (selR);
+        if ( selR != -1 ) {
+            Patch sing =((AbstractPatchListModel) getModel()).getPatchAt(selR);
             // as the name suggests, starts the dragging
-            dragSource.startDrag (event, DragSource.DefaultCopyDrop, sing, this);
-        } else
-        {
+            dragSource.startDrag(event, DragSource.DefaultCopyDrop, sing, this);
+        } else {
             //System.out.println ( "nothing was selected");
         }
     }
@@ -197,13 +180,11 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      * has ended
      *
      */
+    public void dragDropEnd(DragSourceDropEvent event) {
+   //     System.out.println( "DNDLibraryTable: dragDropEnd");
     
-    public void dragDropEnd (DragSourceDropEvent event)
-    {
-       System.out.println ( "DNDLibraryTable: dragDropEnd");
-        if ( event.getDropSuccess ())
-        {
-            removeElement ();
+        if ( event.getDropSuccess()) {
+            removeElement();
         }
     }
     
@@ -212,11 +193,8 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      * has entered the DropSite
      *
      */
-    
-    public void dragEnter (DragSourceDragEvent event)
-    {
-        System.out.println ( "DNDLibraryTable: dragEnter");
-        
+    public void dragEnter(DragSourceDragEvent event) {
+  //      System.out.println( "DNDLibraryTable: dragEnter");
     }
     
     /**
@@ -224,10 +202,8 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      * has exited the DropSite
      *
      */
-    
-    public void dragExit (DragSourceEvent event)
-    {
-        System.out.println ( "DragSorceEvent:dragExit");
+    public void dragExit(DragSourceEvent event) {
+   //     System.out.println( "DNDLibTable: DragSorceEvent:dragExit");
     }
     
     /**
@@ -235,11 +211,8 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      * ocurring over the DropSite
      *
      */
-    
-    public void dragOver (DragSourceDragEvent event)
-    {
-            System.out.println( "DragSourceEvent:dragOver");
-        
+    public void dragOver(DragSourceDragEvent event) {
+    //        System.out.println( "DragSourceEvent:dragOver");
     }
     
     /**
@@ -247,18 +220,15 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      *
      */
     
-    public void dropActionChanged ( DragSourceDragEvent event)
-    {
-        System.out.println ( "dropActionChanged");
+    public void dropActionChanged( DragSourceDragEvent event) {
+   //     System.out.println( "dropActionChanged");
     }
     
     /**
      * adds elements to itself
      *
      */
-    
-    public void addElement ( Object s )
-    {
+    public void addElement( Object s ) {
         //System.out.println ("AddElement "+s.toString ());
         //        (( AbstractTableModel )getModel()).addElement (s);
     }
@@ -266,11 +236,24 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
     /**
      * removes an element from itself
      */
-    
-    public void removeElement ()
-    {
+    public void removeElement() {
         //System.out.println ("RemoveElement ");
         //    (( AbstractTableModel)getModel()).removeElement( getSelectedRow());
     }
     
+    public Component findComponentAt(int x,int y)
+    {
+        Component c;
+        c=super.findComponentAt(x,y);
+        System.out.println("Find Component At "+x+" "+y+" "+c.toString());
+        return c;
+    }
+    
+    public void setSize(int width, int height)
+    {
+        super.setSize(width, height);
+        
+        System.out.println("Set Size called "+width+" "+ height);
+    }
 }
+

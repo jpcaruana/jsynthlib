@@ -1,7 +1,6 @@
 /*
  * PatchListModel.java
  *
- * Created on 21. Mai 2001, 22:42
  */
 
 package core;
@@ -11,11 +10,11 @@ import java.util.ArrayList;
 /**
  *
  * @author  Administrator
- * @version
+ * @version $Id$
  */
-class PatchListModel extends AbstractTableModel
+class PatchListModel extends AbstractTableModel implements AbstractPatchListModel
 {
-    final String[] columnNames =
+     String[] columnNames =
     {"Synth",
      "Type",
      "Patch Name",
@@ -103,6 +102,10 @@ class PatchListModel extends AbstractTableModel
          fireTableRowsUpdated (row, row);
      }
      
+     public void addPatch(Patch p)
+     {
+         PatchList.add(p);
+       //  fireTableRowsUpdated(PatchList.size(),PatchList.size());
+         this.fireTableDataChanged();
+     }
 }
-
-

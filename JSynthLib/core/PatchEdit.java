@@ -1,5 +1,8 @@
 /* This file is the main Application object. It's called PatchEdit, which is probably ambiguous, but probably to late to change
 now.*/
+
+/* @version $Id$ */
+
 package core;
 import java.io.File;
 import javax.swing.*;
@@ -50,6 +53,10 @@ public class PatchEdit extends JFrame
     public static CrossBreedAction crossBreedAction;    
     public static DocsAction docsAction;
     public static MonitorAction monitorAction;
+
+    public static NewPerformanceAction newPerformanceAction;
+    public static TransferPerformanceAction transferPerformanceAction;
+    
     SearchDialog searchDialog;
     DocumentationWindow documentationWindow; 
    public static PatchEdit instance;                        // phil@muqus.com
@@ -126,6 +133,7 @@ public class PatchEdit extends JFrame
         OpenAction openAction=new OpenAction ();
         menuLib.add (openAction);
         menuLib.getItem (menuLib.getItemCount ()-1).setAccelerator (
+
         KeyStroke.getKeyStroke (KeyEvent.VK_O, KeyEvent.CTRL_MASK));
         
         saveAction=new SaveAction ();
@@ -145,6 +153,12 @@ public class PatchEdit extends JFrame
         menuSaveAs.setEnabled (false);
         menuLib.add (menuSaveAs);
         
+        menuLib.add (new JSeparator ());
+        newPerformanceAction=new NewPerformanceAction();
+        menuLib.add(newPerformanceAction);
+        
+        transferPerformanceAction=new TransferPerformanceAction();
+        menuLib.add(transferPerformanceAction);
         menuLib.add (new JSeparator ());
         
         sortAction=new SortAction ();
@@ -338,6 +352,18 @@ public class PatchEdit extends JFrame
         {
             frame.setSelected (true);
         } catch (java.beans.PropertyVetoException e)
+ {}
+    }
+
+    protected void createPerformanceFrame ()
+    {
+        PerformanceFrame frame = new PerformanceFrame ();
+        frame.setVisible (true);
+        desktop.add (frame);
+        try
+        {
+            frame.setSelected (true);
+        } catch (java.beans.PropertyVetoException e)
         {}  //I don't *actually* know what this is for :-)
     }
     
@@ -351,7 +377,22 @@ public class PatchEdit extends JFrame
             frame.open (file);
             desktop.add (frame);
         } catch (Exception e)
-        {ErrorMsg.reportError ("Error","Error Loading Library",e);return;}
+        {
+            PerformanceFrame frame2=new PerformanceFrame(file);
+            try
+            {
+                frame2.setVisible (true);
+                frame2.open (file);
+                desktop.add (frame2);
+            } catch (Exception e2)
+            {
+                ErrorMsg.reportError ("Error","Error Loading Library",e2);return;}
+             try
+             {
+                frame2.setSelected (true);
+             } catch (java.beans.PropertyVetoException e2)
+             {}
+        }
         try
         {
             frame.setSelected (true);
@@ -812,6 +853,7 @@ public class PatchEdit extends JFrame
                         ((PatchBasket)desktop.getSelectedFrame ()).ImportPatch (file);
                 } catch (IOException ex)
                 {ErrorMsg.reportError ("Error","Unable to Load Sysex Data",ex);}
+
             };
             
         }
@@ -825,8 +867,40 @@ public class PatchEdit extends JFrame
         }
         public void actionPerformed (ActionEvent e)
         {createFrame ();}
+
+    }
+
+    class NewPerformanceAction extends AbstractAction
+    {
+        public NewPerformanceAction ()
+        {
+            super ("NewPerformance",null);
+        }
+
+        public void actionPerformed (ActionEvent e)
+        {
+            createPerformanceFrame ();
+        }
     }
     
+
+   class TransferPerformanceAction extends AbstractAction
+    {
+        public TransferPerformanceAction ()
+        {
+            super ("Transfer Performance",null);
+            //putValue (Action.MNEMONIC_KEY, new Integer ('S'));
+            setEnabled (false);
+        }
+        public void actionPerformed (ActionEvent e)
+        {
+            try
+            {
+                ((PerformanceFrame)desktop.getSelectedFrame ()).sendPerformance ();
+            } catch (Exception ex)
+            {ErrorMsg.reportError ("Error","Performance Library must be the selected window.",ex);};
+        }
+    }
     class OpenAction extends AbstractAction
     {
         public OpenAction ()
@@ -836,7 +910,7 @@ public class PatchEdit extends JFrame
         public void actionPerformed (ActionEvent e)
         {
             JFileChooser fc=new JFileChooser ();
-            javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("PatchEdit Library Files",".patchlib");
+            javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("PatchEdit Library Files",new String[] {".patchlib",".perflib"});
             fc.setCurrentDirectory (new File (prefsDialog.libPath));
             fc.addChoosableFileFilter (type1);
             fc.setFileFilter (type1);
