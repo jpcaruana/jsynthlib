@@ -18,6 +18,8 @@ import javax.swing.UIManager;
 import org.jsynthlib.jsynthlib.Dummy;
 
 public final class AppConfig {
+    static final int GUI_MDI	= 0;
+    static final int GUI_SDI	= 1;
     private static ArrayList deviceList = new ArrayList();
     private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
     private static Preferences prefsDev = prefs.node("devices");
@@ -188,7 +190,7 @@ public final class AppConfig {
 
     /** Getter for guiStyle */
     static int getGuiStyle() {
-        return prefs.getInt("guiStyle", MacUtils.isMac() ? 1 : 0);
+        return prefs.getInt("guiStyle", MacUtils.isMac() ? GUI_MDI : GUI_SDI);
     }
     /** Setter for guiStyle */
     static void setGuiStyle(int guiStyle) {
