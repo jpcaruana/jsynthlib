@@ -4,6 +4,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.SysexMessage;
 
+import core.AppConfig;
 import core.Device;
 import core.ErrorMsg;
 import core.IPatch;
@@ -197,6 +198,10 @@ public class XMLDriver implements ISingleDriver {
 
     public boolean supportsPatch(String patchString, IPatch patch) {
         return base_patch.supportsMessages(patch.getMessages());
+    }
+
+    public final boolean isNullDriver() {
+        return this == AppConfig.getNullDriver();
     }
 
     public String toString() {

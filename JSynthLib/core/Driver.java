@@ -56,14 +56,14 @@ abstract public class Driver implements ISingleDriver {
      * selection.
      * @see #getPatchNumbers
      * @see #getPatchNumbersForStore
-     * @see #generateNumbers
+     * @see DriverUtil#generateNumbers
      */
     protected String[] patchNumbers;
     /**
      * Array holding names or numbers for all banks.  Used for
      * comboBox selection.
      * @see #getBankNumbers
-     * @see #generateNumbers
+     * @see DriverUtil#generateNumbers
      */
     protected String[] bankNumbers;
 
@@ -266,7 +266,7 @@ abstract public class Driver implements ISingleDriver {
     /**
      * Create a new Patch. Don't override this unless your driver properly
      * implement this method.
-     * @see IPatchDriver#createNewPatch
+     * @see IPatchDriver#createPatch
      */
     protected Patch createNewPatch() { // overridden by subclass
 	return null;
@@ -542,6 +542,10 @@ abstract public class Driver implements ISingleDriver {
     public String toString() {
 	return getManufacturerName() + " " + getModelName() + " "
 	    + getPatchType();
+    }
+
+    public final boolean isNullDriver() {
+        return this == AppConfig.getNullDriver();
     }
     // end of IPatchDriver methods
 

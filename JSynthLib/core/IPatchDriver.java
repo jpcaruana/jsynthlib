@@ -22,7 +22,7 @@ public interface IPatchDriver extends IDriver {
 
     /**
      * Returns String[] returns full list of patchNumbers
-     * @see Driver#generateNumbers
+     * @see DriverUtil#generateNumbers
      */
     String[] getPatchNumbers();
 
@@ -32,13 +32,13 @@ public interface IPatchDriver extends IDriver {
      * e.g. the Waldorf Pulse has 100 patches, but only 0 to 39 are writable.
      * Currently writable patches are assumed to start at patch location 0.
      * (This has nothing to with the "Storable" class in JSynthLib.)
-     * @see Driver#generateNumbers
+     * @see DriverUtil#generateNumbers
      */
     String[] getPatchNumbersForStore();
 
     /**
      * Returns String[] returns full list of bankNumbers
-     * @see Driver#generateNumbers
+     * @see DriverUtil#generateNumbers
      */
     String[] getBankNumbers();
 
@@ -103,6 +103,11 @@ public interface IPatchDriver extends IDriver {
      * @param param Description of the parameter.
      */
     void sendParameter(IPatch patch, SysexWidget.IParameter param);
+
+    /**
+     * Check if a driver is null driver (Generic driver).
+     */
+    boolean isNullDriver();
 
     /**
      * Returns full name for referring to this Driver. Used for labels
