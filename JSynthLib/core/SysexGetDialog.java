@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.*;
 
 //=========================================================================
 // Class: SysexGetDialog
@@ -34,11 +35,10 @@ public class SysexGetDialog extends JDialog {
   //===== Instance variables
   /** number of received data bytes. */
   private int sysexSize = 0;
+  /** queue to save Sysex Messages received. */
+  private java.util.List queue;
   /** MIDI input port from which SysEX messages come. */
   private int inPort;
-
-  // private static byte[] buffer = new byte[256*1024]; // N.B. WireMidiWrapper ignores MaxSize parameter of readMessage
-  private static byte[] sysex  = new byte[256*1024];
 
   private javax.swing.Timer timer;
   private JLabel myLabel;
@@ -168,22 +168,19 @@ public class SysexGetDialog extends JDialog {
     if (sysexSize < 20)
       return;
 
-    byte[] patchSysex;
-    if (sysex[0]==-16) { //F0
-      patchSysex= new byte[sysexSize];
-      System.arraycopy(sysex, 0, patchSysex, 0, sysexSize);
-    } else {
-      int i=0;
-      while ((sysex[i]!=-16) && (i<sysexSize))
-	i++;
-      if (i==sysexSize)
-	return;
-      patchSysex= new byte[sysexSize-i];
-      System.arraycopy(sysex, i, patchSysex, 0, sysexSize-i);
+    byte[] patchSysex = new byte[sysexSize];
+    ListIterator it = queue.listIterator();
+    for (int size, i = 0; it.hasNext(); i += size) {
+      SysexMessage msg = (SysexMessage) it.next();
+      size = msg.getLength();
+      byte[] d = msg.getMessage();
+      System.arraycopy(d, 0, patchSysex, i, size);
     }
 
+    // create Patch
     Driver driver = (Driver) driverComboBox.getSelectedItem();
     Patch p = new Patch(patchSysex, driver);
+    // if Conveter for the patch exist, convert the patch.
     Patch[] patarray = p.dissect();
 
     for (int k = 0; k < patarray.length; k++) {
@@ -240,7 +237,8 @@ public class SysexGetDialog extends JDialog {
       try {
 	((PatchBasket)PatchEdit.desktop.getSelectedFrame()).PastePatch();
       } catch (Exception ex) {
-	JOptionPane.showMessageDialog (null, "Library to Receive into must be the focused Window.","Error", JOptionPane.ERROR_MESSAGE);
+	JOptionPane.showMessageDialog (null, "Library to Receive into must be the focused Window.",
+				       "Error", JOptionPane.ERROR_MESSAGE);
       }
     } // end of k loop
   }
@@ -319,7 +317,7 @@ public class SysexGetDialog extends JDialog {
       myLabel.setText(" ");
       timer.stop();
       pasteIntoSelectedFrame();
-      sysexSize = 0;
+      sysexSize = 0;		// ???
     }
   } // End InnerClass: PasteActionListener
 
@@ -334,8 +332,8 @@ public class SysexGetDialog extends JDialog {
       int patchNum = patchNumComboBox.getSelectedIndex();
       inPort = driver.getInPort();
 
-      ErrorMsg.reportStatus("");
-      ErrorMsg.reportStatus("SysexGetDialog | port: " + inPort + " | bankNum: " + bankNum + " | patchNum: " + patchNum);
+      ErrorMsg.reportStatus("SysexGetDialog | port: " + inPort
+			    + " | bankNum: " + bankNum + " | patchNum: " + patchNum);
 
       //----- Clear MidiIn buffer
       try {
@@ -350,6 +348,7 @@ public class SysexGetDialog extends JDialog {
       //----- Start timer and request dump
       myLabel.setText("Getting sysex dump...");
       sysexSize = 0;
+      queue = new ArrayList();	// clear queue
       timer.start();
       driver.requestPatchDump(bankNum, patchNum);
     }
@@ -363,13 +362,10 @@ public class SysexGetDialog extends JDialog {
     public void actionPerformed (ActionEvent evt) {
       try {
         while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0) {
-	  // create list of SysexMessage instead of mearging into sysex array. !!!FIXIT!!!
           SysexMessage msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(inPort);
-	  byte[] buffer = msg.getMessage();
-          int size = msg.getLength();
-//  	  ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + size);
-          System.arraycopy (buffer, 0, sysex, sysexSize, size);
-          sysexSize += size;
+	  queue.add(msg);
+//  	  ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + msg.getLength());
+          sysexSize += msg.getLength();
           myLabel.setText(sysexSize + " Bytes Received");
         }
       } catch (Exception ex) {
@@ -381,3 +377,4 @@ public class SysexGetDialog extends JDialog {
   } // End InnerClass: SysexGetTimer
 
 } // End Class: SysexGetDialog
+//(setq c-basic-offset 2)
