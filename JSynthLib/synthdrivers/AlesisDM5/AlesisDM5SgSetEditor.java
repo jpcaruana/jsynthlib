@@ -31,7 +31,25 @@ import java.awt.event.*;
 import javax.sound.midi.ShortMessage;
 
 
-/** Alesis DM5 Single Drumset Editor
+/** Alesis DM5 Single Drumset Editor Edits individual note parameters and
+* trigger note assignments for a single drumset patch. A single drumset is
+* capable of playing 61 notes (5 octaves). For a single note, the voice (family
+* and drum sound), coarse tune, fine tune, volume, pan, output and group can be
+* edited. The user selects the note to be edited using the selected note slider.
+* There is also a play note button. This is different from the play command in
+* that it will play the note currently being edited whereas the play command
+* plays whatever note was set up in the User Preferences.
+*
+* The bottom section of the editor allows the user to assign which notes are
+* triggered by the twelve external triggers, as well as the closing note and the
+* held note. The closing note is the note that is triggered by hitting the
+* footswitch, generally this used for the pedal of the hi-hat). The held note
+* is the note that is triggered when the footswitch is held down and the hit-hat
+* is struck.
+*
+* The root note is a special case. The DM5 is actually capable of playing 68
+* different notes but only 61 consecutive notes for a single drumset. The root
+* note parameter determines where the 61 note range starts within the 68 notes.
 * 
 * @author Jeff Weber
 */
@@ -57,7 +75,8 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     private DM5ScrollBarLookupWidget heldNoteWidget;
     private DM5ScrollBarLookupWidget[] triggerWidget = new DM5ScrollBarLookupWidget[12];
     
-   /** Constructs a AlesisDM5SgSetEditor for the selected patch.*/
+   /** Constructs a AlesisDM5SgSetEditor given the patch.
+        */
     AlesisDM5SgSetEditor(Patch patch)
     {
         super ("Alesis DM5 Single Drumset Editor",patch);   
@@ -68,6 +87,9 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         show();
     }
     
+    /** Adds the main panel to the editor. The main panel contains all the other
+        * panels of the editor.
+        */
     private void addMainPanel(Patch patch) {
         JPanel mainPanel = new JPanel();        
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -84,6 +106,9 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         scrollPane.add(mainPanel,gbc);        
     }
     
+    /** Adds the noteSelect panel, Trigger Note Assignments panel, the selected
+        * note widget, and the Selected Note Parameters panel to the main panel
+        */
     private void addSubPanels(Patch patch, JPanel panel) {
         JPanel noteSelectPanel = new JPanel();        
         noteSelectPanel.setLayout(new BoxLayout(noteSelectPanel, BoxLayout.Y_AXIS));
@@ -107,6 +132,9 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         addParmsSubPanels(patch, parmsPanel);
     }
     
+    /** Adds the voice panel, parm widgets, and output panel to the Selected 
+        * Note Parameters panel.
+        */
     private void addParmsSubPanels(Patch patch, JPanel panel) {
         JPanel voicePanel = new JPanel();        
 //        voicePanel.setLayout(new BoxLayout(voicePanel, BoxLayout.X_AXIS));
@@ -124,6 +152,8 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         addOutputWidgets(patch, outputPanel);
     }
     
+    /** Adds the selected note widget.
+        */
     private void addSelectedNoteWidget(Patch patch, JPanel panel) {
         selectedNoteSender = new NRPNSender(NRPNSender.PREVIEW_NOTE, 60);
         selectedNoteWidget = new DM5ScrollBarLookupWidget("Selected Note", patch, 0, 60, -1,
@@ -140,7 +170,12 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
 	    });
     }
 
-    public void selNoteChanged(ChangeEvent e) {
+    /** Responds to changes to the selected note slider. Updates all controls 
+        * in the Selected Note Parameters panel to reflect the selected note
+        * when the user has dragged the Selected Note slider and releases the
+        * mouse.
+        */
+    private void selNoteChanged(ChangeEvent e) {
         JSlider sl = (JSlider)e.getSource();
         int noteVal = (int)sl.getValue();
         if (!sl.getValueIsAdjusting()) {
@@ -148,6 +183,9 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         }
     }
     
+    /** Called by the selNoteChanged method. Updates all the controls in the
+        * Selected Note Parameters panel to reflect the selected note.
+        */
     private void setPacketModels(int noteValue) {
         selectedNoteSender.send(patch.getDriver(), noteValue);
         
@@ -184,7 +222,9 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         ((ComboBoxWidget)sysexWidget[6]).setValue(outputValue);
         ((ComboBoxWidget)sysexWidget[7]).setValue(groupValue);
     }
-        
+    
+    /** Adds the Family and Drum Sound combo boxes.
+        */
     private void addVoiceWidgets(Patch patch, JPanel panel) {
         notePacketModel[0] = new PacketModel(patch, 36+1, BitModel.BANK_MASK);
         sysexWidget[0] = new ComboBoxWidget("Family", patch,
@@ -217,12 +257,18 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         addWidget(panel, sysexWidget[1], ctrlBase++, 0, 1, 1, widgetCount++);
     }
 
-    public void familyChanged(ActionEvent e) {
+    /** Responds to changes to the Family combobox. Each time the family is
+        * changed, the Drum Sound combobox is updated to show the choices for
+        * the selected family.
+        */
+    private void familyChanged(ActionEvent e) {
         JComboBox cb = (JComboBox)e.getSource();
         int selectedIndex = cb.getSelectedIndex();
         ((DM5ComboBoxWidget)sysexWidget[1]).updateComboBoxWidgetList(DM5SoundList.DRUM_NAME[selectedIndex]);
     }
     
+    /** Adds controls for the coarse tune, fine tune, volume, and pan.
+        */
     private void addParmWidgets(Patch patch, JPanel panel) {
         notePacketModel[2] = new PacketModel(patch, 36+4, BitModel.CRSE_TUNE_MASK);
         sysexWidget[2] = new CoarseTuneScrollBarLookupWidget("Coarse Tune", 
@@ -266,18 +312,26 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         addWidget(panel,sysexWidget[5], ctrlBase++, 0, 1, 1, widgetCount++);
     }
 
-    public void coarseTuneChanged(ChangeEvent e) {
+    /** Responds to changes in the coarse tune slider. Calls the setOptions
+        * method of the CoarseTuneScrollBarWidget.
+        */
+    private void coarseTuneChanged(ChangeEvent e) {
         JSlider sl = (JSlider)e.getSource();
         int slVal = (int)sl.getValue();
         ((FineTuneScrollBarLookupWidget)sysexWidget[3]).setOptions(slVal);
     }
     
-    public void fineTuneChanged(ChangeEvent e) {
+    /** Responds to changes in the fine tune slider. Calls the setOptions
+        * method of the FineTuneScrollBarWidget.
+        */
+    private void fineTuneChanged(ChangeEvent e) {
         JSlider sl = (JSlider)e.getSource();
         int slVal = (int)sl.getValue();
         ((CoarseTuneScrollBarLookupWidget)sysexWidget[2]).setOptions(slVal);
     }
     
+    /** Adds the Output and Group comboboxes and the Play Note button.
+        */
     private void addOutputWidgets(Patch patch, JPanel panel) {
         notePacketModel[6] = new PacketModel(patch, 36+1, BitModel.OUTP_MASK);
         sysexWidget[6] = new ComboBoxWidget("Output", patch,
@@ -302,6 +356,9 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
 	    });
     }
     
+    /** Responds to the Play Note button by sending a note on and a note off
+        * for the selected note.
+        */
     private void playPreviewNote() {
         int selNoteVal = selectedNoteWidget.getValue();
         Driver driver = (Driver)patch.getDriver();
@@ -325,7 +382,8 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         }
     }
     
-    
+    /** Adds the Root Note, Closing Note, and Held Note sliders and the twelve
+        * Trigger Note sliders.*/
     private void addTriggerWidgets(Patch patch, JPanel panel) {
         rootNoteWidget = new DM5ScrollBarLookupWidget("Root Note", patch, 0, 67, -1,
                                                       new BitModel(patch, 21, BitModel.ROOT_NOTE_MASK),
@@ -378,6 +436,9 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         }
     }
 
+    /** Responds to the Root Note slider. This has the effect of sliding all
+        * note and trigger assignments up or down within the 68 note range.
+        */
     public void rootNoteChangeListener(ChangeEvent e) {
         JSlider sl = (JSlider)e.getSource();
         int noteVal = (int)sl.getValue();
@@ -390,17 +451,30 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
             }
         }
     }
-    }
+}
 
+/** Instantiated exclusively for the coarse tune parameter. Changes the set
+* of values displayed by the coarse tune slider between two sets, depending
+* on whether the fine tune slider is set to zero or a value greater than zero.
+* This is done to mimic the front panel display of the DM5.
+*/
 class CoarseTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
+    
+    /** The positive value set for the widget.
+    */
     private static final String[] posOptions = new String[] {
         "-4", "-3", "-2", "-1", "+0", "+1", "+2", "+3", "+4"        
     }; 
     
+    /** The negative value set for the widget.
+    */
     private static final String[] negOptions = new String[] {
         "-3", "-2", "-1", "-0", "+0", "+1", "+2", "+3", "+4"        
     }; 
     
+    /** Constructs a CoarseTuneScrollBarLookupWidget given the label, patch,
+        * min and max values, labelWidth, model, and sender.
+        */
     CoarseTuneScrollBarLookupWidget(String label,
                                     IPatch patch, 
                                     int min, 
@@ -411,6 +485,8 @@ class CoarseTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
         super(label, patch, min, max, labelWidth, pmodel, sender, posOptions);
     }
     
+    /** Selects the positive or negative value set depending upon the input value.
+        */
     void setOptions(int fineTuneValue) {
         if (fineTuneValue > 0) {
             options = negOptions;
@@ -422,7 +498,15 @@ class CoarseTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
     }
 }
 
+/** Instantiated exclusively for the fine tune parameter. Changes the set
+* of values displayed by the fine tune slider between two sets, depending
+* on whether the coarse tune slider is set to a positive or negative value. 
+* This is done to mimic the front panel display of the DM5.
+*/
 class FineTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
+
+    /** The positive value set for the widget.
+    */
     private static final String[] posOptions = new String[] {
         ".00", ".01", ".02", ".03", ".04", ".05", ".06", ".07", ".08", ".09",
         ".10", ".11", ".12", ".13", ".14", ".15", ".16", ".17", ".18", ".19",
@@ -436,6 +520,8 @@ class FineTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
         ".90", ".91", ".92", ".93", ".94", ".95", ".96", ".97", ".98", ".99"
     };
     
+    /** The negative value set for the widget.
+    */
     private static final String[] negOptions = new String[] {
         ".00", "-.99", "-.98", "-.97", "-.96", "-.95", "-.94", "-.93", "-.92", "-.91", 
         "-.90", "-.89", "-.88", "-.87", "-.86", "-.85", "-.84", "-.83", "-.82", "-.81", 
@@ -449,6 +535,9 @@ class FineTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
         "-.10", "-.09", "-.08", "-.07", "-.06", "-.05", "-.04", "-.03", "-.02", "-.01"
     };
     
+    /** Constructs a FineTuneScrollBarLookupWidget given the label, patch,
+        * min and max values, labelWidth, model, and sender.
+        */
     FineTuneScrollBarLookupWidget(String label,
                                   IPatch patch, 
                                   int min, 
@@ -459,6 +548,8 @@ class FineTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
         super(label, patch, min, max, labelWidth, pmodel, sender, posOptions);
     }
     
+    /** Selects the positive or negative value set depending upon the input value.
+        */
     void setOptions(int coarseTuneValue) {
         if (coarseTuneValue < 4) {
             options = negOptions;

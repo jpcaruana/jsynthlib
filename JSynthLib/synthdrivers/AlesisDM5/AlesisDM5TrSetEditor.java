@@ -26,7 +26,9 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 
-/** Alesis DM5 Trigger Setup Editor
+/** Alesis DM5 Trigger Setup Editor. Edits Gain, Velocity, Cross-Talk, Noise
+* Floor, and Decay parameters for each of the twelve external triggers on the
+* DM5.
 * 
 * @author Jeff Weber
 */
@@ -35,10 +37,10 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
     */
     static final int headerSize = Constants.HDR_SIZE;
     
-    /** A reference to the edit panel object. */
-//    private JPanel dm5EditPanel;
-
-    /** Constructs a AlesisDM5TrSetEditor for the selected patch.*/
+    /** Constructs an AlesisDM5TrSetEditor given the patch. The editor contains
+    * twelve panels containing the trigger parameters for each of the twelve
+    * external triggers.
+    */
     AlesisDM5TrSetEditor(Patch patch)
     {
         super ("Alesis DM5 Trigger Setup Editor",patch);   
@@ -51,6 +53,8 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
         show();
     }
     
+    /** Creates a panel in the editor window for a single external trigger.
+        */
     private void addTrigPane(Patch patch, int trigNum) {
         JPanel dm5EditPanel = new JPanel();        
         dm5EditPanel.setLayout(new BoxLayout(dm5EditPanel, BoxLayout.X_AXIS));
@@ -59,6 +63,9 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
         scrollPane.add(dm5EditPanel,gbc);        
     }
     
+    /** Creates the KnobWidgets within a single panel of the editor for a single
+        external trigger.
+        */
     private void addWidgets(JPanel panel, Patch patch, int trigNum) {
         int fdrNbrBase = trigNum * 5;
         addWidget(panel,
