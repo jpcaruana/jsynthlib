@@ -35,17 +35,149 @@ import java.util.*;
  * @version $Id$
  */
 public final class MidiUtil {
-	
-    // holds the state if a SysexMessage is completly displayed or
-    // shorten to one hexdump line
+
+    /**
+     * holds the state if a SysexMessage is completely displayed or
+     * shorten to one hexdump line.
+     */
     private static boolean CSMstate=false;
-    
+
     private MidiUtil() {
     }
 
-    // TODO: define a method which converts a byte array into a list
-    // or array of SysexMessages.  each SysexMessage must be
-    // terminated by EOX.
+    /**
+     * Converts a byte array into an array of SysexMessages.  Each
+     * SysexMessage must be terminated by END_OF_EXCLUSIVE.
+    */
+    public static SysexMessage[] byteArrayToSysexMessages(byte[] d)
+	throws InvalidMidiDataException {
+	ArrayList list = new ArrayList();
+
+        for (int i = 0; i < d.length; i++) {
+	    if ((int) (d[i] & 0xFF) == SysexMessage.SYSTEM_EXCLUSIVE) {
+		int j;
+		// let cause exception if there is no END_OF_EXCLUSIVE
+		for (j = i + 1; (int) (d[j] & 0xff) != ShortMessage.END_OF_EXCLUSIVE; j++)
+		    ;
+		int l = j - i;
+		byte[] b = new byte[l];
+		System.arraycopy(d, i, b, 0, l);
+		SysexMessage m = new SysexMessage();
+		m.setMessage(b, l);
+		list.add(m);
+		i = j;
+	    }
+	}
+	return (SysexMessage[]) list.toArray();
+    }
+
+    /**
+     * Javasound 1.4.2 has a bug which returns
+     * com.sun.media.sound.FastShortMessage object instead of
+     * ShortMessage.
+     */
+    public static MidiMessage fixShortMessage(MidiMessage msg)
+	throws InvalidMidiDataException {
+	// We cannot use
+	//   "msg instanceof com.sun.media.sound.FastShortMessage"
+	// since we don't have the class.
+	if (msg.getClass().toString().equals("class com.sun.media.sound.FastShortMessage"))
+	    return (MidiMessage) conv(msg);
+	else
+	    return msg;
+    }
+
+    /**
+     * Convert a <code>com.sun.media.sound.FastShortMessage</code>
+     * object to a <code>ShortMessage</code> object.
+     */
+    private static ShortMessage conv(MidiMessage mm)
+	throws InvalidMidiDataException {
+	ShortMessage m = (ShortMessage) mm;
+	ShortMessage msg = new ShortMessage();
+	int c = m.getStatus();
+	switch (c < 0xf0 ? c & 0xf0 : c) {
+	case 0x80: case 0x90: case 0xa0: case 0xb0:
+	case 0xe0: case 0xf2:
+	    msg.setMessage(c, m.getData1(), m.getData2());
+	    break;
+	case 0xc0: case 0xd0: case 0xf1: case 0xf3:
+	    msg.setMessage(c, m.getData1(), 0);
+	    break;
+	case 0xf4: case 0xf5: case 0xf6: case 0xf7:
+	case 0xf8: case 0xf9: case 0xfa: case 0xfb:
+	case 0xfc: case 0xfd: case 0xfe: case 0xff:
+	    msg.setMessage(c);
+	    break;
+	default:
+	    throw new InvalidMidiDataException();
+	}
+	return msg;
+    }
+
+    /** Returns an array of MidiDevice.Info for MIDI input device. */
+    public static MidiDevice.Info[] getInputMidiDeviceInfo()
+	throws MidiUnavailableException {
+	ArrayList list = new ArrayList();
+
+	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < infos.length; i++) {
+	    // throws MidiUnavailableException
+	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+	    if (device.getMaxReceivers() != 0
+		&& !(device instanceof Synthesizer)
+		&& !(device instanceof Sequencer))
+		list.add(infos[i]);
+	}
+	return (MidiDevice.Info[]) list.toArray();
+    }
+
+    /** Returns an array of MidiDevice.Info for MIDI output device. */
+    public static MidiDevice.Info[] getOutputMidiDeviceInfo()
+	throws MidiUnavailableException {
+	ArrayList list = new ArrayList();
+
+	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < infos.length; i++) {
+	    // throws MidiUnavailableException
+	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+	    if (device.getMaxTransmitters() != 0
+		&& !(device instanceof Synthesizer)
+		&& !(device instanceof Sequencer))
+		list.add(infos[i]);
+	}
+	return (MidiDevice.Info[]) list.toArray();
+    }
+
+    /** Returns an array of MidiDevice.Info for MIDI Sequencer device. */
+    public static MidiDevice.Info[] getSequencerMidiDeviceInfo()
+	throws MidiUnavailableException {
+	ArrayList list = new ArrayList();
+
+	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < infos.length; i++) {
+	    // throws MidiUnavailableException
+	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+	    if (device instanceof Sequencer)
+		list.add(infos[i]);
+	}
+	return (MidiDevice.Info[]) list.toArray();
+    }
+
+    /** Returns an array of MidiDevice.Info for MIDI Synthesizer device. */
+    public static MidiDevice.Info[] getSynthesizerMidiDeviceInfo()
+	throws MidiUnavailableException {
+	ArrayList list = new ArrayList();
+
+	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < infos.length; i++) {
+	    // throws MidiUnavailableException
+	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+	    if (device instanceof Synthesizer)
+		list.add(infos[i]);
+	}
+	return (MidiDevice.Info[]) list.toArray();
+    }
 
     //
     // convert MidiMessage or byte array into String
@@ -386,12 +518,14 @@ public final class MidiUtil {
 
     /**
      * Get the state of displaying Midi Messages.
-     * (Completly or shorten)
+     * (Completely or Shorten Message)
      */
     static boolean getCSM() { return CSMstate; }
+
     /**
      * Toggle the state of displaying Midi messages.
-     * (Completly or shorten)
+     * (Completely or Shorten Message)
      */
     static void toggleCSM() { CSMstate = !CSMstate; }
+
 } // MidiUtil
