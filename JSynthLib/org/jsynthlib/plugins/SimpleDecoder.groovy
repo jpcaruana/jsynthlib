@@ -68,19 +68,21 @@ class SimpleDecoder extends Decoder {
     }
     
     private int _decode(int offset, int size, boolean signed, byte[] msg) {
-        Integer shift, offset
+        Integer shift = 0
+        Integer s_offset = 0
         if (big_endian) {
-            shift = word_size*(param.getSize() - 1)
-            offset = -word_size
+            shift = word_size*(size - 1)
+            s_offset = -word_size
         } else {
             shift = 0
-            offset = word_size
+            s_offset = word_size
         }
         value = 0
         for (i in offset .. offset + size - 1) {
-            // grr! looks like groovy doesn't support | or & yet
-            value += (msg[i] << shift)
-            shift += offset
+            // grr! looks like groovy doesn't support | or &
+            // or shifting a byte
+            value += ((int)msg[i] << shift)
+            shift += s_offset
         }
         return value    
     }
@@ -169,7 +171,7 @@ class SimpleDecoder extends Decoder {
 }
 class Parameter extends XMLParameter {
 	public int offset;
-	protected int size;
+	public int size;
 	protected String charset
 	protected boolean signed = false
 	protected int base = 0
@@ -183,11 +185,18 @@ class Parameter extends XMLParameter {
 	   this.size = size
     }
     public void setSize(String s) {
-        size = Integer.decode(s)
+        this.size = Integer.decode(s)
+    }
+    public void setLength(String s) {
+        setSize(s);
+    }
+    public int getLength() {
+        return size;
     }
     public void setCharset(String s) {
         charset = s
     }
+    // This is the amount added to the value for display
     public void setOffset(String s) {
         base = Integer.decode(s)
     }
