@@ -22,6 +22,7 @@
 package synthdrivers.YamahaTG100;
 
 import core.Driver;
+import core.DriverUtil;
 import core.JSLFrame;
 import core.Patch;
 
@@ -60,7 +61,7 @@ public class YamahaTG100SingleDriver extends Driver {
 
         this.bankNumbers = new String[] { "Internal voice bank" }; // Bank is ignored since there is only one bank for internal voices
 
-        this.patchNumbers = Driver.generateNumbers(1, TG100Constants.PATCH_NUMBER_LENGTH, "#");
+        this.patchNumbers = DriverUtil.generateNumbers(1, TG100Constants.PATCH_NUMBER_LENGTH, "#");
 
         this.patchSize = TG100Constants.PATCH_SIZE;
     }

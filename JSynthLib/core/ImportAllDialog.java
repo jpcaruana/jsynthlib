@@ -143,7 +143,7 @@ public class ImportAllDialog extends JDialog
                 }
                 if (buffer.length>16)
                 {
-                    IPatch[] patarray = Patch.valueOf(buffer);
+                    IPatch[] patarray = DriverUtil.createPatch(buffer);
 
                     for (int k=0;k<patarray.length;k++) // Loop over all found sub-patches
                     {

@@ -3,6 +3,7 @@
  */
 package synthdrivers.OberheimMatrix;
 import core.BankDriver;
+import core.DriverUtil;
 import core.ErrorMsg;
 import core.Patch;
 public class OberheimMatrixBankDriver extends BankDriver
@@ -19,7 +20,7 @@ public class OberheimMatrixBankDriver extends BankDriver
    deviceIDoffset=-1;
    bankNumbers =new String[] {"000 Bank","100 Bank"};
  
-   patchNumbers = generateNumbers(0,99,"00-");
+   patchNumbers = DriverUtil.generateNumbers(0,99,"00-");
   singleSize=275;
   singleSysexID="F010060**";
   }

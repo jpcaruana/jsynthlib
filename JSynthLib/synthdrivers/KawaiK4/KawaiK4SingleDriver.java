@@ -1,5 +1,6 @@
 package synthdrivers.KawaiK4;
 import core.Driver;
+import core.DriverUtil;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -44,10 +45,10 @@ public class KawaiK4SingleDriver extends Driver {
 	};
 	*/
 	patchNumbers = new String[16 * 4];
-	System.arraycopy(generateNumbers(1, 16, "A-##"), 0, patchNumbers,  0, 16);
-	System.arraycopy(generateNumbers(1, 16, "B-##"), 0, patchNumbers, 16, 16);
-	System.arraycopy(generateNumbers(1, 16, "C-##"), 0, patchNumbers, 32, 16);
-	System.arraycopy(generateNumbers(1, 16, "D-##"), 0, patchNumbers, 48, 16);
+	System.arraycopy(DriverUtil.generateNumbers(1, 16, "A-##"), 0, patchNumbers,  0, 16);
+	System.arraycopy(DriverUtil.generateNumbers(1, 16, "B-##"), 0, patchNumbers, 16, 16);
+	System.arraycopy(DriverUtil.generateNumbers(1, 16, "C-##"), 0, patchNumbers, 32, 16);
+	System.arraycopy(DriverUtil.generateNumbers(1, 16, "D-##"), 0, patchNumbers, 48, 16);
     }
 
     public void storePatch(Patch p, int bankNum, int patchNum) {

@@ -186,7 +186,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         byte [] buffer = new byte [(int) file.length()];
         fileIn.read(buffer);
         fileIn.close();
-        IPatch p = (Patch.valueOf(buffer))[0];
+        IPatch p = (DriverUtil.createPatch(buffer))[0];
         bankDriver.checkAndPutPatch(bankData, p, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
@@ -287,7 +287,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     // end of PatchBasket methods
 
     void revalidateDriver() {
-        bankDriver = (IBankDriver) Patch.chooseDriver(bankData.getByteArray());
+        bankDriver = (IBankDriver) DriverUtil.chooseDriver(bankData.getByteArray());
         if (bankDriver != null) {
             bankData.setDriver(bankDriver);
         } else {

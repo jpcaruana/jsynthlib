@@ -77,7 +77,7 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	    in.close();
 	    byte[] sysex = new byte[i];
 	    System.arraycopy(buff,0,sysex,0,i);
-	    return (Patch.valueOf(sysex))[0];
+	    return (DriverUtil.createPatch(sysex))[0];
 	} catch (MalformedURLException e) {
 	    ErrorMsg.reportStatus("Malformed URL");
 	} catch (IOException ioe) {

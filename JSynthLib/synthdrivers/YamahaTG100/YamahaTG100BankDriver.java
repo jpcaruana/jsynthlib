@@ -55,7 +55,7 @@ public class YamahaTG100BankDriver extends BankDriver {
 
         this.bankNumbers = new String[] { "Internal voice bank" }; // Bank is ignored since there is only one bank for internal voices
 
-        this.patchNumbers = Driver.generateNumbers(1, TG100Constants.PATCH_NUMBER_LENGTH, "#");
+        this.patchNumbers = DriverUtil.generateNumbers(1, TG100Constants.PATCH_NUMBER_LENGTH, "#");
 
         this.singleSysexID = this.sysexID;
         this.singleSize = TG100Constants.PATCH_SIZE;

@@ -27,10 +27,10 @@ public class KawaiK4BankDriver extends BankDriver {
 	    "0-Internal", "1-External"
 	};
 	patchNumbers = new String[16 * 4];
-	System.arraycopy(generateNumbers(1, 16, "A-##"), 0, patchNumbers,  0, 16);
-	System.arraycopy(generateNumbers(1, 16, "B-##"), 0, patchNumbers, 16, 16);
-	System.arraycopy(generateNumbers(1, 16, "C-##"), 0, patchNumbers, 32, 16);
-	System.arraycopy(generateNumbers(1, 16, "D-##"), 0, patchNumbers, 48, 16);
+	System.arraycopy(DriverUtil.generateNumbers(1, 16, "A-##"), 0, patchNumbers,  0, 16);
+	System.arraycopy(DriverUtil.generateNumbers(1, 16, "B-##"), 0, patchNumbers, 16, 16);
+	System.arraycopy(DriverUtil.generateNumbers(1, 16, "C-##"), 0, patchNumbers, 32, 16);
+	System.arraycopy(DriverUtil.generateNumbers(1, 16, "D-##"), 0, patchNumbers, 48, 16);
 
 	singleSysexID = "F040**2*0004";
 	singleSize = HSIZE + SSIZE + 1;

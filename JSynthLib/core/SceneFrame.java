@@ -327,7 +327,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         fileIn.close();
 
         //ErrorMsg.reportStatus("Buffer length:" + buffer.length);
-        IPatch[] patarray = Patch.valueOf(buffer);
+        IPatch[] patarray = DriverUtil.createPatch(buffer);
         for (int j = 0; j < patarray.length; j++) {
             if (table.getSelectedRowCount() == 0)
                 myModel.addPatch(patarray[j]);
@@ -523,7 +523,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
     private void chooseDriver(IPatch patch) {
         byte[] sysex = patch.getByteArray();
-        IPatchDriver driver = (IPatchDriver) Patch.chooseDriver(sysex);
+        IPatchDriver driver = (IPatchDriver) DriverUtil.chooseDriver(sysex);
   	patch.setDriver(driver);
         if (driver == null) {
             // Unkown patch, try to guess at least the manufacturer

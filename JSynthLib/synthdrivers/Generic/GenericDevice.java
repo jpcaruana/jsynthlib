@@ -9,6 +9,7 @@ import core.Device;
 import core.Driver;
 
 /**
+ * A Null Synth Driver.
  *
  * @author  Brian Klock
  * @version $Id$
@@ -22,6 +23,12 @@ public class GenericDevice extends Device {
 	this();
 	this.prefs = prefs;
 
-        addDriver(new Driver("Sysex", "Brian Klock"));
+        addDriver(new GenericDriver());
+    }
+
+    private class GenericDriver extends Driver {
+        private GenericDriver() {
+            super("Sysex", "Brian Klock");
+        }
     }
 }

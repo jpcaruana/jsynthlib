@@ -44,7 +44,7 @@ public interface IDriver {
      * Create a patch from a byte array for the driver.
      * @param sysex a byte array of sysex data.
      * @return a array of <code>IPatch</code> object.
-     * @see Patch#valueOf(byte[])
+     * @see DriverUtil#createPatch(byte[])
      */
     // called by Patch.valueOf and CrossBreeder.generateNewPatch
     IPatch[] createPatch(byte[] sysex);

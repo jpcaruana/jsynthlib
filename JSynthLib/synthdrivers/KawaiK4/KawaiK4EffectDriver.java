@@ -1,5 +1,6 @@
 package synthdrivers.KawaiK4;
 import core.Driver;
+import core.DriverUtil;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -39,7 +40,7 @@ public class KawaiK4EffectDriver extends Driver {
         for (int i = 0; i < 31; i++)
             patchNumbers[i] = String.valueOf(i + 1);
 	*/
-        patchNumbers = generateNumbers(1, 31, "00");
+        patchNumbers = DriverUtil.generateNumbers(1, 31, "00");
     }
 
     public void storePatch(Patch p, int bankNum, int patchNum) {

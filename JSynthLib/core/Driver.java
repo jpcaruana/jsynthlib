@@ -1,8 +1,7 @@
 package core;
 
 import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;import javax.swing.JOptionPane;
+import javax.swing.JOptionPane;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
@@ -36,8 +35,7 @@ import javax.sound.midi.InvalidMidiDataException;
  * @version $Id$
  * @see Patch
  */
-//XXX change to abstract class
-public class Driver implements ISingleDriver {
+abstract public class Driver implements ISingleDriver {
     /**
      * Which device does this driver go with?
      */
@@ -252,38 +250,6 @@ public class Driver implements ISingleDriver {
         return bankNumbers;
     }
 
-    /**
-     * A utility method to generates an array of formatted numbers.
-     * For example,
-     * <pre>
-     *   patchNumbers = generateNumbers(1, 10, "Patch 00");
-     * </pre>
-     * setups the following array,
-     * <pre>
-     *   {
-     *     "Patch 01", "Patch 02", "Patch 03", "Patch 04", "Patch 05"
-     *     "Patch 06", "Patch 07", "Patch 08", "Patch 09", "Patch 10"
-     *   }
-     * </pre>
-     *
-     * @param min minumux value
-     * @param max maximum value
-     * @param format pattern String for java.text.DecimalFormat
-     * @return an array of formatted numbers.
-     * @see java.text.DecimalFormat
-     * @see IPatchDriver#getPatchNumbers
-     * @see IPatchDriver#getPatchNumbersForStore
-     * @see IPatchDriver#getBankNumbers
-     */
-    protected static String[] generateNumbers(int min, int max, String format){
-        String retval[] = new String[max - min + 1];
-        DecimalFormat df = (DecimalFormat)NumberFormat.getInstance().clone();
-        df.applyPattern(format);
-        while (max >= min)
-            retval[max - min] = df.format(max--);
-        return retval;
-    }
-
     public boolean canCreatePatch() {
         try {
             getClass().getDeclaredMethod("createNewPatch", null);
@@ -298,7 +264,9 @@ public class Driver implements ISingleDriver {
     }
 
     /**
-     * Create a new Patch.
+     * Create a new Patch. Don't override this unless your driver properly
+     * implement this method.
+     * @see IPatchDriver#createNewPatch
      */
     protected Patch createNewPatch() { // overridden by subclass
 	return null;
@@ -317,11 +285,12 @@ public class Driver implements ISingleDriver {
         }
 
         // if Conveter for the patch exist, use it.
-        IDriver drv = Patch.chooseDriver(patchSysex, getDevice());
+        IDriver drv = DriverUtil.chooseDriver(patchSysex, getDevice());
         IPatch[] patarray = drv.createPatch(patchSysex);
 
         // Maybe you don't get the expected patch!
-        // Check all devices/drivers again!
+        // Check all devices/drivers again! Call fixpatch() if supportsPatch
+        // returns false.
         // XXX Why don't we simply cause error? Hiroo
         for (int k = 0; k < patarray.length; k++) {
             IPatch pk = patarray[k];
@@ -383,13 +352,13 @@ public class Driver implements ISingleDriver {
      * @return the size of the (modified) patch
      */
     protected int trimSysex(Patch patch) { // no driver overrides this now.
-           if (trimSize > 0 && patch.sysex.length > trimSize
-	    && patch.sysex[trimSize - 1] == (byte) 0xf7) {
-	    byte[] sysex = new byte[trimSize];
-	    System.arraycopy(patch.sysex, 0, sysex, 0, trimSize);
-	    patch.sysex = sysex;
+        if (trimSize > 0 && patch.sysex.length > trimSize
+                && patch.sysex[trimSize - 1] == (byte) 0xf7) {
+            byte[] sysex = new byte[trimSize];
+            System.arraycopy(patch.sysex, 0, sysex, 0, trimSize);
+            patch.sysex = sysex;
         }
-	return patch.sysex.length;	// == trimSize
+        return patch.sysex.length; // == trimSize
     }
 
     public final void calculateChecksum(IPatch myPatch) {
@@ -403,6 +372,7 @@ public class Driver implements ISingleDriver {
      * messages.
      *
      * @param p a <code>Patch</code> value
+     * @see IPatchDriver#calculateChecksum(IPatch)
      */
     protected void calculateChecksum(Patch p) {
 	calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
@@ -425,22 +395,12 @@ public class Driver implements ISingleDriver {
      *            start offset
      * @param end
      *            end offset
-     * @param ofs
+     * @param offset
      *            offset of the checksum data
      * @see #calculateChecksum(IPatch)
      */
-    protected static void calculateChecksum(Patch patch, int start, int end, int ofs) {
-        int sum = 0;
-        for (int i = start; i <= end; i++)
-            sum += patch.sysex[i];
-	patch.sysex[ofs] = (byte) (-sum & 0x7f);
-	/*
-	Equivalent with above.
-	p.sysex[ofs] = (byte) (sum & 0x7f);
-	p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0x7f);
-	p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
-	p.sysex[ofs] = (byte) (p.sysex[ofs] & 0x7f);
-	*/
+    protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
+	DriverUtil.calculateChecksum(patch.sysex, start, end, offset);
     }
 
     public final void send(IPatch myPatch, int bankNum, int patchNum) {
@@ -450,6 +410,7 @@ public class Driver implements ISingleDriver {
     /**
      * Sends a patch to a set location on a synth.<p>
      * Override this if required.
+     * @see IPatchDriver#send(IPatch, int, int)
      */
     protected void storePatch(Patch p, int bankNum, int patchNum) {
         setBankNum(bankNum);
@@ -488,7 +449,8 @@ public class Driver implements ISingleDriver {
 	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, getChannel() - 1,
 			   patchNum, 0); // Program Number
 	    send(msg);
-	} catch (Exception e) {
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
 	}
     }
 
@@ -504,7 +466,8 @@ public class Driver implements ISingleDriver {
 			   0x20, //  Bank Select (LSB)
 			   bankNum % 128); // Bank Number (MSB)
 	    send(msg);
-	} catch (Exception e) {
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
 	}
     }
 
@@ -531,6 +494,7 @@ public class Driver implements ISingleDriver {
     /**
      * Override this if your driver implement Patch Editor.  Don't
      * override this otherwise.
+     * @see IPatchDriver#edit(IPatch)
      */
     protected JSLFrame editPatch(Patch p) {
 	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
@@ -594,6 +558,7 @@ public class Driver implements ISingleDriver {
      * Play note.
      * plays a MIDI file or a single note depending which preference is set.
      * Currently the MIDI sequencer support isn't implemented!
+     * @see ISingleDriver#play(IPatch)
      */
     protected void playPatch() {
 	if (AppConfig.getSequencerEnable())
@@ -631,6 +596,14 @@ public class Driver implements ISingleDriver {
         sendPatch((Patch) p);
     }
 
+    /**
+     * Sends a patch to the synth's edit buffer.<p>
+     *
+     * Override this in the subclass if parameters or warnings need to
+     * be sent to the user (aka if the particular synth does not have
+     * a edit buffer or it is not MIDI accessable).
+     * @see ISingleDriver#send(IPatch)
+     */
     protected void sendPatch(Patch p) {
 	sendPatchWorker(p);
     }
@@ -641,11 +614,8 @@ public class Driver implements ISingleDriver {
     protected final void sendPatchWorker(Patch p) {
         if (deviceIDoffset > 0)
 	    ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
-        try {
-	    send(((Patch)p).sysex);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
+
+        send(((Patch)p).sysex);
     }
     // end of ISingleDriver methods
 

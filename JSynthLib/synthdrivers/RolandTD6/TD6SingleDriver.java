@@ -20,9 +20,9 @@
  */
 
 package synthdrivers.RolandTD6;
-import java.io.InputStream;
 
 import core.Driver;
+import core.DriverUtil;
 import core.ErrorMsg;
 import core.JSLFrame;
 import core.Patch;
@@ -75,7 +75,7 @@ public final class TD6SingleDriver extends Driver {
 	for (int i = 1; i <= NUM_PATCH; i++)
 	    patchNumbers[i - 1] = (i < 10 ? "0" : "") + String.valueOf(i);
 	*/
-	patchNumbers	= generateNumbers(1, NUM_PATCH, "Patch 00");
+	patchNumbers	= DriverUtil.generateNumbers(1, NUM_PATCH, "Patch 00");
 	patchSize	= SINGLE_SIZE;
 
 	// Data set 1 DT1 followed by 4 byte address (MSB first) and data
@@ -204,26 +204,17 @@ public final class TD6SingleDriver extends Driver {
      *
      * @return a <code>Patch</code> value
      */
-    // This can be defined in Driver.java. !!!FIXIT!!!
-    public Patch createNewPatch() { // Borrowed from DR660 driver
-	try {
-	    InputStream fileIn = getClass().getResourceAsStream(patchFileName);
-	    byte[] buffer = new byte [SINGLE_SIZE];
-	    fileIn.read(buffer);
-	    fileIn.close();
-	    return new Patch(buffer, this);
-	} catch (Exception e) {
-	    ErrorMsg.reportError("Error", "Unable to open " + patchFileName, e);
-	    return null;
-	}
+    public Patch createNewPatch() {
+        return (Patch) DriverUtil.createNewPatch(this, patchFileName, SINGLE_SIZE);
     }
 
     /**
-     * Request a Patch (bulk dump system exclusive message) to MIDI
-     * device.
-     *
-     * @param bankNum ignored
-     * @param patchNum drum kit number (0: drum kit 1, ..., 98: drum kit 99)
+     * Request a Patch (bulk dump system exclusive message) to MIDI device.
+     * 
+     * @param bankNum
+     *            ignored
+     * @param patchNum
+     *            drum kit number (0: drum kit 1, ..., 98: drum kit 99)
      */
     public void requestPatchDump(int bankNum, int patchNum) {
 	// checksum depends on drum kit number (patchNum).

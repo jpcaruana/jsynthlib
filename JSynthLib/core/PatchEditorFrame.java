@@ -556,7 +556,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     void revalidateDriver() {
-        ISingleDriver driver = (ISingleDriver) Patch.chooseDriver(p.getByteArray());
+        ISingleDriver driver = (ISingleDriver) DriverUtil.chooseDriver(p.getByteArray());
         if (driver != null) {
             p.setDriver(driver);
         } else {

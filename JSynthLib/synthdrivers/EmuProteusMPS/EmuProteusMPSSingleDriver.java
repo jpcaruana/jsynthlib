@@ -25,7 +25,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
    checksumOffset=317;
    bankNumbers =new String[] {"0-ROM Bank","1-RAM Bank","2-Card Bank",
                               "3-ROM Bank","4-ROM Bank"};
-   patchNumbers = generateNumbers(0,99,"00-");
+   patchNumbers = DriverUtil.generateNumbers(0,99,"00-");
 
    }
                      

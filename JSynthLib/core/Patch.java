@@ -74,7 +74,7 @@ public class Patch implements IPatch {
         comment = new StringBuffer();
         sysex = gsysex;
         setDriver(driver);
-        // commented out to keep backward compatibility
+        // commented out not to break backward compatibility
         //driver.trimSysex(this);
     }
 
@@ -92,7 +92,7 @@ public class Patch implements IPatch {
         author = new StringBuffer();
         comment = new StringBuffer();
         sysex = gsysex;
-        setDriver((Driver) chooseDriver(sysex, device));
+        setDriver((Driver) DriverUtil.chooseDriver(sysex, device));
         driver.trimSysex(this);
     }
 
@@ -113,7 +113,7 @@ public class Patch implements IPatch {
         author = new StringBuffer();
         comment = new StringBuffer();
         sysex = gsysex;
-        setDriver((Driver) chooseDriver(sysex));
+        setDriver((Driver) DriverUtil.chooseDriver(sysex));
         driver.trimSysex(this);
     }
 
@@ -133,58 +133,65 @@ public class Patch implements IPatch {
         comment = new StringBuffer();
         this.sysex = new byte[sysex.length - offset];
         System.arraycopy(sysex, offset, this.sysex, 0, sysex.length - offset);
-        setDriver((Driver) chooseDriver(sysex));
+        setDriver((Driver) DriverUtil.chooseDriver(sysex));
         driver.trimSysex(this);
     }
 
     // IPatch interface methods
-    public String getDate() {
+    public final String getDate() {
         return date.toString();
     }
 
-    public void setDate(String date) {
+    public final void setDate(String date) {
         this.date = new StringBuffer(date);
     }
 
-    public String getAuthor() {
+    public final String getAuthor() {
         return author.toString();
     }
 
-    public void setAuthor(String author) {
+    public final void setAuthor(String author) {
         this.author = new StringBuffer(author);
     }
 
-    public String getComment() {
+    public final String getComment() {
         return comment.toString();
     }
 
-    public void setComment(String comment) {
+    public final void setComment(String comment) {
         this.comment = new StringBuffer(comment);
     }
 
-    public Device getDevice() {
+    public final Device getDevice() {
         return driver.getDevice();
     }
 
-    public IPatchDriver getDriver() {
+    public final IPatchDriver getDriver() {
         return driver;
     }
 
-    public void setDriver(IPatchDriver driver) {
+    public final void setDriver(IPatchDriver driver) {
         this.driver = (driver == null) ? (Driver) AppConfig.getNullDriver()
                 : (Driver) driver;
     }
 
-    public byte[] getByteArray() {
+    public final byte[] getByteArray() {
         return sysex;
     }
 
-    public SysexMessage[] getMessages() {
+    public final SysexMessage[] getMessages() {
         try {
             return MidiUtil.byteArrayToSysexMessages(sysex);
         } catch (InvalidMidiDataException ex) {
             return null;
         }
+    }
+
+    public void useSysexFromPatch(IPatch ip) {
+        byte[] s = ip.getByteArray();
+        if (s.length != sysex.length)
+            throw new IllegalArgumentException();
+        sysex = s;
     }
 
     // Transferable interface methods
@@ -208,7 +215,7 @@ public class Patch implements IPatch {
     // end of Transferable interface methods
 
     // Clone interface method
-    public Object clone() {
+    public final Object clone() {
         try {
             Patch p = (Patch) super.clone();
             p.sysex = (byte[]) sysex.clone();
@@ -221,14 +228,7 @@ public class Patch implements IPatch {
 
     // end of Clone interface method
 
-    /**
-     * Factory method of Patch.
-     */
-    public static IPatch[] valueOf(byte[] sysex) {
-        IDriver driver = chooseDriver(sysex);
-        return driver != null ? driver.createPatch(sysex) : null;
-    }
-/*
+    /*
     public IPatch[] dissect() {
         IPatch[] patarray;
         Device dev = getDevice();
@@ -259,64 +259,63 @@ public class Patch implements IPatch {
         }
         return patarray;
     }
-*/
+    */
 
     public String getPatchHeader() {
-        return getPatchHeader(sysex);
+        return DriverUtil.getPatchHeader(sysex);
     }
 
-    private static String getPatchHeader(byte[] sysex) {
-        StringBuffer patchstring = new StringBuffer("F0");
-
-        // Some Sysex Messages are shorter than 16 Bytes!
-        // 	for (int i = 1; (sysex.length < 16) ? i < sysex.length : i < 16; i++)
-        // {
-        for (int i = 1; i < Math.min(16, sysex.length); i++) {
-            if ((int) (sysex[i] & 0xff) < 0x10)
-                patchstring.append("0");
-            patchstring.append(Integer.toHexString((int) (sysex[i] & 0xff)));
-        }
-        return patchstring.toString();
+    //
+    // delegation methods
+    //
+    public final String getName() {
+        return driver.getPatchName(this);
     }
 
-    /**
-     * choose proper driver for sysex byte array.
-     * @param sysex System Exclusive data byte array.
-     * @return Driver object chosen
-     * @see IDriver#supportsPatch
-     */
-    static IDriver chooseDriver(byte[] sysex) { // Driver or DriverUtil class?
-        String patchString = getPatchHeader(sysex);
-
-        for (int idev = 0; idev < AppConfig.deviceCount(); idev++) {
-            // Outer Loop, iterating over all installed devices
-            Device dev = AppConfig.getDevice(idev);
-            for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-                IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
-                // Inner Loop, iterating over all Drivers of a device
-                if (drv.supportsPatch(patchString, sysex))
-                    return drv;
-            }
-        }
-        return null;
+    public final void setName(String s) {
+        driver.setPatchName(this, s);
     }
 
-    /**
-     * choose proper driver in a given device for sysex byte array.
-     * @param sysex System Exclusive data byte array.
-     * @param dev Device
-     * @return Driver object chosen
-     * @see IDriver#supportsPatch
-     */
-    static IDriver chooseDriver(byte[] sysex, Device dev) { // Driver or DriverUtil class?
-        String patchString = getPatchHeader(sysex);
-        for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-            IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
-            // Inner Loop, iterating over all Drivers of a device
-            if (drv.supportsPatch(patchString, sysex))
-                return drv;
-        }
-        return null;
+    public final void calculateChecksum() {
+        driver.calculateChecksum(this);
+    }
+
+    public final JSLFrame edit() {
+        return driver.editPatch(this);
+    }
+
+    public final void store(int bankNum, int patchNum) {
+        driver.storePatch(this, bankNum, patchNum);
+    }
+
+    // only for single patch
+    public final void play() {
+        ((ISingleDriver) driver).play(this);
+    }
+
+    public final void send() {
+        ((ISingleDriver) driver).send(this);
+    }
+
+    // only for bank patch
+    public final void put(IPatch singlePatch, int patchNum) {
+        ((IBankDriver) driver).checkAndPutPatch(this, singlePatch, patchNum);
+    }
+
+    public final void delete(int patchNum) {
+        ((IBankDriver) driver).deletePatch(this, patchNum);
+    }
+
+    public final IPatch get(int patchNum) {
+        return ((IBankDriver) driver).getPatch(this, patchNum);
+    }
+
+    public final String getName(int patchNum) {
+        return ((IBankDriver) driver).getPatchName(this, patchNum);
+    }
+
+    public final void setName(int patchNum, String name) {
+        ((IBankDriver) driver).setPatchName(this, patchNum, name);
     }
 
     /**
@@ -331,60 +330,4 @@ public class Patch implements IPatch {
         return buf.toString();
     }
 
-    public String getName() {
-        return driver.getPatchName(this);
-    }
-
-    public void setName(String s) {
-        driver.setPatchName(this, s);
-    }
-
-    public void calculateChecksum() {
-        driver.calculateChecksum(this);
-    }
-
-    public JSLFrame edit() {
-        return driver.editPatch(this);
-    }
-
-    public void store(int bankNum, int patchNum) {
-        driver.storePatch(this, bankNum, patchNum);
-    }
-
-    // only for single patch
-    public void play() {
-        ((ISingleDriver) driver).play(this);
-    }
-
-    public void send() {
-        ((ISingleDriver) driver).send(this);
-    }
-
-    // only for bank patch
-    public void put(IPatch singlePatch, int patchNum) {
-        ((IBankDriver) driver).checkAndPutPatch(this, singlePatch, patchNum);
-    }
-
-    public void delete(int patchNum) {
-        ((IBankDriver) driver).deletePatch(this, patchNum);
-    }
-
-    public IPatch get(int patchNum) {
-        return ((IBankDriver) driver).getPatch(this, patchNum);
-    }
-
-    public String getName(int patchNum) {
-        return ((IBankDriver) driver).getPatchName(this, patchNum);
-    }
-
-    public void setName(int patchNum, String name) {
-        ((IBankDriver) driver).setPatchName(this, patchNum, name);
-    }
-
-    public void useSysexFromPatch(IPatch ip) {
-        byte[] s = ip.getByteArray();
-        if (s.length != sysex.length)
-            throw new IllegalArgumentException();
-        sysex = s;
-    }
 }

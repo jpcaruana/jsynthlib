@@ -37,8 +37,8 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
 
     /**
      * Return a hexadecimal string for
-     * {@link IDriver#supportsPatch IDriver.suppportsPatch}at most 16 byte sysex
-     * data.
+     * {@link IDriver#supportsPatch IDriver.suppportsPatch} at most 16 byte
+     * sysex data.
      * 
      * @see IDriver#supportsPatch
      */
@@ -50,7 +50,7 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      */
     String getName();
 
-    /** Set the patches name. */
+    /** Set the patch's name. */
     void setName(String name);
 
     /** calculate checksum of the patch. */
@@ -113,5 +113,6 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      */
     void useSysexFromPatch(IPatch p);
 
+    /** create a clone of the patch. */
     Object clone();
 }

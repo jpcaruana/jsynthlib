@@ -31,7 +31,7 @@ public class ImportMidiFile {
             for (int i=0;i<tr[j].size();i++) {
                 if (tr[j].get(i).getMessage() instanceof SysexMessage) {
                     // System.out.println("Track "+j+" Event "+i+" SYSEX!!");
-                    IPatch[] patarray = Patch.valueOf(tr[j].get(i).getMessage().getMessage());
+                    IPatch[] patarray = DriverUtil.createPatch(tr[j].get(i).getMessage().getMessage());
                     for (int k=0;k<patarray.length;k++) {
 			((LibraryFrame)JSLDesktop.getSelectedFrame()).pastePatch(patarray[k]);
                 }

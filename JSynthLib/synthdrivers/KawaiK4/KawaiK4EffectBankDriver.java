@@ -2,6 +2,7 @@ package synthdrivers.KawaiK4;
 
 import javax.swing.JOptionPane;
 import core.BankDriver;
+import core.DriverUtil;
 import core.ErrorMsg;
 import core.Patch;
 import core.SysexHandler;
@@ -30,7 +31,7 @@ public class KawaiK4EffectBankDriver extends BankDriver {
         bankNumbers = new String[] {
 	    "0-Internal", "1-External"
 	};
-        patchNumbers = generateNumbers(1, 32, "00");
+        patchNumbers = DriverUtil.generateNumbers(1, 32, "00");
 
 	singleSysexID = "F040**2*0004";
 	singleSize = HSIZE + SSIZE + 1;
