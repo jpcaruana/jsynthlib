@@ -34,8 +34,13 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     protected GridBagConstraints gbc;
     /** Scroll Pane for the editor frame. */
     protected JPanel scrollPane;
-    /** A list of slider added by addWidget method.  Only for ScrollBarWidgets and EnvelopeWidget. */
-    protected ArrayList sliderList = new ArrayList(); //workaround for Java Swing Bug (What is this comment? Does anyone knows about this bug?)
+    /**
+     * A list of slider added by addWidget method.  This was defined
+     * for old Java bug.  Now this is not used any more.
+     * @deprecated This is not used any more.
+     */
+    // Used by PatchEdit.EditAction.Worker.  For what is this?!!!FIXIT!!!
+    protected ArrayList sliderList = new ArrayList(); //workaround for Java Swing Bug
     /** A list of widget added by addWidget method. */
     protected ArrayList widgetList = new ArrayList();
 
@@ -265,14 +270,16 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
 	    widget.setSliderNum(slidernum);
 	    if (widget instanceof ScrollBarWidget)
-		{
-		    sliderList.add(((ScrollBarWidget) widget).slider);
-		    ((ScrollBarWidget)widget).setForceLabelWidth(forceLabelWidth);
-		}
-	    if (widget instanceof VertScrollBarWidget)
+		((ScrollBarWidget)widget).setForceLabelWidth(forceLabelWidth);
+	    /*
+	    if (widget instanceof ScrollBarWidget) {
+		sliderList.add(((ScrollBarWidget) widget).slider);
+	    } else if (widget instanceof VertScrollBarWidget) {
 		sliderList.add(((VertScrollBarWidget) widget).slider);
-	    if (widget instanceof ScrollBarLookupWidget)
+	    } else if (widget instanceof ScrollBarLookupWidget) {
 		sliderList.add(((ScrollBarLookupWidget) widget).slider);
+	    }
+	    */
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
 	}
