@@ -39,7 +39,10 @@ public class DeviceDetailsDialog extends JDialog
 	jta.setLineWrap(true);
 	jta.setEditable(false);
 	jta.setWrapStyleWord(true);
-	infoPane.add(jta,BorderLayout.CENTER);
+        jta.setCaretPosition(0);
+        
+        JScrollPane jasp = new JScrollPane(jta);
+        infoPane.add(jasp,BorderLayout.CENTER);
         JPanel buttonPanel1 = new JPanel ();
         buttonPanel1.setLayout ( new FlowLayout (FlowLayout.CENTER) );      
         JButton ok = new JButton ("Close");

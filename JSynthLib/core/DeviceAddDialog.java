@@ -18,7 +18,8 @@ import synthdrivers.RolandXV5080.*;       // phil@muqus.com
 import synthdrivers.PeaveyPC1600.*;       // phil@muqus.com
 import synthdrivers.YamahaDX7.*;
 import synthdrivers.KorgWavestation.*;
-
+import synthdrivers.AlesisQS.*;
+import synthdrivers.RolandMKS50.*;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JFrame;
@@ -37,6 +38,7 @@ import java.io.*;
 public class DeviceAddDialog extends JDialog {
     
     String [] availibleDevices = {
+        "Alesis QS Series Driver",
         "Boss DR660 Driver",
         "Casio CZ-1000 Driver",
         "Emu Proteus MPS Driver",
@@ -49,6 +51,7 @@ public class DeviceAddDialog extends JDialog {
         "Oberheim Matrix 1000 Driver",
         "Oberheim Matrix 6/6R Driver",
         "Peavey PC1600 Driver", // phil@muqus.com
+        "Roland MKS-50 Driver", //KLM
         "Roland XV5080 Driver", // phil@muqus.com
         "Yamaha DX21 / DX27 / DX100 Driver",
         "Yamaha DX7 / TX7 Driver",
@@ -178,6 +181,15 @@ public class DeviceAddDialog extends JDialog {
             PatchEdit.deviceList.add(new KorgWavestationDevice());
             return;
         }
+        if (s.equals("Alesis QS Series Driver")) {
+            PatchEdit.deviceList.add(new AlesisQSDevice());
+            return;
+        }
+        if (s.equals("Roland MKS-50 Driver")) {
+            PatchEdit.deviceList.add(new RolandMKS50Device());
+            return;
+        }
+
     }
     
     void CancelPressed() {

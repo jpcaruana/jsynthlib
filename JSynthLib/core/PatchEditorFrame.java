@@ -90,7 +90,9 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket
                PatchEdit.storeAction.setEnabled (false);
                PatchEdit.copyAction.setEnabled (false);
                PatchEdit.exportAction.setEnabled (false);
-	     
+               lostFocus();
+
+
 	     };
 	     public void internalFrameDeiconified(InternalFrameEvent e) {};
 	     public void internalFrameIconified(InternalFrameEvent e) {};
@@ -259,8 +261,11 @@ public void setBankEditorInformation (BankEditorFrame bf, int row,int col)
   
 
 public void gotFocus()
- {
- }
+  {
+  }
+public void lostFocus()
+  {
+  }
 
 }      
 	

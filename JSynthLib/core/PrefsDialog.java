@@ -187,6 +187,7 @@ public class PrefsDialog extends JDialog
         cbPlatform.addItem ("MS Windows (JavaMIDI)");
         cbPlatform.addItem ("MS Windows (WireProvider)");
         cbPlatform.addItem ("GNU/Linux  (/dev/*)");
+        cbPlatform.addItem ("MacOS X");
         cbPlatform.addItemListener (new ItemListener ()
         {
             public void itemStateChanged (ItemEvent e)
