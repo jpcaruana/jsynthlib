@@ -283,19 +283,25 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	    panel.setLayout(new GridBagLayout());
 	    oscPane.addTab("Source" + (i + 1), panel); gbc.weightx = 0;
 	    EnvelopeWidget.Node[] nodes = new EnvelopeWidget.Node[] {
+	        // origin
 		new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+	        // delay time
 		new EnvelopeWidget.Node(0, 100, new K4Model(patch, 30 + i),
 		        		0, 0, null,
 		        		0, false, new K4Sender(34, i), null, "Dly", null),
+		// atack time
 		new EnvelopeWidget.Node(0, 100, new K4Model(patch, 62 + i),
 		        		100, 100, null,
 		        		25, false, new K4Sender(45, i), null, "A", null),
+		// decay time and sustain level
 		new EnvelopeWidget.Node(0, 100, new K4Model(patch, 66 + i),
 					0, 100, new K4Model(patch, 70 + i),
 					25, false, new K4Sender(46, i), new K4Sender(47, i), "D", "S"),
+		// null node for constant length horizontal line
 		new EnvelopeWidget.Node(100, 100, null,
 		        		EnvelopeWidget.Node.SAME, 0, null,
 					0, false, null, null, null, null),
+		// release time
 		new EnvelopeWidget.Node(0, 100, new K4Model(patch, 74 + i),
 					0, 0, null,
 					0, false, new K4Sender(48, i), null, "R", null),

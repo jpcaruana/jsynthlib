@@ -846,39 +846,45 @@ can therefore be moved in only one direction. Here is an example:
 
 <pre>
     EnvelopeWidget.Node[] nodes = new EnvelopeWidget.Node[] {
-        new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-        new EnvelopeWidget.Node(0, 100,
-                                new K4Model(patch, 30 + i), 0, 0, null, 0, false,
-                                new K4Sender(34, i), null, "Dly", null),
-        new EnvelopeWidget.Node(0, 100,
-                                new K4Model(patch, 62 + i), 100, 100, null, 25, false,
-                                new K4Sender(45, i), null, "A", null),
-        new EnvelopeWidget.Node(0, 100,
-                                new K4Model(patch, 66 + i), 0, 100,
-                                new K4Model(patch, 70 + i), 25, false,
-                                new K4Sender(46, i),
-                                new K4Sender(47, i), "D", "S"),
-        new EnvelopeWidget.Node(100, 100, null, 5000, 5000, null, 0, false, null, null, null, null),
-        new EnvelopeWidget.Node(0, 100,
-                                new K4Model(patch, 74 + i), 0, 0, null, 0, false,
-                                new K4Sender(48, i), null, "R", null),
+        // origin
+	new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
+        // delay time
+	new EnvelopeWidget.Node(0, 100, new K4Model(patch, 30 + i),
+	        		0, 0, null,
+	        		0, false, new K4Sender(34, i), null, "Dly", null),
+        // atack time
+	new EnvelopeWidget.Node(0, 100, new K4Model(patch, 62 + i),
+	        		100, 100, null,
+	        		25, false, new K4Sender(45, i), null, "A", null),
+        // decay time and sustain level
+	new EnvelopeWidget.Node(0, 100, new K4Model(patch, 66 + i),
+				0, 100, new K4Model(patch, 70 + i),
+				25, false, new K4Sender(46, i), new K4Sender(47, i), "D", "S"),
+        // null node for constant length horizontal line
+	new EnvelopeWidget.Node(100, 100, null,
+	        		EnvelopeWidget.Node.SAME, 0, null,
+				0, false, null, null, null, null),
+        // release time
+	new EnvelopeWidget.Node(0, 100, new K4Model(patch, 74 + i),
+				0, 0, null,
+				0, false, new K4Sender(48, i), null, "R", null),
     };
     addWidget(panel,
               new EnvelopeWidget("DCA Envelope", patch, nodes),
               0, 0, 3, 5, 33);
 </pre>
 
-As you can see, the Envelope Widget takes a label, followed by
+As you see, the Envelope Widget takes a label, followed by
 <var>patch</var> and then an array of EnvelopeWidget.Node objects. The
 parameters given to the EnvelopeWidget.Node constructor have the
 following meaning:
 
 <pre>
-    public Node(int minx, int maxx, ParamModel ofsx, 
-                int miny, int maxy, ParamModel ofsy,
+    public Node(int minx, int maxx, ParamModel pmodelx, 
+                int miny, int maxy, ParamModel pmodely,
                 int basey,
                 boolean invertx,
-                SysexSender x, SysexSender y,
+                SysexSender senderx, SysexSender sendery,
                 String namex, String namey)
 </pre>
 
@@ -887,7 +893,7 @@ following meaning:
 <dt>minx, maxx, miny, maxy <dd> The minimum/maximum value permitted by
 the synth parameter which rides the X/Y axis of the node.
 
-<dt>ofsx, ofsy <dd>For the X and Y parameters-- this is the
+<dt>pmodelx, pmodely <dd>The
 Param Model which provides reading/writing abilities to the sysex
 data representing the parameter.
 
@@ -900,7 +906,7 @@ makes it look nicer and possibly be more intuitive to use.)
 <dt>invertx <dd>Sometimes on an X-axis-riding attribute 0 is the fastest,
 other times it is the slowest. This allows you to choose.
 
-<dt>x, y <dd>The Senders which send sysex messages to the synths when
+<dt>senderx, sendery <dd>The Senders which send sysex messages to the synths when
 the Node is moved.
 
 <dt>namex, namey <dd>The names of the parameters riding each access.
@@ -910,7 +916,7 @@ the Node is moved.
 min to max means that a node is stationary on that axis and has no
 related parameter.
 
-**Using EnvelopeWidget.Node.SAME (or 5000) for miny & maxy means that the
+**Using EnvelopeWidget.Node.SAME for miny means that the
 height remains at whatever the previous node was at.
 </small>
 
