@@ -47,6 +47,8 @@ public class Driver extends Object implements Serializable
     public String [] bankNumbers;
     /**The size of the patch this Driver supports (or 0 for variable)*/
     public int patchSize;
+    /** The size of the patch for trimming purposes - see trimSysex()-method */
+    private int trimSize=0;
     /**Number of sysex messages in patch dump*/
     public int numSysexMsgs;    
     
