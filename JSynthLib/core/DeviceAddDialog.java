@@ -18,49 +18,49 @@ import java.awt.*;
 import java.io.*;
 
 public class DeviceAddDialog extends JDialog {
-    
+
     JList AvailableDeviceList;
-	DevicesConfig devConf = null;
-    
+    DevicesConfig devConf = null;
+
     public DeviceAddDialog(JFrame Parent) {
         super(Parent,"Synthesizer Device Install",true);
         JPanel container= new JPanel();
         container.setLayout(new BorderLayout());
 
-		// Read in list of available devices
-		this.devConf = new DevicesConfig();
+	// Read in list of available devices
+	this.devConf = new DevicesConfig();
         AvailableDeviceList = new JList(this.devConf.deviceNames());
         AvailableDeviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollpane = new JScrollPane(AvailableDeviceList);
         container.add(scrollpane, BorderLayout.CENTER);
-        
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout( new FlowLayout(FlowLayout.CENTER) );
-        
+
         JButton ok = new JButton("OK");
         ok.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                OKPressed();
-            }
-        });
+		public void actionPerformed(ActionEvent e) {
+		    OKPressed();
+		}
+	    });
         buttonPanel.add( ok );
         JButton cancel = new JButton("Cancel");
         cancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                CancelPressed();
-            }
-        });
+		public void actionPerformed(ActionEvent e) {
+		    CancelPressed();
+		}
+	    });
         buttonPanel.add( cancel );
-        
+
         getRootPane().setDefaultButton(ok);
-        
+
         container.add(buttonPanel, BorderLayout.SOUTH);
         getContentPane().add(container);
         setSize(400,300);
-        
+
         centerDialog();
     }
-    
+
     protected void centerDialog() {
         Dimension screenSize = this.getToolkit().getScreenSize();
         Dimension size = this.getSize();
@@ -72,18 +72,17 @@ public class DeviceAddDialog extends JDialog {
         int x = screenSize.width - size.width;
         this.setLocation(x,y);
     }
-    
+
     void OKPressed() {
         this.setVisible(false);
-        String s=(String)AvailableDeviceList.getSelectedValue();
-		Device device = this.devConf.classForDevice(s);
-		if (s!=null) {
-			PatchEdit.appConfig.addDevice(device);
-		}
+        String s = (String) AvailableDeviceList.getSelectedValue();
+	Device device = this.devConf.classForDevice(s);
+	if (s != null) {
+	    PatchEdit.appConfig.addDevice(device);
 	}
+    }
 
     void CancelPressed() {
         this.setVisible(false);
     }
-    
 }
