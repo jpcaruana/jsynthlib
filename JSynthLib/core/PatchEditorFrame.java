@@ -80,6 +80,9 @@ public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
      *            patch library or a bank patch.
      */
     protected PatchEditorFrame(String name, ISinglePatch patch) {
+    	this(name, patch, null);
+    }
+    protected PatchEditorFrame(String name, ISinglePatch patch, JPanel panel) {
         super(PatchEdit.getDesktop(), name);
 
         nFrame++;
@@ -88,8 +91,11 @@ public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
         originalPatch = (IPatch) p.clone();
 
         gbc = new GridBagConstraints();
-        scrollPane = new JPanel();
-        scrollPane.setLayout(new GridBagLayout());
+        if (panel == null) {
+            panel = new JPanel();
+            panel.setLayout(new GridBagLayout());
+        }
+        scrollPane = panel;
         scroller = new JScrollPane(scrollPane);
         getContentPane().add(scroller);
 
