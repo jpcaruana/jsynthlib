@@ -351,7 +351,7 @@ public abstract class MidiWrapper {
 			"core.MacOSXMidiWrapper",
 			"core.JavasoundMidiWrapper"
 		};
-		String thisplatform = core.PatchEdit.appConfig.getOSName();
+		String thisplatform = AppConfig.getOSName();
 		Class wrapperclass;
 		try {
 			wrappervec.add (new DoNothingMidiWrapper());
@@ -457,7 +457,6 @@ public abstract class MidiWrapper {
 		      + getInputDeviceName(port));
 	    }
 	}
-
 }
 //(setq c-basic-offset 8)
 //(setq c-basic-offset 4)
