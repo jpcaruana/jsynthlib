@@ -1,3 +1,5 @@
+/* $ID$ */
+
 package core;
 import java.io.*;
 import jmidi.MidiPort;
@@ -351,4 +353,12 @@ public void choosePatch (Patch p, int patchNum)
      return getManufacturerName() + " " + getModelName() + " " + getPatchType() + " " ;
    }
 
+ public int trimSysex(Patch p) {
+     return p.sysex.length;
+ }
+     
+     
+     
+     
+     
 }
