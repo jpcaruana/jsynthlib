@@ -414,56 +414,55 @@ were doing when the bug occurred and what your system setup is like.
 <br>
 <b>Section 1: Introduction</b><br>
 <br>
-Alright, so you've got JSynthLib and like what it does. The problem is that it doesn't support one of<br>
-the synthesizers you own. You drop a line to jsynthlib@overwhelmed.org to find out if anyone is<br>
-working on adding support for that synth and find out that no one is. You decide to volunteer to <br>
+Alright, so you've got JSynthLib and like what it does. The problem is that it doesn't support one of
+the synthesizers you own. You drop a line to jsynthlib@overwhelmed.org to find out if anyone is
+working on adding support for that synth and find out that no one is. You decide to volunteer to
 add support. Triumphantly you let us know your intention and set down to hacking. This document is designed to help you to complete this task.<br>
 <br>
  <i>(A) How hard is it to add support for a new synthesizer to JSynthLib?</i> <br>
    <br>
-	The hardest part is simply becoming familiar with how JSynthLib works and how it's layed out<br>
-internally. Spend some time looking through the driver code for other synthesizers and you'll basically<br>
-pick it up by osmosis. Once your familiar with what you have to do, actually doing it shouldn't take<br>
-too long. I've gotten librarian (not editing) support for synthesizers hacked up in under two hours.<br>
-It depends of course, on the complexity of the synthesizer and the quality of the sysex specification.<br>
-Adding editing support can be a little more time consuming, but is probably even easier than writing<br>
-librarian support. I've spent anywhere between 3 or 4 hours (working on the DR660 Editor) up to 5 days<br>
-(working on the Matrix 1000 editor). If you run into any trouble, you can email jsynthlib@<br>
-overwhelmed.org for help. <br>
+	The hardest part is simply becoming familiar with how JSynthLib works and how it's layed out
+internally. Spend some time looking through the driver code for other synthesizers and you'll basically
+pick it up by osmosis. Once your familiar with what you have to do, actually doing it shouldn't take
+too long. I've gotten librarian (not editing) support for synthesizers hacked up in under two hours.
+It depends of course, on the complexity of the synthesizer and the quality of the sysex specification.
+Adding editing support can be a little more time consuming, but is probably even easier than writing
+librarian support. I've spent anywhere between 3 or 4 hours (working on the DR660 Editor) up to 5 days
+(working on the Matrix 1000 editor). If you run into any trouble, you can email jsynthlib@overwhelmed.org for help. <br>
 <br>
  <i>(B) What do I need in order to add support for a new synthesizer?</i><br>
 <br>
-	 1. At the very least, you need a sysex specification for your synthesizer. In most cases, the<br>
+	 1. At the very least, you need a sysex specification for your synthesizer. In most cases, the
 	    sysex specification is located in the back of the manual, but this is not always the case. 	        
 		    Sometimes they are also availible on the internet if you look around enough. <br>
-	 2. You probably also need the synthesizer you wish to add support for (for testing). While it <br>
+	 2. You probably also need the synthesizer you wish to add support for (for testing). While it 
 	    might be possible to do it without the synthesizer, it would be pretty tough.<br>
-	 3. You'll need a copy of the Java 1.3 JDK. This is availible for free from java.sun.com<br>
+	 3. You'll need a copy of the Java 1.3 (or higher) JDK. This is availible for free from java.sun.com
             This contains the various tools used to compile JSynthLib<br>
-	 4. You'll need a text editor in order to edit code. Anything will work. I wrote a significant<br>
-	    part of the JSynthLib core code using EDIT.COM which comes with Windows. More recently,<br>
-	    I've switched to jEdit, a Java based emacs-like programmer's editor with syntax highlighting<br>
+	 4. You'll need a text editor in order to edit code. Anything will work. I wrote a significant
+	    part of the JSynthLib core code using EDIT.COM which comes with Windows. More recently,
+	    I've switched to jEdit, a Java based emacs-like programmer's editor with syntax highlighting
 	    and bracket matching.<br>
-	 5. Finally, you'll need to be able to program in Java. If you've programmed in C++ before,<br>
-            you can probably pick it up in about an hour (I did). If you are coming from C++ the most<br>
+	 5. Finally, you'll need to be able to program in Java. If you've programmed in C++ before,
+            you can probably pick it up in about an hour (I did). If you are coming from C++ the most
 	    important thing to know is that Java passes all objects by reference, not value.<br>
 <br>
 <i> (C) Who owns the copyright to the code I contribute to JSynthLib?<br></i>
  <br>
-	You do. Unless you specifically assign your copyright to me, you retain ownership. Of course,<br>
-you must release your code under the GNU General Public License since it is considered a work derrived<br>
-from JSynthLib, but in addition to releasing it under the GNU Public License, you can do whatever else<br>
+	You do. Unless you specifically assign your copyright to me, you retain ownership. Of course,
+you must release your code under the GNU General Public License since it is considered a work derrived
+from JSynthLib, but in addition to releasing it under the GNU Public License, you can do whatever else
 you want with it.<br>
 <br>
  <br>
 <br>
 <b>Section 2: Setting out to work on JSynthLib </b><br>
 <br>
-	This section is simply designed towards setting up a working environment (under Windows) for<br>
-doing work on JSynthLib. If you have a different way of setting up your working environment, feel free<br>
+	This section is simply designed towards setting up a working environment (under Windows) for
+doing work on JSynthLib. If you have a different way of setting up your working environment, feel free
 to use it, but this works for me.<br>
-	First, decompress JSynthLib.zip to the directory you are going to work in (such as C:\JSynthLib)<br>
-Next, open up a DOS prompt set to 50 row display and set it to that directory. This is used to run<br>
+	First, decompress JSynthLib.zip to the directory you are going to work in (such as C:\JSynthLib)
+Next, open up a DOS prompt set to 50 row display and set it to that directory. This is used to run
 JSynthLib for testing (the 50 row display helps keep error messages from scolling off the screen too fast). Make sure that the java.exe and javac.exe executables are in your path for easy access. Next, open up your trusty editor to the correct directory.<br>
 	<br>
 <br>
@@ -474,30 +473,30 @@ JSynthLib for testing (the 50 row display helps keep error messages from scollin
 Though 99% of your work will go in the SynthDrivers directory, you need to tell the core JSynthLib program about the existance of your new code. To do so, you must make a small change to the core program itself. All of the core code is kept bundled up inside the JSynthLib.jar file. To extract it, run<br>
 jar -xvf JSynthLib.jar<br>
 <br>
-This will extract all of the files inside the .jar into the directory. You will now see more files and<br>
-directories in your JSynthLib directory. You now have access to the source code for the entire program.<br>
-In addition to the SynthDrivers subdirecory, you will now see one labeled &quot;core&quot; (there are others too but they aren't important). Inside the core directory is all the code for the main part of JSynthLib.<br>
+This will extract all of the files inside the .jar into the directory. You will now see more files and
+directories in your JSynthLib directory. You now have access to the source code for the entire program.
+In addition to the SynthDrivers subdirecory, you will now see one labeled &quot;core&quot; (there are others too but they aren't important). Inside the core directory is all the code for the main part of JSynthLib.
 Feel free to look around.<br>
 <br>
-Important: Once you've extracted the .Jar file and made changes to the resultant files, you must launch<br>
+Important: Once you've extracted the .Jar file and made changes to the resultant files, you must launch
 JSynthLib using &quot;java JSynthLib&quot; instead of &quot;java -jar JSynthLib.jar&quot;. Otherwise you just run the old .Jar file and none of your alterations get used.<br>
 <br>
-When you compile parts of JSynthLib, always do so from the main JSynthLib directory. For example, to compile the file synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java sit in the main JSynthLib<br>
-directory and type &quot;javac synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java&quot; Don't enter that<br>
+When you compile parts of JSynthLib, always do so from the main JSynthLib directory. For example, to compile the file synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java sit in the main JSynthLib
+directory and type &quot;javac synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java&quot; Don't enter that
 directory and just type &quot;javac BossDR660DrumkitDriver.java&quot;, it won't work.<br>
 <br>
 <b>Section 4: The Three areas of Synthesizer support<br></b>
 <br>
-	To add full support for a synthesizer, there are three things you need to write. You need a<br>
-Single Driver, a Bank Driver, and a Single Editor. Each of these provides different functionality.<br>
-First, you would write the Single Driver. This is the only part which is strictly necessary. It provides routines to allow JSynthLib to detect data for the synth, to communicate with the synthesizer, and to calculate checksums on the data. Once this is written, JSynthLib will have Librarian support<br>
+	To add full support for a synthesizer, there are three things you need to write. You need a
+Single Driver, a Bank Driver, and a Single Editor. Each of these provides different functionality.
+First, you would write the Single Driver. This is the only part which is strictly necessary. It provides routines to allow JSynthLib to detect data for the synth, to communicate with the synthesizer, and to calculate checksums on the data. Once this is written, JSynthLib will have Librarian support
 for your synthesizer. Note that you must write a Single Driver first-- both the Bank Driver and Single Editor use the Single Driver in order to communicate with the synthesizer.<br>
 <br>
-The Bank Driver provides the ability to work with banks of patches, to combine singles into banks and to<br>
+The Bank Driver provides the ability to work with banks of patches, to combine singles into banks and to
 extract banks into singles. While this functionality isn't strictly necessary, it is nice to have.<br>
 <br>
-The Single Editor is the fun part. This is a graphical representation of the synthesizers internals<br>
-which allows parameters to be changed and edited. It depends on the single driver for some of its<br>
+The Single Editor is the fun part. This is a graphical representation of the synthesizers internals
+which allows parameters to be changed and edited. It depends on the single driver for some of its
 functionality, so you must write that first.<br>
 <br>
   You will also need to write a device file. This is very easy, just copy an existing one and change it to suit your needs.
@@ -508,19 +507,19 @@ functionality, so you must write that first.<br>
 <br>
 	<i>Step 1: Create the files<br></i>
 <br>
-Under the synthdrivers directory, create a directory for your synth. Into it copy a Single driver from<br>
-one of the other synthesizers and change its name to match your synthesizers. Go through that file and<br>
-change all the references to that synthesizer to yours. I recommend using the KawaiK4SingleDriver<br>
+Under the synthdrivers directory, create a directory for your synth. Into it copy a Single driver from
+one of the other synthesizers and change its name to match your synthesizers. Go through that file and
+change all the references to that synthesizer to yours. I recommend using the KawaiK4SingleDriver
 as a starting point because its the most simple driver.<br>
 <br>
        <i> Step 2: Tell the core program about your driver.<br></i>
 <br>
-Edit the file called \synthdrivers.properties. This is the only file in the core JSynthLib program that you will have to edit. Add an entry with your synthesizer's name and class to the properties file<br>
+Edit the file called \synthdrivers.properties. This is the only file in the core JSynthLib program that you will have to edit. Add an entry with your synthesizer's name and class to the properties file
 Just write it exactly like the ones for the other drivers. The entry will look like this:<br>
-<br>
-deviceName.OberheimMatrix1000=Oberheim Matrix 1000 Driver<br>
-deviceClass.OberheimMatrix1000=synthdrivers.OberheimMatrix.OberheimMatrix1000Device<br>
-<br>
+<pre>
+deviceName.OberheimMatrix1000=Oberheim Matrix 1000 Driver
+deviceClass.OberheimMatrix1000=synthdrivers.OberheimMatrix.OberheimMatrix1000Device
+</pre>
 Save this file.  If all goes well, JSynthLib now knows<br>
 about your driver. Now you just have to write it :)<br>
 <br>
@@ -528,12 +527,12 @@ about your driver. Now you just have to write it :)<br>
 <br>
 Your single driver will be a subclass of the core\Driver class. Open up the file core\Driver.java and take a look at that file. All of the variables and functions are documented as to their purpose. Also look at your single driver code (which you copied from another synthesizer) Between these two files you should be able to figure out what to do.<br>
 <br>
-First, you change your constructor to provide the correct information to the driver. This information is<br>
-used by the functions in driver.java to manipulate the data. If your syntheizer were perfectly regular, that would be just about all there was to writing the driver. However, most synths have their unique<br>
-quirks and features that are impossible to decribe using just data. Therefore you will probably have<br>
+First, you change your constructor to provide the correct information to the driver. This information is
+used by the functions in driver.java to manipulate the data. If your syntheizer were perfectly regular, that would be just about all there was to writing the driver. However, most synths have their unique
+quirks and features that are impossible to decribe using just data. Therefore you will probably have
 to override some of the functions in driver.java to perform for your synth. <br>
 <br>
-Looking at your driver code (which you stole from the KawaiK4 code like I told you to)<br>
+Looking at your driver code (which you stole from the KawaiK4 code like I told you to)
 You'll see that we had to implement functions to Store and Send patches to the synth. This is common, since usually, slightly different sysex messages are used to send a patch to the editing buffer (and not overwrite a patch) or to a specific patch (and overwrite). Change these functions to match your synth. If your synth has no edit buffer, you'll need to write the send method to treat a specific patch location on the synth as the edit buffer and overwrite it (see the EmuProteusMPS Driver for an example of this).<br>
 <br>
 You'll also see that for the KawaiK4, I had to override the computeChecksum method in drivers.java because the K4 uses a different algorithem than the default.  You'll find that the checksum computation is the most common method which needs to be overriden, either because of multiple checksums or because your synth uses a different method to compute its checksum (by default JSynthLib adds all of the data bytes, takes the lowest 7 bits, xors them with 127 and adds one to get the checksum). All of this is in core\drivers.java. Take a look. Computing the checksum properly is the hardest part of <br>
@@ -563,125 +562,166 @@ Make sure you've taken a look at how all the other single editors are set up, th
    (A) How to add Widgets:<br>
 <br>
 	JSynthLib comes with several Widgets I've created which automatically deal with sending sysex and whatnot. All you have to do is tell them where to go and what values to send out. You create them like this: (example from the TX81z Editor)<br>
+<pre>
+    addWidget(cmnPane,  // pane to put the widget on
+              new ScrollBarWidget("Feedback", patch, 0, 7, 0,
+                                  new ParamModel(patch, 100),
+                                  new VcedSender(53)),
+              1, 1,     // horizontal/vertical location
+              3, 1,     // horizontal/vertical size
+              18);      // fader number
+</pre>
+The first parameter is the name of the pane you wish to put the widget on. You would have created this pane previously as a JPane. Usually I use panes to break the interface into functional sections (such as LFO parameters, filter parameters, etc.).<br>
 <br>
- addWidget(cmnPane,new ScrollBarWidget(&quot; Feedback&quot;,patch,0,7,0,new ParamModel(patch,100),new                                          VcedSender(53)),1,1,3,1,18);<br>
-<br>
-The first parameter is the name of the pane you wish to put the widget on. You would have created this pane previously as a JPane. Usually I use panes to break the interface into functional sections (such as LFO parameters, filter parameters, etc.)<br>
-<br>
-The second parameter is the widget to create, in this case a Scrollbar. Notice that the widget itself takes a few parameters, we'll get to that in a moment). the last 5 parameters after the end of the constructor for the Widget are all numbers. The first four represend the location and size of the widget within the Pane (Read up on gridbaglayout in sun's java tutorial). They are (in order) the horizontal location, the vertical location, the horizontal size, and the vertical size). The last number is the fader number. Each widget needs to have a unique fader number and they should go in order. lable all widgets with positive numbers except for checkboxes which get negative numbers (buttons). So the sliders etc. would go 1,2,3,4,5.. and the checkboxes would go -1,-2,-3,-4,-5.. etc.<br>
+The second parameter is the widget to create, in this case a Scrollbar. Notice that the widget itself takes a few parameters, we'll get to that in a moment). The last 5 parameters after the end of the constructor for the Widget are all numbers. The first four represend the location and size of the widget within the Pane (Read up on gridbaglayout in sun's java tutorial). They are (in order) the horizontal location, the vertical location, the horizontal size, and the vertical size). The last number is the fader number. Each widget needs to have a unique fader number and they should go in order. lable all widgets with positive numbers except for checkboxes which get negative numbers (buttons). So the sliders etc. would go 1,2,3,4,5.. and the checkboxes would go -1,-2,-3,-4,-5.. etc.<br>
 <br>
     (B) The provided widgets:<br>
 <br>
-         ScrollBarWidgets contain a label, a slider, and a numeric readout of the value of the slider. They are the most common widgets. The first parameter to the widget should be its label. the second one will always be &quot;patch&quot;. The next two values are the minimum and maximum values on the slider. The fifth value is a value offset for the slider. This is usually zero, but gets used if the parameter in the syntheizer is (for example ) 0 through 127, but should be displayed as -63 to +63). The last two parameters are a model and sender for this fader (we'll get to those after we deal with the widgets)<br>
+         <b>ScrollBarWidgets</b> contain a label, a slider, and a numeric readout of the value of the slider. They are the most common widgets. The first parameter to the widget should be its label. the second one will always be &quot;patch&quot;. The next two values are the minimum and maximum values on the slider. The fifth value is a value offset for the slider. This is usually zero, but gets used if the parameter in the syntheizer is (for example ) 0 through 127, but should be displayed as -63 to +63). The last two parameters are a model and sender for this fader (we'll get to those after we deal with the widgets)<br>
 <br>
-   	 ScrollBarLookupWidgets are just like ScrollBarWidgets but they let the numeric readout contain values other than numbers. They are used rarely, for example if a parameter can take the values of OFF, 1,2,3,4,5,6 or 7. You might use one. You wouldn't want to use a ScrollBar because the first value should be OFF, not zero. You could also use a combobox in this situation. The constructor is about the same as for a combo box.<br>
- 	 ComboBoxWidgets are dropdown list of choices that are best used for non-numeric data (such as LFO shape). Here's an example of setting up a ComboBoxWidget:<br>
+   	 <b>ScrollBarLookupWidgets</b> are just like ScrollBarWidgets but they let the numeric readout contain values other than numbers. They are used rarely, for example if a parameter can take the values of OFF, 1,2,3,4,5,6 or 7. You might use one. You wouldn't want to use a ScrollBar because the first value should be OFF, not zero. You could also use a combobox in this situation. The constructor is about the same as for a combo box.<br>
 <br>
-       addWidget(panel,new ComboBoxWidget(&quot;EG Shift&quot;,patch,new ParamModel(patch,20+(i*5)),new     <br>
-            AcedSender(i*5+4),new String [] {&quot;96db&quot;,&quot;48db&quot;,&quot;24db&quot;,&quot;12db&quot;}),0,4,1,1,5);<br>
-<br>
+ 	 <b>ComboBoxWidgets</b> are dropdown list of choices that are best used for non-numeric data (such as LFO shape). Here's an example of setting up a ComboBoxWidget:<br>
+<pre>
+    addWidget(panel,
+              new ComboBoxWidget("EG Shift", patch,
+                                 new ParamModel(patch, 20 + i*5),
+                                 new AcedSender(i*5 + 4),
+                                 new String[] {"96db", "48db", "24db", "12db"}),
+              0, 4, 1, 1, 5);
+</pre>
 Parameters to the constructor are 1) The Label  2) &quot;patch&quot;  3) a model 4) a sender 5) an array of all the values that it can contain.<br>
 <br>
-	CheckBoxWidgets are used for parameters that can be either on or off. Heres an example:<br>
-<br>
- addWidget(lfoPane,new CheckBoxWidget(&quot;1&quot;,patch,new ParamModel(patch,55+3*13),new 	VcedSender(3*13+8)),3,6,1,1,-19);<br>
-<br>
+	<b>CheckBoxWidgets</b> are used for parameters that can be either on or off. Heres an example:<br>
+<pre>
+    addWidget(lfoPane,
+              new CheckBoxWidget("1", patch,
+                                 new ParamModel(patch, 55 + 3*13),
+                                 new VcedSender(3*13 + 8)),
+              3, 6, 1, 1, -19);
+</pre>
 Parameters to the Constructor are 1)The Label 2) &quot;patch&quot; 3) a model 4) a sender<br>
 <br>
-	EnvelopeWidgets, the final widget type, are vastly more complex than the others.They represent several parameters on the synth, such as the attack, decay, sustain, and release of a VCA envlope.<br>
+    <b>EnvelopeWidgets,</b> the final widget type, are vastly more complex than the others.They represent several parameters on the synth, such as the attack, decay, sustain, and release of a VCA envlope.<br>
 Note that the fader number you give to an envelope widget represents it's first fader number, it will take as many as it needs starting at that one to represent all of it's parameters.<br>
 <br>
-The constructor for an envelope widget takes in its constructor a list of EnvelopeNodes, each with its own constructor. Each EnvelopeNode is one of the movable squares on the envelope. Some of these nodes<br>
+The constructor for an envelope widget takes in its constructor a list of EnvelopeNodes, each with its own constructor. Each EnvelopeNode is one of the movable squares on the envelope. Some of these nodes
 are stationary, some contain two parameters on the synth and can be moved vertically and horizontally and others contain only one parameter and can therefore be moved in only one direction. Here is an example:<br>
-<br>
-     addWidget(panel,new EnvelopeWidget(&quot;  Envelope&quot;,patch,new EnvelopeNode [] {<br>
-        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),     <br>
-	new EnvelopeNode(0,31,new ParamModel(patch,i*13+47),30,30,null,10,true,new 	<br>
-   	  VcedSender(i*13),null,&quot; AR&quot;,null),<br>
-	new EnvelopeNode(0,31,new ParamModel(patch,i*13+48),0,15,new 	   	  <br>
-	  ParamModel(patch,i*13+51),25,true,new VcedSender(i*13+1),new <br>
-	  VcedSender(i*13+4),&quot;D1R&quot;,&quot;D1L&quot;),<br>
-	new EnvelopeNode(0,31,new ParamModel(patch,i*13+49),0,0,null,10,true,new 	   	  <br>
-	   VcedSender(i*13+2),null,&quot;D2R&quot;,null),<br>
-	new EnvelopeNode(1,15,new ParamModel(patch,i*13+50),0,0,null,0,true,new 	              	<br>
-	  VcedSender(i*13+3),null,&quot;RR&quot;,null),<br>
-      }     ),3,0,3,5,10);<br>
-<br>
-As you can see, the Envelope Widget takes a lable, followed by &quot;patch&quot; and then an array of envelope<br>
+<pre>
+    addWidget(panel,
+              new EnvelopeWidget("Envelope", patch,
+                                 new EnvelopeNode[] {
+                                   new EnvelopeNode(0, 0, null,
+                                                    0, 0, null,
+                                                    0, false,
+                                                    null, null, null, null),
+                                   new EnvelopeNode(0, 31, new ParamModel(patch, i*13+47),
+                                                    30,30, null,
+                                                    10, true,
+                                                    new VcedSender(i*13), null, " AR", null),
+                                   new EnvelopeNode(0, 31, new ParamModel(patch, i*13+48),
+                                                    0, 15, new ParamModel(patch, i*13+51),
+                                                    25, true,
+                                                    new VcedSender(i*13+1), new VcedSender(i*13+4), "D1R", "D1L"),
+                                   new EnvelopeNode(0, 31,new ParamModel(patch, i*13+49),
+                                                    0, 0, null,
+                                                    10, true,
+                                                    new VcedSender(i*13+2), null, "D2R", null),
+                                   new EnvelopeNode(1, 15, new ParamModel(patch, i*13+50),
+                                                    0, 0, null,
+                                                    0, true,
+                                                    new VcedSender(i*13+3), null, "RR", null),
+                                }),
+              3, 0, 3, 5, 10);
+</pre>
+As you can see, the Envelope Widget takes a lable, followed by &quot;patch&quot; and then an array of envelope
 nodes. The parameters given to the nodes constructor have the following meaning:<br>
+<pre>
+    public EnvelopeNode(int minx, int maxx, ParamModel ofsx, 
+                        int miny, int maxy, ParamModel ofsy,
+                        int basey, boolean invertx,
+                        SysexSender x, SysexSender y,
+                        String namex, String namey)
+</pre>
+<i>minx, maxx, miny, maxy</i> - The minimum/maxmum value permitted by the Synth-Parameter which rides the X/Y-Axis of the Node.<br>
 <br>
- public EnvelopeNode(int minx, int maxx,ParamModel ofsx, int miny, int maxy, ParamModel ofsy,int basey,boolean invertx, SysexSender x, SysexSender y,String namex, String namey)<br>
+<i>ofsx, ofsy</i> - For the X and Y parameters-- this is the ParameterModel which provides reading/writing abilities to the sysex data representing the parameter.<br>
 <br>
-minx- The minimum value permitted by the Synth-Parameter which rides the X-Axis of the Node<br>
-maxx -The maximum value   &quot;&quot;            &quot;&quot;                        &quot;&quot;               &quot;&quot;<br>
-miny-      minumum        &quot;&quot;            &quot;&quot;                        &quot;&quot;     Y-Axis    &quot;&quot;<br>
-maxy- The  maximum        &quot;&quot;            &quot;&quot;                        &quot;&quot;       &quot;&quot;      &quot;&quot;<br>
+<i>basey</i> - Sometimes you don't want Zero on a Y-access-riding-parameter to be all the way down at the bottom. This gives it a little bit of rise. BaseY will be added to all Y values. (This doesn't change the function of the envelopeWidget, but makes it look nicer and possibly be more intuitive to use.<br>
 <br>
-ofsx and ofsy- For the X and Y parameters-- this is the ParameterModel which provides reading/writing abilities to the sysex data representing the parameter<br>
+<i>invertx</i> - sometimes on an x-riding attribute 0 is the fastest, other times its the slowest. THis allows you to choose.<br>
 <br>
-basey- Sometimes you don't want Zero on a Y-access-riding-parameter to be all the way down at the bottom. This gives it a little bit of rise. BaseY will be added to all Y values. (This doesn't change the function of the envelopeWidget, but makes it look nicer and possibly be more intuitive to use<br>
+<i>x, y</i> - The senders which send sysex messages to the synths when the Node is moved.<br>
 <br>
-invertx- sometimes on an x-riding attribute 0 is the fastest, other times its the slowest. THis allows you to choose<br>
+<i>namex, namey</i> - the names of the parameters riding each access.<br>
 <br>
-x & y- The senders which send sysex messages to the synths when the Node is moved<br>
-<br>
-namex, name y, the names of the parameters riding each access<br>
-**Using nulls for the Models and Senders and setting min to max means that a node is stationary on that axis and has no related parameter<br>
+**Using nulls for the Models and Senders and setting min to max means that a node is stationary on that axis and has no related parameter.<br>
 **Using EnvelopeNode.SAME (or 5000) for MinY & MaxY means that the height remains at whatever the previous node was at.<br>
 <br>
 I hope that made sense, if not, just take a look at the way EnvelopeWidgets are used by various single editors.<br>
 <br>
-<br>
+<b>CheckBoxWidget</b>,
+<b>LabelWidget</b>,
+<b>PatchNameWidget</b>,
+<b>ScrollBarLookupWidget</b>,
+<b>SpinerWidget</b>,
+<b>TreeWidget</b>,
+and <b>VertScrollBarWidget</b> are also provided.
 <br>
 	(C) Models and Senders<br>
 <br>
-	Models and Senders are objects which commicate data between the synth and the widgets. Senders first: Everytime a widget moves, its Sender gets told. The job of the Sender is to send a Sysex string to the synth informing it of the change. Usually a Single Editor will have one or more Sender. Sometimes more than one is used because a synth uses more than one method to transfer the data. Here's an example<br>
+    Models and Senders are objects which commicate data between the synth and the widgets. Senders first: Everytime a widget moves, its Sender gets told. The job of the Sender is to send a Sysex string to the synth informing it of the change. Usually a Single Editor will have one or more Sender. Sometimes more than one is used because a synth uses more than one method to transfer the data. Here's an example
 from the YamahaTX81z Editor:<br>
 <br>
-<br>
-class VcedSender extends SysexSender<br>
-{<br>
-  int parameter;<br>
-  byte []b = new byte [7];<br>
-  public VcedSender(int param) <br>
-  {parameter=param;<br>
-   b[0]=(byte)0xF0; b[1]=(byte)0x43;b[3]=(byte)0x12;b[4]=(byte)parameter;b[6]=(byte)0xF7;<br>
-  }<br>
-  public byte [] generate (int value)<br>
-  {b[5]=(byte)value;b[2]=(byte)(16+channel-1);return b;}<br>
-  <br>
-}<br>
-<br>
-The TX81z has two senders, VcedSender (shown above) and AcedSender (not shown) because it uses two<br>
-slightly different methods to transfer two types of data (called Vced and Aced in the TX81z manuel)<br>
+<pre>
+    class VcedSender extends SysexSender {
+      int parameter;
+      byte[] b = new byte [7];
+      public VcedSender(int param) {
+        parameter = param;
+        b[0] = (byte) 0xF0; b[1] = (byte) 0x43;
+	b[3] = (byte) 0x12; b[4] = (byte) parameter; b[6] = (byte) 0xF7;
+      }
+      public byte[] generate (int value) {
+       b[2] = (byte) (16 + channel - 1); b[5] = (byte) value;
+	return b;
+      }
+    }
+</pre>
+The TX81z has two senders, VcedSender (shown above) and AcedSender (not shown) because it uses two
+slightly different methods to transfer two types of data (called Vced and Aced in the TX81z manuel).<br>
 The Consturctor for a sender takes a parameter representing which parameter a particular instance of the sender should control and creates a sysex message containing all necessary information except for the data value to be transmitted and the channel to transmit on. When the widget attatched to this instance of the sender moves, the generate method of the sender gets called with the value to send. The generate function simply puts the value and channel into the message and returns it.<br>
 <br>
 In addition to sending changes to the synth, we want to keep track of the changes to the patch so that when we next call up this patch the changes are there. We also want to be able to set the Widgets to the correct values for a particular patch when the Single Editor is opened. This is what the Model is for.<br>
-The default model is called ParamModel and is used by the YamahaTX81z editor. Its constructor takes two parameters, the patch being edited &quot;patch&quot; and the offset into the patch of the value. Sometimes the<br>
+The default model is called ParamModel and is used by the YamahaTX81z editor. Its constructor takes two parameters, the patch being edited &quot;patch&quot; and the offset into the patch of the value. Sometimes the
 default can be used, othertimes it is either necessary or more convenient to subclass ParamModel to make your own Model. Here's an example from the KawaiK4 Editor:<br>
 <br>
-<br>
- class K4Model extends ParamModel<br>
-{ <br>
- public int bitmask;<br>
- public int mult;<br>
- public K4Model(Patch p,int o) {ofs=o+8;patch=p;bitmask=255;mult=1;}<br>
- public K4Model(Patch p,int o,int b) {ofs=o+8;patch=p;bitmask=b;<br>
-        if ((bitmask&1)==1) mult=1; else<br>
-        if ((bitmask&2)==2) mult=2; else<br>
-        if ((bitmask&4)==4) mult=4; else<br>
-        if ((bitmask&8)==8) mult=8; else<br>
-        if ((bitmask&16)==16) mult=16; else<br>
-        if ((bitmask&32)==32) mult=32; else<br>
-        if ((bitmask&64)==64) mult=64; else<br>
-        if ((bitmask&128)==128) mult=128;<br>
-<br>
- }<br>
- public void set(int i) {patch.sysex[ofs]=(byte)((i*mult)+(patch.sysex[ofs]&(~bitmask)));}<br>
- public int get() {return ((patch.sysex[ofs]&bitmask)/mult);}<br>
-<br>
-}<br>
-<br>
+<pre>
+    class K4Model extends ParamModel {
+      public int bitmask;
+      public int mult;
+      public K4Model(Patch p, int o) {
+	ofs = o + 8; patch = p; bitmask = 255; mult = 1;
+      }
+      public K4Model(Patch p, int o, int b) {
+	ofs = o + 8; patch = p; bitmask = b;
+	if ((bitmask&  1) ==   1) mult =   1; else
+	if ((bitmask&  2) ==   2) mult =   2; else
+	if ((bitmask&  4) ==   4) mult =   4; else
+	if ((bitmask&  8) ==   8) mult =   8; else
+	if ((bitmask& 16) ==  16) mult =  16; else
+	if ((bitmask& 32) ==  32) mult =  32; else
+	if ((bitmask& 64) ==  64) mult =  64; else
+	if ((bitmask&128) == 128) mult = 128;
+      }
+      public void set(int i) {
+	patch.sysex[ofs] = (byte) ((i*mult) + (patch.sysex[ofs]&(~bitmask)));
+      }
+      public int get() {
+	return ((patch.sysex[ofs]&bitmask)/mult);
+      }
+    }
+</pre>
 In the case of the KawaiK4, we couldn't just use ParamModel, because some Kawai K4 parameters are bitmasks stored in the same byte as other parameters. The above class K4Model, takes care of deciphering the bitmasks. The model is designed to take the same two parameters as ParamModel. It implements two functions in addition to its constructor. the set function is given a value and must set its parameter to the value. the get must return the value of its parameter. <br>
 <br>
 Note how the models and senders are used in the addWidget functions in the various editors. addWidget doesn't care if you use the default JSynthLib 'ParamModel' or if you implement your own. This makes the widgets much more extensible. They can be used without needing to know how exactly the data is supposed to be accessed. THe model and sender takes care of that.<br>
@@ -696,7 +736,7 @@ Java/Swing provides a construct known as an action listener which allows you to 
 <br>
 <b>Section 8: Testing Your Driver...<br></b>
 <i>This section of the Documentation was written by Yves Lefebvre.</i>
-<p>This is an attempt to do a test plan when writing a new driver for J. It take little time to do and may help finding problem before the driver is available publicly.
+<p>This is an attempt to do a test plan when writing a new driver for JSynthLib. It take little time to do and may help finding problem before the driver is available publicly.
 
 
 <p>First thing to do: you must do some single dump and some bank dump from your synth to your computer without using JSyntLib (I use Cakewalk to do that but there should be some simple freeware to do this). Save those dump in .syx format (binary). Remember, we are not using JSynthLib at his point in order to have something "clean" to refer to when testing the new driver.
@@ -708,9 +748,9 @@ Java/Swing provides a construct known as an action listener which allows you to 
 
 <p><b>Single driver:</b>
 
-<p>-Try to open a "clean" .syx file from J and send it to the edit buffer of your synth. Try it to see if the name and sound seems OK. Do a dump (with external soft) and compare the file, they should be identical. Make sure that the patch is really in the edit buffer (and not written in memory) by changing patch on the synth and going back to the patch number it was before the send: the patch you just send should not be there (this may vary with some synth model).
+<p>-Try to open a "clean" .syx file from JSynthLib and send it to the edit buffer of your synth. Try it to see if the name and sound seems OK. Do a dump (with external soft) and compare the file, they should be identical. Make sure that the patch is really in the edit buffer (and not written in memory) by changing patch on the synth and going back to the patch number it was before the send: the patch you just send should not be there (this may vary with some synth model).
 
-<p>-Try to do a single patch dump to J. Check that the patch name is correct in JSynthLib. Export it to a .syx file and compare it (diff) with the original "clean" version. Should be the same. (Those steps will confirm that loading external file and receiving/sending a dump give the same result)
+<p>-Try to do a single patch dump to JSynthLib. Check that the patch name is correct in JSynthLib. Export it to a .syx file and compare it (diff) with the original "clean" version. Should be the same. (Those steps will confirm that loading external file and receiving/sending a dump give the same result)
 
 
 <p>-Try to store this patch at different location in the synth. At least, try to store in patch 0 or 1 and to the highest patch number of your synth. Do that in every user bank if possible. Verify that the patch appear in all the location you save it.
@@ -754,7 +794,5 @@ Of course, nothing ever works the first time. Its never as easy as it should be.
 	2) Use a midi cable to connect your computer's midi out to midi in. Get a program from the internet to printout all incomming midi messages. now you can see what messages your editor/driver is sending and you can check them for correctness.<br>
       3) When you are working on a driver and it doesn't seem to be doing what the code looks like it should do, one common problem is that if you make a change to the Constructor, you need to go into JSynthLib and remove the driver from the SynthConfig Dialog box and then add it again. Otherwise the newly Changed constructor isn't getting called.<br>
 Good Luck. <br>
-	
-
 </body>
 </html>
