@@ -210,7 +210,7 @@ public class DriverUtil {
         try {
             InputStream fileIn = driver.getClass().getResourceAsStream(fileName);
 
-			if (fileIn != null) {
+            if (fileIn != null) {
             	fileIn.read(buffer);
             	fileIn.close();
             	return driver.createPatch(buffer);
