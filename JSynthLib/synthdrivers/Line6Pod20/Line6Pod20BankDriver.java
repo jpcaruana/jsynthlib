@@ -92,10 +92,10 @@ public class Line6Pod20BankDriver extends BankDriver
         patchNameStart=getUnNibblizedPatchStart(patchNum);
         patchNameStart+=Constants.PATCH_NAME_START; //offset of name in patch data
         if (name.length()<patchNameSize) name = name + "                ";
-        byte [] namebytes = new byte [64];
+        byte [] namebytes = new byte [patchNameSize];
         try {
-            namebytes=name.getBytes("US-ASCII");
-            for (int i=0;i<patchNameSize;i++) {
+            namebytes = name.getBytes("US-ASCII");
+            for (int i = 0; i < patchNameSize; i++) {
                 PatchBytes.setSysexByte(p, Constants.BDMP_HDR_SIZE, i + patchNameStart, namebytes[i]);
             }
         } catch (UnsupportedEncodingException ex) {return;}

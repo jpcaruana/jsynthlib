@@ -21,6 +21,7 @@
 
 package synthdrivers.Line6BassPod;
 import core.*;
+import java.io.UnsupportedEncodingException;
 import javax.swing.*;
 
 /** Line6 Single Driver. Used for Line6 program patch.
@@ -84,14 +85,14 @@ public class Line6BassPodSingleDriver extends Driver {
         * contains the name to be assigned to the patch.
         */
     protected void setPatchName(Patch p, String name) {
-        byte nameByte[] = name.getBytes();
-        int i;
-        for (i = 0; i < Math.min(name.length(), patchNameSize); i++) {
-            PatchBytes.setSysexByte(p, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart, nameByte[i]);
-        }
-        for (int j = i; j < patchNameSize; j++) {
-            PatchBytes.setSysexByte(p, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart, (byte)0x20);
-        }
+        if (name.length()<patchNameSize) name = name + "                ";
+        byte nameBytes[] = new byte[patchNameSize];
+        try {
+            nameBytes = name.getBytes("US-ASCII");
+            for (int i = 0; i < patchNameSize; i++) {
+                PatchBytes.setSysexByte(p, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart, nameBytes[i]);
+            }
+        } catch (UnsupportedEncodingException ex) {return;}
     }
     
     /** Converts a single program patch to an edit buffer patch and sends it to
