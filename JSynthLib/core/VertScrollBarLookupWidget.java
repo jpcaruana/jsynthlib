@@ -21,6 +21,8 @@ package core;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -102,6 +104,11 @@ public class VertScrollBarLookupWidget extends ScrollBarLookupWidget {
                 eventListener(e);
             }
         });
+        slider.addMouseWheelListener(new MouseWheelListener() {
+		public void mouseWheelMoved(MouseWheelEvent e) {
+		    eventListener(e);
+		}
+	    });
         text = new JTextField(options[getValue()], 4);
         text.setEditable(false);
 

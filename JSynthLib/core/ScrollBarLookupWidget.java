@@ -1,6 +1,8 @@
 package core;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -103,6 +105,12 @@ public class ScrollBarLookupWidget extends SysexWidget {
 		    eventListener(e);
 		}
 	    });
+        slider.addMouseWheelListener(new MouseWheelListener() {
+		public void mouseWheelMoved(MouseWheelEvent e) {
+		    eventListener(e);
+		}
+	    });	
+
 	text = new JTextField(options[getValue()-super.getValueMin()], 4);
 	text.setEditable(false);
 
@@ -117,14 +125,21 @@ public class ScrollBarLookupWidget extends SysexWidget {
     }
 
     protected int constrain(int min, int val, int max) {
-        return val<min?min:val>max?max:val;
+        return val < min ? min : val > max ? max : val;
     }
 
     /** invoked when the slider is moved. */
     protected void eventListener(ChangeEvent e) {
 	int v = slider.getValue();
-	text.setText(options[v-getValueMin()]);
+	text.setText(options[v]);
 	sendSysex(v);
+    }
+    /** invoked when mouse wheel is moved. */
+    protected void eventListener(MouseWheelEvent e) {
+        JSlider t = (JSlider) e.getSource();
+        //ErrorMsg.reportStatus("wheel : " + e.getWheelRotation());
+	if (t.hasFocus()) // to make consistent with other operation.
+	    t.setValue(t.getValue() - e.getWheelRotation());
     }
 
     /** Adds a <code>ChangeListener</code> to the slider. */
@@ -155,7 +170,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
     public void changeOptions(String[] o) {
 	if (o != options) {
 	    options = o;
-	    text.setText(options[getValue()-getValueMin()]);
+	    text.setText(options[getValue()]);
 	}
     }
 }

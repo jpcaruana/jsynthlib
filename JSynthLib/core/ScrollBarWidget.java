@@ -1,6 +1,8 @@
 package core;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -80,6 +82,11 @@ public class ScrollBarWidget extends SysexWidget {
 		    eventListener(e);
 		}
 	    });
+        slider.addMouseWheelListener(new MouseWheelListener() {
+		public void mouseWheelMoved(MouseWheelEvent e) {
+		    eventListener(e);
+		}
+	    });
 	text = new JTextField(new Integer(getValue() + base).toString(), 4);
 	text.setEditable(false);
 
@@ -94,7 +101,7 @@ public class ScrollBarWidget extends SysexWidget {
     }
 
     protected int constrain(int min, int val, int max) {
-        return val<min?min:val>max?max:val;
+        return val < min ? min : val > max ? max : val;
     }
     
     /** invoked when the slider is moved. */
@@ -102,6 +109,13 @@ public class ScrollBarWidget extends SysexWidget {
 	int v = slider.getValue();
 	text.setText(new Integer(v + base).toString());
 	sendSysex(v);
+    }
+    /** invoked when mouse wheel is moved. */
+    protected void eventListener(MouseWheelEvent e) {
+        JSlider t = (JSlider) e.getSource();
+        //ErrorMsg.reportStatus("wheel : " + e.getWheelRotation());
+	if (t.hasFocus()) // to make consistent with other operation.
+	    t.setValue(t.getValue() - e.getWheelRotation());
     }
 
     /** Adds a <code>ChangeListener</code> to the slider. */

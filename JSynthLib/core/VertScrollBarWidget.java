@@ -1,6 +1,8 @@
 package core;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -37,6 +39,11 @@ public class VertScrollBarWidget extends ScrollBarWidget {
 			     getValueMin(), getValueMax(), getValue());
 	slider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
+		    eventListener(e);
+		}
+	    });
+        slider.addMouseWheelListener(new MouseWheelListener() {
+		public void mouseWheelMoved(MouseWheelEvent e) {
 		    eventListener(e);
 		}
 	    });
