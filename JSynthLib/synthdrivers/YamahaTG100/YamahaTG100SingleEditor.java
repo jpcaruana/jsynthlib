@@ -54,6 +54,9 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 		for (int i = 1; i <= 2; i++) {
 			oTabs.add(buildElementWindow(i, patch), "Element " + i);
 		}
+		
+		// Needed for initial tab enabling/disabling
+		changeVoiceMode( (int)patch.sysex[7] );
 
         setSize(500, 600);
 		pack();
@@ -83,9 +86,8 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 			public void itemStateChanged (ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					JComboBox oComboBox = (JComboBox)e.getSource();
-					boolean enable = (0 == oComboBox.getSelectedIndex())? false: true;
-					oTabs.setEnabledAt(2, enable);
-					element2Panel.setEnabled(enable);
+
+					changeVoiceMode(oComboBox.getSelectedIndex() );
 				}
 			}
 		});
@@ -173,11 +175,11 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 
 		JPanel elementPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-		// Waveform		
+		// Waveform
 		elementPanel.add(new KnobWidget("Waveform", p, 0, 139, 0, new TG100Model(patch, 31 + offset, true),  new TG100Sender(0x18 + offset) ) );
-		// EG AR		
+		// EG AR
 		elementPanel.add(new KnobWidget("EG AR", p, 49, 79, -64, new TG100Model(patch, 33 + offset),  new TG100Sender(0x1A + offset) ) );
-		// EG RR		
+		// EG RR
 		elementPanel.add(new KnobWidget("EG RR", p, 49, 79, -64, new TG100Model(patch, 34 + offset),  new TG100Sender(0x1B + offset) ) );
 		// Panpot
 		elementPanel.add(new ComboBoxWidget("Panpot", p,
@@ -191,21 +193,21 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
         elementPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Element " + element,TitledBorder.CENTER,TitledBorder.CENTER));
         verticalBox.add(elementPanel);
 
-		JPanel levelScalingPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));		
+		JPanel levelScalingPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-		// Level Scaling Break Point 1		
+		// Level Scaling Break Point 1
 		levelScalingPanel.add(new VertScrollBarLookupWidget(  "Breakpoint 1", p,
 		                                        new TG100Model(patch, 35 + offset),
 		                                        new TG100Sender(0x1C + offset), TG100Constants.NOTES ) );
-        // Level Scaling Offset 1        
+        // Level Scaling Offset 1
 		levelScalingPanel.add(new VertScrollBarWidget(  "Offset 1", p, 0, 256, -128,
 		                                        new TG100Model(patch, 39 + offset, true),
 		                                        new TG100Sender(0x20 + offset)), gbc );
-		// Level Scaling Break Point 2		
+		// Level Scaling Break Point 2
 		levelScalingPanel.add(new VertScrollBarLookupWidget(  "Breakpoint 2", p,
 		                                        new TG100Model(patch, 36 + offset),
 		                                        new TG100Sender(0x1D + offset), TG100Constants.NOTES ) );
-        // Level Scaling Offset 2        
+        // Level Scaling Offset 2
 		levelScalingPanel.add(new VertScrollBarWidget(  "Offset 2", p, 0, 256, -128,
 		                                        new TG100Model(patch, 41 + offset, true),
 		                                        new TG100Sender(0x22 + offset)) );
@@ -217,11 +219,11 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 		levelScalingPanel.add(new VertScrollBarWidget(  "Offset 3", p, 0, 256, -128,
 		                                        new TG100Model(patch, 43 + offset, true),
 		                                        new TG100Sender(0x24 + offset)) );
-		// Level Scaling Break Point 4		
+		// Level Scaling Break Point 4
 		levelScalingPanel.add(new VertScrollBarLookupWidget(  "Breakpoint 4", p,
 		                                        new TG100Model(patch, 38 + offset),
 		                                        new TG100Sender(0x1F + offset), TG100Constants.NOTES ) );
-		// Level Scaling Offset 4		
+		// Level Scaling Offset 4
 		levelScalingPanel.add(new VertScrollBarWidget(  "Offset 4", p, 0, 256, -128,
 		                                        new TG100Model(patch, 45 + offset, true),
 		                                        new TG100Sender(0x26 + offset)) );
@@ -262,7 +264,7 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 		gbc.gridx = 1;
 		lfoPanel.add(new KnobWidget(    "Amp Mod Depth", p, 0, 7, 0,
 		                                    new TG100Model(patch, 52 + offset),
-		                                    new TG100Sender(0x2D + offset) ), gbc );		
+		                                    new TG100Sender(0x2D + offset) ), gbc );
         lfoPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"LFO",TitledBorder.CENTER,TitledBorder.CENTER));
         lfoEGPanel.add(lfoPanel);
 
@@ -280,13 +282,13 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 		                                    TG100Constants.P_EG_RANGE ), gbc );
 		// P-EG Velocity Switch
 		// Can't use checkbox because the values are "on", "off" instead of "off", "on"
-		gbc.gridx = 2;		
+		gbc.gridx = 2;
 		pEGPanel.add(new ComboBoxWidget(     "Velocity Switch", p,
 		                                    new TG100Model(patch, 55 + offset),
 		                                    new TG100Sender(0x30 + offset),
 		                                    TG100Constants.SWITCH ), gbc );
         // P-EG Rate Scaling
-        gbc.gridx = 4;        
+        gbc.gridx = 4;
         pEGPanel.add(new KnobWidget(    "Rate Scaling", p, 0, 7, 0,
 		                                    new TG100Model(patch, 56 + offset),
 		                                    new TG100Sender(0x31 + offset) ), gbc );
@@ -343,10 +345,15 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 
         pEGPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Pitch Envelope (P-EG)",TitledBorder.CENTER,TitledBorder.CENTER));
         lfoEGPanel.add(pEGPanel);
-        
+
         verticalBox.add(lfoEGPanel);
 
 		return verticalBox;
 	}
 
+	public void changeVoiceMode(final int index) {
+		boolean enable = (0 == index)? false: true;
+		oTabs.setEnabledAt(2, enable);
+		element2Panel.setEnabled(enable);
+	}
 }
