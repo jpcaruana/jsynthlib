@@ -99,12 +99,11 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	    initForMac(exitAction, prefsAction, aboutAction);
 
 	// Show dialog for the 1st invokation.
+	//This is no longer normal. Maybe we shouldn't save prefs if this happens (could be difficult)
         if (!loadPrefsSuccessfull)
             ErrorMsg.reportError
 		("Error",
-		 "Unable to load user preferences. Defaults loaded.\n"
-		 + "If you've just installed or just upgraded this software, "
-		 + "this is normal.");
+		 "Unable to load user preferences. Defaults loaded instead."); 
 
 	// popup menu for Library window, etc.
 	menuPatchPopup = createPopupMenu();
