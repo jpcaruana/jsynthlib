@@ -417,12 +417,17 @@ public class Device /*implements Serializable, Storable*/ {
 
     public void setPreferences(Preferences p) {
 	prefs = p;
-	setInPort(prefs.getInt("inPort", 0));
-	setPort(prefs.getInt("port", 0));
+	// set default MIDI in/out port
+	setInPort(prefs.getInt("inPort", PatchEdit.appConfig.getInitPortIn()));
+	setPort(prefs.getInt("port", PatchEdit.appConfig.getInitPortOut()));
 	// do we still need the following fields?
 	synthName = prefs.get("synthName", synthName);
 	channel = prefs.getInt("channel", channel);
 	deviceID = prefs.getInt("deviceID", deviceID);
+    }
+
+    public Preferences getPreferences() {
+	return prefs;
     }
 
     /**

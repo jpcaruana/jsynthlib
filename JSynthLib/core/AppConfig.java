@@ -9,9 +9,9 @@
 
 package core;
 
-import java.io.FileNotFoundException;
+//import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
+//import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -33,7 +33,7 @@ public class AppConfig {
     private Transmitter faderInTrns;
 
     private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
-    private static Preferences devices = prefs.node("devices");
+    private static Preferences prefsDev = prefs.node("devices");
 
     static Vector midiWrappers;
     {
@@ -72,7 +72,9 @@ public class AppConfig {
         try {
 	    masterInTrns = MidiUtil.getTransmitter(getFaderPort());
             faderInTrns = MidiUtil.getTransmitter(getFaderPort());
-        } catch (Exception e) {}
+        } catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	}
     }
 
     /**
@@ -326,80 +328,117 @@ public class AppConfig {
 
     // Standard getters/setters
     /** Indexed getter for deviceList elements */
-    public Device getDevice(int i) { return (Device) this.deviceList.get(i); }
-    /** Indexed setter for deviceList elements */
+    Device getDevice(int i) { return (Device) this.deviceList.get(i); }
 
     /**
      * Adder for deviceList elements.  Called by DeviceAddDialog and
      * MidiScan.
      */
-    public boolean addDevice(Device device) {
-	//reassignDeviceDriverNums(deviceList.size(), device);
-	// set default MIDI in/out port number
-    	if (this.deviceList.add(device)) {
-    		int i = deviceList.size() - 1;
-    		device.setPort(PatchEdit.appConfig.getInitPortOut());
-    		device.setInPort(PatchEdit.appConfig.getInitPortIn());
-    		devices.put("device" + i, device.getClass().getName());
-    		devices.put("node" + i, getNextDeviceNode());
-    		device.setPreferences(getPreferences(i));
-    		devices.putInt("count", deviceList.size());
-    		return true;
-    	}
-    	return false;
+    void addDevice(Device device) {
+	device.setPreferences(getDeviceNode(device));
+    	deviceList.add(device); // always returns true
+	/*
+	int i = deviceList.size() - 1;
+	device.setPort(PatchEdit.appConfig.getInitPortOut());
+	device.setInPort(PatchEdit.appConfig.getInitPortIn());
+	devices.put("device" + i, device.getClass().getName());
+	devices.put("node" + i, getNextDeviceNode());
+	device.setPreferences(getPreferences(i));
+	devices.putInt("count", deviceList.size());
+	*/
     }
+
+    /** returns the 1st unused device node name. */
+    private Preferences getDeviceNode(Device dev) {
+	String s = dev.getClass().getName();
+	ErrorMsg.reportStatus("getDeviceNode: " + s);
+	s = s.substring(s.lastIndexOf('.') + 1, s.lastIndexOf("Device"));
+	ErrorMsg.reportStatus("getDeviceNode: -> " + s);
+	int i;
+	try {
+	    for (i = 0; prefsDev.nodeExists(s + "#" + i); i++)
+		;		// do nothing
+	    return prefsDev.node(s + "#" + i);
+	} catch (BackingStoreException e) {
+	    ErrorMsg.reportStatus(e);
+	    return null;
+	}
+    }
+
     /**
      * Remover for deviceList elements.
      * The caller must call reassignDeviceDriverNums and revalidateLibraries.
      * @return <code>Device</code> object removed.
      */
-    public Device removeDevice(int i) {
-    		Device ret = (Device) this.deviceList.remove(i);
-    		int size = deviceList.size();
-    		try {
-    			getPreferences(i).removeNode();
-    		} catch (BackingStoreException ex) {}
-    		while (i < size) {
-    			devices.put("device" + (i), devices.get("device" + (i+1),""));
-    			devices.put("node" + (i), devices.get("node" + (i+1),""));
-    		}
-    		devices.remove("device" + size);
-    		devices.remove("node"+ size);
-    		devices.putInt("count", size);
-    		return ret;
+    Device removeDevice(int i) {
+	Device ret = (Device) deviceList.remove(i);
+	try {
+	    ret.getPreferences().removeNode();
+	} catch (BackingStoreException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+	/*
+	int size = deviceList.size();
+	while (i < size) {
+	    devices.put("device" + (i), devices.get("device" + (i+1),""));
+	    devices.put("node" + (i), devices.get("node" + (i+1),""));
+	}
+	devices.remove("device" + size);
+	devices.remove("node"+ size);
+	devices.putInt("count", size);
+	*/
+	return ret;
     }
+
     /** Size query for deviceList */
-    public int deviceCount() { return this.deviceList.size(); }
+    int deviceCount() {
+	return this.deviceList.size();
+    }
 
-    	private Preferences getPreferences(int i) {
-    		String key = devices.get("node" + i,null);
-    		if (key == null)
-    			return null;
-    		return devices.node(key);
-    	}
+    /*
+    private Preferences getPreferences(int i) {
+	String key = devices.get("node" + i,null);
+	if (key == null)
+	    return null;
+	return devices.node(key);
+    }
+    */
+    private void loadDevices() throws NoSuchMethodException, IllegalAccessException,
+	InstantiationException, InvocationTargetException {
+	String[] devs;
+	try {
+	    devs = prefsDev.childrenNames();
+	} catch (BackingStoreException e) {
+	    ErrorMsg.reportStatus(e);
+	    return;
+	}
+	ErrorMsg.reportStatus("loadDevices: devs.length = " + devs.length);
+	for (int i = 0; i < devs.length; i++) {
+	    try {
+		// get class name from preferences node name
+		//ErrorMsg.reportStatus("loadDevices: " + devs[i]);
+		String s = devs[i].substring(0, devs[i].indexOf('#'));
+		//ErrorMsg.reportStatus("loadDevices: -> " + s);
+		s = PatchEdit.devConfig.classNameForShortName(s);
+		//ErrorMsg.reportStatus("loadDevices: -> " + s);
 
-    	private void loadDevices() throws NoSuchMethodException, IllegalAccessException,
-			InstantiationException, InvocationTargetException {
-    		int size = devices.getInt("count",0);
-    		//Class args[] = new Class[0];
-    		for (int i = 0; i < size; i++) {
-    			try {
-    				Class c = Class.forName(devices.get("device" + (i),""));
-    				//Constructor cons = c.getConstructor(args);
-    				//Device dev = (Device)cons.newInstance(args);
-    				Device dev = (Device) c.newInstance();
-    				dev.setPreferences(getPreferences(i));
-    				deviceList.add(i, dev);
-    			} catch (ClassNotFoundException ex) {
-    			}
-    		}
-    	}
+		Class c = Class.forName(s);
+		Device dev = (Device) c.newInstance();
+		dev.setPreferences(prefsDev.node(devs[i]));
+		deviceList.add(i, dev);
+	    } catch (ClassNotFoundException e) {
+		ErrorMsg.reportStatus(e);
+	    }
+	}
+    }
 
-    	private String getNextDeviceNode() {
-    		int i = devices.getInt("next_node", 0);
-    		devices.putInt("next_node", i + 1);
-    		return Integer.toString(i);
-    	}
+    /*
+    private String getNextDeviceNode() {
+	int i = devices.getInt("next_node", 0);
+	devices.putInt("next_node", i + 1);
+	return Integer.toString(i);
+    }
+    */
 
     // Moved from SynthConfigDialog.java
     /** Revalidate deviceNum element of drivers of each device */
