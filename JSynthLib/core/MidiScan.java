@@ -2,7 +2,7 @@
  * MidiScan.java
  *
  */
-package core; //TODO org.jsynthlib.midi;
+package core;
 
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -12,6 +12,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
 import javax.swing.ProgressMonitor;
 import javax.swing.JDialog;
+import javax.swing.table.AbstractTableModel;
 
 /**
  * Detect MIDI devices by sending out Inquery ID Sysex Message to
@@ -27,7 +28,7 @@ public class MidiScan extends Thread {
     // Wait at least 100ms for a response from a device
     private static final int WAITFORRESPONSE = 100;
 
-    private SynthTableModel model;
+    private AbstractTableModel model;
     private ProgressMonitor pb;
     private JDialog parent;
 
@@ -37,16 +38,18 @@ public class MidiScan extends Thread {
     //private static Object lock = new Object();
 
     /** Creates new MidiScan
-     * @param m
-     * @param pb  */
-    public MidiScan(SynthTableModel m, ProgressMonitor pb, JDialog parent) {
-        model = m;
+     * @param model
+     * @param pb
+     */
+    public MidiScan(AbstractTableModel model,
+		    ProgressMonitor pb, JDialog parent) {
+        this.model = model;
         this.pb = pb;
         this.parent = parent;
     }
 
-    public MidiScan(SynthTableModel m) {
-        this(m, null, null);
+    public MidiScan(AbstractTableModel model) {
+        this(model, null, null);
     }
 
     public void run() {

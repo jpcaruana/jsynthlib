@@ -1,8 +1,5 @@
-package core; //TODO org.jsynthlib;
+package core;
 
-// TODO: Why does FaderBox have to know about a specific midi implementation?
-//import jmidi.*;
-//TODO import org.jsynthlib.midi.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -10,288 +7,259 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Abstract class that is used by PrefsDialog to load an arbitrary
- * number of configuration tabs.
+ * Config panel for Fader Input setting.
  * @author Joe Emenaker
  * @version $Id$
  */
+class FaderBoxConfigPanel extends ConfigPanel {
+    {
+	panelName = "Fader Box";
+	nameSpace = "faderbox";
+    }
 
-public class FaderBoxConfigPanel extends ConfigPanel {
     private JPanel faderPanel;
-    private JComboBox cb4 = new JComboBox();
+    private JComboBox cbFdr;
     private JCheckBox enabledBox;
-    private JList lb1;
-    private JComboBox cbController;
+    private JList lstSl;
+    private JComboBox cbControl;
     private JComboBox cbChannel;
-    private int faderPortWas = 0;
-    private int currentFader = 0;
 
-    public FaderBoxConfigPanel(core.AppConfig appConfig) {
-	super(appConfig);
-	setLayout (new GridBagLayout ());
-	GridBagConstraints gbc = new GridBagConstraints ();
-	gbc.fill=GridBagConstraints.HORIZONTAL; gbc.ipadx=1; gbc.anchor=GridBagConstraints.WEST;
+    /* keep current values */
+    private int slider = 0;
+    private int[] control = new int[Constants.NUM_FADERS];
+    private int[] channel = new int[Constants.NUM_FADERS];
+
+    FaderBoxConfigPanel(PrefsDialog parent, AppConfig appConfig) {
+	super(parent, appConfig);
+	setLayout(new GridBagLayout());
+	GridBagConstraints gbc = new GridBagConstraints();
+
+	gbc.fill = GridBagConstraints.HORIZONTAL; gbc.ipadx = 1; gbc.anchor = GridBagConstraints.WEST;
 
 	// Fader Port selection
-	JLabel l0 = new JLabel ("Receive Faders from MIDI Port:  ");
+	/*
+	JLabel l0 = new JLabel("Receive Faders from MIDI Port:  ");
 	gbc.gridx = 0; gbc.gridy = 1; gbc.gridheight = 1; gbc.gridwidth = 4;
-	add (l0, gbc);
-
-	enabledBox = new JCheckBox ("Enable Faders");
+	add(l0, gbc);
+	*/
+	enabledBox = new JCheckBox("Enable Fader Input Port");
+	enabledBox.setToolTipText("sliders and buttons are controlled by Control Change MIDI message.");
 	gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth = 2;
-	add (enabledBox, gbc);
+	add(enabledBox, gbc);
 	enabledBox.addActionListener(new ActionListener() {
-                public void actionPerformed (ActionEvent e) {
+                public void actionPerformed(ActionEvent e) {
 			setContainerEnabled(faderPanel, enabledBox.isSelected());
+			setModified(true);
 		}
 	});
 
 	// create own Fader/Slider Panel
-	faderPanel = new JPanel(new BorderLayout(5,5));
+	faderPanel = new JPanel(new BorderLayout(5, 5));
 	// upper side
-	cb4 = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
-	resetComboBoxes();
-	//gbc.gridx = 1; gbc.gridy = 3; gbc.gridheight = 1; gbc.gridwidth=gbc.REMAINDER; // gbc.gridwidth = 3;
-	faderPanel.add (cb4, BorderLayout.NORTH);
+	cbFdr = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+	cbFdr.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    setModified(true);
+		}
+	    });
+	gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth=gbc.REMAINDER;
+	faderPanel.add(cbFdr, BorderLayout.NORTH);
 
-	// Fader Slider settings
-	// Init Slider JList and JComboBoxes
+	// Init Slider JList
+	//  0    : active slider
+	//  1-16 : fader 1-16
+	// 17-30 : button 1-14
+	// 31    : button 15 : prev fader bank
+	// 32    : button 16 : next fader bank
 	String[] n = new String[Constants.NUM_FADERS];
 	n[0] = "Active Slider";
-	for (int i = 0; i < 16; i++)
-	    n[i + 1] = ("Slider #" + (i + 1));
-	for (int i = 0; i < 12; i++)
-	    n[i + 17] = ("Button #" + (i + 1));
-	n[29] = "Button #13";
-	n[30] = "Button #14";
-	n[31] = "Slider Bank Prev";
-	n[32] = "Slider Bank Next";
-
-	String[] cc1 = new String[129];	// controller
-	String[] cc2 = new String[17]; // channel
-	for (int i = 0; i < 128; i++)
-	    cc1[i] = ("" + (i));
-	cc1[128] = "Off";
-	for (int i = 0; i < 16; i++)
-	    cc2[i] = ("" + (i + 1));
-	cc2[16] = "Off";
-	cbController = new JComboBox (cc1);
-	cbChannel = new JComboBox (cc2);
-	lb1 = new JList (n);
-	lb1.addListSelectionListener (new ListSelectionListener () {
-		public void valueChanged (ListSelectionEvent e) {
-		    setFaderController(currentFader, cbController.getSelectedIndex());
-		    setFaderChannel(currentFader, cbChannel.getSelectedIndex());
-		    cbController.setSelectedIndex (getFaderController(lb1.getSelectedIndex()));
-		    cbChannel.setSelectedIndex (getFaderChannel(lb1.getSelectedIndex()));
-		    currentFader = lb1.getSelectedIndex ();
+	for (int i = 1; i <= 16; i++) // slider : 1 to 16
+	    n[i] = "Slider #" + i;
+	for (int i = 1; i <= 14; i++) // button : 1 to 14
+	    n[i + 16] = "Button #" + i;
+	n[31] = "Button #15: Prev Slider Bank";
+	n[32] = "Button #16: Next Slider Bank";
+	lstSl = new JList(n);
+	lstSl.addListSelectionListener(new ListSelectionListener() {
+		public void valueChanged(ListSelectionEvent e) {
+		    slider = lstSl.getSelectedIndex();
+		    cbControl.setSelectedIndex(control[slider]);
+		    cbChannel.setSelectedIndex(channel[slider]);
+		    //setModified(true); // don't do that
 		}
 	    });
-	lb1.setSelectedIndex (0);
-	lb1.setSelectionMode (0);
+	lstSl.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+	// MIDI Control Change Message controll # (0-119)
+	// 120-127 are reserved for Channel Mode Messages
+	String[] cc1 = new String[121];
+	for (int i = 0; i < 120; i++)
+	    cc1[i] = "" + i;
+	cc1[120] = "Off";
+	cbControl = new JComboBox(cc1);
+	cbControl.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    control[slider] = cbControl.getSelectedIndex();
+		    setModified(true);
+		}
+	    });
+
+	String[] cc2 = new String[17]; // channel
+	for (int i = 0; i < 16; i++)
+	    cc2[i] = "" + (i + 1);
+	cc2[16] = "Off";
+	cbChannel = new JComboBox(cc2);
+	cbChannel.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    channel[slider] = cbChannel.getSelectedIndex();
+		    setModified(true);
+		}
+	    });
 
 	// left side
-	JScrollPane scroll = new JScrollPane (lb1);
-	faderPanel.add(scroll,BorderLayout.WEST);
+	JScrollPane scroll = new JScrollPane(lstSl);
+	faderPanel.add(scroll, BorderLayout.WEST);
 	// right side
-	JPanel dataPanel = new JPanel ();
-	dataPanel.setLayout (new GridBagLayout ());
+	JPanel dataPanel = new JPanel();
+	dataPanel.setLayout(new GridBagLayout());
 	gbc.anchor = GridBagConstraints.EAST;
 	gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2; gbc.gridheight = 1;
-	dataPanel.add (new JLabel ("MIDI Channel    #  "), gbc);
+	dataPanel.add(new JLabel("MIDI Channel    #  "), gbc);
 	gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2; gbc.gridheight = 1;
-	dataPanel.add (new JLabel ("MIDI Controller #  "), gbc);
+	dataPanel.add(new JLabel("MIDI Control #  "), gbc);
 	gbc.gridx = 2; gbc.gridy = 1; gbc.gridwidth = 2; gbc.gridheight = 1;
-	dataPanel.add (cbChannel, gbc);
+	dataPanel.add(cbChannel, gbc);
 	gbc.gridx = 2; gbc.gridy = 2; gbc.gridwidth = 2; gbc.gridheight = 1;
-	dataPanel.add (cbController, gbc);
+	dataPanel.add(cbControl, gbc);
 	gbc.gridx = 2; gbc.gridy = 5; gbc.gridwidth = 5; gbc.gridheight = 3;
 	gbc.fill = GridBagConstraints.BOTH;
-	dataPanel.setBorder (new EtchedBorder (EtchedBorder.RAISED));
-	faderPanel.add(dataPanel,BorderLayout.CENTER);
+	dataPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+	faderPanel.add(dataPanel, BorderLayout.CENTER);
 	// lower side
-	JPanel buttonPanel = new JPanel ();
-	JButton b0 = new JButton ("Reset");
-	JButton b1 = new JButton ("Peavey PC1600x Preset");
-	JButton b2 = new JButton ("Kawai K5000 Knobs Preset");
-	b0.addActionListener (new ActionListener () {
-		public void actionPerformed (ActionEvent e) {
-		    resetSliders ();
+	JPanel buttonPanel = new JPanel();
+	JButton b0 = new JButton("Reset");
+	JButton b1 = new JButton("Peavey PC1600x Preset");
+	JButton b2 = new JButton("Kawai K5000 Knobs Preset");
+	b0.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    resetSliders();
+		    setModified(true);
 		}
 	    });
-	b1.addActionListener (new ActionListener () {
-		public void actionPerformed (ActionEvent e) {
-		    presetPC1600x ();
+	b1.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    presetPC1600x();
+		    setModified(true);
 		}
 	    });
-	b2.addActionListener (new ActionListener () {
-		public void actionPerformed (ActionEvent e) {
-		    presetKawaiK5000 ();
+	b2.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    presetKawaiK5000();
+		    setModified(true);
 		}
 	    });
 
-	buttonPanel.add (b0);
-	buttonPanel.add (b1);
-	buttonPanel.add (b2);
+	buttonPanel.add(b0);
+	buttonPanel.add(b1);
+	buttonPanel.add(b2);
 
-	faderPanel.add(buttonPanel,BorderLayout.SOUTH);
+	faderPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 	gbc.gridx = 0; gbc.gridy = 8; gbc.gridwidth = 7; gbc.gridheight = 1;
-	add (faderPanel, gbc);
+	add(faderPanel, gbc);
     }
 
-    // The comment below is not correct under the current implementation.
-    /**
-     * This is called every time the config dialog box is opened.
-     * It tells the implementing class to set all GUI elements to
-     * properly reflect the internal data. This is because we are
-     * not assured that the GUI's are not set to a state that
-     * does NOT match the internal data (in cases where the user
-     * changes some stuff and then hits "Cancel". - emenaker 2003.03.13
-     */
-    public void init() {
+    void init() {
 	try {
 	    if (MidiUtil.isInputAvailable())
-		cb4.setSelectedIndex (appConfig.getFaderPort());
+		// index 0 may be unavailable
+		cbFdr.setSelectedIndex(appConfig.getFaderPort());
 	} catch (IllegalArgumentException e) {
-	    cb4.setSelectedIndex(0);
-	    appConfig.setFaderPort(0);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
+	    cbFdr.setSelectedIndex(0);
 	}
-	cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
-	cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
-	enabledBox.setSelected(MidiUtil.isInputAvailable() && appConfig.getFaderEnable());
-	enabledBox.setEnabled(MidiUtil.isInputAvailable());
-	faderPortWas = appConfig.getFaderPort();
-	resetComboBoxes();
+
+	// copy into the temporary array.
+	for (int i = 0; i < Constants.NUM_FADERS; i++) {
+	    control[i] = appConfig.getFaderControl(i);
+	    channel[i] = appConfig.getFaderChannel(i);
+	}
+	lstSl.setSelectedIndex(slider);
+	cbControl.setSelectedIndex(control[slider]);
+	cbChannel.setSelectedIndex(channel[slider]);
+
+	enabledBox.setSelected(appConfig.getFaderEnable());
+	enabledBox.setEnabled(MidiUtil.isInputAvailable()
+			      && appConfig.getMidiEnable());
+
+	setContainerEnabled(faderPanel,
+			    enabledBox.isEnabled() && enabledBox.isSelected());
     }
 
-    /**
-     * This is the opposite of init(). The implementing class should
-     * copy all GUI settings to internal data elements (and also
-     * save those settings in to the preference-saving system, if any
-     */
-    public void commitSettings() {
-	int faderIn = cb4.getSelectedIndex();
-	appConfig.setFaderPort(faderIn);
-	if (appConfig.getFaderPort() != faderPortWas) {
-	    //FIXME: This is not portable to other MIDI libraries--working around strange JavaMIDI bugs
-	    /*
-	    try {
-		((JavaMidiWrapper)(core.PatchEdit.MidiIn)).faderMidiPort.setDeviceNumber (MidiPort.MIDIPORT_INPUT,appConfig.getFaderPort());
-		core.PatchEdit.MidiIn.setInputDeviceNum (appConfig.getFaderPort());
-		// no relation to Master Controller (Hiroo)
-		//core.PatchEdit.MidiIn.setInputDeviceNum (appConfig.getMasterController());
-		JOptionPane.showMessageDialog (null, "You must exit and restart the program for this change to take effect","Changing Fader Port", JOptionPane.INFORMATION_MESSAGE);
-	    } catch (Exception e) {
-	    }
-	    */
-	    faderPortWas = appConfig.getFaderPort();
-	}
-	appConfig.setFaderController(currentFader, cbController.getSelectedIndex());
-	appConfig.setFaderChannel(currentFader, cbChannel.getSelectedIndex());
+    void commitSettings() {
 	appConfig.setFaderEnable(enabledBox.isSelected());
-    }
-
-    /**
-     * This method re-populates the combobox(es) that contain things that depend upon which
-     * midi driver we're using. This is called by the constructor and also by the
-     * midiDriverChanged(MidiWrapper) callback method - emenaker 2003.03.18
-     *
-     */
-    private void resetComboBoxes() {
-	setContainerEnabled(faderPanel,enabledBox.isEnabled() && enabledBox.isSelected());
-    }
-
-    /**
-     * This should return the name that should go on the tab (if using a tabbed config dialog).
-     * Otherwise, it could be used for a frame title, etc. However, this can be overridden by
-     * certain constructors.
-     */
-    protected String getDefaultPanelName() {
-	return "Fader Box";
-    }
-
-    /**
-     * This should return the AppConfig namespace to use if one isn't specified in the constructor
-     */
-    protected String getDefaultNamespace() {
-	return "faderbox";
+	appConfig.setFaderPort(cbFdr.getSelectedIndex());
+	for (int i = 0; i < Constants.NUM_FADERS; i++) {
+	    appConfig.setFaderControl(i, control[i]);
+	    appConfig.setFaderChannel(i, channel[i]);
+	}
+	setModified(false);
     }
 
     /*
      * Private methods
      */
-
-    private int getFaderController(int fader) {
-	return appConfig.getFaderController(fader);
-    }
-
-    private void setFaderController(int currentFader, int controller) {
-	appConfig.setFaderController(currentFader, controller);
-    }
-
-    private int getFaderChannel(int fader) {
-	return appConfig.getFaderChannel(fader);
-    }
-
-    private void setFaderChannel(int currentFader, int channel) {
-	appConfig.setFaderChannel(currentFader, channel);
-    }
-
     private void resetSliders() { // disable all
-	for (int i=0; i < Constants.NUM_FADERS; i++) {
-	    appConfig.setFaderController(i, 128);
-	    appConfig.setFaderChannel(i, 0);
+	for (int i = 0; i < Constants.NUM_FADERS; i++) {
+	    channel[i] = 0;
+	    control[i] = 120;
 	}
-	cbController.setSelectedIndex(appConfig.getFaderController(lb1.getSelectedIndex()));
-	cbChannel.setSelectedIndex(appConfig.getFaderChannel(lb1.getSelectedIndex()));
+	cbControl.setSelectedIndex(control[slider]);
+	cbChannel.setSelectedIndex(channel[slider]);
     }
 
-    private void presetPC1600x () {
-	appConfig.setFaderController(0, 128);
-	appConfig.setFaderChannel(0, 16);
+    private void presetPC1600x() {
+	channel[0] = 16;
+	control[0] = 120;
 	for (int i = 1; i < 17; i++) {
-	    appConfig.setFaderController(i, 24);
-	    appConfig.setFaderChannel(i, i - 1);
+	    channel[i] = i - 1;
+	    control[i] = 24;
 	}
 	for (int i = 17; i < Constants.NUM_FADERS; i++) {
-	    appConfig.setFaderController(i, 25);
-	    appConfig.setFaderChannel(i, i - 17);
+	    channel[i] = i - 17;
+	    control[i] = 25;
 	}
-	cbController.setSelectedIndex(appConfig.getFaderController(lb1.getSelectedIndex()));
-	cbChannel.setSelectedIndex(appConfig.getFaderChannel(lb1.getSelectedIndex()));
+	cbChannel.setSelectedIndex(channel[slider]);
+	cbControl.setSelectedIndex(control[slider]);
     }
 
-    private void presetKawaiK5000 () {
-	appConfig.setFaderController(0, 1);
-	appConfig.setFaderChannel(0, 0);
+    private void presetKawaiK5000() {
+	channel[0] = 0;
+	control[0] = 1;
 	for (int i = 1; i < 17; i++) {
-	    appConfig.setFaderChannel(i, 0);
+	    channel[i] = 0;
 	}
 	for (int i = 17; i < Constants.NUM_FADERS; i++) {
-	    appConfig.setFaderController(i, 128);
-	    appConfig.setFaderChannel(i, 16);
+	    channel[i] = 16;
+	    control[i] = 120;
 	}
-	appConfig.setFaderController(1, 16);
-	appConfig.setFaderController(2, 18);
-	appConfig.setFaderController(3, 74);
-	appConfig.setFaderController(4, 73);
-	appConfig.setFaderController(5, 17);
-	appConfig.setFaderController(6, 19);
-	appConfig.setFaderController(7, 77);
-	appConfig.setFaderController(8, 78);
-	appConfig.setFaderController(9, 71);
-	appConfig.setFaderController(10, 75);
-	appConfig.setFaderController(11, 76);
-	appConfig.setFaderController(12, 72);
-	appConfig.setFaderController(13, 80);
-	appConfig.setFaderController(14, 81);
-	appConfig.setFaderController(15, 82);
-	appConfig.setFaderController(16, 83);
+	control[1]  = 16;
+	control[2]  = 18;
+	control[3]  = 74;
+	control[4]  = 73;
+	control[5]  = 17;
+	control[6]  = 19;
+	control[7]  = 77;
+	control[8]  = 78;
+	control[9]  = 71;
+	control[10] = 75;
+	control[11] = 76;
+	control[12] = 72;
+	control[13] = 80;
+	control[14] = 81;
+	control[15] = 82;
+	control[16] = 83;
 
-	cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
-	cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
+	cbControl.setSelectedIndex(control[slider]);
+	cbChannel.setSelectedIndex(channel[slider]);
     }
 }

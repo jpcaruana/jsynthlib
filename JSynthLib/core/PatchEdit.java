@@ -108,7 +108,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	menuPatchPopup = createPopupMenu();
 
 	// set up Preference Dialog Window
-	prefsDialog = initPrefsDialog();
+	prefsDialog = new PrefsDialog(JSLDesktop.getSelectedWindow(), appConfig);
 
         //Set up a silly little dialog we can pop up for the user to
         //gawk at while we do time consuming work later on.
@@ -123,26 +123,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     // JSLDesktop.getSelectedWindow(). Hiroo
     public static JFrame getInstance() {
 	return JSLDesktop.getSelectedWindow();
-    }
-
-    /**
-     * Setup preference dialog window.
-     */
-    private static PrefsDialog initPrefsDialog() {
-        PrefsDialog prefsDialog = new PrefsDialog(JSLDesktop.getSelectedWindow());
-	// Add the configuration panels to the prefsDialog
-        prefsDialog.addPanel(new GeneralConfigPanel(appConfig));
-	prefsDialog.addPanel(new DirectoryConfigPanel(appConfig));
-	prefsDialog.addPanel(new MidiConfigPanel(appConfig));
-	// FaderBoxConfigPanel() have to be called after MidiIn is initialized.
-	prefsDialog.addPanel(new FaderBoxConfigPanel(appConfig));
-	prefsDialog.addPanel(new SynthConfigPanel(appConfig));
-	prefsDialog.addPanel(new NoteChooserConfigPanel(appConfig));
-	prefsDialog.addPanel(new RepositoryConfigPanel(appConfig));
-	// Create preference dialog window and initialize each config
-	// panel.
-	prefsDialog.init();
-	return prefsDialog;
     }
 
     private static void createActions() {

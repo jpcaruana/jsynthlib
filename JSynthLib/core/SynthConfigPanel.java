@@ -1,6 +1,5 @@
 package core;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -8,134 +7,158 @@ import java.awt.event.ActionListener;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.ProgressMonitor;
 import javax.swing.table.TableColumn;
+import javax.swing.table.AbstractTableModel;
+import javax.sound.midi.MidiDevice;
 
 /**
+ * ConfigPanel for Synthesizer Configuration
  * @author ???
  * @version $Id$
  */
-public class SynthConfigPanel extends ConfigPanel {
+class SynthConfigPanel extends ConfigPanel {
+    {
+	panelName = "Synth Driver";
+	nameSpace = "synthDriver";
+    }
+
+    /** Multiple MIDI Interface CheckBox */
+    private JCheckBox cbxMMI;
+    private boolean multiMIDI;
+
     private JTable table;
-    private JTable table2;
     private MidiScan midiScan;
 
-    public SynthConfigPanel(AppConfig appConfig) {
-        super(appConfig);
-	setLayout(new core.ColumnLayout());
+    private static final int SYNTH_NAME	    = 0;
+    private static final int DEVICE	    = 1;
+    private static final int MIDI_IN	    = 2;
+    private static final int MIDI_OUT	    = 3;
+    private static final int MIDI_CHANNEL   = 4;
+    private static final int MIDI_DEVICE_ID = 5;
 
-	// create synth table
-        SynthTableModel dataModel = new SynthTableModel ();
-        JTable table = new JTable (dataModel);
-        table2 = table;
-        table.setPreferredScrollableViewportSize (new Dimension (650, 150));
-        JScrollPane scrollpane = new JScrollPane (table);
-        add (scrollpane/*, BorderLayout.CENTER*/);
+    SynthConfigPanel(PrefsDialog parent, AppConfig appConfig) {
+        super(parent, appConfig);
+	setLayout(new ColumnLayout());
 
-        TableColumn column = null;
-        column = table.getColumnModel ().getColumn (0);
-        column.setPreferredWidth (75);
-        column = table.getColumnModel ().getColumn (1);
-        column.setPreferredWidth (250);
-        column = table.getColumnModel ().getColumn (2);
-        column.setPreferredWidth (150);
+	// create synth driver table
+        table = new JTable(new TableModel());
+	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setPreferredScrollableViewportSize(new Dimension(650, 150));
+
+        TableColumn column;
+        column = table.getColumnModel().getColumn(SYNTH_NAME);
+        column.setPreferredWidth(75);
+        column = table.getColumnModel().getColumn(DEVICE);
+        column.setPreferredWidth(250);
+
 	JComboBox comboBox;
+        column = table.getColumnModel().getColumn(MIDI_IN);
+        column.setPreferredWidth(150);
 	comboBox = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+	column.setCellEditor(new DefaultCellEditor(comboBox));
 
-	column.setCellEditor (new DefaultCellEditor (comboBox));
-        column = table.getColumnModel ().getColumn (3);
-        column.setPreferredWidth (150);
-
+        column = table.getColumnModel().getColumn(MIDI_OUT);
+        column.setPreferredWidth(150);
 	comboBox = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
+	column.setCellEditor(new DefaultCellEditor(comboBox));
 
-	column.setCellEditor (new DefaultCellEditor (comboBox));
-        column = table.getColumnModel ().getColumn (4);
-        column.setPreferredWidth (75);
+        column = table.getColumnModel().getColumn(MIDI_CHANNEL);
+        column.setPreferredWidth(75);
+
+        JScrollPane scrollpane = new JScrollPane(table);
+        add(scrollpane/*, BorderLayout.CENTER*/);
+	//((TableModel) table.getModel()).fireTableDataChanged();
+	//table.setRowSelectionInterval(0, 0);
+
+	// multiple MIDI interface check box
+	cbxMMI = new JCheckBox("Use Multiple MIDI Interface");
+	cbxMMI.setToolTipText("Allows users to select different MIDI port for each synth.");
+	cbxMMI.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    multiMIDI = cbxMMI.isSelected();
+		    setModified(true);
+		}
+	});
+	add(cbxMMI);
 
 	// create buttons
-        JPanel buttonPanel = new JPanel ();
-        buttonPanel.setLayout (new FlowLayout (FlowLayout.CENTER));
-        // BUTTON ADDED BY GERRIT GEHNEN
-        JButton scan = new JButton ("Auto-Scan");
-        scan.addActionListener (new ActionListener () {
-		public void actionPerformed (ActionEvent e) {
-		    scanPressed ();
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        JButton detail = new JButton("Show Details");
+        detail.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    detailPressed();
 		}
 	    });
-	buttonPanel.add (scan);
+        buttonPanel.add(detail);
+
+        JButton add = new JButton("Add Device");
+        add.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    addPressed();
+		}
+	    });
+        buttonPanel.add(add);
+
+        // BUTTON ADDED BY GERRIT GEHNEN
+        JButton scan = new JButton("Auto-Scan");
+        scan.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    scanPressed();
+		}
+	    });
+	buttonPanel.add(scan);
         // END OF ADDED BUTTON
 
-        JButton add = new JButton ("Add Device");
-        add.addActionListener (new ActionListener () {
-		public void actionPerformed (ActionEvent e) {
-		    addPressed ();
+        JButton rem = new JButton("Remove Device");
+        rem.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    removePressed();
 		}
 	    });
-        buttonPanel.add (add);
+        buttonPanel.add(rem);
 
-        JButton rem = new JButton ("Remove Device");
-        rem.addActionListener (new ActionListener () {
-		public void actionPerformed (ActionEvent e) {
-		    removePressed ();
-		}
-	    });
-        buttonPanel.add (rem);
-        JButton detail = new JButton ("Show Details");
-        detail.addActionListener (new ActionListener () {
-		public void actionPerformed (ActionEvent e) {
-		    detailPressed ();
-		}
-	    });
-        buttonPanel.add (detail);
-
-        add (buttonPanel);
+        add(buttonPanel);
     }
 
-    private void removePressed () {
-        table = table2;
-        if ((table2.getSelectedRow () == -1) || (table2.getSelectedRow() == 0))
+    private void removePressed() {
+        if ((table.getSelectedRow() == -1) || (table.getSelectedRow() == 0))
 	    return;
-        if (JOptionPane.showConfirmDialog (null,
-					   "Are you sure?",
-					   "Remove Device?",
-					   JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+        if (JOptionPane.showConfirmDialog
+	    (null, "Are you sure?", "Remove Device?",
+	     JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 	    return;
-	try {
-	    PatchEdit.appConfig.removeDevice(table2.getSelectedRow ());
-	    //PatchEdit.appConfig.reassignDeviceDriverNums();
-	    revalidateLibraries();
-	    ((SynthTableModel) table.getModel ()).fireTableDataChanged ();
-	    table2.repaint ();
-	} catch (Exception e) {
-	}
+	appConfig.removeDevice(table.getSelectedRow());
+	revalidateLibraries();
+	((TableModel) table.getModel()).fireTableDataChanged();
+	table.repaint();
     }
 
-    private void detailPressed () {
-        table = table2;
-        if ((table2.getSelectedRow () == -1))
+    private void detailPressed() {
+        if ((table.getSelectedRow() == -1)) // not selected
 	    return;
-        ((Device) (PatchEdit.appConfig.getDevice(table2.getSelectedRow()))).showDetails();
-        ((SynthTableModel) table.getModel ()).fireTableDataChanged ();
+        appConfig.getDevice(table.getSelectedRow()).showDetails();
+        //((TableModel) table.getModel()).fireTableDataChanged();
     }
 
-    private void addPressed () {
-        table = table2;
-	DeviceAddDialog dad = new DeviceAddDialog (null);
-        dad.show ();
-	//	PatchEdit.appConfig.reassignDeviceDriverNums();
+    private void addPressed() {
+	DeviceAddDialog dad = new DeviceAddDialog(null);
+        dad.show();
         revalidateLibraries();
-	((SynthTableModel) table.getModel ()).fireTableDataChanged ();
+	((TableModel) table.getModel()).fireTableDataChanged();
     }
 
     private void revalidateLibraries() {
-	JSLFrame[] jList = JSLDesktop.getAllFrames ();
+	JSLFrame[] jList = JSLDesktop.getAllFrames();
 	if (jList.length > 0) {
 	    PatchEdit.showWaitDialog();
 	    for (int i = 0; i < jList.length; i++) {
@@ -151,46 +174,222 @@ public class SynthConfigPanel extends ConfigPanel {
     }
 
     // METHOD ADDED BY GERRIT GEHNEN
-    private void scanPressed () {
-        table = table2;
-
-        if (JOptionPane.showConfirmDialog (null,
-					   "Scanning the System for supported Synthesizers may take\n"
-					   + "a few minutes if you have many Midi devices. During the scan\n"
-					   + "it is normal for the system to be unresponsive.\n"
-					   + "Do you wish to scan?",
-					   "Scan for Synthesizers",
-					   JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+    private void scanPressed() {
+        if (JOptionPane.showConfirmDialog
+	    (null,
+	     "Scanning the System for supported Synthesizers may take\n"
+	     + "a few minutes if you have many MIDI ports. During the scan\n"
+	     + "it is normal for the system to be unresponsive.\n"
+	     + "Do you wish to scan?",
+	     "Scan for Synthesizers",
+	     JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 	    return;
 
         if (midiScan != null) {
-	    midiScan.close ();
+	    midiScan.close();
 	}
 
-        ProgressMonitor pm = new ProgressMonitor (null,
-						  "Scanning for SupportedSynthesizers",
-						  "Initializing Midi Devices", 0, 100);
-        midiScan = new MidiScan((SynthTableModel) table.getModel (), pm, null);
+        ProgressMonitor pm = new ProgressMonitor
+	    (null,
+	     "Scanning for SupportedSynthesizers",
+	     "Initializing Midi Devices", 0, 100);
+        midiScan = new MidiScan((TableModel) table.getModel(), pm, null);
 
-        midiScan.start ();
-	//PatchEdit.appConfig.reassignDeviceDriverNums();
+        midiScan.start();
         revalidateLibraries();
-        ((SynthTableModel) table.getModel ()).fireTableDataChanged ();
+        ((TableModel) table.getModel()).fireTableDataChanged();
     }
     // END OF METHOD ADDED BY GERRIT GEHNEN
 
     // ConfigPanel interface methods
-    public void init() {
+    void init() {
+	multiMIDI = appConfig.getMultiMIDI();
+	cbxMMI.setSelected(multiMIDI);
+	cbxMMI.setEnabled(appConfig.getMidiEnable());
+	//table.setRowSelectionInterval(0, 0); // why this does not work? Hiroo
+	((TableModel) table.getModel()).fireTableDataChanged();
     }
 
-    public void commitSettings() {
+    void commitSettings() {
+	appConfig.setMultiMIDI(multiMIDI);
+ 	((TableModel) table.getModel()).fireTableDataChanged();
+	if (!multiMIDI) {
+	    int out = appConfig.getInitPortOut();
+	    int in = appConfig.getInitPortIn();
+	    for (int i = 0; i < appConfig.deviceCount(); i++) {
+		appConfig.getDevice(i).setPort(out);
+		appConfig.getDevice(i).setInPort(in);
+	    }
+	}
+
+	setModified(false);
     }
 
-    protected final String getDefaultPanelName() {
-	return("Synth Driver");
+    private class TableModel extends AbstractTableModel {
+	private final String[] columnNames = {
+	    "Synth ID",
+	    "Device",
+	    "MIDI In Port",
+	    "MIDI Out Port",
+	    "Channel #",
+	    "Device ID"
+	};
+
+	TableModel() {
+	}
+
+	public int getColumnCount() {
+	    return columnNames.length;
+	}
+	public String getColumnName(int col) {
+	    return columnNames[col];
+	}
+	public int getRowCount() {
+	    return appConfig.deviceCount();
+	}
+	public Class getColumnClass(int c) {
+	    return getValueAt(0, c).getClass();
+	}
+	public Object getValueAt(int row, int col) {
+	    Device myDevice = (Device) appConfig.getDevice(row);
+
+	    switch (col) {
+	    case SYNTH_NAME:
+		return myDevice.getSynthName();
+	    case DEVICE:
+		return (myDevice.getManufacturerName()
+			+ " " + myDevice.getModelName());
+	    case MIDI_IN:
+		if (MidiUtil.isInputAvailable()) {
+		    int port = multiMIDI ?
+			myDevice.getInPort() : appConfig.getInitPortIn();
+		    return MidiUtil.getInputMidiDeviceInfo(port).getName();
+		} else {
+		    return "not available";
+		}
+	    case MIDI_OUT:
+		if (MidiUtil.isOutputAvailable()) {
+		    int port = multiMIDI ?
+			myDevice.getPort() : appConfig.getInitPortOut();
+		    return MidiUtil.getOutputMidiDeviceInfo(port).getName();
+		} else {
+		    return "not available";
+		}
+	    case MIDI_CHANNEL:
+		return new Integer(myDevice.getChannel());
+	    case MIDI_DEVICE_ID:
+		return new Integer(myDevice.getDeviceID());
+	    default:
+		return null;
+	    }
+	}
+
+	public boolean isCellEditable(int row, int col) {
+	    //Note that the data/cell address is constant,
+	    //no matter where the cell appears onscreen.
+	    return (col == SYNTH_NAME
+		    || (col == MIDI_IN && multiMIDI)
+		    || (col == MIDI_OUT && multiMIDI)
+		    || col == MIDI_CHANNEL
+		    || col == MIDI_DEVICE_ID);
+	}
+
+	public void setValueAt(Object value, int row, int col) {
+	    Device dev = (Device) appConfig.getDevice(row);
+	    switch (col) {
+	    case SYNTH_NAME:
+		dev.setSynthName((String) value);
+		break;
+	    case MIDI_IN:
+		dev.setInPort(MidiUtil.getInPort((MidiDevice.Info) value));
+		break;
+	    case MIDI_OUT:
+		dev.setPort(MidiUtil.getOutPort((MidiDevice.Info) value));
+		break;
+	    case MIDI_CHANNEL:
+		dev.setChannel(((Integer) value).intValue());
+		break;
+	    case MIDI_DEVICE_ID:
+		dev.setDeviceID(((Integer) value).intValue());
+		break;
+	    }
+	    fireTableCellUpdated(row, col); // really required???
+	}
     }
 
-    protected final String getDefaultNamespace() {
-	return("synth");
+    /*
+    // I gave up using 'Apply' botton for Synth Table. It's is
+    // difficult to defer 'add device' and 'remove device' event.
+    private class DeviceInfo {
+	private String synthName;
+	private int midiIn;
+	private int midiOut;
+	private int channel;
+	private int deviceID;
+
+	private boolean synthNameChanged;
+	private boolean midiInChanged;
+	private boolean midiOutChanged;
+	private boolean channelChanged;
+	private boolean deviceIDChanged;
+
+	DeviceInfo(Device dev) {
+	    synthName = dev.getSynthName();
+	    midiIn   = multiMIDI ? dev.getInPort() : appConfig.getInitPortIn();
+	    midiOut  = multiMIDI ? dev.getPort() : appConfig.getInitPortOut();
+	    channel  = dev.getChannel();
+	    deviceID = dev.getDeviceID();
+	}
+
+	String getsynthName() { return synthName; }
+	int getmidiIn()   { return midiIn; }
+	int getmidiOut()  { return midiOut; }
+	int getchannel()  { return channel; }
+	int getdeviceID() { return deviceID; }
+
+	void setSynthName(String synthName) {
+	    this.synthName = synthName;
+	    synthNameChanged = true;
+	}
+	void setMidiIn(int midiIn) {
+	    this.midiIn    = midiIn;
+	    midiInChanged = true;
+	}
+	void setMidiOut(int midiOut) {
+	    this.midiOut   = midiOut;
+	    midiOutChanged = true;
+	}
+	void setChannel(int channel) {
+	    this.channel   = channel;
+	    channelChanged = true;
+	}
+	void setDeviceID(int deviceID) {
+	    this.deviceID  = deviceID;
+	    deviceIDChanged = true;
+	}
+
+	void apply(Device dev) {
+	    if (synthNameChanged) {
+		dev.setSynthName(synthName);
+		synthNameChanged = false;
+	    }
+	    if (midiInChanged) {
+		dev.setInPort(midiIn);
+		midiInChanged    = false;
+	    }
+	    if (midiOutChanged) {
+		dev.setPort(midiOut);
+		midiOutChanged   = false;
+	    }
+	    if (channelChanged) {
+		dev.setChannel(channel);
+		channelChanged   = false;
+	    }
+	    if (deviceIDChanged) {
+		dev.setDeviceID(deviceID);
+		deviceIDChanged  = false;
+	    }
+	}
     }
+    */
 }

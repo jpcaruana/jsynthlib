@@ -344,6 +344,13 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	public void close() {
 	}
 
+	/**
+	 * <pre>
+	 * Control Change MIDI Message
+	 *   1011nnnn : BnH, nnnn: Voice Channel number
+	 *   0ccccccc : control # (0-119)
+	 *   0vvvvvvv : control value
+	 */
 	public void send(MidiMessage message, long timeStamp) {
 	    // ignore unless Editor Window is active.
 	    if (!isSelected())
@@ -351,19 +358,16 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	    ShortMessage msg = (ShortMessage) message;
 	    if (msg.getCommand() == ShortMessage.CONTROL_CHANGE) {
 		int channel = msg.getChannel();	// 0 <= channel < 16
-		int controller = msg.getData1(); // 0 <= controller < 256
+		int controller = msg.getData1(); // 0 <= controller <= 119
 		ErrorMsg.reportStatus("FaderReceiver: channel: " + channel
 				      + ", control: " + controller
 				      + ", value: " + msg.getData2());
+		// use hash !!!FIXIT!!!
 		for (int i = 0; i < Constants.NUM_FADERS; i++) {
 		    // faderChannel: 0:channel l, ..., 15:channel 16, 16:off
-		    // faderController: 0 <= value < 256, 256:off
-		    /*
-		    ErrorMsg.reportStatus(i + ": faderChannel: " + PatchEdit.appConfig.getFaderChannel(i)
-					  + ", faderController: " + PatchEdit.appConfig.getFaderController(i));
-		    */
+		    // faderController: 0 <= value < 120, 120:off
 		    if ((PatchEdit.appConfig.getFaderChannel(i) == channel)
-			&& (PatchEdit.appConfig.getFaderController(i) == controller)) {
+			&& (PatchEdit.appConfig.getFaderControl(i) == controller)) {
 			faderMoved(i, msg.getData2());
 			break;
 		    }
@@ -372,24 +376,33 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	}
     }
 
+    /**
+     * @param fader fader number
+     * <pre>
+     *  0    : active slider
+     *  1-16 : fader 1-16
+     * 17-30 : button 1-14
+     * 31    : button 15 : prev fader bank
+     * 32    : button 16 : next fader bank
+     * </pre>
+     * @param value data value
+     */
     private void faderMoved(int fader, int value) {
 	ErrorMsg.reportStatus("FaderMoved: fader: " + fader
 			      + ", value: " + value);
-	if (fader == 32) {
+	if (fader == 32) {	// button 16 : next fader bank
 	    faderBank = (faderBank + 1) % numFaderBanks;
 	    faderHighlight();
 	    return;
-	}
-	if (fader == 31) {
+	} else if (fader == 31) { // button 15 : prev fader bank
 	    faderBank = faderBank - 1;
 	    if (faderBank < 0)
 		faderBank = numFaderBanks - 1;
 	    faderHighlight();
 	    return;
-	}
-	if (fader > 16)
+	} else if (fader > 16)	// 17-30 : button 1-14
 	    fader = (byte) (0 - (fader - 16) - (faderBank * 16));
-	else
+	else			// 0 : active slder, 1-16 : fader 1-16
 	    fader += (faderBank * 16);
 
 	if (recentWidget != null) {
@@ -423,6 +436,19 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	}
     }
 
+    /**
+     * > P.S. btw, anyone an idea why some labels are grayed-out?<p>
+     *
+     * If I remember correctly, the label color becomes darker if the label
+     * is currently assigned to an active fader. the addWidget calls have the
+     * last parameter which defines a fader number. By default the first 16
+     * are active. Using the "Next Fader bank" Button on the toolbar makes
+     * the next 16 active. Its not supposed to look 'greyed out' though, I
+     * just wanted a visual cue about what bank of faders was active. Maybe
+     * the color scheme should be changed to be less confusing.<p>
+     *
+     * Brian
+     */
     private void faderHighlight() {
 	for (int i = 0; i < widgetList.size(); i++) {
 	    SysexWidget w = (SysexWidget) widgetList.get(i);
@@ -525,7 +551,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      *  reasons. Editors can call this more than once to create multiple
      *  aligned sets of sliders rather than align everything in the entire
      *  editor to one length.
-     * @deprecated use the constructor of ScrollBarWidet with
+     * @deprecated use the constructor of ScrollBarWidget with
      * labelWidth parameter.
      */
     public void setLongestLabel(String s)

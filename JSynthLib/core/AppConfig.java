@@ -168,9 +168,9 @@ final public class AppConfig {
         UIManager.LookAndFeelInfo [] installedLF;
         installedLF = UIManager.getInstalledLookAndFeels();
         try {
-        UIManager.setLookAndFeel(installedLF[lookAndFeel].getClassName());
+	    UIManager.setLookAndFeel(installedLF[lookAndFeel].getClassName());
         } catch (Exception e) {
-        ErrorMsg.reportStatus(e.toString());
+	    ErrorMsg.reportStatus(e);
         }
     }
 
@@ -183,12 +183,18 @@ final public class AppConfig {
         prefs.putInt("guiStyle", guiStyle);
     }
 
-    /** Getter for midiEnable */
-    public boolean getMidiEnable() { return prefs.getBoolean("midiEnable", false); }
+    /**
+     * Getter for midiEnable. Returns false if either MIDI input nor
+     * output is not available.
+     */
+    public boolean getMidiEnable() {
+	return ((MidiUtil.isOutputAvailable() || MidiUtil.isInputAvailable())
+		&& prefs.getBoolean("midiEnable", false));
+    }
     /** Setter for midiEnable */
     public void setMidiEnable(boolean midiEnable) {
 	prefs.putBoolean("midiEnable", midiEnable);
-	ErrorMsg.reportStatus("setMidiEnable: " + midiEnable);
+	//ErrorMsg.reportStatus("setMidiEnable: " + midiEnable);
     }
 
     /** Getter for initPortIn */
@@ -207,9 +213,14 @@ final public class AppConfig {
         prefs.putInt("initPortOut", initPortOut);
     }
 
-    /** Getter for masterInEnable */
+    /**
+     * Getter for masterInEnable. Returns false if either MIDI input or
+     * output is unavailable.
+     */
     public boolean getMasterInEnable() {
-	return prefs.getBoolean("masterInEnable", false);
+	return (MidiUtil.isOutputAvailable() && MidiUtil.isInputAvailable()
+		&& getMidiEnable()
+		&& prefs.getBoolean("masterInEnable", false));
     }
     /** Setter for masterInEnable */
     public void setMasterInEnable(boolean masterInEnable) {
@@ -226,9 +237,14 @@ final public class AppConfig {
         prefs.putInt("masterController", masterController);
     }
 
-    /** Getter for faderEnable */
+    /**
+     * Getter for faderEnable. Returns false if MIDI input is
+     * unavailable.
+     */
     public boolean getFaderEnable() {
-	return prefs.getBoolean("faderEnable", false);
+	return (MidiUtil.isOutputAvailable()
+		&& getMidiEnable()
+		&& prefs.getBoolean("faderEnable", false));
     }
     /** Setter for faderEnable */
     public void setFaderEnable(boolean faderEnable) {
@@ -245,18 +261,33 @@ final public class AppConfig {
     }
 
     //int[] faderChannel (0 <= channel < 16, 16:off)
-    /** Indexed getter for faderChannel */
-    public int getFaderChannel(int i) { return  prefs.getInt("faderChannel" + i, 0); }
-    /** Indexed setter for faderChannel */
+    /** Indexed getter for fader Channel number */
+    public int getFaderChannel(int i) {
+	return  prefs.getInt("faderChannel" + i, 0);
+    }
+    /** Indexed setter for fader Channel number */
     public void setFaderChannel(int i, int faderChannel) {
         prefs.putInt("faderChannel" + i, faderChannel);
     }
 
-    //int[] faderController (0 <= controller < 256, 256:off)
-    public int getFaderController(int i) { return  prefs.getInt("faderController" + i, 0); }
-    /** Indexed setter for faderController */
-    public void setFaderController(int i, int faderController) {
-        prefs.putInt("faderController" + i, faderController);
+    //int[] faderControl (0 <= controller < 120, 120:off)
+    /** Indexed getter for fader Control number */
+    public int getFaderControl(int i) {
+	int n = prefs.getInt("faderControl" + i, 0);
+	return n > 120 ? 120 : n; // for old JSynthLib bug
+    }
+    /** Indexed setter for fader Control number. */
+    public void setFaderControl(int i, int faderControl) {
+        prefs.putInt("faderControl" + i, faderControl);
+    }
+
+    /** Getter for Multiple MIDI Interface enable */
+    public boolean getMultiMIDI() {
+	return prefs.getBoolean("multiMIDI", false);
+    }
+    /** Setter for midiEnable */
+    public void setMultiMIDI(boolean enable) {
+	prefs.putBoolean("multiMIDI", enable);
     }
 
     /**
@@ -299,7 +330,7 @@ final public class AppConfig {
 	return addDevice(className, getDeviceNode(className));
     }
 
-    /** returns the 1st unused device node name. */
+    /** returns the 1st unused device node name for Preferences. */
     private Preferences getDeviceNode(String s) {
 	ErrorMsg.reportStatus("getDeviceNode: " + s);
 	s = s.substring(s.lastIndexOf('.') + 1, s.lastIndexOf("Device"));
