@@ -125,6 +125,7 @@ public abstract class Device implements Serializable, Storable {
 	this.infoText = (infoText == null)
 	    ? "There is no information about this Device." : infoText;
 	this.authors = authors;
+	this.synthName = modelName;
 	// set default MIDI port number
 	inPort = PatchEdit.appConfig.getInitPortIn();
 	port = PatchEdit.appConfig.getInitPortOut();

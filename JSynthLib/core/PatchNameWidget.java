@@ -22,7 +22,7 @@ public class PatchNameWidget extends SysexWidget {
         setup();
     }
 
-    /** @deprecated Use Patch(String, Patch) */
+    /** @deprecated Use PatchNameWidget(String, Patch) */
     // The order of argument is not consistent with others!!!FIXIT!!!
     public PatchNameWidget(Patch patch, String label) {
 	super(label, patch);
