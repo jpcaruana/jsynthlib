@@ -21,7 +21,7 @@ import javax.swing.ListSelectionModel;
 public class DeviceAddDialog extends JDialog {
 
     JList AvailableDeviceList;
-    DevicesConfig devConf = null;
+    //DevicesConfig devConf = null;
 
     public DeviceAddDialog(JFrame Parent) {
         super(Parent,"Synthesizer Device Install",true);
@@ -29,8 +29,8 @@ public class DeviceAddDialog extends JDialog {
         container.setLayout(new BorderLayout());
 
 	// Read in list of available devices
-	this.devConf = new DevicesConfig();
-        AvailableDeviceList = new JList(this.devConf.deviceNames());
+	//this.devConf = new DevicesConfig();
+        AvailableDeviceList = new JList(PatchEdit.devConfig.deviceNames());
         AvailableDeviceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollpane = new JScrollPane(AvailableDeviceList);
         container.add(scrollpane, BorderLayout.CENTER);
@@ -77,21 +77,23 @@ public class DeviceAddDialog extends JDialog {
     void OKPressed() {
         this.setVisible(false);
         String s = (String) AvailableDeviceList.getSelectedValue();
-	Device device = this.devConf.classForDevice(s);
-	if (s != null) {
-	    PatchEdit.appConfig.addDevice(device);
-	    String info = device.getInfoText();
-	    if (info != null && info.length() > 0) {
-		JTextArea jta = new JTextArea(info, 15, 40);
-		jta.setEditable(false);
-		jta.setLineWrap(true);
-		jta.setWrapStyleWord(true);
-		jta.setCaretPosition(0);
-		JScrollPane jasp = new JScrollPane(jta);
-  		JOptionPane.showMessageDialog(null, jasp,
-					      "Device Information",
-  					      JOptionPane.INFORMATION_MESSAGE);
-	    }
+	if (s == null)
+	    return;
+
+	Device device = PatchEdit.devConfig.classForDevice(s);
+	PatchEdit.appConfig.addDevice(device);
+
+	String info = device.getInfoText();
+	if (info != null && info.length() > 0) {
+	    JTextArea jta = new JTextArea(info, 15, 40);
+	    jta.setEditable(false);
+	    jta.setLineWrap(true);
+	    jta.setWrapStyleWord(true);
+	    jta.setCaretPosition(0);
+	    JScrollPane jasp = new JScrollPane(jta);
+	    JOptionPane.showMessageDialog(null, jasp,
+					  "Device Information",
+					  JOptionPane.INFORMATION_MESSAGE);
 	}
     }
 

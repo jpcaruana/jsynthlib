@@ -24,7 +24,7 @@ public class MidiScan extends  Thread {
 
     private javax.swing.JDialog parent;
     private Enumeration synthisenum;
-    private DevicesConfig devconf;
+    //private DevicesConfig devconf;
 
     /** Creates new MidiScan
      * @param m
@@ -33,7 +33,7 @@ public class MidiScan extends  Thread {
         model = m;
         this.pb = pb;
         this.parent = parent;
-        devconf = new DevicesConfig();
+        //devconf = new DevicesConfig();
     }
 
     public MidiScan(SynthTableModel m) {
@@ -122,7 +122,7 @@ public class MidiScan extends  Thread {
 			    byte [] answerData = msg.getMessage();
 			    if (sysexSize > 0) {
 				//sleep(100);
-				synthisenum = devconf.IDStrings(); //=new RecognizerEnumeration();
+				synthisenum = PatchEdit.devConfig.IDStrings(); //=new RecognizerEnumeration();
 				//int msgsize=inarray[i].readMessage (i,answerData,answerData.length);
 				int msgsize = sysexSize;
 				//System.out.println ("msgSize "+msgsize);
@@ -151,20 +151,21 @@ public class MidiScan extends  Thread {
 						boolean dontadd = false;
 						for (int checkloop = 0; checkloop < PatchEdit.appConfig.deviceCount(); checkloop++) {
 						    Device checkDevice = (Device) PatchEdit.appConfig.getDevice(checkloop);
-						    if (checkDevice.toString().equalsIgnoreCase(devconf.classForIDString(se).toString())) {
+						    if (checkDevice.toString().equalsIgnoreCase(PatchEdit.devConfig.classForIDString(se).toString())) {
 							//if ((se.getManufacturerName().equals(checkDevice.getManufacturerName()))&&(se.getModelName().equals(checkDevice.getModelName()))) {
 							dontadd = true; // Oh, its already there....
 						    }
 						}
 						if (!dontadd) { // add it only, if it is not in the list
-						    Device useDevice = devconf.classForIDString(se);
+						    Device useDevice = PatchEdit.devConfig.classForIDString(se);
+						    PatchEdit.appConfig.addDevice(useDevice);
+
 						    useDevice.setPort(j);
 						    useDevice.setInPort(i);
 						    useDevice.setChannel(channel + 1);
 						    if (pb != null)
-							pb.setNote("Found " + useDevice.getManufacturerName() + " " + useDevice.getModelName());
-
-						    PatchEdit.appConfig.addDevice(useDevice);
+							pb.setNote("Found " + useDevice.getManufacturerName()
+								   + " " + useDevice.getModelName());
 
 						}
 					    } catch (Exception e) {

@@ -29,6 +29,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     static MidiWrapper MidiIn;
     static javax.swing.Timer echoTimer;
 
+    static DevicesConfig devConfig;
     static AppConfig appConfig;
 
     // accessed by BankEditorFrame
@@ -79,6 +80,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     /** Initialize Application: */
     public PatchEdit() {
+	// Load synth database (synthdrivers.properties)
+	devConfig = new DevicesConfig();
+
 	// Load config file (JSynthLib.properties).
 	appConfig = new AppConfig();
         boolean loadPrefsSuccessfull = appConfig.loadPrefs();
