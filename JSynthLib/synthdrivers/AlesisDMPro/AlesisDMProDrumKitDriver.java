@@ -14,10 +14,7 @@ public class AlesisDMProDrumKitDriver extends Driver
                                                 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',  'z', '{', '|', '}', '>', '<'};
    public AlesisDMProDrumKitDriver()
    {
-   manufacturer="Alesis";
-   model="DM Pro";
-   patchType="DrumKit";
-   id="DMPro";
+   super("DrumKit", "Peter Hageus (peter.hageus@comhem.se)");
    sysexID="F000000E190E*";
    sysexRequestDump=new SysexHandler("F0 00 00 0E 19 0F *patchNum* F7");
 
@@ -68,13 +65,12 @@ public void sendPatch (Patch p)
          sysex[647] = (byte) 0xF7;
          
 	 //ToDO: Load up a dump as a basis...
-     Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+	 Patch p = new Patch(sysex, this);
 	 setPatchName(p,"NewDrumKit");
 	 calculateChecksum(p);	 
 	 return p;
  }
-public JInternalFrame editPatch(Patch p)
+public JSLFrame editPatch(Patch p)
  {
      return new AlesisDMProDrumKitEditor(p);
  }
@@ -143,4 +139,3 @@ public void setPatchName (Patch p, String name)
  
     }
 }
-

@@ -10,10 +10,7 @@ public class AlesisDMProEffectDriver extends Driver
    
    public AlesisDMProEffectDriver()
    {
-   manufacturer="Alesis";
-   model="DM Pro";
-   patchType="Effect";
-   id="DMProFX";
+   super("Effect", "Peter Hageus (peter.hageus@comhem.se)");
    sysexID="F000000E1906*";
    sysexRequestDump=new SysexHandler("F0 00 00 0E 19 07 *patchNum* F7");
 
@@ -64,18 +61,14 @@ public void sendPatch (Patch p)
          sysex[35] = (byte) 0xF7;
          
 
-     Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+	 Patch p = new Patch(sysex, this);
 	 //setPatchName(p,"New Effect");
 	 //calculateChecksum(p);	 
 	 return p;
  }
-public JInternalFrame editPatch(Patch p)
+public JSLFrame editPatch(Patch p)
  {
      return new AlesisDMProEffectEditor(p);
  }
 
 }
-
-
-
