@@ -21,12 +21,6 @@
 
 package synthdrivers.QuasimidiQuasar;
 
-import core.*;
-
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.*;
-import javax.swing.*;
 
 /**
  *

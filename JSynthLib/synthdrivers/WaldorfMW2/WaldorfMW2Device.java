@@ -21,17 +21,9 @@
 
 package synthdrivers.WaldorfMW2;
 
-import core.Device;
-
 import java.util.prefs.Preferences;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import core.Device;
 
 /**
  * Device class for Microwave 2 / XT / XTK
@@ -41,7 +33,7 @@ import javax.swing.JPanel;
  */
 public class WaldorfMW2Device extends Device {
     private static final String INFO_TEXT
-    = "Microwave 2 / XT / XTK";    
+    = "Microwave 2 / XT / XTK";
 
     /**
     * Constructor for DeviceListWriter.
@@ -62,7 +54,6 @@ public class WaldorfMW2Device extends Device {
     */
     public WaldorfMW2Device(Preferences prefs) {
         this();
-
         this.prefs = prefs;
 
         addDriver(new WaldorfMW2SingleDriver());
