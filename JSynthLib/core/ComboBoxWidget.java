@@ -3,14 +3,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
+/**
+ * @version $Id$
+ */
 public class ComboBoxWidget extends SysexWidget
 {
     public JComboBox cb;
     String []options;
-    public ComboBoxWidget (String l,Patch p,ParamModel ofs,SysexSender s, String []o)
+    public ComboBoxWidget (String l,Patch p,int min,ParamModel ofs,SysexSender s, String []o)
     {
-        valueMin=0;
-        valueMax=o.length-1;
+        valueMin=min;
+        valueMax=valueMin+o.length-1;
         paramModel=ofs;
         sysexString=s;
         setValue (p);label=l;patch=p;
@@ -18,6 +21,11 @@ public class ComboBoxWidget extends SysexWidget
         setup ();
     }
     
+    public ComboBoxWidget (String l,Patch p,ParamModel ofs,SysexSender s, String []o)
+    {
+        this(l, p, 0, ofs, s, o);
+    }
+
     /** Constructor for setting up the ComboBoxWidget including an initial value.
      * @param l Label for the Widget
      * @param p The patch, which is edited
@@ -39,12 +47,12 @@ public class ComboBoxWidget extends SysexWidget
         if (valueCurr>valueMax)
             valueCurr=valueMax;
         cb=new JComboBox (options);
-        cb.setSelectedIndex (valueCurr);
+        cb.setSelectedIndex (valueCurr - valueMin);
         cb.addItemListener (new ItemListener ()
         {
             public void itemStateChanged (ItemEvent e)
             {
-                valueCurr=cb.getSelectedIndex ();
+                valueCurr=cb.getSelectedIndex () + valueMin;
                 sendSysex ();
             }
         }
@@ -57,7 +65,7 @@ public class ComboBoxWidget extends SysexWidget
         
     }
     public void setValue (int v)
-    {super.setValue (v); cb.setSelectedIndex (v);}
+    {super.setValue (v); cb.setSelectedIndex (v - valueMin);}
 }
 
 
