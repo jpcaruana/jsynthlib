@@ -56,10 +56,20 @@ public abstract class Device implements Serializable, Storable {
     protected String synthName;
 
     /**
-     * The channel (device ID) the user assigns to this driver.
+     * The channel the user assigns to this driver.  The value must be
+     * 1 or greater than 1, and 16 or less than 16.  Some old drivers
+     * use this for device ID.  Use deviceID field for device ID.
      * @deprecated Use the getter/setter method.
      */
     protected int channel = 1;
+
+    /**
+     * The device ID.  The value must be 1 or greater than 1, and 256
+     * or less than 256.  For backward compatibility if this has the
+     * initial value (-1), The value of <code>channel</code> is used
+     * as device ID.
+     */
+    private int deviceID = -1;
 
     /**
      * The MIDI input port number, where the cable <B>to</B> the
@@ -81,12 +91,6 @@ public abstract class Device implements Serializable, Storable {
      */
     ArrayList driverList = new ArrayList ();
     //private ListIterator li;
-
-    /**
-     * The index of this device in appConfig.deviceList. Used by
-     * getDeviceNum().
-     */
-    private int deviceIndex = -1;
 
     /**
      * Creates new Device.
@@ -202,7 +206,8 @@ public abstract class Device implements Serializable, Storable {
 
     /**
      * Setter for property channel.
-     * @param channel New value of property channel.
+     * @param channel The value must be 1 or greater than 1, and 16 or
+     * less than 16.
      */
     public void setChannel (int channel) { // public for storable
         this.channel = channel;
@@ -211,6 +216,23 @@ public abstract class Device implements Serializable, Storable {
 	while (iter.hasNext()) {
  	    ((Driver) iter.next()).setChannel(channel);
 	}
+    }
+
+    /**
+     * Getter for property deviceID.
+     * @return Value of property deviceID.
+     */
+    public int getDeviceID() { // public for storable
+        return deviceID == -1 ? channel : deviceID;
+    }
+
+    /**
+     * Setter for property deviceID.
+     * @param deviceID The value must be 1 or greater than 1, and 256 or less
+     * than 256.
+     */
+    public void setDeviceID(int deviceID) { // public for storable
+        this.deviceID = deviceID;
     }
 
     /**
@@ -275,6 +297,7 @@ public abstract class Device implements Serializable, Storable {
      * Bulk converters must be added before simple drivers!
      * @param driver Driver to be added.
      */
+    // The range of 'index' needs to be checked.
     // Is this method necessary?  Just calling addDriver(Driver) in
     // order should be enough.  -- Hiroo
     // @deprecated
@@ -320,10 +343,7 @@ public abstract class Device implements Serializable, Storable {
 
     /** getter for device number. */
     int getDeviceNum() {
-	if (deviceIndex == -1) { // the first call
-	    deviceIndex = PatchEdit.appConfig.getDeviceIndex(this);
-	}
-	return deviceIndex;
+	return PatchEdit.appConfig.getDeviceIndex(this);
     }
 
     // For storable interface
@@ -334,7 +354,7 @@ public abstract class Device implements Serializable, Storable {
     public Set storedProperties() {
 	final String[] storedPropertyNames = {
 	    "inPort", "synthName", "port", "channel",
-	    "driver",		// Is "driver" necessary?
+// 	    "driver",		// Is "driver" necessary?
 	};
 	HashSet set = new HashSet();
 	set.addAll(Arrays.asList(storedPropertyNames));
