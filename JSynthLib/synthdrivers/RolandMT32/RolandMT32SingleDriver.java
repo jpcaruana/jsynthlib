@@ -1,3 +1,29 @@
+/*
+ * Copyright 2004 Fred Jan Kraan
+ *
+ * This file is part of JSynthLib.
+ *
+ * JSynthLib is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * JSynthLib is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with JSynthLib; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA
+ */
+
+/*
+ * RolandMT32SingleDriver.java v.0.3
+ * part of the Roland MT-32 driver
+ */
+
 package synthdrivers.RolandMT32;
 import core.Driver;
 import core.JSLFrame;
@@ -60,8 +86,19 @@ public class RolandMT32SingleDriver extends Driver {
 
     // not used
     public void sendPatch(Patch p) {
-	p.sysex[3] = (byte) 0x23;
+	p.sysex[0] = (byte) 0xF0;
+	p.sysex[1] = (byte) 0x41;
+	p.sysex[2] = (byte) 0x10;
+	p.sysex[3] = (byte) 0x16;
+ 	p.sysex[4] = (byte) 0x08;
+	p.sysex[5] = (byte) 0x00;
+	p.sysex[6] = (byte) 0x00;
 	p.sysex[7] = (byte) 0x00;
+	p.sysex[8] = (byte) 0x01;
+	p.sysex[9] = (byte) 0x76;
+        //this.calculateChecksum(p, 4, 253, 0);
+ 	p.sysex[255] = (byte) 0xF7;
+
         System.out.println("sendPatch: Not implemented yet.");
 	sendPatchWorker(p);
     }

@@ -1,7 +1,29 @@
-/**
- * Single Editor for Roland MT-32.
- * @version $Id$
+/*
+ * Copyright 2004 Fred Jan Kraan
+ *
+ * This file is part of JSynthLib.
+ *
+ * JSynthLib is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * JSynthLib is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with JSynthLib; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA
  */
+
+/*
+ * RolandMT32SingleEditor.java v.0.3
+ * part of the Roland MT-32 driver
+ */
+
 package synthdrivers.RolandMT32;
 import core.*;
 import javax.swing.*;
@@ -108,14 +130,11 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
         addWidget(cmnPane, new CheckBoxWidget ("Env Mode", patch, 
             new MT32Model(patch,0x0D), new MT32Sender(k+0x0D)),0,gy,5,1,4);   
 
-        gbc.gridx=0;
-        gbc.gridy=0;
-        gbc.gridwidth=5;
-        gbc.gridheight=3;
+        gbc.gridx=0; gbc.gridy=0; gbc.gridwidth=5; gbc.gridheight=3;
         gbc.fill=GridBagConstraints.BOTH;
         gbc.anchor=GridBagConstraints.EAST;
         cmnPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-            "Common",TitledBorder.CENTER, TitledBorder.CENTER));  
+            "COMMON",TitledBorder.CENTER, TitledBorder.CENTER));  
         scrollPane.add(cmnPane,gbc);
     
         gbc.weightx = 5;
@@ -128,15 +147,15 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
         {
             int j = i * 0x3A + 0x0E;  // Point to partial parameters 
             gy = 0;
-            // Partial panel
+             // Partial panel
             JPanel partNPane = new JPanel();
-       
+      
             int lww = getLabelWidth("WG PW VELO SENS  "); // Longest label lenght
-
+            JTabbedPane partNTabPane = new JTabbedPane();
+            
             // WG and P_ENV panel on partial panel
             JPanel WGPane = new JPanel();
             WGPane.setLayout(new GridBagLayout());
-            partTabPane.addTab("Partial"+(i+1)+" WG & P", WGPane);
 
             addWidget(WGPane, new ComboBoxWidget("WG PITCH COARSE", patch, 
                 new MT32Model(patch,j+0x00), new MT32Sender(j+k+0x00), noteName), 0, gy, 1, 1, 11);
@@ -214,9 +233,11 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
             gy++;
          
             WGPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-                "WG & P",TitledBorder.CENTER,TitledBorder.CENTER));
+                "",TitledBorder.CENTER,TitledBorder.CENTER));
+            partNTabPane.add(WGPane, gbc);
+            partNTabPane.addTab("Wave Generator & Pitch Envelope", WGPane);
 
-      
+            
             // TVF panel on partial panel
             JPanel TVFPane = new JPanel();
             TVFPane.setLayout(new GridBagLayout());
@@ -284,13 +305,14 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
 	        new EnvelopeWidget("TVF", patch, fNodes), 0, gy, 3, 5, 56);
 
             TVFPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-                "TVF",TitledBorder.CENTER,TitledBorder.CENTER));
+                "",TitledBorder.CENTER,TitledBorder.CENTER));
+            partNTabPane.add(TVFPane, gbc);
+            partNTabPane.addTab("Time Variant Filter", TVFPane);
 
-//   }
-   gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=9;
-            partTabPane.addTab("Partial"+(i+1)+" TVF", TVFPane);
+//   
+               gbc.gridx=10;gbc.gridy=8;gbc.gridwidth=0;gbc.gridheight=9;
 
-
+            
             // TVA panel on partial panel
             JPanel TVAPane = new JPanel();
             TVAPane.setLayout(new GridBagLayout());
@@ -357,22 +379,28 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
 	        new EnvelopeWidget("TVA", patch, aNodes), 0, gy, 3, 5, 56);
 
             TVAPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-                "TVA",TitledBorder.CENTER,TitledBorder.CENTER));
-            partTabPane.add(TVAPane, gbc);
-            
-            partNPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), 
-                "PART" + i,TitledBorder.CENTER,TitledBorder.CENTER));  
-            partTabPane.addTab("Partial"+(i+1)+" TVA", TVAPane);
-            partialPane.add(partTabPane, gbc);
+                "",TitledBorder.CENTER,TitledBorder.CENTER));
+            partNTabPane.add(TVAPane, gbc);
+            partNTabPane.addTab("Time Variant Amplifier", TVAPane);
 
+            
+//            partNPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), 
+//                "PART "+(i+1)+" (partNPane) ",TitledBorder.CENTER,TitledBorder.CENTER));
+            
+            partNPane.add(partNTabPane, gbc);
+            partTabPane.addTab("Partial "+(i+1), partNPane);
+ 
         } // end for loop
 
-        gbc.gridx=5;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=9;
+        gbc.gridx=5;gbc.gridy=0;gbc.gridwidth=0;gbc.gridheight=0;
         partialPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED), 
             "PARTIALS",TitledBorder.CENTER,TitledBorder.CENTER));  
-        scrollPane.add(partialPane, gbc);
+        partialPane.add(partTabPane, gbc);
+//        gbc.anchor=GridBagConstraints.WEST;
+         
+        gbc.gridx=5;gbc.gridy=0;gbc.gridwidth=8;gbc.gridheight=9;
 
-        gbc.gridx=5;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=9;
+        scrollPane.add(partialPane, gbc);
 
         pack();
         show();
