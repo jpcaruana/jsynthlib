@@ -24,6 +24,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
     private JComboBox cbDriver = null;
 
     private JPanel channelPanel = null;
+    private JPanel cbPanel = null;
     private Vector midiImps;
     private Vector driverChangeListeners;
     private MidiWrapper currentDriver;
@@ -34,6 +35,8 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	driverChangeListeners = new Vector();
 
 	setLayout (new core.ColumnLayout ());
+	setPreferredSize(new Dimension(500,250));
+
         JLabel l2 = new JLabel ("MIDI Access Method:");
         add (l2);
 
@@ -54,28 +57,70 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	    });
 
 	channelPanel = new JPanel();
-	channelPanel.setLayout(new core.ColumnLayout());
-        JLabel l0=new JLabel ("Run Startup Initialization on MIDI Ports:");
-        channelPanel.add (l0);
-        cb1 = new JComboBox ();
-        cb2 = new JComboBox ();
-        channelPanel.add (cb1);
-        channelPanel.add (cb2);
-        JLabel l1=new JLabel ("Receive from Master Controller on MIDI Port:");
-        channelPanel.add (l1);
-        cb3 = new JComboBox ();
-        channelPanel.add (cb3);
-        add(channelPanel);
+        channelPanel.setLayout(new core.ColumnLayout());
 
+	GridBagLayout gridbag = new GridBagLayout();
+	GridBagConstraints gbc = new GridBagConstraints();
+	cbPanel = new JPanel(gridbag);
+	gbc.fill=gbc.HORIZONTAL;
+	gbc.ipadx=1;
+	gbc.anchor=gbc.WEST;
+
+
+	gbc.gridx=0; gbc.gridy=2; gbc.gridheight=1; gbc.gridwidth=1;
+	JLabel l3=new JLabel (" ");
+	gridbag.setConstraints(l3, gbc);
+        cbPanel.add (l3);
+	gbc.gridx=0; gbc.gridy=3; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+        JLabel cbLabel = new JLabel ("Run Startup Initialization on MIDI Ports:");
+	gridbag.setConstraints(cbLabel, gbc);
+	cbPanel.add (cbLabel);
+	
+	gbc.gridx=0; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=1;
+	JLabel cb1Label = new JLabel("Out Port:");
+	gridbag.setConstraints(cb1Label, gbc);
+	cbPanel.add (cb1Label);
+        cb1 = new JComboBox ();
+	gbc.gridx=1; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	gridbag.setConstraints(cb1, gbc);
+        cbPanel.add (cb1);
+
+	gbc.gridx=0; gbc.gridy=5; gbc.gridheight=1; gbc.gridwidth=1;
+	JLabel cb2Label = new JLabel("In Port:");
+	gridbag.setConstraints(cb2Label, gbc);
+        cbPanel.add (cb2Label);
+	cb2 = new JComboBox ();
+	gbc.gridx=1; gbc.gridy=5; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	gridbag.setConstraints(cb2, gbc);
+        cbPanel.add (cb2);
+
+	gbc.gridx=1; gbc.gridy=6; gbc.gridheight=1; gbc.gridwidth=1;gbc.fill=gbc.NONE;
         JButton testButton = new JButton("Test MIDI");
 	testButton.addActionListener (new ActionListener () {
 		public void actionPerformed (ActionEvent e) {
 		    MidiTest.runLoopbackTest(currentDriver, cb2.getSelectedIndex(), cb1.getSelectedIndex());
 		}
 	    });
-	add(testButton);
+	gridbag.setConstraints(testButton, gbc);
+	cbPanel.add(testButton);
+	
+	gbc.gridx=0; gbc.gridy=7; gbc.gridheight=1; gbc.gridwidth=1; gbc.fill=gbc.HORIZONTAL;
+	JLabel l0=new JLabel (" ");
+	gridbag.setConstraints(l0, gbc);
+        cbPanel.add (l0);
+	gbc.gridx=0; gbc.gridy=8; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	JLabel l1=new JLabel ("Receive from Master Controller on MIDI Port:");
+	gridbag.setConstraints(l1, gbc);
+        cbPanel.add (l1);
+	gbc.gridx=1; gbc.gridy=9; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+        cb3 = new JComboBox ();
+	gridbag.setConstraints(cb3, gbc);
+        cbPanel.add (cb3);
 
-        init();
+	channelPanel.add(cbPanel);
+	add(channelPanel);
+        
+	init();
     }
 
     /**
