@@ -11,7 +11,7 @@ package core;
 
 //import java.io.FileNotFoundException;
 //import java.io.IOException;
-//import java.lang.reflect.Constructor;
+import java.lang.reflect.Constructor;
 //import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -23,7 +23,7 @@ import javax.swing.UIManager;
 
 import org.jsynthlib.jsynthlib.Dummy;
 
-public class AppConfig {
+final public class AppConfig {
     private static ArrayList deviceList = new ArrayList();
     private static MidiWrapper midiWrapper = null;
     private static boolean initMasterController = false;
@@ -296,6 +296,7 @@ public class AppConfig {
 	initMasterController = true;
     }
 
+    /** Return Transmitter of Master Input. */
     Transmitter getMasterInTrns() {
 	return masterInTrns;
     }
@@ -322,6 +323,7 @@ public class AppConfig {
         prefs.putInt("faderPort", faderPort);
     }
 
+    /** Return Transmitter of Fader Input. */
     Transmitter getFaderInTrns() {
 	return faderInTrns;
     }
@@ -352,16 +354,17 @@ public class AppConfig {
     private Device addDevice(String className, Preferences prefs) {
 	Device device;
 	try {
-	    Class deviceClass = Class.forName(className);
-	    device = (Device) deviceClass.newInstance();
+	    Class c = Class.forName(className);
+	    Class[] args = { Class.forName("java.util.prefs.Preferences") };
+	    Constructor con = c.getConstructor(args);
+	    device = (Device) con.newInstance(new Object[] { prefs });
 	} catch (Exception e) {
 	    ErrorMsg.reportError("Failed to create class for class",
 				 "Failed to create class for class '"
 				 + className + "'");
 	    return null;
 	}
-
-	device.setPreferences(prefs);
+	device.setup();
     	deviceList.add(device); // always returns true
 
 	return device;

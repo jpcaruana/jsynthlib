@@ -15,8 +15,28 @@ import javax.swing.JPanel;
  * It also manages a list of Driver classes which provides actual
  * functions.<p>
  *
+ * Subclass must define two constructor, with no argument and with one
+ * argument, <code>Preferences</code>.  Here is an example;
+ * <pre>
+ *    import java.util.prefs.Preferences;
+ *    ...
+ *    // Constructor for DeviceListWriter.
+ *    public KawaiK4Device() {
+ *	super("Kawai", "K4/K4R", "F07E**0602400000040000000000f7",
+ *	      INFO_TEXT, "Brian Klock & Gerrit Gehnen");
+ *    }
+ *
+ *    // Constructor for for actual work.
+ *    public KawaiK4Device(Preferences prefs) {
+ *	this();
+ *	this.prefs = prefs;
+ *
+ *      addDriver(new KawaiK4BulkConverter());
+ *      ...
+ *    }
+ * </pre>
  * Compatibility Note: The following fields are now
- * <code>private</code>.  Use setter/getter method to access them.
+ * <code>private</code>. Use setter/getter method to access them.
  * <pre>
  *	manufacturerName, modelName, inquiryID, infoText, authors,
  *	synthName, channel, inPort, port
@@ -26,7 +46,7 @@ import javax.swing.JPanel;
  * @version $Id$
  * @see Driver
  */
-public class Device /*implements Serializable, Storable*/ {
+public abstract class Device /*implements Serializable, Storable*/ {
 
     /** Preferences node for storing configuration options */
     protected Preferences prefs = null;
@@ -52,20 +72,20 @@ public class Device /*implements Serializable, Storable*/ {
     /** Authors of the device driver. */
     private String authors;
     /** The synthName is your personal naming of the device. */
-    private String synthName;
+    //private String synthName;
     /** The channel the user assigns to this driver. */
-    private int channel = 1;
+    //private int channel = 1;
     /** The device ID. */
-    private int deviceID = -1;
+    //private int deviceID = -1;
 
     /** The MIDI output port number. */
-    private int port = -1;
+    //private int port = -1;
     /** set to true when initialization of MIDI output is done. */
     private boolean initPort = false;
     /** MIDI output Receiver */
     private Receiver rcvr;
     /** The MIDI input port number. */
-    private int inPort = -1;
+    //private int inPort = -1;
     /** set to true when initialization of MIDI input is done. */
     private boolean initInPort = false;
     /** The input MIDI Device. */
@@ -104,18 +124,14 @@ public class Device /*implements Serializable, Storable*/ {
 	this.infoText = (infoText == null)
 	    ? "There is no information about this Device." : infoText;
 	this.authors = authors;
-	this.synthName = modelName;
+	//this.synthName = modelName;
     }
 
-    public void setPreferences(Preferences p) {
-	prefs = p;
+    /** Called after Device(Preferences prefs) is called. */
+    protected void setup() {
 	// set default MIDI in/out port
 	setInPort(prefs.getInt("inPort", PatchEdit.appConfig.getInitPortIn()));
 	setPort(prefs.getInt("port", PatchEdit.appConfig.getInitPortOut()));
-	// do we still need the following fields?
-	synthName = prefs.get("synthName", synthName);
-	channel = prefs.getInt("channel", channel);
-	deviceID = prefs.getInt("deviceID", deviceID);
     }
 
     public Preferences getPreferences() {
@@ -177,7 +193,7 @@ public class Device /*implements Serializable, Storable*/ {
      * @return Value of property synthName.
      */
     public String getSynthName () {
-        return synthName;
+	return prefs.get("synthName", modelName);
     }
 
     /**
@@ -187,10 +203,8 @@ public class Device /*implements Serializable, Storable*/ {
      * default value. A synth driver should not use this.
      * @param synthName New value of property synthName.
      */
-    public void setSynthName (String synthName) { // public for storable
-        this.synthName = synthName;
-        if (prefs != null)
-	    prefs.put("synthName", synthName);
+    protected void setSynthName (String synthName) {
+	prefs.put("synthName", synthName);
     }
 
     /**
@@ -198,7 +212,7 @@ public class Device /*implements Serializable, Storable*/ {
      * @return Value of property channel.
      */
     public int getChannel () {
-        return channel;
+	return prefs.getInt("channel", 1);
     }
 
     /**
@@ -210,28 +224,20 @@ public class Device /*implements Serializable, Storable*/ {
      * @param channel The value must be 1 or greater than 1, and 16 or
      * less than 16.
      */
-    public void setChannel (int channel) { // public for storable
-        this.channel = channel;
-        if (prefs != null)
-	    prefs.putInt("channel", channel);
-	// Remove the following lines when 'driver.channel' becomes 'private'.
-	/*
-	Iterator iter = driverList.iterator();
-	while (iter.hasNext()) {
- 	    ((Driver) iter.next()).setChannel(channel);
-	}
-	*/
+    protected void setChannel (int channel) {
+	prefs.putInt("channel", channel);
     }
 
     /**
      * Getter for property deviceID.
      * @return Value of property deviceID.
      */
-    public int getDeviceID() { // public for storable
+    public int getDeviceID() {
 	// For backward compatibility if this has the initial value
 	// (-1), The value of <code>channel</code> is used as device
 	// ID.
-        return deviceID == -1 ? channel : deviceID;
+	int deviceID = prefs.getInt("deviceID", -1);
+        return deviceID == -1 ? getChannel() : deviceID;
     }
 
     /**
@@ -243,10 +249,8 @@ public class Device /*implements Serializable, Storable*/ {
      * @param deviceID The value must be 1 or greater than 1, and 256
      * or less than 256.
      */
-    public void setDeviceID(int deviceID) { // public for storable
-        this.deviceID = deviceID;
-        if (prefs != null)
-	    prefs.putInt("devicID", deviceID);
+    protected void setDeviceID(int deviceID) {
+	prefs.putInt("devicID", deviceID);
     }
 
     /**
@@ -254,7 +258,7 @@ public class Device /*implements Serializable, Storable*/ {
      * @return Value of property port.
      */
     public int getPort () {
-        return port;
+	return prefs.getInt("port", PatchEdit.appConfig.getInitPortOut());
     }
 
     /**
@@ -263,17 +267,15 @@ public class Device /*implements Serializable, Storable*/ {
      * should not use this.
      * @param port New value of property port.
      */
-    public void setPort (int port) { // public for storable
+    protected void setPort (int port) {
     	if (PatchEdit.newMidiAPI) {
-	    if (!initPort || this.port != port) {
+	    if (!initPort || getPort() != port) {
 		if (rcvr != null)
 		    rcvr.close();
 		rcvr = MidiUtil.getReceiver(port);
 	    }
 	}
-        this.port = port;
-        if (prefs != null)
-	    prefs.putInt("port", port);
+	prefs.putInt("port", port);
 	initPort = true;
     }
 
@@ -293,7 +295,7 @@ public class Device /*implements Serializable, Storable*/ {
      * @return Value of property inPort.
      */
     public int getInPort () {
-        return inPort;
+	return prefs.getInt("inPort", PatchEdit.appConfig.getInitPortIn());
     }
 
     /**
@@ -302,13 +304,11 @@ public class Device /*implements Serializable, Storable*/ {
      * should not use this.
      * @param inPort New value of property inPort.
      */
-    public void setInPort (int inPort) { // public for storable
+    protected void setInPort (int inPort) {
 	if (PatchEdit.newMidiAPI)
-	    if (!initInPort || this.inPort != inPort)
+	    if (!initInPort || getInPort() != inPort)
 		MidiUtil.setSysexInputQueue(inPort);
-	if (prefs != null)
-	    prefs.putInt("inPort", inPort);
-    	this.inPort = inPort;
+	prefs.putInt("inPort", inPort);
 	initInPort = true;
     }
 
@@ -330,11 +330,8 @@ public class Device /*implements Serializable, Storable*/ {
      * @param index The index, where the driver is added in the list.
      * Bulk converters must be added before simple drivers!
      * @param driver Driver to be added.
+     * @deprecated Call <code>addDriver(Driver)</code> in order.
      */
-    // The range of 'index' needs to be checked.
-    // Is this method necessary?  Just calling addDriver(Driver) in
-    // order should be enough.  -- Hiroo
-    // @deprecated
     protected void addDriver(int index, Driver driver) {
 	driver.setDevice(this);
         driverList.add(index, driver);
