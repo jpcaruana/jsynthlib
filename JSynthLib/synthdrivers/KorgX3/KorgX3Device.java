@@ -24,7 +24,7 @@ public class KorgX3Device extends Device
    */
   public KorgX3Device ()
   {
-    super ("Korg","X3","F07E**0602423500**00**00**00F7",infoText,"Juha Tukkinen");
+    super ("Korg","X3","F07E..0602423500..00..00..00F7",infoText,"Juha Tukkinen");
     }
 
     /** Constructor for for actual work. */

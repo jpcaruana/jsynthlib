@@ -143,13 +143,13 @@ public class ImportAllDialog extends JDialog
                 }
                 if (buffer.length>16)
                 {
-                    Patch p = new Patch (buffer);
+                    IPatch p = new Patch (buffer);
                     // NEW CODE
-                    Patch[] patarray=p.dissect ();
+                    IPatch[] patarray=p.dissect ();
 
                     for (int k=0;k<patarray.length;k++) // Loop over all found sub-patches
                     {
-			Patch pk = patarray[k];
+			IPatch pk = patarray[k];
                         if (putName==1) pk.setDate(pk.getDate() + files[i].getName());
                         if (putName==2) pk.setAuthor(pk.getAuthor() + files[i].getName());
                         if (myModel.includeDevice[pk.getDriver().getDeviceNum()].booleanValue ())
@@ -160,7 +160,7 @@ public class ImportAllDialog extends JDialog
 				String[] pn = myDriver.getPatchNumbers();
                                 for (int j=0;j<myDriver.getNumPatches();j++)
                                 {
-                                    Patch q=(myDriver.getPatch (pk,j));
+                                    IPatch q=(myDriver.getPatch (pk,j));
                                     if (putName==1)
                                         q.setDate(q.getDate() + files[i].getName() + " " + pn[j]);
                                     if (putName==2)
@@ -197,28 +197,28 @@ public class ImportAllDialog extends JDialog
             String s1; String s2;
             if (field==0)
             {
-                s1=((Patch) a1).getDriver().getPatchName((Patch) a1);;
-                s2=((Patch) a2).getDriver().getPatchName((Patch) a2);;
+                s1=((IPatch) a1).getDriver().getPatchName((IPatch) a1);;
+                s2=((IPatch) a2).getDriver().getPatchName((IPatch) a2);;
             }
             else if (field==1)
             {
-                s1=((Patch) a1).getDate().toLowerCase();
-                s2=((Patch) a2).getDate().toLowerCase();
+                s1=((IPatch) a1).getDate().toLowerCase();
+                s2=((IPatch) a2).getDate().toLowerCase();
             }
             else if (field==2)
             {
-                s1=((Patch) a1).getAuthor().toLowerCase();
-                s2=((Patch) a2).getAuthor().toLowerCase();
+                s1=((IPatch) a1).getAuthor().toLowerCase();
+                s2=((IPatch) a2).getAuthor().toLowerCase();
             }
             else if (field==3)
             {
-                s1=((Patch) a1).getDevice().getSynthName();
-                s2=((Patch) a2).getDevice().getSynthName();
+                s1=((IPatch) a1).getDevice().getSynthName();
+                s2=((IPatch) a2).getDevice().getSynthName();
             }
             else
             {
-                s1=((Patch) a1).getDriver().getPatchType();
-                s2=((Patch) a2).getDriver().getPatchType();
+                s1=((IPatch) a1).getDriver().getPatchType();
+                s2=((IPatch) a2).getDriver().getPatchType();
             }
 
             return s1.compareTo (s2);
@@ -256,7 +256,7 @@ public class ImportAllDialog extends JDialog
 
          public Object getValueAt (int row, int col)
          {
-             Device myDevice=(Device)PatchEdit.appConfig.getDevice (row);
+             Device myDevice=(Device)AppConfig.getDevice (row);
              if (col==1) return myDevice.getManufacturerName ()+" "+myDevice.getModelName ()/*+" "+myDriver.getPatchType ()*/;
              else return includeDevice[row];
          }

@@ -1,6 +1,7 @@
 package synthdrivers.KorgWavestation;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -30,8 +31,8 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
     }
 
     /**
-     */
-    public void storePatch(Patch p, int bankNum,int patchNum) {
+     */    
+    public void storePatch(IPatch p, int bankNum,int patchNum) {
         //        int patchValue = patchNum;
         //int bankValue  = 0;
                calculateChecksum(p);
@@ -39,10 +40,10 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
         try
         {Thread.sleep(100); } catch (Exception e)
         {}
-
-        p.sysex[2]=(byte)(0x30 + getChannel() - 1);
+        
+        ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1);
         try {
-            send(p.sysex);
+            send(((Patch)p).sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
     /*
@@ -51,17 +52,17 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
         {}
      */
     }
-
-    public void sendPatch(Patch p) {
-        p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
-
+    
+    public void sendPatch(IPatch p) {
+        ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
+        
         try {
-            send(p.sysex);
+            send(((Patch)p).sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
     }
-
-    public Patch createNewPatch() {
+    
+    public IPatch createNewPatch() {
         byte [] sysex=new byte[2761];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
         sysex[2]=(byte)(0x30+getChannel()-1);
@@ -69,15 +70,16 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
 
         /*sysex[2759]=checksum;*/
         sysex[2760]=(byte)0xF7;
-
-        Patch p = new Patch(sysex, this);
+        
+        IPatch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
     }
-
-    public void calculateChecksum(Patch p,int start,int end,int ofs) {
-        int i;
+    
+    public void calculateChecksum(IPatch ip,int start,int end,int ofs) {
+    		Patch p = (Patch)ip;
+    		int i;
         int sum=0;
 
 //        System.out.println("Checksum was" + p.sysex[ofs]);

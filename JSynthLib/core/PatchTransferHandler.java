@@ -5,20 +5,20 @@ import javax.swing.*;
 import java.io.*;
 import java.net.*;
 public abstract class PatchTransferHandler extends TransferHandler {
-    public static final DataFlavor PATCH_FLAVOR =
-	new DataFlavor(Patch[].class, "Patch Array");
+    public static final DataFlavor PATCH_FLAVOR = 
+	new DataFlavor(IPatch[].class, "Patch Array");
     public static final DataFlavor TEXT_FLAVOR =
 	new DataFlavor("application/x-java-serialized-object; class=java.lang.String","string");
     protected static final DataFlavor[] flavors = {
 	PATCH_FLAVOR,TEXT_FLAVOR
     };
 
-    protected abstract Patch getSelectedPatch(JComponent c);
-    protected abstract boolean storePatch(Patch p, JComponent c);
-
+    protected abstract IPatch getSelectedPatch(JComponent c);
+    protected abstract boolean storePatch(IPatch p, JComponent c);
+		
     protected Transferable createTransferable(JComponent c) {
 
-	Patch p = getSelectedPatch(c);
+	IPatch p = getSelectedPatch(c);
 	if (p == null)
 	    return null;
 
@@ -32,8 +32,8 @@ public abstract class PatchTransferHandler extends TransferHandler {
     public boolean importData(JComponent c, Transferable t){
 	if (canImport(c, t.getTransferDataFlavors())) {
 	    try {
-		Patch p = (Patch)t.getTransferData(PATCH_FLAVOR);
-
+		IPatch p = (IPatch)t.getTransferData(PATCH_FLAVOR);
+		
 		if (p != null)
 		    return storePatch(p, c);
 	    } catch (UnsupportedFlavorException ufe) {
@@ -42,8 +42,8 @@ public abstract class PatchTransferHandler extends TransferHandler {
 
 	    try{
 		String s = (String)t.getTransferData(TEXT_FLAVOR);
-		Patch p = getPatchFromUrl(s);
-		if (p!=null)
+		IPatch p = getPatchFromUrl(s);
+		if (p!=null) 
 		    return storePatch(p,c);
 
 	    } catch (UnsupportedFlavorException ufe) {
@@ -54,8 +54,8 @@ public abstract class PatchTransferHandler extends TransferHandler {
    	Toolkit.getDefaultToolkit().beep();
 	return false;
     }
-
-    public Patch getPatchFromUrl(String s)
+    
+    public IPatch getPatchFromUrl(String s)
     {
 
 	try {
@@ -77,7 +77,8 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	    byte []sysex = new byte[i];
 	    System.arraycopy(buff,0,sysex,0,i);
 	in.close();
-	    Patch p = new Patch(sysex);
+		// XXX: Factory
+	    IPatch p = new Patch(sysex);
 	    return p;
 
 	}catch (MalformedURLException e) {ErrorMsg.reportStatus("Malformed URL");}
@@ -110,9 +111,9 @@ public abstract class PatchTransferHandler extends TransferHandler {
 
     /* Transferable containing patch and it's transient information. */
     protected class PatchTransferable implements Transferable, Serializable {
-	protected Patch patch;
+	protected IPatch patch;
 
-	public PatchTransferable(Patch p) {
+	public PatchTransferable(IPatch p) {
 	    patch = p;
 	}
 

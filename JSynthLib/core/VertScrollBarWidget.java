@@ -24,7 +24,7 @@ public class VertScrollBarWidget extends ScrollBarWidget {
      * @param ofs a <code>ParamModel</code> instance.
      * @param s sysexSender for transmitting the value at editing the parameter
      */
-    public VertScrollBarWidget(String l, Patch p, int min, int max, int b,
+    public VertScrollBarWidget(String l, IPatch p, int min, int max, int b,
 			       ParamModel ofs, SysexSender s) {
 	super(l, p, min, max, b, ofs, s);
     }

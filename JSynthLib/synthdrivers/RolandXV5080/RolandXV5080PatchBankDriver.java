@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import core.BankDriver;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 import core.Utility;
@@ -71,7 +72,7 @@ public class RolandXV5080PatchBankDriver extends BankDriver {
 // RolandXV5080PatchBankDriver->getPatchName(Patch)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public String getPatchName(Patch p) {
+  public String getPatchName(IPatch ip) {
     return getNumPatches() + " patches";
   }
 
@@ -79,10 +80,10 @@ public class RolandXV5080PatchBankDriver extends BankDriver {
 // RolandXV5080PatchBankDriver->getPatchName(Patch, int)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public String getPatchName(Patch p, int patchNum) {
+  public String getPatchName(IPatch p, int patchNum) {
     try {
       return new String(
-        p.sysex, RolandXV5080PatchDriver.PATCH_SIZE * patchNum + RolandXV5080PatchDriver.PATCH_NAME_START,
+        ((Patch)p).sysex, RolandXV5080PatchDriver.PATCH_SIZE * patchNum + RolandXV5080PatchDriver.PATCH_NAME_START,
         RolandXV5080PatchDriver.PATCH_NAME_SIZE,
         "US-ASCII"
       );
@@ -95,8 +96,8 @@ public class RolandXV5080PatchBankDriver extends BankDriver {
 // RolandXV5080PatchBankDriver->setPatchName(Patch, int, String)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void setPatchName(Patch bank, int patchNum, String name) {
-    Patch p = getPatch(bank, patchNum);
+  public void setPatchName(IPatch bank, int patchNum, String name) {
+    IPatch p = (IPatch)getPatch(bank, patchNum);
     Driver singleDriver = p.getDriver();
     singleDriver.setPatchName(p, name);
     singleDriver.calculateChecksum(p);
@@ -107,11 +108,11 @@ public class RolandXV5080PatchBankDriver extends BankDriver {
 // RolandXV5080PatchBankDriver->getPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public Patch getPatch(Patch bank, int patchNum) {
+  public IPatch getPatch(IPatch bank, int patchNum) {
     try {
       byte[] sysex = new byte[RolandXV5080PatchDriver.PATCH_SIZE];
-      System.arraycopy(bank.sysex, RolandXV5080PatchDriver.PATCH_SIZE * patchNum, sysex, 0, RolandXV5080PatchDriver.PATCH_SIZE);
-      Patch p = new Patch(sysex, getDevice());
+      System.arraycopy(((Patch)bank).sysex, RolandXV5080PatchDriver.PATCH_SIZE * patchNum, sysex, 0, RolandXV5080PatchDriver.PATCH_SIZE);
+      IPatch p = new Patch(sysex, getDevice());
       return p;
     } catch (Exception ex) {
       ErrorMsg.reportError("Error", "Error in XV5080 Patch Bank Driver", ex);
@@ -123,14 +124,14 @@ public class RolandXV5080PatchBankDriver extends BankDriver {
 // RolandXV5080PatchBankDriver->putPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void putPatch(Patch bank, Patch p, int patchNum) {
-    Patch pInsert = new Patch(p.sysex);
+  public void putPatch(IPatch bank, IPatch p, int patchNum) {
+    Patch pInsert = new Patch(((Patch)p).sysex);
     RolandXV5080PatchDriver singleDriver = (RolandXV5080PatchDriver)pInsert.getDriver();
     singleDriver.updatePatchNum(pInsert, patchNum);
     singleDriver.calculateChecksum(pInsert);
 
-    bank.sysex = Utility.byteArrayReplace(
-      bank.sysex, RolandXV5080PatchDriver.PATCH_SIZE * patchNum, RolandXV5080PatchDriver.PATCH_SIZE,
+    ((Patch)bank).sysex = Utility.byteArrayReplace(
+      ((Patch)bank).sysex, RolandXV5080PatchDriver.PATCH_SIZE * patchNum, RolandXV5080PatchDriver.PATCH_SIZE,
       pInsert.sysex, 0, RolandXV5080PatchDriver.PATCH_SIZE);
   }
 

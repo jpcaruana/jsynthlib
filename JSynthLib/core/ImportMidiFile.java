@@ -30,9 +30,9 @@ public class ImportMidiFile {
             //ErrorMsg.reportStatus("Track "+j+":size "+tr[j].size());
             for (int i=0;i<tr[j].size();i++) {
                 if (tr[j].get(i).getMessage() instanceof SysexMessage) {
-                    //ErrorMsg.reportStatus("Track "+j+" Event "+i+" SYSEX!!");
-                    Patch q=new Patch(tr[j].get(i).getMessage().getMessage());
-                    Patch[] patarray=q.dissect();
+                    // System.out.println("Track "+j+" Event "+i+" SYSEX!!");
+                    IPatch q=new Patch(tr[j].get(i).getMessage().getMessage());
+                    IPatch[] patarray=q.dissect();
                     for (int k=0;k<patarray.length;k++) {
 			((LibraryFrame)JSLDesktop.getSelectedFrame()).pastePatch(patarray[k]);
                 }

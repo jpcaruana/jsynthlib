@@ -22,7 +22,7 @@ import javax.swing.JPanel;
  *    ...
  *    // Constructor for DeviceListWriter.
  *    public KawaiK4Device() {
- *	super("Kawai", "K4/K4R", "F07E**0602400000040000000000f7",
+ *	super("Kawai", "K4/K4R", "F07E..0602400000040000000000f7",
  *	      INFO_TEXT, "Brian Klock & Gerrit Gehnen");
  *    }
  *
@@ -59,9 +59,9 @@ public abstract class Device /*implements Serializable, Storable*/ {
      */
     private final String modelName;
     /**
-     * The response to the Universal Inquiry Message.  It can have
-     * wildcards (*). It can be up to 16 bytes.<p>
-     * Ex. <code>"F07E**0602413F01000000020000f7"</code>
+     * The response to the Universal Inquiry Message.  It is a
+     * regular expression. It can be up to 16 bytes.<p>
+     * Ex. <code>"F07E..0602413F01000000020000f7"</code>
      */
     private final String inquiryID;
     /**

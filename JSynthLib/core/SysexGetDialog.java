@@ -68,7 +68,7 @@ public class SysexGetDialog extends JDialog {
     // combinations except converters
     // skip 0 (Generic Device)
     for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++) {
-      Device device=PatchEdit.appConfig.getDevice(i);
+      Device device=AppConfig.getDevice(i);
       for (int j=0; j < device.driverCount(); j++) {
 	Driver driver = device.getDriver(j);
         if (!(driver instanceof Converter)) { // Skipping a converter
@@ -164,7 +164,7 @@ public class SysexGetDialog extends JDialog {
     Driver driver = (Driver) driverComboBox.getSelectedItem();
     Patch p = new Patch(patchSysex, driver);
     // if Conveter for the patch exist, convert the patch.
-    Patch[] patarray = p.dissect();
+    Patch[] patarray = (Patch[])p.dissect();
 
     for (int k = 0; k < patarray.length; k++) {
       Patch pk = patarray[k];
@@ -180,7 +180,7 @@ public class SysexGetDialog extends JDialog {
 	  {
 	    // first check the requested device.
 	    // then starting index '1'. (index 0 is 'generic driver')
-	    Device device = (i == 0) ? pk.getDevice() : PatchEdit.appConfig.getDevice(i);
+	    Device device = (i == 0) ? pk.getDevice() : AppConfig.getDevice(i);
 	    for (int j=0;j<device.driverCount();j++)
 	    {
 	      Driver d = device.getDriver(j);

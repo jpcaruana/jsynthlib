@@ -4,6 +4,7 @@
 package synthdrivers.YamahaTG33;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 
 public class YamahaTG33SingleDriver extends Driver
@@ -31,7 +32,7 @@ public class YamahaTG33SingleDriver extends Driver
                               "81","82","83","84","85","86","87","88"};
    
   }
-public void storePatch (Patch p, int bankNum,int patchNum)
+public void storePatch (IPatch p, int bankNum,int patchNum)
   {   
 
    setBankNum(bankNum);
@@ -47,7 +48,7 @@ public void storePatch (Patch p, int bankNum,int patchNum)
    send(new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x04,(byte)0xF7});
    }catch (Exception e){ErrorMsg.reportError("Error","Unable to Store Patch",e);}
   }
-public Patch createNewPatch()
+public IPatch createNewPatch()
  {
 	 byte [] sysex = new byte[605];
       sysex[00]=(byte)0xF0;sysex[01]=(byte)0x43;sysex[02]=(byte)0x00;
@@ -56,7 +57,7 @@ public Patch createNewPatch()
      sysex[9]=(byte)0x20;sysex[10]=(byte)0x30;sysex[11]=(byte)0x30;
      sysex[12]=(byte)0x31;sysex[13]=(byte)0x32;sysex[14]=(byte)0x56;
      sysex[15]=(byte)0x45;  sysex[604]=(byte)0xF7;     
-	Patch p = new Patch(sysex, this);
+	IPatch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;

@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -44,26 +45,27 @@ public class KawaiK5000ADDSingleDriver extends Driver
                               "120-","121-","122-","123-","124-","125-","126-","127-","128-" };
 
   }
-public void storePatch (Patch p, int bankNum,int patchNum)
+public void storePatch (IPatch p, int bankNum,int patchNum)
   {
    setBankNum(bankNum);
    setPatchNum(patchNum);
    try {Thread.sleep(100); } catch (Exception e){}
-   p.sysex[3]=(byte)0x20;
-   p.sysex[8]=(byte)(patchNum);
-   if (bankNum==0)p.sysex[7]=0;   //bank a
-   if (bankNum==3)p.sysex[7]=2;   //bank d
+   ((Patch)p).sysex[3]=(byte)0x20;
+   ((Patch)p).sysex[8]=(byte)(patchNum);
+   if (bankNum==0)((Patch)p).sysex[7]=0;   //bank a
+   if (bankNum==3)((Patch)p).sysex[7]=2;   //bank d
 
    sendPatchWorker(p);
    try {Thread.sleep(100); } catch (Exception e){}
    setPatchNum(patchNum);
   }
-public void sendPatch (Patch p)
+public void sendPatch (IPatch p)
   {
    storePatch(p,0,0);
   }
-public void calculateChecksum(Patch p)
+public void calculateChecksum(IPatch ip)
   {
+	Patch p = (Patch)ip;
     calculateChecksum(p,checksumStart,90+p.sysex[60]*86,checksumOffset);
     int sourceDataStart=91;
     int numWaveData=0;
@@ -80,9 +82,10 @@ public void calculateChecksum(Patch p)
       waveDataStart+=806;
     }
   }
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  public void calculateChecksum(IPatch ip,int start,int end,int ofs)
   {
-    int i;
+  	Patch p = (Patch)ip;
+  	int i;
     int sum=0;
     for (i=start;i<=end;i++)
       sum+=p.sysex[i];
@@ -120,19 +123,19 @@ public void calculateChecksum(Patch p)
 //----- End phil@muqus.com
 
 
-public JSLFrame editPatch(Patch p)
+public JSLFrame editPatch(IPatch p)
  {
-     return new KawaiK5000ADDSingleEditor(p);
+     return new KawaiK5000ADDSingleEditor((Patch)p);
  }
 
-public Patch createNewPatch()
+public IPatch createNewPatch()
   { 
   try {
     InputStream fileIn= getClass().getResourceAsStream("k5k.syx");
     byte [] buffer =new byte [2768];
     fileIn.read(buffer);
     fileIn.close();
-    Patch p=new Patch(buffer, this);
+    IPatch p=new Patch(buffer, this);
     return p;
   }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
   }

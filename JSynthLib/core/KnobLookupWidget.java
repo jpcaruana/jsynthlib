@@ -25,7 +25,7 @@ public class KnobLookupWidget extends KnobWidget {
      * @param s a <code>SysexSender</code> object.
      * @param valueLabels an array of labels for the knob values.
      */
-    public KnobLookupWidget(String l, Patch p, int min, int max,
+    public KnobLookupWidget(String l, IPatch p, int min, int max,
 			    ParamModel ofs, SysexSender s,
 			    String[] valueLabels) {
 	super(l, p, min, max, 0, ofs, s);
@@ -44,7 +44,7 @@ public class KnobLookupWidget extends KnobWidget {
      * @param s a <code>SysexSender</code> object.
      * @param valueLabels an array of labels for the knob values.
      */
-    public KnobLookupWidget(String l, Patch p, int min,
+    public KnobLookupWidget(String l, IPatch p, int min,
 			    ParamModel ofs, SysexSender s,
 			    String[] valueLabels) {
 	super(l, p, min, min + valueLabels.length - 1, 0, ofs, s);
@@ -54,7 +54,7 @@ public class KnobLookupWidget extends KnobWidget {
     }
 
     /** <code>min</code> is set to 0. */
-    public KnobLookupWidget(String l, Patch p,
+    public KnobLookupWidget(String l, IPatch p,
 			    ParamModel ofs, SysexSender s,
 			    String[] valueLabels) {
 	this(l, p, 0, ofs, s, valueLabels);

@@ -8,6 +8,7 @@
 package synthdrivers.CasioCZ1000;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 
 // Note : on the casio, if you initiate a dump (from the PC or the Casio itself), you will get a patch
@@ -37,10 +38,10 @@ public class CasioCZ1000SingleDriver extends Driver
                                    "16-"};
     }
 
-    public void storePatch (Patch p, int bankNum,int patchNum)
+    public void storePatch (IPatch p, int bankNum,int patchNum)
     {
         byte [] newsysex = new byte[264];
-        System.arraycopy(p.sysex,0,newsysex,0,264);
+        System.arraycopy(((Patch)p).sysex,0,newsysex,0,264);
         newsysex[4] = (byte)(0x70 + getChannel() -1); // must do it ourselve since sendPatchWorker didn't support
                                                  // adding midi channel info in half a byte
         newsysex[5] = (byte)(0x20); // 20 is to send data to the Casio
@@ -56,26 +57,26 @@ public class CasioCZ1000SingleDriver extends Driver
         setPatchNum(patchNum);
     }
 
-    public void sendPatch (Patch p)
+    public void sendPatch (IPatch p)
     { 
         byte [] newsysex = new byte[264];
-        System.arraycopy(p.sysex,0,newsysex,0,264);
+        System.arraycopy(((Patch)p).sysex,0,newsysex,0,264);
         newsysex[4] = (byte)(0x70 + getChannel() -1); // must do it ourselve since sendPatchWorker didn't support
                                                  // adding midi channel info in half a byte
         newsysex[5] = (byte)(0x20); // 0x20 is to send data to the Casio
         newsysex[6] = (byte)(0x60); // 0x60 is edit buffer location
-        Patch patchtowrite = new Patch(newsysex, this);
+        IPatch patchtowrite = new Patch(newsysex, this);
         try {       
             send(newsysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
     }
 
-    public void calculateChecksum(Patch p,int start,int end,int ofs)
+    public void calculateChecksum(IPatch p,int start,int end,int ofs)
     {
         // no checksum
     }
 
-    public Patch createNewPatch()
+    public IPatch createNewPatch()
     {
         byte [] sysex = new byte[264];
         //System.arraycopy(CasioCZ1000InitPatch.initpatch,0,sysex,0,264);
@@ -87,7 +88,7 @@ public class CasioCZ1000SingleDriver extends Driver
         sysex[5]=(byte)0x20;
         sysex[6]=(byte)0x60; // default to send for edit buffer
         sysex[263]=(byte)0xF7;
-        Patch p = new Patch(sysex, this);
+        IPatch p = new Patch(sysex, this);
         calculateChecksum(p);	 
         return p;
     }

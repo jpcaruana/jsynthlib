@@ -5,6 +5,7 @@ package synthdrivers.RolandMKS50;
 
 import core.BankDriver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 
 public class MKS50ToneBankDriver extends BankDriver
@@ -31,17 +32,17 @@ public class MKS50ToneBankDriver extends BankDriver
     singleSysexID = "F041350*232001";
   }
 
-  public void calculateChecksum(Patch p)
+  public void calculateChecksum(IPatch p)
   {
     // MKS-50 doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs)
+  public void calculateChecksum(IPatch p, int start, int end, int ofs)
   {
     // MKS-50 doesn't use checksum
   }
 
-  public void storePatch (Patch p, int bankNum, int patchNum)
+  public void storePatch (IPatch p, int bankNum, int patchNum)
   {
     sendPatchWorker(p);
   }
@@ -62,7 +63,7 @@ public class MKS50ToneBankDriver extends BankDriver
     storePatch(p, 0, 0);
   }
   */
-  public void putPatch(Patch bank, Patch p, int patchNum)
+  public void putPatch(IPatch bank, IPatch p, int patchNum)
   {
     if (!canHoldPatch(p))
     {
@@ -72,96 +73,96 @@ public class MKS50ToneBankDriver extends BankDriver
 
     byte bankSysex[] = new byte[32];
     // DCO ENV MODE
-    bankSysex[5] |= (byte)((p.sysex[7] & 0x02) << 6);
-    bankSysex[6] |= (byte)((p.sysex[7] & 0x01) << 7);
+    bankSysex[5] |= (byte)((((Patch)p).sysex[7] & 0x02) << 6);
+    bankSysex[6] |= (byte)((((Patch)p).sysex[7] & 0x01) << 7);
     // VCF ENV MODE
-    bankSysex[7] |= (byte)((p.sysex[8] & 0x02) << 6);
-    bankSysex[8] |= (byte)((p.sysex[8] & 0x01) << 7);
+    bankSysex[7] |= (byte)((((Patch)p).sysex[8] & 0x02) << 6);
+    bankSysex[8] |= (byte)((((Patch)p).sysex[8] & 0x01) << 7);
     // VCA ENV MODE
-    bankSysex[9] |= (byte)((p.sysex[9] & 0x02) << 6);
-    bankSysex[10] |= (byte)((p.sysex[9] & 0x01) << 7);
+    bankSysex[9] |= (byte)((((Patch)p).sysex[9] & 0x02) << 6);
+    bankSysex[10] |= (byte)((((Patch)p).sysex[9] & 0x01) << 7);
     // DCO WAVEFORM PULSE
-    bankSysex[17] |= (byte)((p.sysex[10] & 0x02) << 6);
-    bankSysex[18] |= (byte)((p.sysex[10] & 0x01) << 7);
+    bankSysex[17] |= (byte)((((Patch)p).sysex[10] & 0x02) << 6);
+    bankSysex[18] |= (byte)((((Patch)p).sysex[10] & 0x01) << 7);
     // DCO WAVEFORM SAWTOOTH
-    bankSysex[14] |= (byte)((p.sysex[11] & 0x04) << 5);
-    bankSysex[15] |= (byte)((p.sysex[11] & 0x02) << 6);
-    bankSysex[16] |= (byte)((p.sysex[11] & 0x01) << 7);
+    bankSysex[14] |= (byte)((((Patch)p).sysex[11] & 0x04) << 5);
+    bankSysex[15] |= (byte)((((Patch)p).sysex[11] & 0x02) << 6);
+    bankSysex[16] |= (byte)((((Patch)p).sysex[11] & 0x01) << 7);
     // DCO WAVEFORM SUB
-    bankSysex[11] |= (byte)((p.sysex[12] & 0x04) << 5);
-    bankSysex[12] |= (byte)((p.sysex[12] & 0x02) << 6);
-    bankSysex[13] |= (byte)((p.sysex[12] & 0x01) << 7);
+    bankSysex[11] |= (byte)((((Patch)p).sysex[12] & 0x04) << 5);
+    bankSysex[12] |= (byte)((((Patch)p).sysex[12] & 0x02) << 6);
+    bankSysex[13] |= (byte)((((Patch)p).sysex[12] & 0x01) << 7);
     // DCO RANGE
-    bankSysex[21] |= (byte)((p.sysex[13] & 0x02) << 6);
-    bankSysex[22] |= (byte)((p.sysex[13] & 0x01) << 7);
+    bankSysex[21] |= (byte)((((Patch)p).sysex[13] & 0x02) << 6);
+    bankSysex[22] |= (byte)((((Patch)p).sysex[13] & 0x01) << 7);
     // DCO SUB LEVEL
-    bankSysex[23] |= (byte)((p.sysex[14] & 0x02) << 6);
-    bankSysex[24] |= (byte)((p.sysex[14] & 0x01) << 7);
+    bankSysex[23] |= (byte)((((Patch)p).sysex[14] & 0x02) << 6);
+    bankSysex[24] |= (byte)((((Patch)p).sysex[14] & 0x01) << 7);
     // DCO NOISE LEVEL
-    bankSysex[25] |= (byte)((p.sysex[15] & 0x02) << 6);
-    bankSysex[26] |= (byte)((p.sysex[15] & 0x01) << 7);
+    bankSysex[25] |= (byte)((((Patch)p).sysex[15] & 0x02) << 6);
+    bankSysex[26] |= (byte)((((Patch)p).sysex[15] & 0x01) << 7);
     // HPF CUTOFF FREQ
-    bankSysex[19] |= (byte)((p.sysex[16] & 0x02) << 6);
-    bankSysex[20] |= (byte)((p.sysex[16] & 0x01) << 7);
+    bankSysex[19] |= (byte)((((Patch)p).sysex[16] & 0x02) << 6);
+    bankSysex[20] |= (byte)((((Patch)p).sysex[16] & 0x01) << 7);
     // CHORUS
-    bankSysex[4] |= (byte)((p.sysex[17] & 0x01) << 7);
+    bankSysex[4] |= (byte)((((Patch)p).sysex[17] & 0x01) << 7);
     // DCO LFO MOD DEPTH
-    bankSysex[3] |= p.sysex[18];
+    bankSysex[3] |= ((Patch)p).sysex[18];
     // DCO ENV MOD DEPTH
-    bankSysex[4] |= p.sysex[19];
+    bankSysex[4] |= ((Patch)p).sysex[19];
     // DCO AFTER DEPTH (sysex docs say 0-127 value, but real range is 0-15 and it's stored shifted)
-    bankSysex[0] |= (byte)((p.sysex[20] & 0x78) << 1);
+    bankSysex[0] |= (byte)((((Patch)p).sysex[20] & 0x78) << 1);
     // DCO PW/PWM DEPTH
-    bankSysex[5] |= p.sysex[21];
+    bankSysex[5] |= ((Patch)p).sysex[21];
     // DCO PWM RATE
-    bankSysex[6] |= p.sysex[22];
+    bankSysex[6] |= ((Patch)p).sysex[22];
     // VCF CUTOFF FREQ
-    bankSysex[7] |= p.sysex[23];
+    bankSysex[7] |= ((Patch)p).sysex[23];
     // VCF RESONANCE
-    bankSysex[8] |= p.sysex[24];
+    bankSysex[8] |= ((Patch)p).sysex[24];
     // VCF LFO MOD DEPTH
-    bankSysex[10] |= p.sysex[25];
+    bankSysex[10] |= ((Patch)p).sysex[25];
     // VCF ENV MOD DEPTH
-    bankSysex[9] |= p.sysex[26];
+    bankSysex[9] |= ((Patch)p).sysex[26];
     // VCF KEY FOLLOW (sysex docs say 0-127 value, but real range is 0-15 and it's stored shifted)
-    bankSysex[0] |= (byte)((p.sysex[27] & 0x78) >> 3);
+    bankSysex[0] |= (byte)((((Patch)p).sysex[27] & 0x78) >> 3);
     // VCF AFTER DEPTH (sysex docs say 0-127 value, but real range is 0-15 and it's stored shifted)
-    bankSysex[1] |= (byte)((p.sysex[28] & 0x78) << 1);
+    bankSysex[1] |= (byte)((((Patch)p).sysex[28] & 0x78) << 1);
     // VCA LEVEL
-    bankSysex[11] |= p.sysex[29];
+    bankSysex[11] |= ((Patch)p).sysex[29];
     // VCA AFTER DEPTH (sysex docs say 0-127 value, but real range is 0-15 and it's stored shifted)
-    bankSysex[1] |= (byte)((p.sysex[30] & 0x78) >> 3);
+    bankSysex[1] |= (byte)((((Patch)p).sysex[30] & 0x78) >> 3);
     // LFO RATE
-    bankSysex[12] |= p.sysex[31];
+    bankSysex[12] |= ((Patch)p).sysex[31];
     // LFO DELAY TIME
-    bankSysex[13] |= p.sysex[32];
+    bankSysex[13] |= ((Patch)p).sysex[32];
     // ENV T1
-    bankSysex[14] |= p.sysex[33];
+    bankSysex[14] |= ((Patch)p).sysex[33];
     // ENV L1
-    bankSysex[15] |= p.sysex[34];
+    bankSysex[15] |= ((Patch)p).sysex[34];
     // ENV T2
-    bankSysex[16] |= p.sysex[35];
+    bankSysex[16] |= ((Patch)p).sysex[35];
     // ENV L2
-    bankSysex[17] |= p.sysex[36];
+    bankSysex[17] |= ((Patch)p).sysex[36];
     // ENV T3
-    bankSysex[18] |= p.sysex[37];
+    bankSysex[18] |= ((Patch)p).sysex[37];
     // ENV L3
-    bankSysex[19] |= p.sysex[38];
+    bankSysex[19] |= ((Patch)p).sysex[38];
     // ENV T4
-    bankSysex[20] |= p.sysex[39];
+    bankSysex[20] |= ((Patch)p).sysex[39];
     // ENV KEY FOLLOW (sysex docs say 0-127 value, but real range is 0-15 and it's stored shifted)
-    bankSysex[2] |= (byte)((p.sysex[40] & 0x78) << 1);
+    bankSysex[2] |= (byte)((((Patch)p).sysex[40] & 0x78) << 1);
     // CHORUS RATE
-    bankSysex[27] |= (byte)((p.sysex[41] & 0x03) << 6);
-    bankSysex[28] |= (byte)((p.sysex[41] & 0x0C) << 4);
-    bankSysex[29] |= (byte)((p.sysex[41] & 0x30) << 2);
-    bankSysex[30] |= (byte)(p.sysex[41] & 0x40);
+    bankSysex[27] |= (byte)((((Patch)p).sysex[41] & 0x03) << 6);
+    bankSysex[28] |= (byte)((((Patch)p).sysex[41] & 0x0C) << 4);
+    bankSysex[29] |= (byte)((((Patch)p).sysex[41] & 0x30) << 2);
+    bankSysex[30] |= (byte)(((Patch)p).sysex[41] & 0x40);
     // BENDER RANGE
-    bankSysex[2] |= p.sysex[40];
+    bankSysex[2] |= ((Patch)p).sysex[40];
     // TONE NAME (10 bytes)
     for (int i = 0; i < 10; i++)
     {
-      bankSysex[i+21] |= p.sysex[43+i];
+      bankSysex[i+21] |= ((Patch)p).sysex[43+i];
     }
     byte bankSysexNibbles[] = new byte[64];
     for (int i = 0; i < 32; i++)
@@ -170,10 +171,10 @@ public class MKS50ToneBankDriver extends BankDriver
       bankSysexNibbles[i*2+1] = (byte)((bankSysex[i] & 0xF0) >> 4);
     }
     int patchOffset = getPatchStart(patchNum);
-    System.arraycopy(bankSysexNibbles, 0, bank.sysex, patchOffset, 64);
+    System.arraycopy(bankSysexNibbles, 0, ((Patch)bank).sysex, patchOffset, 64);
   }
 
-  public Patch getPatch(Patch bank, int patchNum)
+  public IPatch getPatch(IPatch bank, int patchNum)
   {
       byte bankSysexNibbles[] = new byte[64];
       byte bankSysex[] = new byte[32];
@@ -187,7 +188,7 @@ public class MKS50ToneBankDriver extends BankDriver
       sysex[6] = (byte)0x01;
       sysex[53] = (byte)0xF7;
       int patchOffset = getPatchStart(patchNum);
-      System.arraycopy(bank.sysex, patchOffset, bankSysexNibbles, 0, 64);
+      System.arraycopy(((Patch)bank).sysex, patchOffset, bankSysexNibbles, 0, 64);
 
       //   convert bank tone (31 bytes, lo/hi nibble) to single tone (46 bytes)
       for (int i = 0; i < 32; i++)
@@ -273,17 +274,17 @@ public class MKS50ToneBankDriver extends BankDriver
         sysex[43+i] = (byte)(bankSysex[i+21] & 0x3F);
       }
 
-      Patch p = new Patch(sysex);
+      IPatch p = new Patch(sysex);
       return p;
   }
 
-  public String getPatchName(Patch p, int patchNum)
+  public String getPatchName(IPatch p, int patchNum)
   {
       byte bankSysexNibbles[] = new byte[64];
       byte bankSysex[] = new byte[32];
       char patchName[] = new char[10];
       int patchOffset = getPatchStart(patchNum);
-      System.arraycopy(p.sysex, patchOffset, bankSysexNibbles, 0, 64);
+      System.arraycopy(((Patch)p).sysex, patchOffset, bankSysexNibbles, 0, 64);
       for (int i = 0; i < 32; i++)
       {
         bankSysex[i] = (byte)(bankSysexNibbles[i*2] | bankSysexNibbles[i*2+1] << 4);
@@ -301,14 +302,14 @@ public class MKS50ToneBankDriver extends BankDriver
     return PatchNum/4*266 + PatchNum%4*64 + 9;
   }
 
-  protected void sendPatch (Patch p)
+  protected void sendPatch (IPatch p)
   {
     byte []tmp = new byte[266];  // send in 16 messages containing 4 tones each
     try
     {
       for (int i = 0; i < 16; i++)
       {
-        System.arraycopy(p.sysex, 266*i, tmp, 0, 266);
+        System.arraycopy(((Patch)p).sysex, 266*i, tmp, 0, 266);
         if (deviceIDoffset > 0)
           tmp[deviceIDoffset] = (byte)(getChannel()-1);
         send(tmp);

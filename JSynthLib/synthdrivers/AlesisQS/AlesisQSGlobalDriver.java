@@ -2,6 +2,7 @@ package synthdrivers.AlesisQS;
 
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -53,7 +54,7 @@ public class AlesisQSGlobalDriver extends Driver
 	 * @param end ignored
 	 * @param ofs ignored
 	 */
-	public void calculateChecksum(Patch p,int start,int end,int ofs)
+	public void calculateChecksum(IPatch p,int start,int end,int ofs)
 	{
 		//This synth does not use a checksum
 	}
@@ -62,7 +63,7 @@ public class AlesisQSGlobalDriver extends Driver
 	 * Create a new global patch
 	 * @return the new Patch
 	 */
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		// Copy over the Alesis QS header
 		byte [] sysex = new byte[patchSize];
@@ -74,13 +75,13 @@ public class AlesisQSGlobalDriver extends Driver
 		sysex[QSConstants.POSITION_OPCODE] = QSConstants.OPCODE_MIDI_GLOBAL_DATA_DUMP;
 
 		// Create the patch, and set the name
-		Patch p = new Patch(sysex, this);
+		IPatch p = new Patch(sysex, this);
 		return p;
 	}
 
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
-		return new GlobalEditor(p);
+		return new GlobalEditor((Patch)p);
 	}
 
 
@@ -104,7 +105,7 @@ public class AlesisQSGlobalDriver extends Driver
 	 * Sends a patch to the synth's global data buffer.
 	 * @param p the patch to send to the global data area
 	 */
-	public void sendPatch (Patch p)
+	public void sendPatch (IPatch p)
 	{
 		storePatch(p, 0, 0);
 	}
@@ -115,15 +116,15 @@ public class AlesisQSGlobalDriver extends Driver
 	 * @param bankNum ignored
 	 * @param patchNum ignored
 	 */
-	public void storePatch (Patch p, int bankNum, int patchNum)
+	public void storePatch (IPatch p, int bankNum, int patchNum)
 	{
 		byte opcode = QSConstants.OPCODE_MIDI_GLOBAL_DATA_DUMP;
-		byte oldOpcode = p.sysex[QSConstants.POSITION_OPCODE];
+		byte oldOpcode = ((Patch)p).sysex[QSConstants.POSITION_OPCODE];
 
 		// set the opcode
-		p.sysex[QSConstants.POSITION_OPCODE] = opcode;
+		((Patch)p).sysex[QSConstants.POSITION_OPCODE] = opcode;
 
-		ErrorMsg.reportStatus("foo", p.sysex);
+		ErrorMsg.reportStatus("foo", ((Patch)p).sysex);
 		//setBankNum (bankNum);
 		//setPatchNum (patchNum);
 
@@ -131,6 +132,6 @@ public class AlesisQSGlobalDriver extends Driver
 		sendPatchWorker (p);
 
 		// restore the old values
-		p.sysex[QSConstants.POSITION_OPCODE] = oldOpcode;
+		((Patch)p).sysex[QSConstants.POSITION_OPCODE] = oldOpcode;
 	}
 }

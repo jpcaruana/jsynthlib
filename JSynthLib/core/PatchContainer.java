@@ -8,5 +8,5 @@ package core;
 */
 public interface PatchContainer
 {
-	Patch getPatch();
+	IPatch getPatch();
 }

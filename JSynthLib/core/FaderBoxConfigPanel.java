@@ -62,7 +62,7 @@ class FaderBoxConfigPanel extends ConfigPanel {
 		    setModified(true);
 		}
 	    });
-	gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth=gbc.REMAINDER;
+	gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth=GridBagConstraints.REMAINDER;
 	faderPanel.add(cbFdr, BorderLayout.NORTH);
 
 	// Init Slider JList

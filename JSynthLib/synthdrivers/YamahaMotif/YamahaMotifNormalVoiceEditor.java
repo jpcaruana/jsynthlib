@@ -23,15 +23,14 @@ import javax.swing.event.ListDataListener;
 import core.ComboBoxWidget;
 import core.EnvelopeWidget;
 import core.ErrorMsg;
+import core.IPatch;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
-import core.ScrollBarLookupWidget;
 import core.ScrollBarWidget;
 import core.SysexSender;
 import core.SysexWidget;
-import core.VertScrollBarWidget;
 
 public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
   int slidercount = 0;
@@ -94,7 +93,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       sendaddress = (address & 0x7f007f) | (mid << 8);
     ScrollBarWidget bar =
       new ScrollBarWidget(name, p, min, max, offset,
-			  new MotifParamModel(p, address, mid, _short),
+			  new MotifParamModel((Patch)p, address, mid, _short),
 			  new ParamSender(sendaddress, _short));
     addWidget(panel, bar, slidercount++ );
     return bar;
@@ -122,7 +121,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
   }
   */
   class MyScrollBarWidget extends ScrollBarWidget {
-    MyScrollBarWidget(String l, Patch p, int min, int max, int b,
+    MyScrollBarWidget(String l, IPatch p, int min, int max, int b,
 			     ParamModel ofs, SysexSender s) {
       super(l, p, min, max, b, ofs, s);
     }
@@ -147,7 +146,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       sendaddress = (address & 0x7f007f) | (mid << 8);
     MyScrollBarWidget bar =
       new MyScrollBarWidget(name, p, min, max, offset,
-			    new MotifParamModel(p, address, mid, _short),
+			    new MotifParamModel((Patch)p, address, mid, _short),
 			    new ParamSender(sendaddress, _short));
     addWidget(panel, bar, slidercount++, false);
     return bar;
@@ -577,7 +576,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
  					    ,null,"Delay", null), new
 			       EnvelopeWidget.Node(10,10,null,
 					    0,127,
-					    new MotifParamModel(p,0x41ff28,
+					    new MotifParamModel((Patch)p,0x41ff28,
 								element),
 					    0,false,
 					    null,new
@@ -591,7 +590,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 			       EnvelopeWidget.Node(0,127,new
 					    MotifParamModel(p,0x41ff25,element),
 					    0,127,new
-					    MotifParamModel(p,0x41ff2a,element),
+					    MotifParamModel((Patch)p,0x41ff2a,element),
 					    0,false,new
 					    ParamSender(0x41ff25, element),
  					    new ParamSender(0x41ff25,element),
@@ -599,7 +598,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 			       new EnvelopeWidget.Node(0,127,new
 					    MotifParamModel(p,0x41ff26,element),
 					    0,127,new
-					    MotifParamModel(p,0x41ff2b,element),
+					    MotifParamModel((Patch)p,0x41ff2b,element),
 					    0,false,new
                                             ParamSender(0x410025, element),
  					    new ParamSender(0x41ff25,element),
@@ -613,7 +612,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 					    0,0,
 					    null,0,false,new
 					    ParamSender(0x41ff27, element),
-					    null,"Release",null),
+					    null,"Release",null)
 
 			       }),600+10*element);
     }
@@ -691,23 +690,23 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
   }
   class MotifParamModel extends ParamModel {
     boolean twobytes;
-    public MotifParamModel ( Patch p, int address ) {
-      super(p, address);
+    public MotifParamModel ( IPatch p, int address ) {
+      super((Patch)p, address);
       setAddress( 0 );
       twobytes = false;
     }
-    public MotifParamModel(Patch p, int address, boolean _short) {
-      super(p, address);
+    public MotifParamModel(IPatch p, int address, boolean _short) {
+      super((Patch)p, address);
       setAddress( 0 );
       twobytes = _short;
     }
-    public MotifParamModel(Patch p, int address, int _mid) {
-      super(p, address);
+    public MotifParamModel(IPatch p, int address, int _mid) {
+      super((Patch)p, address);
       setAddress( _mid & 127 );
       twobytes = false;
     }
-    public MotifParamModel(Patch p, int address, int _mid, boolean _short) {
-      super(p, address);
+    public MotifParamModel(IPatch p, int address, int _mid, boolean _short) {
+      super((Patch)p, address);
       setAddress( _mid & 127 );
       twobytes = _short;
     }

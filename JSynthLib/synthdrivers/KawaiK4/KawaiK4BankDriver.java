@@ -1,5 +1,6 @@
 package synthdrivers.KawaiK4;
 import core.*;
+
 import java.io.*;
 import javax.swing.*;
 
@@ -41,11 +42,11 @@ public class KawaiK4BankDriver extends BankDriver {
 	return HSIZE + (SSIZE * patchNum);
     }
 
-    public String getPatchName(Patch p, int patchNum) {
+    public String getPatchName(IPatch p, int patchNum) {
 	int nameStart = getPatchStart(patchNum);
 	nameStart += 0; //offset of name in patch data
 	try {
-	    StringBuffer s = new StringBuffer(new String(p.sysex, nameStart,
+	    StringBuffer s = new StringBuffer(new String(((Patch)p).sysex, nameStart,
 							 10, "US-ASCII"));
 	    return s.toString();
 	} catch (UnsupportedEncodingException ex) {
@@ -53,7 +54,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	}
     }
 
-    public void setPatchName(Patch p, int patchNum, String name) {
+    public void setPatchName(IPatch p, int patchNum, String name) {
 	patchNameSize = 10;
 	patchNameStart = getPatchStart(patchNum);
 
@@ -63,15 +64,16 @@ public class KawaiK4BankDriver extends BankDriver {
 	try {
 	    namebytes = name.getBytes("US-ASCII");
 	    for (int i = 0; i < patchNameSize; i++)
-		p.sysex[patchNameStart + i] = namebytes[i];
+		((Patch)p).sysex[patchNameStart + i] = namebytes[i];
 
         } catch (UnsupportedEncodingException ex) {
 	    return;
 	}
     }
 
-    public void calculateChecksum(Patch p, int start, int end, int ofs)  {
-	int i;
+    public void calculateChecksum(IPatch ip, int start, int end, int ofs)  {
+    	Patch p = (Patch)ip;
+    	int i;
 	int sum = 0;
 
 	for (i = start; i <= end; i++)
@@ -82,14 +84,14 @@ public class KawaiK4BankDriver extends BankDriver {
 	// p.sysex[ofs]=(byte)(p.sysex[ofs]+1);
     }
 
-    public void calculateChecksum(Patch p) {
+    public void calculateChecksum(IPatch p) {
 	for (int i = 0; i < NS; i++)
 	    calculateChecksum(p, HSIZE + (i * SSIZE),
 			      HSIZE + (i * SSIZE) + SSIZE - 2,
 			      HSIZE + (i * SSIZE) + SSIZE - 1);
     }
 
-    public void putPatch(Patch bank, Patch p, int patchNum) {
+    public void putPatch(IPatch bank, IPatch p, int patchNum) {
 	if (!canHoldPatch(p)) {
 	    JOptionPane.showMessageDialog
 		(null,
@@ -98,20 +100,20 @@ public class KawaiK4BankDriver extends BankDriver {
 	    return;
 	}
 
-	System.arraycopy(p.sysex, HSIZE, bank.sysex, getPatchStart(patchNum), SSIZE);
+	System.arraycopy(((Patch)p).sysex, HSIZE, ((Patch)bank).sysex, getPatchStart(patchNum), SSIZE);
 	calculateChecksum(bank);
     }
 
-    public Patch getPatch(Patch bank, int patchNum) {
+    public IPatch getPatch(IPatch bank, int patchNum) {
 	byte[] sysex = new byte[HSIZE + SSIZE + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x20; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
 	sysex[6] = (byte) 0x00; sysex[7] = /*(byte)0x00+*/(byte) patchNum;
 	sysex[HSIZE + SSIZE] = (byte) 0xF7;
-	System.arraycopy(bank.sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
+	System.arraycopy(((Patch)bank).sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
 	try {
 	    // pass Single Driver !!!FIXIT!!!
-	    Patch p = new Patch(sysex, getDevice());
+	    IPatch p = new Patch(sysex, getDevice());
 	    p.getDriver().calculateChecksum(p);
 	    return p;
 	} catch (Exception e) {
@@ -120,13 +122,13 @@ public class KawaiK4BankDriver extends BankDriver {
 	}
     }
 
-    public Patch createNewPatch() {
+    public IPatch createNewPatch() {
 	byte[] sysex = new byte[HSIZE + SSIZE * NS + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x21; sysex[4] = (byte) 0x00;	sysex[5] = (byte) 0x04;
 	sysex[6] = (byte) 0x0;  sysex[7] = 0;
 	sysex[HSIZE + SSIZE * NS] = (byte) 0xF7;
-	Patch p = new Patch(sysex, this);
+	IPatch p = new Patch(sysex, this);
 	for (int i = 0; i < NS; i++)
 	    setPatchName(p, i, "New Patch");
 	calculateChecksum(p);
@@ -138,14 +140,14 @@ public class KawaiK4BankDriver extends BankDriver {
 				    new NameValue("bankNum", bankNum << 1)));
     }
 
-    public void storePatch(Patch p, int bankNum, int patchNum) {
+    public void storePatch(IPatch p, int bankNum, int patchNum) {
         try {
 	    Thread.sleep(100);
 	} catch (Exception e) {
 	}
-        p.sysex[3] = (byte) 0x21;
-        p.sysex[6] = (byte) (bankNum << 1);
-        p.sysex[7] = (byte) 0x0;
+        ((Patch)p).sysex[3] = (byte) 0x21;
+        ((Patch)p).sysex[6] = (byte) (bankNum << 1);
+        ((Patch)p).sysex[7] = (byte) 0x0;
         sendPatchWorker(p);
         try {
 	    Thread.sleep(100);

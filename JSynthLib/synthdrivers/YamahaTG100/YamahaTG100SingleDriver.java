@@ -21,10 +21,9 @@
 
 package synthdrivers.YamahaTG100;
 
-import core.*;
-
-import javax.swing.*;
-import java.io.*;
+import core.Driver;
+import core.IPatch;
+import core.Patch;
 
 /**
  * Driver for Yamaha TG100 Singles's (Yamaha calls them "Voices")
@@ -145,7 +144,7 @@ public class YamahaTG100SingleDriver extends Driver {
         }
     }*/
 
-    public Patch createNewPatch() {
+    public IPatch createNewPatch() {
         Patch p = this.createNewPatch(0);
         calculateChecksum(p);
         return p;

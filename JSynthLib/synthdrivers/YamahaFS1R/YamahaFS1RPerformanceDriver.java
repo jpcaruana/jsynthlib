@@ -1,6 +1,7 @@
 package synthdrivers.YamahaFS1R;
 
 import core.*;
+
 import java.io.*;
 
 /**
@@ -133,7 +134,7 @@ public class YamahaFS1RPerformanceDriver extends Driver
     }
 
 
-    public void sendPatch(Patch p) {
+    public void sendPatch(IPatch p) {
 	super.sendPatch(p);
     }
 	
@@ -153,12 +154,12 @@ public class YamahaFS1RPerformanceDriver extends Driver
 
 
     /**Sends a patch to a set location on a synth.*/
-    public void storePatch (Patch p, int bankNum,int patchNum)
+    public void storePatch (IPatch p, int bankNum,int patchNum)
     {
 		// change the address to internal performance
-		p.sysex[6] = (byte)0x11;
-		p.sysex[7] = (byte)0;
-		p.sysex[8] = (byte)patchNum;
+		((Patch)p).sysex[6] = (byte)0x11;
+		((Patch)p).sysex[7] = (byte)0;
+		((Patch)p).sysex[8] = (byte)patchNum;
 		calculateChecksum(p); 
         sendPatch (p);
     }
@@ -205,11 +206,11 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	 *
 	 *@return    Description of the Return Value
 	 */
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		byte[] sysex = new byte[PATCH_AND_HEADER_SIZE];
 		initPatch(sysex, 0);
-		Patch oPatch = new Patch(sysex, this);
+		IPatch oPatch = new Patch(sysex, this);
 		return oPatch;
 	}
 	
@@ -226,15 +227,16 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	 *@param  p  data of the performance
 	 *@return    Description of the Return Value
 	 */
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch ip)
 	{
+		Patch p = (Patch)ip;
 		// set the address to "current performance" so when patch is sent
 		// the FS1R display show this "in edit" performance whenever it comes from.
 		p.sysex[6] = (byte)0x10;
 		p.sysex[7] = (byte)0;
 		p.sysex[8] = (byte)0;
 		calculateChecksum(p);
-		return new YamahaFS1RPerformanceEditor(p);
+		return new YamahaFS1RPerformanceEditor((Patch)p);
 	}
 
 	

@@ -36,8 +36,9 @@ public class YamahaDX7Converter extends Converter
 	}
     
 	
-	public Patch[] extractPatch (Patch p)
+	public IPatch[] extractPatch (IPatch ip)
 	{
+		Patch p = (Patch)ip;
 		byte[] sx=new byte [163]; //single voice
 		byte[] tx= new byte [102]; //single performance
 		byte[] px=new byte [112]; // rest of data

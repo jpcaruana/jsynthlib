@@ -41,7 +41,7 @@ public class KnobWidget extends SysexWidget {
      * @param ofs a <code>ParamModel</code> object.
      * @param s a <code>SysexSender</code> object.
      */
-    public KnobWidget(String l, Patch p, int min, int max, int base,
+    public KnobWidget(String l, IPatch p, int min, int max, int base,
 		      ParamModel ofs, SysexSender s) {
 	super(l, p, min, max, ofs, s);
         mBase = base;
@@ -54,7 +54,7 @@ public class KnobWidget extends SysexWidget {
      * Display an image to the right of the value.
      * @param aImages array of images corresponding to each value.
      */
-    public KnobWidget(String l, Patch p, int min, int max, int base,
+    public KnobWidget(String l, IPatch p, int min, int max, int base,
 		      ParamModel ofs, SysexSender s, ImageIcon[] aImages) {
 	super(l, p, min, max, ofs, s);
         mBase = base;
@@ -68,7 +68,7 @@ public class KnobWidget extends SysexWidget {
      * Special constructor for derived classes.
      * @deprecated
      */
-    protected KnobWidget(String l, Patch p, int min, int max,
+    protected KnobWidget(String l, IPatch p, int min, int max,
 			 ParamModel ofs, SysexSender s) {
 	super(l, p, min, max, ofs, s);
 

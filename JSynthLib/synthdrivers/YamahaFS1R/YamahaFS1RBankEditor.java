@@ -5,9 +5,9 @@ import java.awt.Dimension;
 import javax.swing.JTable;
 
 import core.BankEditorFrame;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
-import core.PatchBasket;
 import core.PatchEditorFrame;
 
 /**
@@ -22,7 +22,7 @@ public class YamahaFS1RBankEditor extends BankEditorFrame
 	preferredColumnWidth = 130;
     }
 
-    public YamahaFS1RBankEditor (Patch p)
+    public YamahaFS1RBankEditor (IPatch p)
     {
 		super(p);
     }
@@ -34,7 +34,7 @@ public class YamahaFS1RBankEditor extends BankEditorFrame
 	*/
     public JSLFrame EditPatch (int aNumPatch, int aPart) // This is not called. OK?
     {
-        Patch p = bankDriver.getPatch (bankData, aNumPatch);
+        Patch p = (Patch)bankDriver.getPatch (bankData, aNumPatch);
         if (p==null) {
 			return null;
 		}
@@ -44,7 +44,8 @@ public class YamahaFS1RBankEditor extends BankEditorFrame
         return pf;
     }
 
-    public Patch getBankPatch() {
-	return bankData;
-    }
+	public IPatch getBankPatch() {
+		return bankData;
+	}
+
 }

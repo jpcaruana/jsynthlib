@@ -1,8 +1,11 @@
 package core;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Window;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  * An abstract class that is used by PrefsDialog to load an arbitrary

@@ -23,9 +23,9 @@ public interface PatchBasket {
     /** Paste a patch. */
     void pastePatch();
     /** Paste a patch. */
-    void pastePatch(Patch p);
+    void pastePatch(IPatch p);
     /** Get the selected patch. */
-    Patch getSelectedPatch();
+    IPatch getSelectedPatch();
 
     /** Send the selected patch. */
     void sendSelectedPatch();

@@ -19,7 +19,7 @@ public class KorgER1Device extends Device
     /** Creates new KorgER1Device */
     public KorgER1Device ()
     {
-	super ("Korg","Electribe ER1","F07E**06024251**************F7",null,"Yves Lefebvre");
+	super ("Korg","Electribe ER1","F07E..06024251..............F7",null,"Yves Lefebvre");
     }
 
     /** Constructor for for actual work. */

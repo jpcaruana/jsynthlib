@@ -18,7 +18,7 @@ public class ReassignPatchDialog extends DevDrvPatchSelector {
      * Constructor
      * @param patch The Patch to reassign
      */
-    public ReassignPatchDialog (Patch patch) {
+    public ReassignPatchDialog (IPatch patch) {
         super(patch, "Reassign Patch to another Device/Driver", "Reassign...");
     }
 

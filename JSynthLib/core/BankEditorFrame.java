@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.sound.midi.SysexMessage;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -25,7 +26,7 @@ import javax.swing.table.TableColumn;
 
 public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
-    protected Patch bankData;
+    protected IPatch bankData;
     /** bank driver. */
     protected BankDriver bankDriver;
     /** This BankEditorFrame instance. */
@@ -48,7 +49,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
      *
      * @param p a <code>Patch</code> value
      */
-    protected BankEditorFrame(Patch p) {
+    protected BankEditorFrame(IPatch p) {
         super(p.getDevice().getModelName() + " "
 	      + p.getDriver().getPatchType()
 	      + " Window",
@@ -178,22 +179,30 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     // PatchBasket methods
 
+    // This needs to use some sort of factory so correct IPatch can be created.
     public void importPatch(File file) throws IOException, FileNotFoundException {
         if (!checkSelected()) return;
         FileInputStream fileIn = new FileInputStream(file);
         byte [] buffer = new byte [(int) file.length()];
         fileIn.read(buffer);
         fileIn.close();
-        Patch p = new Patch(buffer);
+        IPatch p = new Patch(buffer);
         bankDriver.checkAndPutPatch(bankData, p, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
 
     public void exportPatch(File file) throws IOException, FileNotFoundException {
+    	/* Almost the same thing occurs in LibraryFrame and SceneFrame also.
+    	 * Maybe we should have something like
+    	 * static final writePatch(OutputStream, IPatch) in Patch.
+    	 */
         if (!checkSelected()) return;
-        Patch p = getSelectedPatch();
+        SysexMessage[] msgs = getSelectedPatch().getMessages();
+        if (msgs == null)
+        		return; // Exception?
         FileOutputStream fileOut = new FileOutputStream(file);
-        fileOut.write(p.sysex);
+        for (int i = 0; i < msgs.length; i++)
+        		fileOut.write(msgs[i].getMessage(),0,msgs[i].getLength());
         fileOut.close();
     }
 
@@ -209,13 +218,13 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 			      TransferHandler.COPY);
     }
 
-    public Patch getSelectedPatch() {
+    public IPatch getSelectedPatch() {
         return bankDriver.getPatch(bankData, getSelectedPatchNum());
     }
 
     public void sendSelectedPatch() {
         if (!checkSelected()) return;
-        Patch p = getSelectedPatch();
+        IPatch p = getSelectedPatch();
         if (p == null) {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
@@ -231,7 +240,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     public void playSelectedPatch() {
         if (!checkSelected()) return;
-        Patch p = getSelectedPatch();
+        IPatch p = getSelectedPatch();
         if (p == null) {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
@@ -242,7 +251,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     public void storeSelectedPatch() {
         if (!checkSelected()) return;
-        Patch p = getSelectedPatch();
+        IPatch p = getSelectedPatch();
         if (p == null) {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
@@ -254,7 +263,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     public JSLFrame editSelectedPatch() {
         if (!checkSelected()) return null;
-        Patch p = getSelectedPatch();
+        IPatch p = getSelectedPatch();
         if (p == null) {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return null;
@@ -268,7 +277,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
 	    Actions.setEnabled(false, Actions.EN_PASTE);
     }
-    public void pastePatch(Patch p) {
+    public void pastePatch(IPatch p) {
 	pth.importData(table, p);
     }
 
@@ -311,7 +320,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 			   | Actions.EN_STORE);
 
 	// All entries are of the same type, so we can check the first one....
-	Patch myPatch = myModel.getPatchAt(0, 0);
+	IPatch myPatch = myModel.getPatchAt(0, 0);
 	Actions.setEnabled(table.getSelectedRowCount() > 0
 			   && myPatch.getDriver().hasEditor(),
 			   Actions.EN_EDIT);
@@ -327,7 +336,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     private static class PatchGridTransferHandler extends PatchTransferHandler {
-	protected Patch getSelectedPatch(JComponent c) {
+	protected IPatch getSelectedPatch(JComponent c) {
 	    try {
 		JTable t = (JTable)c;
 		PatchGridModel m = (PatchGridModel) t.getModel();
@@ -338,7 +347,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    }
 	}
 
-	protected boolean storePatch(Patch p, JComponent c) {
+	protected boolean storePatch(IPatch p, JComponent c) {
 	    try {
 		p.chooseDriver();
 		JTable t = (JTable)c;
@@ -354,10 +363,10 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     class PatchGridModel extends AbstractTableModel {
-	public Patch bankData;
+	public IPatch bankData;
 	public BankDriver bankDriver;
 
-	public PatchGridModel (Patch p,BankDriver d) {
+	public PatchGridModel (IPatch p,BankDriver d) {
 	    super();
 	    ErrorMsg.reportStatus("PatchGridModel");
 	    bankData=p;
@@ -382,7 +391,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    return (patchNumbers[i] + " " + bankDriver.getPatchName(bankData, i));
 	}
 
-	public Patch getPatchAt(int row, int col) {
+	public IPatch getPatchAt(int row, int col) {
 	    int i = col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row;
 	    return bankDriver.getPatch(bankData, i);
 	}
@@ -401,7 +410,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
 	}
 
-	public void setPatchAt(Patch p,int row,int col) {
+	public void setPatchAt(IPatch p,int row,int col) {
 	    bankDriver.checkAndPutPatch(bankData,p,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
 	    fireTableCellUpdated (row, col);
 	}

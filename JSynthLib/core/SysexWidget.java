@@ -53,7 +53,7 @@ public abstract class SysexWidget extends JPanel {
     private JLabel jlabel;
 
     /** <code>Patch</code> associated with the widget. */
-    private Patch patch;
+    private IPatch patch;
 
     /** System exclusive message sender. */
     private SysexSender sysexSender;
@@ -94,7 +94,7 @@ public abstract class SysexWidget extends JPanel {
      * @param s SysexSender for transmitting the value at editing
      * the parameter.
      */
-    protected SysexWidget(String l, Patch p, int min, int max,
+    protected SysexWidget(String l, IPatch p, int min, int max,
 			  ParamModel ofs, SysexSender s) {
         super();
 	label = l;
@@ -120,14 +120,14 @@ public abstract class SysexWidget extends JPanel {
      * <code>min</code> is set to <code>Integer.MIN_VALUE</code> and
      * <code>max</code> is set to <code>Integer.MAX_VALUE</code>.
      */
-    protected SysexWidget(String l, Patch p, ParamModel ofs, SysexSender s) {
+    protected SysexWidget(String l, IPatch p, ParamModel ofs, SysexSender s) {
 	this(l, p, Integer.MIN_VALUE, Integer.MAX_VALUE, ofs, s);
     }
 
     /**
      * @deprecated use <code>SysexWidget(l, p, null, null)</code>
      */
-    protected SysexWidget(String l, Patch p) {
+    protected SysexWidget(String l, IPatch p) {
 	this(l, p, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
     }
 
@@ -209,7 +209,7 @@ public abstract class SysexWidget extends JPanel {
     }
 
     /** @deprecated Use no arg <code>setValue()</code>. */
-    public void setValue(Patch p) { // 'p' is not used!!!
+    public void setValue(IPatch p) { // 'p' is not used!!!
 	setValue();
     }
 
@@ -262,7 +262,7 @@ public abstract class SysexWidget extends JPanel {
     }
 
     /** Return <code>Patch</code> value. */
-    protected Patch getPatch() {
+    protected IPatch getPatch() {
 	return patch;
     }
 

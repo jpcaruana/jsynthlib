@@ -22,7 +22,7 @@ public class EmuProteusDevice extends Device
     /** Creates new EmuProteusDevice */
     public EmuProteusDevice ()
     {
-	super ("Emu","Proteus MPS","F07E**06021804040800********F7",infoText,"Brian Klock");
+	super ("Emu","Proteus MPS","F07E..06021804040800........F7",infoText,"Brian Klock");
     }
 
     /** Constructor for for actual work. */

@@ -11,13 +11,15 @@
 
 package core;
 
-import java.util.Properties;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.io.InputStream;
-import java.io.IOException;
+import java.util.Properties;
+import java.util.prefs.Preferences;
 
 class DevicesConfig {
 
@@ -111,6 +113,18 @@ class DevicesConfig {
 		*/
 	    }
 	}
+	String[][] xmldevices = XMLDeviceFactory.getDeviceNames();
+	if (xmldevices != null) {
+		for (int i = 0; i < xmldevices.length; i++) {
+			String deviceName = xmldevices[i][0];
+			String deviceClass = ":" + xmldevices[i][2];
+			deviceNames.add(deviceName);
+			inqueryIDProps.setProperty(xmldevices[i][1], deviceClass);
+			deviceProps.setProperty(deviceName, deviceClass);
+			//XXX: just use the name for now
+			shortNameProps.setProperty(deviceName, deviceClass);
+		}
+	}
 	Collections.sort(deviceNames);
     }
 
@@ -143,6 +157,28 @@ class DevicesConfig {
 	return createDevice(deviceProps.getProperty(deviceName));
     }
     */
+    
+    Device createDevice(String className, Preferences prefs) {
+    		if (className.charAt(0) == ':') {
+    			return XMLDeviceFactory.createDevice(className.substring(1),
+    					prefs);
+    		} else {
+    			try {
+    				Device device;
+    				Class c = Class.forName(className);
+    			    Class[] args = { Class.forName("java.util.prefs.Preferences") };
+    			    Constructor con = c.getConstructor(args);
+    			    device = (Device) con.newInstance(new Object[] { prefs });
+    			    return device;
+    			} catch (Exception e) {
+    			    ErrorMsg.reportError("Failed to create device",
+    						 "Failed to create device of class '"
+    						 + className + "'");
+    			    return null;
+    			}
+    		}
+    }
+    
     /**
      * Given a inquery ID String, return its Device.
      * @param IDString inquery ID String

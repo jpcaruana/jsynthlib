@@ -4,6 +4,7 @@
 package synthdrivers.OberheimMatrix;
 import core.BankDriver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 public class OberheimMatrixBankDriver extends BankDriver
 {
@@ -28,15 +29,16 @@ public int getPatchStart(int PatchNum)
 	return PatchNum*275;
 }
 
-public void calculateChecksum(Patch p)
+public void calculateChecksum(IPatch p)
  {
    for (int i=0;i<100;i++)
      calculateChecksum(p,5+getPatchStart(i),272+getPatchStart(i),273+getPatchStart(i)); 
  
  }
 
-public void calculateChecksum(Patch p,int start,int end,int ofs)
+public void calculateChecksum(IPatch ip,int start,int end,int ofs)
   {
+    Patch p = (Patch)ip;
     int i;
     int sum=0;
     for (i=start;i<=end;i++)
@@ -55,97 +57,97 @@ public void calculateChecksum(Patch p,int start,int end,int ofs)
 	  });
       } catch (Exception e) {}
   }
-  public void storePatch (Patch p, int bankNum,int patchNum)
+  public void storePatch (IPatch p, int bankNum,int patchNum)
   {   
    setBankNum(bankNum);
    for (int i=0;i<100;i++)
-   {p.sysex[3+getPatchStart(i)]=1;
-   p.sysex[4+getPatchStart(i)]=(byte)i;}
+   {((Patch)p).sysex[3+getPatchStart(i)]=1;
+   ((Patch)p).sysex[4+getPatchStart(i)]=(byte)i;}
    sendPatchWorker(p);
    
   }
 
  
 
-  public String getPatchName(Patch p,int patchNum) {
+  public String getPatchName(IPatch p,int patchNum) {
           try {
             int start=getPatchStart(patchNum);
 	    byte []b = new byte[8];
-	    b[0]=((byte)(p.sysex[start+5]+p.sysex[start+6]*16));
-	    b[1]=((byte)(p.sysex[start+7]+p.sysex[start+8]*16));
-	    b[2]=((byte)(p.sysex[start+9]+p.sysex[start+10]*16));
-	    b[3]=((byte)(p.sysex[start+11]+p.sysex[start+12]*16));
-	    b[4]=((byte)(p.sysex[start+13]+p.sysex[start+14]*16));
-	    b[5]=((byte)(p.sysex[start+15]+p.sysex[start+16]*16));
-	    b[6]=((byte)(p.sysex[start+17]+p.sysex[start+18]*16));
-	    b[7]=((byte)(p.sysex[start+19]+p.sysex[start+20]*16));
+	    b[0]=((byte)(((Patch)p).sysex[start+5]+((Patch)p).sysex[start+6]*16));
+	    b[1]=((byte)(((Patch)p).sysex[start+7]+((Patch)p).sysex[start+8]*16));
+	    b[2]=((byte)(((Patch)p).sysex[start+9]+((Patch)p).sysex[start+10]*16));
+	    b[3]=((byte)(((Patch)p).sysex[start+11]+((Patch)p).sysex[start+12]*16));
+	    b[4]=((byte)(((Patch)p).sysex[start+13]+((Patch)p).sysex[start+14]*16));
+	    b[5]=((byte)(((Patch)p).sysex[start+15]+((Patch)p).sysex[start+16]*16));
+	    b[6]=((byte)(((Patch)p).sysex[start+17]+((Patch)p).sysex[start+18]*16));
+	    b[7]=((byte)(((Patch)p).sysex[start+19]+((Patch)p).sysex[start+20]*16));
             StringBuffer s= new StringBuffer(new String(b,0,8,"US-ASCII"));
            return s.toString();
          } catch (Exception ex) {return "-";}
    }
-  public void setPatchName(Patch p, int patchNum,String name)	
+  public void setPatchName(IPatch p, int patchNum,String name)	
   {
 	byte [] namebytes = new byte[32];
 	try{
         int start=getPatchStart(patchNum);
 	if (name.length()<8) name=name+"        ";
         namebytes=name.getBytes("US-ASCII");
-	p.sysex[start+5]=((byte)(namebytes[0]%16));
-	p.sysex[start+6]=((byte)(namebytes[0]/16));
-	p.sysex[start+7]=((byte)(namebytes[1]%16));
-	p.sysex[start+8]=((byte)(namebytes[1]/16));
-	p.sysex[start+9]=((byte)(namebytes[2]%16));
-	p.sysex[start+10]=((byte)(namebytes[2]/16));
-	p.sysex[start+11]=((byte)(namebytes[3]%16));
-	p.sysex[start+12]=((byte)(namebytes[3]/16));
-	p.sysex[start+13]=((byte)(namebytes[4]%16));
-	p.sysex[start+14]=((byte)(namebytes[4]/16));
-	p.sysex[start+15]=((byte)(namebytes[5]%16));
-	p.sysex[start+16]=((byte)(namebytes[5]/16));
-	p.sysex[start+17]=((byte)(namebytes[6]%16));
-	p.sysex[start+18]=((byte)(namebytes[6]/16));
-	p.sysex[start+19]=((byte)(namebytes[7]%16));
-	p.sysex[start+20]=((byte)(namebytes[7]/16));
+	((Patch)p).sysex[start+5]=((byte)(namebytes[0]%16));
+	((Patch)p).sysex[start+6]=((byte)(namebytes[0]/16));
+	((Patch)p).sysex[start+7]=((byte)(namebytes[1]%16));
+	((Patch)p).sysex[start+8]=((byte)(namebytes[1]/16));
+	((Patch)p).sysex[start+9]=((byte)(namebytes[2]%16));
+	((Patch)p).sysex[start+10]=((byte)(namebytes[2]/16));
+	((Patch)p).sysex[start+11]=((byte)(namebytes[3]%16));
+	((Patch)p).sysex[start+12]=((byte)(namebytes[3]/16));
+	((Patch)p).sysex[start+13]=((byte)(namebytes[4]%16));
+	((Patch)p).sysex[start+14]=((byte)(namebytes[4]/16));
+	((Patch)p).sysex[start+15]=((byte)(namebytes[5]%16));
+	((Patch)p).sysex[start+16]=((byte)(namebytes[5]/16));
+	((Patch)p).sysex[start+17]=((byte)(namebytes[6]%16));
+	((Patch)p).sysex[start+18]=((byte)(namebytes[6]/16));
+	((Patch)p).sysex[start+19]=((byte)(namebytes[7]%16));
+	((Patch)p).sysex[start+20]=((byte)(namebytes[7]/16));
 	}catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix1000 Bank Driver",e);}
   }
-public void putPatch(Patch bank,Patch p,int patchNum)
+public void putPatch(IPatch bank,IPatch p,int patchNum)
    { 
    if (!canHoldPatch(p))
        {ErrorMsg.reportError("Error", "This type of patch does not fit in to this type of bank."); return;}
                         
-   System.arraycopy(p.sysex,0,bank.sysex,getPatchStart(patchNum),275);
+   System.arraycopy(((Patch)p).sysex,0,((Patch)bank).sysex,getPatchStart(patchNum),275);
    calculateChecksum(bank);
    }
-  public Patch getPatch(Patch bank, int patchNum)
+  public IPatch getPatch(IPatch bank, int patchNum)
    {
   try{
      byte [] sysex=new byte[275];
-     System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,0,275);
-     Patch p = new Patch(sysex, getDevice());
+     System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,0,275);
+     IPatch p = new Patch(sysex, getDevice());
      p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix 1000 Bank Driver",e);return null;}
    }
-  protected void sendPatch (Patch p)
+  protected void sendPatch (IPatch p)
    {
      byte []tmp=new byte[275];
-    if (deviceIDoffset>0) p.sysex[deviceIDoffset]=(byte)(getChannel()-1);
+    if (deviceIDoffset>0) ((Patch)p).sysex[deviceIDoffset]=(byte)(getChannel()-1);
     try {       
        for (int i=0;i<100;i++) 
        {
-       System.arraycopy(p.sysex,275*i,tmp,0,275);
+       System.arraycopy(((Patch)p).sysex,275*i,tmp,0,275);
        send(tmp);
        Thread.sleep(15);
        }
     }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}
    }
-public Patch createNewPatch()
+public IPatch createNewPatch()
  {
 	 byte [] sysex = new byte[27500];
 	 for (int i=0;i<100;i++){
 	 sysex[0+275*i]=(byte)0xF0; sysex[1+275*i]=(byte)0x10;sysex[2+275*i]=(byte)0x06;sysex[3+275*i]=(byte)0x0D;sysex[4+275*i]=(byte)0x00;
 	 sysex[274+275*i]=(byte)0xF7;}
-         Patch p = new Patch(sysex, this);
+         IPatch p = new Patch(sysex, this);
 	 for (int i=0;i<100;i++)
 	  setPatchName(p,i,"NewPatch");
 	 calculateChecksum(p);	 

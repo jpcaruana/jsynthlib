@@ -24,6 +24,7 @@
  */
 package synthdrivers.YamahaDX7.common;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -59,15 +60,15 @@ public class DX7FamilyPerformanceIIISingleDriver extends Driver
 	}
 
 	
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		return new Patch(initSysex, this);
 	}
 
 
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
-		return new DX7FamilyPerformanceIIIEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor" ,p);
+		return new DX7FamilyPerformanceIIIEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor" ,(Patch)p);
 	}
 
 
@@ -77,14 +78,15 @@ public class DX7FamilyPerformanceIIISingleDriver extends Driver
         }
 
 
-	public String getPatchName (Patch p)
+	public String getPatchName (IPatch p)
 	{
+	    Patch ip = (Patch)p;
 		try {
 			byte []b = new byte[patchNameSize/2];	// 1 character encoded in 2 bytes!
 
 			for (int i=0; i < b.length; i++) {
-			b[i] =(byte)(	DX7FamilyByteEncoding.AsciiHex2Value(p.sysex[16+2*(96+i)  ])*16 +
-					DX7FamilyByteEncoding.AsciiHex2Value(p.sysex[16+2*(96+i)+1]) );
+			b[i] =(byte)(	DX7FamilyByteEncoding.AsciiHex2Value(ip.sysex[16+2*(96+i)  ])*16 +
+					DX7FamilyByteEncoding.AsciiHex2Value(ip.sysex[16+2*(96+i)+1]) );
 			}
 
 			StringBuffer s= new StringBuffer(new String(b,0,patchNameSize/2,"US-ASCII"));
@@ -96,7 +98,7 @@ public class DX7FamilyPerformanceIIISingleDriver extends Driver
 	}
 
 
-	public void setPatchName (Patch p, String name)
+	public void setPatchName (IPatch p, String name)
 	{
 		byte [] namebytes = new byte[patchNameSize/2];	// 1 character encoded in 2 bytes!
 
@@ -106,8 +108,8 @@ public class DX7FamilyPerformanceIIISingleDriver extends Driver
 			namebytes=name.getBytes("US-ASCII");
 
 			for (int i=0; i < namebytes.length; i++) {
-				p.sysex[16+2*(96+i)  ] = (byte)(DX7FamilyByteEncoding.Value2AsciiHexHigh(namebytes[i]));
-				p.sysex[16+2*(96+i)+1] = (byte)(DX7FamilyByteEncoding.Value2AsciiHexLow( namebytes[i]));
+				((Patch)p).sysex[16+2*(96+i)  ] = (byte)(DX7FamilyByteEncoding.Value2AsciiHexHigh(namebytes[i]));
+				((Patch)p).sysex[16+2*(96+i)+1] = (byte)(DX7FamilyByteEncoding.Value2AsciiHexLow( namebytes[i]));
 			}
 		} catch (Exception e) {}
 

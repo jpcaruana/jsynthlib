@@ -20,7 +20,7 @@ public class KawaiK4Device extends Device {
 
     /** Constructor for DeviceListWriter. */
     public KawaiK4Device() {
-	super("Kawai", "K4/K4R", "F07E**0602400000040000000000f7",
+	super("Kawai", "K4/K4R", "F07E..0602400000040000000000f7",
 	      INFO_TEXT, "Brian Klock & Gerrit Gehnen");
     }
 

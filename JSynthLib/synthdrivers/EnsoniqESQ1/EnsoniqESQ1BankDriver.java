@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 
 import core.BankDriver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 public class EnsoniqESQ1BankDriver extends BankDriver
 {
@@ -34,86 +35,86 @@ public class EnsoniqESQ1BankDriver extends BankDriver
      start+=5;  //sysex header
    return start;
    }
-  public String getPatchName(Patch p,int patchNum) {
+  public String getPatchName(IPatch p,int patchNum) {
      int nameStart=getPatchStart(patchNum);
      nameStart+=0; //offset of name in patch data
 
           try {
             byte []b = new byte[6];
-            b[0]=((byte)(p.sysex[nameStart]+p.sysex[nameStart+1]*16));
-            b[1]=((byte)(p.sysex[nameStart+2]+p.sysex[nameStart+3]*16));
-            b[2]=((byte)(p.sysex[nameStart+4]+p.sysex[nameStart+5]*16));
-            b[3]=((byte)(p.sysex[nameStart+6]+p.sysex[nameStart+7]*16));
-            b[4]=((byte)(p.sysex[nameStart+8]+p.sysex[nameStart+9]*16));
-            b[5]=((byte)(p.sysex[nameStart+10]+p.sysex[nameStart+11]*16));
+            b[0]=((byte)(((Patch)p).sysex[nameStart]+((Patch)p).sysex[nameStart+1]*16));
+            b[1]=((byte)(((Patch)p).sysex[nameStart+2]+((Patch)p).sysex[nameStart+3]*16));
+            b[2]=((byte)(((Patch)p).sysex[nameStart+4]+((Patch)p).sysex[nameStart+5]*16));
+            b[3]=((byte)(((Patch)p).sysex[nameStart+6]+((Patch)p).sysex[nameStart+7]*16));
+            b[4]=((byte)(((Patch)p).sysex[nameStart+8]+((Patch)p).sysex[nameStart+9]*16));
+            b[5]=((byte)(((Patch)p).sysex[nameStart+10]+((Patch)p).sysex[nameStart+11]*16));
             StringBuffer s= new StringBuffer(new String(b,0,6,"US-ASCII"));
            return s.toString();
          } catch (Exception ex) {return "-";}
      
   }
 
-  public void setPatchName(Patch p,int patchNum, String name)
+  public void setPatchName(IPatch p,int patchNum, String name)
   {
 	byte [] namebytes = new byte[32];
         int nameStart=getPatchStart(patchNum);
 	try{
         if (name.length()<6) name=name+"        ";
         namebytes=name.getBytes("US-ASCII");
-        p.sysex[nameStart]=((byte)(namebytes[0]%16));
-        p.sysex[nameStart+1]=((byte)(namebytes[0]/16));
-        p.sysex[nameStart+2]=((byte)(namebytes[1]%16));
-        p.sysex[nameStart+3]=((byte)(namebytes[1]/16));
-        p.sysex[nameStart+4]=((byte)(namebytes[2]%16));
-        p.sysex[nameStart+5]=((byte)(namebytes[2]/16));
-        p.sysex[nameStart+6]=((byte)(namebytes[3]%16));
-        p.sysex[nameStart+7]=((byte)(namebytes[3]/16));
-        p.sysex[nameStart+8]=((byte)(namebytes[4]%16));
-        p.sysex[nameStart+9]=((byte)(namebytes[4]/16));
-        p.sysex[nameStart+10]=((byte)(namebytes[5]%16));
-        p.sysex[nameStart+11]=((byte)(namebytes[5]/16));
+        ((Patch)p).sysex[nameStart]=((byte)(namebytes[0]%16));
+        ((Patch)p).sysex[nameStart+1]=((byte)(namebytes[0]/16));
+        ((Patch)p).sysex[nameStart+2]=((byte)(namebytes[1]%16));
+        ((Patch)p).sysex[nameStart+3]=((byte)(namebytes[1]/16));
+        ((Patch)p).sysex[nameStart+4]=((byte)(namebytes[2]%16));
+        ((Patch)p).sysex[nameStart+5]=((byte)(namebytes[2]/16));
+        ((Patch)p).sysex[nameStart+6]=((byte)(namebytes[3]%16));
+        ((Patch)p).sysex[nameStart+7]=((byte)(namebytes[3]/16));
+        ((Patch)p).sysex[nameStart+8]=((byte)(namebytes[4]%16));
+        ((Patch)p).sysex[nameStart+9]=((byte)(namebytes[4]/16));
+        ((Patch)p).sysex[nameStart+10]=((byte)(namebytes[5]%16));
+        ((Patch)p).sysex[nameStart+11]=((byte)(namebytes[5]/16));
 	}catch (Exception e) {}
 
   }
  
 
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  public void calculateChecksum(IPatch p,int start,int end,int ofs)
   {
 
 
   }
 
 
-  public void calculateChecksum (Patch p)
+  public void calculateChecksum (IPatch p)
    {
    }                                     
 
-  public void putPatch(Patch bank,Patch p,int patchNum)
+  public void putPatch(IPatch bank,IPatch p,int patchNum)
    { 
    if (!canHoldPatch(p))
        {JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); return;}
                         
-   System.arraycopy(p.sysex,5,bank.sysex,getPatchStart(patchNum),204);
+   System.arraycopy(((Patch)p).sysex,5,((Patch)bank).sysex,getPatchStart(patchNum),204);
    calculateChecksum(bank);
    }
-  public Patch getPatch(Patch bank, int patchNum)
+  public IPatch getPatch(IPatch bank, int patchNum)
    {
   try{
      byte [] sysex=new byte[210];
      sysex[00]=(byte)0xF0;sysex[01]=(byte)0x0F;sysex[02]=(byte)0x02;
      sysex[03]=(byte)0x00;sysex[04]=(byte)0x01;
      sysex[209]=(byte)0xF7;     
-     System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,5,204);
-     Patch p = new Patch(sysex, getDevice());
+     System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,5,204);
+     IPatch p = new Patch(sysex, getDevice());
      p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in ESQ1 Bank Driver",e);return null;}
    }
-public Patch createNewPatch()
+public IPatch createNewPatch()
  {
 	 byte [] sysex = new byte[15123];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x21;sysex[4]=(byte)0x00;
 	  sysex[5]=(byte)0x04; sysex[6]=(byte)0x0;sysex[15122]=(byte)0xF7;
-         Patch p = new Patch(sysex, this);
+         IPatch p = new Patch(sysex, this);
 	 for (int i=0;i<64;i++)
            setPatchName(p,i,"NEWSND");
 	 calculateChecksum(p);	 

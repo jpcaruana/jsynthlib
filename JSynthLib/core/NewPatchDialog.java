@@ -23,7 +23,7 @@ public class NewPatchDialog extends JDialog
 {
     private JComboBox deviceComboBox;
     private JComboBox driverComboBox;
-    private Patch p;
+    private IPatch p;
 
     public NewPatchDialog(JFrame parent)
     {
@@ -43,7 +43,7 @@ public class NewPatchDialog extends JDialog
 // 	try {
 	// Skipping the generic device (i == 0)
 	for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++) {
-	    Device device = (Device) PatchEdit.appConfig.getDevice(i);
+	    Device device = (Device) AppConfig.getDevice(i);
 	    for (int j=0; j < device.driverCount(); j++) {
 		Driver driver = device.getDriver(j);
 		if (!(driver instanceof Converter)) { // Skipping a converter
@@ -128,7 +128,7 @@ public class NewPatchDialog extends JDialog
 // 	}
     }
 
-    public Patch getNewPatch() { return p; }
+    public IPatch getNewPatch() { return p; }
 
     /**
      * Repopulate the Driver ComboBox with valid drivers after a Device change

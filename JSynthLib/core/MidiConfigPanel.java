@@ -207,8 +207,8 @@ class MidiConfigPanel extends ConfigPanel {
 	    if (!appConfig.getMultiMIDI()) {
 		// change MIDI ports of all Devices
 		for (int i = 0; i < appConfig.deviceCount(); i++) {
-		    appConfig.getDevice(i).setPort(out);
-		    appConfig.getDevice(i).setInPort(in);
+		    AppConfig.getDevice(i).setPort(out);
+		    AppConfig.getDevice(i).setInPort(in);
 		}
 	    }
 	} else {

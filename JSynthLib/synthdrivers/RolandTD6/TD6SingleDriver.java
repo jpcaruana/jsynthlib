@@ -24,6 +24,7 @@ import java.io.InputStream;
 
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.JSLFrame;
 import core.NameValue;
 import core.Patch;
@@ -103,10 +104,10 @@ public final class TD6SingleDriver extends Driver {
      * @param bankNum ignored.
      * @param patchNum drum kit number (0: drum kit 1, ..., 98: drum kit 99)
      */
-    public void storePatch (Patch p, int bankNum, int patchNum) {
+    public void storePatch (IPatch p, int bankNum, int patchNum) {
 // 	ErrorMsg.reportStatus("storePatch: " + p);
 //  	ErrorMsg.reportStatus("storePatch: " + device);
-	storePatch(p.sysex, 0, patchNum);
+	storePatch(((Patch)p).sysex, 0, patchNum);
     }
 
     /**
@@ -156,7 +157,7 @@ public final class TD6SingleDriver extends Driver {
      *
      * @param p a <code>Patch</code> value
      */
-    public void sendPatch (Patch p) {
+    public void sendPatch (IPatch p) {
 	storePatch (p, 0, NUM_PATCH - 1);
     }
 
@@ -183,7 +184,7 @@ public final class TD6SingleDriver extends Driver {
      * @param p a <code>Patch</code> value.
      * @param offset offset index to calculate the check sum.
      */
-    void calculateChecksum(Patch p, int offset) {
+    void calculateChecksum(IPatch p, int offset) {
 // 	ErrorMsg.reportStatus("offset = " + offset);
 	int size;
 	for (int i = 0; i < NUM_PKT; i++, offset += size) {
@@ -199,8 +200,8 @@ public final class TD6SingleDriver extends Driver {
      *
      * @param p a <code>Patch</code> value
      */
-    public void calculateChecksum(Patch p) {
-	calculateChecksum(p, 0);
+    public void calculateChecksum(IPatch p) {
+	calculateChecksum((IPatch)p, 0);
     }
 
     /**
@@ -209,7 +210,7 @@ public final class TD6SingleDriver extends Driver {
      * @return a <code>Patch</code> value
      */
     // This can be defined in Driver.java. !!!FIXIT!!!
-    public Patch createNewPatch() { // Borrowed from DR660 driver
+    public IPatch createNewPatch() { // Borrowed from DR660 driver
 	try {
 	    InputStream fileIn = getClass().getResourceAsStream(patchFileName);
 	    byte[] buffer = new byte [SINGLE_SIZE];
@@ -243,8 +244,8 @@ public final class TD6SingleDriver extends Driver {
      * @param p a <code>Patch</code> value
      * @return a <code>JSLFrame</code> value
      */
-    public JSLFrame editPatch(Patch p) {
+    public JSLFrame editPatch(IPatch p) {
 // 	ErrorMsg.reportStatus("editPatch: " + device);
-	return new TD6SingleEditor(p);
+	return new TD6SingleEditor((Patch)p);
     }
 }

@@ -31,7 +31,7 @@ public class ComboBoxWidget extends SysexWidget {
      * @param o Array, which contains the list of the options in the combobox.
      * @see SysexWidget
      */
-    public ComboBoxWidget(String l, Patch p, int min,
+    public ComboBoxWidget(String l, IPatch p, int min,
 			  ParamModel ofs, SysexSender s, Object[] o) {
 	super(l, p, min, min + o.length - 1, ofs, s);
         options = o;
@@ -41,7 +41,7 @@ public class ComboBoxWidget extends SysexWidget {
     }
 
     /** <code>min</code> is set to 0. */
-    public ComboBoxWidget(String l, Patch p,
+    public ComboBoxWidget(String l, IPatch p,
 			  ParamModel ofs, SysexSender s, Object [] o) {
         this(l, p, 0, ofs, s, o);
     }

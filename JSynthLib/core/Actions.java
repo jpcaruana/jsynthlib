@@ -1143,7 +1143,7 @@ final class Actions {
             try {
 		NewPatchDialog np = new NewPatchDialog(PatchEdit.getInstance());
 		np.setVisible(true);
-		Patch p = np.getNewPatch();
+		IPatch p = np.getNewPatch();
 		if (p != null)
 		    ((PatchBasket) JSLDesktop.getSelectedFrame()).pastePatch(p);
 	    } catch (Exception ex) {

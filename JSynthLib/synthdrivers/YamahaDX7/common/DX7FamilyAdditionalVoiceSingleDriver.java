@@ -24,6 +24,7 @@
  */
 package synthdrivers.YamahaDX7.common;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -58,14 +59,14 @@ public class DX7FamilyAdditionalVoiceSingleDriver extends Driver
 	}
 
 
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		return new Patch(initSysex, this);
 	}
 
 
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
-		return new DX7FamilyAdditionalVoiceEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", p);
+		return new DX7FamilyAdditionalVoiceEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", (Patch)p);
 	}
 }

@@ -1,6 +1,7 @@
 package synthdrivers.KorgWavestation;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -16,7 +17,7 @@ import core.SysexHandler;
 public class KorgWavestationSinglePatchDriver extends Driver {
 
     public KorgWavestationSinglePatchDriver() {
-	super ("Single Patch","Gerrit Gehnen");
+        super ("Single Patch","Gerrit Gehnen");
         sysexID="F0423*2840";
         sysexRequestDump=new SysexHandler("F0 42 @@ 28 10 *bankNum* *patchNum* F7");
         //patchSize=852;
@@ -29,11 +30,11 @@ public class KorgWavestationSinglePatchDriver extends Driver {
         checksumOffset=852+7;
         bankNumbers =new String[] {"RAM1","RAM2","ROM1","CARD","RAM3"};
         patchNumbers=new String[]
-        {"01-","02-","03-","04-","05-","06-","07-",
-         "08-","09-","10-","11-","12-","13-","14-","15-",
-         "16-","17-","18-","19-","20-","21-","22-","23-",
-         "24-","25-","26-","27-","28-","29-","30-","31-",
-         "32-","33-","34-","35-"};
+            {"01-","02-","03-","04-","05-","06-","07-",
+             "08-","09-","10-","11-","12-","13-","14-","15-",
+             "16-","17-","18-","19-","20-","21-","22-","23-",
+             "24-","25-","26-","27-","28-","29-","30-","31-",
+             "32-","33-","34-","35-"};
     }
 
     /** Stores the patch in the specified memory.
@@ -41,24 +42,24 @@ public class KorgWavestationSinglePatchDriver extends Driver {
      * copys the patch into the edit buffer.
      * A seperate command must transmitted to store the edit
      * buffer contents in the RAM.
-     */
-    public void storePatch(Patch p, int bankNum,int patchNum) {
+     */    
+    public void storePatch(IPatch p, int bankNum,int patchNum) {        
         setBankNum(bankNum);
         setPatchNum(patchNum);
 
         try
-        {Thread.sleep(100); } catch (Exception e)
-        {}
-
-        p.sysex[2]=(byte)(0x30 + getChannel() - 1);
+            {Thread.sleep(100); } catch (Exception e)
+            {}
+        
+        ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1);
         try {
-            send(p.sysex);
+            send(((Patch)p).sysex);
         }catch (Exception e)
-        {ErrorMsg.reportStatus(e);}
+            {ErrorMsg.reportStatus(e);}
 
         try
-        {Thread.sleep(100); } catch (Exception e)
-        {}
+            {Thread.sleep(100); } catch (Exception e)
+            {}
         // Send a write request to store the patch in eprom
 
         byte [] sysex = new byte[8];
@@ -73,36 +74,37 @@ public class KorgWavestationSinglePatchDriver extends Driver {
         try {
             send(sysex);
         }catch (Exception e)
-        {ErrorMsg.reportStatus(e);}
+            {ErrorMsg.reportStatus(e);}
 
     }
-
-    public void sendPatch(Patch p) {
-        p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
-
+    
+    public void sendPatch(IPatch p) {
+        ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
+        
         try {
-            send(p.sysex);
+            send(((Patch)p).sysex);
         }catch (Exception e)
-        {ErrorMsg.reportStatus(e);}
+            {ErrorMsg.reportStatus(e);}
     }
-
-    public Patch createNewPatch() {
+    
+    public IPatch createNewPatch() {
         byte [] sysex=new byte[852+9];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
         sysex[2]=(byte)(0x30+getChannel()-1);
         sysex[03]=(byte)0x28;sysex[04]=(byte)0x40;sysex[05]=(byte)0x00/*bankNum*/;
-         sysex[06]=(byte)0/*patchNum*/;
+        sysex[06]=(byte)0/*patchNum*/;
 
         /*sysex[852+7]=checksum;*/
         sysex[852+8]=(byte)0xF7;
-
-        Patch p = new Patch(sysex, this);
+    
+        IPatch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
     }
-
-    public void calculateChecksum(Patch p,int start,int end,int ofs) {
+    
+    public void calculateChecksum(IPatch ip,int start,int end,int ofs) {
+        Patch p = (Patch)ip;
         int i;
         int sum=0;
 
@@ -119,11 +121,11 @@ public class KorgWavestationSinglePatchDriver extends Driver {
         try {
             send(0xC0+(getChannel()-1), patchNum);
         } catch (Exception e)
-        {};
+            {};
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-          NameValue nv[]=new NameValue[2];
+        NameValue nv[]=new NameValue[2];
         nv[0]=new NameValue("bankNum",bankNum);
         nv[1]=new NameValue("patchNum",patchNum);
         send(sysexRequestDump.toSysexMessage(getChannel(), nv));

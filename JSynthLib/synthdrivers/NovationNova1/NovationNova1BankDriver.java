@@ -7,6 +7,7 @@
 
 package synthdrivers.NovationNova1;
 import core.*;
+
 import java.io.*;
 import javax.swing.*;
 public class NovationNova1BankDriver extends BankDriver
@@ -52,18 +53,18 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         start+=10;  //sysex header
         return start;
     }
-    public String getPatchName(Patch p,int patchNum)
+    public String getPatchName(IPatch p,int patchNum) 
     {
         int nameStart=getPatchStart(patchNum);
         try
         {
-            StringBuffer s= new StringBuffer(new String(p.sysex,nameStart,
+            StringBuffer s= new StringBuffer(new String(((Patch)p).sysex,nameStart,
             16,"US-ASCII"));
             return s.toString();
         } catch (UnsupportedEncodingException ex) {return "-";}
     }
 
-    public void setPatchName(Patch p,int patchNum, String name)
+    public void setPatchName(IPatch p,int patchNum, String name)
     {
         patchNameSize=16;
         patchNameStart=getPatchStart(patchNum);
@@ -77,23 +78,23 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         {
             namebytes=name.getBytes("US-ASCII");
             for (int i=0;i<patchNameSize;i++)
-            p.sysex[patchNameStart+i]=namebytes[i];
+            ((Patch)p).sysex[patchNameStart+i]=namebytes[i];
         } catch (UnsupportedEncodingException ex) {return;}
     }
 
 
-    public void calculateChecksum(Patch p,int start,int end,int ofs)
+    public void calculateChecksum(IPatch p,int start,int end,int ofs)
     {
 
     }
 
 
-    public void calculateChecksum (Patch p)
+    public void calculateChecksum (IPatch p)
     {
 
     }
 
-    public void putPatch(Patch bank,Patch p,int patchNum)
+    public void putPatch(IPatch bank,IPatch p,int patchNum)
     {
         // This method is called when doing a paste (from another bank or a single)
         // the patch received will be a single dump (meant for the edit buffer)
@@ -104,10 +105,10 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
             JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        System.arraycopy(p.sysex,9,bank.sysex,getPatchStart(patchNum),296-9);
+        System.arraycopy(((Patch)p).sysex,9,((Patch)bank).sysex,getPatchStart(patchNum),296-9);
         calculateChecksum(bank);
     }
-    public Patch getPatch(Patch bank, int patchNum)
+    public IPatch getPatch(IPatch bank, int patchNum)
     {
         // this method is call when you have a bank opened and want to send or play individual patches
         // OR when you do a Cut/Copy
@@ -123,14 +124,14 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
             sysex[7]=(byte)0x00;
             sysex[8]=(byte)0x09;
             sysex[295]=(byte)0xF7;
-            System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,9,296-9);
-            Patch p = new Patch(sysex, getDevice());
-            p.getDriver().calculateChecksum(p);
+            System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,9,296-9);
+            IPatch p = new Patch(sysex, getDevice());
+            p.getDriver().calculateChecksum(p);   
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }
 
-    public Patch createNewPatch()
+    public IPatch createNewPatch()
     {
         // On the Nova, Bank A or Bank B dump are just a collection of 128 writable single dump
         // ie : single dump meant to go to a specific memory location (see the storePatch method
@@ -164,8 +165,8 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         return p;
     }
 
-    public void storePatch (Patch bank, int bankNum,int patchNum)
-    {
+    public void storePatch (IPatch bank, int bankNum,int patchNum)
+    { 
         // This is called when the user want to Store a bank.
         // The bank number (bank A or B) information is written in EACH writable single dump
         // (a bank is just a group of individual single dump)
@@ -174,7 +175,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
 
         for (int i=0;i<128;i++)
         {
-            bank.sysex[getPatchStart(i)-2] = (byte)(bankNum+5);
+            ((Patch)bank).sysex[getPatchStart(i)-2] = (byte)(bankNum+5);
         }
 
         byte [] newsysex = new byte[297];
@@ -183,7 +184,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         {
             for (int i=0;i<128;i++)
             {
-                System.arraycopy(bank.sysex,297*i,p.sysex,0,297);
+                System.arraycopy(((Patch)bank).sysex,297*i,p.sysex,0,297);
                 sendPatchWorker(p);
                 Thread.sleep(150); // Nova have problem receiving too fast,
                                 // NOTE : Do not modify this to send the bank in one shot! It will be faster but some patch will not be received correctly on the Nova!

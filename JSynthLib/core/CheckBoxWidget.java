@@ -22,7 +22,7 @@ public class CheckBoxWidget extends SysexWidget {
      * @param s a <code>SysexSender</code> instance.
      * @see SysexWidget
      */
-    public CheckBoxWidget(String l, Patch p, ParamModel ofs, SysexSender s) {
+    public CheckBoxWidget(String l, IPatch p, ParamModel ofs, SysexSender s) {
 	super(l, p, 0, 1, ofs, s);
 
 	createWidgets();

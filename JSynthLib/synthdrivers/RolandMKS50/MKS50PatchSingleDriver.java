@@ -4,6 +4,7 @@
 package synthdrivers.RolandMKS50;
 
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -31,12 +32,12 @@ public class MKS50PatchSingleDriver extends Driver
                                  "81-", "82-", "83-", "84-", "85-", "86-", "87-", "88-"};
   }
 
-  public void calculateChecksum(Patch p)
+  public void calculateChecksum(IPatch p)
   {
     // MKS-50 doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs)
+  public void calculateChecksum(IPatch p, int start, int end, int ofs)
   {
     // MKS-50 doesn't use checksum
   }
@@ -46,11 +47,11 @@ public class MKS50PatchSingleDriver extends Driver
     // MKS-50 doesn't have banks: pgm# 0-63 is group A, 64-127 is group B
   }
 
-  public String getPatchName(Patch p) {
+  public String getPatchName(IPatch ip) {
     try {
       char c[] = new char[patchNameSize];
       for (int i = 0; i < patchNameSize; i++)
-        c[i] = MKS50ToneSingleDriver.nameChars[p.sysex[i+patchNameStart]];
+        c[i] = MKS50ToneSingleDriver.nameChars[((Patch)ip).sysex[i+patchNameStart]];
       return new String(c);
     }
     catch (Exception ex)
@@ -59,7 +60,7 @@ public class MKS50PatchSingleDriver extends Driver
     }
   }
 
-  public void setPatchName(Patch p, String name)
+  public void setPatchName(IPatch p, String name)
   {
     String s = new String(MKS50ToneSingleDriver.nameChars);
     for (int i = 0; i < patchNameSize; i++)
@@ -73,11 +74,11 @@ public class MKS50PatchSingleDriver extends Driver
       }
       else
         j = 62;  // pad with spaces
-      p.sysex[i+patchNameStart] = (byte)j;
+      ((Patch)p).sysex[i+patchNameStart] = (byte)j;
     }
   }
 
-  public Patch createNewPatch()
+  public IPatch createNewPatch()
   {
     byte sysex[] = {
       (byte)0xF0, (byte)0x41, (byte)0x35, (byte)0x00, (byte)0x23,
@@ -88,14 +89,14 @@ public class MKS50PatchSingleDriver extends Driver
       (byte)0x3E, (byte)0x3E, (byte)0x3E, (byte)0x3E, (byte)0x3E,
       (byte)0xF7
     };
-    Patch p = new Patch(sysex, this);
+    IPatch p = new Patch(sysex, this);
     setPatchName(p, "NewPatch");
     return p;
   }
 
-  public JSLFrame editPatch(Patch p)
+  public JSLFrame editPatch(IPatch p)
   {
-     return new MKS50PatchSingleEditor(p);
+     return new MKS50PatchSingleEditor((Patch)p);
   }
 }
 

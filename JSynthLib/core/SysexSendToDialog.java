@@ -16,7 +16,7 @@ public class SysexSendToDialog extends DevDrvPatchSelector {
      * Constructor
      * @param patch The Patch to 'send to...'
      */
-    public SysexSendToDialog (Patch patch) {
+    public SysexSendToDialog (IPatch patch) {
         //super(PatchEdit.getInstance(), "Send Sysex Data into Edit Buffer of a specified device", true);
         super(patch,"Send Sysex Data into Edit Buffer of a specified device","Send To...");
     }

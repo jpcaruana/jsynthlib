@@ -1,5 +1,6 @@
 package synthdrivers.KawaiK4;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.NameValue;
 import core.Patch;
@@ -34,14 +35,14 @@ public class KawaiK4DrumsetDriver extends Driver {
 	};
     }
 
-    public void storePatch(Patch p, int bankNum, int patchNum) {
+    public void storePatch(IPatch p, int bankNum, int patchNum) {
         try {
 	    Thread.sleep(100);
 	} catch (Exception e) {
 	}
-        p.sysex[3] = (byte) 0x20;
-        p.sysex[6] = (byte) ((bankNum << 1) + 1);
-        p.sysex[7] = (byte) 0x20;
+        ((Patch)p).sysex[3] = (byte) 0x20;
+        ((Patch)p).sysex[6] = (byte) ((bankNum << 1) + 1);
+        ((Patch)p).sysex[7] = (byte) 0x20;
         sendPatchWorker(p);
         try {
 	    Thread.sleep(100);
@@ -49,14 +50,15 @@ public class KawaiK4DrumsetDriver extends Driver {
 	}
     }
 
-    public void sendPatch(Patch p) {
-        p.sysex[3] = (byte) 0x23;
-        p.sysex[7] = (byte) 0x20;
+    public void sendPatch(IPatch p) {
+        ((Patch)p).sysex[3] = (byte) 0x23;
+        ((Patch)p).sysex[7] = (byte) 0x20;
         sendPatchWorker(p);
     }
 
-    public void calculateChecksum(Patch p, int start, int end, int ofs) {
-	// a litte strange this, but there is a checksum for each key!
+    public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+    	Patch p = (Patch)ip;
+    	// a litte strange this, but there is a checksum for each key!
         for (int i = 8; i < HSIZE + SSIZE - 1; i += 11) {
 	    int sum = 0;
             for (int j = i; j < i + 10; j++) {
@@ -67,7 +69,7 @@ public class KawaiK4DrumsetDriver extends Driver {
         }
     }
 
-    public Patch createNewPatch() {
+    public IPatch createNewPatch() {
         byte[] sysex = new byte[HSIZE + SSIZE + 1];
         sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x23; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
@@ -79,16 +81,16 @@ public class KawaiK4DrumsetDriver extends Driver {
         }
 
 	sysex[HSIZE + SSIZE] = (byte) 0xF7;
-	Patch p = new Patch(sysex, this);
+	IPatch p = new Patch(sysex, this);
 	calculateChecksum(p);
 	return p;
     }
 
-    public JSLFrame editPatch(Patch p) {
-        return new KawaiK4DrumsetEditor(p);
+    public JSLFrame editPatch(IPatch p) {
+        return new KawaiK4DrumsetEditor((Patch)p);
     }
 
-    public String getPatchName(Patch p) {
+    public String getPatchName(IPatch ip) {
 	return "Drumset";
     }
 

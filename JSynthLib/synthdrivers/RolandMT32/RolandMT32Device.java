@@ -41,7 +41,7 @@ public class RolandMT32Device extends Device {
 
     /** Constructor for DeviceListWriter. */
     public RolandMT32Device() {
-	super("Roland", "MT32", "F041**16",
+	super("Roland", "MT32", "F041..16",
 	      INFO_TEXT, "Fred Jan Kraan");
     }
 

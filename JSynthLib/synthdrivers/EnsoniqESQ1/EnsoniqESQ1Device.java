@@ -23,7 +23,7 @@ public class EnsoniqESQ1Device extends Device
     /** Creates new EnsoniqESQ1Device */
     public EnsoniqESQ1Device ()
     {
-	super ("Ensoniq","ESQ-1","F07E**06020F0200************F7",infoText,"Brian Klock");
+	super ("Ensoniq","ESQ-1","F07E..06020F0200...........F7",infoText,"Brian Klock");
     }
 
     /** Constructor for for actual work. */

@@ -17,7 +17,7 @@ public class NovationNova1Device extends Device
     /** Creates new NovationNovaDevice */
     public NovationNova1Device ()
     {
-	super ("Novation","Nova1","F07E**06020020290100210020000000F7",null,"Yves Lefebvre");
+	super ("Novation","Nova1","F07E..06020020290100210020000000F7",null,"Yves Lefebvre");
     }
 
     /** Constructor for for actual work. */

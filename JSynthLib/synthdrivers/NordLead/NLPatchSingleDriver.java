@@ -4,6 +4,7 @@ package synthdrivers.NordLead;
 
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -62,22 +63,22 @@ public class NLPatchSingleDriver extends Driver {
     patchNumbers = PATCH_LIST;
   }
 
-  public void calculateChecksum(Patch p) {
+  public void calculateChecksum(IPatch p) {
     // doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs) {
+  public void calculateChecksum(IPatch p, int start, int end, int ofs) {
     // doesn't use checksum
   }
 
-  public String getPatchName(Patch p) {
-    return "prog" + (p.sysex[PATCH_NUM_OFFSET] + 1);
+  public String getPatchName(IPatch ip) {
+    return "prog" + (((Patch)ip).sysex[PATCH_NUM_OFFSET] + 1);
   }
 
-  public void setPatchName(Patch p, String name) {}
+  public void setPatchName(IPatch p, String name) {}
 
-  public void sendPatch(Patch p) {
-    sendPatch(p, 0, 0); // using edit buffer for slot A
+  public void sendPatch(IPatch p) {
+    sendPatch((Patch)p, 0, 0); // using edit buffer for slot A
   }
 
   public void sendPatch(Patch p, int bankNum, int patchNum) {
@@ -88,24 +89,24 @@ public class NLPatchSingleDriver extends Driver {
   }
 
   // Sends a patch to a set location in the user bank
-  public void storePatch(Patch p, int bankNum, int patchNum) {
+  public void storePatch(IPatch p, int bankNum, int patchNum) {
     setBankNum(bankNum); // must set bank - sysex patch dump always stored in current bank
     setPatchNum(patchNum); // must send program change to make bank change take effect
-    sendPatch(p, bankNum + 1, patchNum);
+    sendPatch((Patch)p, bankNum + 1, patchNum);
     setPatchNum(patchNum); // send another program change to get new sound in edit buffer
   }
 
-  public void playPatch(Patch p) {
+  public void playPatch(IPatch p) {
     byte sysex[] = new byte[patchSize];
-    System.arraycopy(p.sysex, 0, sysex, 0, patchSize);
+    System.arraycopy(((Patch)p).sysex, 0, sysex, 0, patchSize);
     sysex[BANK_NUM_OFFSET] = 0; // edit buffer
     sysex[PATCH_NUM_OFFSET] = 0; // slot A
-    Patch p2 = new Patch(sysex);
+    IPatch p2 = new Patch(sysex);
     super.playPatch(p2);
   }
 
-  public Patch createNewPatch() {
-    Patch p = new Patch(NEW_PATCH, this);
+  public IPatch createNewPatch() {
+    IPatch p = new Patch(NEW_PATCH, this);
     return p;
   }
 

@@ -10,7 +10,10 @@ package core;
  * method.
  */
 public class ParamModel {
-    /** <code>Patch</code> data. */
+	/* XXX: I'm not planning to use this with XML drivers, so I won't bother
+	 *      making this use IPatches atm.
+	 */
+	/** <code>Patch</code> data. */
     protected Patch patch;
     /** Offset of the data for which this model is. */
     protected int ofs;

@@ -12,12 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import core.CheckBoxWidget;
 import core.ComboBoxWidget;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
-import core.ScrollBarLookupWidget;
 import core.ScrollBarWidget;
 import core.SysexSender;
 import core.SysexWidget;

@@ -19,12 +19,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+
+import javax.sound.midi.SysexMessage;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -322,7 +323,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
             Patch firstpat = new Patch(buffer, offset);
             offset += firstpat.sysex.length;
             //ErrorMsg.reportStatus("Buffer length:" + buffer.length + " Patch Lenght: " + firstpat.sysex.length);
-	    Patch[] patarray = firstpat.dissect();
+	    IPatch[] patarray = firstpat.dissect();
 
 	    if (patarray.length > 0) {
 		// Conversion was sucessfull, we have at least one converted patch
@@ -347,8 +348,12 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	    ErrorMsg.reportError("Error", "No Patch Selected.");
 	    return;
 	}
+        SysexMessage[] msgs = getSelectedPatch().getMessages();
+        if (msgs == null)
+        		return;
         FileOutputStream fileOut = new FileOutputStream(file);
-        fileOut.write(myModel.getPatchAt(table.getSelectedRow()).sysex);
+        for (int i = 0; i < msgs.length; i++)
+        		fileOut.write(msgs[i].getMessage(),0,msgs[i].getLength());
         fileOut.close();
     }
 
@@ -373,11 +378,11 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	    Actions.setEnabled(false, Actions.EN_PASTE);
     }
 
-    public void pastePatch(Patch p) {
+    public void pastePatch(IPatch p) {
 	pth.importData(table, p);
     }
 
-    public Patch getSelectedPatch() {
+    public IPatch getSelectedPatch() {
 	try {
 	    return myModel.getPatchAt(table.getSelectedRow());
 	} catch (Exception e) {
@@ -387,33 +392,33 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     public void sendSelectedPatch() {
-	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         myPatch.getDriver().sendPatch(myPatch);
     }
 
     public void sendToSelectedPatch() {
-	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
 	myPatch.getDriver().calculateChecksum(myPatch);
 	new SysexSendToDialog(myPatch);
     }
 
     public void reassignSelectedPatch() {
-	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
 	myPatch.getDriver().calculateChecksum(myPatch);
 	new ReassignPatchDialog(myPatch);
 	myModel.fireTableDataChanged();
     }
 
     public void playSelectedPatch() {
-	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         myPatch.getDriver().sendPatch(myPatch);
 	myPatch.getDriver().playPatch(myPatch);
     }
 
     public void storeSelectedPatch() {
-	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
  	new SysexStoreDialog(myPatch);
     }
@@ -423,7 +428,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	    ErrorMsg.reportError("Error", "No Patch Selected. EditAction must be disabled.");
 	    return null;
 	}
-	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         changed = true;
         return myPatch.getDriver().editPatch(myPatch);
     }
@@ -447,7 +452,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	    ErrorMsg.reportError("Error", "No Patch Selected.");
 	    return;
 	}
-	Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         BankDriver myDriver = (BankDriver) myPatch.getDriver();
         for (int i = 0; i < myDriver.getNumPatches(); i++)
             if (myDriver.getPatch(myPatch, i) != null)
@@ -492,6 +497,9 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
         statusBar.setText(myModel.getRowCount() + " Patches");
     }
 
+    /**
+     * This needs to not use Patch.  Maybe IPatch should extend Comparable.
+     */
     void deleteDuplicates() {
 	Collections.sort(myModel.list, new SysexSort());
 	int numDeleted = 0;
@@ -580,7 +588,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	}
 
 	public Object getValueAt(int row, int col) {
-	    Patch myPatch = (Patch) list.get(row);
+	    IPatch myPatch = (IPatch) list.get(row);
 
 	    switch (col) {
 	    case SYNTH:
@@ -631,7 +639,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
          */
 	public void setValueAt(Object value, int row, int col) {
 	    changed = true;
-	    Patch myPatch = (Patch) list.get(row);
+	    IPatch myPatch = (IPatch) list.get(row);
 	    switch (col) {
 	    case PATCH_NAME:
 		myPatch.getDriver().setPatchName(myPatch, (String) value);
@@ -650,19 +658,19 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	}
 
 	// begin AbstractPatchListModel interface methods
-	public void addPatch(Patch p) {
+	public void addPatch(IPatch p) {
 	    list.add(p);
 	    //  fireTableRowsUpdated(getRowCount(),getRowCount());
 	    this.fireTableDataChanged();
 	}
 
-	public void setPatchAt(Patch p, int row) {
+	public void setPatchAt(IPatch p, int row) {
 	    list.set(row, p);
 	    fireTableRowsUpdated(row, row);
 	}
 
-	public Patch getPatchAt(int row) {
-	    return (Patch) list.get(row);
+	public IPatch getPatchAt(int row) {
+	    return (IPatch) list.get(row);
 	}
 
 	public String getCommentAt(int row) {

@@ -3,6 +3,7 @@ package synthdrivers.KawaiK4;
 import javax.swing.JOptionPane;
 import core.BankDriver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -43,30 +44,31 @@ public class KawaiK4EffectBankDriver extends BankDriver {
 	return HSIZE + (SSIZE * patchNum);
     }
 
-    public String getPatchName(Patch p, int patchNum) {
+    public String getPatchName(IPatch p, int patchNum) {
         int nameStart = getPatchStart(patchNum);
         nameStart += 0; //offset of name in patch data
 	//System.out.println("Patch Num "+patchNum+ "Name Start:"+nameStart);
-	String s = "Effect Type " + (p.sysex[nameStart] + 1);
+	String s = "Effect Type " + (((Patch)p).sysex[nameStart] + 1);
 	return s;
     }
 
-    public void calculateChecksum(Patch p, int start, int end, int ofs) {
-        int sum = 0;
+    public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+    	    Patch p = (Patch)ip;
+    	    int sum = 0;
         for (int i = start; i <= end; i++)
             sum += p.sysex[i];
         sum += 0xA5;
         p.sysex[ofs] = (byte) (sum % 128);
     }
 
-    public void calculateChecksum(Patch p) {
+    public void calculateChecksum(IPatch p) {
         for (int i = 0; i < NS; i++)
             calculateChecksum(p, HSIZE + (i * SSIZE),
 			      HSIZE + (i * SSIZE) + SSIZE - 2,
 			      HSIZE + (i * SSIZE) + SSIZE - 1);
     }
 
-    public void putPatch(Patch bank, Patch p, int patchNum) {
+    public void putPatch(IPatch bank, IPatch p, int patchNum) {
         if (!canHoldPatch(p)) {
 	    JOptionPane.showMessageDialog
 		(null,
@@ -75,7 +77,7 @@ public class KawaiK4EffectBankDriver extends BankDriver {
 	    return;
 	}
 
-        System.arraycopy(p.sysex, HSIZE, bank.sysex, getPatchStart(patchNum), SSIZE);
+        System.arraycopy(((Patch)p).sysex, HSIZE, ((Patch)bank).sysex, getPatchStart(patchNum), SSIZE);
         calculateChecksum(bank);
     }
 
@@ -84,15 +86,15 @@ public class KawaiK4EffectBankDriver extends BankDriver {
      * @param patchNum The index of the patch to extract
      * @return A single effect patch
      */
-    public Patch getPatch(Patch bank, int patchNum) {
+    public IPatch getPatch(IPatch bank, int patchNum) {
 	byte[] sysex = new byte[HSIZE + SSIZE + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x20; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
 	sysex[6] = (byte) 0x01; sysex[7] = (byte) (patchNum);
 	sysex[HSIZE + SSIZE] = (byte) 0xF7;
-	System.arraycopy(bank.sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
+	System.arraycopy(((Patch)bank).sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
         try {
-            Patch p = new Patch(sysex, getDevice());
+            IPatch p = new Patch(sysex, getDevice());
             p.getDriver().calculateChecksum(p);
             return p;
         } catch (Exception e) {
@@ -105,7 +107,7 @@ public class KawaiK4EffectBankDriver extends BankDriver {
      * to the center of all patches
      * @return The new created patch
      */
-    public Patch createNewPatch() {
+    public IPatch createNewPatch() {
         byte[] sysex = new byte[HSIZE + SSIZE * NS + 1];
         sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x21; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
@@ -123,7 +125,7 @@ public class KawaiK4EffectBankDriver extends BankDriver {
         }
 
         sysex[HSIZE + SSIZE * NS] = (byte) 0xF7;
-        Patch p = new Patch(sysex, this);
+        IPatch p = new Patch(sysex, this);
         calculateChecksum(p);
         return p;
     }
@@ -133,14 +135,14 @@ public class KawaiK4EffectBankDriver extends BankDriver {
 				    new NameValue("bankNum", (bankNum << 1) + 1)));
     }
 
-    public void storePatch(Patch p, int bankNum, int patchNum) {
+    public void storePatch(IPatch p, int bankNum, int patchNum) {
         try {
 	    Thread.sleep(100);
 	} catch (Exception e) {
 	}
-        p.sysex[3] = (byte) 0x21;
-        p.sysex[6] = (byte) ((bankNum << 1) + 1);
-        p.sysex[7] = (byte) 0x0;
+        ((Patch)p).sysex[3] = (byte) 0x21;
+        ((Patch)p).sysex[6] = (byte) ((bankNum << 1) + 1);
+        ((Patch)p).sysex[7] = (byte) 0x0;
         sendPatchWorker(p);
         try {
 	    Thread.sleep(100);

@@ -1,6 +1,7 @@
 package synthdrivers.YamahaFS1R;
 
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -48,7 +49,7 @@ public class YamahaFS1RSystemDriver extends Driver
 	 *
 	 *@return    Description of the Return Value
 	 */
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		return newPatch();
 	}
@@ -79,7 +80,7 @@ public class YamahaFS1RSystemDriver extends Driver
 	 * @param aOffset offset in the sysex
 	 * @return    the patch
 	 */
-	static Patch newPatch(byte aSysex[], int aOffset)
+	static IPatch newPatch(byte aSysex[], int aOffset)
 	{
 		Patch oNewPatch = newPatch();
 		System.arraycopy(aSysex, aOffset, oNewPatch.sysex, HEADER_SIZE-1, PATCH_SIZE);
@@ -92,9 +93,9 @@ public class YamahaFS1RSystemDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
-		return new YamahaFS1RSystemEditor(p);
+		return new YamahaFS1RSystemEditor((Patch)p);
 	}
 }
 

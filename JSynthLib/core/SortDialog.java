@@ -3,7 +3,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collections;
 import java.util.Comparator;
 
 import javax.swing.ButtonGroup;
@@ -98,22 +97,31 @@ public class SortDialog extends JDialog {
 
         public int compare (Object a1, Object a2) {
             String s1; String s2;
-            if (field == 0) {
-		s1 = ((Patch) a1).getDriver().getPatchName((Patch) a1).toLowerCase();
-		s2 = ((Patch) a2).getDriver().getPatchName((Patch) a2).toLowerCase();
-	    } else if (field == 1) {
-		s1 = ((Patch) a1).getDate().toLowerCase();
-		s2 = ((Patch) a2).getDate().toLowerCase();
-	    } else if (field == 2) {
-		s1 = ((Patch) a1).getAuthor().toLowerCase();
-		s2 = ((Patch) a2).getAuthor().toLowerCase();
-	    } else if (field == 3) {
-		s1 = ((Patch) a1).getDevice().getSynthName();
-		s2 = ((Patch) a2).getDevice().getSynthName();
-	    } else {
-		s1 = ((Patch) a1).getDriver().getPatchType();
-		s2 = ((Patch) a2).getDriver().getPatchType();
-	    }
+            if (field==0)
+            {
+                s1=((IPatch) a1).getDriver().getPatchName((IPatch) a1).toLowerCase();
+                s2=((IPatch) a2).getDriver().getPatchName((IPatch) a2).toLowerCase();
+            }
+            else if (field==1)
+            {
+                s1=((IPatch) a1).getDate().toLowerCase();
+                s2=((IPatch) a2).getDate().toLowerCase();
+            }
+            else if (field==2)
+            {
+                s1=((IPatch) a1).getAuthor().toLowerCase();
+                s2=((IPatch) a2).getAuthor().toLowerCase();
+            }
+            else if (field==3)
+            {
+		s1=((IPatch) a1).getDevice().getSynthName();
+		s2=((IPatch) a2).getDevice().getSynthName();
+            }
+            else
+            {
+                s1=((IPatch) a1).getDriver().getPatchType();
+                s2=((IPatch) a2).getDriver().getPatchType();
+            }
             return s1.compareTo(s2);
         }
     }

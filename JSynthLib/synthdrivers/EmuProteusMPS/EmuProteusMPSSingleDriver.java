@@ -15,7 +15,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
    {
    super ("Single","Brian Klock");
    sysexID= "F01808**01";
-   //inquiryID="F07E**06021804040800*********F7";
+   //inquiryID="F07E..06021804040800.........F7";
    patchSize=319;
    patchNameStart=7;
    patchNameSize=12;
@@ -28,18 +28,18 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
    patchNumbers = generateNumbers(0,99,"00-");
 
    }
-
-   public String getPatchName(Patch p) {
+                     
+   public String getPatchName(IPatch ip) {
          if (patchNameSize==0) return ("-");
          try {
-           StringBuffer s= new StringBuffer(new String(p.sysex,patchNameStart,
+           StringBuffer s= new StringBuffer(new String(((Patch)ip).sysex,patchNameStart,
              patchNameSize*2-1,"US-ASCII"));
            for (int i=1;i<s.length();i++) s.deleteCharAt(i);
          return s.toString();
          } catch (UnsupportedEncodingException ex) {return "-";}
    }
 
-  public void setPatchName(Patch p, String name)
+  public void setPatchName(IPatch p, String name)
   {
     if (patchNameSize==0)
        {JOptionPane.showMessageDialog(null,
@@ -51,16 +51,16 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
     try {
          namebytes=name.getBytes("US-ASCII");
          for (int i=0;i<patchNameSize;i++)
-           p.sysex[patchNameStart+(i*2)]=namebytes[i];
+           ((Patch)p).sysex[patchNameStart+(i*2)]=namebytes[i];
 
         } catch (UnsupportedEncodingException ex) {return;}
     calculateChecksum(p);
   }
-
-   public void storePatch (Patch p,int bankNum,int patchNum)
+    
+   public void storePatch (IPatch p,int bankNum,int patchNum)
    {
-     p.sysex[5]=(byte)((bankNum*100+patchNum)%128);
-     p.sysex[6]=(byte)((bankNum*100+patchNum)/128);
+     ((Patch)p).sysex[5]=(byte)((bankNum*100+patchNum)%128);
+     ((Patch)p).sysex[6]=(byte)((bankNum*100+patchNum)/128);
      setBankNum(bankNum);
      setPatchNum(patchNum);
      sendPatchWorker (p);
@@ -79,19 +79,20 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
          }catch (Exception e) {JOptionPane.showMessageDialog(null, "Invalid Patch Number Entered!","Error", JOptionPane.ERROR_MESSAGE);}
    }
     */
-   public void sendPatch (Patch p)
+   public void sendPatch (IPatch p)
    {
 
      Integer patchNum=new Integer(100);
-     p.sysex[5]=(byte)(patchNum.intValue()%128);
-     p.sysex[6]=(byte)(patchNum.intValue()/128);
+     ((Patch)p).sysex[5]=(byte)(patchNum.intValue()%128);
+     ((Patch)p).sysex[6]=(byte)(patchNum.intValue()/128);
      setBankNum(patchNum.intValue()/100);
      setPatchNum(patchNum.intValue()%100);
      sendPatchWorker (p);
    }
 
-  public void calculateChecksum(Patch p)
+  public void calculateChecksum(IPatch ip)
   {
+  	Patch p = (Patch)ip;
     int i;
     int sum=0;
 
@@ -101,19 +102,19 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
 
 
   }
- public Patch createNewPatch()
+ public IPatch createNewPatch()
  {
 	 byte [] sysex = new byte[319];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x18;sysex[2]=(byte)0x08;sysex[3]=(byte)0x00;sysex[4]=(byte)0x01;
 	 sysex[318]=(byte)0xF7;
-         Patch p = new Patch(sysex, this);
+         IPatch p = new Patch(sysex, this);
 	 setPatchName(p,"New Patch");
 	 calculateChecksum(p);
 	 return p;
  }
-public JSLFrame editPatch(Patch p)
+public JSLFrame editPatch(IPatch p)
  {
-     return new EmuProteusMPSSingleEditor(p);
+     return new EmuProteusMPSSingleEditor((Patch)p);
  }
   public void requestPatchDump(int bankNum, int patchNum) {
    send(SysexRequestDump.toSysexMessage(getChannel(),

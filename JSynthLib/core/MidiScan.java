@@ -6,12 +6,14 @@ package core;
 
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.regex.Pattern;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.SysexMessage;
-import javax.swing.ProgressMonitor;
 import javax.swing.JDialog;
+import javax.swing.ProgressMonitor;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -174,7 +176,7 @@ public class MidiScan extends Thread {
 		// Check, wether the driver is already in the list
 		boolean dontadd = false;
 		for (int checkloop = 0; checkloop < PatchEdit.appConfig.deviceCount(); checkloop++) {
-		    String checkDevice = ((Device) PatchEdit.appConfig.getDevice(checkloop)).getClass().getName();
+		    String checkDevice = ((Device) AppConfig.getDevice(checkloop)).getClass().getName();
 		    if (checkDevice.equalsIgnoreCase(PatchEdit.devConfig.classNameForIDString(se))) {
 			dontadd = true; // Oh, its already there....
 		    }
@@ -224,13 +226,8 @@ public class MidiScan extends Thread {
     }
 
     private boolean checkInquiry(StringBuffer patchString, String inquiryID) {
-	StringBuffer inquiryString = new StringBuffer(inquiryID);
-	if (inquiryString.length() > patchString.length())
-	    return false;
-	for (int j = 0; j < inquiryString.length(); j++)
-	    if (inquiryString.charAt(j) == '*')
-		inquiryString.setCharAt(j, patchString.charAt(j));
-	return (inquiryString.toString().equalsIgnoreCase(patchString.toString().substring(0, inquiryString.length())));
+    		Pattern p = Pattern.compile(inquiryID,Pattern.CASE_INSENSITIVE);
+    		return p.matcher(patchString).lookingAt();
     }
 
     public void close() {

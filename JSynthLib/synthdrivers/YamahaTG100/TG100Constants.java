@@ -21,9 +21,6 @@
 
 package synthdrivers.YamahaTG100;
 
-import core.*;
-
-import java.util.prefs.Preferences;
 /**
  * Constants for the Yamaha TG-100 synthdriver
  *

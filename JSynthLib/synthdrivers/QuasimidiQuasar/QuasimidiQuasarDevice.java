@@ -40,7 +40,7 @@ public class QuasimidiQuasarDevice extends Device {
     public QuasimidiQuasarDevice() {
         super(  "Quasimidi",
                 "Quasar",
-                "F07E**06023F20**************F7",
+                "F07E..06023F20..............F7",
                 INFO_TEXT,
                 "Joachim Backhaus");
     }

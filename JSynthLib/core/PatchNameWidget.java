@@ -19,7 +19,7 @@ public class PatchNameWidget extends SysexWidget {
      * @param label a label text.
      * @param patch a <code>Patch</code>, which is edited.
      */
-    public PatchNameWidget(String label, Patch patch) {
+    public PatchNameWidget(String label, IPatch patch) {
 	super(label, patch, null, null);
 
 	createWidgets();
@@ -28,7 +28,7 @@ public class PatchNameWidget extends SysexWidget {
 
     /** @deprecated Use PatchNameWidget(String, Patch) */
     // The order of argument is not consistent with others.
-    public PatchNameWidget(Patch patch, String label) {
+    public PatchNameWidget(IPatch patch, String label) {
 	super(label, patch, null, null);
 
 	createWidgets();

@@ -3,7 +3,7 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 
 class PatchListTransferHandler extends PatchTransferHandler {
-    protected Patch getSelectedPatch(JComponent c) {
+    protected IPatch getSelectedPatch(JComponent c) {
 	try {
 	    JTable t = (JTable)c;
 	    AbstractPatchListModel m = 
@@ -14,7 +14,7 @@ class PatchListTransferHandler extends PatchTransferHandler {
 	    return null;
 	}
     }
-    protected boolean storePatch(Patch p, JComponent c) {
+    protected boolean storePatch(IPatch p, JComponent c) {
 	try {
 	    if (p.getDriver() == null)
 	    	p.chooseDriver();

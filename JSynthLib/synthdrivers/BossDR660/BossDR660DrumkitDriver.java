@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 
@@ -37,8 +38,10 @@ public class BossDR660DrumkitDriver extends Driver
     } catch (Exception e) {};
   }
 
- public void calculateChecksum (Patch p)
-   { for (int i=0;i<55;i++)
+ public void calculateChecksum (IPatch ip)
+   {
+ 	Patch p = (Patch)ip;
+ 	for (int i=0;i<55;i++)
 	   {calculateChecksum(p,23*i+5,23*i+20,23*i+21);
 	    p.sysex[i*23+2]=((byte)(getChannel()-1));
 	   }
@@ -53,9 +56,10 @@ public class BossDR660DrumkitDriver extends Driver
 
    }
 
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  public void calculateChecksum(IPatch ip,int start,int end,int ofs)
   {
-    int i;
+  	Patch p = (Patch)ip;
+  	int i;
     int sum=0;
     for (i=start;i<=end;i++)
       sum+=p.sysex[i];
@@ -65,14 +69,14 @@ public class BossDR660DrumkitDriver extends Driver
     p.sysex[ofs]=(byte)(p.sysex[ofs]%128);
 
   }
-   public void sendPatch (Patch p)
+   public void sendPatch (IPatch p)
    { setPatchNum(0);
      sendPatchWorker (p);
      try {Thread.sleep(25);}catch (Exception e){};
  //    setPatchNum(0);
    }
 
- public void storePatch (Patch p, int bankNum,int patchNum)
+ public void storePatch (IPatch p, int bankNum,int patchNum)
   {
 //   setBankNum(bankNum);
    setPatchNum(patchNum);
@@ -84,7 +88,7 @@ public class BossDR660DrumkitDriver extends Driver
  public void setBankNum(int bankNum)
   {
   }
- public void playPatch(Patch p)
+ public void playPatch(IPatch p)
   {
      try {
 
@@ -104,20 +108,20 @@ public class BossDR660DrumkitDriver extends Driver
         send((0x80+(getChannel()-1)),46,0);
      } catch (Exception e){ErrorMsg.reportError("Error","Unable to Play Drums",e);}
   }
-public Patch createNewPatch()
+public IPatch createNewPatch()
   {
   try {
     InputStream fileIn= getClass().getResourceAsStream("BossDR660Drumkit.new");
     byte [] buffer =new byte [1387];
     fileIn.read(buffer);
     fileIn.close();
-    Patch p=new Patch(buffer, this);
+    IPatch p=new Patch(buffer, this);
     return p;
   }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
   }
-public JSLFrame editPatch(Patch p)
+public JSLFrame editPatch(IPatch p)
  {
-     return new BossDR660DrumkitEditor(p);
+     return new BossDR660DrumkitEditor((Patch)p);
  }
 
 }

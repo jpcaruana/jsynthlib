@@ -19,6 +19,6 @@ public class YamahaMotifDrumVoiceDriver extends YamahaMotifSingleDriver
      yamaha_init();
    }
   // The driver has to define this method for the option to be available.
-  public Patch createNewPatch() { return super.createNewPatch(); }
+  public IPatch createNewPatch() { return super.createNewPatch(); }
 
 }

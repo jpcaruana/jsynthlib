@@ -5,6 +5,7 @@
 package synthdrivers.AlesisA6;
 
 import core.*;
+
 import javax.swing.*;
 
 public class AlesisA6PgmSingleDriver extends Driver
@@ -41,12 +42,12 @@ public class AlesisA6PgmSingleDriver extends Driver
     patchNumbers = patchList;
   }
 
-  public void calculateChecksum(Patch p)
+  public void calculateChecksum(IPatch p)
   {
     // A6 doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs)
+  public void calculateChecksum(IPatch p, int start, int end, int ofs)
   {
     // A6 doesn't use checksum
   }
@@ -92,9 +93,10 @@ public class AlesisA6PgmSingleDriver extends Driver
     sysex[9 + offset] = (byte)( (sysex[9 + offset] & ~dstMask2) | ((b & srcMask2) >> (7 - modulus)) );
   }
 
-  public String getPatchName(Patch p)
+  public String getPatchName(IPatch ip)
   {
-    try {
+  	Patch p = (Patch) ip;
+  	try {
       char c[] = new char[patchNameSize];
       for (int i = 0; i < patchNameSize; i++)
         c[i] = (char)(getA6PgmByte(p.sysex, i + patchNameStart));
@@ -106,20 +108,20 @@ public class AlesisA6PgmSingleDriver extends Driver
     }
   }
 
-  public void setPatchName(Patch p, String name)
+  public void setPatchName(IPatch p, String name)
   {
     if (name.length() < patchNameSize + 4)
       name = name + "                ";
     byte nameByte[] = name.getBytes();
     for (int i = 0; i < patchNameSize; i++)
     {
-      setA6PgmByte(nameByte[i], p.sysex, i + patchNameStart);
+      setA6PgmByte(nameByte[i], ((Patch)p).sysex, i + patchNameStart);
     }
   }
 
-  public void sendPatch(Patch p)
+  public void sendPatch(IPatch p)
   {
-    sendPatch(p, 0, 127); // using user program # 127 as edit buffer
+    sendPatch((Patch)p, 0, 127); // using user program # 127 as edit buffer
   }
 
   public void sendPatch(Patch p, int bankNum, int patchNum)
@@ -131,7 +133,7 @@ public class AlesisA6PgmSingleDriver extends Driver
   }
 
   // Sends a patch to a set location in the user bank
-  public void storePatch(Patch p, int bankNum, int patchNum)
+  public void storePatch(IPatch p, int bankNum, int patchNum)
   {
     if (bankNum == 1 || bankNum == 2)
       JOptionPane.showMessageDialog(PatchEdit.getInstance(),
@@ -143,21 +145,21 @@ public class AlesisA6PgmSingleDriver extends Driver
     {
       setBankNum(bankNum);
       setPatchNum(patchNum);
-      sendPatch(p, bankNum, patchNum);
+      sendPatch((Patch)p, bankNum, patchNum);
     }
   }
 
   // Kludge: A6 doesn't seem to receive edit buffer dump, so user program 127
   // is being used for that purpose.
-  public void playPatch(Patch p)
+  public void playPatch(IPatch p)
   {
     byte sysex[] = new byte[2352];
-    System.arraycopy(p.sysex, 0, sysex, 0, 2350);
+    System.arraycopy(((Patch)p).sysex, 0, sysex, 0, 2350);
     sysex[6] = 0; // user bank
     sysex[7] = 127; // program # 127
     sysex[2350] = (byte)(0xC0 + getChannel() - 1); // program change
     sysex[2351] = (byte)127; // program # 127
-    Patch p2 = new Patch(sysex);
+    IPatch p2 = new Patch(sysex);
     try
     {
       super.playPatch(p2);
@@ -168,7 +170,7 @@ public class AlesisA6PgmSingleDriver extends Driver
     }
   }
 
-  public Patch createNewPatch()
+  public IPatch createNewPatch()
   {
     byte sysex[] =
     {
@@ -467,7 +469,7 @@ public class AlesisA6PgmSingleDriver extends Driver
       (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
       (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xF7
     };
-    Patch p = new Patch(sysex, this);
+    IPatch p = new Patch(sysex, this);
 //    setPatchName(p, "NewPatch");
     return p;
   }

@@ -20,7 +20,7 @@ abstract public class Converter extends Driver {
 
     /** Convert a Patch into an array of Patches. */
     // called by Patch.dissect().
-    abstract public Patch[] extractPatch(Patch p);
+    abstract public IPatch[] extractPatch(IPatch p);
 
     // comment out since there is no difference from Driver.supportsPatch
     /*

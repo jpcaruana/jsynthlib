@@ -33,6 +33,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import core.ComboBoxWidget;
+import core.IPatch;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
@@ -266,23 +267,23 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 	}
 
 
-	private boolean isDX1(Patch p) {
+	private boolean isDX1(IPatch p) {
 	    if (p.getDevice().getModelName() == "DX1") return true;
 	    else return false;
 	}
-	private boolean isDX5(Patch p) {
+	private boolean isDX5(IPatch p) {
 	    if (p.getDevice().getModelName() == "DX5") return true;
 	    else return false;
 	}
-	private boolean isDX7(Patch p) {
+	private boolean isDX7(IPatch p) {
 	    if (p.getDevice().getModelName() == "DX7") return true;
 	    else return false;
 	}
-	private boolean isTX7(Patch p) {
+	private boolean isTX7(IPatch p) {
 	    if (p.getDevice().getModelName() == "TX7") return true;
 	    else return false;
 	}
-	private boolean isTX816(Patch p) {
+	private boolean isTX816(IPatch p) {
 	    if (p.getDevice().getModelName() == "TX816") return true;
 	    else return false;
 	}
@@ -303,7 +304,7 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 	 */
 	class PerformanceSender extends SysexSender
 	{
-		Patch patch;
+		IPatch patch;
 		int parameter;
 		byte []b = new byte [7];
 		// translation table TX7->DX7 for Sensitivity parameters
@@ -315,7 +316,7 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 		    0x4F, 0x56, 0x5C, 0x63 
 		};
 		
-		public PerformanceSender(Patch p, int param)
+		public PerformanceSender(IPatch p, int param)
 		{
 			patch = p;
 

@@ -3,6 +3,7 @@
 package synthdrivers.NordLead;
 
 import core.*;
+
 import javax.swing.*;
 
 public class NLDrumBankDriver extends BankDriver {
@@ -24,15 +25,15 @@ public class NLDrumBankDriver extends BankDriver {
     patchNumbers = NLDrumSingleDriver.PATCH_LIST;
   }
 
-  public void calculateChecksum(Patch p) {
+  public void calculateChecksum(IPatch p) {
     // doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs) {
+  public void calculateChecksum(IPatch p, int start, int end, int ofs) {
     // doesn't use checksum
   }
 
-  public void storePatch (Patch p, int bankNum, int patchNum) {
+  public void storePatch (IPatch p, int bankNum, int patchNum) {
     if (bankNum == 0) {
       JOptionPane.showMessageDialog(PatchEdit.getInstance(),
         "Cannot send to ROM bank",
@@ -42,36 +43,36 @@ public class NLDrumBankDriver extends BankDriver {
     } else {
       setBankNum(bankNum); // must set bank - sysex patch dump always stored in current bank
       setPatchNum(patchNum); // must send program change to make bank change take effect
-      sendPatchWorker(p, bankNum);
+      sendPatchWorker((Patch)p, bankNum);
     }
   }
 
-  public void putPatch(Patch bank, Patch p, int patchNum) {
+  public void putPatch(IPatch bank, IPatch p, int patchNum) {
     if (!canHoldPatch(p)) {
       ErrorMsg.reportError("Error", "This type of patch does not fit in to this type of bank.");
       return;
     }
 
-    System.arraycopy(p.sysex, 0, bank.sysex, patchNum * singleSize, singleSize);
-    bank.sysex[patchNum * singleSize + PATCH_NUM_OFFSET] =
+    System.arraycopy(((Patch)p).sysex, 0, ((Patch)bank).sysex, patchNum * singleSize, singleSize);
+    ((Patch)bank).sysex[patchNum * singleSize + PATCH_NUM_OFFSET] =
        (byte)(patchNum + 99); // set program #
   }
 
-  public Patch getPatch(Patch bank, int patchNum) {
+  public IPatch getPatch(IPatch bank, int patchNum) {
     byte sysex[] = new byte[singleSize];
-    System.arraycopy(bank.sysex, patchNum * singleSize, sysex, 0, singleSize);
-    Patch p = new Patch(sysex);
+    System.arraycopy(((Patch)bank).sysex, patchNum * singleSize, sysex, 0, singleSize);
+    IPatch p = new Patch(sysex);
     return p;
   }
 
-  public String getPatchName(Patch p, int patchNum) {
+  public String getPatchName(IPatch p, int patchNum) {
     return "-";
   }
 
-  public void setPatchName(Patch p,int patchNum, String name) {}
+  public void setPatchName(IPatch p,int patchNum, String name) {}
 
-  protected void sendPatch (Patch p) {
-    sendPatchWorker(p, 0);
+  protected void sendPatch (IPatch p) {
+    sendPatchWorker((Patch)p, 0);
   }
 
   protected void sendPatchWorker (Patch p, int bankNum) {
@@ -93,7 +94,7 @@ public class NLDrumBankDriver extends BankDriver {
     }
   }
 
-  public Patch createNewPatch() {
+  public IPatch createNewPatch() {
     byte tmp[] = new byte[singleSize];
     byte sysex[] = new byte[patchSize];
     System.arraycopy(NLDrumSingleDriver.NEW_PATCH, 0, tmp, 0, singleSize);
@@ -101,7 +102,7 @@ public class NLDrumBankDriver extends BankDriver {
       tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
       System.arraycopy(tmp, 0, sysex, i * singleSize, singleSize);
     }
-    Patch p = new Patch(sysex, this);
+    IPatch p = new Patch(sysex, this);
     return p;
   }
 

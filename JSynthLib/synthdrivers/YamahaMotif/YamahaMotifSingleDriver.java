@@ -1,5 +1,6 @@
 package synthdrivers.YamahaMotif;
 import core.*;
+
 import java.io.*;
 
 /** Base driver for Yamaha Motif voices */
@@ -35,41 +36,41 @@ public abstract class YamahaMotifSingleDriver extends Driver
     }
   }
 
-  public String getPatchName (Patch p) {
+  public String getPatchName (IPatch ip) {
     int address = Byte.parseByte(parameter_base_address, 16);
     address = (address << 16) | 0x007000;
-    int offset=YamahaMotifSysexUtility.findBaseAddressOffset(p.sysex, address);
+    int offset=YamahaMotifSysexUtility.findBaseAddressOffset(((Patch)ip).sysex, address);
     try {
-      return new String(p.sysex, offset + YamahaMotifSysexUtility.DATA_OFFSET,
+      return new String(((Patch)ip).sysex, offset + YamahaMotifSysexUtility.DATA_OFFSET,
 			10, "US-ASCII");
     } catch (UnsupportedEncodingException e) {
       return "-";
     }
   }
-  public void setPatchName (Patch p, String name) {
+  public void setPatchName (IPatch p, String name) {
     byte[] namebytes;
     int address = Byte.parseByte(parameter_base_address, 16);
     address = (address << 16) | 0x007000;
-    int offset=YamahaMotifSysexUtility.findBaseAddressOffset(p.sysex, address);
+    int offset=YamahaMotifSysexUtility.findBaseAddressOffset(((Patch)p).sysex, address);
     try {
       namebytes=name.getBytes ("US-ASCII");
       for (int i = 0; i < 10; i++) {
 	if (i >= namebytes.length)
-	  p.sysex[offset + i + YamahaMotifSysexUtility.DATA_OFFSET] =(byte)' ';
+	  ((Patch)p).sysex[offset + i + YamahaMotifSysexUtility.DATA_OFFSET] =(byte)' ';
 	else
-	  p.sysex[offset+ i+ YamahaMotifSysexUtility.DATA_OFFSET]=namebytes[i];
+	  ((Patch)p).sysex[offset+ i+ YamahaMotifSysexUtility.DATA_OFFSET]=namebytes[i];
       }
-      YamahaMotifSysexUtility.checksum(p.sysex, offset);
+      YamahaMotifSysexUtility.checksum(((Patch)p).sysex, offset);
     } catch (UnsupportedEncodingException e) { return; }
   }
 
-  public void storePatch (Patch p, int bankNum,int patchNum) {
-    sendPatchWorker (p, patchNum);
+  public void storePatch (IPatch p, int bankNum,int patchNum) {
+    sendPatchWorker ((Patch)p, patchNum);
   }
 
   /** Send to edit buffer */
-  protected void sendPatch (Patch p) {
-    sendPatchWorker(p, -1);
+  protected void sendPatch (IPatch p) {
+    sendPatchWorker((Patch)p, -1);
   }
   /**Does the actual work to send a patch to the synth*/
   protected void sendPatchWorker(Patch p, int patchnum) {
@@ -95,8 +96,8 @@ public abstract class YamahaMotifSingleDriver extends Driver
       Byte.parseByte(base_address, 16);
   }
 
-  public void calculateChecksum (Patch p) {
-    YamahaMotifSysexUtility.checksum( p.sysex );
+  public void calculateChecksum (IPatch p) {
+    YamahaMotifSysexUtility.checksum( ((Patch)p).sysex );
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
@@ -104,13 +105,13 @@ public abstract class YamahaMotifSingleDriver extends Driver
   }
   // Stolen from the YamahaFS1RVoiceEditor
   // I probably should use some other method to do this, but I'm lazy.
-  public Patch createNewPatch() {
+  public IPatch createNewPatch() { 
     try {
       InputStream fileIn= getClass().getResourceAsStream(defaults_filename);
       byte [] buffer =new byte [patchSize];
       fileIn.read(buffer);
       fileIn.close();
-      Patch p=new Patch(buffer, this);
+      IPatch p=new Patch(buffer, this);
       return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find " + defaults_filename,e);return null;}
   }

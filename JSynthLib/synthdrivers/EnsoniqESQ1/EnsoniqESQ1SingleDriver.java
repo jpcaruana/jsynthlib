@@ -4,6 +4,7 @@
 package synthdrivers.EnsoniqESQ1;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 
@@ -30,7 +31,8 @@ public class EnsoniqESQ1SingleDriver extends Driver
 
   }
 
-  public String getPatchName(Patch p) {
+  public String getPatchName(IPatch ip) {
+  	Patch p = (Patch)ip;
           try {
             byte []b = new byte[8];
             b[0]=((byte)(p.sysex[5]+p.sysex[6]*16));
@@ -43,24 +45,24 @@ public class EnsoniqESQ1SingleDriver extends Driver
            return s.toString();
          } catch (Exception ex) {return "-";}
    }
-  public void setPatchName(Patch p, String name)	
+  public void setPatchName(IPatch p, String name)	
   {
 	byte [] namebytes = new byte[32];
 	try{
         if (name.length()<6) name=name+"        ";
         namebytes=name.getBytes("US-ASCII");
-	p.sysex[5]=((byte)(namebytes[0]%16));
-	p.sysex[6]=((byte)(namebytes[0]/16));
-	p.sysex[7]=((byte)(namebytes[1]%16));
-	p.sysex[8]=((byte)(namebytes[1]/16));
-	p.sysex[9]=((byte)(namebytes[2]%16));
-	p.sysex[10]=((byte)(namebytes[2]/16));
-	p.sysex[11]=((byte)(namebytes[3]%16));
-	p.sysex[12]=((byte)(namebytes[3]/16));
-	p.sysex[13]=((byte)(namebytes[4]%16));
-	p.sysex[14]=((byte)(namebytes[4]/16));
-	p.sysex[15]=((byte)(namebytes[5]%16));
-	p.sysex[16]=((byte)(namebytes[5]/16));
+	((Patch)p).sysex[5]=((byte)(namebytes[0]%16));
+	((Patch)p).sysex[6]=((byte)(namebytes[0]/16));
+	((Patch)p).sysex[7]=((byte)(namebytes[1]%16));
+	((Patch)p).sysex[8]=((byte)(namebytes[1]/16));
+	((Patch)p).sysex[9]=((byte)(namebytes[2]%16));
+	((Patch)p).sysex[10]=((byte)(namebytes[2]/16));
+	((Patch)p).sysex[11]=((byte)(namebytes[3]%16));
+	((Patch)p).sysex[12]=((byte)(namebytes[3]/16));
+	((Patch)p).sysex[13]=((byte)(namebytes[4]%16));
+	((Patch)p).sysex[14]=((byte)(namebytes[4]/16));
+	((Patch)p).sysex[15]=((byte)(namebytes[5]%16));
+	((Patch)p).sysex[16]=((byte)(namebytes[5]/16));
 	}catch (Exception e) {}
   }
 
@@ -71,34 +73,34 @@ public void choosePatch (Patch p)
 */
 
 
-public void storePatch (Patch p, int bankNum,int patchNum)
+public void storePatch (IPatch p, int bankNum,int patchNum)
   {   
     sendPatchWorker(p);
     ErrorMsg.reportWarning("Ensoniq ESQ!","The patch has been placed in the edit buffer\nYou must now hold the 'write' button 'exit' on the ESQ1's\nand choose a location to store the patch.");
   }
-public void sendPatch (Patch p)
+public void sendPatch (IPatch p)
   { 
    sendPatchWorker(p);
    ErrorMsg.reportWarning("Ensoniq ESQ!","You must now hit 'exit' on the ESQ1's\nfront panel before you can\nsend another patch.");
   }
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  public void calculateChecksum(IPatch p,int start,int end,int ofs)
   {
 
         //This synth does not use a checksum
   }
-public Patch createNewPatch()
+public IPatch createNewPatch()
  {
          byte [] sysex = new byte[210];
          sysex[0]=(byte)0xF0; sysex[1]=(byte)0x0F;sysex[2]=(byte)0x02;sysex[3]=(byte)0x00;
          sysex[4]=(byte)0x01; sysex[209]=(byte)0xF7;
-         Patch p = new Patch(sysex, this);
+         IPatch p = new Patch(sysex, this);
          setPatchName(p,"NEWSND");
 	 calculateChecksum(p);	 
 	 return p;
  }
-public JSLFrame editPatch(Patch p)
+public JSLFrame editPatch(IPatch p)
  {
- return null;//     return new KawaiK4SingleEditor(p);
+ return null;//     return new KawaiK4SingleEditor((Patch)p);
  }
 }
 

@@ -2,6 +2,7 @@ package synthdrivers.AlesisQS;
 
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -53,7 +54,7 @@ public class AlesisQSEffectsDriver extends Driver
    * @param end ignored
    * @param ofs ignored
    */
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  public void calculateChecksum(IPatch p,int start,int end,int ofs)
   {
     //This synth does not use a checksum
   }
@@ -62,7 +63,7 @@ public class AlesisQSEffectsDriver extends Driver
    * Create a new effects patch
    * @return the new Patch
    */
-  public Patch createNewPatch()
+  public IPatch createNewPatch()
   {
     // Copy over the Alesis QS header
     byte [] sysex = new byte[patchSize];
@@ -75,13 +76,13 @@ public class AlesisQSEffectsDriver extends Driver
     sysex[QSConstants.POSITION_LOCATION] = 0;
 
     // Create the patch
-    Patch p = new Patch(sysex, this);
+    IPatch p = new Patch(sysex, this);
     return p;
   }
 
   //public JSLFrame editPatch(Patch p)
   // {
-  //     return new AlesisQSEffectsEditor(p);
+  //     return new AlesisQSEffectsEditor((Patch)p);
   // }
 
 
@@ -121,7 +122,7 @@ public class AlesisQSEffectsDriver extends Driver
    * Sends a patch to the synth's program effects edit buffer.
    * @param p the patch to send to the edit buffer
    */
-  public void sendPatch (Patch p)
+  public void sendPatch (IPatch p)
   {
     storePatch(p, 0, QSConstants.MAX_LOCATION_PROG + 1);
   }
@@ -134,13 +135,13 @@ public class AlesisQSEffectsDriver extends Driver
    * @param bankNum ignored - you can only send to the User bank on Alesis QS synths
    * @param patchNum the patch number to send it to
    */
-  public void storePatch (Patch p, int bankNum, int patchNum)
+  public void storePatch (IPatch p, int bankNum, int patchNum)
   {
     // default to simple case - set specified patch in the User bank
     int location = patchNum;
     byte opcode = QSConstants.OPCODE_MIDI_USER_EFFECTS_DUMP;
-    byte oldOpcode = p.sysex[QSConstants.POSITION_OPCODE];
-    byte oldLocation = p.sysex[QSConstants.POSITION_LOCATION];
+    byte oldOpcode = ((Patch)p).sysex[QSConstants.POSITION_OPCODE];
+    byte oldLocation = ((Patch)p).sysex[QSConstants.POSITION_LOCATION];
 
     // if the patch number is > max location, get from Edit buffers
     if (location>QSConstants.MAX_LOCATION_PROG)
@@ -149,10 +150,10 @@ public class AlesisQSEffectsDriver extends Driver
       opcode = QSConstants.OPCODE_MIDI_EDIT_EFFECTS_DUMP;
     }
     // set the opcode and target location
-    p.sysex[QSConstants.POSITION_OPCODE] = opcode;
-    p.sysex[QSConstants.POSITION_LOCATION] = (byte)location;
+    ((Patch)p).sysex[QSConstants.POSITION_OPCODE] = opcode;
+    ((Patch)p).sysex[QSConstants.POSITION_LOCATION] = (byte)location;
 
-    ErrorMsg.reportStatus("foo", p.sysex);
+    ErrorMsg.reportStatus("foo", ((Patch)p).sysex);
     //setBankNum (bankNum);
     //setPatchNum (patchNum);
 
@@ -160,7 +161,7 @@ public class AlesisQSEffectsDriver extends Driver
     sendPatchWorker (p);
 
     // restore the old values
-    p.sysex[QSConstants.POSITION_OPCODE] = oldOpcode;
-    p.sysex[QSConstants.POSITION_LOCATION] = oldLocation;
+    ((Patch)p).sysex[QSConstants.POSITION_OPCODE] = oldOpcode;
+    ((Patch)p).sysex[QSConstants.POSITION_LOCATION] = oldLocation;
   }
 }

@@ -1,6 +1,7 @@
 package synthdrivers.KorgX3;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -119,7 +120,7 @@ public class KorgX3SingleDriver extends Driver
    * @param bankNum Bank number
    * @param patchNum Patch number
    */
-  public void storePatch (Patch p, int bankNum,int patchNum)
+  public void storePatch (IPatch p, int bankNum,int patchNum)
   {   
     setBankNum(bankNum);
     setPatchNum(patchNum);
@@ -154,7 +155,7 @@ public class KorgX3SingleDriver extends Driver
    * @param p Patch to be sent
    */
   //protected void sendPatchWorker (Patch p)
-  protected void sendPatch (Patch p)
+  protected void sendPatch (IPatch p)
   {
     // ##TODO## first go to program edit mode so that the edit buffer will be active.
     // then write PROGRAM PARAMETER DUMP, F0423g3540[data]F7
@@ -173,8 +174,8 @@ public class KorgX3SingleDriver extends Driver
       byte b7 = (byte)0x00;
       for(int k = 0; k < 7; k++) {
 	if(i + k < 164) {
-	  b7 += (p.sysex[i+k+EXTRA_HEADER]&128)>>(7-k);
-	  pd[j+k+1+5] = (byte)(p.sysex[i+k+EXTRA_HEADER] & (byte)0x7F);
+	  b7 += (((Patch)p).sysex[i+k+EXTRA_HEADER]&128)>>(7-k);
+	  pd[j+k+1+5] = (byte)(((Patch)p).sysex[i+k+EXTRA_HEADER] & (byte)0x7F);
 	} 
       }
       pd[j+5] = b7;
@@ -194,7 +195,7 @@ public class KorgX3SingleDriver extends Driver
    *
    * @return A new empty patch
    */
-  public Patch createNewPatch ()
+  public IPatch createNewPatch ()
   {
     byte[] sysex = new byte[187];
     sysex[0]=(byte)0xF0; sysex[1]=(byte)0x42;sysex[2]=(byte)0x30;sysex[3]=(byte)0x35;
@@ -208,7 +209,7 @@ public class KorgX3SingleDriver extends Driver
       sysex[i]=(byte)0x20;
     }
     
-    Patch p = new Patch(sysex, this);
+    IPatch p = new Patch(sysex, this);
 
     setPatchName(p,"Init");
   
@@ -221,9 +222,9 @@ public class KorgX3SingleDriver extends Driver
    * @param p Patch to be edited
    * @return Editor window
    */
-  public JSLFrame editPatch(Patch p)
+  public JSLFrame editPatch(IPatch p)
   {
-    return new KorgX3SingleEditor(p);
+    return new KorgX3SingleEditor((Patch)p);
   }
 
 }

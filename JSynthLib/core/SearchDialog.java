@@ -140,7 +140,7 @@ public class SearchDialog extends JDialog {
 	else
 	    searchFrom = lf.getTable().getSelectedRow() + 1;
 
-	Patch p;
+	IPatch p;
 	int field = 0;
 	if (command.equals("P")) field = 0;
 	if (command.equals("1")) field = 1;
@@ -152,7 +152,7 @@ public class SearchDialog extends JDialog {
 	int i;
 	boolean match = false;
 	for (i = searchFrom; i < lf.getAbstractPatchListModel().getRowCount(); i++) {
-		p = (Patch) lf.getAbstractPatchListModel().getPatchAt(i);
+		p =  lf.getAbstractPatchListModel().getPatchAt(i);
 
 		match = false;
 		if (field == 0 || field == 4) {

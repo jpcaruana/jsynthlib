@@ -1,6 +1,7 @@
 package synthdrivers.KorgWavestation;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -16,7 +17,7 @@ import core.SysexHandler;
 public class KorgWavestationSinglePerformanceDriver extends Driver {
 
     public KorgWavestationSinglePerformanceDriver() {
-	super ("Single Performance","Gerrit Gehnen");
+        super ("Single Performance","Gerrit Gehnen");
         sysexID="F0423*2849";
         sysexRequestDump=new SysexHandler("F0 42 @@ 28 19 *bankNum* *patchNum* F7");
 
@@ -29,33 +30,33 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         checksumOffset=1083;
         bankNumbers =new String[] {"RAM1","RAM2","ROM1","CARD","RAM3"};
         patchNumbers=new String[]
-        {"01-","02-","03-","04-","05-","06-","07-",
-         "08-","09-","10-","11-","12-","13-","14-","15-",
-         "16-","17-","18-","19-","20-","21-","22-","23-",
-         "24-","25-","26-","27-","28-","29-","30-","31-",
-         "32-","33-","34-","35-","36-","37-","38-","39-",
-         "40-","41-","42-","43-","44-","45-","46-","47-",
-         "48-","49-","50-"};
+            {"01-","02-","03-","04-","05-","06-","07-",
+             "08-","09-","10-","11-","12-","13-","14-","15-",
+             "16-","17-","18-","19-","20-","21-","22-","23-",
+             "24-","25-","26-","27-","28-","29-","30-","31-",
+             "32-","33-","34-","35-","36-","37-","38-","39-",
+             "40-","41-","42-","43-","44-","45-","46-","47-",
+             "48-","49-","50-"};
 
     }
-
-    public void storePatch(Patch p, int bankNum,int patchNum) {
+    
+    public void storePatch(IPatch p, int bankNum,int patchNum) {
         setBankNum(bankNum);
         setPatchNum(patchNum);
 
         try
-        {Thread.sleep(100); } catch (Exception e)
-        {}
-
-        p.sysex[2]=(byte)(0x30 + getChannel() - 1);
+            {Thread.sleep(100); } catch (Exception e)
+            {}
+        
+        ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1);
         try {
-            send(p.sysex);
+            send(((Patch)p).sysex);
         }catch (Exception e)
-        {ErrorMsg.reportStatus(e);}
+            {ErrorMsg.reportStatus(e);}
 
         try
-        {Thread.sleep(100); } catch (Exception e)
-        {}
+            {Thread.sleep(100); } catch (Exception e)
+            {}
         // Send a write request to store the patch in eprom
 
         byte [] sysex = new byte[8];
@@ -70,20 +71,20 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         try {
             send(sysex);
         }catch (Exception e)
-        {ErrorMsg.reportStatus(e);}
+            {ErrorMsg.reportStatus(e);}
 
     }
-
-    public void sendPatch(Patch p) {
-        p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
-
+    
+    public void sendPatch(IPatch p) {
+        ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
+        
         try {
-            send(p.sysex);
+            send(((Patch)p).sysex);
         }catch (Exception e)
-        {ErrorMsg.reportStatus(e);}
+            {ErrorMsg.reportStatus(e);}
     }
-
-    public Patch createNewPatch() {
+    
+    public IPatch createNewPatch() {
         byte [] sysex = new byte[1085];
         sysex[0]=(byte)0xF0;
         sysex[1]=(byte)0x42;
@@ -93,13 +94,14 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         sysex[5]=(byte)0; /*bankNum*/
         sysex[6]=(byte)0; /*patchNum*/
         sysex[1084]=(byte)0xF7;
-        Patch p = new Patch(sysex, this);
+        IPatch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
     }
-
-    public void calculateChecksum(Patch p,int start,int end,int ofs) {
+    
+    public void calculateChecksum(IPatch ip,int start,int end,int ofs) {
+        Patch p = (Patch)ip;
         int i;
         int sum=0;
 
@@ -116,7 +118,7 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         try {
             send(0xC0+(getChannel()-1), patchNum);
         } catch (Exception e)
-        {};
+            {};
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {

@@ -49,7 +49,7 @@ public class ScrollBarWidget extends SysexWidget {
      * @param sender sysexSender for transmitting the value at editing the parameter
      * @see SysexWidget
      */
-    public ScrollBarWidget(String label, Patch patch, int min, int max,
+    public ScrollBarWidget(String label, IPatch patch, int min, int max,
 			   int base, int labelWidth,
 			   ParamModel pmodel, SysexSender sender) {
         super(label, patch, min, max, pmodel, sender);
@@ -60,7 +60,7 @@ public class ScrollBarWidget extends SysexWidget {
         layoutWidgets();
     }
 
-    public ScrollBarWidget(String label, Patch patch, int min, int max,
+    public ScrollBarWidget(String label, IPatch patch, int min, int max,
 			   int base,
 			   ParamModel pmodel, SysexSender sender) {
         this(label, patch, min, max, base, -1, pmodel, sender);
@@ -72,7 +72,7 @@ public class ScrollBarWidget extends SysexWidget {
      * @param valueInit initial value, displayed at construction of the widget
      * @deprecated call setValue(int) if really required.
      */
-    public ScrollBarWidget(String l, Patch p, int min, int max, int b,
+    public ScrollBarWidget(String l, IPatch p, int min, int max, int b,
 			   ParamModel ofs, SysexSender s, int valueInit) {
 	this(l, p, min, max, b, ofs, s);
         setValue(valueInit);

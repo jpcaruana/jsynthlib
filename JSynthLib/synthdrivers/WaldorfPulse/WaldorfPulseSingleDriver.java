@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.text.NumberFormat;
 
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -69,7 +70,7 @@ public class WaldorfPulseSingleDriver extends Driver
         super.setPatchNum(patchNum);
     }
 
-    public Patch createNewPatch()
+    public IPatch createNewPatch()
     {
         byte [] sysex  = new byte[77];
         try {
@@ -84,30 +85,31 @@ public class WaldorfPulseSingleDriver extends Driver
             System.arraycopy(WaldorfPulseInitPatch.initPatch,0,sysex,0,77);
         }
         sysex[3] = 0; // Device ID
-        Patch p = new Patch(sysex, this);
+        IPatch p = new Patch(sysex, this);
         calculateChecksum(p);
         return p;
     }
 
-    public void storePatch(Patch p, int bankNum, int patchNum) {
+    public void storePatch(IPatch p, int bankNum, int patchNum) {
         setPatchNum(patchNum);
-        p.sysex[4] = (byte)1;
-        p.sysex[5] = (byte)patchNum;
+        ((Patch)p).sysex[4] = (byte)1;
+        ((Patch)p).sysex[5] = (byte)patchNum;
         super.sendPatch(p);
     }
 
-    public void sendPatch(Patch p) {
-        p.sysex[4] = (byte)0;
+    public void sendPatch(IPatch p) {
+        ((Patch)p).sysex[4] = (byte)0;
         super.sendPatch(p);
     }
 
-    public JSLFrame editPatch (Patch p)
+    public JSLFrame editPatch (IPatch p)
     {
-        return new WaldorfPulseSingleEditor(p);
+        return new WaldorfPulseSingleEditor((Patch)p);
     }
 
-    protected void calculateChecksum(Patch p, int start, int end, int ofs)
+    protected void calculateChecksum(IPatch ip, int start, int end, int ofs)
     {
+    		Patch p = (Patch)ip;
         int sum = 0;
         for (int i = start; i <= end; i++)
             sum += p.sysex[i];

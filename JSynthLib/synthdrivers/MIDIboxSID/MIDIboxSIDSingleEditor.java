@@ -399,7 +399,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 
 	byte[] cooked_dump = dataModel.getCookedDump();
 	for(int i=0; i<cooked_dump.length; ++i)
-	    cooked_dump[i] = p.sysex[8+0x80+i];
+	    cooked_dump[i] = ((Patch)p).sysex[8+0x80+i];
 	dataModel.setCookedDump(cooked_dump);
 
 	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -485,11 +485,11 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	byte[] cooked_dump = dataModel.getCookedDump();
 
 	for(int i=0; i<4*32; ++i) {
-	    byte stored_value = p.sysex[8+0x80+i];
+	    byte stored_value = ((Patch)p).sysex[8+0x80+i];
 	    if( stored_value != cooked_dump[i] )
 	    {
 		System.out.println("Wavetable Field changed: " + i);
-	        p.sysex[8+0x80+i] = cooked_dump[i];
+	        ((Patch)p).sysex[8+0x80+i] = cooked_dump[i];
 		SlowSender.sendParameter(p.getDriver(), 0x80+i, cooked_dump[i], 10);
 	    }
 	}

@@ -11,10 +11,8 @@ package core;
 
 //import java.io.FileNotFoundException;
 //import java.io.IOException;
-import java.lang.reflect.Constructor;
-//import java.lang.reflect.InvocationTargetException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -110,7 +108,12 @@ final public class AppConfig {
     /** Setter for libPath */
     public void setLibPath(String libPath) { prefs.put("libPath", libPath); }
 
-    /** Getter for sysexPath */
+    /** Getter for libPath */
+    public String getXMLpaths() { return prefs.get("XMLpaths", ""); }
+    /** Setter for libPath */
+    public void setXMLpaths(String libPath) { prefs.put("XMLpaths", libPath); }
+
+   /** Getter for sysexPath */
     public String getSysexPath() { return prefs.get("sysexPath", "."); }
     /** Setter for sysexPath */
     public void setSysexPath(String sysexPath) {
@@ -299,18 +302,7 @@ final public class AppConfig {
      * @return a <code>Device</code> value created.
      */
     private Device addDevice(String className, Preferences prefs) {
-	Device device;
-	try {
-	    Class c = Class.forName(className);
-	    Class[] args = { Class.forName("java.util.prefs.Preferences") };
-	    Constructor con = c.getConstructor(args);
-	    device = (Device) con.newInstance(new Object[] { prefs });
-	} catch (Exception e) {
-	    ErrorMsg.reportError("Failed to create class for class",
-				 "Failed to create class for class '"
-				 + className + "'");
-	    return null;
-	}
+    	Device device = PatchEdit.devConfig.createDevice(className, prefs);
 	device.setup();
     	deviceList.add(device); // always returns true
 
@@ -333,7 +325,9 @@ final public class AppConfig {
     /** returns the 1st unused device node name for Preferences. */
     private Preferences getDeviceNode(String s) {
 	ErrorMsg.reportStatus("getDeviceNode: " + s);
-	s = s.substring(s.lastIndexOf('.') + 1, s.lastIndexOf("Device"));
+	try {
+		s = s.substring(s.lastIndexOf('.') + 1, s.lastIndexOf("Device"));
+	} catch (StringIndexOutOfBoundsException ex) {}
 	ErrorMsg.reportStatus("getDeviceNode: -> " + s);
 	int i;
 	try {
@@ -366,7 +360,7 @@ final public class AppConfig {
 
     /** Size query for deviceList */
     int deviceCount() {
-	return this.deviceList.size();
+	return deviceList.size();
     }
 
     /** Getter for the index of <code>device</code>. */

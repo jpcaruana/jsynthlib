@@ -57,25 +57,25 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		
 		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		oPanel1.add(new PatchNameWidget("Name",p));
-		oPanel1.add(new ComboBoxWidget("Loop mode", p, new YamahaFS1RFseqDriver.Model(p, 0x14), new YamahaFS1RFseqDriver.Sender(0x14), new String []{"One way", "Round"}));
-		oPanel1.add(new ComboBoxWidget("Pitch mode", p, new YamahaFS1RFseqDriver.Model(p, 0x17), new YamahaFS1RFseqDriver.Sender(0x17), new String []{"Pitch", "Non-pitch"}));
-		YamahaFS1RFseqDriver.Model oFrameModel = new YamahaFS1RFseqDriver.Model(p, 0x1B);
+		oPanel1.add(new ComboBoxWidget("Loop mode", p, new YamahaFS1RFseqDriver.Model((Patch)p, 0x14), new YamahaFS1RFseqDriver.Sender(0x14), new String []{"One way", "Round"}));
+		oPanel1.add(new ComboBoxWidget("Pitch mode", p, new YamahaFS1RFseqDriver.Model((Patch)p, 0x17), new YamahaFS1RFseqDriver.Sender(0x17), new String []{"Pitch", "Non-pitch"}));
+		YamahaFS1RFseqDriver.Model oFrameModel = new YamahaFS1RFseqDriver.Model((Patch)p, 0x1B);
 		oPanel1.add(new ComboBoxWidget("Frame format", p, oFrameModel, new YamahaFS1RFseqDriver.Sender(0x1B), new String []{"128", "256", "384", "512"}));
 		oPanel.add(oPanel1);
 
 		JPanel oPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		// les 3 valeurs qui suivent ne doivent pas depasser le frame format
-		oPanel2.add(new KnobWidget("Data end", p, 0, 512, 0, new YamahaFS1RFseqDriver.DoubleModel(p, 0x1E), new YamahaFS1RFseqDriver.Sender(0x1E)));
-		oPanel2.add(new KnobWidget("Loop start", p, 0, 512, 0, new YamahaFS1RFseqDriver.DoubleModel(p, 0x10), new YamahaFS1RFseqDriver.Sender(0x10)));
-		oPanel2.add(new KnobWidget("Loop end", p, 0, 512, 0, new YamahaFS1RFseqDriver.DoubleModel(p, 0x12), new YamahaFS1RFseqDriver.Sender(0x12)));
-		oPanel2.add(new KnobWidget("Speed adjust", p, 0, 127, -64, new YamahaFS1RFseqDriver.Model(p, 0x15), new YamahaFS1RFseqDriver.Sender(0x15)));
-		oPanel2.add(new KnobWidget("Tempo vel sens", p, 0, 127, 0, new YamahaFS1RFseqDriver.Model(p, 0x16), new YamahaFS1RFseqDriver.Sender(0x16)));
+		oPanel2.add(new KnobWidget("Data end", p, 0, 512, 0, new YamahaFS1RFseqDriver.DoubleModel((Patch)p, 0x1E), new YamahaFS1RFseqDriver.Sender(0x1E)));
+		oPanel2.add(new KnobWidget("Loop start", p, 0, 512, 0, new YamahaFS1RFseqDriver.DoubleModel((Patch)p, 0x10), new YamahaFS1RFseqDriver.Sender(0x10)));
+		oPanel2.add(new KnobWidget("Loop end", p, 0, 512, 0, new YamahaFS1RFseqDriver.DoubleModel((Patch)p, 0x12), new YamahaFS1RFseqDriver.Sender(0x12)));
+		oPanel2.add(new KnobWidget("Speed adjust", p, 0, 127, -64, new YamahaFS1RFseqDriver.Model((Patch)p, 0x15), new YamahaFS1RFseqDriver.Sender(0x15)));
+		oPanel2.add(new KnobWidget("Tempo vel sens", p, 0, 127, 0, new YamahaFS1RFseqDriver.Model((Patch)p, 0x16), new YamahaFS1RFseqDriver.Sender(0x16)));
 		oPanel.add(oPanel2);
 		
 		JPanel oPanel3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel3.add(new ComboBoxWidget("Formant note", p, new YamahaFS1RFseqDriver.Model(p, 0x18), new YamahaFS1RFseqDriver.Sender(0x18), YamahaFS1RPerformanceEditor.mNotes));
-		oPanel3.add(new SpinnerWidget("Pitch tuning", p, 0, 126, -63, new YamahaFS1RFseqDriver.Model(p, 0x19), new YamahaFS1RFseqDriver.Sender(0x19)));
-		oPanel3.add(new KnobWidget("Delay", p, 0, 0x63, 0, new YamahaFS1RFseqDriver.Model(p, 0x1A), new YamahaFS1RFseqDriver.Sender(0x1A)));
+		oPanel3.add(new ComboBoxWidget("Formant note", p, new YamahaFS1RFseqDriver.Model((Patch)p, 0x18), new YamahaFS1RFseqDriver.Sender(0x18), YamahaFS1RPerformanceEditor.mNotes));
+		oPanel3.add(new SpinnerWidget("Pitch tuning", p, 0, 126, -63, new YamahaFS1RFseqDriver.Model((Patch)p, 0x19), new YamahaFS1RFseqDriver.Sender(0x19)));
+		oPanel3.add(new KnobWidget("Delay", p, 0, 0x63, 0, new YamahaFS1RFseqDriver.Model((Patch)p, 0x1A), new YamahaFS1RFseqDriver.Sender(0x1A)));
 		oPanel.add(oPanel3);
 		
 		JPanel oPanel4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -173,7 +173,7 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 			mSequence = aSeq;
 			if (aSeq.equals(SEQ_PITCH)) {
 				mNbOp = 1;
-				mY[0] = YamahaFS1RFseqDriver.getPitch(p);
+				mY[0] = YamahaFS1RFseqDriver.getPitch((Patch)p);
 				if (mX == null) {
 					mX = new int[mY[0].length];
 				}
@@ -186,16 +186,16 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 				mNbOp = 8;
 				for (int op = 0; op < mNbOp; op++) {
 					if (aSeq.equals(SEQ_VOICEDFREQ)) {
-						mY[op] = YamahaFS1RFseqDriver.getFrequencies(p, op, true);
+						mY[op] = YamahaFS1RFseqDriver.getFrequencies((Patch)p, op, true);
 					}
 					else if (aSeq.equals(SEQ_VOICEDLEVEL)) {
-						mY[op] = YamahaFS1RFseqDriver.getLevels(p, op, true);
+						mY[op] = YamahaFS1RFseqDriver.getLevels((Patch)p, op, true);
 					}
 					else if (aSeq.equals(SEQ_UNVOICEDFREQ)) {
-						mY[op] = YamahaFS1RFseqDriver.getFrequencies(p, op, false);
+						mY[op] = YamahaFS1RFseqDriver.getFrequencies((Patch)p, op, false);
 					}
 					else {
-						mY[op] = YamahaFS1RFseqDriver.getLevels(p, op, false);
+						mY[op] = YamahaFS1RFseqDriver.getLevels((Patch)p, op, false);
 					}
 					if (mX == null) {
 						mX = new int[mY[op].length];

@@ -29,7 +29,7 @@ import javax.swing.UIManager;
  */
 public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
-    protected Patch p;
+    protected IPatch p;
     /** Note that calling addWidget() method may change the value of this. */
     protected GridBagConstraints gbc;
     /** Scroll Pane for the editor frame. */
@@ -63,7 +63,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * This is a copy of the patch when we started editing (in case
      * user wants to revert).
      */
-    private final byte[] originalPatch;
+    private final IPatch originalPatch;
     /** which patch in bank we're editing */
     private int patchRow;
     private int patchCol;
@@ -78,114 +78,113 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * @param name a name to display in the title bar.
      * @param patch a <code>Patch</code> value
      */
-    protected PatchEditorFrame(String name, Patch patch) {
-	// create a resizable, closable, maximizable, and iconifiable frame.
-	super(name, true, true, true, true);
-	p = patch;
-	// make a backup copy
-	originalPatch = new byte[p.sysex.length];
-	System.arraycopy(p.sysex, 0, originalPatch, 0, p.sysex.length);
+    protected PatchEditorFrame(String name, IPatch patch) {
+        // create a resizable, closable, maximizable, and iconifiable frame.
+        super(name, true, true, true, true);
+        p = patch;
+        // make a backup copy
+        originalPatch = (IPatch)p.clone();
 
-	gbc = new GridBagConstraints();
-	scrollPane = new JPanel();
-	scrollPane.setLayout(new GridBagLayout());
-	scrollPane.setSize(600, 400);
-	scroller = new JScrollPane(scrollPane);
-	getContentPane().add(scroller);
-	setSize(600, 400);
-	moveToDefaultLocation();
+        gbc = new GridBagConstraints();
+        scrollPane = new JPanel();
+        scrollPane.setLayout(new GridBagLayout());
+        scrollPane.setSize(600, 400);
+        scroller = new JScrollPane(scrollPane);
+        getContentPane().add(scroller);
+        setSize(600, 400);
+        moveToDefaultLocation();
 
-	faderInEnable(PatchEdit.appConfig.getFaderEnable());
+        faderInEnable(PatchEdit.appConfig.getFaderEnable());
 
-	scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
-		public void mousePressed(MouseEvent e) {
-		}
-		public void mouseReleased(MouseEvent e) {
+        scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                }
+                public void mouseReleased(MouseEvent e) {
                     repaint();
                 }
-	    });
-	scroller.getHorizontalScrollBar().addMouseListener(new MouseAdapter() {
-		public void mousePressed(MouseEvent e) {
-		}
-		public void mouseReleased(MouseEvent e) {
+            });
+        scroller.getHorizontalScrollBar().addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                }
+                public void mouseReleased(MouseEvent e) {
                     repaint();
                 }
-	    });
-	addJSLFrameListener(new JSLFrameListener() {
-		public void JSLFrameClosing(JSLFrameEvent e) {
-		    String[] choices = new String[] {"Keep Changes",
-						     "Revert to Original",
-						     "Place Changed Version on Clipboard"
-		    };
-		    int choice = JOptionPane.CLOSED_OPTION;
-		    while (choice == JOptionPane.CLOSED_OPTION)
-			choice = JOptionPane.showOptionDialog
-			    ((Component) null,
-			     "What do you wish to do with the changed copy of the Patch?",
-			     "Save Changes?",
-			     JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE,
-			     null, choices, choices[0]);
-		    if (choice == 0) { // "Keep Changes"
-			if (bankFrame != null)
-			    bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
-			return;
-		    }
-		    if (choice == 2) // "Place Changed Version on Clipboard"
-			//put on clipboard but don't 'return' just yet
-			copySelectedPatch();
-		    //restore backup
-		    System.arraycopy(originalPatch, 0, p.sysex, 0, p.sysex.length);
-		}
+            });
+        addJSLFrameListener(new JSLFrameListener() {
+                public void JSLFrameClosing(JSLFrameEvent e) {
+                    String[] choices = new String[] {"Keep Changes",
+                                                     "Revert to Original",
+                                                     "Place Changed Version on Clipboard"
+                    };
+                    int choice = JOptionPane.CLOSED_OPTION;
+                    while (choice == JOptionPane.CLOSED_OPTION)
+                        choice = JOptionPane.showOptionDialog
+                            ((Component) null,
+                             "What do you wish to do with the changed copy of the Patch?",
+                             "Save Changes?",
+                             JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE,
+                             null, choices, choices[0]);
+                    if (choice == 0) { // "Keep Changes"
+                        if (bankFrame != null)
+                            bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
+                        return;
+                    }
+                    if (choice == 2) // "Place Changed Version on Clipboard"
+                        //put on clipboard but don't 'return' just yet
+                        copySelectedPatch();
+                    p.useSysexFromPatch(originalPatch);
+                    //restore backup
+                }
 
-		public void JSLFrameOpened(JSLFrameEvent e) {
-		}
+                public void JSLFrameOpened(JSLFrameEvent e) {
+                }
 
-		public void JSLFrameActivated(JSLFrameEvent e) {
-		    p.getDriver().calculateChecksum(p);
-		    p.getDriver().sendPatch(p);
-		    gotFocus();
+                public void JSLFrameActivated(JSLFrameEvent e) {
+                    p.getDriver().calculateChecksum(p);
+                    p.getDriver().sendPatch(p);
+                    gotFocus();
 
-		    Actions.setEnabled(false,
-				       Actions.EN_GET
-				       | Actions.EN_PASTE);
+                    Actions.setEnabled(false,
+                                         Actions.EN_GET
+                                         | Actions.EN_PASTE);
 
-		    Actions.setEnabled(true,
-				       Actions.EN_COPY
-				       | Actions.EN_EXPORT
-				       | Actions.EN_PLAY
-				       | Actions.EN_REASSIGN
-				       | Actions.EN_SEND
-				       | Actions.EN_SEND_TO
-				       | Actions.EN_STORE);
-		}
+                    Actions.setEnabled(true,
+                                         Actions.EN_COPY
+                                         | Actions.EN_EXPORT
+                                         | Actions.EN_PLAY
+                                         | Actions.EN_REASSIGN
+                                         | Actions.EN_SEND
+                                         | Actions.EN_SEND_TO
+                                         | Actions.EN_STORE);
+                }
 
-		public void JSLFrameClosed(JSLFrameEvent e) {
-		}
+                public void JSLFrameClosed(JSLFrameEvent e) {
+                }
 
-		public void JSLFrameDeactivated(JSLFrameEvent e) {
-		    Actions.setEnabled(false,
-				       Actions.EN_COPY
-				       | Actions.EN_EXPORT
-				       | Actions.EN_PLAY
-				       | Actions.EN_REASSIGN
-				       | Actions.EN_SEND
-				       | Actions.EN_SEND_TO
-				       | Actions.EN_STORE);
-		    lostFocus();
-		}
+                public void JSLFrameDeactivated(JSLFrameEvent e) {
+                    Actions.setEnabled(false,
+                                         Actions.EN_COPY
+                                         | Actions.EN_EXPORT
+                                         | Actions.EN_PLAY
+                                         | Actions.EN_REASSIGN
+                                         | Actions.EN_SEND
+                                         | Actions.EN_SEND_TO
+                                         | Actions.EN_STORE);
+                    lostFocus();
+                }
 
-		public void JSLFrameDeiconified(JSLFrameEvent e) {
-		}
+                public void JSLFrameDeiconified(JSLFrameEvent e) {
+                }
 
-		public void JSLFrameIconified(JSLFrameEvent e) {
-		}
-	    });
+                public void JSLFrameIconified(JSLFrameEvent e) {
+                }
+            });
     }
 
     // PatchBasket methods
 
     public ArrayList getPatchCollection() {
-	return null;
+        return null;
     }
 
     public void importPatch (File file) throws FileNotFoundException {
@@ -198,44 +197,43 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void copySelectedPatch() {
-	ClipboardUtil.storePatch(p);
+        ClipboardUtil.storePatch(p);
     }
-    public Patch getSelectedPatch() {
-	return p;
+    public IPatch getSelectedPatch() {
+        return p;
     }
 
     public void sendSelectedPatch() {
-	p.getDriver().calculateChecksum(p);
-	p.getDriver().sendPatch(p);
+        p.getDriver().calculateChecksum(p);
+        p.getDriver().sendPatch(p);
     }
 
     public void sendToSelectedPatch() {
-	p.getDriver().calculateChecksum(p);
-	new SysexSendToDialog(p);
+        p.getDriver().calculateChecksum(p);
+        new SysexSendToDialog(p);
     }
 
     public void reassignSelectedPatch() {
-	p.getDriver().calculateChecksum(p);
-	new ReassignPatchDialog(p);
+        p.getDriver().calculateChecksum(p);
+        new ReassignPatchDialog(p);
     }
 
     public void playSelectedPatch() {
-	p.getDriver().calculateChecksum(p);
-	p.getDriver().sendPatch(p);
-	p.getDriver().playPatch(p);
+        p.getDriver().calculateChecksum(p);
+        p.getDriver().sendPatch(p);
+        p.getDriver().playPatch(p);
     }
 
     public void storeSelectedPatch() {
     }
 
     public JSLFrame editSelectedPatch() {
-	return null;
+        return null;
     }
 
     public void pastePatch() {
     }
-
-    public void pastePatch(Patch p) {
+    public void pastePatch(IPatch _p) {
     }
     // end of PatchBasket methods
 
@@ -257,36 +255,36 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * @see GridBagConstraints
      */
     protected void addWidget(JComponent parent, SysexWidget widget,
-			     int gridx, int gridy, int gridwidth, int gridheight,
-			     int anchor, int fill,
-			     int slidernum) {
-	try {
-	    gbc.gridx = gridx;
-	    gbc.gridy = gridy;
-	    gbc.gridwidth = gridwidth;
-	    gbc.gridheight = gridheight;
-	    gbc.anchor = anchor;
-	    gbc.fill = fill;
-	    parent.add(widget, gbc);
+                             int gridx, int gridy, int gridwidth, int gridheight,
+                             int anchor, int fill,
+                             int slidernum) {
+        try {
+            gbc.gridx = gridx;
+            gbc.gridy = gridy;
+            gbc.gridwidth = gridwidth;
+            gbc.gridheight = gridheight;
+            gbc.anchor = anchor;
+            gbc.fill = fill;
+            parent.add(widget, gbc);
 
-	    widgetList.add(widget);
+            widgetList.add(widget);
 
-	    widget.setSliderNum(slidernum);
-	    // This may be removed
-	    if (widget instanceof ScrollBarWidget)
-		((ScrollBarWidget)widget).setForceLabelWidth(forceLabelWidth);
-	    /*
-	    if (widget instanceof ScrollBarWidget) {
-		sliderList.add(((ScrollBarWidget) widget).slider);
-	    } else if (widget instanceof VertScrollBarWidget) {
-		sliderList.add(((VertScrollBarWidget) widget).slider);
-	    } else if (widget instanceof ScrollBarLookupWidget) {
-		sliderList.add(((ScrollBarLookupWidget) widget).slider);
-	    }
-	    */
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
+            widget.setSliderNum(slidernum);
+            // This may be removed
+            if (widget instanceof ScrollBarWidget)
+                ((ScrollBarWidget)widget).setForceLabelWidth(forceLabelWidth);
+            /*
+            if (widget instanceof ScrollBarWidget) {
+                sliderList.add(((ScrollBarWidget) widget).slider);
+            } else if (widget instanceof VertScrollBarWidget) {
+                sliderList.add(((VertScrollBarWidget) widget).slider);
+            } else if (widget instanceof ScrollBarLookupWidget) {
+                sliderList.add(((ScrollBarLookupWidget) widget).slider);
+            }
+            */
+        } catch (Exception e) {
+            ErrorMsg.reportStatus(e);
+        }
     }
 
     /**
@@ -299,10 +297,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * <code>fill</code> constraint.
      */
     protected void addWidget(JComponent parent, SysexWidget widget,
-			     int gridx, int gridy, int gridwidth, int gridheight,
-			     int slidernum) {
-	this.addWidget(parent, widget, gridx, gridy, gridwidth, gridheight,
-			GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, slidernum);
+                             int gridx, int gridy, int gridwidth, int gridheight,
+                             int slidernum) {
+        this.addWidget(parent, widget, gridx, gridy, gridwidth, gridheight,
+                        GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, slidernum);
     }
 
     /**
@@ -315,10 +313,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * <code>fill</code> constraint.
      */
     protected void addWidget(SysexWidget widget,
-			     int gridx, int gridy, int gridwidth, int gridheight,
-			     int slidernum) {
-	this.addWidget(scrollPane, widget, gridx, gridy, gridwidth, gridheight,
-			GridBagConstraints.EAST, GridBagConstraints.BOTH, slidernum);
+                             int gridx, int gridy, int gridwidth, int gridheight,
+                             int slidernum) {
+        this.addWidget(scrollPane, widget, gridx, gridy, gridwidth, gridheight,
+                        GridBagConstraints.EAST, GridBagConstraints.BOTH, slidernum);
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -328,58 +326,58 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     private Receiver rcvr;
 
     private void faderInEnable(boolean enable) {
-	if (enable) {
-	    // get transmitter
-	    trns = MidiUtil.getTransmitter(PatchEdit.appConfig.getFaderPort());
-	    rcvr = new FaderReceiver();
-	    trns.setReceiver(rcvr);
-	} else {
-	    if (trns != null)
-		trns.close();
-	    if (rcvr != null)
-		rcvr.close();
-	}
+        if (enable) {
+            // get transmitter
+            trns = MidiUtil.getTransmitter(PatchEdit.appConfig.getFaderPort());
+            rcvr = new FaderReceiver();
+            trns.setReceiver(rcvr);
+        } else {
+            if (trns != null)
+                trns.close();
+            if (rcvr != null)
+                rcvr.close();
+        }
     }
 
-    protected void finalize() {	// ???
-	faderInEnable(false);
+    protected void finalize() { // ???
+        faderInEnable(false);
     }
 
     private class FaderReceiver implements Receiver {
-	//Receiver interface
-	public void close() {
-	}
+        //Receiver interface
+        public void close() {
+        }
 
-	/**
-	 * <pre>
-	 * Control Change MIDI Message
-	 *   1011nnnn : BnH, nnnn: Voice Channel number
-	 *   0ccccccc : control # (0-119)
-	 *   0vvvvvvv : control value
-	 */
-	public void send(MidiMessage message, long timeStamp) {
-	    // ignore unless Editor Window is active.
-	    if (!isSelected())
-		return;
-	    ShortMessage msg = (ShortMessage) message;
-	    if (msg.getCommand() == ShortMessage.CONTROL_CHANGE) {
-		int channel = msg.getChannel();	// 0 <= channel < 16
-		int controller = msg.getData1(); // 0 <= controller <= 119
-		ErrorMsg.reportStatus("FaderReceiver: channel: " + channel
-				      + ", control: " + controller
-				      + ", value: " + msg.getData2());
-		// use hash !!!FIXIT!!!
-		for (int i = 0; i < Constants.NUM_FADERS; i++) {
-		    // faderChannel: 0:channel l, ..., 15:channel 16, 16:off
-		    // faderController: 0 <= value < 120, 120:off
-		    if ((PatchEdit.appConfig.getFaderChannel(i) == channel)
-			&& (PatchEdit.appConfig.getFaderControl(i) == controller)) {
-			faderMoved(i, msg.getData2());
-			break;
-		    }
-		}
-	    }
-	}
+        /**
+         * <pre>
+         * Control Change MIDI Message
+         *   1011nnnn : BnH, nnnn: Voice Channel number
+         *   0ccccccc : control # (0-119)
+         *   0vvvvvvv : control value
+         */
+        public void send(MidiMessage message, long timeStamp) {
+            // ignore unless Editor Window is active.
+            if (!isSelected())
+                return;
+            ShortMessage msg = (ShortMessage) message;
+            if (msg.getCommand() == ShortMessage.CONTROL_CHANGE) {
+                int channel = msg.getChannel(); // 0 <= channel < 16
+                int controller = msg.getData1(); // 0 <= controller <= 119
+                ErrorMsg.reportStatus("FaderReceiver: channel: " + channel
+                                      + ", control: " + controller
+                                      + ", value: " + msg.getData2());
+                // use hash !!!FIXIT!!!
+                for (int i = 0; i < Constants.NUM_FADERS; i++) {
+                    // faderChannel: 0:channel l, ..., 15:channel 16, 16:off
+                    // faderController: 0 <= value < 120, 120:off
+                    if ((PatchEdit.appConfig.getFaderChannel(i) == channel)
+                        && (PatchEdit.appConfig.getFaderControl(i) == controller)) {
+                        faderMoved(i, msg.getData2());
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -394,52 +392,52 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * @param value data value
      */
     private void faderMoved(int fader, int value) {
-	ErrorMsg.reportStatus("FaderMoved: fader: " + fader
-			      + ", value: " + value);
-	if (fader == 32) {	// button 16 : next fader bank
-	    faderBank = (faderBank + 1) % numFaderBanks;
-	    faderHighlight();
-	    return;
-	} else if (fader == 31) { // button 15 : prev fader bank
-	    faderBank = faderBank - 1;
-	    if (faderBank < 0)
-		faderBank = numFaderBanks - 1;
-	    faderHighlight();
-	    return;
-	} else if (fader > 16)	// 17-30 : button 1-14
-	    fader = (byte) (0 - (fader - 16) - (faderBank * 16));
-	else			// 0 : active slder, 1-16 : fader 1-16
-	    fader += (faderBank * 16);
+        ErrorMsg.reportStatus("FaderMoved: fader: " + fader
+                              + ", value: " + value);
+        if (fader == 32) {      // button 16 : next fader bank
+            faderBank = (faderBank + 1) % numFaderBanks;
+            faderHighlight();
+            return;
+        } else if (fader == 31) { // button 15 : prev fader bank
+            faderBank = faderBank - 1;
+            if (faderBank < 0)
+                faderBank = numFaderBanks - 1;
+            faderHighlight();
+            return;
+        } else if (fader > 16)  // 17-30 : button 1-14
+            fader = (byte) (0 - (fader - 16) - (faderBank * 16));
+        else                    // 0 : active slder, 1-16 : fader 1-16
+            fader += (faderBank * 16);
 
-	if (recentWidget != null) {
-	    SysexWidget w = recentWidget;
-	    if (fader == faderBank * 16)
-		fader = lastFader;
-	    if (w.getSliderNum() == fader && w.isShowing()) {
-		if (w.getNumFaders() == 1)
-		    w.setValue((int) (w.getValueMin() + ((float) (value) / 127 * (w.getValueMax() - w.getValueMin()))));
-		else		// EnvelopeWidget
-		    w.setFaderValue(fader, (int) value);
-		w.repaint();
-		return;
-	    }
-	}
-	lastFader = fader;
+        if (recentWidget != null) {
+            SysexWidget w = recentWidget;
+            if (fader == faderBank * 16)
+                fader = lastFader;
+            if (w.getSliderNum() == fader && w.isShowing()) {
+                if (w.getNumFaders() == 1)
+                    w.setValue((int) (w.getValueMin() + ((float) (value) / 127 * (w.getValueMax() - w.getValueMin()))));
+                else            // EnvelopeWidget
+                    w.setFaderValue(fader, (int) value);
+                w.repaint();
+                return;
+            }
+        }
+        lastFader = fader;
 
-	for (int i = 0; i < widgetList.size(); i++) {
-	    SysexWidget w = (SysexWidget) widgetList.get(i);
-	    if ((w.getSliderNum() == fader
-		 || (w.getSliderNum() < fader && w.getSliderNum() + w.getNumFaders() > fader))
-		&& w.isShowing()) {
-		if (w.getNumFaders() == 1)
-		    w.setValue((int) (w.getValueMin() + ((float) (value) / 127 * (w.getValueMax() - w.getValueMin()))));
-		else		// EnvelopeWidget
-		    w.setFaderValue(fader, (int) value);
-		w.repaint();
-		recentWidget = w;
-		return;
-	    }
-	}
+        for (int i = 0; i < widgetList.size(); i++) {
+            SysexWidget w = (SysexWidget) widgetList.get(i);
+            if ((w.getSliderNum() == fader
+                 || (w.getSliderNum() < fader && w.getSliderNum() + w.getNumFaders() > fader))
+                && w.isShowing()) {
+                if (w.getNumFaders() == 1)
+                    w.setValue((int) (w.getValueMin() + ((float) (value) / 127 * (w.getValueMax() - w.getValueMin()))));
+                else            // EnvelopeWidget
+                    w.setFaderValue(fader, (int) value);
+                w.repaint();
+                recentWidget = w;
+                return;
+            }
+        }
     }
 
     /**
@@ -456,47 +454,47 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * Brian
      */
     private void faderHighlight() {
-	for (int i = 0; i < widgetList.size(); i++) {
-	    SysexWidget w = (SysexWidget) widgetList.get(i);
-	    if (w.getLabel() != null) {
-		if (((Math.abs(w.getSliderNum() - 1) & 0xf0)) == faderBank * 16) {
-		    Color c = UIManager.getColor("controlText");
-		    if (c == null)
-			c = new Color(75, 75, 100);
-		    w.getJLabel().setForeground(c);
-		} else {
-		    Color c = UIManager.getColor("textInactiveText");
-		    if (c == null)
-			c = new Color(102, 102, 153);
-		    w.getJLabel().setForeground(c);
-		}
-		w.getJLabel().repaint();
-	    }
-	}
+        for (int i = 0; i < widgetList.size(); i++) {
+            SysexWidget w = (SysexWidget) widgetList.get(i);
+            if (w.getLabel() != null) {
+                if (((Math.abs(w.getSliderNum() - 1) & 0xf0)) == faderBank * 16) {
+                    Color c = UIManager.getColor("controlText");
+                    if (c == null)
+                        c = new Color(75, 75, 100);
+                    w.getJLabel().setForeground(c);
+                } else {
+                    Color c = UIManager.getColor("textInactiveText");
+                    if (c == null)
+                        c = new Color(102, 102, 153);
+                    w.getJLabel().setForeground(c);
+                }
+                w.getJLabel().repaint();
+            }
+        }
     }
 
     void nextFader() {
-	faderBank = (faderBank + 1) % numFaderBanks;
-	faderHighlight();
+        faderBank = (faderBank + 1) % numFaderBanks;
+        faderHighlight();
     }
 
     /**
      * When showing the dialog, also check how many components there
      * are to determine the number of widget banks needed.
      */
-    public void show() {	// override a method of JSLFrame
-	int high = 0;
-	for (int i = 0; i < widgetList.size(); i++) {
-	    SysexWidget w = (SysexWidget) widgetList.get(i);
-	    if ((w.getSliderNum() + w.getNumFaders() - 1) > high)
-		high = w.getSliderNum() + w.getNumFaders() - 1;
-	}
-	numFaderBanks = (high / 16) + 1;
-	faderHighlight();
-	ErrorMsg.reportStatus("PatchEditorFrame:Show   Num Fader Banks =  "
-			      + numFaderBanks);
+    public void show() {        // override a method of JSLFrame
+        int high = 0;
+        for (int i = 0; i < widgetList.size(); i++) {
+            SysexWidget w = (SysexWidget) widgetList.get(i);
+            if ((w.getSliderNum() + w.getNumFaders() - 1) > high)
+                high = w.getSliderNum() + w.getNumFaders() - 1;
+        }
+        numFaderBanks = (high / 16) + 1;
+        faderHighlight();
+        ErrorMsg.reportStatus("PatchEditorFrame:Show   Num Fader Banks =  "
+                              + numFaderBanks);
 
-	Dimension screenSize = JSLDesktop.getSize();
+        Dimension screenSize = JSLDesktop.getSize();
         Dimension frameSize = this.getSize();
         if (frameSize.height > screenSize.height) {
             // Add necessary place for the vertical Scrollbar
@@ -520,19 +518,19 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * creates a patch editor frame.
      */
     public void setBankEditorInformation(BankEditorFrame bf, int row, int col) { // accessed by YamahaFS1RBankEditor
-	bankFrame = bf;
-	patchRow = row;
-	patchCol = col;
+        bankFrame = bf;
+        patchRow = row;
+        patchCol = col;
     }
 
     void revalidateDriver() {
-	if (!p.chooseDriver()) {
-	    try {
-		setClosed(true);
-	    } catch (Exception e) {
-	    }
-	    return;
-	}
+        if (!p.chooseDriver()) {
+            try {
+                setClosed(true);
+            } catch (Exception e) {
+            }
+            return;
+        }
     }
 
     /** A hook called when the frame is activated. */
@@ -546,8 +544,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     /**
      * return the Patch which is edited.
      */
-    public Patch getPatch() {
-	return p;
+    public IPatch getPatch() {
+        return p;
     }
 
     /** Tells JSynthLib what the longest Label you plan to add in this
@@ -562,8 +560,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      */
     public void setLongestLabel(String s)
     {
-	JLabel j = new JLabel(s);
-	Dimension d = j.getPreferredSize();
-	forceLabelWidth=(int)d.getWidth();
+        JLabel j = new JLabel(s);
+        Dimension d = j.getPreferredSize();
+        forceLabelWidth=(int)d.getWidth();
     }
 }

@@ -18,7 +18,7 @@ public class KorgWavestationDevice extends Device {
 
     /** Creates new KorgWavestationDevice */
     public KorgWavestationDevice() {
-	super ("Korg","Wavestation","F07E**06024228000100********F7",infoText,"Gerrit Gehnen");
+	super ("Korg","Wavestation","F07E..06024228000100........F7",infoText,"Gerrit Gehnen");
     }
 
     /** Constructor for for actual work. */

@@ -5,6 +5,7 @@
 package synthdrivers.AlesisA6;
 
 import core.*;
+
 import javax.swing.*;
 
 public class AlesisA6MixBankDriver extends BankDriver
@@ -25,17 +26,17 @@ public class AlesisA6MixBankDriver extends BankDriver
     singleSysexID = "F000000E1D04";
   }
 
-  public void calculateChecksum(Patch p)
+  public void calculateChecksum(IPatch p)
   {
     // A6 doesn't use checksum
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs)
+  public void calculateChecksum(IPatch p, int start, int end, int ofs)
   {
     // A6 doesn't use checksum
   }
 
-  public void storePatch (Patch p, int bankNum, int patchNum)
+  public void storePatch (IPatch p, int bankNum, int patchNum)
   {
     if (bankNum == 1 || bankNum == 2)
       JOptionPane.showMessageDialog(PatchEdit.getInstance(),
@@ -44,10 +45,10 @@ public class AlesisA6MixBankDriver extends BankDriver
         JOptionPane.WARNING_MESSAGE
       );
     else
-      sendPatchWorker(p, bankNum);
+      sendPatchWorker((Patch)p, bankNum);
   }
 
-  public void putPatch(Patch bank, Patch p, int patchNum)
+  public void putPatch(IPatch bank, IPatch p, int patchNum)
   {
     if (!canHoldPatch(p))
     {
@@ -55,22 +56,22 @@ public class AlesisA6MixBankDriver extends BankDriver
       return;
     }
 
-    System.arraycopy(p.sysex, 0, bank.sysex, patchNum * 1180, 1180);
-    bank.sysex[patchNum * 1180 + 6] = 0; // user bank
-    bank.sysex[patchNum * 1180 + 7] = (byte)patchNum; // set mix #
+    System.arraycopy(((Patch)p).sysex, 0, ((Patch)bank).sysex, patchNum * 1180, 1180);
+    ((Patch)bank).sysex[patchNum * 1180 + 6] = 0; // user bank
+    ((Patch)bank).sysex[patchNum * 1180 + 7] = (byte)patchNum; // set mix #
   }
 
-  public Patch getPatch(Patch bank, int patchNum)
+  public IPatch getPatch(IPatch bank, int patchNum)
   {
     byte sysex[] = new byte[1180];
-    System.arraycopy(bank.sysex, patchNum * 1180, sysex, 0, 1180);
-    Patch p = new Patch(sysex, getDevice());
+    System.arraycopy(((Patch)bank).sysex, patchNum * 1180, sysex, 0, 1180);
+    IPatch p = new Patch(sysex, getDevice());
     return p;
   }
 
-  public String getPatchName(Patch p, int patchNum)
+  public String getPatchName(IPatch p, int patchNum)
   {
-    Patch Mix = getPatch(p, patchNum);
+    Patch Mix = (Patch)getPatch(p, patchNum);
     try {
       char c[] = new char[patchNameSize];
       for (int i = 0; i < patchNameSize; i++)
@@ -83,9 +84,9 @@ public class AlesisA6MixBankDriver extends BankDriver
     }
   }
 
-  public void setPatchName(Patch p,int patchNum, String name)
+  public void setPatchName(IPatch p,int patchNum, String name)
   {
-    Patch Mix = getPatch(p, patchNum);
+    Patch Mix = (Patch)getPatch(p, patchNum);
     if (name.length() < patchNameSize + 4)
       name = name + "                ";
     byte nameByte[] = name.getBytes();
@@ -96,9 +97,9 @@ public class AlesisA6MixBankDriver extends BankDriver
     putPatch(p, Mix, patchNum);
   }
 
-  protected void sendPatch (Patch p)
+  protected void sendPatch (IPatch p)
   {
-    sendPatchWorker(p, 0);
+    sendPatchWorker((Patch)p, 0);
   }
 
   protected void sendPatchWorker (Patch p, int bankNum)
@@ -126,9 +127,7 @@ public class AlesisA6MixBankDriver extends BankDriver
 
   public void requestPatchDump(int bankNum, int patchNum)
   {
-    send(sysexRequestDump.toSysexMessage(getChannel(),
-					 new NameValue("bankNum", bankNum),
-					 new NameValue("patchNum", patchNum)));
+    send(sysexRequestDump.toSysexMessage(((byte)getChannel()), new NameValue[] { new NameValue("bankNum", bankNum), new NameValue("patchNum", patchNum)}));
   }
 }
 

@@ -50,7 +50,7 @@ public class EnvelopeWidget extends SysexWidget {
      * @param xpad horizontal padding value.
      * @param ypad vertical padding value.
      */
-    public EnvelopeWidget(String l, Patch p, Node[] n,
+    public EnvelopeWidget(String l, IPatch p, Node[] n,
 			  int xpad, int ypad) {
 	super(l, p, null, null);
 	nodes = n;
@@ -62,7 +62,7 @@ public class EnvelopeWidget extends SysexWidget {
     }
 
     /** <code>xpad</code> and <code>ypad</code> are set to zero. */
-    public EnvelopeWidget(String l, Patch p, Node[] n) {
+    public EnvelopeWidget(String l, IPatch p, Node[] n) {
 	this(l, p, n, 0, 0);
     }
 

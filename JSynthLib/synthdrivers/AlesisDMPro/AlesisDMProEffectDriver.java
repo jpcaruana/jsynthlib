@@ -22,6 +22,7 @@
 package synthdrivers.AlesisDMPro;
 
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -48,24 +49,24 @@ public class AlesisDMProEffectDriver extends Driver
    }
 
   }
-public void storePatch (Patch p, int bankNum,int patchNum)
+public void storePatch (IPatch p, int bankNum,int patchNum)
   {
    setBankNum(bankNum);
    setPatchNum(patchNum);
-   p.sysex[6] = (byte) patchNum;
+   ((Patch)p).sysex[6] = (byte) patchNum;
    sendPatchWorker(p);
    setPatchNum(patchNum);
   }
-public void sendPatch (Patch p)
+public void sendPatch (IPatch p)
   {
    //DM Pro editbuffer is named 64
-   p.sysex[6] = 64;
+   ((Patch)p).sysex[6] = 64;
    sendPatchWorker(p);
   }
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  public void calculateChecksum(IPatch p,int start,int end,int ofs)
   {
   }
-  public Patch createNewPatch ()
+  public IPatch createNewPatch ()
  {
 
 	 byte [] sysex = new byte[36];
@@ -83,14 +84,14 @@ public void sendPatch (Patch p)
          sysex[35] = (byte) 0xF7;
 
 
-	 Patch p = new Patch(sysex, this);
+	 IPatch p = new Patch(sysex, this);
 	 //setPatchName(p,"New Effect");
 	 //calculateChecksum(p);
 	 return p;
  }
-public JSLFrame editPatch(Patch p)
+public JSLFrame editPatch(IPatch p)
  {
-     return new AlesisDMProEffectEditor(p);
+     return new AlesisDMProEffectEditor((Patch)p);
  }
 
 }

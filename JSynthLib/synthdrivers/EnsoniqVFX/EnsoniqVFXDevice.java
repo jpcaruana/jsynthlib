@@ -32,7 +32,7 @@ public class EnsoniqVFXDevice extends Device
 		// inquiryID:
 		// i fix the required major version to 2
 		// i let the minor version number empty
-		super ("Ensoniq","VFX","F07E**06020F05000000000002**F7",infoText,"Denis Queffeulou");
+		super ("Ensoniq","VFX","F07E..06020F05000000000002..F7",infoText,"Denis Queffeulou");
 	}
 
 	/** Constructor for for actual work. */

@@ -21,9 +21,6 @@
 
 package synthdrivers.QuasimidiQuasar;
 
-import core.*;
-
-import java.util.prefs.Preferences;
 /**
  * Constants for the Quasimidi Quasar synthdriver
  *

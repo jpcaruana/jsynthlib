@@ -17,6 +17,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.EventObject;
+
+import javax.sound.midi.SysexMessage;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -25,7 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -331,7 +332,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             Patch firstpat = new Patch(buffer, offset);
             offset += firstpat.sysex.length;
             //ErrorMsg.reportStatus("Buffer length:" + buffer.length + " Patch Lenght: " + firstpat.sysex.length);
-            Patch[] patarray = firstpat.dissect();
+            IPatch[] patarray = firstpat.dissect();
 
             for (int j = 0; j < patarray.length; j++) {
                 if (table.getSelectedRowCount() == 0)
@@ -351,9 +352,12 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return;
         }
+        SysexMessage[] msgs = getSelectedPatch().getMessages();
+        if (msgs == null)
+        		return;
         FileOutputStream fileOut = new FileOutputStream(file);
-        // Scene does not have sysex field, Hiroo
-        fileOut.write(myModel.getPatchAt(table.getSelectedRow()).sysex);
+        for (int i = 0; i < msgs.length; i++)
+        		fileOut.write(msgs[i].getMessage(),0,msgs[i].getLength());
         fileOut.close();
     }
 
@@ -378,47 +382,47 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             Actions.setEnabled(false, Actions.EN_PASTE);
     }
 
-    public void pastePatch(Patch p) {
-        pth.importData(table, p);
+    public void pastePatch(IPatch p) {
+	pth.importData(table, p);
     }
 
-    public Patch getSelectedPatch() {
-        try {
-            return myModel.getPatchAt(table.getSelectedRow());
-        } catch (Exception e) {
-            ErrorMsg.reportStatus(e);
-            return null;
-        }
+    public IPatch getSelectedPatch() {
+	try {
+	    return myModel.getPatchAt(table.getSelectedRow());
+	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	    return null;
+	}
     }
 
     public void sendSelectedPatch() {
-        Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         myPatch.getDriver().sendPatch(myPatch);
     }
 
     public void sendToSelectedPatch() {
-        Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         new SysexSendToDialog(myPatch);
     }
 
     public void reassignSelectedPatch() {
-        Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         new ReassignPatchDialog(myPatch);
         myModel.fireTableDataChanged();
     }
 
     public void playSelectedPatch() {
-        Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         myPatch.getDriver().sendPatch(myPatch);
         myPatch.getDriver().playPatch(myPatch);
     }
 
     public void storeSelectedPatch() {
-        Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.getDriver().calculateChecksum(myPatch);
         new SysexStoreDialog(myPatch);
     }
@@ -428,7 +432,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             ErrorMsg.reportError("Error", "No Patch Selected. EditAction must be disabled.");
             return null;
         }
-        Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         changed = true;
         return myPatch.getDriver().editPatch(myPatch);
     }
@@ -455,7 +459,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return;
         }
-        Patch myPatch = myModel.getPatchAt(table.getSelectedRow());
+        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         BankDriver myDriver = (BankDriver) myPatch.getDriver();
         for (int i = 0; i < myDriver.getNumPatches(); i++)
             if (myDriver.getPatch(myPatch, i) != null)
@@ -509,7 +513,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         for (int i = 0; i < myModel.getRowCount(); i++) {
             int bankNum   = myModel.getSceneAt(i).getBankNumber();
             int patchNum  = myModel.getSceneAt(i).getPatchNumber();
-            Patch myPatch = myModel.getPatchAt(i);
+            IPatch myPatch = myModel.getPatchAt(i);
             myPatch.getDriver().calculateChecksum(myPatch);
             myPatch.getDriver().storePatch(myPatch, bankNum, patchNum);
         }
@@ -633,17 +637,17 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         }
 
         // begin AbstractPatchListModel interface methods
-        public void addPatch(Patch p) {
+        public void addPatch(IPatch p) {
             list.add(new Scene(p));
             this.fireTableDataChanged();
         }
 
-        public void setPatchAt(Patch p, int row) {
+        public void setPatchAt(IPatch p, int row) {
             list.set(row, new Scene(p));
             fireTableRowsUpdated(row, row);
         }
 
-        public Patch getPatchAt(int row) {
+        public IPatch getPatchAt(int row) {
             return ((Scene) list.get(row)).getPatch();
         }
 
@@ -680,7 +684,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             this.fireTableDataChanged();
         }
 
-        public void addPatch(Patch p, int row) {
+        public void addPatch(IPatch p, int row) {
             list.add(row, new Scene(p));
             this.fireTableDataChanged();
         }

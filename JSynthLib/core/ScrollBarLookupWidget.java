@@ -40,7 +40,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
      * the parameter
      * @param options array of label string for each value.
      */
-    public ScrollBarLookupWidget(String label, Patch patch, int min, int max,
+    public ScrollBarLookupWidget(String label, IPatch patch, int min, int max,
 				 int labelWidth,
 				 ParamModel pmodel, SysexSender sender,
 				 String[] options) {
@@ -52,7 +52,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
 	layoutWidgets();
     }
 
-    public ScrollBarLookupWidget(String label, Patch patch, int min, int max,
+    public ScrollBarLookupWidget(String label, IPatch patch, int min, int max,
 				 ParamModel pmodel, SysexSender sender,
 				 String[] options) {
 	this(label, patch, min, max, -1, pmodel, sender, options);

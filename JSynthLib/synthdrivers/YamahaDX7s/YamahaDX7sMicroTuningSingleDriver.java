@@ -23,8 +23,8 @@
  */
 package synthdrivers.YamahaDX7s;
 import synthdrivers.YamahaDX7.common.DX7FamilyMicroTuningSingleDriver;
+import core.IPatch;
 import core.JSLFrame;
-import core.Patch;
 
 public class YamahaDX7sMicroTuningSingleDriver extends DX7FamilyMicroTuningSingleDriver
 {
@@ -37,13 +37,13 @@ public class YamahaDX7sMicroTuningSingleDriver extends DX7FamilyMicroTuningSingl
 	}
 
 
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 
 
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
 		return super.editPatch(p);
 	}

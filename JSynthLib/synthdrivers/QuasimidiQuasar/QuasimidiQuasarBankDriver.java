@@ -217,7 +217,7 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
     /**
     * Creates a new bank with 100 new Quasar Performances
     */
-    public Patch createNewPatch() {
+    public IPatch createNewPatch() {
         byte [] sysex = new byte[this.patchSize];
 
         Patch tempPatch;

@@ -32,7 +32,6 @@ import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import core.Device;
 

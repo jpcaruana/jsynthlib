@@ -25,6 +25,7 @@
 package synthdrivers.YamahaDX7.common;
 import core.BankDriver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -64,7 +65,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 	}
 
 	
-	public void calculateChecksum(Patch p)
+	public void calculateChecksum(IPatch p)
 	{
 		// This patch doesn't uses an over-all checksum for bank bulk data
 	}
@@ -76,7 +77,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 	}
 
 
-	public void putPatch(Patch bank,Patch p,int patchNum)		//puts a patch into the bank, converting it as needed
+	public void putPatch(IPatch bank,IPatch p,int patchNum)		//puts a patch into the bank, converting it as needed
 	{
 		if (!canHoldPatch(p)) {
 			DX7FamilyStrings.dxShowError(toString(), "This type of patch does not fit in to this type of bank.");
@@ -84,22 +85,22 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 		}
 
 		// Transform Voice Data to Bulk Dump Packed Format
-		bank.sysex[getPatchStart(patchNum)+ 0	]=(byte)(0x02);	// Byte Count MSB
-		bank.sysex[getPatchStart(patchNum)+ 1	]=(byte)(0x0a);	// Byte Count LSB
-		bank.sysex[getPatchStart(patchNum)+ 2	]=(byte)(0x4c);	// "L"
-		bank.sysex[getPatchStart(patchNum)+ 3	]=(byte)(0x4d);	// "M"
-		bank.sysex[getPatchStart(patchNum)+ 4	]=(byte)(0x20);	// " "
-		bank.sysex[getPatchStart(patchNum)+ 5	]=(byte)(0x20);	// " "
-		bank.sysex[getPatchStart(patchNum)+ 6	]=(byte)(0x4d);	// "M"
-		bank.sysex[getPatchStart(patchNum)+ 7	]=(byte)(0x43);	// "C"
-		bank.sysex[getPatchStart(patchNum)+ 8	]=(byte)(0x52);	// "R"
-		bank.sysex[getPatchStart(patchNum)+ 9	]=(byte)(0x59);	// "Y"
-		bank.sysex[getPatchStart(patchNum)+10	]=(byte)(0x43);	// "C"
-		bank.sysex[getPatchStart(patchNum)+11	]=(byte)(0x20);	// " "
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 0	]=(byte)(0x02);	// Byte Count MSB
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 1	]=(byte)(0x0a);	// Byte Count LSB
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 2	]=(byte)(0x4c);	// "L"
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 3	]=(byte)(0x4d);	// "M"
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 4	]=(byte)(0x20);	// " "
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 5	]=(byte)(0x20);	// " "
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 6	]=(byte)(0x4d);	// "M"
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 7	]=(byte)(0x43);	// "C"
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 8	]=(byte)(0x52);	// "R"
+		((Patch)bank).sysex[getPatchStart(patchNum)+ 9	]=(byte)(0x59);	// "Y"
+		((Patch)bank).sysex[getPatchStart(patchNum)+10	]=(byte)(0x43);	// "C"
+		((Patch)bank).sysex[getPatchStart(patchNum)+11	]=(byte)(0x20);	// " "
 
 
 		for (int i=0; i<256; i++) {
-			bank.sysex[getPatchStart(patchNum)+12+i]=(byte)p.sysex[16+i];
+			((Patch)bank).sysex[getPatchStart(patchNum)+12+i]=(byte)((Patch)p).sysex[16+i];
 		}
 
 		// Calculate checkSum of single bulk data
@@ -107,7 +108,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 	}
 
 
-	public Patch getPatch(Patch bank, int patchNum)			//Gets a patch from the bank, converting it as needed
+	public IPatch getPatch(IPatch bank, int patchNum)			//Gets a patch from the bank, converting it as needed
 	{
 		try {
 			byte [] sysex=new byte[singleSize];
@@ -133,10 +134,10 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 
 
 			for (int i=0; i<256; i++) {
-				sysex[16+i]=(byte)(bank.sysex[getPatchStart(patchNum)+12+i]);
+				sysex[16+i]=(byte)(((Patch)bank).sysex[getPatchStart(patchNum)+12+i]);
 			}
 
-			Patch p = new Patch(sysex, getDevice());	// single sysex
+			IPatch p = new Patch(sysex, getDevice());	// single sysex
 			p.getDriver().calculateChecksum(p);
 
 			return p;
@@ -146,7 +147,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 	}
 
 
-	public Patch createNewPatch()		// create a bank with 64 micro tuning patches
+	public IPatch createNewPatch()		// create a bank with 64 micro tuning patches
 	{
 		byte [] sysex = new byte[trimSize];
 		
@@ -156,8 +157,8 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 		sysex[ 3]=(byte)0x7e;
 		sysex[trimSize-1]=(byte)0xF7;
 
-		Patch v = new Patch(initSysex, getDevice());	// single sysex
-		Patch p = new Patch(sysex,     this);		// bank sysex
+		IPatch v = new Patch(initSysex, getDevice());	// single sysex
+		IPatch p = new Patch(sysex,     this);		// bank sysex
 
 		for (int i=0;i<getNumPatches();i++)
 			putPatch(p,v,i);

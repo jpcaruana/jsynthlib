@@ -24,8 +24,8 @@
 package synthdrivers.YamahaDX5;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceBankDriver;
+import core.IPatch;
 import core.JSLFrame;
-import core.Patch;
 
 public class YamahaDX5PerformanceBankDriver extends DX7FamilyPerformanceBankDriver
 {
@@ -38,19 +38,19 @@ public class YamahaDX5PerformanceBankDriver extends DX7FamilyPerformanceBankDriv
 	}
 	
 
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 
 
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
 		return super.editPatch(p);
 	}
   
 	
-	public void sendPatch (Patch p, int bankNum,int patchNum)
+	public void sendPatch (IPatch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 ) {
 			// show Information 
@@ -61,9 +61,9 @@ public class YamahaDX5PerformanceBankDriver extends DX7FamilyPerformanceBankDriv
 	}
 
 	
-	public void storePatch (Patch p, int bankNum,int patchNum)
+	public void storePatch (IPatch p, int bankNum,int patchNum)
 	{
-		sendPatch(p, bankNum, patchNum);
+		sendPatch((IPatch)p, bankNum, patchNum);
 	}
 
 	

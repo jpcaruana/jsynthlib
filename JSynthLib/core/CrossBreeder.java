@@ -8,7 +8,10 @@ package core;
  * seperating functionality from GUI code, something I didn't do when
  * I first started JSynthLib.
  */
-/**
+/* XXX: How do we make this work with IPatches instead of Patches?
+ *      Does this need to be a method of IPatch or Driver or something?
+ */
+ /**
  * @author bklock
  * @version $Id$
  * @see CrossBreedDialog
@@ -42,7 +45,7 @@ public class CrossBreeder {
 	    ErrorMsg.reportError("Error", "Internal Error", e);
 	}
     }
-    public Patch getCurrentPatch() {
+    public IPatch getCurrentPatch() {
 	return p;
     }
 

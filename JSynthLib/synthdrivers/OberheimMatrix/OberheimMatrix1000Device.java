@@ -26,7 +26,7 @@ public class OberheimMatrix1000Device extends Device
     /** Creates new OberheimMatrixDevice */
     public OberheimMatrix1000Device ()
     {
-	super ("Oberheim","Matrix 1000","F07E**06021006000200********F7",infoText,"Brian Klock");
+	super ("Oberheim","Matrix 1000","F07E..06021006000200........F7",infoText,"Brian Klock");
     }
 
     /** Constructor for for actual work. */

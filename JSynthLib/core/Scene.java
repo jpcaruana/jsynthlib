@@ -21,7 +21,7 @@ import java.io.Serializable;
  */
 public class Scene extends java.lang.Object implements Serializable, Transferable {
 
-    private Patch patch;
+    private IPatch patch;
 
     private int bankNumber;
 
@@ -38,7 +38,7 @@ public class Scene extends java.lang.Object implements Serializable, Transferabl
         comment=new StringBuffer();
     }
     */
-    public Scene(Patch p) {
+    public Scene(IPatch p) {
         patch=p;
         bankNumber=0;
         patchNumber=0;
@@ -76,14 +76,14 @@ public class Scene extends java.lang.Object implements Serializable, Transferabl
     /** Getter for property patch.
      * @return Value of property patch.
      */
-    public core.Patch getPatch() {
+    public IPatch getPatch() {
         return patch;
     }
 
     /** Setter for property patch.
      * @param patch New value of property patch.
      */
-    public void setPatch(core.Patch patch) {
+    public void setPatch(IPatch patch) {
         this.patch = patch;
     }
 

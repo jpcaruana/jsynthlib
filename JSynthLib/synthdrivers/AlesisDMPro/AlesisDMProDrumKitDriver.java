@@ -21,6 +21,7 @@
 
 package synthdrivers.AlesisDMPro;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -52,24 +53,24 @@ public class AlesisDMProDrumKitDriver extends Driver
    }
 
   }
-public void storePatch (Patch p, int bankNum,int patchNum)
+public void storePatch (IPatch p, int bankNum,int patchNum)
   {
    setBankNum(bankNum);
    setPatchNum(patchNum);
-   p.sysex[6] = (byte) patchNum;
+   ((Patch)p).sysex[6] = (byte) patchNum;
    sendPatchWorker(p);
    setPatchNum(patchNum);
   }
-public void sendPatch (Patch p)
+public void sendPatch (IPatch p)
   {
    //DM Pro editbuffer is named 64
-   p.sysex[6] = 64;
+   ((Patch)p).sysex[6] = 64;
    sendPatchWorker(p);
   }
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  public void calculateChecksum(IPatch p,int start,int end,int ofs)
   {
   }
-  public Patch createNewPatch ()
+  public IPatch createNewPatch ()
  {
 
 	 byte [] sysex = new byte[648];
@@ -87,25 +88,25 @@ public void sendPatch (Patch p)
          sysex[647] = (byte) 0xF7;
 
 	 //ToDO: Load up a dump as a basis...
-	 Patch p = new Patch(sysex, this);
+	 IPatch p = new Patch(sysex, this);
 	 setPatchName(p,"NewDrumKit");
 	 calculateChecksum(p);
 	 return p;
  }
-public JSLFrame editPatch(Patch p)
+public JSLFrame editPatch(IPatch p)
  {
-     return new AlesisDMProDrumKitEditor(p);
+     return new AlesisDMProDrumKitEditor((Patch)p);
  }
 
 /**Gets the name of the patch from the sysex. If the patch uses some weird
  * format or encoding, this needs to be overidden in the particular driver*/
-public String getPatchName (Patch p)
+public String getPatchName (IPatch ip)
 {
   StringBuffer str = new StringBuffer("");
 
   try {
 
-    	AlesisDMProParser oParser = new AlesisDMProParser(p);
+    	AlesisDMProParser oParser = new AlesisDMProParser((Patch)ip);
 
     	str.append((char) m_arChars[oParser.getValue(0,5,7)]);
     	str.append((char) m_arChars[oParser.getValue(1,4,7)]);
@@ -125,10 +126,10 @@ public String getPatchName (Patch p)
     return str.toString();
 }
 
-public void setPatchName (Patch p, String name)
+public void setPatchName (IPatch p, String name)
     {
 
-        AlesisDMProParser oParser = new AlesisDMProParser(p);
+        AlesisDMProParser oParser = new AlesisDMProParser((Patch)p);
         byte[] ar = new byte[10];
         char arStr[] = name.toCharArray();
 

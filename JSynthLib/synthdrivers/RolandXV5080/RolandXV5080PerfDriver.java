@@ -8,6 +8,7 @@
 
 package synthdrivers.RolandXV5080;
 import core.Driver;
+import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -67,8 +68,8 @@ public class RolandXV5080PerfDriver extends Driver {
 // RolandXV5080PerfDriver->storePatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void storePatch (Patch p, int bankNum, int patchNum) {
-    updatePatchNum(p, patchNum);
+  public void storePatch (IPatch p, int bankNum, int patchNum) {
+    updatePatchNum((Patch)p, patchNum);
     calculateChecksum(p);
 
     sendPatchWorker(p);
@@ -81,7 +82,7 @@ public class RolandXV5080PerfDriver extends Driver {
 // RolandXV5080PerfDriver->sendPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void sendPatch (Patch p) {
+  public void sendPatch (IPatch p) {
     storePatch(p, 0, 0);
   }
 
@@ -112,12 +113,12 @@ public class RolandXV5080PerfDriver extends Driver {
 // RolandXV5080PerfDriver->calculateChecksum(Patch)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void calculateChecksum(Patch p) {
+  public void calculateChecksum(IPatch p) {
     for (int i = 0; i < PATCH_SYSEX_START.length; i++) {
       int checksumStart = PATCH_SYSEX_START[i] + CHECKSUM_START;
       int checksumEnd = PATCH_SYSEX_START[i] + PATCH_SYSEX_SIZE[i] - 3;
       int checksumOffset = checksumEnd + 1;
-      RolandXV5080PatchDriver.calculateChecksum(p.sysex, checksumStart, checksumEnd, checksumOffset);
+      RolandXV5080PatchDriver.calculateChecksum(((Patch)p).sysex, checksumStart, checksumEnd, checksumOffset);
     }
   }
 

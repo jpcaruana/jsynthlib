@@ -15,7 +15,7 @@ public class YamahaMotifDevice extends Device {
 
     /** Creates new MotifDevice */
     public YamahaMotifDevice() {
-	super("Yamaha", "Motif", "F07E7F06024300417*040000007FF7",
+	super("Yamaha", "Motif", "F07E7F06024300417.040000007FF7",
 	      "This version has librarian support for single voices (drum "+
 	      "and normal), and some editor support for normal voices. "+
 	      "There's a ton missing from the editor (control sets, lfo's, "+

@@ -1,6 +1,5 @@
 package core;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -9,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.sound.midi.SysexMessage;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -33,7 +33,7 @@ public class UploadPatchDialog extends JDialog {
 
 	String patchType;
 	PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-	Patch q	= library.getSelectedPatch();
+	IPatch q	= library.getSelectedPatch();
 
 	JPanel container= new JPanel();
 	container.setLayout (new BorderLayout());
@@ -72,7 +72,7 @@ public class UploadPatchDialog extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 		    try {
 			PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-			Patch q	= library.getSelectedPatch();
+			IPatch q	= library.getSelectedPatch();
 			uploadPatch(q);
 		    }catch (Exception ex){JOptionPane.showMessageDialog(null, "Patch Must be Focused","Error", JOptionPane.ERROR_MESSAGE);}
 		}});
@@ -114,14 +114,28 @@ public class UploadPatchDialog extends JDialog {
  	this.setVisible(false);
     }
 
-    void uploadPatch(Patch p) {
+    void uploadPatch(IPatch p) {
 	String patchType=t1.getText();
 	String patchName=t2.getText();
 	String desc=t3.getText();
 	String repository=t4.getText();
 	String userName=t5.getText();
 	String passwd=new String(t6.getPassword());
-	byte [] sysex = p.sysex;
+	byte [] sysex;
+	{
+		SysexMessage[] msgs = p.getMessages();
+		if (msgs == null)
+			ErrorMsg.reportError("Error","Patch contains no data");
+		int length = 0;
+		for (int i = 0; i < msgs.length;i++)
+			length += msgs[i].getLength();
+		sysex = new byte[length];
+		int pos = 0;
+		for (int i = 0; i < msgs.length; i++) {
+			System.arraycopy(msgs[i].getMessage(),0,sysex,pos,msgs[i].getLength());
+			pos += msgs[i].getLength();
+		}
+	}
 	if (patchName.length()<4)
 	    ErrorMsg.reportError("Error","Patch Name must be at least 4 characters.");
 	else if (desc.length()<20)
@@ -217,7 +231,7 @@ public class UploadPatchDialog extends JDialog {
     void play() {
 	try{
 	    PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-	    Patch p = library.getSelectedPatch();
+	    IPatch p = library.getSelectedPatch();
 
 	    if (p==null) return;
 	    p.getDriver().sendPatch(p);

@@ -1,6 +1,11 @@
 package core;
-import java.io.*;
-import java.awt.datatransfer.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.SysexMessage;
 
 /**
  * A class for MIDI System Exclusive Message patch data.<p>
@@ -27,7 +32,7 @@ import java.awt.datatransfer.*;
  * @version $Id$
  * @see Driver#supportsPatch
  */
-public class Patch implements Serializable, Transferable, Cloneable {
+public class Patch implements IPatch {
     /** Driver for this Patch. */
     private transient Driver driver;
 
@@ -143,14 +148,14 @@ public class Patch implements Serializable, Transferable, Cloneable {
      * @return <code>true</code> if a driver is found,
      * <code>false</code> otherwise.
      */
-    boolean chooseDriver() {
+    public boolean chooseDriver() {
         //Integer intg = new Integer(0);
         //StringBuffer driverString = new StringBuffer();
         StringBuffer patchString = getPatchHeader();
 
         for (int idev = 0; idev < PatchEdit.appConfig.deviceCount(); idev++) {
             // Outer Loop, iterating over all installed devices
-	    Device dev = PatchEdit.appConfig.getDevice(idev);
+	    Device dev = AppConfig.getDevice(idev);
 	    for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
 		Driver drv = dev.getDriver(idrv);
                 // Inner Loop, iterating over all Drivers of a device
@@ -170,32 +175,32 @@ public class Patch implements Serializable, Transferable, Cloneable {
     }
 
     /** Getter for property date. */
-    String getDate() {
+    public String getDate() {
 	return date.toString();
     }
 
     /** Setter for property date. */
-    void setDate(String date) {
+    public void setDate(String date) {
 	this.date = new StringBuffer(date);
     }
 
     /** Getter for property author. */
-    String getAuthor() {
+    public String getAuthor() {
 	return author.toString();
     }
 
     /** Setter for property author. */
-    void setAuthor(String author) {
+    public void setAuthor(String author) {
 	this.author = new StringBuffer(author);
     }
 
     /** Getter for property comment. */
-    String getComment() {
+    public String getComment() {
 	return comment.toString();
     }
 
     /** Setter for property comment. */
-    void setComment(String comment) {
+    public void setComment(String comment) {
 	this.comment = new StringBuffer(comment);
     }
 
@@ -210,10 +215,33 @@ public class Patch implements Serializable, Transferable, Cloneable {
     }
 
     /** Set driver. */
-    void setDriver(Driver driver) {
+    public void setDriver(Driver driver) {
   	this.driver = (driver == null) ? AppConfig.getNullDriver() : driver;
     }
 
+	public SysexMessage[] getMessages() {
+		if (sysex == null)
+			return null;
+		ArrayList l = new ArrayList();
+		int start, end = -1;
+		while (end < sysex.length) {
+			start = end + 1;
+			end = start + 1;
+			while ((sysex[end] & 0xF0) == 0 && end < sysex.length)
+				end++;
+			byte[] b = new byte[end - start];
+			System.arraycopy(sysex, start, b, 0, end - start);
+			SysexMessage msg = new SysexMessage();
+			try {
+				msg.setMessage(b,b.length);
+			} catch (InvalidMidiDataException ex) {
+				// Should I do something else here?
+				ErrorMsg.reportError("Invalid Midi Message","This patch contains invalid MIDI sysex data.",ex);
+			}
+			l.add(msg);
+		}
+		return (SysexMessage[])l.toArray(new SysexMessage[0]);
+	}
     // Transferable interface methods
 
     public Object getTransferData(DataFlavor p1)
@@ -258,9 +286,8 @@ public class Patch implements Serializable, Transferable, Cloneable {
      */
     // called by ImportAllDialog, ImportMidiFile, SysexGetDialog,
     // LibraryFrame, and SceneFrame.
-    // Converter is used only here.
-    Patch[] dissect() {
-	Patch[] patarray;
+    public IPatch[] dissect() {
+	IPatch[] patarray;
 	Device dev = getDevice();
     search:
 	{
@@ -276,7 +303,7 @@ public class Patch implements Serializable, Transferable, Cloneable {
 		}
 	    }
 	    // No conversion. Try just the original patch....
-	    return new Patch[] {this};
+	    return new IPatch[] {this};
 	}
 	// Conversion was sucessfull, we have at least one
 	// converted patch assign the original deviceNum and
@@ -297,7 +324,7 @@ public class Patch implements Serializable, Transferable, Cloneable {
      * byte sysex data.
      * @see Driver#supportsPatch
      */
-    StringBuffer getPatchHeader() {
+    public StringBuffer getPatchHeader() {
 	StringBuffer patchstring = new StringBuffer("F0");
 
 	// Some Sysex Messages are shorter than 16 Bytes!
@@ -321,4 +348,18 @@ public class Patch implements Serializable, Transferable, Cloneable {
 		   + Utility.hexDumpOneLine(sysex, 0, -1, 20));
 	return buf.toString();
     }
+    
+    public String getName() {
+    		return getDriver().getPatchName(this);
+    }
+    
+    public void setName(String s) {
+    		getDriver().setPatchName(this, s);
+    }
+	public void useSysexFromPatch(IPatch ip) {
+		Patch p = (Patch)ip;
+		if (p.sysex.length != sysex.length)
+			throw new IllegalArgumentException();
+		sysex = p.sysex;
+	}
 }

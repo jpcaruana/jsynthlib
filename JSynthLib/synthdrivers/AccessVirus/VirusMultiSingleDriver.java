@@ -3,6 +3,7 @@
 package synthdrivers.AccessVirus;
 
 import core.Driver;
+import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -85,16 +86,17 @@ public class VirusMultiSingleDriver extends Driver {
     patchNumbers = PATCH_LIST;
   }
 
-  public void calculateChecksum(Patch p, int start, int end, int ofs) {
-    int sum = 0;
+  public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+  	Patch p = (Patch)ip;
+  	int sum = 0;
     for (int i = start; i <= end; i++) {
       sum += p.sysex[i];
     }
     p.sysex[ofs] = (byte)(sum & 0x7F);
   }
 
-  public void sendPatch(Patch p) {
-    sendPatch(p, 0, 0); // using single mode edit buffer
+  public void sendPatch(IPatch p) {
+    sendPatch((Patch)p, 0, 0); // using single mode edit buffer
   }
 
   public void sendPatch(Patch p, int bankNum, int patchNum) {
@@ -107,12 +109,12 @@ public class VirusMultiSingleDriver extends Driver {
   }
 
   // Sends a patch to a set location in the user bank
-  public void storePatch(Patch p, int bankNum, int patchNum) {
-    sendPatch(p, 1, patchNum);
+  public void storePatch(IPatch p, int bankNum, int patchNum) {
+    sendPatch((Patch)p, 1, patchNum);
   }
 
-  public void playPatch(Patch p) {
-    Patch p2 = new Patch(p.sysex);
+  public void playPatch(IPatch p) {
+    Patch p2 = new Patch(((Patch)p).sysex);
     p2.sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
     p2.sysex[BANK_NUM_OFFSET] = 0; // edit buffer
     p2.sysex[PATCH_NUM_OFFSET] = 0; // single mode
@@ -120,8 +122,8 @@ public class VirusMultiSingleDriver extends Driver {
     super.playPatch(p2);
   }
 
-  public Patch createNewPatch() {
-    Patch p = new Patch(NEW_PATCH, this);
+  public IPatch createNewPatch() {
+    IPatch p = new Patch(NEW_PATCH, this);
     return p;
   }
 

@@ -33,7 +33,8 @@ public class KorgX3BankConverter extends Converter {
    * @param p Patch to be converted
    * @return Converted patch
    */
-  public Patch[] extractPatch (Patch p) {
+  public IPatch[] extractPatch (IPatch ip) {
+  	Patch p = (Patch)ip;
     byte[] ps;
     byte[] pd;
     pd = new byte[37600+KorgX3BankDriver.EXTRA_HEADER];

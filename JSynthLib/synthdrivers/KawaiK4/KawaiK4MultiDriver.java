@@ -1,5 +1,6 @@
 package synthdrivers.KawaiK4;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.NameValue;
 import core.Patch;
@@ -41,16 +42,16 @@ public class KawaiK4MultiDriver extends Driver {
 	System.arraycopy(generateNumbers(1, 16, "D-##"), 0, patchNumbers, 48, 16);
     }
 
-    public void storePatch(Patch p, int bankNum, int patchNum) {
+    public void storePatch(IPatch p, int bankNum, int patchNum) {
 	setBankNum(bankNum);
 	setPatchNum(patchNum);
 	try {
 	    Thread.sleep(100);
 	} catch (Exception e) {
 	}
-	p.sysex[3] = (byte) 0x20;
-	p.sysex[6] = (byte) (bankNum << 1);
-	p.sysex[7] = (byte) (patchNum + 0x40);
+	((Patch)p).sysex[3] = (byte) 0x20;
+	((Patch)p).sysex[6] = (byte) (bankNum << 1);
+	((Patch)p).sysex[7] = (byte) (patchNum + 0x40);
 	sendPatchWorker(p);
 	try {
 	    Thread.sleep(100);
@@ -59,14 +60,15 @@ public class KawaiK4MultiDriver extends Driver {
 	setPatchNum(patchNum);
     }
 
-    public void sendPatch(Patch p) {
-	p.sysex[3] = (byte) 0x23;
-	p.sysex[7] = (byte) 0x40;
+    public void sendPatch(IPatch p) {
+	((Patch)p).sysex[3] = (byte) 0x23;
+	((Patch)p).sysex[7] = (byte) 0x40;
 	sendPatchWorker(p);
     }
 
-    public void calculateChecksum(Patch p, int start, int end, int ofs) {
-	int sum = 0;
+    public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+    	Patch p = (Patch)ip;
+    	int sum = 0;
 	for (int i = start; i <= end; i++) {
 	    sum += p.sysex[i];
 	}
@@ -74,7 +76,7 @@ public class KawaiK4MultiDriver extends Driver {
 	p.sysex[ofs] = (byte) (sum % 128);
     }
 
-    public Patch createNewPatch() {
+    public IPatch createNewPatch() {
 	byte[] sysex = new byte[HSIZE + SSIZE + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x20; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
@@ -83,14 +85,14 @@ public class KawaiK4MultiDriver extends Driver {
 	    sysex[12 + 6 + 8 + i * 8] = 24;
 	    sysex[12 + 7 + 8 + i * 8] = 50;
 	}
-	Patch p = new Patch(sysex, this);
+	IPatch p = new Patch(sysex, this);
 	setPatchName(p, "New Patch");
 	calculateChecksum(p);
 	return p;
     }
 
-    public JSLFrame editPatch(Patch p) {
-	return new KawaiK4MultiEditor(p);
+    public JSLFrame editPatch(IPatch p) {
+	return new KawaiK4MultiEditor((Patch)p);
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {

@@ -3,6 +3,7 @@
  */
 package synthdrivers.OberheimMatrix;
 import core.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -545,8 +546,8 @@ MtxModel(patch,104),new ModSender(patch,0),source);
  }
 
  class CheckBoxCellRenderer  implements TableCellRenderer {
-  Patch patch;
-  CheckBoxCellRenderer(Patch p) {patch=p;}
+  IPatch patch;
+  CheckBoxCellRenderer(IPatch p) {patch=p;}
   public Component getTableCellRendererComponent (JTable table, Object value, boolean isSelected, boolean hasFocus,
                                                   int row, int col)
     {

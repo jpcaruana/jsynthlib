@@ -24,6 +24,7 @@
  */
 package synthdrivers.YamahaDX7.common;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -63,37 +64,37 @@ public class DX7FamilyMicroTuningSingleDriver extends Driver
 	}
 
 
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		return new Patch(initSysex, this);
 	}
 
 
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
-		return new DX7FamilyMicroTuningEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", p);
+		return new DX7FamilyMicroTuningEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", (Patch)p);
 	}
 
 
-	public void sendPatch (Patch p)
+	public void sendPatch (IPatch p)
 	{
 		// This is an edit buffer patch!
-		p.sysex[14]=(byte)(0x45);
-		p.sysex[15]=(byte)(0x20);
+		((Patch)p).sysex[14]=(byte)(0x45);
+		((Patch)p).sysex[15]=(byte)(0x20);
 	
 		super.sendPatch (p);
 	}
 
 
-	public void storePatch (Patch p, int bankNum,int patchNum)
+	public void storePatch (IPatch p, int bankNum,int patchNum)
 	{
 		// Is it necessary to switch off Memory Protection for edit buffer and/or User 1,2?
 		if (patchNum==0) {	   // edit buffer
-			p.sysex[14]=(byte)(0x45);
-			p.sysex[15]=(byte)(0x20);
+			((Patch)p).sysex[14]=(byte)(0x45);
+			((Patch)p).sysex[15]=(byte)(0x20);
 		} else {		   // User 1,2
-			p.sysex[14]=(byte)(0x4D);
-			p.sysex[15]=(byte)(0x00+patchNum-1);
+			((Patch)p).sysex[14]=(byte)(0x4D);
+			((Patch)p).sysex[15]=(byte)(0x00+patchNum-1);
 		}
 	
 		super.sendPatch (p);

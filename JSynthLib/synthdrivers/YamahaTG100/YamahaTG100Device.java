@@ -47,7 +47,7 @@ public class YamahaTG100Device extends Device {
     public YamahaTG100Device() {
         super(  "Yamaha",
                 "TG100",
-                "F07E**06020001050000040001002100F7",
+                "F07E..06020001050000040001002100F7",
                 INFO_TEXT,
                 "Joachim Backhaus");
                 

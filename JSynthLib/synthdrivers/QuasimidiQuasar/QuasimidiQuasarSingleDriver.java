@@ -21,12 +21,17 @@
 
 package synthdrivers.QuasimidiQuasar;
 
-import core.*;
+import java.io.UnsupportedEncodingException;
 
-import java.io.*;
-import javax.swing.*;
-import javax.sound.midi.ShortMessage;
-import javax.sound.midi.SysexMessage;
+import javax.swing.JOptionPane;
+
+import core.Driver;
+import core.ErrorMsg;
+import core.IPatch;
+import core.NameValue;
+import core.Patch;
+import core.PatchEdit;
+import core.SysexHandler;
 
 /** Driver for Quasimidi Quasar Singles Performance's
  *
@@ -252,7 +257,7 @@ public class QuasimidiQuasarSingleDriver extends Driver {
     /**
     * Creates a new "Single Performance"
     */
-    public Patch createNewPatch() {
+    public IPatch createNewPatch() {
         return createNewPatch(0);
     }
 

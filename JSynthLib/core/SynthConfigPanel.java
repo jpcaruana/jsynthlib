@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.sound.midi.MidiDevice;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -15,9 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ProgressMonitor;
-import javax.swing.table.TableColumn;
 import javax.swing.table.AbstractTableModel;
-import javax.sound.midi.MidiDevice;
+import javax.swing.table.TableColumn;
 
 /**
  * ConfigPanel for Synthesizer Configuration
@@ -146,7 +146,7 @@ class SynthConfigPanel extends ConfigPanel {
     private void detailPressed() {
         if ((table.getSelectedRow() == -1)) // not selected
 	    return;
-        appConfig.getDevice(table.getSelectedRow()).showDetails();
+        AppConfig.getDevice(table.getSelectedRow()).showDetails();
         //((TableModel) table.getModel()).fireTableDataChanged();
     }
 
@@ -217,8 +217,8 @@ class SynthConfigPanel extends ConfigPanel {
 	    int out = appConfig.getInitPortOut();
 	    int in = appConfig.getInitPortIn();
 	    for (int i = 0; i < appConfig.deviceCount(); i++) {
-		appConfig.getDevice(i).setPort(out);
-		appConfig.getDevice(i).setInPort(in);
+		AppConfig.getDevice(i).setPort(out);
+		AppConfig.getDevice(i).setInPort(in);
 	    }
 	}
 
@@ -251,7 +251,7 @@ class SynthConfigPanel extends ConfigPanel {
 	    return getValueAt(0, c).getClass();
 	}
 	public Object getValueAt(int row, int col) {
-	    Device myDevice = (Device) appConfig.getDevice(row);
+	    Device myDevice = (Device) AppConfig.getDevice(row);
 
 	    switch (col) {
 	    case SYNTH_NAME:
@@ -295,7 +295,7 @@ class SynthConfigPanel extends ConfigPanel {
 	}
 
 	public void setValueAt(Object value, int row, int col) {
-	    Device dev = (Device) appConfig.getDevice(row);
+	    Device dev = (Device) AppConfig.getDevice(row);
 	    switch (col) {
 	    case SYNTH_NAME:
 		dev.setSynthName((String) value);

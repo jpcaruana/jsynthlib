@@ -1,5 +1,6 @@
 package synthdrivers.KorgX3;
 import core.*;
+
 import java.io.*;
 import javax.swing.*;
 
@@ -86,11 +87,11 @@ public class KorgX3BankDriver extends BankDriver
    * @param patchNum Patch number
    * @return Patch name
    */
-  public String getPatchName(Patch p,int patchNum) {
+  public String getPatchName(IPatch p,int patchNum) {
     int nameStart=getPatchStart(patchNum);
     nameStart+=0; //offset of name in patch data
     try {
-      StringBuffer s= new StringBuffer(new String(p.sysex,nameStart,
+      StringBuffer s= new StringBuffer(new String(((Patch)p).sysex,nameStart,
 						  10,"US-ASCII"));
       return s.toString();
     } catch (UnsupportedEncodingException ex) {
@@ -105,7 +106,7 @@ public class KorgX3BankDriver extends BankDriver
    * @param patchNum Patch number
    * @param name Name
    */
-  public void setPatchName(Patch p,int patchNum, String name)
+  public void setPatchName(IPatch p,int patchNum, String name)
   {
     patchNameSize=10;
     patchNameStart=getPatchStart(patchNum);
@@ -115,7 +116,7 @@ public class KorgX3BankDriver extends BankDriver
     try {
       namebytes=name.getBytes("US-ASCII");
       for (int i=0;i<patchNameSize;i++)
-	p.sysex[patchNameStart+i]=namebytes[i];
+	((Patch)p).sysex[patchNameStart+i]=namebytes[i];
       
     } catch (UnsupportedEncodingException ex) {return;}
   }
@@ -123,14 +124,14 @@ public class KorgX3BankDriver extends BankDriver
   /**
    * Not used in KorgX3.
    */
-  public void calculateChecksum(Patch p,int start,int end,int ofs)
+  public void calculateChecksum(IPatch p,int start,int end,int ofs)
   {
   }
 
   /**
    * Not used in KorgX3.
    */
-  public void calculateChecksum (Patch p)
+  public void calculateChecksum (IPatch p)
   {
   }                                     
 
@@ -141,14 +142,14 @@ public class KorgX3BankDriver extends BankDriver
    * @param p Patch
    * @param patchNum Patch number in bank
    */
-  public void putPatch(Patch bank,Patch p,int patchNum)
+  public void putPatch(IPatch bank,IPatch p,int patchNum)
   { 
     if (!canHoldPatch(p)) {
       JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); 
       return;
     }
                 
-    System.arraycopy(p.sysex,KorgX3SingleDriver.EXTRA_HEADER,bank.sysex,getPatchStart(patchNum),164);
+    System.arraycopy(((Patch)p).sysex,KorgX3SingleDriver.EXTRA_HEADER,((Patch)bank).sysex,getPatchStart(patchNum),164);
   }
 
   /**
@@ -158,15 +159,15 @@ public class KorgX3BankDriver extends BankDriver
    * @param patchNum Patch number
    * @return Single patch
    */
-  public Patch getPatch(Patch bank, int patchNum)
+  public IPatch getPatch(IPatch bank, int patchNum)
   {
     try {
       byte [] sysex=new byte[187];
       sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;sysex[02]=(byte)0x30;
       sysex[03]=(byte)0x35;sysex[186]=(byte)0xF7;
       
-      System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,KorgX3SingleDriver.EXTRA_HEADER,164);
-      Patch p = new Patch(sysex);
+      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,KorgX3SingleDriver.EXTRA_HEADER,164);
+      IPatch p = new Patch(sysex);
       return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in Korg X3 Bank Driver",e);return null;}
   }
@@ -174,7 +175,7 @@ public class KorgX3BankDriver extends BankDriver
   /**
    * Not implemented as not needed.
    */
-  public Patch createNewPatch()
+  public IPatch createNewPatch()
   {
     JOptionPane.showMessageDialog(null, "Creating a new Bank is not possible.","Error", JOptionPane.ERROR_MESSAGE);
     return null;

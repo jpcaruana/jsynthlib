@@ -26,6 +26,7 @@
 
 package synthdrivers.MIDIboxSID;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -68,26 +69,26 @@ public class MIDIboxSIDSingleDriver extends Driver
 
     }
 
-    public void storePatch(Patch p, int bankNum,int patchNum)
+    public void storePatch(IPatch p, int bankNum,int patchNum)
     {
-	p.sysex[5]=(byte)((getChannel()-1)&0x7f);
-	p.sysex[6]=(byte)0x02;
-	p.sysex[7]=(byte)(patchNum);
+	((Patch)p).sysex[5]=(byte)((getChannel()-1)&0x7f);
+	((Patch)p).sysex[6]=(byte)0x02;
+	((Patch)p).sysex[7]=(byte)(patchNum);
 	sendPatchWorker(p);
 	try {Thread.sleep(100); } catch (Exception e){}   
 	setPatchNum(patchNum);
     }
 
-    public void sendPatch(Patch p)
+    public void sendPatch(IPatch p)
     { 
-	p.sysex[5]=(byte)((getChannel()-1)&0x7f);
-	p.sysex[6]=(byte)0x02;
-	p.sysex[7]=(byte)0x00;
+	((Patch)p).sysex[5]=(byte)((getChannel()-1)&0x7f);
+	((Patch)p).sysex[6]=(byte)0x02;
+	((Patch)p).sysex[7]=(byte)0x00;
 
 	sendPatchWorker(p);
     }
     
-    public Patch createNewPatch()
+    public IPatch createNewPatch()
     {
 	byte [] sysex = new byte[266];
 
@@ -160,14 +161,14 @@ public class MIDIboxSIDSingleDriver extends Driver
 	sysex[8+0x7b] = 0x40; // ENV2 release
 
 	sysex[265]=(byte)0xF7;
-	Patch p = new Patch(sysex, this);
+	IPatch p = new Patch(sysex, this);
 	setPatchName(p,"New Patch");
 	calculateChecksum(p);	 
 	return p;
     }
 
-    public JSLFrame editPatch(Patch p)
+    public JSLFrame editPatch(IPatch p)
     {
-	return new MIDIboxSIDSingleEditor(p);
+	return new MIDIboxSIDSingleEditor((Patch)p);
     }
 }

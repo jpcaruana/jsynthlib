@@ -29,7 +29,7 @@ public class KawaiK5000Device extends Device
     /** Creates new KawaiK5000Device */
     public KawaiK5000Device ()
     {
-	super ("Kawai","K5000","F07E**06024000000A**********F7",infoText,"Brian Klock & Phil Shepherd");
+	super ("Kawai","K5000","F07E..06024000000A..........F7",infoText,"Brian Klock & Phil Shepherd");
     }
 
     /** Constructor for for actual work. */

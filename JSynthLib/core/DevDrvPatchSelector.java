@@ -22,7 +22,7 @@ public class DevDrvPatchSelector extends JDialog {
     /** The last index in driver Combo Box. */
     private int driverNum;
     protected int patchNum;
-    protected Patch p;
+    protected IPatch p;
     private StringBuffer patchString;
 
     private JLabel myLabel;
@@ -37,7 +37,7 @@ public class DevDrvPatchSelector extends JDialog {
      * @param wintitle String which appears as window title
      * @param action   String which describe the used menu item
      */
-    public DevDrvPatchSelector (Patch patch, String wintitle, String action) {
+    public DevDrvPatchSelector (IPatch patch, String wintitle, String action) {
         this(patch,-1,wintitle,action);
     }
 
@@ -48,7 +48,7 @@ public class DevDrvPatchSelector extends JDialog {
      * @param wintitle String which appears as window title
      * @param action   String which describe the used menu item
      */
-    public DevDrvPatchSelector (Patch patch, int patchnum, String wintitle, String action) {
+    public DevDrvPatchSelector (IPatch patch, int patchnum, String wintitle, String action) {
         super(PatchEdit.getInstance(), wintitle, true);
 
         // initialising some variables
@@ -78,7 +78,7 @@ public class DevDrvPatchSelector extends JDialog {
 
 
         for (int i=0; i < PatchEdit.appConfig.deviceCount(); i++) {
-            Device device = PatchEdit.appConfig.getDevice(i);
+            Device device = AppConfig.getDevice(i);
             boolean newDevice = true;
             for (int j=0, m=0; j<device.driverCount();j++) {
 	        Driver driver = device.getDriver(j);

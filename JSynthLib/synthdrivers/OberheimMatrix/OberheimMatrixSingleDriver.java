@@ -3,6 +3,7 @@
  */
 package synthdrivers.OberheimMatrix;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -36,14 +37,15 @@ public class OberheimMatrixSingleDriver extends Driver
                               "88-","89-","90-","91-","92-","93-","94-","95-",
                               "96-","97-","98-","99-"};
    }
-public void calculateChecksum(Patch p)
+public void calculateChecksum(IPatch p)
  {
    calculateChecksum(p,5,272,273); 
  
  }
 
-public void calculateChecksum(Patch p,int start,int end,int ofs)
+public void calculateChecksum(IPatch ip,int start,int end,int ofs)
   {
+    Patch p = (Patch)ip;
     int i;
     int sum=0;
     for (i=start;i<=end;i++)
@@ -61,75 +63,76 @@ public void calculateChecksum(Patch p,int start,int end,int ofs)
 	    });
 	} catch (Exception e) {}
   }
-  public void storePatch (Patch p, int bankNum,int patchNum)
+  public void storePatch (IPatch p, int bankNum,int patchNum)
   {   
    setBankNum(bankNum);
    setPatchNum(patchNum);
-   p.sysex[3]=1;
-   p.sysex[4]=(byte)patchNum;
+   ((Patch)p).sysex[3]=1;
+   ((Patch)p).sysex[4]=(byte)patchNum;
    sendPatchWorker(p);
    
   }
 
-  public void sendPatch (Patch p)
+  public void sendPatch (IPatch p)
   {
-    p.sysex[3]=0x0D;
-    p.sysex[4]=0;
+    ((Patch)p).sysex[3]=0x0D;
+    ((Patch)p).sysex[4]=0;
     sendPatchWorker(p);
   }
 
-  public String getPatchName(Patch p) {
-          try {
+  public String getPatchName(IPatch p) {
+  	Patch ip = (Patch)p;
+  	try {
             byte []b = new byte[8];
-	    b[0]=((byte)(p.sysex[5]+p.sysex[6]*16));
-	    b[1]=((byte)(p.sysex[7]+p.sysex[8]*16));
-	    b[2]=((byte)(p.sysex[9]+p.sysex[10]*16));
-	    b[3]=((byte)(p.sysex[11]+p.sysex[12]*16));
-	    b[4]=((byte)(p.sysex[13]+p.sysex[14]*16));
-	    b[5]=((byte)(p.sysex[15]+p.sysex[16]*16));
-	    b[6]=((byte)(p.sysex[17]+p.sysex[18]*16));
-	    b[7]=((byte)(p.sysex[19]+p.sysex[20]*16));
+	    b[0]=((byte)(ip.sysex[5]+ip.sysex[6]*16));
+	    b[1]=((byte)(ip.sysex[7]+ip.sysex[8]*16));
+	    b[2]=((byte)(ip.sysex[9]+ip.sysex[10]*16));
+	    b[3]=((byte)(ip.sysex[11]+ip.sysex[12]*16));
+	    b[4]=((byte)(ip.sysex[13]+ip.sysex[14]*16));
+	    b[5]=((byte)(ip.sysex[15]+ip.sysex[16]*16));
+	    b[6]=((byte)(ip.sysex[17]+ip.sysex[18]*16));
+	    b[7]=((byte)(ip.sysex[19]+ip.sysex[20]*16));
             StringBuffer s= new StringBuffer(new String(b,0,8,"US-ASCII"));
            return s.toString();
          } catch (Exception ex) {return "-";}
    }
-  public void setPatchName(Patch p, String name)	
+  public void setPatchName(IPatch p, String name)	
   {
 	byte [] namebytes = new byte[32];
 	try{
         if (name.length()<8) name=name+"        ";
         namebytes=name.getBytes("US-ASCII");
-	p.sysex[5]=((byte)(namebytes[0]%16));
-	p.sysex[6]=((byte)(namebytes[0]/16));
-	p.sysex[7]=((byte)(namebytes[1]%16));
-	p.sysex[8]=((byte)(namebytes[1]/16));
-	p.sysex[9]=((byte)(namebytes[2]%16));
-	p.sysex[10]=((byte)(namebytes[2]/16));
-	p.sysex[11]=((byte)(namebytes[3]%16));
-	p.sysex[12]=((byte)(namebytes[3]/16));
-	p.sysex[13]=((byte)(namebytes[4]%16));
-	p.sysex[14]=((byte)(namebytes[4]/16));
-	p.sysex[15]=((byte)(namebytes[5]%16));
-	p.sysex[16]=((byte)(namebytes[5]/16));
-	p.sysex[17]=((byte)(namebytes[6]%16));
-	p.sysex[18]=((byte)(namebytes[6]/16));
-	p.sysex[19]=((byte)(namebytes[7]%16));
-	p.sysex[20]=((byte)(namebytes[7]/16));
+	((Patch)p).sysex[5]=((byte)(namebytes[0]%16));
+	((Patch)p).sysex[6]=((byte)(namebytes[0]/16));
+	((Patch)p).sysex[7]=((byte)(namebytes[1]%16));
+	((Patch)p).sysex[8]=((byte)(namebytes[1]/16));
+	((Patch)p).sysex[9]=((byte)(namebytes[2]%16));
+	((Patch)p).sysex[10]=((byte)(namebytes[2]/16));
+	((Patch)p).sysex[11]=((byte)(namebytes[3]%16));
+	((Patch)p).sysex[12]=((byte)(namebytes[3]/16));
+	((Patch)p).sysex[13]=((byte)(namebytes[4]%16));
+	((Patch)p).sysex[14]=((byte)(namebytes[4]/16));
+	((Patch)p).sysex[15]=((byte)(namebytes[5]%16));
+	((Patch)p).sysex[16]=((byte)(namebytes[5]/16));
+	((Patch)p).sysex[17]=((byte)(namebytes[6]%16));
+	((Patch)p).sysex[18]=((byte)(namebytes[6]/16));
+	((Patch)p).sysex[19]=((byte)(namebytes[7]%16));
+	((Patch)p).sysex[20]=((byte)(namebytes[7]/16));
 	}catch (Exception e) {}
   }
-public Patch createNewPatch()
+public IPatch createNewPatch()
  {
 	 byte [] sysex = new byte[275];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x10;sysex[2]=(byte)0x06;sysex[3]=(byte)0x0D;sysex[4]=(byte)0x00;
 	 sysex[274]=(byte)0xF7;
-         Patch p = new Patch(sysex, this);
+         IPatch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;
  }
-public JSLFrame editPatch(Patch p)
+public JSLFrame editPatch(IPatch p)
  {
-     return new OberheimMatrixSingleEditor(p);
+     return new OberheimMatrixSingleEditor((Patch)p);
  }
 }
 

@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
+import core.IPatch;
 import core.KnobWidget;
 import core.Patch;
 import core.SpinnerWidget;
@@ -21,7 +22,7 @@ class FseqWindow extends JPanel
 
 	private Patch p;
 
-	public Patch getPatch()
+	public IPatch getPatch()
 	{
 		return p;
 	}

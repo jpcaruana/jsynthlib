@@ -24,8 +24,8 @@
 package synthdrivers.YamahaDX7;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyVoiceSingleDriver;
+import core.IPatch;
 import core.JSLFrame;
-import core.Patch;
 
 public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 {
@@ -38,13 +38,13 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 	}
 
 
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 
 
-	public void sendPatch (Patch p)
+	public void sendPatch (IPatch p)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 ) {
 			// switch off memory protection of internal voices
@@ -60,7 +60,7 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 	}
 
 
-	public void storePatch (Patch p, int bankNum,int patchNum)
+	public void storePatch (IPatch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 ) {
 			// switch off memory protection of internal/cartridge voices
@@ -116,7 +116,7 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 	}
 
 
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 ) {
 			// switch off memory protection of internal/cartridge voices

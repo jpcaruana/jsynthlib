@@ -60,7 +60,7 @@ public final class RolandTD6Device extends Device {
      */
     public RolandTD6Device() {
 	super("Roland", "TD6",
-	      "F07E**0602413F01000000020000f7",
+	      "F07E..0602413F01000000020000f7",
 	      "Driver for TD-6 Roland Percussion Sound Module.\n"
 	      + "This driver is still under development.\n"
 	      + "This driver uses Drum Kit 99 as edit buffer.\n"

@@ -28,7 +28,7 @@ public class SpinnerWidget extends SysexWidget {
      * @param ofs a <code>ParamModel</code> instance.
      * @param s sysexSender for transmitting the value at editing the parameter
      */
-    public SpinnerWidget(String l, Patch p, int min, int max, int b,
+    public SpinnerWidget(String l, IPatch p, int min, int max, int b,
 			 ParamModel ofs, SysexSender s) {
         super(l, p, min, max, ofs, s);
         base = b;

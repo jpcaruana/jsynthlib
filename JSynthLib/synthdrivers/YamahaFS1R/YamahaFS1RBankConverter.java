@@ -19,16 +19,16 @@ public class YamahaFS1RBankConverter extends Converter
 		patchSize = 129340;
 	}
 	
-	public Patch[] extractPatch (Patch p) 
+	public IPatch[] extractPatch (IPatch p) 
 	{
 		Patch oBank[] = new Patch[1];
-		oBank[0] = importFSEditor(p.sysex);
+		oBank[0] = importFSEditor(((Patch)p).sysex);
 		return oBank;
 	}
 	
 	Patch importFSEditor(byte[] aBuffer)
 	{
-		Patch oBank = YamahaFS1RBankDriver.getInstance().createNewPatch();
+		Patch oBank = (Patch)YamahaFS1RBankDriver.getInstance().createNewPatch();
 		int oIndex = 26; 
 		int oIDest = 0;//YamahaFS1RBankDriver.DATA_START;
 		for (int p = 0; p < 128; p++)

@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import core.ColumnLayout;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -59,15 +60,15 @@ public class NovationNova1SingleDriver extends Driver
                                    "124-","125-","126-","127"};
     }
 
-    public void storePatch (Patch p, int bankNum,int patchNum)
+    public void storePatch (IPatch p, int bankNum,int patchNum)
     {
         byte [] newsysex = new byte[297]; // a dump and write format is one byte longer than an edit buffer dump
-        System.arraycopy(p.sysex,0,newsysex,0,7);
+        System.arraycopy(((Patch)p).sysex,0,newsysex,0,7);
         newsysex[7] = (byte)0x02;
         newsysex[8] = (byte)(0x05+bankNum);
         newsysex[9] = (byte)(patchNum);
-        System.arraycopy(p.sysex,9,newsysex,10,296-9); //-10);
-        Patch patchtowrite = new Patch(newsysex, this);
+        System.arraycopy(((Patch)p).sysex,9,newsysex,10,296-9); //-10);
+        IPatch patchtowrite = new Patch(newsysex, this);
         // need to convert to a "patch dump and write" format
         try {Thread.sleep(100); } catch (Exception e){}
         sendPatchWorker(patchtowrite );
@@ -76,13 +77,13 @@ public class NovationNova1SingleDriver extends Driver
         setPatchNum(patchNum);
     }
 
-    public void sendPatch (Patch p)
+    public void sendPatch (IPatch p)
     {
         if( NovationNova1PatchSender.bShowMenu == true )
         {
             NovationNova1PatchSender.deviceIDoffset = deviceIDoffset;
             NovationNova1PatchSender.channel = getChannel();
-            NovationNova1PatchSender nps= new NovationNova1PatchSender(null,p,this);
+            NovationNova1PatchSender nps= new NovationNova1PatchSender(null,(Patch)p,this);
             nps.show();
         }
         else
@@ -91,17 +92,17 @@ public class NovationNova1SingleDriver extends Driver
         }
     }
 
-    public void calculateChecksum(Patch p,int start,int end,int ofs)
+    public void calculateChecksum(IPatch p,int start,int end,int ofs)
     {
         // no checksum
     }
 
-    public Patch createNewPatch()
+    public IPatch createNewPatch()
     {
         byte [] sysex = new byte[296];
         System.arraycopy(NovationNova1InitPatch.initpatch,0,sysex,0,296);
         sysex[6]=(byte)(getChannel()-1);
-        Patch p = new Patch(sysex, this);
+        IPatch p = new Patch(sysex, this);
         calculateChecksum(p);
         return p;
     }

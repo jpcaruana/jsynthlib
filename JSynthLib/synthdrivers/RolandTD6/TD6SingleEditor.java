@@ -649,7 +649,7 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	//...stick them in a container named contents...
 	TD6SingleDriver td6sd = new TD6SingleDriver();
 	Patch p = td6sd.createNewPatch();
-	TD6SingleEditor se = new TD6SingleEditor(p);
+	TD6SingleEditor se = new TD6SingleEditor((Patch)p);
 
 	frame.getContentPane().add(se, BorderLayout.CENTER);
 

@@ -8,16 +8,16 @@ public class ClipboardUtil implements ClipboardOwner {
     protected final static Clipboard c =
 	Toolkit.getDefaultToolkit().getSystemClipboard();
 
-    public static void storePatch(Patch p) {
+    public static void storePatch(IPatch p) {
 	try {
 	    c.setContents(p, instance);
 	} catch (IllegalStateException e) {}
     }
 
-    public static Patch getPatch() {
+    public static IPatch getPatch() {
 	try {
 	    Transferable t = c.getContents(instance);
-	    return (Patch)t.getTransferData(t.getTransferDataFlavors()[0]);
+	    return (IPatch)t.getTransferData(t.getTransferDataFlavors()[0]);
 	}
 	catch (IllegalStateException e) {}
 	catch (ClassCastException e) {}

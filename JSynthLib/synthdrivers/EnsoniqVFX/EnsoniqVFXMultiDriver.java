@@ -1,5 +1,6 @@
 package synthdrivers.EnsoniqVFX;
 import core.Driver;
+import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -56,7 +57,7 @@ public class EnsoniqVFXMultiDriver extends Driver
 	 *@param  bankNum   Description of the Parameter
 	 *@param  patchNum  Description of the Parameter
 	 */
-	public void storePatch(Patch p, int bankNum, int patchNum)
+	public void storePatch(IPatch p, int bankNum, int patchNum)
 	{
 		sendPatchWorker(p);
 	}
@@ -67,13 +68,13 @@ public class EnsoniqVFXMultiDriver extends Driver
 	 *
 	 *@param  p  Description of the Parameter
 	 */
-	public void sendPatch(Patch p)
+	public void sendPatch(IPatch p)
 	{
 		sendPatchWorker(p);
 	}
 
 
-	public void calculateChecksum(Patch p, int start, int end, int ofs)
+	public void calculateChecksum(IPatch p, int start, int end, int ofs)
 	{
 		//This synth does not use a checksum
 	}
@@ -84,7 +85,7 @@ public class EnsoniqVFXMultiDriver extends Driver
 	 *
 	 *@return    Description of the Return Value
 	 */
-	public Patch createNewPatch()
+	public IPatch createNewPatch()
 	{
 		byte[] sysex = new byte[SIZE+7];
 		sysex[0] = (byte) 0xF0;
@@ -94,7 +95,7 @@ public class EnsoniqVFXMultiDriver extends Driver
 		sysex[4] = (byte) 0x00;
 		sysex[5] = (byte) 0x0B;	
 		sysex[SIZE+6] = (byte) 0xF7;
-		Patch p = new Patch(sysex, this);
+		IPatch p = new Patch(sysex, this);
 		return p;
 	}
 
@@ -105,7 +106,7 @@ public class EnsoniqVFXMultiDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JSLFrame editPatch(Patch p)
+	public JSLFrame editPatch(IPatch p)
 	{
 		return null;
 	}

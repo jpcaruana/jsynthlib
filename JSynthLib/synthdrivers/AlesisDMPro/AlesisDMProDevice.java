@@ -39,7 +39,7 @@ public class AlesisDMProDevice extends Device
     /** Creates new AlesisDMProDevice */
     public AlesisDMProDevice ()
     {
-	super("Alesis", "DM Pro", "F07E7F060200000E19000000*F7",
+	super("Alesis", "DM Pro", "F07E7F060200000E19000000.F7",
 	      INFO_TEXT, "Peter Hageus (peter.hageus@comhem.se)");
     }
 
