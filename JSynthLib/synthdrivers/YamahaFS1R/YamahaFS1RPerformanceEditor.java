@@ -109,7 +109,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 						Patch oPatch = null;
 						if (mVoicesInEdit[oPart] != null) {
 							// voice currently in editing
-							oPatch = mVoicesInEdit[oPart].p;
+							oPatch = mVoicesInEdit[oPart].getPatch();
 						}
 						else {
 							oPatch = YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+mVoiceSelector[oPart].getValue());
