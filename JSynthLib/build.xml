@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.6 2004-08-03 05:28:17 jbackhaus Exp $
+	Version: $Id: build.xml,v 1.7 2004-08-03 05:43:44 jbackhaus Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -46,6 +46,7 @@
 
 	<property name="synth"  value="**"/>
 	<property name="deprecation"  value="on"/>
+	<property name="show-private-classes"  value="false"/>
 
 	<!-- Conditions -->
 	<condition property="isMacOS"> <os family="mac"/> </condition>
@@ -91,7 +92,7 @@
 	<target name="api_docs" depends="init"
 			description="Generate API documentation">
 		<mkdir dir="${api_docs}"/>		
-		<javadoc destdir="${api_docs}" nohelp="true" private="true">			
+		<javadoc destdir="${api_docs}" nohelp="true" private="${show-private-classes}">			
 			<packageset dir="${src}">
 				<include name="*/**"/>
 				<exclude name="midiprovider/**"/>
@@ -174,12 +175,15 @@
 
 	<target name="ud" depends="update-drivers"/>
 
+    <!-- Cleanup only the build directory -->
+    <target name="clean-build-dir">		
+		<delete dir="${build}"/>
+	</target>
 
 	<!-- Cleanup -->
-	<target name="clean" description="Cleanup all generated files">
+	<target name="clean" description="Cleanup all generated files" depends="clean-build-dir">
 		<delete dir="${dist}"/>
-		<delete dir="${api_docs}"/>
-		<delete dir="${build}"/>
+		<delete dir="${api_docs}"/>		
 	</target>
 
 	<!-- Cleanup synthdrivers -->
@@ -195,7 +199,7 @@
 	<target name="build-core" depends="clean-synthdrivers,build"/>
 	<target name="bc" depends="build-core"/>
 
-	<target name="clean-build" depends="clean,build"/>
+	<target name="clean-build" depends="clean-build-dir,build"/>
 	<target name="cb" depends="clean-build"/>
 
 	<target name="all" depends="clean,dist"/>
@@ -212,10 +216,11 @@ The following targets are available:
   api_docs             Generate API documentation
   doc                  Short form of "api_docs"
   build                Build JSynthLib
+  clean-build-dir      Cleanup the build directory
   build-core           First "clean-synthdrivers" and then "build"
                          Same alternative option as with "clean-synthdrivers"
   bc                   Short form of "build-core"
-  clean-build          First "clean" and then "build"
+  clean-build          First "clean-build-dir" and then "build"
   cb                   Short form of "clean-build"
   clean-synthdrivers   Clean all synthdrivers
                          You can alternatively specify a synthdriver e.g. "KawaiK4":
