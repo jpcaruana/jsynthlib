@@ -60,7 +60,7 @@ public final class AppConfig {
 		//ErrorMsg.reportStatus("loadDevices: \"" + devs[i] + "\"");
 		String s = devs[i].substring(0, devs[i].indexOf('#'));
 		//ErrorMsg.reportStatus("loadDevices: -> " + s);
-		String className = PatchEdit.devConfig.classNameForShortName(s);
+		String className = PatchEdit.devConfig.getClassNameForShortName(s);
 		//ErrorMsg.reportStatus("loadDevices: -> " + s);
 
 		addDevice(className, prefsDev.node(devs[i]));
@@ -346,7 +346,7 @@ public final class AppConfig {
     /** returns the 1st unused device node name for Preferences. */
     private static Preferences getDeviceNode(String s) {
 	ErrorMsg.reportStatus("getDeviceNode: " + s);
-	s = DevicesConfig.shortNameForClassName(s);
+	s = DevicesConfig.getShortNameForClassName(s);
 	ErrorMsg.reportStatus("getDeviceNode: -> " + s);
 	int i;
 	try {

@@ -21,7 +21,7 @@
 package core;
 
 import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -187,10 +187,9 @@ public class MidiScan extends Thread {
         }
         //  ErrorMsg.reportStatus ("ResponseString "+responseString);
         boolean found = false;
-        Enumeration synthisenum = PatchEdit.devConfig.IDStrings();
-        // synthisenum.reset();
-        while (synthisenum.hasMoreElements()) {
-            String se = (String) synthisenum.nextElement();
+        Iterator synthIDs = PatchEdit.devConfig.getIDStrings().iterator();
+        while (synthIDs.hasNext()) {
+            String se = (String) synthIDs.next();
             // ErrorMsg.reportStatus ("Checking "+se.getManufacturerName ()
             //+" "+se.getModelName ());
             if (checkInquiry(responseString, se)) {
@@ -198,12 +197,12 @@ public class MidiScan extends Thread {
                 boolean dontadd = false;
                 for (int checkloop = 0; checkloop < AppConfig.deviceCount(); checkloop++) {
                     String checkDevice = AppConfig.getDevice(checkloop).getClass().getName();
-                    if (checkDevice.equalsIgnoreCase(PatchEdit.devConfig.classNameForIDString(se))) {
+                    if (checkDevice.equalsIgnoreCase(PatchEdit.devConfig.getClassNameForIDString(se))) {
                         dontadd = true; // Oh, its already there....
                     }
                 }
                 if (!dontadd) { // add it only, if it is not in the list
-                    String cls = PatchEdit.devConfig.classNameForIDString(se);
+                    String cls = PatchEdit.devConfig.getClassNameForIDString(se);
                     Device useDevice = AppConfig.addDevice(cls);
                     ErrorMsg.reportStatus("MidiOut: " + midiout
                             + ", MidiIn: " + midiin
