@@ -51,12 +51,12 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     /**
      * The patch type. eg. "Single", "Bank", "Drumkit", etc.
      */
-    private String patchType;
+    private final String patchType;
 
     /**
      * The names of the authors of this driver.
      */
-    private String authors;
+    private final String authors;
 
     /**
      * Array holding names/numbers for all patches.  Used for comboBox
@@ -209,27 +209,14 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	this.authors = authors;
     }
 
-    /**
+    /*
      * Constructs a generic Driver.
      * @deprecated Use Driver(String, String).
      */
+    /*
     public Driver() {
-	/*
-        sysexID = "MATCHNONE";
-	inquiryID = "NONE";
-        authors = "Brian Klock";
-	manufacturer = "Generic";
-	model = "";
-        patchType = "Sysex";
-// 	id = "???";
-        patchNameSize = 0;
-        patchNumbers = new String[128];
-        for (int i = 0; i < 128; i++)
-	    patchNumbers[i] = String.valueOf(i);
-        bankNumbers = new String[] {"0"};
-	*/
     }
-
+    */
     //
     // Setters and Getters
     //

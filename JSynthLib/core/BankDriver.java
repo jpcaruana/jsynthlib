@@ -5,16 +5,12 @@ import javax.swing.JOptionPane;
 public class BankDriver extends Driver {
     /**
      * The Number of Patches the Bank holds.
-     * @deprecated Use the getter method.
      */
-    // can be private final
-    protected int numPatches;
+    private final int numPatches;
     /**
      * How many columns to use when displaying the patches as a table.
-     * @deprecated Use the getter method.
      */
-    // can be private final
-    protected int numColumns;
+    private final int numColumns;
 
     // for default canHoldPatch
     /**
@@ -51,13 +47,14 @@ public class BankDriver extends Driver {
 	this.numColumns = numColumns;
     }
 
-    /**
+    /*
      * @deprecated Use BankDriver(String, String, int, int).
      */
+    /*
     public BankDriver() {
 	super();
     }
-
+    */
     /** Getter for property <code>numPatches</code>. */
     protected int getNumPatches() {
 	return numPatches;

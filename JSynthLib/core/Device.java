@@ -52,25 +52,25 @@ public abstract class Device /*implements Serializable, Storable*/ {
     protected Preferences prefs = null;
 
     /** The company which made the Synthesizer. */
-    private /*final*/ String manufacturerName;
+    private final String manufacturerName;
     /**
      * The fixed name of the model supported by this driver, as stated
      * on the type plate of the engine. eg TG33/SY22
      */
-    private /*final*/ String modelName;
+    private final String modelName;
     /**
      * The response to the Universal Inquiry Message.  It can have
      * wildcards (*). It can be up to 16 bytes.<p>
      * Ex. <code>"F07E**0602413F01000000020000f7"</code>
      */
-    private /*final*/ String inquiryID;
+    private final String inquiryID;
     /**
      * Information about Device.
      * @see DeviceDetailsDialog
      */
-    private /*final*/ String infoText;
+    private final String infoText;
     /** Authors of the device driver. */
-    private /*final*/ String authors;
+    private final String authors;
     /** The synthName is your personal naming of the device. */
     //private String synthName;
     /** The channel the user assigns to this driver. */
@@ -92,12 +92,14 @@ public abstract class Device /*implements Serializable, Storable*/ {
     /** The List for all available drivers of this device. */
     private ArrayList driverList = new ArrayList ();
 
-    /**
+    /*
      * Creates new Device.
      * @deprecated Use Device(String, String, String, String, String).
      */
+    /*
     public Device () {
     }
+    */
 
     /**
      * Creates a new <code>Device</code> instance.
