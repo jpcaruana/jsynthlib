@@ -24,8 +24,7 @@ public class JSLFrame {
 	    proxy = new JSLIFrame(this);
 	else
 	    proxy = new JSLJFrame(this);
-	// This is really means PatchEdit.desktop, not JSLDesktop.getInstance()
-	if (PatchEdit.desktop != null)
+	if (JSLDesktop.getInstance() != null)
 	    JSLDesktop.registerFrame(this);
 	frame_count++;
     }
@@ -36,8 +35,7 @@ public class JSLFrame {
 				  iconifiable);
 	else
 	    proxy = new JSLJFrame(this, s);
-	// This is really means PatchEdit.desktop, not JSLDesktop.getInstance()
-	if (PatchEdit.desktop != null)
+	if (JSLDesktop.getInstance() != null)
 	    JSLDesktop.registerFrame(this);
 	frame_count++;
     }

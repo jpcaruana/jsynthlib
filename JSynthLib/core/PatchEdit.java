@@ -30,10 +30,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
     public static WaitDialog waitDialog; // define showWaitDialog() and hideWaitDialog()
 
-    /**
-     * @deprecated Anything that uses this should be changed to use JSLDesktop or JSLDesktop.getInstance()
-     **/
-    static JSLDesktop desktop;
     static Patch Clipboard;
     static JPopupMenu menuPatchPopup; // define showMenuPatchPopup()
     static javax.swing.Timer echoTimer;
@@ -90,8 +86,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	createActions();
 
 	// Set up the GUI.
-	desktop = JSLDesktop.getInstance();
-	JSLDesktop.setupInitialMenuBar(createToolBar());
+	JSLDesktop.getInstance().setupInitialMenuBar(createToolBar());
 	if (MacUtils.isMac())
 	    initForMac(exitAction, prefsAction, aboutAction);
 
@@ -917,7 +912,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	    mnemonics.put(this, new Integer('N'));
         }
         public void actionPerformed(ActionEvent e) {
-	    System.out.println(UIManager.get("MenuItemUI"));
 	    createLibraryFrame();
 	}
     }

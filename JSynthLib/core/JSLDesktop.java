@@ -13,6 +13,7 @@ public class JSLDesktop {
 	    }
 	};
     private static Boolean in_fake_activation = Boolean.FALSE;
+    private static Boolean in_get_instance = Boolean.FALSE;
     private static int xdecoration = 0, ydecoration = 0;
     private static JSLDesktop instance = null;
 
@@ -25,8 +26,15 @@ public class JSLDesktop {
     }
 
     public static JSLDesktop getInstance() {
-	if (instance == null)
-	    instance = new JSLDesktop();
+	if (instance == null) {
+	    synchronized (in_get_instance) {
+		if (!in_get_instance.booleanValue()) {
+		    in_get_instance = Boolean.TRUE;
+		    instance = new JSLDesktop();
+		    in_get_instance = Boolean.FALSE;
+		}
+	    }
+	}
 	return instance;
     }
 
