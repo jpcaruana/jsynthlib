@@ -48,7 +48,10 @@ public class ComboBoxWidget extends SysexWidget {
         cb.setSelectedIndex(getValue() - getValueMin());
         cb.addItemListener(new ItemListener() {
 		public void itemStateChanged(ItemEvent e) {
-		    sendSysex(cb.getSelectedIndex() + getValueMin());
+			if (e.getStateChange() == ItemEvent.SELECTED)
+			{
+				sendSysex(cb.getSelectedIndex() + getValueMin());
+			}
 		}
 	    });
         add(getJLabel());
