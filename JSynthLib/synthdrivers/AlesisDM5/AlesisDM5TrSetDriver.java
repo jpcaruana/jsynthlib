@@ -86,14 +86,6 @@ public class AlesisDM5TrSetDriver extends Driver {
     protected void setBankNum(int bankNum) {
     }
     
-    /** Calculates the checksum for the DM5 by calling 
-        * calculateChecksum(Patch patch, int start, int end, int offset). This 
-        * needs to be included to override the version in the Driver class.
-        */
-    protected void calculateChecksum(Patch p) {
-        calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
-    }
-    
     /** Calculates the checksum for the DM5. Equal to the mod 128 of the sum of
         * all the bytes from offset header+1 to offset total patchlength-3.
         */
