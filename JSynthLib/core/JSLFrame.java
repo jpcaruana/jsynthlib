@@ -10,8 +10,6 @@ import java.awt.datatransfer.DataFlavor;
 
 // addJSLFrameListener should probably be implemented in JSLFrame
 // for dynamic switching of type
-// TODO: Lines marked with XXX are JSynthLib dependent code. They must be removed to
-// make this class a generic class.
 /**
  * A Frame class which supports JInternalFrame mothods and also can creates a
  * non-internal frame using JFrame. For the details of each method, refer the
@@ -24,8 +22,6 @@ import java.awt.datatransfer.DataFlavor;
  */
 public class JSLFrame {
     protected JSLFrameProxy proxy;
-    private static boolean useIFrames =
-	(AppConfig.getGuiStyle() == 0); // XXX
 
     // only for JSLJFrame
     private static JFrame lastselection = null;
@@ -35,12 +31,12 @@ public class JSLFrame {
      * JSLFrame with no title.
      */
     public JSLFrame() {
-	if (useIFrames)
+	if (JSLDesktop.useMDI())
 	    proxy = new JSLIFrame(this);
 	else
 	    proxy = new JSLJFrame(this);
-	if (JSLDesktop.getInstance() != null)
-	    JSLDesktop.registerFrame(this);
+//	if (JSLDesktop.getInstance() != null)
+//	    JSLDesktop.registerFrame(this);
 	frame_count++;
     }
     /**
@@ -49,13 +45,13 @@ public class JSLFrame {
      */
     public JSLFrame(String s, boolean resizable, boolean closable,
 		    boolean maximizable, boolean iconifiable) {
-	if (useIFrames)
-	    proxy = new JSLIFrame(this,s, resizable, closable, maximizable,
+	if (JSLDesktop.useMDI())
+	    proxy = new JSLIFrame(this, s, resizable, closable, maximizable,
 				  iconifiable);
 	else
 	    proxy = new JSLJFrame(this, s);
-	if (JSLDesktop.getInstance() != null)
-	    JSLDesktop.registerFrame(this);
+//	if (JSLDesktop.getInstance() != null)
+//	    JSLDesktop.registerFrame(this);
 	frame_count++;
     }
     
@@ -147,10 +143,10 @@ public class JSLFrame {
         //proxy.moveToDefaultLocation();
         int x, y, yofs = 0;
         int xsep = 30;
-        int ysep = useIFrames ? 30 : JSLDesktop.getYDecoration();
+        int ysep = JSLDesktop.useMDI() ? 30 : JSLDesktop.getYDecoration();
         Dimension d = JSLDesktop.getSize();
 
-        JFrame tb = useIFrames ? null : JSLDesktop.getToolBar().getJFrame();
+        JFrame tb = JSLDesktop.useMDI() ? null : JSLDesktop.getToolBar().getJFrame();
         if (tb != null && tb.getLocation().getY() < 100)
             yofs = (int) (tb.getLocation().getY() - ysep + tb.getSize()
                     .getHeight());
@@ -178,8 +174,6 @@ public class JSLFrame {
 	else
 	    return null;
     }
-    /**  */
-    static boolean useInternalFrames() { return useIFrames; }
     /**  */
     JSLFrameProxy getProxy() { return proxy; }
 
@@ -257,8 +251,6 @@ public class JSLFrame {
 	    while (it.hasNext()) {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
-	    // Enable pasteAction
-	    Actions.setEnabled(true, Actions.EN_PASTE); // XXX
 	}
 	public void internalFrameClosed(InternalFrameEvent e) {
 	    JSLFrameEvent fe =
@@ -385,8 +377,6 @@ public class JSLFrame {
 	    while (it.hasNext()) {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
-	    // Enable pasteAction (Why this is done here?)
-	    Actions.setEnabled(true, Actions.EN_PASTE); // XXX
 	}
 	public void windowClosed(WindowEvent e) {
 	    showState("closed");
@@ -460,7 +450,7 @@ public class JSLFrame {
 	public void setPreferredSize(Dimension d) {}
 	public boolean isSelected() {
 	    //return isActive() || lastselection == this;
-	    JSLDesktop d = JSLDesktop.getInstance();
+	    //JSLDesktop d = JSLDesktop.getInstance();
 	    JFrame f = JSLDesktop.getSelectedWindow();
 	    return (f == this)
 		|| (f == JSLDesktop.getToolBar().getJFrame()

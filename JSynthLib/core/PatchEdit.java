@@ -46,8 +46,10 @@ public final class PatchEdit  {
 	Actions.createActions();
 
 	// Set up the GUI.
-	JSLDesktop.getInstance();
-	JSLDesktop.setupInitialMenuBar(Actions.createToolBar());
+	JSLDesktop desktop = new JSLDesktop("JSynthLib", 
+	        AppConfig.getGuiStyle() == AppConfig.GUI_MDI,
+	        Actions.createToolBar(),
+	        Actions.exitAction);
 
 	// Show dialog for the 1st invokation.
 	//This is no longer normal. Maybe we shouldn't save prefs if this happens (could be difficult)
@@ -94,8 +96,6 @@ public final class PatchEdit  {
 	prefsDialog.setVisible(true);
     }
 
-    // PatchEdit.getInstance() can/should be replaced by
-    // JSLDesktop.getSelectedWindow(). Hiroo
     public static JFrame getInstance() {
 	return JSLDesktop.getSelectedWindow();
     }

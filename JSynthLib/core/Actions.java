@@ -106,7 +106,7 @@ final class Actions {
     private static Action deleteDuplicatesAction;
     private static Action docsAction;
     private static Action editAction;
-    private static Action exitAction;
+    static Action exitAction; // refered by PatchEdit
     private static Action exportAction;
     private static Action extractAction;
     private static Action getAction;

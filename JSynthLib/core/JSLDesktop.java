@@ -26,29 +26,40 @@ public class JSLDesktop {
 	    }
 	};
     private static Boolean in_fake_activation = Boolean.FALSE;
-    private static Boolean in_get_instance = Boolean.FALSE;
+    //private static Boolean in_get_instance = Boolean.FALSE;
     private static int xdecoration = 0, ydecoration = 0;
     private static JSLDesktop instance = null;
+    private static boolean useMDI;
+    private static Action exitAction;
 
     /** Creates a new JSLDesktop. */
-    protected JSLDesktop() {
-	if (JSLFrame.useInternalFrames()) { // XXX
-	    proxy = new JSLJDesktop();
+    protected JSLDesktop(String title, boolean useMDI, JToolBar tb, Action exitAction) {
+        JSLDesktop.useMDI = useMDI;
+        JSLDesktop.exitAction = exitAction;
+	if (useMDI) {
+	    proxy = new JSLJDesktop(title, tb);
+	    ((JSLJDesktop) proxy).setupInitialMenuBar(tb);
 	} else {
-	    proxy = new JSLFakeDesktop();
+	    proxy = new JSLFakeDesktop(title + " Tool Bar", tb);
+	    ((JSLFakeDesktop) proxy).setupInitialMenuBar(tb);
 	}
+//	setupInitialMenuBar(tb);
+	instance = this;
+    }
+    static boolean useMDI() {
+        return useMDI;
     }
 
-    public static JSLDesktop getInstance() {
-	if (instance == null) {
-	    synchronized (in_get_instance) {
-		if (!in_get_instance.booleanValue()) {
-		    in_get_instance = Boolean.TRUE;
-		    instance = new JSLDesktop();
-		    in_get_instance = Boolean.FALSE;
-		}
-	    }
-	}
+    static JSLDesktop getInstance() {
+//	if (instance == null) {
+//	    synchronized (in_get_instance) {
+//		if (!in_get_instance.booleanValue()) {
+//		    in_get_instance = Boolean.TRUE;
+//		    instance = new JSLDesktop();
+//		    in_get_instance = Boolean.FALSE;
+//		}
+//	    }
+//	}
 	return instance;
     }
     // JDesktopPane compatible methods
@@ -64,8 +75,8 @@ public class JSLDesktop {
 
     // original (non-JDesktopPane compatible) methods
     /**
-     * Returns the JFrame created in constructor (for what?) in SDI mode. In MDI
-     * mode return the current active Frame including Toolbar frame.
+     * In MDI mode returns the root JFrame created. In SDI mode returns the
+     * current active JFrame including Toolbar frame.
      */
     public static JFrame getSelectedWindow() { return selected; }
     /**
@@ -74,13 +85,12 @@ public class JSLDesktop {
      */
     public static JMenu createWindowMenu() { return proxy.createWindowMenu(); }
     /**  */
-    public static void setupInitialMenuBar(JToolBar tb) { proxy.setupInitialMenuBar(tb); }
+    //private static void setupInitialMenuBar(JToolBar tb) { proxy.setupInitialMenuBar(tb); }
 
-    // XXX Cannot we do the job of add() and registerFrame() in the constructor of JSLFrame?
-    /** add frame in MDI mode. Do nothing in SDI mode. */
+    /** add frame in MDI mode. registerFrame() is called in SDI mode. */
     public static void add(JSLFrame f) { proxy.add(f); }
     /** add frame in SDI mode. Do nothing in MDI mode. */
-    static void registerFrame(JSLFrame f) { proxy.registerFrame(f); }
+    //static void registerFrame(JSLFrame f) { proxy.registerFrame(f); }
     /**  */
     static JFrame getLastSelectedWindow() { return proxy.getLastSelectedWindow(); }
     /**  */
@@ -95,23 +105,23 @@ public class JSLDesktop {
     private static void showToolBar() { proxy.showToolBar(); }
 
     private interface JSLDesktopProxy {
-	public JSLFrame[] getAllJSLFrames();
-	public JSLFrame getSelectedJSLFrame();
-	public Dimension getSize();
-	public void add(JSLFrame f);
-	public JMenu createWindowMenu();
-	void registerFrame(JSLFrame f);
-	public void setupInitialMenuBar(JToolBar tb);
-	public void showToolBar();
-	public JSLFrame getToolBar();
-	public JSLFrame getInvisible();
-	JFrame getLastSelectedWindow();
-     }
+        JSLFrame[] getAllJSLFrames();
+        JSLFrame getSelectedJSLFrame();
+        Dimension getSize();
+        void add(JSLFrame f);
+        JMenu createWindowMenu();
+        //void registerFrame(JSLFrame f);
+        //void setupInitialMenuBar(JToolBar tb);
+        void showToolBar();
+        JSLFrame getToolBar();
+        JSLFrame getInvisible();
+        JFrame getLastSelectedWindow();
+    }
     private class JSLJDesktop extends JDesktopPane implements JSLDesktopProxy {
 
-	JSLJDesktop() {
+	JSLJDesktop(String title, JToolBar tb) {
 	    super();
-	    selected = new JFrame("JSynthLib"); // XXX
+	    selected = new JFrame(title);
 	    int inset = 100;
 	    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	    selected.setBounds(inset, inset,
@@ -121,12 +131,11 @@ public class JSLDesktop {
 	    //Quit this app when the big window closes.
 	    selected.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e) {
-			PatchEdit.exit(); // XXX
+			exitAction.actionPerformed(null);
 		    }
 		});
-
 	}
-	public void setupInitialMenuBar( JToolBar tb ) {
+	private void setupInitialMenuBar(JToolBar tb) {
 	    Container c = selected.getContentPane();
 	    c.add(tb, BorderLayout.NORTH);
 	    tb.setVisible(true);
@@ -147,7 +156,7 @@ public class JSLDesktop {
 	    menuWindow.add(Actions.monitorAction); // XXX
 	    return menuWindow;
 	}
-	public void registerFrame(JSLFrame f) {}
+	//public void registerFrame(JSLFrame f) {}
 	public void add(JSLFrame f) {
 	    if (f.getProxy() instanceof JInternalFrame) {
 		add((JInternalFrame)f.getProxy());
@@ -183,7 +192,7 @@ public class JSLDesktop {
 	private JSLFrame invisible = null;
 	private JSLFrame.JSLJFrame last_selected = null;
 
-	JSLFakeDesktop() {
+	JSLFakeDesktop(String title, JToolBar tb) {
 	    if (MacUtils.isMac()) {
 		// Create invisible window to keep menus when no open windows
 		invisible = new JSLFrame();
@@ -192,10 +201,10 @@ public class JSLDesktop {
 		        JFrame.DO_NOTHING_ON_CLOSE);
 	    }
 	    toolbar = new JSLFrame();
-	    toolbar.setTitle("JSynthLib Tool Bar");
+	    toolbar.setTitle(title);
 	    toolbar.getJFrame().setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
-	public void setupInitialMenuBar(JToolBar tb) {
+	private void setupInitialMenuBar(JToolBar tb) {
 	    if (invisible != null) { // MacUtils.isMac()
 		selected = invisible.getJFrame();
 		selected.setJMenuBar(Actions.createMenuBar()); // XXX
@@ -233,7 +242,7 @@ public class JSLDesktop {
 	    wm.setSelectedWindow(selected);
 	    return wm;
 	}
-	public void registerFrame(JSLFrame f) {
+	private void registerFrame(JSLFrame f) {
 	    if (windows.contains(f))
 		return;
 	    if (f.getProxy() instanceof JFrame) {
@@ -245,6 +254,9 @@ public class JSLDesktop {
 		}
 		windows.add(f);
 		jf.setJMenuBar(Actions.createMenuBar()); // XXX
+		//ErrorMsg.reportStatus("isVisible = " + jf.isVisible());
+		// Without the next line, menu bar does not show up sometimes. Why?
+		jf.setVisible(true);
 	    }
 	}
 	public void add(JSLFrame f) { registerFrame(f); }
@@ -305,7 +317,7 @@ public class JSLDesktop {
 	    JSLFrame f = e.getJSLFrame();
 	    if (f == toolbar) {
 		if (windows.size() < 2 && invisible == null) { // !MacUtils.isMac()
-		    PatchEdit.exit(); // XXX
+		    exitAction.actionPerformed(null);
 		} else {
 		    showState(f, "hidden. " + (windows.size() - 1)
                             + " windows still open.");
@@ -322,7 +334,7 @@ public class JSLDesktop {
 		    selected = toolbar.getJFrame();
 		    showState(toolbar, "selected");
 		} else if (invisible == null) { // !MacUtils.isMac()
-		    PatchEdit.exit(); // XXX
+		    exitAction.actionPerformed(null);
 		} else {
 		    ErrorMsg.reportStatus(ErrorMsg.FRAME,
 		            "All windows closed, but invisible "
