@@ -10,7 +10,7 @@ import javax.swing.event.*;
 public class ComboBoxWidget extends SysexWidget {
     /** JComboBox widget */
     public JComboBox cb;	// access by some drivers
-    private String[] options;
+    private Object[] options;
 
     /**
      * Constructor for setting up the ComboBoxWidget.
@@ -24,14 +24,14 @@ public class ComboBoxWidget extends SysexWidget {
      * @see SysexWidget
      */
     public ComboBoxWidget(String l, Patch p, int min,
-			  ParamModel ofs, SysexSender s, String[] o) {
+			  ParamModel ofs, SysexSender s, Object[] o) {
 	super(l, p, min, min + o.length - 1, ofs, s);
         options = o;
         setup();
     }
 
     public ComboBoxWidget(String l, Patch p,
-			  ParamModel ofs, SysexSender s, String [] o) {
+			  ParamModel ofs, SysexSender s, Object [] o) {
         this(l, p, 0, ofs, s, o);
     }
     /*
