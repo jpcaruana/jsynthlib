@@ -1,0 +1,128 @@
+FortePno 1
+FortePno 2
+MM-Piano 1
+MM-Piano 2
+Pianotone1
+Pianotone2
+Pianotone3
+5thPiano 1
+5thPiano 2
+PrprdPiano
+Claviano  
+BrightPno1
+BrightPno2
+BrightPno3
+Dark Piano
+Digi Piano
+PianoDrops
+PowerPiano
+CP70 1    
+CP70 2    
+CP70 3    
+El.Grand 1
+El.Grand 2
+El.Grand 3
+El.Grand 4
+MM-ElGnd 1
+MM-ElGnd 2
+E.Piano 1 
+E.Piano 2 
+E.Piano 3 
+E.Piano 4 
+E.Piano 5 
+E.Piano 6 
+E.Piano 7 
+E.Piano 8 
+E.Piano 9 
+E.Piano 10
+E.Piano 11
+E.Piano 12
+E.Piano 13
+E.Piano 14
+E.Piano 15
+E.Piano 16
+E.Piano 17
+Aclectic  
+DX-Road 1 
+DX-Road 2 
+DX-Road 3 
+DX-Road 4 
+DX-Road 5 
+BrightEP 1
+BrightEP 2
+EP 1967   
+EP 1970   
+EP 1980   
+EP 1985   
+Soft EP 1 
+Soft EP 2 
+Soft EP 3 
+Hard EP 1 
+Hard EP 2 
+Hard EP 3 
+Hard EP 4 
+Clicky EP 
+Digitine  
+Woody EP  
+Metaltine 
+Tinesquawk
+FullTine 1
+FullTine 2
+Wurli EP  
+Wurli Road
+Dark Wurli
+Big Wurlt 
+Andrian   
+Blustig   
+Woodmetal 
+CastePiano
+Chorus EP 
+BigJazzyEP
+ClearElPno
+NiteclubEP
+CosaRosa  
+DX-Ragtime
+Digi Poly 
+Duke EP   
+DynoRoad  
+Clavarpsi 
+Wack EP   
+HollowKeys
+HonkyTonk1
+HonkyTonk2
+PotlidKeyz
+Knock EP  
+Knock Wack
+Mark III  
+XtremeTine
+Mod ElPno 
+3D Road   
+PinchedEP 
+No Tines  
+Old Jazz  
+Politti   
+Pop Piano 
+Prc ElPno 
+Prds Piano
+Ratio Dob 
+ThinnerEP 
+Rezzo EP  
+RubbaRoad 
+SawBellEP 
+QuikPlayEP
+Loud Piano
+Urban     
+Vics EP   
+DX Classic
+ToyPiano 1
+ToyPiano 2
+ToyPiano 3
+ToyPiano 4
+Plasticky 
+Harpsi 1  
+Harpsi 2  
+Harpsi 3  
+Harpsi 4  
+Harpsi 5  
+Harpsi 6  
+Harpsi 7  

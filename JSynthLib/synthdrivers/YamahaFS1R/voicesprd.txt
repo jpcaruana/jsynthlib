@@ -1,0 +1,128 @@
+Harpsi 8  
+Harpsi 9  
+HarpsiWire
+AD 1600s 1
+AD 1600s 2
+AD 1900s  
+Caffeine  
+RazorWire 
+Cembalim  
+Cembalo   
+ElecHarpsi
+Syn Harpsi
+DX-Clavi 1
+DX-Clavi 2
+DX-Clavi 3
+DX-Clavi 4
+DX-Clavi 5
+DX-Clavi 6
+DX-Clavi 7
+MM-Clavi 1
+MM-Clavi 2
+MM-Clavi 3
+BrightClv1
+BrightClv2
+BasoClavi 
+ChorusClav
+Clavecin  
+Clavi Comp
+ClaviExcel
+ClaviPluck
+ClaviStaff
+Mute Clavi
+Revinett  
+SkeltonClv
+Celesta 1 
+Celesta 2 
+Celesta 3 
+Celesta 4 
+MM-Celesta
+Halloween 
+Glocken 1 
+Glocken 2 
+Glocken 3 
+Glocken 4 
+Glocken 5 
+Glocken 6 
+HamerGlock
+Magiglokk 
+AnvilGlock
+MetalGlock
+Perc Glock
+Glokenring
+SynGlock 1
+SynGlock 2
+MusicBox 1
+MusicBox 2
+MusicBox 3
+MusicBox 4
+MusicBox 5
+MusicBox 6
+MusicBox 7
+MusicBox 8
+MusicBox 9
+MusicBox10
+DX-Vibe 1 
+DX-Vibe 2 
+DX-Vibe 3 
+DX-Vibe 4 
+MM-Vibe 1 
+MM-Vibe 2 
+LFO Vibe  
+Vocal Vibe
+Vibetron  
+VibraPhone
+DX-Marimb1
+DX-Marimb2
+DX-Marimb3
+DX-Marimb4
+DX-Marimb5
+DX-Marimb6
+DX-Marimb7
+TineMallet
+Thumbpick 
+EchoMalet1
+EchoMalet2
+EchoMalet3
+Congorimba
+Bamburimba
+BrightMrmb
+Guitarimba
+MellowMrmb
+Metal Mrmb
+DX-Xylo 1 
+DX-Xylo 2 
+DX-Xylo 3 
+DX-Xylo 4 
+DX-Xylo 5 
+DX-Xylo 6 
+Dual Xylo 
+Xylo Log  
+Syn Xylo  
+Digi Xylo 
+DX-Bell 1 
+DX-Bell 2 
+DX-Bell 3 
+DX-Bell 4 
+DX-Bell 5 
+DX-Bell 6 
+DX-Bell 7 
+DX-Bell 8 
+DX-Bell 9 
+DX-Bell 10
+DX-Bell 11
+DX-Bell 12
+SparklBell
+Wire Bell 
+DualSparkl
+BellGlassy
+MM-Bell   
+Crystal 1 
+Crystal 2 
+SoftBell 1
+SoftBell 2
+Bell Pluck
+Blow Bell 
+Carillon  
+BellKeyzis
+Digi Log  

@@ -1,0 +1,128 @@
+Ballad EP 
+Clavmann  
+Clavmann 2
+Digi Clav 
+DX7Classic
+Mtrial Pno
+MtrialPno2
+MtrialPno3
+Real Rose 
+Rose Att  
+Rose Sft1 
+Rose Sft2 
+Suit Rose 
+Velvt Rose
+4 Op Clav 
+Da Comp   
+Synth Bell
+Tabla     
+B3JazzComp
+B3Perc3rd 
+DrawOrgn  
+DrawOrgn2 
+DrawOrgn3 
+Fs-Organ  
+Full Drawb
+Ham Organ 
+OR-Right  
+Organ Fseq
+The Lounge
+Jazz Gtr  
+Stratmann 
+Acid King
+Ana Bass  
+AttackBass
+B-Rave    
+Bassline 1
+Bassline 2
+BlegBass  
+DidgBass  
+Dry Syn   
+FM Bass   
+FundaBass 
+HyperFuzz 
+JungleBass
+LoFiAcid 
+Matze     
+Moon Bass 
+Phone Bass
+PlastBass 
+PunchBass 
+Syn Bass  
+Technical 
+FairyStrgs
+JMichel   
+OB String 
+ResoStrgs 
+Saws      
+SloDu Saws
+SS String 
+SS String2
+HitMatrial
+ANSweep   
+FS Brass  
+Hook      
+ObiehornL 
+ObiehornR 
+Quackz    
+Stab      
+Swell     
+Kuchibue  
+Dual Saws2
+DualSquare
+Earth Lead
+Fetish    
+Glass Harp
+Glider    
+Lead Saw  
+Mitosis   
+Retronic  
+Score Pad 
+Tech Lead 
+Trance Csm
+Voc Lead  
+Add Pad   
+Beauty    
+Brassetra 
+CineSweep 
+Fat Pad   
+FormantPad
+FormSweep1
+FormSweep2
+FormSweep3
+FormSweep4
+FS Moby II
+Heimdal   
+LFO Pad   
+Moving    
+Nebulous  
+OBx Pad   
+OBx Pad2  
+Octavian  
+Paddy     
+Qwerty    
+Saws&Hold 
+Saws2     
+SleepyPad 
+Spacy Pad 
+Starship  
+SuperPad  
+SweepersVx
+Tech Lead2
+The Seeker
+The Shadow
+Thermal   
+VocPhaseA 
+Win Pad   
+Wind      
+Caravan   
+DippeDut  
+Furry Bell
+Glacial   
+Miracle   
+MizuGuitar
+Morph     
+Nightmare 
+RythmLoop 
+Sho       
+Spiral    

@@ -1,0 +1,128 @@
+Ukabanjo  
+Xango     
+Xanu      
+Zimbalon  
+DX-Banjo  
+Shamisen 1
+Shamisen 2
+Shamisen 3
+DX-Koto   
+DX-Klmb 1 
+DX-Klmb 2 
+DX-Klmb 3 
+DX-Klmb 4 
+DX-Klmb 5 
+DX-Bagpipe
+DX-Fiddle 
+African   
+Bali      
+Tibetan   
+Charango  
+Gamelan 1 
+Gamelan 2 
+Gamelan 3 
+Kinzoku 1 
+Kinzoku 2 
+ScotchTone
+DX-Agogo 1
+DX-Agogo 2
+DX-Bongo  
+Bongo     
+DX-Clave  
+DX-Perc   
+Block     
+Conga Drum
+Cowbell   
+Flexatone 
+Glaeser   
+Log Drum  
+SmlShaker 
+Metal     
+Percud    
+RefrsWhstl
+Seq Pluck 
+BigShaker 
+Side Stick
+Perkabell 
+Spoon     
+DX-StelCan
+Steel Can 
+DX-StelDr1
+DX-StelDr2
+SteelDrum1
+SteelDrum2
+Steel Band
+Jamaica   
+Tambarin  
+Triangle 1
+Triangle 2
+BellGliss1
+BellGliss2
+Twincle   
+MetalBottl
+NipponDrm1
+NipponDrm2
+Janpany   
+Nou       
+Sumoh Drum
+HandBell 1
+HandBell 2
+JingleBell
+Light Year
+SlightBell
+TracerBell
+MM-SynDr 1
+MM-SynDr 2
+Click Kick
+Hexagon   
+Whapit    
+Hi-Hat    
+Deep Snare
+DX-MtlSnr 
+Snapie    
+Snare     
+Soft Head 
+StreetSD  
+Tom Herz  
+DX-RevCym1
+DX-RevCym2
+DX-Chorus1
+DX-Chorus2
+DX-Chorus3
+DX-Chorus4
+DX-Chorus5
+DX-Chorus6
+DX-Chorus7
+DX-Chorus8
+DX-Chorus9
+DX-Voice 1
+DX-Voice 2
+MM-Voice 1
+MM-Voice 2
+MM-Voice 3
+MM-Voice 4
+DbVoxFem  
+Fem Voice 
+Lady Vox  
+Space Vox 
+Syn Vox   
+Bell+Pno 1
+Bell+Pno 2
+Bell+Vibe1
+Bell+Str  
+Bell+Vibe2
+Cho+Marimb
+Clavi+Bass
+DX-Ba+Lead
+DX-HpSt   
+EP+Brass 1
+EP+Brass 2
+EP+Chime  
+EP+Clavi  
+Elec Combi
+Glock+Brs 
+Glock+Pno 
+Harp+Flute
+Koto+Flute
+MalletHorn
+Mrmb+Gtr  

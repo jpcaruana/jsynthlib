@@ -1,0 +1,128 @@
+DX-Trpt 3 
+DX-Trpt 4 
+DX-Trpt 5 
+DX-Trpt 6 
+SilverTrpt
+Solo Trpt 
+SynTrumpet
+Trumponica
+DX-Trb 1  
+DX-Trb 2  
+DX-Trb 3  
+Mute Trb  
+DX-Tuba 1 
+DX-Tuba 2 
+DX-Tuba 3 
+DX-Horn   
+Hornz     
+Alps Horn 
+BlunchHorn
+Horn Ens  
+MelowHorn1
+MelowHorn2
+SimpleHorn
+Syn Horns 
+Vibra Horn
+DX-Brass 1
+DX-Brass 2
+Attack Brs
+Brasstring
+DX-BrsSec1
+DX-BrsSec2
+MM-Brass 1
+MM-Brass 2
+MM-Brass 3
+5th Brass 
+Blow Brass
+Brass Sect
+Chorus Brs
+Fanfare   
+Hard Brass
+Sample Brs
+Single Brs
+ThickBrass
+TightBrs 1
+TightBrs 2
+DX-SynBr 1
+DX-SynBr 2
+DX-SynBr 3
+DX-SynBr 4
+DX-SynBr 5
+DX-SynBr 6
+DX-SynBr 7
+FilterHorn
+SharpBrass
+Synthorns 
+CS80-Brs 1
+CS80-Brs 2
+Ana Poly  
+AnaFatBrs 
+AnalogBrs 
+Faze Brass
+Brassy    
+Court     
+DX-FatBrs 
+RezAttack 
+FunkyRhytm
+Chiffhorns
+Juice     
+Kingdom   
+PowerDrive
+Rahool Brs
+SyntiBrs  
+UltraDrive
+Warm Brass
+SopranoSax	
+DX-ASax 1 	
+DX-ASax 2 	
+Alto Sax  	
+DX-Tsax   	
+TenorSax  	
+Tenorsaxes	
+Oboe 1    	
+Oboe 2    	
+Oboe 3    	
+Eng.Horn  	
+Bassoon   	
+DX-Clari 1	
+DX-Clari 2	
+Clari Solo	
+Slow Clari	
+VibratoCla	
+Piccolo 1 
+Piccolo 2 
+DX-Flute 1
+DX-Flute 2
+DX-Flute 3
+DX-Flute 4
+DX-Flute 5
+DX-Flute 6
+DX-Flute 7
+Air Blower
+MetalFlute
+Song Flute
+Recorder 1
+Recorder 2
+Recorder 3
+DX-PnFlute
+Harvest   
+Fuhppps!  
+DX-Bottle 
+Quena     
+Whistle 1 
+Whistle 2 
+Whistle 3 
+Sukiyaki  
+SambaWhstl
+Cosmowhist
+DX-Ocrn 1 
+DX-Ocrn 2 
+DX-Ocrn 3 
+DX-Sitar 1
+DX-Sitar 2
+Ethre Four
+India     
+Juice Harp
+Syntholin 
+Pilgrim   
+Tenjiku   

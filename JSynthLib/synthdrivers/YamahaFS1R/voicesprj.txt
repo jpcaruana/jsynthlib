@@ -1,0 +1,128 @@
+Orch Chime
+Pno+Flute 
+StringTine
+Xylo+Brass
+DX-SynLd 1
+DX-SynLd 2
+DX-SynLd 3
+DX-SynLd 4
+DX-SynLd 5
+DX-SynLd 6
+DX-SynLd 7
+DX-SynLd 8
+DX-SynLd 9
+Pluck Lead
+Perka Lead
+GuitsynLd
+DXSynLd 1
+DXSynLd 2
+DXSynLd 3
+DXSynLd 4
+DXSynLd 5
+DXSynLd 6
+DXSynLd 7
+DXSynLd 8
+SqueezeLd
+Mooganic
+BrassLead1
+BrassLead2
+BrassLead3
+BrassLead4
+Saw Lead
+DX-SawLd 1
+DX-SawLd 2
+DX-Squar
+DX-VoiceLd
+DX-WahLead
+DXAttackLd
+CaliopLd 1
+CaliopLd 2
+CaliopLd 3
+Fifths 1
+Fifths 2
+LdSubHarm
+Buzzer
+Au Campo
+Bass Lead
+Comp Lead
+EadgbeLead
+Flap Synth
+FretlessLd
+Giovanni
+HarmoSynth
+Lead Line
+Lead Phone
+Lyle Lead
+PekingLead
+Puff Pipe
+Reed Lead
+SingleLine
+Super DX
+Sweep Lead
+Vibratoron
+DX-Vocoder
+Winwood
+DrkSweeper
+AnaBrsPad 
+8bitStrPad
+DX-ChoPad1
+DX-ChoPad2
+Bow Pad 1 
+Bow Pad 2 
+Bow Pad 3 
+Glassharp 
+Wineglass 
+Ice Galaxy
+Ice Heaven
+Hit Pad 1 
+Hit Pad 2 
+SynBrsPad1
+SynBrsPad2
+SynBrsPad3
+SynBrsPad4
+SynBrsPad5
+SynBrsPad6
+SynBrsPad7
+Vector Pad
+Pada Perka
+DX-MetalPd
+DX-SawPad
+Anna Pad
+Baroque
+BrassyWarm
+Bright Pad
+Clavi Pad
+Digi Pad
+Dispo Pad
+Ethereal
+Film Pad
+Fl.Cloud
+Floating
+Forest99
+Gior Pad
+GreenPeace
+Grunge Pad
+Hyper Sqr
+MM-Pretty
+MonsterPad
+Orwell
+PhaseSweep
+Phasers
+Glass Pad
+Sanctus
+StacHeaven
+Sweep Pad
+Water Log
+Spec-trail
+Whaser Pad
+Whisper
+WhistlePad
+DX-ScFi 1 
+DX-ScFi 2 
+DX-ScFi 3 
+Image 1   
+Image 2   
+Laser 1   
+Laser 2   
+Laser 3   
+Ri-zer   

@@ -1,0 +1,129 @@
+BagPipe   
+BagPipe-dl
+Gamelan   
+Gamelan2  
+Mukkuri   
+SuikinStr 
+Thai Boxin
+ThumKalimb
+Big-Gamlan
+Eth-Drum1 
+Eth-Drum2 
+Beep VoX  
+Dark      
+ForceField
+Ghost     
+Ghost2    
+Magic     
+Night     
+Open Fseq 
+RadioNoise
+Reso SE   
+Saucer    
+Scaling SE
+Slow Atk  
+SpaceBomb 
+WalkinRobo
+Warp1     
+Warp2     
+09 OpenHat
+09ClHatBel
+Beat BD   
+Beat Cym  
+Beat SD   
+Beat Zap  
+Boom      
+Choos     
+ClosedHat1
+ClosedHat2
+DanceKick 
+FS-Kick1  
+FS-Kick2  
+FS-Kick3  
+Hatty     
+Hihat     
+Nu Kick 1 
+Nu Kick 2 
+Nu Kick 3 
+Nu Snare 1
+Nu Snare 2
+Nu Snare 3
+Open Hat 1
+Open Hat 2
+PowerKick 
+Snare     
+Tchak     
+Tech BD   
+Tech HH   
+Tech Rim  
+Tech SD   
+TR Kick   
+TR Snare  
+DigiSQ1R  
+DigiSQ3   
+DogBytes  
+Fast&Cheap
+Fmt-Pluck 
+FunKey    
+Funky Tech
+Fusion    
+Metallic  
+NoiseDecay
+Raymond   
+SawSaw    
+Snow Decay
+Snow Pixy 
+Spellbound
+Syncorgano
+Thin Mini 
+VeloSweep 
+Vox Tron  
+Zansyo    
+Zapper    
+Celebratn 
+Eh Human  
+FairyVoice
+FormSweep 
+FS-Choir  
+FS-Sweep  
+Homy      
+Human     
+Ih Human  
+Man_Eh    
+NoisyVce  
+Oh Human  
+Shaman Woo
+Spacy Aaah
+Spacy FX  
+SpacySweep
+SweepyVce 
+VocoSweep 
+VocPhaseB 
+AN Arp 1  
+AN Arp 2  
+Compu Saw 
+DigiSQ1   
+DigiSQ2   
+Drw-EuroDr
+Hard Pulse
+Harry     
+New Key   
+Power Key 
+RythmLoop2
+Saw Pad   
+TekBass   
+FseqBase01
+FseqBase02
+FseqBase03
+FseqBase04
+FseqBase05
+FseqBase06
+FseqBase07
+FseqBase08
+FseqBase09
+FseqBase10
+FseqBase11
+FseqBase12
+FseqBase13
+FseqBase14
+

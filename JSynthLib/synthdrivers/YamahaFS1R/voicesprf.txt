@@ -1,0 +1,128 @@
+DX-AcstGt1
+DX-AcstGt2
+DX-AcstGt3
+DX-AcstGt4
+DX-AcstGt5
+GuitarBell
+LuteGuitar
+DX-PickGt1
+DX-PickGt2
+DX-PickGt3
+DX-PickGt4
+DX-PickGt5
+DX-PickGt6
+DX-PickGt7
+DX-PickGt8
+Synhalon  
+Picksynth 
+Compitar  
+Stratish  
+Banjitar  
+Touch Mute
+Firenze   
+Folknik   
+FunkyPluck
+Guitar Box
+Long Nail 
+Pianatar  
+RhythmPluk
+SteelyPick
+TiteGuitar
+DX-JazzGt1
+DX-JazzGt2
+DX-JazzGt3
+DX-JazzGt4
+DX-JazzGt5
+Guitorgan 
+DX-ClGt 1 
+DX-ClGt 2 
+DX-ClGt 3 
+DX-ClGt 4 
+DX-ClGt 5 
+DX-ClGt 6 
+DX-ClGt 7 
+DX-ClGt 8 
+DX-ClGt 9 
+DX-ClGt 10
+DX-ClGt 11
+DX-ClGt 12
+Buzzstring
+DX-MuteGt1
+DX-MuteGt2
+DX-MuteGt3
+DX-MuteGt4
+Heavy Gage
+DX-OvDrGt 
+DX-DistGt1
+DX-DistGt2
+DX-DistGt3
+DX-DistGt4
+DX-DistGt5
+Stortion1 
+Pluckoww  
+Stortion2 
+FuzzGuitar
+DX-WoodBa1
+DX-WoodBa2
+DX-WoodBa3
+DX-WoodBa4
+DX-WoodBa5
+DX-WoodBa6
+DX-WoodBa7
+DarkWodBa1
+DarkWodBa2
+BoogieBass
+BassLegend
+DX-FngrBa1
+DX-FngrBa2
+DX-FngrBa3
+DX-FngrBa4
+Fusit Bass
+FingerPick
+HardFinger
+Harm Bass 
+Inorganic 
+Nasty Bass
+SkweekBass
+DX-PickBa1
+DX-PickBa2
+DX-PickBa3
+DX-PickBa4
+Bass Magic
+Chiff Bass
+Comped EB 
+Metal Bass
+Owl Bass  
+Pick Pluck
+Plektrumbs
+Wired Bass
+FretlesBa1
+FretlesBa2
+FretlesBa3
+FretlesBa4
+FretlesBa5
+SlapString
+Lite Slap 
+RoundWound
+ImpactBass
+Afresh    
+WireString
+Clakwire  
+SuperBass1
+SuperBass2
+DigiBass 1
+DigiBass 2
+Digit Bass
+Draft Bass
+Brainacus 
+DX-SynBa 1
+DX-SynBa 2
+DX-SynBa 3
+DX-SynBa 4
+DX-SynBa 5
+DX-SynBa 6
+DX-SynBa 7
+DX-SynBa 8
+DX-SynBa 9
+AnalogBass
+Nharmonik 

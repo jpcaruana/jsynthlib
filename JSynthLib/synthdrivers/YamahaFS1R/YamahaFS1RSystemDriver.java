@@ -97,10 +97,7 @@ public class YamahaFS1RSystemDriver extends Driver
 	 */
 	public JInternalFrame editPatch(Patch p)
 	{
-	/*
 		return new YamahaFS1RSystemEditor(p);
-		*/
-		return null;
 	}
 }
 

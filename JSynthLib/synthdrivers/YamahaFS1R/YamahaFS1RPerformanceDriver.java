@@ -224,14 +224,11 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	{
 		// set the address to "current performance" so when patch is sent
 		// the FS1R display show this "in edit" performance whenever it comes from.
-	/*
 		p.sysex[6] = (byte)0x10;
 		p.sysex[7] = (byte)0;
 		p.sysex[8] = (byte)0;
 		calculateChecksum(p);
 		return new YamahaFS1RPerformanceEditor(p);
-		*/
-		return null;
 	}
 
 	

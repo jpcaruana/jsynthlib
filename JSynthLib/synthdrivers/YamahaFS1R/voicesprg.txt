@@ -1,0 +1,128 @@
+BassNovo  
+BassResWp 
+Cutmandu  
+DX-Bass 1 
+DX-Bass 2 
+DX-Bass 3 
+DX-Bass 4 
+DX-Bass 5 
+DX-Bass 6 
+WireBass 1
+WireBass 2
+HardDXBass
+SmakaBass 
+AnaBass 1 
+AnaBass 2 
+AnaBass 3 
+81Z Bass  
+DiscBass 1
+DiscBass 2
+Hop Bass 1
+Hop Bass 2
+After 88  
+Cable Bass
+Wood Rez  
+EazyAction
+ExciteBass
+PrkussBass
+Flapstick 
+Jackson   
+NipponBass
+Bass Knock
+Ana Stevie
+Munkhen   
+Perc Bass 
+Remark    
+SmoothBass
+Ana Knock 
+Jaco Syn  
+Werksfunk 
+ZedRubba  
+DX-Violin1
+DX-Violin2
+DX-Violin3
+DX-Violin4
+Violinz   
+DX-Viola 1
+DX-Viola 2
+DX-Viola 3
+DX-Cello 1
+DX-Cello 2
+DX-Cello 3
+DX-Cello 4
+Rosin     
+DX-Str 1  
+DX-Str 2  
+DX-Str 3  
+DX-Str 4  
+DX-Str 5  
+DX-Str 6  
+DX-Str 7  
+DX-Str 8  
+DX-Str 9  
+DX-Str 10 
+DX-Str 11 
+DX-Str 12 
+DX-Str 13 
+Quick Arco
+MidString1
+MidString2
+LowString1
+LowString2
+MM-String 
+DX-AnaSt 1
+DX-AnaSt 2
+DX-AnaSt 3
+DX-SynSt 1
+DX-SynSt 2
+DX-SynSt 3
+DX-SynSt 4
+DX-SynSt 5
+DX-SynSt 6
+DX-SynSt 7
+WarmStr 1 
+WarmStr 2 
+WarmStr 3 
+WarmStr 4 
+Afternoon 
+Agitate   
+AnnaString
+Bright Str
+General   
+GentleMind
+Gypsy     
+MaxiString
+Michelle  
+MoterDrive
+ReverbStrg
+StrMachine
+Silk Hall 
+Small Sect
+Soft Bow  
+Soline    
+Violtron  
+DX-PizzSt 
+PizzString
+DX-Harp 1 
+DX-Harp 2 
+DX-Harp 3 
+Baroquen  
+Dbl Harp 1
+Dbl Harp 2
+Apollon   
+CembaHarp 
+ElectrHarp
+HarpStrum 
+Lute Harp 
+Metal Harp
+Orch Harp 
+Syn Harp  
+DX-Timpani
+Timpanic! 
+Iron Timpa
+Ensemble  
+HallOrch 1
+HallOrch 2
+Orch Brass
+DX-Trpt 1 
+DX-Trpt 2 
