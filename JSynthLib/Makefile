@@ -314,7 +314,7 @@ SRC_JAR_FILE := $(basename $(JAR_FILE))-src$(suffix $JAR_FILE)
 # Source jar target
 srcjar : $(SRC_JAR_FILE)
 $(SRC_JAR_FILE): $(JAVA_SRC) $(RESOURCE_OBJS)
-	$(FIND) $(TOPLEVEL) $(subst .class,.java,501 259 81 80 79 501JAR_OBJS)) -print | $(XARGS) \
+	$(FIND) $(TOPLEVEL) $(subst .class,.java,$(JAR_OBJS)) -print | $(XARGS) \
 	$(JAR) $(JAR_FLAGS) $@
 
 # Bundle target
