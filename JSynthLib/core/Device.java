@@ -48,29 +48,29 @@ import javax.swing.JPanel;
  */
 public abstract class Device /*implements Serializable, Storable*/ {
 
-    /** Preferences node for storing configuration options */
+    /** Preferences node for storing configuration options. */
     protected Preferences prefs = null;
 
     /** The company which made the Synthesizer. */
-    private String manufacturerName;
+    private /*final*/ String manufacturerName;
     /**
      * The fixed name of the model supported by this driver, as stated
      * on the type plate of the engine. eg TG33/SY22
      */
-    private String modelName;
+    private /*final*/ String modelName;
     /**
      * The response to the Universal Inquiry Message.  It can have
      * wildcards (*). It can be up to 16 bytes.<p>
      * Ex. <code>"F07E**0602413F01000000020000f7"</code>
      */
-    private String inquiryID;
+    private /*final*/ String inquiryID;
     /**
      * Information about Device.
      * @see DeviceDetailsDialog
      */
-    private String infoText;
+    private /*final*/ String infoText;
     /** Authors of the device driver. */
-    private String authors;
+    private /*final*/ String authors;
     /** The synthName is your personal naming of the device. */
     //private String synthName;
     /** The channel the user assigns to this driver. */
@@ -250,7 +250,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * or less than 256.
      */
     protected void setDeviceID(int deviceID) {
-	prefs.putInt("devicID", deviceID);
+	prefs.putInt("deviceID", deviceID);
     }
 
     /**
@@ -272,7 +272,11 @@ public abstract class Device /*implements Serializable, Storable*/ {
 	    if (!initPort || getPort() != port) {
 		if (rcvr != null)
 		    rcvr.close();
-		rcvr = MidiUtil.getReceiver(port);
+		try {
+		    rcvr = MidiUtil.getReceiver(port);
+		} catch (MidiUnavailableException e) {
+		    ErrorMsg.reportStatus(e);
+		}
 	    }
 	}
 	prefs.putInt("port", port);
