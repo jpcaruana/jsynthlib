@@ -52,6 +52,9 @@ public final class TD6SingleDriver extends Driver {
     /** Number of packets in a single patch. */
     static final int NUM_PKT = PKT_SIZE.length;
 
+    private static final SysexHandler SYS_REQ = new SysexHandler
+    ("F0 41 @@ 00 3F 11 41 *patchNum* 00 00 00 00 00 00 *checkSum* F7");
+
     /**
      * Creates a new <code>TD6SingleDriver</code> instance.
      *
@@ -73,8 +76,6 @@ public final class TD6SingleDriver extends Driver {
 	sysexID		= "F041**003F12";
 	deviceIDoffset	= 2;
 	// Request data 1 RQ1 (11H)
-	sysexRequestDump = new SysexHandler
-	    ("F0 41 @@ 00 3F 11 41 *patchNum* 00 00 00 00 00 00 *checkSum* F7");
     }
 
     /**
@@ -222,12 +223,12 @@ public final class TD6SingleDriver extends Driver {
      * @param patchNum drum kit number (0: drum kit 1, ..., 98: drum kit 99)
      */
     public void requestPatchDump(int bankNum, int patchNum) {
+	clearMidiInBuffer();
 	// checksum depends on drum kit number (patchNum).
 	int checkSum = -(0x41 + patchNum) & 0x7f;
-	// see core/SysexHandler.java
-	sysexRequestDump.send(getPort(), (byte) getDeviceID(),
-			      new NameValue("patchNum", patchNum),
-			      new NameValue("checkSum", checkSum));
+	send(SYS_REQ.toSysexMessage(getDeviceID(),
+				    new NameValue("patchNum", patchNum),
+				    new NameValue("checkSum", checkSum)));
     }
 
     /**

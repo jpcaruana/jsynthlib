@@ -43,6 +43,9 @@ public class TD6BankDriver extends BankDriver {
     private static final int PATCH_SIZE = SINGLE_SIZE * NUM_PATCH;
     /** Number of columns for displaying the patches in a table. */
     private static final int NUM_COLUMNS = 9;
+    /** Request data 1 RQ1 (11H) */
+    private static final SysexHandler SYS_REQ = new SysexHandler
+    ("F0 41 @@ 00 3F 11 41 7F 00 00 00 00 00 00 40 F7");
 
     private final TD6SingleDriver singleDriver;
 
@@ -59,12 +62,6 @@ public class TD6BankDriver extends BankDriver {
 	patchSize	= PATCH_SIZE;
 
 	sysexID		= "F041**003F12";
-	// deviceIDoffset	= 2;	// This cannot work...
-
-	// Request data 1 RQ1 (11H)
-	sysexRequestDump = new SysexHandler
-	    ("F0 41 @@ 00 3F 11 41 7F 00 00 00 00 00 00 40 F7");
-
 	singleSysexID	= "F041**003F12";
 	singleSize	= SINGLE_SIZE;
     }
@@ -131,7 +128,8 @@ public class TD6BankDriver extends BankDriver {
 
     // bankNum nor patchNum are not used.
     public void requestPatchDump(int bankNum, int patchNum) {
-	sysexRequestDump.send(getPort(), (byte) getDeviceID());
+	clearMidiInBuffer();
+	send(SYS_REQ.toSysexMessage(getDeviceID()));
     }
 
     // bankNum nor patchNum are not used.
