@@ -1,6 +1,7 @@
 package core;
 import java.io.*;
 import javax.swing.*;
+import javax.sound.midi.ShortMessage;
 // import java.util.Set;
 // import java.util.HashSet;
 // import java.util.Arrays;
@@ -543,10 +544,10 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     /** Send Program Change MIDI message. */
     protected void setPatchNum(int patchNum) {
         try {
-	    PatchEdit.MidiOut.writeShortMessage
-		(port,
-		 (byte) (0xC0 + ((channel - 1) & 0xf)),	// Program Change
-		 (byte) patchNum); // Program Number
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, channel - 1,
+			   patchNum, 0); // Program Number
+	    PatchEdit.MidiOut.send(port, msg);
 	} catch (Exception e) {
 	}
     }
@@ -554,16 +555,15 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     /** Send Control Change (Bank Select) MIDI message. */
     protected void setBankNum(int bankNum) {
         try {
-	    PatchEdit.MidiOut.writeShortMessage
-		(port,
-		 (byte) (0xB0 + ((channel - 1) & 0xf)),	// Control Change
-		 (byte) 0x00,	// Bank Select
-		 (byte) (bankNum / 128)); // Bank Number (MSB)
-	    PatchEdit.MidiOut.writeShortMessage
-		(port,
-		 (byte) (0xB0 + ((channel - 1) & 0xf)),	// Control Change
-		 (byte) 0x20,	// Bank Select (LSB)
-		 (byte) (bankNum % 128)); // Bank Number (LSB)
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.CONTROL_CHANGE, channel - 1,
+			   0x00, //  Bank Select (MSB)
+			   bankNum / 128); // Bank Number (MSB)
+	    PatchEdit.MidiOut.send(port, msg);
+	    msg.setMessage(ShortMessage.CONTROL_CHANGE, channel - 1,
+			   0x20, //  Bank Select (LSB)
+			   bankNum % 128); // Bank Number (MSB)
+	    PatchEdit.MidiOut.send(port, msg);
 	} catch (Exception e) {
 	}
     }
@@ -592,7 +592,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 
     /** Does the actual work to send a patch to the synth. */
     // Why do we need both sendPatch(Patch) and sendPatchWorker(Patch)?
-    protected void sendPatchWorker(Patch p) {
+    protected final void sendPatchWorker(Patch p) {
         if (deviceIDoffset > 0)	// set channel (device ID)
 	    p.sysex[deviceIDoffset] = (byte) (device.getDeviceID() - 1);
         try {
@@ -640,17 +640,18 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         try {
 // 	    sendPatch(p);
 	    Thread.sleep(100);
-	    PatchEdit.MidiOut.writeShortMessage
-		(port,
-		 (byte) (0x90 + ((channel - 1) & 0xf)),	// Note On with channel
-		 (byte) PatchEdit.appConfig.getNote(),
-		 (byte) PatchEdit.appConfig.getVelocity());
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.NOTE_ON, channel - 1,
+			   PatchEdit.appConfig.getNote(),
+			   PatchEdit.appConfig.getVelocity());
+	    PatchEdit.MidiOut.send(port, msg);
+
 	    Thread.sleep(PatchEdit.appConfig.getDelay());
-	    PatchEdit.MidiOut.writeShortMessage
-		(port,
-		 (byte) (0x80 + ((channel - 1) & 0xf)),	// Note Off
-		 (byte) PatchEdit.appConfig.getNote(),
-		 (byte) 0);
+
+	    msg.setMessage(ShortMessage.NOTE_ON, channel - 1,
+			   PatchEdit.appConfig.getNote(),
+			   0);	// expecting running status
+	    PatchEdit.MidiOut.send(port, msg);
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
 	}
