@@ -133,23 +133,23 @@ public class YamahaFS1RPerformanceDriver extends Driver
     }
 
 
-	public void sendPatch(Patch p) {
-		super.sendPatch(p);
-	}
+    public void sendPatch(Patch p) {
+	super.sendPatch(p);
+    }
 	
-	/**
-		Met a jour la requete selon le type de banque.
-	*/
-	private void updateSysexRequest() {
-		if (mCurrentBankNum == 1) { 
-			// current
-			sysexRequestDump.setSysex("F0 43 20 5E 10 00 00 F7");
-		}
-		else {	
-			// internal
-			sysexRequestDump.setSysex("F0 43 20 5E 11 00 *patchNum* F7");
-		}
+    /**
+       Met a jour la requete selon le type de banque.
+    */
+    private void updateSysexRequest() {
+	if (mCurrentBankNum == 1) { 
+	    // current
+	    sysexRequestDump = new SysexHandler("F0 43 20 5E 10 00 00 F7");
 	}
+	else {	
+	    // internal
+	    sysexRequestDump = new SysexHandler("F0 43 20 5E 11 00 *patchNum* F7");
+	}
+    }
 
 
     /**Sends a patch to a set location on a synth.*/

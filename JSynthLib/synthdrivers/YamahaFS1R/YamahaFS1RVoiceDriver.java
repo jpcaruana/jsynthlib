@@ -177,10 +177,10 @@ public class YamahaFS1RVoiceDriver extends Driver
 	*/
 	private void updateSysexRequest() {
 		if (mCurrentBankNum == BANK_NUM_PERFORMANCE) {
-			sysexRequestDump.setSysex("F0 43 20 5E 4"+mCurrentPatchNum+" 00 00 F7");
+			sysexRequestDump = new SysexHandler("F0 43 20 5E 4"+mCurrentPatchNum+" 00 00 F7");
 		}
 		else {
-			sysexRequestDump.setSysex("F0 43 20 5E 51 00 *patchNum* F7");
+			sysexRequestDump = new SysexHandler("F0 43 20 5E 51 00 *patchNum* F7");
 		}
 	}
 	
