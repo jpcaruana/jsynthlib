@@ -1,31 +1,24 @@
-/*
- * Device.java
- *
- * Created on 5. Oktober 2001, 21:59
- *
- * $Id$
- *
- */
-
 package core;
 import javax.swing.*;
 import java.util.*;
 import java.io.Serializable;
-/**
- *
- * @author Gerrit Gehnen
- * @version
- */
 
+/**
+ * Device.java<p>
+ *
+ * Created on 5. Oktober 2001, 21:59
+ * @author Gerrit Gehnen
+ * @version $Id$
+ */
 public abstract class Device implements Serializable, Storable {
     // All field should be private.
-    /** Manufacturer name of the device. */
+    /** The company which made the Synthesizer. */
     protected String manufacturerName;
-    /** Model name of the device. */
+    /** The models supported by this driver. eg TG33/SY22 */
     protected String modelName;
-
-    /** The ID-String returned by the device as response to the
-     * universal inquiry command.
+    /**
+     * The response to the Universal Inquiry Message.  It can have
+     * wildcards (*). It can be up to 16 bytes.
      */
     protected String inquiryID;
 
@@ -69,8 +62,9 @@ public abstract class Device implements Serializable, Storable {
 		   String inquiryID, String infoText, String authors) {
 	this.manufacturerName = manufacturerName;
 	this.modelName = modelName;
-	this.inquiryID = inquiryID;
-	this.infoText = infoText;
+	this.inquiryID = (inquiryID == null) ? "NONE" : inquiryID;
+	this.infoText = (infoText == null)
+	    ? "There is no information about this Device." : infoText;
 	this.authors = authors;
 	inPort = PatchEdit.appConfig.getInitPortIn();
 	port = PatchEdit.appConfig.getInitPortOut();
@@ -153,12 +147,13 @@ public abstract class Device implements Serializable, Storable {
      * @param channel New value of property channel.
      */
     public void setChannel (int channel) {
-        Iterator iter;
         this.channel = channel;
-        iter = driverList.iterator();
-        while (iter.hasNext()) {
-	    ((Driver) iter.next()).setChannel(channel);
-        }
+	// remove the following lines when 'driver.channel' becomes 'private'.
+	Iterator iter;
+	iter = driverList.iterator();
+	while (iter.hasNext()) {
+ 	    ((Driver) iter.next()).setChannel(channel);
+	}
     }
 
     /**
@@ -182,8 +177,9 @@ public abstract class Device implements Serializable, Storable {
      * @param port New value of property port.
      */
     public void setPort (int port) {
-        Iterator iter;
         this.port = port;
+	// remove the following lines when 'driver.port' becomes 'private'.
+        Iterator iter;
         iter = driverList.iterator();
         while (iter.hasNext ())
             ((Driver) iter.next()).setPort(port);
@@ -194,8 +190,9 @@ public abstract class Device implements Serializable, Storable {
      * @param inPort New value of property inPort.
      */
     public void setInPort (int inPort) {
-        Iterator iter;
         this.inPort = inPort;
+	// remove the following lines when 'driver.inPort' becomes 'private'.
+        Iterator iter;
         iter = driverList.iterator();
         while (iter.hasNext())
             ((Driver) iter.next()).inPort = inPort;
