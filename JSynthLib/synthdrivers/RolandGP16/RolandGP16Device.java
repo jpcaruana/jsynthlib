@@ -25,20 +25,20 @@ public class RolandGP16Device extends Device {
 		"for me, but of course I take no responsibility for lost patches.\n\n"+
 		"All comments are appreciated at alcarola@kravbrev.se.";
     
-/** Constructor for DeviceListWriter. */
+	/** Constructor for DeviceListWriter. */
     public RolandGP16Device() {
-	super("Roland", "GP16", "", INFO_TEXT, "Mikael Kurula");
+		super("Roland", "GP16", null, INFO_TEXT, "Mikael Kurula");
     }
 
-/** Constructor for for actual work. */
+	/** Constructor for for actual work. */
     public RolandGP16Device(Preferences prefs) {
-	this();
-	this.prefs = prefs;
-
-	RolandGP16SingleDriver singleDriver = new RolandGP16SingleDriver();
-	addDriver(singleDriver);
-        addDriver(new RolandGP16BankDriver(singleDriver));
-	addDriver(new RolandGP16GroupDriver(singleDriver));
-	addDriver(new RolandGP16AllDriver(singleDriver));
+		this();
+		this.prefs = prefs;
+	
+		RolandGP16SingleDriver singleDriver = new RolandGP16SingleDriver();
+		addDriver(singleDriver);
+	    addDriver(new RolandGP16BankDriver(singleDriver));
+		addDriver(new RolandGP16GroupDriver(singleDriver));
+		addDriver(new RolandGP16AllDriver(singleDriver));
      }
 }
