@@ -164,10 +164,10 @@ public class SysexGetDialog extends JDialog {
     Driver driver = (Driver) driverComboBox.getSelectedItem();
     Patch p = new Patch(patchSysex, driver);
     // if Conveter for the patch exist, convert the patch.
-    Patch[] patarray = (Patch[])p.dissect();
+    IPatch[] patarray = (IPatch[])p.dissect();
 
     for (int k = 0; k < patarray.length; k++) {
-      Patch pk = patarray[k];
+      IPatch pk = patarray[k];
       StringBuffer patchString = pk.getPatchHeader();
 
       // Maybe you don't get the expected patch!
@@ -203,10 +203,10 @@ public class SysexGetDialog extends JDialog {
 	  // driver not found
 	  pk.setDriver(null); //reset
 	  pk.setComment("Probably a "
-			+ LookupManufacturer.get(pk.sysex[1],
-						 pk.sysex[2],
-						 pk.sysex[3])
-			+ " Patch, Size: " + pk.sysex.length);
+			+ LookupManufacturer.get(pk.getByteArray()[1],
+						 pk.getByteArray()[2],
+						 pk.getByteArray()[3])
+			+ " Patch, Size: " + pk.getByteArray().length);
 	  JOptionPane.showMessageDialog
 	    (null,
 	     "You requested a "+driver.toString()+" patch!"+
