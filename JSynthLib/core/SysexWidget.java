@@ -406,4 +406,7 @@ public abstract class SysexWidget extends JPanel {
         public int getLength();
         public void set(IPatch p, String stringval);
     }
+    public IParameter getParameter() {
+        return parameter;
+    }
 }
