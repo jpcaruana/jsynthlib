@@ -32,22 +32,22 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
     {
         super(file.getName(),
         true, //resizable
-        true, //closable        
+        true, //closable
         true, //maximizable
         true);//iconifiable
         InitLibraryFrame();
     }
-    
+
     public LibraryFrame()
     {
         super("Unsaved Library #" + (++openFrameCount),
         true, //resizable
-        true, //closable        
+        true, //closable
         true, //maximizable
         true);//iconifiable
         InitLibraryFrame();
     }
-    
+
     protected void InitLibraryFrame()
     {
         //...Create the GUI and put it in the window...
@@ -71,7 +71,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                               jList[j].setClosed(true); }catch (Exception e1){}
                               break;}
                     }
-                    
+
                     if (jList[j] instanceof PatchEditorFrame)
                     {
                         for (i=0;i<myModel.PatchList.size();i++)
@@ -82,36 +82,36 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                               break;}
                     }
                 }
-                
+
                 if (JOptionPane.showConfirmDialog(null,"This Library may contain unsaved data.\nSave before closing?","Delete Duplicate Patches",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-                
+
                 if (getTitle().startsWith("Unsaved Library"))
                 {
                     FileDialog fc2=new FileDialog(PatchEdit.instance);
                     FilenameFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)",".patchlib");
-                    
+
                     fc2.setFilenameFilter(type1);
 		    fc2.setDirectory (PatchEdit.appConfig.getLibPath());
 		    fc2.show();
-                    
+
                     if (fc2.getDirectory() == null || fc2.getFile() == null)
                     {
 		      File file = new File(fc2.getDirectory(), fc2.getFile());
-                        
+
                         try
                         {
                             if (!file.getName().toUpperCase().endsWith(".PATCHLIB"))
                                 file=new File(file.getPath()+".patchlib");
-                            
+
                             if (file.isDirectory())
                             { ErrorMsg.reportError("Error", "Can not save over a directory");
                               return;
                             }
-                            
+
                             if (file.exists())
-                                
+
                                 if (JOptionPane.showConfirmDialog(null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-                            
+
                             save(file);
                         } catch (Exception ex)
                         {
@@ -120,7 +120,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                     }
                     return;
                 }
-                
+
                 try
                 {
                     save();
@@ -137,7 +137,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 PatchEdit.pasteAction.setEnabled(true);
                 PatchEdit.importAction.setEnabled(true);
                 PatchEdit.importAllAction.setEnabled(true);
-                PatchEdit.newPatchAction.setEnabled(true);                
+                PatchEdit.newPatchAction.setEnabled(true);
                 PatchEdit.crossBreedAction.setEnabled(true);
 
                 if (table.getRowCount()>0)
@@ -146,13 +146,13 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                     PatchEdit.menuSaveAs.setEnabled(true);
                     PatchEdit.searchAction.setEnabled(true);
                 }
-                
+
                 if (table.getRowCount()>1)
                 {
                     PatchEdit.sortAction.setEnabled(true);
                     PatchEdit.dupAction.setEnabled(true);
                 }
-                
+
                 if (table.getSelectedRowCount()>0)
                 {
                     PatchEdit.extractAction.setEnabled(true);
@@ -161,8 +161,8 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
  		    PatchEdit.reassignAction.setEnabled(true);
-                    
-                    
+
+
                     Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
                     try{
                         // look, if the driver for the selected patch brings his own editor
@@ -181,20 +181,20 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                             PatchEdit.editAction.setEnabled(false);
                         }
                     };
-                    
+
                     PatchEdit.cutAction.setEnabled(true);
                     PatchEdit.copyAction.setEnabled(true);
                     PatchEdit.deleteAction.setEnabled(true);
                     PatchEdit.exportAction.setEnabled(true);
                 }
-                
+
                 //                System.out.println ("Frame activated"+table.getSelectedRowCount ());
-                
+
             }
-            
+
             public void internalFrameClosed(InternalFrameEvent e)
             {}
-            
+
             public void internalFrameDeactivated(InternalFrameEvent e)
             {
                 PatchEdit.receiveAction.setEnabled(false);
@@ -221,17 +221,17 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 PatchEdit.crossBreedAction.setEnabled(false);
                 //                System.out.println ("Frame deactivated");
             }
-            
+
             public void internalFrameDeiconified(InternalFrameEvent e)
             {}
-            
+
             public void internalFrameIconified(InternalFrameEvent e)
             {}
-            
+
         });
-                
+
         myModel = new PatchListModel(changed);
-        table = new DNDLibraryTable(myModel);        
+        table = new DNDLibraryTable(myModel);
         table2=table;
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
         table.addMouseListener(new MouseAdapter()
@@ -247,7 +247,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                     );
                 }
             }
-            
+
             public void mouseReleased(MouseEvent e)
             {
                 if(e.isPopupTrigger())
@@ -259,7 +259,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                     );
                 }
             }
-            
+
             public void mouseClicked(MouseEvent e)
             {
                 if(e.getClickCount()==2)
@@ -268,9 +268,9 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 }
             }
         });
-        
-        
-        
+
+
+
         //Create the scroll  pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
         DNDViewport myviewport=new DNDViewport();
@@ -280,21 +280,21 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
         {
             public void mousePressed(MouseEvent e)
             {}
-            
+
             public void mouseReleased(MouseEvent e)
             {
                 myModel.fireTableDataChanged();
             }
         });
-        
+
         //Add the scroll pane to this window.
         JPanel statusPanel=new JPanel();
         statusBar=new JLabel(myModel.PatchList.size()+" Patches");
         statusPanel.add(statusBar);
-        
+
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         getContentPane().add(statusPanel, BorderLayout.SOUTH);
-        
+
         TableColumn column = null;
         column = table.getColumnModel().getColumn(0);
         column.setPreferredWidth(50);
@@ -321,12 +321,12 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
             {
                 // System.out.println ("Focus Gained");
             }
-            
+
             public void focusLost(FocusEvent e)
             {
                 //System.out.println ("Focus Lost");
             }
-            
+
         });
 
         table.getModel().addTableModelListener( new TableModelListener()
@@ -341,7 +341,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                     PatchEdit.searchAction.setEnabled(true);
                     PatchEdit.exportAction.setEnabled(true);
                 }
-                
+
                 if (((PatchListModel)e.getSource()).getRowCount()>1)
                 {
                     PatchEdit.sortAction.setEnabled(true);
@@ -359,7 +359,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 //System.out.println ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
                 if (((ListSelectionModel)e.getSource()).getMaxSelectionIndex()>=0)
                 {
-                    PatchEdit.extractAction.setEnabled(true);                    
+                    PatchEdit.extractAction.setEnabled(true);
                     PatchEdit.sendAction.setEnabled(true);
                     PatchEdit.sendToAction.setEnabled(true);
                     PatchEdit.playAction.setEnabled(true);
@@ -383,9 +383,9 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                     PatchEdit.deleteAction.setEnabled(true);
                     PatchEdit.exportAction.setEnabled(true);
                 }
-                
+
                 else
-                    
+
                 {
                     PatchEdit.extractAction.setEnabled(false);
                     PatchEdit.sendAction.setEnabled(false);
@@ -401,18 +401,18 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
             }
         });
     }
-    
-    
+
+
     public void ImportPatch(File file) throws IOException,FileNotFoundException
     {
         int i;
         int offset=0;
-        
+
         if (ImportMidiFile.doImport(file))
         {
           return;
         }
-        
+
         FileInputStream fileIn= new FileInputStream(file);
         byte [] buffer =new byte [(int)file.length()];
 
@@ -444,19 +444,19 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
         changed=true;
         //statusBar.setText(myModel.PatchList.size()+" Patches");
     }
-    
+
     public void ExportPatch(File file) throws IOException,FileNotFoundException
     {
         if (table.getSelectedRowCount()==0)
         {
            ErrorMsg.reportError("Error", "No Patch Selected.");
            return;
-	}	
+	}
         FileOutputStream fileOut= new FileOutputStream(file);
         fileOut.write(((Patch)myModel.PatchList.get(table.getSelectedRow())).sysex);
         fileOut.close();
     }
-    
+
     public void DeleteSelectedPatch()
     {
         if (table.getSelectedRowCount()==0)
@@ -468,7 +468,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
         myModel.fireTableDataChanged();
 //        statusBar.setText(myModel.PatchList.size()+" Patches");
     }
-    
+
     public void CopySelectedPatch()
     {
         try
@@ -482,11 +482,11 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
             byte [] mySysex = new byte[myPatch.sysex.length];
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
             PatchEdit.Clipboard=new Patch(mySysex,
-            myPatch.deviceNum,
-   	    myPatch.driverNum,
-            (myPatch.date.toString()),
-            (myPatch.author.toString()),
-            (myPatch.comment.toString()));
+					  myPatch.deviceNum,
+					  myPatch.driverNum,
+					  myPatch.date.toString(),
+					  myPatch.author.toString(),
+					  myPatch.comment.toString());
         }catch (Exception e)
         {};
     }
@@ -494,20 +494,20 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
     public void SendSelectedPatch()
     {
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).sendPatch(myPatch);
+        myPatch.getDriver().calculateChecksum(myPatch);
+        myPatch.getDriver().sendPatch(myPatch);
     }
     public void SendToSelectedPatch()
      {
          Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+         myPatch.getDriver().calculateChecksum(myPatch);
  	 new SysexSendToDialog(myPatch);
      }
-  
+
      public void ReassignSelectedPatch()
      {
          Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+         myPatch.getDriver().calculateChecksum(myPatch);
  	 new ReassignPatchDialog(myPatch);
  	 myModel.fireTableDataChanged();
      }
@@ -515,18 +515,18 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
     public void PlaySelectedPatch()
     {
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).sendPatch(myPatch);
-	PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).playPatch(myPatch);
+        myPatch.getDriver().calculateChecksum(myPatch);
+        myPatch.getDriver().sendPatch(myPatch);
+	myPatch.getDriver().playPatch(myPatch);
     }
-    
+
     public void StoreSelectedPatch()
     {
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+        myPatch.getDriver().calculateChecksum(myPatch);
  	new SysexStoreDialog(myPatch);
     }
-    
+
     public JInternalFrame EditSelectedPatch()
     {
         if (table.getSelectedRowCount()==0)
@@ -536,7 +536,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
         }
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
         changed=true;
-        return(PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).editPatch(myPatch));
+        return myPatch.getDriver().editPatch(myPatch);
     }
 
     public void PastePatch()
@@ -550,25 +550,26 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
             if (table.getSelectedRowCount()==0)
                 myModel.PatchList.add(new Patch(mySysex,
-                myPatch.deviceNum,
- 		myPatch.driverNum,
-                (myPatch.date.toString()),
-                (myPatch.author.toString()),
-                (myPatch.comment.toString())));
+						myPatch.deviceNum,
+						myPatch.driverNum,
+						myPatch.date.toString(),
+						myPatch.author.toString(),
+						myPatch.comment.toString()));
             else
-                myModel.PatchList.add(table.getSelectedRow(),new Patch(mySysex,
-                myPatch.deviceNum,
- 		myPatch.driverNum,
-                (myPatch.date.toString()),
-                (myPatch.author.toString()),
-                (myPatch.comment.toString())));
+                myModel.PatchList.add(table.getSelectedRow(),
+				      new Patch(mySysex,
+						myPatch.deviceNum,
+						myPatch.driverNum,
+						myPatch.date.toString(),
+						myPatch.author.toString(),
+						myPatch.comment.toString()));
 
             changed=true;
             myModel.fireTableDataChanged();
         //    statusBar.setText(myModel.PatchList.size()+" Patches");
         }
     }
-    
+
     public void save() throws Exception
     {
         PatchEdit.waitDialog.show();
@@ -590,14 +591,14 @@ ErrorMsg.reportError("Error","No Patch Selected.");
 return;
 }
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-        BankDriver myDriver=(BankDriver)PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum);
+        BankDriver myDriver=(BankDriver)myPatch.getDriver();
         for (int i=0;i<myDriver.getNumPatches();i++)
             if (myDriver.getPatch(myPatch,i)!=null) myModel.PatchList.add(myDriver.getPatch(myPatch,i));
         myModel.fireTableDataChanged();
         changed=true;
      //   statusBar.setText(myModel.PatchList.size()+" Patches");
     }
-    
+
     public int getSelectedRowCount()
     {
         return table.getSelectedRowCount();
@@ -609,7 +610,7 @@ return;
         setTitle(file.getName());
         save();
     }
-    
+
     public void open(File file) throws Exception
     {
         PatchEdit.waitDialog.show();
@@ -625,12 +626,12 @@ return;
         PatchEdit.waitDialog.hide();
         statusBar.setText(myModel.PatchList.size()+" Patches");
     }
-    
+
     public ArrayList getPatchCollection()
     {
         return myModel.PatchList;
     }
-    
+
     //Re-assigns drivers to all patches in libraryframe. Called after new drivers are added or or removed
     protected void revalidateDrivers()
     {
@@ -643,9 +644,9 @@ return;
     public AbstractPatchListModel getAbstractPatchListModel() {
         return myModel;
     }
-    
+
     public DNDLibraryTable getTable() {
         return table;
     }
-    
+
 }

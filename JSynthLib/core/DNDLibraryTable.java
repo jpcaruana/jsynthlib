@@ -27,21 +27,21 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
     /**
      * enables this component to be a dropTarget
      */
-    
+
     DropTarget dropTarget = null;
     AbstractTableModel plModel;
-    
+
     /**
      * enables this component to be a Drag Source
      */
     DragSource dragSource = null;
-    
+
     public DNDLibraryTable() {
         dropTarget = new DropTarget(this, this);
         dragSource = new DragSource();
         dragSource.createDefaultDragGestureRecognizer( this, DnDConstants.ACTION_COPY_OR_MOVE, this);
     }
-    
+
     /**
      * @param dm  */
     public DNDLibraryTable(AbstractTableModel dm) {
@@ -49,14 +49,14 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
         plModel=dm;
         setModel(dm);
     }
-  
+
     /** Creates new DNDLibraryTable */
-    
+
     public DNDLibraryTable(Patch soundType) {
         this();
         setSoundType(soundType);
     }
-    
+
     /**
      * is invoked when you are dragging over the DropSite
      *
@@ -64,44 +64,44 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
     public void setSoundType(Patch soundType) {
         // this.soundType=soundType;
     }
-    
+
     /**
      * @param event  */
     public void dragEnter(DropTargetDragEvent event) {
         event.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
     }
-    
+
     /**
      * is invoked when you are exit the DropSite without dropping
      *
      */
-    
+
     public void dragExit(DropTargetEvent event) {
    //     System.out.println( "DNDLibraryTable:DropTargetEvent:dragExit");
     }
-    
+
     /**
      * is invoked when a drag operation is going on
      *
      */
-    
+
     public void dragOver(DropTargetDragEvent event) {
         event.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
     }
-    
+
     /**
      * a drop has occurred
      *
      */
     public void drop(DropTargetDropEvent event) {
    //     System.out.println("DNDLibraryTable drop");
-    
+
         try {
 //            Transferable transferable = event.getTransferable();
             Patch pat=(Patch)((AbstractPatchListModel)getModel()).getPatchAt(this.rowAtPoint(event.getLocation()));
 
-    
-            DataFlavor df=new DataFlavor(PatchEdit.getDriver(pat.deviceNum,pat.driverNum).getClass(),pat.toString());
+
+            DataFlavor df=new DataFlavor(pat.getDriver().getClass(),pat.toString());
 //            if (transferable.isDataFlavorSupported(df)) {
                 System.out.println ("IsSupported");
                 Patch so=(Patch)event.getTransferable().getTransferData(df);
@@ -137,14 +137,14 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
             event.rejectDrop();
         }
     }
-    
+
     /**
      * is invoked if the use modifies the current drop gesture
      *
      */
     public void dropActionChanged( DropTargetDragEvent event ) {
     }
-    
+
     /**
      * a drag gesture has been initiated
      *
@@ -158,14 +158,14 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
         // Dnd doesn't work with JInternalFrame
         iter=event.iterator();
         while (iter.hasNext()) {
-           obj=iter.next(); 
+           obj=iter.next();
            System.out.println(obj.toString());
         }
-        
+
         if (((MouseEvent)obj).getID()==MouseEvent.MOUSE_EXITED) return;
         int selR = getSelectedRow();
         int selC = getSelectedColumn();
-    
+
         if ( selR != -1 ) {
             Patch sing =((AbstractPatchListModel) getModel()).getPatchAt(selR);
             // as the name suggests, starts the dragging
@@ -174,7 +174,7 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
             //System.out.println ( "nothing was selected");
         }
     }
-    
+
     /**
      * this message goes to DragSourceListener, informing it that the dragging
      * has ended
@@ -182,12 +182,12 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
      */
     public void dragDropEnd(DragSourceDropEvent event) {
    //     System.out.println( "DNDLibraryTable: dragDropEnd");
-    
+
         if ( event.getDropSuccess()) {
             removeElement();
         }
     }
-    
+
     /**
      * this message goes to DragSourceListener, informing it that the dragging
      * has entered the DropSite
@@ -196,7 +196,7 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
     public void dragEnter(DragSourceDragEvent event) {
   //      System.out.println( "DNDLibraryTable: dragEnter");
     }
-    
+
     /**
      * this message goes to DragSourceListener, informing it that the dragging
      * has exited the DropSite
@@ -205,7 +205,7 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
     public void dragExit(DragSourceEvent event) {
    //     System.out.println( "DNDLibTable: DragSorceEvent:dragExit");
     }
-    
+
     /**
      * this message goes to DragSourceListener, informing it that the dragging is currently
      * ocurring over the DropSite
@@ -214,16 +214,16 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
     public void dragOver(DragSourceDragEvent event) {
     //        System.out.println( "DragSourceEvent:dragOver");
     }
-    
+
     /**
      * is invoked when the user changes the dropAction
      *
      */
-    
+
     public void dropActionChanged( DragSourceDragEvent event) {
    //     System.out.println( "dropActionChanged");
     }
-    
+
     /**
      * adds elements to itself
      *
@@ -232,7 +232,7 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
         //System.out.println ("AddElement "+s.toString ());
         //        (( AbstractTableModel )getModel()).addElement (s);
     }
-    
+
     /**
      * removes an element from itself
      */
@@ -240,7 +240,7 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
         //System.out.println ("RemoveElement ");
         //    (( AbstractTableModel)getModel()).removeElement( getSelectedRow());
     }
-    
+
     public Component findComponentAt(int x,int y)
     {
         Component c;
@@ -248,11 +248,11 @@ public class DNDLibraryTable extends JTable implements DNDComponentInterface, Dr
         System.out.println("Find Component At "+x+" "+y+" "+c.toString());
         return c;
     }
-    
+
     public void setSize(int width, int height)
     {
         super.setSize(width, height);
-        
+
         System.out.println("Set Size called "+width+" "+ height);
     }
 }

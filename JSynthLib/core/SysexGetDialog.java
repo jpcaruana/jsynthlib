@@ -209,7 +209,7 @@ public class SysexGetDialog extends JDialog {
 
       // Maybe you don't get the expected patch!
       // Check all devices/drivers again!
-      if ( !(((Driver)PatchEdit.getDriver(PatchEdit.Clipboard.deviceNum,PatchEdit.Clipboard.driverNum)).supportsPatch(patchString,PatchEdit.Clipboard)) )
+      if ( !(PatchEdit.Clipboard.getDriver().supportsPatch(patchString,PatchEdit.Clipboard)) )
       {
 	boolean firstRun=true;
 	boolean foundDriver=false;
@@ -241,8 +241,8 @@ public class SysexGetDialog extends JDialog {
         if (foundDriver)
 	{
 	  JOptionPane.showMessageDialog (null,
-		"You requested a "+((Driver)PatchEdit.getDriver(deviceNum,driverNum)).getDriverName()+"patch!"+
-		"\nBut you got a "+((Driver)PatchEdit.getDriver(PatchEdit.Clipboard.deviceNum,PatchEdit.Clipboard.driverNum)).getDriverName()+"patch.",
+		"You requested a "+PatchEdit.getDriver(deviceNum,driverNum).getDriverName()+"patch!"+
+		"\nBut you got a "+PatchEdit.Clipboard.getDriver().getDriverName()+"patch.",
 		"Warning", JOptionPane.WARNING_MESSAGE);
 	}
 	else

@@ -40,14 +40,14 @@ public class CrossBreedDialog extends JDialog {
 	JButton play = new JButton("Play");
 	play.addActionListener(new ActionListener() {
 	                       public void actionPerformed(ActionEvent e) {
-                                 play();  
+                                 play();
 			       }});
         buttonPanel2.add(play);
 	JButton keep = new JButton("Keep");
 	keep.addActionListener(new ActionListener() {
 	                       public void actionPerformed(ActionEvent e) {
 			       try {
-			        PatchBasket library=(PatchBasket)PatchEdit.desktop.getSelectedFrame();   
+			        PatchBasket library=(PatchBasket)PatchEdit.desktop.getSelectedFrame();
 				Patch q=PatchEdit.Clipboard;
 				PatchEdit.Clipboard=crossBreeder.getCurrentPatch();
 				library.PastePatch();
@@ -55,7 +55,7 @@ public class CrossBreedDialog extends JDialog {
 			       }catch (Exception ex){JOptionPane.showMessageDialog(null, "Destination Library Must be Focused","Error", JOptionPane.ERROR_MESSAGE);}
 			       }});
         buttonPanel2.add(keep);
-	
+
 	JButton ok = new JButton("Close");
         ok.addActionListener(new ActionListener() {
 	                       public void actionPerformed(ActionEvent e) {
@@ -64,7 +64,7 @@ public class CrossBreedDialog extends JDialog {
 	buttonPanel.add( ok );
 	getRootPane().setDefaultButton(ok);
         p4.add(l1);
-	
+
 	container.add(p4,BorderLayout.NORTH);
 	container.add(buttonPanel2,BorderLayout.CENTER);
 	container.add(buttonPanel,BorderLayout.SOUTH);
@@ -78,8 +78,8 @@ public class CrossBreedDialog extends JDialog {
    public void show()
    {
        super.show();
-      
-	
+
+
    }
     protected void centerDialog() {
         Dimension screenSize = this.getToolkit().getScreenSize();
@@ -102,18 +102,18 @@ void generatePressed()
    crossBreeder.generateNewPatch();
    Patch p=crossBreeder.getCurrentPatch();
    try {
-   l1.setText("Patch Type: "+ ((Device)(PatchEdit.appConfig.getDevice(p.deviceNum))).getManufacturerName()+" "+
-   ((Device)(PatchEdit.appConfig.getDevice(p.deviceNum))).getModelName()+" "+
-   PatchEdit.getDriver(p.deviceNum,p.driverNum).getPatchType());
+   l1.setText("Patch Type: "+ p.getDevice().getManufacturerName()+" "+
+	      p.getDevice().getModelName()+" "+
+	      p.getDriver().getPatchType());
    play();
    } catch (Exception e) {/*already taken care off-- we just don't want this thrown any farther*/}
-}                    
+}
 void play()
  {
   Patch p=crossBreeder.getCurrentPatch();
   if (p==null) return;
-  PatchEdit.getDriver(p.deviceNum,p.driverNum).sendPatch(p);  
-  PatchEdit.getDriver(p.deviceNum,p.driverNum).playPatch(p);
+  p.getDriver().sendPatch(p);
+  p.getDriver().playPatch(p);
  }
 
 }

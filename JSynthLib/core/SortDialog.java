@@ -21,15 +21,15 @@ import java.awt.*;
 import java.io.*;
 public class SortDialog extends JDialog
 {
-    
+
     public SortDialog (JFrame Parent)
     {
-        
+
         super(Parent,"Library Sort",true);
-        
+
         JPanel container= new JPanel ();
         container.setLayout (new BorderLayout ());
-        
+
         JLabel myLabel=new JLabel ("Please select a Field to Sort the Library by.",JLabel.CENTER);
         try
         {
@@ -74,7 +74,7 @@ public class SortDialog extends JDialog
                     PatchEdit.waitDialog.hide ();
                 }});
                 buttonPanel.add ( done );
-                
+
                 JButton cancel = new JButton ("Cancel");
                 cancel.addActionListener (new ActionListener ()
                 {
@@ -83,9 +83,9 @@ public class SortDialog extends JDialog
                         setVisible (false);
                     }});
                     buttonPanel.add ( cancel );
-                    
+
                     getRootPane ().setDefaultButton (done);
-                    
+
                     container.add (buttonPanel, BorderLayout.SOUTH);
                     getContentPane ().add (container);
                     pack ();
@@ -93,7 +93,7 @@ public class SortDialog extends JDialog
         }catch(Exception e)
         {ErrorMsg.reportStatus (e);}
     }
-    
+
     protected void centerDialog ()
     {
         Dimension screenSize = this.getToolkit ().getScreenSize ();
@@ -106,7 +106,7 @@ public class SortDialog extends JDialog
         int x = screenSize.width - size.width;
         this.setLocation (x,y);
     }
-    
+
     static class myOrder implements Comparator
     {
         int field=0;
@@ -123,36 +123,30 @@ public class SortDialog extends JDialog
             String s1; String s2;
             if (field==0)
             {
-                s1=PatchEdit.getDriver (((Patch)a1).deviceNum,((Patch)a1).driverNum).getPatchName ((Patch)a1).toLowerCase ();
-                s2=PatchEdit.getDriver (((Patch)a2).deviceNum,((Patch)a2).driverNum).getPatchName ((Patch)a2).toLowerCase ();
-                //((Driver)(PatchEdit.DriverList.get(((Patch)a1).driverNum))).getPatchName((Patch)a1).toLowerCase();
-                // s2=((Driver)(PatchEdit.DriverList.get(((Patch)a2).driverNum))).getPatchName((Patch)a2).toLowerCase();
+                s1=((Patch) a1).getDriver().getPatchName((Patch) a1).toLowerCase();
+                s2=((Patch) a2).getDriver().getPatchName((Patch) a2).toLowerCase();
             }
             else if (field==1)
             {
-                s1=((Patch)a1).date.toString ().toLowerCase ();
-                s2=((Patch)a2).date.toString ().toLowerCase ();
+                s1=((Patch) a1).date.toString().toLowerCase();
+                s2=((Patch) a2).date.toString().toLowerCase();
             }
             else if (field==2)
             {
-                s1=((Patch)a1).author.toString ().toLowerCase ();
-                s2=((Patch)a2).author.toString ().toLowerCase ();
+                s1=((Patch) a1).author.toString().toLowerCase();
+                s2=((Patch) a2).author.toString().toLowerCase();
             }
             else if (field==3)
             {
-                   s1=((Device)(PatchEdit.appConfig.getDevice(((Patch)a1).deviceNum))).getSynthName();
-                   s2=((Device)(PatchEdit.appConfig.getDevice(((Patch)a2).deviceNum))).getSynthName();
-//                ((Driver)(PatchEdit.DriverList.get (((Patch)a1).driverNum))).getSynthName ();
-//                s2=((Driver)(PatchEdit.DriverList.get (((Patch)a2).driverNum))).getSynthName ();
+		s1=((Patch) a1).getDevice().getSynthName();
+		s2=((Patch) a2).getDevice().getSynthName();
             }
             else
             {
-                s1=PatchEdit.getDriver (((Patch)a1).deviceNum,((Patch)a1).driverNum).getPatchType ();
-                s2=PatchEdit.getDriver (((Patch)a2).deviceNum,((Patch)a2).driverNum).getPatchType ();
+                s1=((Patch) a1).getDriver().getPatchType();
+                s2=((Patch) a2).getDriver().getPatchType();
             }
-            
-            
-            return s1.compareTo (s2);
+            return s1.compareTo(s2);
         }
     }
 }

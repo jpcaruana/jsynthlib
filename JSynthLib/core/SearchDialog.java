@@ -26,7 +26,7 @@ public class SearchDialog extends JDialog {
  JRadioButton button2;
  JRadioButton button3;
    public SearchDialog(JFrame Parent) {
-	   
+
         super(Parent,"Search Library",false);
 
 	JPanel container= new JPanel();
@@ -64,8 +64,8 @@ public class SearchDialog extends JDialog {
              button2.setEnabled(false);
              button3.setEnabled(false);
          }
-         
-         
+
+
          button1.setSelected(true);
 	 JPanel radioPanel=new JPanel();
          radioPanel.setLayout(new FlowLayout());
@@ -128,7 +128,7 @@ public void show()
          }
     super.show();
 }
-   
+
     protected void centerDialog() {
         Dimension screenSize = this.getToolkit().getScreenSize();
 	Dimension size = this.getSize();
@@ -168,11 +168,11 @@ void findString(String text, String command, boolean restart)
    for (i=searchFrom;i<lf.getAbstractPatchListModel().getRowCount();i++)
      {
        p=(Patch)lf.getAbstractPatchListModel().getPatchAt(i);
-       
+
        match=false;
         if (field==0 || field==4)
          {
-          s=PatchEdit.getDriver(p.deviceNum,p.driverNum).getPatchName(p).toLowerCase();
+          s=p.getDriver().getPatchName(p).toLowerCase();
           match=(s.indexOf(text)!=-1);
           if (match) break;
          }
@@ -202,7 +202,7 @@ void findString(String text, String command, boolean restart)
    if (!match) {ErrorMsg.reportError("Search Complete","Not Found.");return;}
    lf.getTable().changeSelection(i,0,false,false);
 
-     
+
 
  }
 

@@ -84,8 +84,8 @@ public abstract class SysexWidget extends JPanel {
 	// If patch.deviceNum or patch.driverNum can be changed after
 	// the constructor is called, the following code have to be
 	// moved to methods which use them.
-	device = PatchEdit.appConfig.getDevice(patch.deviceNum);
-	driver = PatchEdit.getDriver(patch.deviceNum, patch.driverNum);
+	device = patch.getDevice();
+	driver = patch.getDriver();
 	if (paramModel != null)
 	    _setValue(paramModel.get());
 	jlabel = new JLabel(label);

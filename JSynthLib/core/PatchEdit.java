@@ -1248,7 +1248,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 				    } else
 					Clipboard = ((PatchEditorFrame) desktop.getSelectedFrame()).p;
 				    //port = (PatchEdit.deviceList.get(Clipboard.deviceNum)).
-				    port = appConfig.getDevice(Clipboard.deviceNum).getPort();
+				    port = Clipboard.getDevice().getPort();
 				    if ((appConfig.getFaderEnable())
 					&& (desktop.getSelectedFrame() instanceof PatchEditorFrame)
 					&& (buffer[0] & 0xF0) == 0xB0)
@@ -1259,7 +1259,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 					} else {
 					    if (((buffer[0] & 0xF0) > 0x70)
 						&& ((buffer[0] & 0xF0) < 0xF0))
-						buffer[0] = (byte) ((buffer[0] & 0xF0) + appConfig.getDevice(Clipboard.deviceNum).getChannel() - 1);
+						buffer[0] = (byte) ((buffer[0] & 0xF0) + Clipboard.getDevice().getChannel() - 1);
 					    PatchEdit.MidiOut.writeLongMessage(port, buffer, size);
 					}
 				    PatchEdit.Clipboard = p;

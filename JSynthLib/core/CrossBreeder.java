@@ -20,7 +20,7 @@ public class CrossBreeder
        }
      p.driverNum=father.driverNum;
      p.deviceNum=father.deviceNum;
-     PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
+     p.getDriver().calculateChecksum(p);
      //((Driver)(PatchEdit.DriverList.get(p.driverNum))).calculateChecksum(p);
    }catch (Exception e) {ErrorMsg.reportError("Error", "Source Library Must be Focused",e);}
   }
@@ -28,7 +28,7 @@ public class CrossBreeder
   {
     return p;
   }
-  public void workFromLibrary (PatchBasket lib) 
+  public void workFromLibrary (PatchBasket lib)
   {
      library=lib;
   }
@@ -36,6 +36,6 @@ public class CrossBreeder
   {
      int num=((int)(Math.random()*library.getPatchCollection().size()));
      return ((Patch)(library.getPatchCollection().get(num)));
-  } 
+  }
 
 }

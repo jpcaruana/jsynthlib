@@ -38,8 +38,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
      * @param p a <code>Patch</code> value
      */
     protected BankEditorFrame(Patch p) {
-        super(PatchEdit.appConfig.getDevice(p.deviceNum).getModelName() + " "
-	      + PatchEdit.getDriver(p.deviceNum, p.driverNum).getPatchType()
+        super(p.getDevice().getModelName() + " "
+	      + p.getDriver().getPatchType()
 	      + " Window",
 	      true, //resizable
 	      true, //closable
@@ -47,7 +47,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 	      true); // iconifiable
         instance = this;
 	bankData = p;
-        bankDriver = (BankDriver) PatchEdit.getDriver(p.deviceNum, p.driverNum);
+        bankDriver = (BankDriver) p.getDriver();
         InitBankEditorFrame();
     }
 
@@ -273,7 +273,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        PatchEdit.getDriver(p.deviceNum, p.driverNum).sendPatch(p);
+        p.getDriver().sendPatch(p);
     }
 
     public void SendToSelectedPatch() {
@@ -289,8 +289,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        PatchEdit.getDriver(p.deviceNum, p.driverNum).sendPatch(p);
-	PatchEdit.getDriver(p.deviceNum, p.driverNum).playPatch(p);
+        p.getDriver().sendPatch(p);
+	p.getDriver().playPatch(p);
     }
 
     public void StoreSelectedPatch() {
@@ -300,7 +300,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        //PatchEdit.getDriver(p.deviceNum, p.driverNum).choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com
+        //p.getDriver().choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com
         new SysexStoreDialog(p, table.getSelectedColumn() * bankDriver.getNumPatches() / bankDriver.getNumColumns()
 			     + table.getSelectedRow());
     }
@@ -312,7 +312,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return null;
 	}
-        PatchEditorFrame pf = (PatchEditorFrame) (PatchEdit.getDriver(p.deviceNum, p.driverNum).editPatch(p));
+        PatchEditorFrame pf = (PatchEditorFrame) (p.getDriver().editPatch(p));
         pf.setBankEditorInformation(this, table.getSelectedRow(), table.getSelectedColumn());
         return pf;
     }
@@ -338,6 +338,6 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 	    }
 	    return;
 	}
-	bankDriver = (BankDriver) PatchEdit.getDriver(bankData.deviceNum, bankData.driverNum);
+	bankDriver = (BankDriver) bankData.getDriver();
     }
 }

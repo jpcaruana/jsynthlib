@@ -21,8 +21,8 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
     File filename;
     boolean changed=false;  //has the library been altered since it was last saved?
     SceneTableCellEditor rowEditor ;
-    
-    
+
+
     /**
      * @param file
      */
@@ -34,7 +34,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         true);//iconifiable
         InitLibraryFrame();
     }
-    
+
     public SceneFrame() {
         super("Unsaved Scene #" + (++openFrameCount),
         true, //resizable
@@ -43,16 +43,16 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         true);//iconifiable
         InitLibraryFrame();
     }
-    
+
     protected void InitLibraryFrame() {
         //...Create the GUI and put it in the window...
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameClosing(InternalFrameEvent e) {
                 if (!changed) return;
-                
+
                 int i;
                 javax.swing.JInternalFrame[] jList =PatchEdit.desktop.getAllFrames();
-                
+
                 for (int j=0;j<jList.length;j++) {
                     if (jList[j] instanceof BankEditorFrame) {
                         for (i=0;i<myModel.sceneList.size();i++)
@@ -62,7 +62,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                               jList[j].setClosed(true); }catch (Exception e1){}
                               break;}
                     }
-                    
+
                     if (jList[j] instanceof PatchEditorFrame) {
                         for (i=0;i<myModel.sceneList.size();i++)
                             if (((PatchEditorFrame)(jList[j])).p==((Patch)(myModel.sceneList.get(i))))
@@ -72,33 +72,33 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                               break;}
                     }
                 }
-                
+
                 if (JOptionPane.showConfirmDialog(null,"This Scene may contain unsaved data.\nSave before closing?","Unsaved Data",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-                
+
                 if (getTitle().startsWith("Unsaved Scene")) {
                     java.awt.FileDialog fc2=new java.awt.FileDialog(PatchEdit.instance);
                     java.io.FilenameFilter type1 = new ExtensionFilter("PatchEdit Scene Files (*.scenelib)",".scenelib");
                     fc2.setMode(fc2.SAVE);
 		    fc2.setFile("Untitled.scenelib");
                     fc2.setFilenameFilter(type1);
-                    
+
 		    fc2.show();
-                    
+
                     if (fc2.getFile() != null) {
 		        File file = new File(fc2.getDirectory(),fc2.getFile());
-                        
+
                         try {
                             if (!file.getName().toUpperCase().endsWith(".SCENELIB"))
                                 file=new File(file.getPath()+".scenelib");
-                            
+
                             if (file.isDirectory())
                             { ErrorMsg.reportError("Error", "Can not save over a directory");
                               return;
                             }
-                            
+
                             if (file.exists())
                                 if (JOptionPane.showConfirmDialog(null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
-                            
+
                             save(file);
                         } catch (Exception ex) {
                             ErrorMsg.reportError("Error", "Error saving File",ex);
@@ -106,36 +106,36 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                     }
                     return;
                 }
-                
+
                 try {
                     save();
                 } catch (Exception ex)
                 {};
             }
-            
+
             public void internalFrameOpened(InternalFrameEvent e)
             {}
-            
+
             public void internalFrameActivated(InternalFrameEvent e) {
                 PatchEdit.receiveAction.setEnabled(true);
                 PatchEdit.pasteAction.setEnabled(true);
                 PatchEdit.importAction.setEnabled(true);
                 PatchEdit.importAllAction.setEnabled(true);
                 PatchEdit.newPatchAction.setEnabled(true);
-                
+
                 if (table.getRowCount()>0) {
                     PatchEdit.saveAction.setEnabled(true);
                     PatchEdit.menuSaveAs.setEnabled(true);
                     PatchEdit.searchAction.setEnabled(true);
                     PatchEdit.transferSceneAction.setEnabled(true);
                 }
-                
+
                 if (table.getRowCount()>1) {
                     PatchEdit.sortAction.setEnabled(true);
                     PatchEdit.dupAction.setEnabled(true);
                     PatchEdit.crossBreedAction.setEnabled(true);
                 }
-                
+
                 if (table.getSelectedRowCount()>0) {
                     PatchEdit.extractAction.setEnabled(true);
                     PatchEdit.sendAction.setEnabled(true);
@@ -143,8 +143,8 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
                     PatchEdit.reassignAction.setEnabled(true);
-                    
-                    
+
+
                     Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
                     try{
                         // look, if the driver for the selected patch brings his own editor
@@ -163,18 +163,18 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                             PatchEdit.editAction.setEnabled(false);
                         }
                     };
-                    
+
                     PatchEdit.cutAction.setEnabled(true);
                     PatchEdit.copyAction.setEnabled(true);
                     PatchEdit.deleteAction.setEnabled(true);
                     PatchEdit.exportAction.setEnabled(true);
                 }
-                
+
             }
-            
+
             public void internalFrameClosed(InternalFrameEvent e)
             {}
-            
+
             public void internalFrameDeactivated(InternalFrameEvent e) {
                 PatchEdit.receiveAction.setEnabled(false);
                 PatchEdit.extractAction.setEnabled(false);
@@ -199,23 +199,23 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                 PatchEdit.newPatchAction.setEnabled(false);
                 PatchEdit.crossBreedAction.setEnabled(false);
                 PatchEdit.transferSceneAction.setEnabled(false);
-                
+
             }
-            
+
             public void internalFrameDeiconified(InternalFrameEvent e)
             {}
-            
+
             public void internalFrameIconified(InternalFrameEvent e)
             {}
-            
+
         });
-        
+
         myModel = new SceneListModel(changed);
         table = new DNDLibraryTable(myModel);
         table2=table;
-        
+
         rowEditor=new SceneTableCellEditor(table);
-        
+
         table.setPreferredScrollableViewportSize(new java.awt.Dimension(500, 70));
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -227,7 +227,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                     );
                 }
             }
-            
+
             public void mouseReleased(MouseEvent e) {
                 if(e.isPopupTrigger()) {
                     PatchEdit.menuPatchPopup.show(table2, e.getX(), e.getY());
@@ -237,14 +237,14 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                     );
                 }
             }
-            
+
             public void mouseClicked(MouseEvent e) {
                 if(e.getClickCount()==2) {
                     PlaySelectedPatch();
                 }
             }
         });
-        
+
         //Create the scroll  pane and add the table to it.
         final javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(table);
         DNDViewport myviewport=new DNDViewport();
@@ -253,21 +253,21 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         scrollPane.getVerticalScrollBar().addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(MouseEvent e)
             {}
-            
+
             public void mouseReleased(MouseEvent e) {
                 myModel.fireTableDataChanged();
             }
         });
-        
+
         //Add the scroll pane to this window.
         javax.swing.JPanel statusPanel=new javax.swing.JPanel();
         statusBar=new javax.swing.JLabel(myModel.sceneList.size()+" Patches");
         statusPanel.add(statusBar);
-        
+
         getContentPane().setLayout(new java.awt.BorderLayout());
         getContentPane().add(scrollPane, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
-        
+
         javax.swing.table.TableColumn column = null;
         column = table.getColumnModel().getColumn(0); // Synth
         column.setPreferredWidth(50);
@@ -277,34 +277,34 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         column.setPreferredWidth(100);
         column = table.getColumnModel().getColumn(3); //Bank Number
         column.setPreferredWidth(50);
-        
+
         column.setCellEditor(rowEditor); // Set the special pop-up Editor for Bank numbers
-        
+
         column = table.getColumnModel().getColumn(4); //Patch Number
         column.setPreferredWidth(50);
-        
+
         column.setCellEditor(rowEditor); // Set the special pop-up Editorfor Patch Numbers
-        
+
         column = table.getColumnModel().getColumn(5); //Comment
         column.setPreferredWidth(200);
-        
+
         //...Then set the window size or call pack...
         setSize(600,300);
-        
+
         //Set the window's location.
         setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
-        
+
         this.addFocusListener(new java.awt.event.FocusListener() {
             public void focusGained(java.awt.event.FocusEvent e) {
                 // System.out.println ("Focus Gained");
             }
-            
+
             public void focusLost(java.awt.event.FocusEvent e) {
                 //System.out.println ("Focus Lost");
             }
-            
+
         });
-        
+
         table.getModel().addTableModelListener( new javax.swing.event.TableModelListener() {
             public void tableChanged(javax.swing.event.TableModelEvent e) {
                 statusBar.setText(myModel.sceneList.size()+" Patches");
@@ -315,7 +315,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                     PatchEdit.exportAction.setEnabled(true);
                     PatchEdit.transferSceneAction.setEnabled(true);
                 }
-                
+
                 if (((SceneListModel)e.getSource()).getRowCount()>1) {
                     PatchEdit.sortAction.setEnabled(true);
                     PatchEdit.dupAction.setEnabled(true);
@@ -324,7 +324,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
             }
         }
         );
-        
+
         table.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent e) {
                 //System.out.println ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
@@ -335,8 +335,8 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                     PatchEdit.playAction.setEnabled(true);
                     PatchEdit.storeAction.setEnabled(true);
                     PatchEdit.reassignAction.setEnabled(true);
-                    
-                    
+
+
                     Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
                     try{
                         myPatch.getDriver().getClass().getDeclaredMethod("editPatch", new Class[]{myPatch.getClass()});
@@ -348,13 +348,13 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                         else
                             PatchEdit.editAction.setEnabled(false);
                     };
-                    
+
                     PatchEdit.copyAction.setEnabled(true);
                     PatchEdit.cutAction.setEnabled(true);
                     PatchEdit.deleteAction.setEnabled(true);
                     PatchEdit.exportAction.setEnabled(true);
                 }
-                
+
                 else {
                     PatchEdit.extractAction.setEnabled(false);
                     PatchEdit.sendAction.setEnabled(false);
@@ -370,8 +370,8 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
             }
         });
     }
-    
-    
+
+
     /**
      * @param file
      * @throws IOException
@@ -382,7 +382,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         int offset=0;
         java.io.FileInputStream fileIn= new java.io.FileInputStream(file);
         byte [] buffer =new byte [(int)file.length()];
-        
+
         fileIn.read(buffer);
         fileIn.close();
         while (offset<buffer.length-1) {
@@ -391,7 +391,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
             offset+=firstpat.sysex.length;
             //System.out.println("Buffer length:"+ buffer.length+" Patch Lenght: "+firstpat.sysex.length);
             Patch[] patarray=firstpat.dissect();
-            
+
             if (patarray.length>1) { // Conversion was sucessfull, we have at least one converted patch
                 for (int j=0;j<patarray.length;j++) {
                     myModel.sceneList.add(patarray[j]); // add all converted patches
@@ -407,7 +407,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         myModel.fireTableDataChanged();
         changed=true;
     }
-    
+
     /**
      * @param file
      * @throws IOException
@@ -422,7 +422,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         fileOut.write(((Patch)myModel.sceneList.get(table.getSelectedRow())).sysex);
         fileOut.close();
     }
-    
+
     public void DeleteSelectedPatch() {
         if (table.getSelectedRowCount()==0) {
             ErrorMsg.reportError("Error", "No Patch Selected.");
@@ -430,9 +430,9 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         }
         myModel.sceneList.remove(table.getSelectedRow());
         myModel.fireTableDataChanged();
-        
+
     }
-    
+
     public void CopySelectedPatch() {
         try {
             if (table.getSelectedRowCount()==0) {
@@ -443,48 +443,48 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
             byte [] mySysex = new byte[myPatch.sysex.length];
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
             PatchEdit.Clipboard=new Patch(mySysex,
-            myPatch.deviceNum,
-            myPatch.driverNum,
-            (myPatch.date.toString()),
-            (myPatch.author.toString()),
-            (myPatch.comment.toString()));
+					  myPatch.deviceNum,
+					  myPatch.driverNum,
+					  myPatch.date.toString(),
+					  myPatch.author.toString(),
+					  myPatch.comment.toString());
         }catch (Exception e)
         {};
     }
-    
+
     /** */
     public void SendSelectedPatch() {
         Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).sendPatch(myPatch);
+        myPatch.getDriver().calculateChecksum(myPatch);
+        myPatch.getDriver().sendPatch(myPatch);
     }
-    
+
     public void SendToSelectedPatch() {
         Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+        myPatch.getDriver().calculateChecksum(myPatch);
         new SysexSendToDialog(myPatch);
     }
-    
+
     public void ReassignSelectedPatch() {
         Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+        myPatch.getDriver().calculateChecksum(myPatch);
         new ReassignPatchDialog(myPatch);
         myModel.fireTableDataChanged();
     }
-    
+
     public void PlaySelectedPatch() {
         Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).sendPatch(myPatch);
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).playPatch(myPatch);
+        myPatch.getDriver().calculateChecksum(myPatch);
+        myPatch.getDriver().sendPatch(myPatch);
+        myPatch.getDriver().playPatch(myPatch);
     }
-    
+
     public void StoreSelectedPatch() {
         Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
+        myPatch.getDriver().calculateChecksum(myPatch);
         new SysexStoreDialog(myPatch);
     }
-    
+
     /**
      * @return
      */
@@ -495,9 +495,9 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         }
         Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
         changed=true;
-        return(PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).editPatch(myPatch));
+        return(myPatch.getDriver().editPatch(myPatch));
     }
-    
+
     public void PastePatch() {
         Patch myPatch=PatchEdit.Clipboard;
         if (myPatch!=null) {
@@ -505,24 +505,25 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
             if (table.getSelectedRowCount()==0)
                 myModel.sceneList.add(new Scene(new Patch(mySysex,
-                myPatch.deviceNum,
-                myPatch.driverNum,
-                (myPatch.date.toString()),
-                (myPatch.author.toString()),
-                (myPatch.comment.toString()))));
+							  myPatch.deviceNum,
+							  myPatch.driverNum,
+							  myPatch.date.toString(),
+							  myPatch.author.toString(),
+							  myPatch.comment.toString())));
             else
-                myModel.sceneList.add(table.getSelectedRow(),new Scene(new Patch(mySysex,
-                myPatch.deviceNum,
-                myPatch.driverNum,
-                (myPatch.date.toString()),
-                (myPatch.author.toString()),
-                (myPatch.comment.toString()))));
-            
+                myModel.sceneList.add(table.getSelectedRow(),
+				      new Scene(new Patch(mySysex,
+							  myPatch.deviceNum,
+							  myPatch.driverNum,
+							  myPatch.date.toString(),
+							  myPatch.author.toString(),
+							  myPatch.comment.toString())));
+
             changed=true;
             myModel.fireTableDataChanged();
         }
     }
-    
+
     /**
      * @throws Exception
      */
@@ -537,14 +538,14 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         PatchEdit.waitDialog.hide();
         changed=false;
     }
-    
+
     /**
      * @return
      */
     public int getSelectedRowCount() {
         return table.getSelectedRowCount();
     }
-    
+
     /**
      * @param file
      * @throws Exception
@@ -554,7 +555,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         setTitle(file.getName());
         save();
     }
-    
+
     /**
      * @param file
      * @throws Exception
@@ -572,7 +573,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         f.close();
         PatchEdit.waitDialog.hide();
     }
-    
+
     /**
      * @return
      */
@@ -583,7 +584,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
             ar.add(myModel.getPatchAt(i));
         return ar;
     }
-    
+
     //Re-assigns drivers to all patches in libraryframe. Called after new drivers are added or or removed
     protected void revalidateDrivers() {
         int i;
@@ -591,7 +592,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
             ((Scene)(myModel.sceneList.get(i))).getPatch().ChooseDriver();
         myModel.fireTableDataChanged();
     }
-    
+
     /**
      * Send all patches of the scene to the
      * configured places in the synth's.
@@ -603,37 +604,37 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
             bankNum=((Scene)(myModel.sceneList.get(i))).getBankNumber();
             patchNum=((Scene)(myModel.sceneList.get(i))).getPatchNumber();
             Patch myPatch=((Scene)myModel.sceneList.get(i)).getPatch();
-            PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-            PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).storePatch(myPatch,bankNum,patchNum);
+            myPatch.getDriver().calculateChecksum(myPatch);
+            myPatch.getDriver().storePatch(myPatch,bankNum,patchNum);
         }
     }
-    
+
     /**
      * @return
      */
     public AbstractPatchListModel getAbstractPatchListModel() {
         return myModel;
     }
-    
+
     /**
      * @return
      */
     public DNDLibraryTable getTable() {
         return table;
     }
-    
+
     public void ExtractSelectedPatch() {
         if (table.getSelectedRowCount()==0) {
             ErrorMsg.reportError("Error","No Patch Selected.");
             return;
         }
         Patch myPatch=myModel.getPatchAt(table.getSelectedRow());
-        BankDriver myDriver=(BankDriver)PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum);
+        BankDriver myDriver=(BankDriver)myPatch.getDriver();
         for (int i=0;i<myDriver.getNumPatches();i++)
             if (myDriver.getPatch(myPatch,i)!=null) myModel.addPatch(myDriver.getPatch(myPatch,i));
         myModel.fireTableDataChanged();
         changed=true;
         //   statusBar.setText(myModel.PatchList.size()+" Patches");
     }
-    
+
 }
