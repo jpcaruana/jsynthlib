@@ -13,7 +13,8 @@ import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Collection;
+//import java.util.Collection;
+import java.util.Iterator;
 import java.util.Arrays;
 
 import java.io.InputStream;
@@ -191,6 +192,16 @@ public class AppConfig implements Storable {
 	/** Size query for deviceList */
 	public int deviceCount() { return this.deviceList.size(); };
 
+	/** Getter for the index of <code>device</code>. */
+    	int getDeviceIndex(Device device) {
+	    Iterator it = deviceList.iterator();
+	    for (int i = 0; it.hasNext(); i++) {
+		if ((Device) it.next() == device)
+		    return i;
+	    }
+	    return -1;		// throw error !!!FIXIT!!!
+	}
+
 	// Returns the "os.name" system property - emenaker 2003.03.13
 	public String getOSName() {
 		return(getSystemProperty("os.name"));
@@ -208,10 +219,10 @@ public class AppConfig implements Storable {
 		} catch(Exception e) {}
 		return("");
 	}
-	
+
 	// For Storable interface
 
-	private String[] storedPropertyNames = {
+	private static final String[] storedPropertyNames = {
 		"libPath", "sysexPath", "initPortIn", "initPortOut", "note",
 		"velocity", "delay", "masterController", "lookAndFeel", "midiPlatform",
 		"faderPort", "faderEnable", "faderController","faderChannel",
@@ -234,5 +245,4 @@ public class AppConfig implements Storable {
 	public void afterRestore() {
 		// do nothing - we don't need any special code to execute after restore
 	}
-	
 }
