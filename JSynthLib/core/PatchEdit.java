@@ -1,5 +1,7 @@
-/* This file is the main Application object. It's called PatchEdit,
-   which is probably ambiguous, but probably to late to change now.*/
+/**
+ * This is the main Application object.  It's called PatchEdit, which
+ * is probably ambiguous, but probably to late to change now.
+ */
 
 /* @version $Id$ */
 
@@ -18,95 +20,116 @@ import com.apple.eawt.ApplicationEvent;
 
 //TODO import /*TODO org.jsynthlib.*/midi.*;
 public class PatchEdit extends JFrame implements MidiDriverChangeListener {
-    public static JDesktopPane desktop;
-    public static PatchEdit instance; // phil@muqus.com
+    public static PatchEdit instance;
     public static MidiWrapper MidiOut;
     public static MidiWrapper MidiIn;
-
-    public static JPopupMenu menuPatchPopup;
     public static AppConfig appConfig;
     // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
-    public static WaitDialog waitDialog;
+    public static WaitDialog waitDialog; // define showWaitDialog() and hideWaitDialog()
 
-    // *Action is public since YamahaFS1RBankEditor is using them.
-    public static ExtractAction extractAction;
-    public static SendAction sendAction;
-    public static SendToAction sendToAction;
-    public static StoreAction storeAction;
-    public static ReassignAction reassignAction;
-    public static EditAction editAction;
-    public static PlayAction playAction;
-    public static GetAction receiveAction;
-    public static SaveAction saveAction;
-    public static JMenuItem menuSaveAs;
-    public static SortAction sortAction;
-    public static SearchAction searchAction;
-    public static DeleteDuplicatesAction dupAction;
-    public static CopyAction copyAction;
-    public static CutAction cutAction;
-    public static PasteAction pasteAction;
-    public static DeleteAction deleteAction;
-    public static ImportAction importAction;
-    public static ExportAction exportAction;
-    public static ImportAllAction importAllAction;
-    public static NewPatchAction newPatchAction;
-    public static CrossBreedAction crossBreedAction;
-    public static DocsAction docsAction;
-    public static MonitorAction monitorAction;
-    public static NewSceneAction newSceneAction;
-    public static TransferSceneAction transferSceneAction;
-
+    static JDesktopPane desktop;
     static Patch Clipboard;
+    static JPopupMenu menuPatchPopup; // define showMenuPatchPopup()
     static javax.swing.Timer echoTimer;
-    static MidiMonitor midiMonitor;
 
+    // accessed by BankEditorFrame
+    static ExtractAction extractAction;
+    static SendAction sendAction;
+    static SendToAction sendToAction;
+    static StoreAction storeAction;
+    static ReassignAction reassignAction;
+    static EditAction editAction;
+    static PlayAction playAction;
+    static GetAction receiveAction;
+    static SaveAction saveAction;
+    static SaveAsAction saveAsAction;
+    static SortAction sortAction;
+    static SearchAction searchAction;
+    static DeleteDuplicatesAction dupAction;
+    static CopyAction copyAction;
+    static CutAction cutAction;
+    static PasteAction pasteAction;
+    static DeleteAction deleteAction;
+    static ImportAction importAction;
+    static ExportAction exportAction;
+    static ImportAllAction importAllAction;
+    static NewPatchAction newPatchAction;
+    static CrossBreedAction crossBreedAction;
+    static DocsAction docsAction;
+    static MonitorAction monitorAction;
+    static NewSceneAction newSceneAction;
+    static TransferSceneAction transferSceneAction;
+
+    private static NextFaderAction nextFaderAction;
+    private static NewAction newAction;
+    private static OpenAction openAction;
+    private static ExitAction exitAction;
+    private static PrefsAction prefsAction;
+    private static SynthAction synthAction;
+    private static AboutAction aboutAction;
+
+    private static MidiMonitor midiMonitor;
     private static JToolBar toolBar;
     private static int currentPort;
     //private static int[] newFaderValue = new int[33];
     private static PrefsDialog prefsDialog;
-    private SearchDialog searchDialog;
-    private DocumentationWindow documentationWindow;
+    private static SearchDialog searchDialog;
+    private static DocumentationWindow documentationWindow;
 
     /** Initialize Application: */
     public PatchEdit() {
+	/*
+	 * Initialize JFrame
+	 */
         super("JSynthLib");
-        instance = this; // phil@muqus.com (so can pop-up windows with PatchEdit as the
-        boolean loadPrefsSuccessfull, loadDriverSuccessfull;
-	this.appConfig = new AppConfig();
+	// phil@muqus.com (so can pop-up windows with PatchEdit as the
+        instance = this;
 
+	/*
+	 * Load config file (JSynthLib.properties).
+	 */
+	appConfig = new AppConfig();
+        boolean loadPrefsSuccessfull = appConfig.loadPrefs();
+
+	/*
+	 * Setup preference dialog window.
+	 */
         prefsDialog = new PrefsDialog(this);
-        loadPrefsSuccessfull = loadPrefs();
 	// Add the configuration panels to the prefsDialog
-        prefsDialog.addPanel(new /*TODO org.jsynthlib.*/GeneralConfigPanel(appConfig));
-	prefsDialog.addPanel(new /*TODO org.jsynthlib.*/DirectoryConfigPanel(appConfig));
-	/*TODO org.jsynthlib.midi.*/MidiConfigPanel midiConfigPanel = null;
-	try {
-	    midiConfigPanel = new /*TODO org.jsynthlib.midi.*/MidiConfigPanel(appConfig);
-	    midiConfigPanel.addDriverChangeListener(this);
-	    prefsDialog.addPanel(midiConfigPanel);
-	    MidiIn = MidiOut = midiConfigPanel.getMidiWrapper();
-	    // FaderBoxConfigPanel() have to be called after MidiIn is initialized.
-	    /*TODO org.jsynthlib.*/FaderBoxConfigPanel faderbox = new /*TODO org.jsynthlib.*/FaderBoxConfigPanel(appConfig);
-	    midiConfigPanel.addDriverChangeListener(faderbox); // Notify the faderbox, too... - emenaker 2003.03.19
-	    prefsDialog.addPanel(faderbox);
-	} catch (Exception e) {
-	    System.err.println(e);
-	    e.printStackTrace();
-	}
-	prefsDialog.addPanel(new /*TODO org.jsynthlib.*/NoteChooserConfigPanel(appConfig));
+        prefsDialog.addPanel(new GeneralConfigPanel(appConfig));
 
-	prefsDialog.init();  //loads in the config file and sets parameters
-        // Now lets set up how the pretty application should look
+	prefsDialog.addPanel(new DirectoryConfigPanel(appConfig));
+
+	MidiConfigPanel midiConfigPanel = null;
+	midiConfigPanel = new MidiConfigPanel(appConfig);
+	midiConfigPanel.addDriverChangeListener(this);
+	prefsDialog.addPanel(midiConfigPanel);
+	MidiIn = MidiOut = midiConfigPanel.getMidiWrapper();
+
+	// FaderBoxConfigPanel() have to be called after MidiIn is initialized.
+	FaderBoxConfigPanel faderbox = new FaderBoxConfigPanel(appConfig);
+	midiConfigPanel.addDriverChangeListener(faderbox); // Notify the faderbox, too... - emenaker 2003.03.19
+	prefsDialog.addPanel(faderbox);
+
+	prefsDialog.addPanel(new NoteChooserConfigPanel(appConfig));
+
+	// Create preference dialog window and initialize each config
+	// panel.
+	prefsDialog.init();
+
+        /*
+	 * Now lets set up how the pretty application should look.
+	 */
         int inset = 100;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
-		  screenSize.width - inset * 2,
+		  screenSize.width  - inset * 2,
 		  screenSize.height - inset * 2);
 
         //Quit this app when the big window closes.
         addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
-		    savePrefs();
+		    appConfig.savePrefs();
 		    // We shouldn't need to unload the midi driver if
 		    // the whole JVM is going away.
 		    // unloadMidiDriver();
@@ -114,190 +137,230 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		}
 	    });
 
+	createActions();
+
         //Set up the GUI.
-        desktop = new JDesktopPane();
-        setJMenuBar(createMenus());
-        desktop.setOpaque(false);
         Container c = getContentPane();
+        setJMenuBar(createMenuBar());
+	JToolBar tb = createToolBar();
+        c.add(tb, BorderLayout.NORTH);
+        tb.setVisible(true);	//necessary as of kestrel
+	if (MacUtils.isMac())
+	    initForMac(exitAction, prefsAction, aboutAction);
+
+        desktop = new JDesktopPane();
+        desktop.setOpaque(false);
+        desktop.putClientProperty("JDesktopPane.dragMode", "outline");
         c.add(desktop, BorderLayout.CENTER);
 
-        desktop.putClientProperty("JDesktopPane.dragMode", "outline");
         setVisible(true);
+
+	// popup menu for Library window, etc.
+	menuPatchPopup = createPopupMenu();
+
+	/*
+	 * Show dialog for the 1st invokation.
+	 */
         if (!loadPrefsSuccessfull)
-            ErrorMsg.reportError("Error", "Unable to load user preferences. Defaults loaded\n If you've just installed or just upgraded this software, this is normal.");
-	//if (!loadDriverSuccessfull)
-	//ErrorMsg.reportError("Error","Unable to Initialize MIDI IN/OUT! \nMidi Transfer will be unavailable this session.\nChange the Initialization Port Settings under Preferences and restart.");
+            ErrorMsg.reportError("Error",
+				 "Unable to load user preferences. Defaults loaded\n"
+				 + "If you've just installed or just upgraded this software, this is normal.");
 
         //Set up a silly little dialog we can pop up for the user to
         //gawk at while we do time consuming work later on.
         waitDialog = new WaitDialog(this);
-
 
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music
         beginEcho();
     }
 
+    private void createActions() {
+        HashMap mnemonics = new HashMap();
+
+        newAction		= new NewAction(mnemonics);
+        openAction		= new OpenAction(mnemonics);
+        saveAction		= new SaveAction(mnemonics);
+        saveAsAction		= new SaveAsAction(mnemonics);
+        newSceneAction		= new NewSceneAction(mnemonics);
+        transferSceneAction	= new TransferSceneAction(mnemonics);
+        sortAction		= new SortAction(mnemonics);
+        searchAction		= new SearchAction(mnemonics);
+        dupAction		= new DeleteDuplicatesAction(mnemonics);
+        exitAction		= new ExitAction(mnemonics);
+
+        copyAction		= new CopyAction(mnemonics);
+        cutAction		= new CutAction(mnemonics);
+        pasteAction		= new PasteAction(mnemonics);
+        deleteAction		= new DeleteAction(mnemonics);
+        importAction		= new ImportAction(mnemonics);
+        exportAction		= new ExportAction(mnemonics);
+        importAllAction		= new ImportAllAction(mnemonics);
+        sendAction		= new SendAction(mnemonics);
+        sendToAction		= new SendToAction(mnemonics);
+        storeAction		= new StoreAction(mnemonics);
+        receiveAction		= new GetAction(mnemonics);
+
+        playAction		= new PlayAction(mnemonics);
+        editAction		= new EditAction(mnemonics);
+        reassignAction		= new ReassignAction(mnemonics);
+        crossBreedAction	= new CrossBreedAction(mnemonics);
+        newPatchAction		= new NewPatchAction(mnemonics);
+        extractAction		= new ExtractAction(mnemonics);
+
+	prefsAction		= new PrefsAction(mnemonics);
+	synthAction		= new SynthAction(mnemonics);
+	monitorAction		= new MonitorAction(mnemonics);
+
+        aboutAction		= new AboutAction(mnemonics);
+        docsAction		= new DocsAction(mnemonics);
+
+        nextFaderAction		= new NextFaderAction(mnemonics);
+
+	// set keyboard short cut
+	if (!MacUtils.isMac())
+	    setMnemonics(mnemonics);
+    }
+
     /** This sets up the Menubar as well as the main right-click Popup
 	menu and the toolbar */
-    protected JMenuBar createMenus() {
+    private JMenuBar createMenuBar() {
+	JMenuItem mi;
         HashMap mnemonics = new HashMap();
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
         JMenuBar menuBar = new JMenuBar();
+
+	// create "Library" Menu
         JMenu menuLib = new JMenu("Library");
 	mnemonics.put(menuLib, new Integer(KeyEvent.VK_L));
 
-        NewAction newAction = new NewAction(mnemonics);
-        menuLib.add(newAction);
-        menuLib.getItem(menuLib.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
-
-        OpenAction openAction = new OpenAction(mnemonics);
-        menuLib.add(openAction);
-        menuLib.getItem(menuLib.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, mask));
-
-        saveAction = new SaveAction(mnemonics);
-        menuLib.add(saveAction);
-        menuLib.getItem(menuLib.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, mask));
-
-        menuSaveAs = new JMenuItem("Save As...");
-	mnemonics.put(menuSaveAs, new Integer(KeyEvent.VK_A));
-        menuSaveAs.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    saveFrameAs();
-		}
-	    });
-        menuSaveAs.setEnabled(false);
-        menuLib.add(menuSaveAs);
-
-        menuLib.addSeparator();
-        newSceneAction = new NewSceneAction(mnemonics);
+	mi = menuLib.add(newAction);
+	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
         menuLib.add(newSceneAction);
+        mi = menuLib.add(openAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, mask));
+        mi = menuLib.add(saveAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, mask));
+        menuLib.add(saveAsAction);
+        menuLib.addSeparator();
 
-        transferSceneAction = new TransferSceneAction(mnemonics);
         menuLib.add(transferSceneAction);
         menuLib.addSeparator();
 
-        sortAction = new SortAction(mnemonics);
         menuLib.add(sortAction);
-
-        searchAction = new SearchAction(mnemonics);
         menuLib.add(searchAction);
-
-        dupAction = new DeleteDuplicatesAction(mnemonics);
         menuLib.add(dupAction);
-        menuLib.addSeparator();
-        final ExitAction exitAction = new ExitAction(mnemonics);
-        if (!MacUtils.isMac())
+        if (!MacUtils.isMac()) {
+	    menuLib.addSeparator();
 	    menuLib.add(exitAction);
-        menuBar.add(menuLib);
+	}
+	menuBar.add(menuLib);
 
+	// create "Patch" Menu
         JMenu menuPatch = new JMenu("Patch");
 	mnemonics.put(menuPatch, new Integer(KeyEvent.VK_P));
-        copyAction = new CopyAction(mnemonics);
-        menuPatch.add(copyAction);
-        menuPatch.getItem(menuPatch.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, mask));
-        cutAction = new CutAction(mnemonics);
-        menuPatch.add(cutAction);
-        menuPatch.getItem(menuPatch.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, mask));
-        pasteAction = new PasteAction(mnemonics);
-        menuPatch.add(pasteAction);
-        menuPatch.getItem(menuPatch.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, mask));
-        deleteAction = new DeleteAction(mnemonics);
-        menuPatch.add(deleteAction);
+        mi = menuPatch.add(copyAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COPY, 0));
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, mask));
+        mi = menuPatch.add(cutAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_CUT, 0));
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, mask));
+        mi = menuPatch.add(pasteAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PASTE, 0));
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, mask));
+        mi = menuPatch.add(deleteAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         menuPatch.addSeparator();
-        importAction = new ImportAction(mnemonics);
+
         menuPatch.add(importAction);
-        exportAction = new ExportAction(mnemonics);
         menuPatch.add(exportAction);
-        importAllAction = new ImportAllAction(mnemonics);
         menuPatch.add(importAllAction);
         menuPatch.addSeparator();
-        sendAction = new SendAction(mnemonics);
-        menuPatch.add(sendAction);
-        menuPatch.getItem(menuPatch.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, mask));
-        sendToAction = new SendToAction(mnemonics);
-        menuPatch.add(sendToAction);
-        storeAction = new StoreAction(mnemonics);
-        menuPatch.add(storeAction);
-        receiveAction = new GetAction(mnemonics);
-        menuPatch.add(receiveAction); // phil@muqus.com
 
+        mi = menuPatch.add(sendAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, mask));
+        menuPatch.add(sendToAction);
+        menuPatch.add(storeAction);
+        menuPatch.add(receiveAction); // phil@muqus.com
         menuPatch.addSeparator();
-        playAction = new PlayAction(mnemonics);
-        menuPatch.add(playAction);
-        menuPatch.getItem(menuPatch.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, mask));
-        editAction = new EditAction(mnemonics);
-        menuPatch.add(editAction);
-        menuPatch.getItem(menuPatch.getItemCount() - 1).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, mask));
+
+        mi = menuPatch.add(playAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, mask));
+        mi = menuPatch.add(editAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, mask));
         menuPatch.addSeparator();
-        reassignAction = new ReassignAction(mnemonics);
+
  	menuPatch.add(reassignAction);
-        crossBreedAction = new CrossBreedAction(mnemonics);
         menuPatch.add(crossBreedAction);
-        newPatchAction = new NewPatchAction(mnemonics);
         menuPatch.add(newPatchAction);
-        extractAction = new ExtractAction(mnemonics);
         menuPatch.add(extractAction);
         menuBar.add(menuPatch);
 
-	final PrefsAction prefsAction = new PrefsAction(mnemonics);
-
-	if (!MacUtils.isMac()) {
-	    JMenu menuConfig = new JMenu("Config");
-	    mnemonics.put(menuConfig, new Integer(KeyEvent.VK_C));
-	    menuConfig.add(prefsAction);
-	    // NoteChooserAction noteChooserAction = new NoteChooserAction();
-	    // menuConfig.add(noteChooserAction); -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
-
-	    menuBar.add(menuConfig);
-	}
-
-	// Moved "Synths" and "Midi Monitor" to a "Window" menu -
-	// emenaker 2003.03.24
+	// create "Window" menu
 	JMenu menuWindow = new JMenu("Window");
-	mnemonics.put(menuWindow, new Integer(KeyEvent.VK_C));
-	JMenuItem menuSynths = new JMenuItem("Synths...");
-	mnemonics.put(menuSynths, new Integer(KeyEvent.VK_S));
-	menuSynths.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    SynthConfigDialog scd = new SynthConfigDialog(PatchEdit.this);
-		    scd.show();
-		}
-	    }
-				     );
-	menuWindow.add(menuSynths);
-	monitorAction = new MonitorAction(mnemonics);
+	mnemonics.put(menuWindow, new Integer(KeyEvent.VK_W));
+	menuWindow.add(synthAction);
+	if (!MacUtils.isMac())
+	    menuWindow.add(prefsAction);
 	menuWindow.add(monitorAction);
-
 	menuBar.add(menuWindow);
 
+	// create "Help" menu
         JMenu menuHelp = new JMenu("Help");
 	mnemonics.put(menuHelp, new Integer(KeyEvent.VK_H));
-        final AboutAction aboutAction = new AboutAction(mnemonics);
-
+	mi = menuHelp.add(docsAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, 0));
 	if (!MacUtils.isMac())
 	    menuHelp.add(aboutAction);
-        docsAction = new DocsAction(mnemonics);
-	menuHelp.add(docsAction);
         menuBar.add(menuHelp);
 
-        menuPatchPopup = new JPopupMenu();
-        menuPatchPopup.add(playAction);
-        menuPatchPopup.add(editAction);
-        menuPatchPopup.addSeparator();
-        menuPatchPopup.add(reassignAction);
-        menuPatchPopup.add(storeAction);
-        menuPatchPopup.add(sendAction);
-        menuPatchPopup.add(sendToAction);
-        menuPatchPopup.addSeparator();
-        menuPatchPopup.add(cutAction);
-        menuPatchPopup.add(copyAction);
-        menuPatchPopup.add(pasteAction);
+	// set keyboard short cut
+	if (!MacUtils.isMac())
+	    setMnemonics(mnemonics);
 
+        return menuBar;
+    }
+
+    /** This sets up the mnemonics */
+    private void setMnemonics(Map mnemonics) {
+	Iterator it = mnemonics.keySet().iterator();
+	Object key, value;
+	while (it.hasNext()) {
+	    key = it.next();
+	    value = mnemonics.get(key);
+	    if (key instanceof JMenuItem)
+		((JMenuItem) key).setMnemonic(((Integer) value).intValue());
+	    else if (key instanceof Action)
+		((Action) key).putValue(Action.MNEMONIC_KEY, value);
+	}
+    }
+
+    private JPopupMenu createPopupMenu() {
+	// crate popup menu
+        JPopupMenu popup = new JPopupMenu();
+        popup.add(playAction);
+        popup.add(editAction);
+        popup.addSeparator();
+
+        popup.add(reassignAction);
+        popup.add(storeAction);
+        popup.add(sendAction);
+        popup.add(sendToAction);
+        popup.addSeparator();
+
+        popup.add(cutAction);
+        popup.add(copyAction);
+        popup.add(pasteAction);
+	return popup;
+    }
+
+    private JToolBar createToolBar() {
+	// create tool bar
         JButton b;
         toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(500, 35));
         toolBar.setFloatable(true);
+
         b = toolBar.add(newAction);
         b.setToolTipText("New Library");
         b.setIcon(loadIcon("images/New24.gif"));
@@ -311,6 +374,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         b.setIcon(loadIcon("images/Save24.gif"));
         b.setText(null);
         toolBar.addSeparator();
+
         b = toolBar.add(copyAction);
         b.setToolTipText("Copy Patch");
         b.setIcon(loadIcon("images/Copy24.gif"));
@@ -332,6 +396,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         b.setIcon(loadIcon("images/Export24.gif"));
         b.setText(null);
         toolBar.addSeparator();
+
         b = toolBar.add(playAction);
         b.setToolTipText("Play Patch");
         b.setIcon(loadIcon("images/Volume24.gif"));
@@ -345,17 +410,18 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         b.setIcon(loadIcon("images/Edit24.gif"));
         b.setText(null);
         toolBar.addSeparator();
-        NextFaderAction nextFaderAction = new NextFaderAction(mnemonics);
+
         b = toolBar.add(nextFaderAction);
         b.setToolTipText("Go to Next Fader Bank");
         b.setIcon(loadIcon("images/Forward24.gif"));
         b.setText(null);
 
-        getContentPane().add(toolBar, BorderLayout.NORTH);
-        toolBar.setVisible(true); //necessary as of kestrel
+        return toolBar;
+    }
 
-	if (!MacUtils.isMac())
-	    setMnemonics(mnemonics);
+    private void initForMac(final ExitAction exitAction,
+			    final PrefsAction prefsAction,
+			    final AboutAction aboutAction) {
 	MacUtils.init(new ApplicationAdapter() {
 		public void handleAbout(ApplicationEvent e) {
 		    final ActionEvent event =
@@ -403,25 +469,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		    e.setHandled(true);
 		}
 	    });
-        return menuBar;
-    }
-
-    /** This sets up the mnemonics */
-    protected void setMnemonics(Map mnemonics) {
-	Iterator it = mnemonics.keySet().iterator();
-	Object key, value;
-	while (it.hasNext()) {
-	    key = it.next();
-	    value = mnemonics.get(key);
-	    if (key instanceof JMenuItem)
-		((JMenuItem) key).setMnemonic(((Integer) value).intValue());
-	    else if (key instanceof Action)
-		((Action) key).putValue(Action.MNEMONIC_KEY, value);
-	}
     }
 
     /** This creates a new [empty] Library Window */
-    protected void createFrame() {
+    private void createLibraryFrame() {
         LibraryFrame frame = new LibraryFrame();
         frame.setVisible(true);
         desktop.add(frame);
@@ -431,7 +482,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	}
     }
 
-    protected void createSceneFrame() {
+    private void createSceneFrame() {
         SceneFrame frame = new SceneFrame();
         frame.setVisible(true);
         desktop.add(frame);
@@ -443,7 +494,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
     /** Create a new Library Window and load a Library from disk to
 	fill it! Fun! */
-    protected void openFrame(File file) {
+    private void openFrame(File file) {
         LibraryFrame frame = new LibraryFrame(file);
         try {
 	    frame.setVisible(true);
@@ -471,7 +522,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
 
     /** This one saves a Library to Disk */
-    protected void saveFrame() {
+    private void saveFrame() {
 	try {
 	    Object oFrame = desktop.getSelectedFrame();
 	    if (oFrame instanceof LibraryFrame) {
@@ -496,7 +547,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
 
     /** Save and specify a file name */
-    protected void saveFrameAs() {
+    private void saveFrameAs() {
         CompatibleFileDialog fc2 = new CompatibleFileDialog();
         FileFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)", ".patchlib");
         fc2.addChoosableFileFilter(type1);
@@ -516,7 +567,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		    return;
 		}
 		if (file.exists())
-		    if (JOptionPane.showConfirmDialog(null, "Are you sure?", "File Exists", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+		    if (JOptionPane.showConfirmDialog(null, "Are you sure?", "File Exists",
+						      JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 			return;
 		try {
 		    ((LibraryFrame) desktop.getSelectedFrame()).save(file);
@@ -529,49 +581,13 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	}
     }
 
+
     // Generally the app is started by running JSynthLib, so the
     // following few lines are not necessary, but I won't delete them
     // just yet.
     public static void main(String[] args) {
         PatchEdit frame = new PatchEdit();
         frame.setVisible(true);
-    }
-
-    /** This routine just saves the current settings in the config
-	file. Its called when the user quits the app. */
-    public void savePrefs() {
-        try {
-	    // Save the appconfig
-	    this.appConfig.store();
-	} catch (Exception e) {
-	    ErrorMsg.reportError("Error", "Unable to Save Preferences", e);
-	}
-    }
-
-    /** And this one loads the settings on start up. */
-    public boolean loadPrefs() {
-    	/*
-    	 * These are handled by the individual ConfigPanels now - emenaker 2003.03.25
-	 appConfig.setInitPortIn(0);
-	 appConfig.setInitPortOut(0);
-	 appConfig.setLibPath("");
-	 appConfig.setSysexPath("");
-	 appConfig.setNote(60);
-	 appConfig.setVelocity(100);
-	 appConfig.setDelay(500);
-	*/
-
-	try {
-	    // Load the appconfig
-	    this.appConfig.load();
-	    return true;
-	} catch (Exception e) {
-	    return false;
-	} finally {
-	    if (this.appConfig.deviceCount() == 0) {
-		appConfig.addDevice(new synthdrivers.Generic.GenericDevice());
-	    }
-	}
     }
 
     /**
@@ -585,10 +601,29 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	MidiIn = MidiOut = driver;
     }
 
+    public static Driver getDriver(int deviceNumber, int driverNumber) {
+	if (appConfig == null)
+	    return null;
+        return (Driver) appConfig.getDevice(deviceNumber).driverList.get(driverNumber);
+    }
 
-    /** Now we start with the various action classes. Each of these
-        preforms one of the menu commands and are called either from
-        the menubar, popup menu or toolbar.*/
+    /**
+     * Output string to MIDI Monitor Window.  Use MidiUtil.log()
+     * instead of this.
+     *
+     * @param s string to be output
+     */
+    static void midiMonitorLog(String s) {
+	if (midiMonitor != null && midiMonitor.isVisible())
+	    midiMonitor.log(s);
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    /*
+     * Now we start with the various action classes. Each of these
+     * preforms one of the menu commands and are called either from
+     * the menubar, popup menu or toolbar.
+     */
     public class AboutAction extends AbstractAction {
 	public AboutAction(Map mnemonics) {
 	    super("About");
@@ -596,7 +631,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-	    JOptionPane.showMessageDialog(null, "JSynthLib Version 0.18\nCopyright (C) 2000-03 Brian Klock et al.\nSee the file 'LICENSE.TXT' for more info", "About JSynthLib", JOptionPane.INFORMATION_MESSAGE);
+	    JOptionPane.showMessageDialog(null,
+					  "JSynthLib Version 0.18\nCopyright (C) 2000-04 Brian Klock et al.\n"
+					  + "See the file 'LICENSE.TXT' for more info.",
+					  "About JSynthLib", JOptionPane.INFORMATION_MESSAGE);
 	    return;
 	}
     }
@@ -848,9 +886,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
         public void actionPerformed(ActionEvent e) {
             CompatibleFileDialog fc2 = new CompatibleFileDialog();
-            FileFilter type1 = new ExtensionFilter("Sysex Files (*.syx)",".syx");
+            FileFilter type1 = new ExtensionFilter("Sysex Files (*.syx)", ".syx");
 	    // core.ImportMidiFile extracts Sysex Messages from MidiFile
-            FileFilter type2 = new ExtensionFilter("MIDI Files (*.mid)" ,".mid");
+            FileFilter type2 = new ExtensionFilter("MIDI Files (*.mid)" , ".mid");
             fc2.addChoosableFileFilter(type1);
             fc2.addChoosableFileFilter(type2);
             fc2.setFileFilter(type1);
@@ -871,12 +909,12 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
     public class NewAction extends AbstractAction {
         public NewAction(Map mnemonics) {
-	    super("New", null);
+	    super("New Library", null);
 	    mnemonics.put(this, new Integer('N'));
         }
         public void actionPerformed(ActionEvent e) {
 	    System.out.println(UIManager.get("MenuItemUI"));
-	    createFrame();
+	    createLibraryFrame();
 	}
     }
 
@@ -936,6 +974,18 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
     }
 
+    public class SaveAsAction extends AbstractAction {
+        public SaveAsAction(Map mnemonics) {
+	    super("Save As...", null);
+	    setEnabled(false);
+	    mnemonics.put(this, new Integer('A'));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            saveFrameAs();
+        }
+    }
+
     public class ExitAction extends AbstractAction {
         public ExitAction(Map mnemonics) {
 	    super("Exit", null);
@@ -943,7 +993,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-            savePrefs();
+            appConfig.savePrefs();
             System.exit(0);
         }
     }
@@ -1033,7 +1083,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
         public void actionPerformed(ActionEvent e) {
             try {
-		if (JOptionPane.showConfirmDialog(null, "This Operation will change the ordering of the Patches. Continue?", "Delete Duplicate Patches", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+		if (JOptionPane.showConfirmDialog(null,
+						  "This Operation will change the ordering of the Patches. Continue?",
+						  "Delete Duplicate Patches",
+						  JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 		    return;
 		PatchEdit.waitDialog.show();
 		Collections.sort(((LibraryFrame) desktop.getSelectedFrame()).myModel.PatchList, new SysexSort());
@@ -1061,9 +1114,21 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
     }
 
+    //This is a comparator class used by the delete duplicated action
+    //to sort based on the sysex data
+    //Sorting this way makes the Dups search much easier, since the
+    //dups must be next to each other
+    static class SysexSort implements Comparator {
+        public int compare(Object a1, Object a2) {
+	    String s1 = new String(((Patch) (a1)).sysex);
+	    String s2 = new String(((Patch) (a2)).sysex);
+	    return s1.compareTo(s2);
+        }
+    }
+
     public class NewPatchAction extends AbstractAction {
         public NewPatchAction(Map mnemonics) {
-            super("New...", null);
+            super("New Patch...", null);
             setEnabled(false);
 	    mnemonics.put(this, new Integer('N'));
         }
@@ -1091,6 +1156,18 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
     }
 
+    public class SynthAction extends AbstractAction {
+        public SynthAction(Map mnemonics) {
+            super("Synths...", null);
+	    mnemonics.put(this, new Integer('S'));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+	    SynthConfigDialog scd = new SynthConfigDialog(PatchEdit.this);
+	    scd.show();
+        }
+    }
+
     /*
       noteChooserDialog got replaced by NoteChooserConfigPanel - emenaker 2003.03.17
 
@@ -1109,18 +1186,6 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
       }
     */
-
-    //This is a comparator class used by the delete duplicated action
-    //to sort based on the sysex data
-    //Sorting this way makes the Dups search much easier, since the
-    //dups must be next to each other
-    static class SysexSort implements Comparator {
-        public int compare(Object a1, Object a2) {
-	    String s1 = new String(((Patch) (a1)).sysex);
-	    String s2 = new String(((Patch) (a2)).sysex);
-	    return s1.compareTo(s2);
-        }
-    }
 
     public class CrossBreedAction extends AbstractAction {
         public CrossBreedAction(Map mnemonics) {
@@ -1154,9 +1219,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
     public class DocsAction extends AbstractAction {
         public DocsAction(Map mnemonics) {
-	    super("Documentation", null);
+	    super("Help", null);
 	    setEnabled(true);
-	    mnemonics.put(this, new Integer('D'));
+	    mnemonics.put(this, new Integer('H'));
         }
         public void actionPerformed(ActionEvent e) {
 	    try {
@@ -1173,7 +1238,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         public MonitorAction(Map mnemonics) {
 	    super("MIDI Monitor", null);
 	    setEnabled(true);
-	    mnemonics.put(this, new Integer('D'));
+	    mnemonics.put(this, new Integer('M'));
         }
         public void actionPerformed(ActionEvent e) {
 	    try {
@@ -1186,17 +1251,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
     }
 
-    /**
-     * Output string to MIDI Monitor Window.  Use MidiUtil.log()
-     * instead of this.
-     *
-     * @param s string to be output
-     */
-    static void midiMonitorLog(String s) {
-	if (midiMonitor != null && midiMonitor.isVisible())
-	    midiMonitor.log(s);
-    }
-
+    ////////////////////////////////////////////////////////////////////////
     // This allows icons to be loaded even if they are inside a Jar file
     private ImageIcon loadIcon(String name) {
         Object icon;
@@ -1214,7 +1269,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         return (ImageIcon) icon;
     }
 
-    protected void beginEcho() {
+    private void beginEcho() {
         echoTimer = new javax.swing.Timer(5, new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {
 		    try {
@@ -1270,7 +1325,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         echoTimer.start();
     }
 
-    void sendFaderMessage(ShortMessage msg) {
+    private void sendFaderMessage(ShortMessage msg) {
         int channel = msg.getChannel();
 	int controller = msg.getData1();
         for (int i = 0; i < 33; i++) {
@@ -1280,11 +1335,5 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		break;
 	    }
 	}
-    }
-
-    public static Driver getDriver(int deviceNumber, int driverNumber) {
-	if (appConfig == null)
-	    return null;
-        return (Driver) appConfig.getDevice(deviceNumber).driverList.get(driverNumber);
     }
 }

@@ -152,7 +152,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 if (table.getRowCount()>0)
                 {
                     PatchEdit.saveAction.setEnabled(true);
-                    PatchEdit.menuSaveAs.setEnabled(true);
+                    PatchEdit.saveAsAction.setEnabled(true);
                     PatchEdit.searchAction.setEnabled(true);
                 }
 
@@ -215,7 +215,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
       		PatchEdit.reassignAction.setEnabled(false);
                 PatchEdit.editAction.setEnabled(false);
                 PatchEdit.saveAction.setEnabled(false);
-                PatchEdit.menuSaveAs.setEnabled(false);
+                PatchEdit.saveAsAction.setEnabled(false);
                 PatchEdit.sortAction.setEnabled(false);
                 PatchEdit.searchAction.setEnabled(false);
                 PatchEdit.dupAction.setEnabled(false);
@@ -346,7 +346,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 if (((PatchListModel)e.getSource()).getRowCount()>0)
                 {
                     PatchEdit.saveAction.setEnabled(true);
-                    PatchEdit.menuSaveAs.setEnabled(true);
+                    PatchEdit.saveAsAction.setEnabled(true);
                     PatchEdit.searchAction.setEnabled(true);
                     PatchEdit.exportAction.setEnabled(true);
                 }
