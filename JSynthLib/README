@@ -1,0 +1,119 @@
+$Id: README,v 1.1 2004-06-26 17:12:28 hayashi Exp $
+
+JSynthLib --- A Universal MIDI Synthsizer Librarian/Editor
+
+Description:
+
+	JSynthLib is a universal MIDI synthesizer librarian /
+	editor. The project aims to eventually support all existing
+	synthesizers.
+
+	This program is free software; you can redistribute it and/or
+	modify it under the GPL license.  See license.txt for more
+	detail.
+
+WWW Site:
+	Home Page
+	    http://www.jsynthlib.org/
+
+	Development Home Page
+	    http://sourceforge.net/projects/jsynthlib/
+
+Install:
+
+  Step 1: Java Runtime Environment
+
+	Make sure you have the J2SE JRE (Java Run Time Environment) or
+	SDK (Software Development Kit) which supports Java 1.4 or
+	later. If you do not have it, you can download it from
+	http://java.sun.com/. If you develop a Java program (for
+	example a JSynthLib synth driver for your synth), you need
+	SDK. Otherwise you need JRE. It spends your disk space less.
+
+	Mac OS X comes with java preinstalled. but you should be sure
+	you have the latest update installed.
+
+  Step 2: MIDI Provider
+
+	JSynthLib-0.19 and/or later uses MIDI Provider, a platform
+	dependent layer of the Java MIDI API. Depends on a version of
+	your Java Environment, you have to install a MIDI Provider.
+
+    Microsoft Windows
+
+	If you have a J2SE version 1.4.2 or newer installed, you don't
+	have to install a MIDI Provider.
+
+	If you use older version of J2SE, download the binary package
+	of WireProvider and put WireProvider.jar under
+	$JAVA_HOME/jre/lib/ext/ directory and put WireProvider.dll
+	under $JAVA_HOME/jre/bin/ directory. ($JAVA_HOME is the root
+	directory of J2SE installation.)
+
+    GNU/Linux
+
+	If you have a J2SE version 1.5 or newer installed, you don't
+	have to install a MIDI Provider.
+
+	If you use older version of J2SE, download the latest
+	LinuxCharDev.jar from JSynthLib SourceForge site and copy it
+	under $JAVA_HOME/jre/lib/ext/ directory. Then create a file
+	linuxdevices.conf under the main JSynthLib Directory to
+	reflect your setup. Here is an example;
+
+	    /dev/null
+	    /dev/midi
+
+	Each line in this file represents one device that you wish to
+	have accessible in JSynthLib.
+	With the LinuxCharDev MidiProvider no concurrent access of the
+	used devices is provided. The OSS/"ALSA rawmidi" interfaces
+	are used.
+
+	You may also use the Tritonus ALSA MidiProvider instead of
+	LinuxCharDev. Please see the Tritonus: Open Source Java Sound
+	website for further information.
+
+    Mac OS X
+
+	At this point (June, 2004) you need to install a MIDI Provider.
+
+	Download the latest CAProvider.jar from JSynthLib SourceForge
+	site and copy it under /Library/Java/Extensions/
+	(~/Library/Java/Extensions/ should also work for a single user
+	installation).
+
+	You may use Plum Stone instead of CAProvider. 
+
+  Step 3: Installing and Invoking JSynthLib
+
+	Download the latest JSynthLib-XXX.jar file from JSynthLib Home
+	Page or JSynthLib SourceForge site and copy it to any
+	directory (for example c:\Program Files\JSynthLib\ or
+	~/Applications/jsynthlib/).
+
+	Application bundle may be provided for Mac OS X. 
+
+	Invoke JSynthLib. 
+
+	  [MS Windows] Run JSynthLib.jar by typing
+		java -jar JSynthLib-XXX.jar
+	  from the command prompt. You may create a shortcut on the
+	  desktop to JSynthLib.jar.
+
+	  [GNU/Linux] Run JSynthLib.jar by typing
+		java -jar JSynthLib-XXX.jar
+	  from the shell prompt.
+
+	  [Mac OS X] Run JSynthLib.jar by typing
+		java -Dapple.laf.useScreenMenuBar=ture -jar JSynthLib-XXX.jar
+	  from the Terminal. You can also double click the jar file,
+	  but then each window will have it's own menu
+	  bar. Application bundle would remove this step.
+
+	Go to Window->Preferences and set preferences (such as look
+	and feel, default file directories, default MIDI port, etc.)
+	as you wish.
+
+	Go to Window->Synths and add and configure the synthesizers
+	you want to use with JSynthLib.
