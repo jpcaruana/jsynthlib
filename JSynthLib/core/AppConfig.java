@@ -124,6 +124,10 @@ public class AppConfig implements Storable {
 	public int getMasterController() { return this.masterController; };
 	/** Setter for masterController */
 	public void setMasterController(int masterController) { this.masterController = masterController; };
+	/** Return true if master controller is enabled. */
+	public boolean getMasterControllerEnable() {
+	    return (0 <= masterController);
+	}
 
 	/** Getter for lookAndFeel */
 	public int getLookAndFeel() { return this.lookAndFeel; };
