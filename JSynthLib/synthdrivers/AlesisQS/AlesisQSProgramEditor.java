@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-        File:           FolderDialog.java
+        File:           AlesisQSProgramEditor.java
         Author:         Chris Halls
         Copyright:      Copyright (c) 2003 Chris Halls <halls@debian.org>
 
@@ -48,7 +48,7 @@ class AlesisQSProgramEditor extends PatchEditorFrame
     JPanel topPane = new JPanel();
     topPane.setLayout(new GridBagLayout());
     addWidget(topPane,new PatchNameWidget("Name",patch),0,0,1,1,0);
-    gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=1;
+    gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1;
     scrollPane.add(topPane, gbc);
 
     for(int i=1; i<5; i++) {
@@ -57,7 +57,7 @@ class AlesisQSProgramEditor extends PatchEditorFrame
         //120.	Sound enable	            16	    0	    3	0	    1	1	    84:3
         addWidget(scrollPane,new CheckBoxWidget(name, patch,
                                                 new SoundModel(patch,i-1,1,84,3),new ProgSender(i-1,16,0,3)),
-                                                i,0,1,1,i*-1);
+                                                i+1,0,1,1,i*-1);
     }
 
     JTabbedPane soundPane=new JTabbedPane();
@@ -83,24 +83,35 @@ class AlesisQSProgramEditor extends PatchEditorFrame
         panel.add(levelPane, gbc);
 
         controlPanel pitchPane=new pitchPanel(patch,i);
-        gbc.gridx=0;gbc.gridy=2;gbc.gridwidth=1;gbc.gridheight=1;
+        gbc.gridx=0;gbc.gridy=2;gbc.gridwidth=1;gbc.gridheight=2;
         panel.add(pitchPane, gbc);
 
         JPanel filterPane=new filterPanel(patch, i);
-        gbc.gridx=0;gbc.gridy=3;gbc.gridwidth=1;gbc.gridheight=1;
+        gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=1;gbc.gridheight=2;
         panel.add(filterPane, gbc);
 
         JPanel amplitudePane=new amplitudePanel(patch, i);
-        gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=1;gbc.gridheight=1;
+        gbc.gridx=0;gbc.gridy=6;gbc.gridwidth=1;gbc.gridheight=1;
         panel.add(amplitudePane, gbc);
 
         JPanel rangePane=new rangePanel(patch, i);
-        gbc.gridx=0;gbc.gridy=5;gbc.gridwidth=1;gbc.gridheight=1;
+        gbc.gridx=0;gbc.gridy=7;gbc.gridwidth=1;gbc.gridheight=1;
         panel.add(rangePane, gbc);
 
-        JPanel envPane=new envelopePanel("Pitch envelope", patch, i, 12, 53, 0);
-        gbc.gridx=2;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1;
-        panel.add(envPane, gbc);
+        // 76.	Sound pitch env attack	12	0	0	0	99	7	53:0-52:2
+        JPanel pitchEnvPane=new envelopePanel("Pitch envelope", patch, i, 12, 53, 0);
+        gbc.gridx=1;gbc.gridy=2;gbc.gridwidth=2;gbc.gridheight=2;
+        panel.add(pitchEnvPane, gbc);
+
+        // 87.	Sound filter env attack	13	0	0	0	99	7	60:5-59:7
+        JPanel filtEnvPane=new envelopePanel("Filter envelope", patch, i, 13, 60, 5);
+        gbc.gridx=1;gbc.gridy=4;gbc.gridwidth=2;gbc.gridheight=2;
+        panel.add(filtEnvPane, gbc);
+
+        // 98.	Sound amp env attack	14	0	0	0	99	7	68:2-67:4
+        JPanel ampEnvPane=new envelopePanel("Amplitude envelope", patch, i, 14, 68, 2);
+        gbc.gridx=1;gbc.gridy=6;gbc.gridwidth=2;gbc.gridheight=2;
+        panel.add(ampEnvPane, gbc);
 
     }
     gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=6;gbc.gridheight=2;
@@ -362,11 +373,6 @@ class AlesisQSProgramEditor extends PatchEditorFrame
         // 79.	Sound pitch env release	        12	0	3	0	99	7	55:5-54:7
         // 80.	Sound pitch env delay	        12	1	0	0	99	7	56:4-55:6
         // 81.	Sound pitch env sustain decay	12	1	1	0	99	7	57:3-56:5
-        // 82.	Sound pitch env trig type	    12	1	3	0	3	2	57:5-57:4
-        // 83.	Sound pitch env time track	    12	2	0	0	1	1	57:6
-        // 84.	Sound pitch env sustain pedal	12	2	1	0	1	1	57:7
-        // 85.	Sound pitch env level	        12	2	2	0	99	7	58:6-58:0
-        // 86.	Sound pitch env velocity mod	12	2	3	-99	199	8	59:6-58:7
 
         addWidget(this,
                     new EnvelopeWidget("Envelope", p,
@@ -404,7 +410,33 @@ class AlesisQSProgramEditor extends PatchEditorFrame
                                         new ProgSender(snd,12,0,3),null,
                                         "Release", null),
                             }),
-                            0,++yPos,2,1,controlIdx++);
+                            0,++yPos,3,1,controlIdx++);
+
+        // 82.	Sound pitch env trig type	    12	1	3	0	3	2	57:5-57:4
+        addWidget(this,new ComboBoxWidget("Velocity curve",p,
+                                           new SoundModel(p,snd,2,57,5),new ProgSender(snd,12,1,3),
+                                           new String [] {"Normal", "Freerun", "Reset", "Reset-Freerun"}),
+                                           0,++yPos,1,1,controlIdx++);
+        // 83.	Sound pitch env time track	    12	2	0	0	1	1	57:6
+        addWidget(this,new CheckBoxWidget("Time Track", p,
+                                            new SoundModel(p,snd,1,57,6),new ProgSender(snd,12,2,0)),
+                                           1,yPos,1,1,-1);
+
+        // 84.	Sound pitch env sustain pedal	12	2	1	0	1	1	57:7
+        addWidget(this,new CheckBoxWidget("Sustain Pedal", p,
+                                            new SoundModel(p,snd,1,57,7),new ProgSender(snd,12,2,1)),
+                                           2,yPos,1,1,-1);
+
+        // 85.	Sound pitch env level	        12	2	2	0	99	7	58:6-58:0
+        addWidget(this,new ScrollBarWidget("Level",p,0,99,0,
+                                            new SoundModel(p,snd,7,58,6),new ProgSender(snd,12,2,2)),
+                                            0,++yPos,3,1,controlIdx++);
+
+        // 86.	Sound pitch env velocity mod	12	2	3	-99	199	8	59:6-58:7
+        addWidget(this,new ScrollBarWidget("Velocity modulation",p,-99,99,0,
+                                            new SoundModel(p,snd,8,59,6,-99),new ProgSender(snd,12,2,3)),
+                                            0,++yPos,3,1,controlIdx++);
+
     }
 
   }
