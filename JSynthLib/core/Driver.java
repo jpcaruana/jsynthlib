@@ -517,7 +517,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         if ((patchSize != p.sysex.length) && (patchSize != 0))
 	    return false;
 
-        if (patchString.length() < sysexID.length())
+        if (sysexID == null || patchString.length() < sysexID.length())
 	    return false;
 
         StringBuffer compareString = new StringBuffer();
