@@ -276,7 +276,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * <code>new Patch(sysex, getDeviceNum(), getDriverNum())</code>.
      */
     protected int getDriverNum() {
- 	return device.driverList.indexOf(this);
+ 	return device.getDriverNum(this);
     }
     /** Getter for property <code>patchType</code>. */
     protected String getPatchType() {
@@ -311,7 +311,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
     */
     /** Getter for property <code>inPort</code>. */
-    protected int getInPort() {	// was 'public' for storable interface
+    int getInPort() {	// was 'public' for storable interface
 	return device.getInPort();
     }
     /** Getter for property <code>device.manufacturerName</code>. */
@@ -628,6 +628,22 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	}
     }
 
+    /**
+     * clear MIDI input buffer.  Now called by
+     * SysexGetDialog.GetActionListener before requestPatchDump is
+     * called.
+     */
+    void clearMidiInBuffer() {
+	try {
+	    if (PatchEdit.newMidiAPI)
+		MidiUtil.clearSysexInputQueue(getInPort());
+	    else
+		PatchEdit.MidiIn.clearMidiInBuffer(getInPort());
+	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	}
+    }
+
     //----- Start phil@muqus.com
     /**
      * Request MIDI synth to send a patch dump.  If
@@ -637,7 +653,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @see SysexHandler
      */
     protected void requestPatchDump(int bankNum, int patchNum) {
-	clearMidiInBuffer();
+	//clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
 	setBankNum(bankNum);
 	setPatchNum(patchNum);
 	if (sysexRequestDump == null) {
@@ -679,7 +695,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 
     // MIDI in/out mothods to encapsulate lower MIDI layer
     /** Send MidiMessage to MIDI outport. */
-    protected final void send(MidiMessage msg) {
+    public final void send(MidiMessage msg) {
 	try {
 	    if (PatchEdit.newMidiAPI)
 		device.send(msg);
@@ -691,7 +707,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     /** Send Sysex byte array data to MIDI outport. */
-    protected final void send(byte[] sysex) {
+    public final void send(byte[] sysex) {
 	try {
 	    if (PatchEdit.newMidiAPI) {
 		SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
@@ -705,7 +721,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     /** Send ShortMessage to MIDI outport. */
-    protected final void send(int status, int d1, int d2) {
+    public final void send(int status, int d1, int d2) {
 	ShortMessage msg = new ShortMessage();
 	try {
 	    msg.setMessage(status, d1, d2);
@@ -716,23 +732,8 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     /** Send ShortMessage to MIDI outport. */
-    protected final void send(int status, int d1) {
+    public final void send(int status, int d1) {
 	send(status, d1, 0);
-    }
-
-    /**
-     * clear MIDI input buffer.  Only used by YamahaDX7 now. Is this
-     * really required?
-     */
-    protected final void clearMidiInBuffer() {
-	try {
-	    if (PatchEdit.newMidiAPI)
-		MidiUtil.clearSysexInputQueue(getInPort());
-	    else
-		PatchEdit.MidiIn.clearMidiInBuffer(getInPort());
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
     }
 
     // For storable interface
