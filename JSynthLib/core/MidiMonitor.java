@@ -37,22 +37,27 @@ public class MidiMonitor extends JDialog
 	    jt.setCaretPosition(0);
 	    jt.setEditable(false);
 	    jt.setFont(new Font("monospaced", Font.PLAIN, 12));
-	    /*
+	    
+	    // create an own panel for "clear" and "close" buttons
+	    JPanel buttonPanel= new JPanel();
+	    buttonPanel.setLayout (new BorderLayout());
+	    
 	    JButton ok = new JButton("Close");
 	    ok.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 			OKPressed();
 		    }});
-	    getContentPane().add(ok,BorderLayout.SOUTH);
-	    getRootPane().setDefaultButton(ok);
-	    */
+	    buttonPanel.add(ok,BorderLayout.EAST);
+	   
 	    JButton clr = new JButton("Clear");
 	    clr.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 			jt.setText("");
 		    }});
-	    getContentPane().add(clr,BorderLayout.SOUTH);
+	    buttonPanel.add(clr,BorderLayout.WEST);
 
+	    getContentPane().add(buttonPanel,BorderLayout.SOUTH);
+	    getRootPane().setDefaultButton(ok);
 	    setSize(500,400);
 
 // 	    pane.getVerticalScrollBar().setValue(pane.getVerticalScrollBar().getMinimum());
