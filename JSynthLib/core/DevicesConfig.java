@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -32,7 +31,7 @@ class DevicesConfig {
 
     /** Character used in the Preferences as file separator for xml files */
     private static final char XML_FILE_SEPARATOR = ':';
-    
+
     /** Properties representing config file, synthdrivers.properties. */
     private Properties configProps = new Properties();
 
@@ -51,12 +50,6 @@ class DevicesConfig {
      * Short name string -&gt class name.
      */
     private Properties shortNameProps = new Properties();
-
-    /**
-     * Properties representing the manufacturer name Strings.
-     * Short name string -&gt class name.
-     */
-    private Hashtable manufNames = new Hashtable();
 
     /** ArrayList of device names (long name). */
     private ArrayList deviceNames = new ArrayList();
@@ -94,7 +87,6 @@ class DevicesConfig {
 		String deviceName  = configProps.getProperty(propName);
 		String deviceClass = configProps.getProperty(Constants.PROP_PREFIX_DEVICE_CLASS + shortName);
 		String IDString    = configProps.getProperty(Constants.PROP_PREFIX_ID_STRING + shortName);
-        String manufString = configProps.getProperty(Constants.PROP_PREFIX_MANUFACTURER + shortName);
 
 		try {
 		    deviceNames.add(deviceName);
@@ -104,7 +96,6 @@ class DevicesConfig {
 		    inqueryIDProps.setProperty(IDString, deviceClass);
 		    // shortNameProps: short name String -> deviceName
 		    shortNameProps.setProperty(shortName, deviceClass);
-            manufNames.put(deviceName,manufString);
 		} catch (NullPointerException e) {
 		    ErrorMsg.reportError("Failed loading Devices",
 					 "Config file inconsistency found "
@@ -146,7 +137,7 @@ class DevicesConfig {
 	}
 	Collections.sort(deviceNames);
     }
-    
+
     static String shortNameForClassName(String s) {
         String shortName;
         if (s.charAt(0) == XML_FILE_SEPARATOR) {
@@ -166,11 +157,6 @@ class DevicesConfig {
     String[] deviceNames() {
 	String[] retVal = new String[deviceNames.size()];
 	return (String[]) deviceNames.toArray(retVal);
-    }
-
-    public String getManufacturerForDevice(String deviceName) {
-        String manuf = (String) manufNames.get(deviceName);
-        return(manuf == null ? "Unknown" : manuf);
     }
 
     /**
@@ -193,7 +179,7 @@ class DevicesConfig {
 	return createDevice(deviceProps.getProperty(deviceName));
     }
     */
-        
+
     Device createDevice(String className, Preferences prefs) {
     		if (className.charAt(0) == XML_FILE_SEPARATOR) {
     		        className = className.replace(XML_FILE_SEPARATOR,File.separatorChar);
@@ -215,7 +201,7 @@ class DevicesConfig {
     			}
     		}
     }
-    
+
     /**
      * Given a inquery ID String, return its Device.
      * @param IDString inquery ID String
