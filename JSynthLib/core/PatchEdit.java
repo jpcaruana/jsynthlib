@@ -24,8 +24,6 @@ import com.apple.eawt.ApplicationEvent;
 //TODO import /*TODO org.jsynthlib.*/midi.*;
 public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     // This field will be removed when new MIDI API become stable.
-    // When you try to set this 'true', 'JavasoundMidiWrappe' will be
-    // selected.
     static boolean newMidiAPI = false;
 
     public static MidiWrapper MidiOut;
@@ -606,7 +604,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     public static Driver getDriver(int deviceNumber, int driverNumber) {
 	if (appConfig == null)
 	    return null;
-        return (Driver) appConfig.getDevice(deviceNumber).driverList.get(driverNumber);
+        return appConfig.getDevice(deviceNumber).getDriver(driverNumber);
     }
 
     /**

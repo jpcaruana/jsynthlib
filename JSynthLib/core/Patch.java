@@ -223,9 +223,9 @@ public class Patch extends Object
         StringBuffer patchString = this.getPatchHeader();
 
         Device dev = PatchEdit.appConfig.getDevice(deviceNum);
-        for (int idrv = 0; idrv < dev.driverList.size(); idrv++) {
+        for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
 	    // iterating over all Drivers of the given device
-	    if (((Driver) dev.driverList.get(idrv)).supportsPatch(patchString, this)) {
+	    if ((dev.getDriver(idrv)).supportsPatch(patchString, this)) {
 		this.driverNum = idrv;
 		getDriver().trimSysex(this);
 		return;
@@ -276,9 +276,9 @@ public class Patch extends Object
         for (int idev = 0; idev < PatchEdit.appConfig.deviceCount(); idev++) {
             // Outer Loop, iterating over all installed devices
 	    Device dev = PatchEdit.appConfig.getDevice(idev);
-	    for (int idrv = 0; idrv < dev.driverList.size(); idrv++) {
+	    for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
                 // Inner Loop, iterating over all Drivers of a device
-		if (((Driver) dev.driverList.get(idrv)).supportsPatch(patchString, this)) {
+		if ((dev.getDriver(idrv)).supportsPatch(patchString, this)) {
 		    driverNum = idrv;
 		    deviceNum = idev;
                     getDriver().trimSysex(this);
@@ -407,8 +407,8 @@ public class Patch extends Object
 		// Do it for all converters. They should be at the
 		// beginning of the driver list!
 		Device dev = PatchEdit.appConfig.getDevice(idev);
-		for (int idrv = 0; idrv < dev.driverList.size(); idrv++) {
-		    Driver drv = (Driver) dev.driverList.get(idrv);
+		for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
+		    Driver drv = dev.getDriver(idrv);
 		    if ((drv instanceof Converter)
 			&& drv.supportsPatch(patchString, this)) {
 			patarray = ((Converter) drv).extractPatch(this);
@@ -430,8 +430,8 @@ public class Patch extends Object
 	    // set driverNum field
 	    Device dev = PatchEdit.appConfig.getDevice(deviceNum);
 	    StringBuffer patchString = patarray[i].getPatchHeader();
-	    for (int jdrv = 0; jdrv < dev.driverList.size(); jdrv++) {
-		Driver drv = (Driver) dev.driverList.get(jdrv);
+	    for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {
+		Driver drv = dev.getDriver(jdrv);
 		if (drv.supportsPatch(patchString, patarray[i]))
 		    patarray[i].driverNum = jdrv;
 	    }

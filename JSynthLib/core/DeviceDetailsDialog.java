@@ -143,7 +143,7 @@ public class DeviceDetailsDialog extends JDialog
         if (JOptionPane.showConfirmDialog (null,"Do you really want to do this? Are you sure?","Remove Driver?",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
         try
         {
-            device.driverList.remove (table2.getSelectedRow ());
+            device.removeDriver(table2.getSelectedRow ());
 	   ((DeviceDetailsTableModel)table.getModel ()).fireTableDataChanged ();
             table2.repaint ();
 	    revalidateLibraries();

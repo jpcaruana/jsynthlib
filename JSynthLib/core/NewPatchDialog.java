@@ -44,8 +44,8 @@ public class NewPatchDialog extends JDialog
 	// Skipping the generic device (i == 0)
 	for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++) {
 	    Device device = (Device) PatchEdit.appConfig.getDevice(i);
-	    for (int j=0; j < device.driverList.size(); j++) {
-		Driver driver = (Driver) device.driverList.get(j);
+	    for (int j=0; j < device.driverCount(); j++) {
+		Driver driver = device.getDriver(j);
 		if (!(driver instanceof Converter)) { // Skipping a converter
 		    try {
 			// If the actual driver doesn't override the
@@ -157,8 +157,8 @@ public class NewPatchDialog extends JDialog
 	    driverComboBox.removeAllItems();
 
 	    Device device = (Device) deviceComboBox.getSelectedItem();
-	    for (int i = 0; i < device.driverList.size(); i++) {
-		Driver driver = (Driver) device.driverList.get(i);
+	    for (int i = 0; i < device.driverCount(); i++) {
+		Driver driver = device.getDriver(i);
 		if (!(driver instanceof Converter)) {
 		    driverComboBox.addItem (driver);
 		}

@@ -77,8 +77,8 @@ public class SysexGetDialog extends JDialog {
     // skip 0 (Generic Device)
     for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++) {
       Device device=PatchEdit.appConfig.getDevice(i);
-      for (int j=0; j <device.driverList.size(); j++) {
-	Driver driver = (Driver) device.driverList.get(j);
+      for (int j=0; j < device.driverCount(); j++) {
+	Driver driver = device.getDriver(j);
         if (!(driver instanceof Converter)) { // Skipping a converter
 	  deviceComboBox.addItem(device);
 	  break;
@@ -201,9 +201,9 @@ public class SysexGetDialog extends JDialog {
 	    // first check the requested device.
 	    // then starting index '1'. (index 0 is 'generic driver')
 	    Device device = (i == 0) ? pk.getDevice() : PatchEdit.appConfig.getDevice(i);
-	    for (int j=0;j<device.driverList.size();j++)
+	    for (int j=0;j<device.driverCount();j++)
 	    {
-	      Driver d = (Driver) device.driverList.get(j);
+	      Driver d = device.getDriver(j);
 	      if (!(d instanceof Converter)
 		  && d.supportsPatch(patchString, pk)) {
 		// driver found
@@ -269,8 +269,8 @@ public class SysexGetDialog extends JDialog {
        driverComboBox.removeAllItems();
 
        Device device = (Device) deviceComboBox.getSelectedItem();
-       for (int i = 0; i < device.driverList.size(); i++) {
-	 Driver driver = (Driver) device.driverList.get(i);
+       for (int i = 0; i < device.driverCount(); i++) {
+	 Driver driver = (Driver) device.getDriver(i);
 	 if (!(driver instanceof Converter)) {
 	   driverComboBox.addItem(driver);
 	 }
@@ -357,6 +357,7 @@ public class SysexGetDialog extends JDialog {
       timeOut=(long)driver.getPatchSize();
       sysexSize = 0;
       queue = new ArrayList();	// clear queue
+      driver.clearMidiInBuffer();
       timer.start();
       driver.requestPatchDump(bankNum, patchNum);
     }

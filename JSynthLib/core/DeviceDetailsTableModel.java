@@ -38,13 +38,13 @@ class DeviceDetailsTableModel extends AbstractTableModel
      public String getColumnName (int col)
      { return columnNames[col];}
      public int getRowCount ()
-     { return d.driverList.size();}
+     { return d.driverCount();}
      public Class getColumnClass (int c)
      {return getValueAt (0, c).getClass ();}
      public Object getValueAt (int row, int col)
      {
          
-         Driver myDriver=(Driver)d.driverList.get (row);
+         Driver myDriver=(Driver)d.getDriver(row);
          
 	 if (col==0) return d.getManufacturerName()+" "+d.getModelName()+" "+myDriver.getPatchType();
          if (col==1) if (myDriver instanceof Converter) return "Converter"; else return "Driver";
