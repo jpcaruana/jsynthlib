@@ -27,7 +27,7 @@ import core.Patch;
 /*
  * 
  * TODO 
- * - In the bank names are obscure special characters after import an all sound dump
+ * - In the bank names are obscure special characters after import an all sound dump -> fixed
  */
 /**
  * Converts an "all sounds" dump to two banks
@@ -66,15 +66,14 @@ public class WaldorfMW2AllSoundConverter extends Converter {
                     getPatchStart(patchNo),
                     temporarySysex,
                     MW2Constants.SYSEX_HEADER_OFFSET,
-                    MW2Constants.PURE_PATCH_SIZE );
+                    MW2Constants.PURE_PATCH_SIZE + MW2Constants.SYSEX_FOOTER_SIZE );
             tempPatch = new Patch(temporarySysex, getDevice());
             
-            WaldorfMW2SingleDriver.createPatchHeader(tempPatch, 0, patchNo);
-            WaldorfMW2SingleDriver.createPatchFooter(tempPatch);            
+            WaldorfMW2SingleDriver.createPatchHeader(tempPatch, 0, patchNo);                        
             WaldorfMW2SingleDriver.calculateChecksum( tempPatch,
                 MW2Constants.SYSEX_HEADER_OFFSET, 
-                MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE, 
-                MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1);
+                MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1, 
+                MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE);
             
             System.arraycopy(   tempPatch.sysex,
                     0,
@@ -83,7 +82,9 @@ public class WaldorfMW2AllSoundConverter extends Converter {
                     MW2Constants.PATCH_SIZE );            
         }                               
         
-        newPatchArray[0] = new Patch(bankSysex, getDevice());
+        tempPatch = new Patch(bankSysex, getDevice());
+        tempPatch.setComment("Bank A from an all sound dump.");
+        newPatchArray[0] = tempPatch;        
         
         // Convert the sounds of bank B
         
@@ -94,23 +95,18 @@ public class WaldorfMW2AllSoundConverter extends Converter {
         
         for(int patchNo = 0; patchNo < MW2Constants.PATCH_NUMBERS; patchNo++) {
             index = halfSize + getPatchStart(patchNo);
-//System.out.println("patchNo: " + patchNo);
-//System.out.println("index: " + index);
-//System.out.println("getPatchStart: " + getPatchStart(patchNo));
-//System.out.println("halfSize: " + halfSize);
             System.arraycopy(   baseSysex,
                     index,
                     temporarySysex,
                     MW2Constants.SYSEX_HEADER_OFFSET,
-                    MW2Constants.PURE_PATCH_SIZE );
+                    MW2Constants.PURE_PATCH_SIZE + MW2Constants.SYSEX_FOOTER_SIZE );
             tempPatch = new Patch(temporarySysex, getDevice());
             
-            WaldorfMW2SingleDriver.createPatchHeader(tempPatch, 1, patchNo);
-            WaldorfMW2SingleDriver.createPatchFooter(tempPatch);            
+            WaldorfMW2SingleDriver.createPatchHeader(tempPatch, 1, patchNo);                       
             WaldorfMW2SingleDriver.calculateChecksum( tempPatch,
                 MW2Constants.SYSEX_HEADER_OFFSET, 
-                MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE, 
-                MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1);
+                MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1, 
+                MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE);
             
             System.arraycopy(   tempPatch.sysex,
                     0,
@@ -119,7 +115,9 @@ public class WaldorfMW2AllSoundConverter extends Converter {
                     MW2Constants.PATCH_SIZE );            
         }
         
-        newPatchArray[1] = new Patch(bankSysex, getDevice());
+        tempPatch = new Patch(bankSysex, getDevice());
+        tempPatch.setComment("Bank B from an all sound dump.");
+        newPatchArray[1] = tempPatch;
 
         return newPatchArray;
     }

@@ -34,9 +34,10 @@ import core.SysexHandler;
 /*
  * 
  * TODO 
- * - Copying a single program inside a bank doesn't work
- * - Copying a single program from a bank to a new position in the library window doesn't work
+ * - Copying a single program inside a bank doesn't work -> fixed
+ * - Copying a single program from a bank to a new position in the library window doesn't work -> fixed
  * - Storing banks doesn't work
+ * - Request banks doesn't work anymore!
  */
 
 /**
@@ -90,19 +91,15 @@ public class WaldorfMW2BankDriver extends BankDriver {
     }
     
     /**
-     * Calculate check sum of a bank.
+     * Calculate check sum of a complete bank.
      *
      * @param p a <code>Patch</code> value
      */
     protected void calculateChecksum(Patch p) {
-        int sum;
-        int offset = 0;
+        int sum;        
         for (int patchNo = 0; patchNo < this.patchNumbers.length; patchNo++) {
             sum = 0;
-            for (int i = this.checksumStart; i <= this.checksumEnd; i++)
-                sum += p.sysex[offset + i];
-            p.sysex[offset + this.checksumOffset] = (byte) (sum & 0x7F);
-            offset += this.singleSize;
+            calculateChecksum(p, patchNo);            
         }
     }
     
@@ -169,7 +166,8 @@ public class WaldorfMW2BankDriver extends BankDriver {
                 MW2Constants.SYSEX_HEADER_OFFSET,
                 bank.sysex,
                 getPatchStart(patchNum),
-                MW2Constants.PURE_PATCH_SIZE);
+                // The SYSEX_FOOTER_SIZE is for that the checksum is copied, too!
+                MW2Constants.PURE_PATCH_SIZE + MW2Constants.SYSEX_FOOTER_SIZE);
     }    
     
     /**
@@ -180,24 +178,19 @@ public class WaldorfMW2BankDriver extends BankDriver {
     protected void storePatch(Patch bank, int bankNum, int patchNum) {
         // The Microwave XT hang up when I tried to send all 128 single programs
         // of the bank at one time
-        //calculateChecksum(bank);
+        calculateChecksum(bank);
         Patch singlePatch;
         
-        System.err.println("Start of storePatch");
-        
         for (int patchNo = 0; patchNo < this.patchNumbers.length; patchNo++) {
-            singlePatch = getPatch(bank, patchNo);
-                       
+            singlePatch = getPatch(bank, bankNum, patchNo);
+
             sendPatchWorker(singlePatch);
             
             try {
                 // Wait a little bit so that the Microwave 2 / XT doesn't hang up
                 Thread.sleep(50);
-            } catch (Exception ex) {                
-                ErrorMsg.reportError("Error", "Error storing all single sounds of a bank in a bank.", ex);
-            }
-            
-            System.out.println("Storing sound No. " + patchNo);
+            } catch (InterruptedException ex) {}
+
         }
     }
     
@@ -214,22 +207,22 @@ public class WaldorfMW2BankDriver extends BankDriver {
                     MW2Constants.SYSEX_HEADER_OFFSET,
                     MW2Constants.PURE_PATCH_SIZE);
             Patch p = new Patch(sysex);
-            WaldorfMW2SingleDriver.createPatchHeader(bank, bankNum, patchNum);              
-            WaldorfMW2SingleDriver.createPatchFooter(bank);
+            WaldorfMW2SingleDriver.createPatchHeader(   p, bankNum, patchNum);
+            p.sysex[264] = MW2Constants.SYSEX_END_BYTE;
             WaldorfMW2SingleDriver.calculateChecksum(   p, 
                     MW2Constants.SYSEX_HEADER_OFFSET, 
-                    MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE, 
-                    MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1);
+                    MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE - 1, 
+                    MW2Constants.SYSEX_HEADER_OFFSET + MW2Constants.PURE_PATCH_SIZE);
             
             return p;
         } catch (Exception e) {
-            ErrorMsg.reportError("Error", "Error in WaldorfMW2 Bank Driver", e);
+            ErrorMsg.reportError("Error", "Error in WaldorfMW2 bank driver", e);
             return null;
         }
     }
     
     /**
-     * Gets a patch from the bank, converting it as needed
+     * Gets a patch from the bank, converting it as needed.
      */
     protected Patch getPatch(Patch bank, int patchNum) {
         return getPatch(bank, 0, patchNum);
@@ -244,19 +237,17 @@ public class WaldorfMW2BankDriver extends BankDriver {
                     new SysexHandler.NameValue("XSUM", ((byte)(bankNum + patchNo)) & 0x7F )
             };
 
-            send(sysexRequestDump.toSysexMessage(getDeviceID(), nameValues ) );
+            send(sysexRequestDump.toSysexMessage(getDeviceID(), nameValues ) );            
 
             try {
                 // Wait a little bit so that everything is in the correct sequence
                 Thread.sleep(50);
-            } catch (Exception ex) {
-                ErrorMsg.reportError("Error", "Error requesting all single sounds of a bank.", ex);
-            }
+            } catch (Exception ex) {}
         }                
     }
     
     /**
-     * Creates a new bank with all 256 user sounds
+     * Creates a new bank (128 user sounds)
      */
     protected Patch createNewPatch() {
         byte[] bankSysex = new byte[this.patchSize];
@@ -267,8 +258,8 @@ public class WaldorfMW2BankDriver extends BankDriver {
         
         for(int patchNo = 0; patchNo < patchNumbers.length; patchNo++) {            
             tempPatch = new Patch(patchSysex, getDevice());
-            WaldorfMW2SingleDriver.createPatchHeader(tempPatch, 0, patchNo);
-            WaldorfMW2SingleDriver.createPatchFooter(tempPatch);            
+            WaldorfMW2SingleDriver.createPatchHeader(tempPatch, 0, patchNo);            
+            tempPatch.sysex[264] = MW2Constants.SYSEX_END_BYTE;
             System.arraycopy(   patchSysex,
                     0,
                     bankSysex,

@@ -33,6 +33,12 @@ import core.Patch;
 import core.PatchEdit;
 import core.SysexHandler;
 
+/*
+ * 
+ * TODO 
+ * 
+ * - Request single programs doesn't work anymore!
+ */
 /**
  * Driver for Microwave 2 / XT / XTK single programs
  *
@@ -144,14 +150,7 @@ public class WaldorfMW2SingleDriver extends Driver {
         // Location (use Edit Buffer)
         createPatchHeader(tempPatch, 0x20, 0x00);        
     }
-    
-    protected static void createPatchFooter(Patch tempPatch) {
-        if (264 <= tempPatch.sysex.length) {
-            //tempPatch.sysex[263] = (byte) 0x00; // Checksum
-            tempPatch.sysex[264] = MW2Constants.SYSEX_END_BYTE;
-        }
-    }   
-    
+
     /**
      * @see core.Driver#createNewPatch()
      */
@@ -170,7 +169,9 @@ public class WaldorfMW2SingleDriver extends Driver {
                        
             p = new Patch(sysex, this);
             createPatchHeader(p);
-            createPatchFooter(p);                       
+            //createPatchFooter(p);
+            //p.sysex[263] = (byte) 0x00; // Checksum
+            p.sysex[264] = MW2Constants.SYSEX_END_BYTE;
             setPatchName(p, "New program");
             calculateChecksum(p);
         }
