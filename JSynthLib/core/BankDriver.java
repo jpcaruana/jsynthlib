@@ -106,8 +106,8 @@ public class BankDriver extends Driver {
     /**
      * Check a patch by using <code>canHoldPatch()</code> and put it
      * into the bank.
-     * @see putPatch
-     * @see canHoldPatch
+     * @see #putPatch
+     * @see #canHoldPatch
      */
     void checkAndPutPatch(Patch bank, Patch p, int patchNum) {
 	if (canHoldPatch(p)) {

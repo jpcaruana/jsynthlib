@@ -451,9 +451,6 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         new SysexStoreDialog(myPatch);
     }
 
-    /**
-     * @return
-     */
     public JSLFrame EditSelectedPatch() {
         if (table.getSelectedRowCount()==0) {
             ErrorMsg.reportError("Error", "No Patch Selected.");
@@ -487,9 +484,6 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         changed=false;
     }
 
-    /**
-     * @return
-     */
     public int getSelectedRowCount() {
         return table.getSelectedRowCount();
     }
@@ -522,9 +516,6 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         PatchEdit.waitDialog.hide();
     }
 
-    /**
-     * @return
-     */
     public java.util.ArrayList getPatchCollection() {
         java.util.ArrayList ar=new java.util.ArrayList();
         int i;
@@ -557,16 +548,10 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         }
     }
 
-    /**
-     * @return
-     */
     public AbstractPatchListModel getAbstractPatchListModel() {
         return myModel;
     }
 
-    /**
-     * @return
-     */
     public JTable getTable() {
         return table;
     }

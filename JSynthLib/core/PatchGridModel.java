@@ -17,7 +17,8 @@ public class PatchGridModel extends AbstractTableModel
 
     /**
      * @param p
-     * @param d  */
+     * @param d
+     */
     public PatchGridModel (Patch p,BankDriver d)
     {super();
 ErrorMsg.reportStatus("PatchGridModel");
@@ -25,16 +26,11 @@ ErrorMsg.reportStatus("PatchGridModel");
      bankDriver=d;
     }
 
-
-    /**
-     * @return  */
     public int getColumnCount ()
     {
         return bankDriver.getNumColumns();
     }
 
-    /**
-     * @return  */
     public int getRowCount ()
     {
         return bankDriver.getNumPatches()/bankDriver.getNumColumns();
@@ -42,7 +38,7 @@ ErrorMsg.reportStatus("PatchGridModel");
 
     /**
      * @param col
-     * @return  */
+     */
     public String getColumnName (int col)
     {
         return "";
@@ -51,7 +47,7 @@ ErrorMsg.reportStatus("PatchGridModel");
     /**
      * @param row
      * @param col
-     * @return  */
+     */
     public Object getValueAt (int row, int col)
     {
 	String patchNumbers[] = bankDriver.getPatchNumbers();
@@ -61,7 +57,7 @@ ErrorMsg.reportStatus("PatchGridModel");
     /**
      * @param row
      * @param col
-     * @return  */
+     */
     public Patch getPatchAt(int row, int col)
     {
 	int i = col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row;
@@ -69,7 +65,7 @@ ErrorMsg.reportStatus("PatchGridModel");
     }
     /**
      * @param c
-     * @return  */
+     */
     public Class getColumnClass (int c)
     {
         return getValueAt (0, c).getClass ();
@@ -77,7 +73,7 @@ ErrorMsg.reportStatus("PatchGridModel");
     /**
      * @param row
      * @param col
-     * @return  */
+     */
     public boolean isCellEditable (int row, int col)
     {
         //Note that the data/cell address is constant,
@@ -92,7 +88,8 @@ ErrorMsg.reportStatus("PatchGridModel");
     /**
      * @param p
      * @param row
-     * @param col  */
+     * @param col
+     */
     public void setPatchAt(Patch p,int row,int col)
     {
         bankDriver.checkAndPutPatch(bankData,p,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
@@ -101,7 +98,8 @@ ErrorMsg.reportStatus("PatchGridModel");
     /**
      * @param value
      * @param row
-     * @param col  */
+     * @param col
+     */
     public void setValueAt (Object value, int row, int col)
     {
 //----- Start phil@muqus.com (allow patch name editing from a bank edit window)

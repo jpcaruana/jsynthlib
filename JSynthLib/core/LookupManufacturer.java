@@ -8,7 +8,7 @@ package core;
 /**
  *
  * @author  Gerrit Gehnen <Gerrit.Gehnen@gmx.de>
- * @version
+ * @version $Id$
  */
 public class LookupManufacturer extends Object {
     private static String normal[]=
@@ -100,7 +100,7 @@ public class LookupManufacturer extends Object {
      "Fuji Sound Corporation Ltd.",
      "Acoustic Technical Laboratory,Inc"
     };
-    
+
     private static String extended00[]=    {
         "Warner New Media", //0x01
         "UNASSIGNED!",
@@ -230,7 +230,7 @@ public class LookupManufacturer extends Object {
         "Otari",
         "Key Electronics"   //0x7F
     };
-    
+
     private static String extended10[]=  {
         "Crystalake Multimedia",    //0x01
         "Crystal Semiconductor",
@@ -274,7 +274,7 @@ public class LookupManufacturer extends Object {
         "St Louis Music",
         "Lyrrus dba G-VOX" //0x29
     };
-    
+
     private static String extended20[]= {
         "Dream",    // 0x00 !!!!
         "Strand Lighting",
@@ -334,7 +334,7 @@ public class LookupManufacturer extends Object {
         "Proel SpA",
         "IBK MIDI"      // 0x38
     };
-    
+
     /** Creates new LookupManufacturer */
     private LookupManufacturer() {
     }
@@ -343,25 +343,25 @@ public class LookupManufacturer extends Object {
             return "Invalid Manufacturer";
         if (number1>0)
             return normal[number1-1];
-        
+
         if (number2==0) {
             if (number3<=0)
                 return "Invalid Manufacturer";
             return extended00[number3-1];
         }
-        
+
         if (number2==0x10) {
             if ((number3<=0)||(number3>extended10.length))
                 return "Invalid Manufacturer";
             return extended10[number3-1];
         }
-        
+
         if (number2==0x20) {
             if ((number3<=0)||(number3>=extended20.length))
                 return "Invalid Manufacturer";
             return extended20[number3];
         }
-        
+
         return "Invalid Manufacturer";
     }
 }
