@@ -47,12 +47,30 @@ public class DX7FamilyDevice extends Device
     // switch off "Hints and Tips Messages"?
     protected JCheckBox	tipsMsg;
 
+    // default flag value
+    private int defaultSPBPFlag;
+    private int defaultSwOffProtFlag;
+    private int defaultTipsMsgFlag;
 
     // Creates a new YamahaDX7FamilyDevice
     // infact it calls only the constructor of the Device class
-    public DX7FamilyDevice (String manufacturerName, String modelName, String inquiryID, String infoText, String authors)
+    public DX7FamilyDevice (String manufacturerName, String modelName,
+			    String inquiryID, String infoText, String authors)
     {
 	super (manufacturerName, modelName, inquiryID, infoText, authors);
+    }
+
+    public DX7FamilyDevice (String manufacturerName, String modelName,
+			    String inquiryID, String infoText, String authors,
+			    int sPBPFlag, int swOffMemProtFlag, int tipsMsgFlag,
+			    Preferences prefs)
+    {
+	super (manufacturerName, modelName, inquiryID, infoText, authors);
+	// set default configuration flag value
+	defaultSPBPFlag = sPBPFlag;
+	defaultSwOffProtFlag = swOffMemProtFlag;
+	defaultTipsMsgFlag = tipsMsgFlag;
+	this.prefs = prefs;
     }
 
     protected JPanel config()
@@ -131,7 +149,7 @@ public class DX7FamilyDevice extends Device
 
     /** Getter for sPBPflag */
     public int getSPBPflag() {
-	return prefs.getInt("sPBPflag", 0);
+	return prefs.getInt("sPBPflag", defaultSPBPFlag);
     }
     /** Setter for sPBPflag */
     public void setSPBPflag(int sPBPflag) {
@@ -140,7 +158,7 @@ public class DX7FamilyDevice extends Device
 
     /** Getter for swOffMemProtFlag */
     public int getSwOffMemProtFlag() {
-	return prefs.getInt("swOffMemProtFlag", 0);
+	return prefs.getInt("swOffMemProtFlag", defaultSwOffProtFlag);
     }
     /** Setter for swOffMemProtFlag */
     public void setSwOffMemProtFlag(int swOffMemProtFlag) {
@@ -149,7 +167,7 @@ public class DX7FamilyDevice extends Device
 
     /** Getter for tipsMsgFlag */
     public int getTipsMsgFlag() {
-	return prefs.getInt("tipsMsgFlag", 0);
+	return prefs.getInt("tipsMsgFlag", defaultTipsMsgFlag);
     }
 
     /** Setter for tipsMsgFlag */

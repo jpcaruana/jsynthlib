@@ -37,12 +37,12 @@ public class YamahaDX7IIDevice extends DX7FamilyDevice
 
     /** Constructor for for actual work. */
     public YamahaDX7IIDevice(Preferences prefs) {
-	this();
-	this.prefs = prefs;
+	super("Yamaha","DX7-II",null,dxInfoText,"Torsten Tittmann",
+	      0x00, 0x02, 0x03, prefs);
 
-	setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
-	setSwOffMemProtFlag(0x02);	// switched off	'Disable Memory Protection?'	and  enabled
-	setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
+	//setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
+	//setSwOffMemProtFlag(0x02);	// switched off	'Disable Memory Protection?'	and  enabled
+	//setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
 
 	// voice patch
 	addDriver (new YamahaDX7IIVoiceSingleDriver());
