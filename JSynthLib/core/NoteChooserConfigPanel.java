@@ -114,13 +114,13 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 		note = appConfig.getNote();
 		velocity = appConfig.getVelocity();
 		delay = appConfig.getDelay();
-		if(note<0 || note>127) {
+		if(note <= 0 || note > 127) {
 			note=DEFAULT_NOTE;
 		} 
-		if(velocity < 0 || velocity > 127) {
+		if(velocity <= 0 || velocity > 127) {
 			velocity = DEFAULT_VELOCITY;
 		}
-		if(delay < 0) {
+		if(delay <= 0) {
 			delay = DEFAULT_DELAY;
 		}
 	}
