@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 Hiroo Hayashi
+ * Copyright 2003, 2004 Hiroo Hayashi
  *
  * This file is part of JSynthLib.
  *
@@ -28,9 +28,9 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 
 /**
- * TreeWidget.java
+ * A SysexWidget implementing JTree component.<p>
  *
- * A SysexWidget implementing JTree component.
+ * See synthdrivers.RolandTD6.TD6SingleEditor as an example.<p>
  *
  * This widget is still under development. The inferface may be
  * changed. If you would like to use this in you driver, contact the
@@ -40,11 +40,10 @@ import javax.swing.tree.*;
  *
  * @author <a href ="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
- * @see synthdriver.RolandTD6.TD6SingleEditor
  */
 public class TreeWidget extends SysexWidget {
     private JTree tree;
-    private TreeNodes treeNodes;
+    private Nodes treeNodes;
     private DefaultMutableTreeNode rootNode;
 
     //Optionally play with line styles.  Possible values are
@@ -57,15 +56,15 @@ public class TreeWidget extends SysexWidget {
      *
      * @param label not used in the current implementation.
      * @param patch a <code>Patch</code>, which is edited.
-     * @param treeNodes a <code>TreeNodes</code> object specifying the
+     * @param treeNodes a <code>TreeWidget.Nodes</code> object specifying the
      * tree data structure.
      * @param paramModel a <code>ParamModel</code> value
      * @param sysexString SysexSender for transmitting the value at
      * editing the parameter.
      * @see SysexWidget
-     * @see TreeNodes
+     * @see Nodes
      */
-    public TreeWidget(String label, Patch patch, TreeNodes treeNodes,
+    public TreeWidget(String label, Patch patch, Nodes treeNodes,
 		      ParamModel paramModel, SysexSender sysexString) {
 	super(label, patch, paramModel, sysexString);
 	this.treeNodes = treeNodes;
@@ -127,12 +126,13 @@ public class TreeWidget extends SysexWidget {
     }
 
     /**
-     * This routine is borrowed from
-     * http://www.apl.jhu.edu/~hall/java/Swing-Tutorial/Swing-Tutorial-JTree.html
      * Small routine that will make node out of the first entry in the
      * array, then make nodes out of subsequent entries and make them
      * child nodes of the first one. The process is repeated recursively
      * for entries that are arrays.
+     * This routine is borrowed from <a href=
+     * "http://www.apl.jhu.edu/~hall/java/Swing-Tutorial/Swing-Tutorial-JTree.html">
+     * Quick Swing Tutorial for AWT Programmers</a>.
      *
      * @param root a tree structure given via <code>treeNode</code>
      * constructor parameter.
@@ -190,7 +190,7 @@ public class TreeWidget extends SysexWidget {
      * Select a tree node specified by <code>n</code>.
      *
      * @param n an <code>int</code> value specifing a tree node.
-     * @see TreeNodes#getIndices methods.
+     * @see Nodes#getIndices
      */
     protected void setSelection(int n) {
 	TreePath path = getTreePath(treeNodes.getIndices(n));
@@ -204,7 +204,7 @@ public class TreeWidget extends SysexWidget {
      *
      * @param n an <code>int</code> value specifing a tree node.
      * @return an <code>Object</code> value
-     * @see TreeNodes#getIndices methods.
+     * @see Nodes#getIndices
      */
     public Object getNode(int n) {
 	return getNode(treeNodes.getIndices(n));
@@ -230,4 +230,52 @@ public class TreeWidget extends SysexWidget {
     public void setEnabled(boolean e) {
         tree.setEnabled(e);
     }
+
+    /**
+     * Structured data for Tree Widget.
+     * Example of tree data:
+     * <pre>
+     * Object[] root  =
+     *  { "root",
+     *    "leaf 0", // { 0 }
+     *    "leaf 1", // { 1 }
+     *    new Object[] { "branch 2",
+     *                   "leaf 2-0",   // { 2, 0 }
+     *                   "leaf 2-1" }, // { 2, 1 }
+     *    new Object[] { "branch 3",
+     *                   new Object[] { "branch 3-0",
+     *                                  "leaf 3-0-0" }, // { 3, 0, 0 }
+     *                   "leaf 3-1" }, // { 3, 1 }
+     *    "leaf 4" }; // { 4 }
+     * </pre>
+     * Assume the node value of leaf node '2-1' is '48',
+     *   'getIndices(48)' returns an array '{ 2, 1 }'.
+     *   'getValue( { 2, 1 } )' returns '48'.
+     */
+    public interface Nodes {
+
+	/**
+	 * Returns tree strucutre.  Used by TreeWidget.
+	 *
+	 * @return an array of a tree structure.
+	 */
+	Object[] getRoot();
+
+	/**
+	 * Returns an array of indices which specifies a node whose value is
+	 * <code>n</code>.
+	 *
+	 * @param n a node value
+	 * @return an array of indices.
+	 */
+	int[] getIndices(int n);
+	/**
+	 * Returns a value of a node which is specified by an array of indices.
+	 *
+	 * @param indices an array of indices.
+	 * @return a node value
+	 */
+	int getValue(int[] indices);
+
+    } // Nodes
 } // TreeWidget
