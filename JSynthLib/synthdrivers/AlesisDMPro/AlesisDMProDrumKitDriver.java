@@ -1,3 +1,24 @@
+/*
+ * Copyright 2004 Peter Hageus
+ *
+ * This file is part of JSynthLib.
+ *
+ * JSynthLib is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * JSynthLib is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with JSynthLib; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA
+ */
+
 package synthdrivers.AlesisDMPro;
 import core.Driver;
 import core.JSLFrame;
@@ -6,12 +27,12 @@ import core.SysexHandler;
 
 public class AlesisDMProDrumKitDriver extends Driver
 {
-    
-   private final char[] m_arChars = new char[] {' ', '!', '"', '#', '$', '%', '&', '"', '(', ')', '*', '+', ',', '-', '.', '/', 
-                                                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 
-                                                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 
-                                                'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',  'Z', '[', 'Y', ']', '^', '_', '"', 
-                                                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',  'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 
+
+   private final char[] m_arChars = new char[] {' ', '!', '"', '#', '$', '%', '&', '"', '(', ')', '*', '+', ',', '-', '.', '/',
+                                                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@',
+                                                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
+                                                'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',  'Z', '[', 'Y', ']', '^', '_', '"',
+                                                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',  'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
                                                 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',  'z', '{', '|', '}', '>', '<'};
    public AlesisDMProDrumKitDriver()
    {
@@ -24,15 +45,15 @@ public class AlesisDMProDrumKitDriver extends Driver
    patchNameSize=10;
 
    bankNumbers =new String[] {"Internal bank"};
-   patchNumbers=new String[64]; 
-   
+   patchNumbers=new String[64];
+
    for (int i=0;i < 64;i++) {
        patchNumbers[i] = "Kit " + i;
    }
 
   }
 public void storePatch (Patch p, int bankNum,int patchNum)
-  {   
+  {
    setBankNum(bankNum);
    setPatchNum(patchNum);
    p.sysex[6] = (byte) patchNum;
@@ -40,7 +61,7 @@ public void storePatch (Patch p, int bankNum,int patchNum)
    setPatchNum(patchNum);
   }
 public void sendPatch (Patch p)
-  { 
+  {
    //DM Pro editbuffer is named 64
    p.sysex[6] = 64;
    sendPatchWorker(p);
@@ -50,7 +71,7 @@ public void sendPatch (Patch p)
   }
   public Patch createNewPatch ()
  {
-     
+
 	 byte [] sysex = new byte[648];
          sysex[0] = (byte) 0xF0;
          sysex[1] = (byte) 0x00;
@@ -59,16 +80,16 @@ public void sendPatch (Patch p)
          sysex[4] = (byte) 0x19;
          sysex[5] = (byte) 0x0E;
          sysex[6] = (byte) 0x64;
-         
-         for (int i=7;i<647;i++) 
+
+         for (int i=7;i<647;i++)
              sysex[i] = 0;
-         
+
          sysex[647] = (byte) 0xF7;
-         
+
 	 //ToDO: Load up a dump as a basis...
 	 Patch p = new Patch(sysex, this);
 	 setPatchName(p,"NewDrumKit");
-	 calculateChecksum(p);	 
+	 calculateChecksum(p);
 	 return p;
  }
 public JSLFrame editPatch(Patch p)
@@ -83,7 +104,7 @@ public String getPatchName (Patch p)
   StringBuffer str = new StringBuffer("");
 
   try {
-    	
+
     	AlesisDMProParser oParser = new AlesisDMProParser(p);
 
     	str.append((char) m_arChars[oParser.getValue(0,5,7)]);
@@ -105,14 +126,14 @@ public String getPatchName (Patch p)
 }
 
 public void setPatchName (Patch p, String name)
-    {   
+    {
 
         AlesisDMProParser oParser = new AlesisDMProParser(p);
         byte[] ar = new byte[10];
         char arStr[] = name.toCharArray();
 
         for (int i = 0;i<10;i++) {
-            
+
             if (i >= arStr.length)
                 ar[i] = 0;
             else {
@@ -124,7 +145,7 @@ public void setPatchName (Patch p, String name)
                 }
             }
         }
-    
+
         oParser.setValue(0,5,7,ar[0]);
         oParser.setValue(1,4,7,ar[1]);
         oParser.setValue(2,3,7,ar[2]);
@@ -137,6 +158,6 @@ public void setPatchName (Patch p, String name)
         oParser.setValue(8,4,7,ar[9]);
 
         oParser = null;
- 
+
     }
 }
