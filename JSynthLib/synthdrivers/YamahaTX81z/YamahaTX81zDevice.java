@@ -7,6 +7,7 @@
 package synthdrivers.YamahaTX81z;
 
 import core.*;
+import java.util.prefs.Preferences;
 /**
  *
  * @author  Brian Klock
@@ -18,14 +19,19 @@ public class YamahaTX81zDevice extends Device
 	          "quickly. With JSynthLib, this can happenif you are using a fader box and throwing the faders"+
 		  "around rapidly. Otherwise, it should not be a problem\n\n"+
 		  "JSynthLib supports the TX81z as both a Single and Bank Librarian and also supports Patch Editing.";
-    
+
     /** Creates new YamahaTX81zDevice */
     public YamahaTX81zDevice ()
     {
 	super ("Yamaha","TX81z",null,infoText,"Brian Klock");
+    }
+
+    /** Constructor for for actual work. */
+    public YamahaTX81zDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
         addDriver (new YamahaTX81zBankDriver ());
         addDriver (new YamahaTX81zSingleDriver ());
-        
     }
-    
 }

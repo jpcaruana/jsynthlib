@@ -7,6 +7,7 @@
 package synthdrivers.BossDR660;
 
 import core.*;
+import java.util.prefs.Preferences;
 
 /**
  *
@@ -21,12 +22,18 @@ public class BossDR660Device extends Device
 		 "Keep in mind that the first several locations to store drumkits on the DR660 are ROM"+
 		 " locations and are not user writable. Though JSynthLib can store drumkits to these locations, "+
 		 "they will revert back to their old values once a patch change message is received.";
-    
+
     /** Creates new BossDR660Device */
     public BossDR660Device ()
     {
 	super ("Boss","DR660",null,infoText,"Brian Klock");
+    }
+
+    /** Constructor for for actual work. */
+    public BossDR660Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
         addDriver (new BossDR660DrumkitDriver ());
     }
-    
 }

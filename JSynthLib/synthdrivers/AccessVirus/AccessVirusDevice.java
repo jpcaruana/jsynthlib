@@ -1,6 +1,7 @@
 package synthdrivers.AccessVirus;
 
 import core.Device;
+import java.util.prefs.Preferences;
 
 /** Device class for the Access Virus
  * @version $Id$
@@ -27,6 +28,13 @@ public class AccessVirusDevice extends Device /*implements ItemListener*/ {
     /** Creates new AccessVirus */
     public AccessVirusDevice() {
 	super ("Access","Virus",null,DRIVER_INFO,"Kenneth L. Martinez");
+    }
+
+    /** Constructor for for actual work. */
+    public AccessVirusDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
 	setDeviceID(17);	// default Device ID
         //avConfig = new AccessVirusConfig();
         //Driver drv;

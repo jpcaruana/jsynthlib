@@ -21,6 +21,7 @@
 package synthdrivers.WaldorfPulse;
 
 import core.*;
+import java.util.prefs.Preferences;
 
 public class WaldorfPulseDevice extends Device
 {
@@ -28,12 +29,19 @@ public class WaldorfPulseDevice extends Device
     {
         super("Waldorf",
               "Pulse/Pulse+", null,
-              "This driver supports patch editting for the Waldorf Pulse\n"+
-              "and Pulse+. Parameters supported by the Pulse+\n"+
-              "only are marked with a plus icon.\n\n"+
+              "This driver supports patch editting for the Waldorf Pulse "+
+              "and Pulse+. Parameters supported by the Pulse+ "+
+              "only are marked with a plus icon.\n"+
               "Stacked pulses are not supported at present.\n",
               "Scott Shedden");
-        setSynthName("Pulse");
-        addDriver(0, new WaldorfPulseSingleDriver());
+    }
+
+    /** Constructor for for actual work. */
+    public WaldorfPulseDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+        //setSynthName("Pulse");
+        addDriver(new WaldorfPulseSingleDriver());
     }
 }

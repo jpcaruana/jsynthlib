@@ -23,24 +23,31 @@
  */
 package synthdrivers.YamahaDX5;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import java.util.prefs.Preferences;
 
 public class YamahaDX5Device extends DX7FamilyDevice
 {
 	private static final String dxInfoText = YamahaDX5Strings.INFO_TEXT;
-	
+
 	/** Creates new YamahaDX5Device */
 	public YamahaDX5Device ()
 	{
 		super("Yamaha","DX5",null,dxInfoText,"Torsten Tittmann");
-	  
+	}
+
+	/** Constructor for for actual work. */
+	public YamahaDX5Device(Preferences prefs) {
+		this();
+		this.prefs = prefs;
+
 		setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
 		setSwOffMemProtFlag(0x00);	// switched off 'Disable Memory Protection?'	and disabled
 		setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
-		
+
 		// voice patch - basic patch for all modells of the DX7 family
 		addDriver (new YamahaDX5VoiceSingleDriver());
 		addDriver (new YamahaDX5VoiceBankDriver());
-	
+
 		// DX5	Performance patch
 		addDriver (new YamahaDX5PerformanceSingleDriver());		// experimental !!!!
 		addDriver (new YamahaDX5PerformanceBankDriver());		// experimental !!!!

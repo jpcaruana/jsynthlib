@@ -1,6 +1,7 @@
 package synthdrivers.KorgX3;
 
 import core.*;
+import java.util.prefs.Preferences;
 
 /**
  * This class is a device driver for Korg X3 -synthesizer to be used in
@@ -17,16 +18,23 @@ public class KorgX3Device extends Device
       "most of the attributes in this synthesizer. A few are unimplemented as "+
       "the pan setting for example. Playing the patch in JSynthLib moves first "+
       "the patch to Korg's patch buffer.";
-  
+
   /**
-   * Creates a new KorgX3Device 
+   * Creates a new KorgX3Device
    */
   public KorgX3Device ()
   {
     super ("Korg","X3","F07E**0602423500**00**00**00F7",infoText,"Juha Tukkinen");
-    setSynthName("X3");
-    addDriver(0, new KorgX3SingleConverter());
-    addDriver(1, new KorgX3BankConverter());    
+    }
+
+    /** Constructor for for actual work. */
+    public KorgX3Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+    //setSynthName("X3");
+    addDriver(new KorgX3SingleConverter());
+    addDriver(new KorgX3BankConverter());
     addDriver(new KorgX3SingleDriver());
     addDriver(new KorgX3BankDriver());
   }

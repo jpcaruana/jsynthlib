@@ -7,6 +7,7 @@
 package synthdrivers.KawaiK5000;
 
 import core.*;
+import java.util.prefs.Preferences;
 /**
  *
  * @author  
@@ -24,12 +25,19 @@ public class KawaiK5000Device extends Device
 		  "backup to non-volitile RAM from the front panel.\n\n"+
 		  "Note that when sending single patches to the K5k, , Patch A01 will be used as the midi edit buffer since the K5k "+
 		  "does not provide a MIDI accessable edit buffer.";
-    
+
     /** Creates new KawaiK5000Device */
     public KawaiK5000Device ()
     {
 	super ("Kawai","K5000","F07E**06024000000A**********F7",infoText,"Brian Klock & Phil Shepherd");
-        setSynthName("K5k");
+    }
+
+    /** Constructor for for actual work. */
+    public KawaiK5000Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+        //setSynthName("K5k");
 
         addDriver (new KawaiK5000BankDriver ());
         addDriver (new KawaiK5000ADDSingleDriver ());
@@ -38,5 +46,4 @@ public class KawaiK5000Device extends Device
 
 
     }
-    
 }

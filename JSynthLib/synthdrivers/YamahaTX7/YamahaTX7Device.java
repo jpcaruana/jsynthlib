@@ -23,26 +23,33 @@
  */
 package synthdrivers.YamahaTX7;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import java.util.prefs.Preferences;
 
 public class YamahaTX7Device extends DX7FamilyDevice
 {
-	private static final String dxInfoText = YamahaTX7Strings.INFO_TEXT;
-	
-	/** Creates new YamahaTX7Device */
-	public YamahaTX7Device ()
-	{
-		super("Yamaha","TX7",null,dxInfoText,"Torsten Tittmann");
-	  
-		setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
-		setSwOffMemProtFlag(0x02);	// switched off 'Disable Memory Protection?'	and  enabled
-		setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
-		
-		// voice patch - basic patch for all modells of the DX7 family
-		addDriver (new YamahaTX7VoiceSingleDriver());
-		addDriver (new YamahaTX7VoiceBankDriver());
-	
-		// TX7	Performance patch
-		addDriver (new YamahaTX7PerformanceSingleDriver());		// experimental !!!!
-		addDriver (new YamahaTX7PerformanceBankDriver());		// experimental !!!!
-	}
+    private static final String dxInfoText = YamahaTX7Strings.INFO_TEXT;
+
+    /** Creates new YamahaTX7Device */
+    public YamahaTX7Device ()
+    {
+	super("Yamaha","TX7",null,dxInfoText,"Torsten Tittmann");
+    }
+
+    /** Constructor for for actual work. */
+    public YamahaTX7Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+	setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
+	setSwOffMemProtFlag(0x02);	// switched off 'Disable Memory Protection?'	and  enabled
+	setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
+
+	// voice patch - basic patch for all modells of the DX7 family
+	addDriver (new YamahaTX7VoiceSingleDriver());
+	addDriver (new YamahaTX7VoiceBankDriver());
+
+	// TX7	Performance patch
+	addDriver (new YamahaTX7PerformanceSingleDriver());		// experimental !!!!
+	addDriver (new YamahaTX7PerformanceBankDriver());		// experimental !!!!
+    }
 }

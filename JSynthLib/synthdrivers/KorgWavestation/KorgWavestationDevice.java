@@ -7,20 +7,27 @@
 package synthdrivers.KorgWavestation;
 
 import core.Device;
+import java.util.prefs.Preferences;
 /**
  *
  * @author Gerrit Gehnen
  * @version $Id$
  */
 public class KorgWavestationDevice extends Device {
-    
-        private static final String infoText="This is an experimental driver. It is not tested on a real device yet!";
+    private static final String infoText="This is an experimental driver. It is not tested on a real device yet!";
 
     /** Creates new KorgWavestationDevice */
     public KorgWavestationDevice() {
 	super ("Korg","Wavestation","F07E**06024228000100********F7",infoText,"Gerrit Gehnen");
-        setSynthName("Wavestation");
-        
+    }
+
+    /** Constructor for for actual work. */
+    public KorgWavestationDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+        //setSynthName("Wavestation");
+
         addDriver(new KorgWavestationSinglePatchDriver());
         addDriver(new KorgWavestationSinglePerformanceDriver());
         addDriver(new KorgWavestationBankPatchDriver());
@@ -31,5 +38,4 @@ public class KorgWavestationDevice extends Device {
         addDriver(new KorgWavestationMicroTuneScaleDriver());
         addDriver(new KorgWavestationPerformanceMapDriver());
     }
-    
 }

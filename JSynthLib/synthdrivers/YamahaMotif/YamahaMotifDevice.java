@@ -6,12 +6,13 @@
 package synthdrivers.YamahaMotif;
 
 import core.*;
+import java.util.prefs.Preferences;
 /**
  * @author  Ryan Brown
  * @version $Id$
  */
 public class YamahaMotifDevice extends Device {
-    
+
     /** Creates new MotifDevice */
     public YamahaMotifDevice() {
 	super("Yamaha", "Motif", "F07E7F06024300417*040000007FF7",
@@ -26,8 +27,15 @@ public class YamahaMotifDevice extends Device {
 	      "I will finish the editor support and and support for "+
 	      "performances, masters, etc.",
 	      "Rib Rdb");
-        setSynthName("Motif");
-        
+    }
+
+    /** Constructor for for actual work. */
+    public YamahaMotifDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+        //setSynthName("Motif");
+
 	/*addDriver(0,new YamahaMotifBulkConverter());
         addDriver(new YamahaMotifSingleDriver());
         addDriver(new YamahaMotifBankDriver());
@@ -38,7 +46,5 @@ public class YamahaMotifDevice extends Device {
         addDriver(new YamahaMotifDrumsetDriver());*/
 	addDriver(new YamahaMotifDrumVoiceDriver());
 	addDriver(new YamahaMotifNormalVoiceDriver());
-        
     }
-    
 }

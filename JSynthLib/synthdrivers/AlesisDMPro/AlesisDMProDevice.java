@@ -7,6 +7,7 @@
 package synthdrivers.AlesisDMPro;
 
 import core.*;
+import java.util.prefs.Preferences;
 /**
  *
  * @author  Peter Hageus
@@ -25,7 +26,14 @@ public class AlesisDMProDevice extends Device
     {
 	super("Alesis", "DM Pro", "F07E7F060200000E19000000*F7",
 	      INFO_TEXT, "Peter Hageus (peter.hageus@comhem.se)");
-      	addDriver (0,new AlesisDMProDrumKitDriver());
-        addDriver (1,new AlesisDMProEffectDriver());
+    }
+
+    /** Constructor for for actual work. */
+    public AlesisDMProDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+      	addDriver (new AlesisDMProDrumKitDriver());
+        addDriver (new AlesisDMProEffectDriver());
     }
 }

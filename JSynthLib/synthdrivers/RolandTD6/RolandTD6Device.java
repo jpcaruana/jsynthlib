@@ -25,6 +25,7 @@ import core.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.prefs.Preferences;
 
 /**
  * RolandTD6Device.java
@@ -63,8 +64,13 @@ public final class RolandTD6Device extends Device {
 	      + "This driver uses Drum Kit 99 as edit buffer.\n"
 	      + "Set \"Sync Mode\" to \"EXT\" to stop sending Timing Clock system real time message (0xF8).",
 	      "Hiroo Hayashi <hiroo.hayashi@computer.org>");
-	setSynthName("TD6");
-// 	setChannel(17);		// default Device ID
+    }
+
+    public RolandTD6Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+	//setSynthName("TD6");
 	setDeviceID(17);	// default Device ID
 
 	// add drivers

@@ -38,131 +38,122 @@ import core.Device;
 
 public class DX7FamilyDevice extends Device
 {
-	// flag interpretation: bit1 - 1=on, 0=off
-	//			bit2 - 1=enabled, 0=disabled
-	
-	// Simulate panel button pushes by sending SysEx commands ?
-	protected JCheckBox	sPBP;
-	protected int		sPBPflag;
-	// switch off memory protection?
-	protected JCheckBox	swOffMemProt;
-	protected int		swOffMemProtFlag;
-	// switch off "Hints and Tips Messages"?
-	protected JCheckBox	tipsMsg;
-	protected int		tipsMsgFlag;
+    // flag interpretation: bit1 - 1=on, 0=off
+    //			bit2 - 1=enabled, 0=disabled
+    // Simulate panel button pushes by sending SysEx commands ?
+    protected JCheckBox	sPBP;
+    // switch off memory protection?
+    protected JCheckBox	swOffMemProt;
+    // switch off "Hints and Tips Messages"?
+    protected JCheckBox	tipsMsg;
 
-	// Creates a new YamahaDX7FamilyDevice
-	// infact it calls only the constructor of the Device class
-	public DX7FamilyDevice (String manufacturerName, String modelName, String inquiryID, String infoText, String authors)
-	{
-		super (manufacturerName, modelName, inquiryID, infoText, authors);
-	}
 
-	protected JPanel config()
-	{
-		JPanel panel= new JPanel();
-		GridBagLayout gridbag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		panel.setLayout(gridbag);
-		c.anchor = GridBagConstraints.WEST; 
+    // Creates a new YamahaDX7FamilyDevice
+    // infact it calls only the constructor of the Device class
+    public DX7FamilyDevice (String manufacturerName, String modelName, String inquiryID, String infoText, String authors)
+    {
+	super (manufacturerName, modelName, inquiryID, infoText, authors);
+    }
 
-		c.gridx=0;c.gridy=0;c.gridwidth=9;c.gridheight=1;c.weightx=1;c.anchor=GridBagConstraints.WEST;c.fill=GridBagConstraints.HORIZONTAL;
-		panel.add(new JLabel("						    "),c);
+    protected JPanel config()
+    {
+	JPanel panel= new JPanel();
+	GridBagLayout gridbag = new GridBagLayout();
+	GridBagConstraints c = new GridBagConstraints();
+	panel.setLayout(gridbag);
+	c.anchor = GridBagConstraints.WEST;
 
-		c.gridx=0;c.gridy=1;c.gridwidth=3;c.gridheight=2;
-		panel.add(new JLabel("Synthesizer Name"),c);
-		final JTextField sl = new JTextField(getSynthName());
-		sl.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setSynthName(sl.getText());
-			}
-		});
-		c.gridx=3;c.gridy=1;c.gridwidth=3;c.gridheight=2;
-		panel.add(sl,c);
-		c.gridx=4;c.gridy=1;c.gridwidth=3;c.gridheight=1;
-		panel.add(new JLabel(" ( free choosable )"),c);
+	c.gridx=0;c.gridy=0;c.gridwidth=9;c.gridheight=1;c.weightx=1;c.anchor=GridBagConstraints.WEST;c.fill=GridBagConstraints.HORIZONTAL;
+	panel.add(new JLabel("						    "),c);
 
-		c.gridx=0;c.gridy=3;c.gridwidth=3;c.gridheight=2;
-		panel.add(new JLabel("Enable Remote Control?"),c);
-		sPBP = new JCheckBox();
-		sPBP.setSelected( (getSPBPflag() & 0x01) == 0x01);
-		sPBP.setEnabled ( (getSPBPflag() & 0x02) == 0x02);
-		sPBP.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JCheckBox chb = (JCheckBox)e.getSource();
-				if (chb.isSelected()) setSPBPflag( getSPBPflag() | 0x01);
-				else setSPBPflag( getSPBPflag() & 0xfe);
-			}
-		});
-		c.gridx=3;c.gridy=3;c.gridwidth=1;c.gridheight=2;
-		panel.add(sPBP,c);
+	/*
+	c.gridx=0;c.gridy=1;c.gridwidth=3;c.gridheight=2;
+	panel.add(new JLabel("Synthesizer Name"),c);
+	final JTextField sl = new JTextField(getSynthName());
+	sl.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    setSynthName(sl.getText());
+		}
+	    });
+	c.gridx=3;c.gridy=1;c.gridwidth=3;c.gridheight=2;
+	panel.add(sl,c);
+	c.gridx=4;c.gridy=1;c.gridwidth=3;c.gridheight=1;
+	panel.add(new JLabel(" ( free choosable )"),c);
+	*/
 
-		c.gridx=0;c.gridy=5;c.gridwidth=3;c.gridheight=2;
-		panel.add(new JLabel("Disable Memory Protection?"),c);
-		swOffMemProt = new JCheckBox();
-		swOffMemProt.setSelected( (getSwOffMemProtFlag() & 0x01) == 0x01);
-		swOffMemProt.setEnabled ( (getSwOffMemProtFlag() & 0x02) == 0x02);
-		swOffMemProt.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JCheckBox chb = (JCheckBox)e.getSource();
-				if (chb.isSelected()) setSwOffMemProtFlag( getSwOffMemProtFlag() | 0x01);
-				else setSwOffMemProtFlag( getSwOffMemProtFlag() & 0xfe);
-			}
-		});
-		c.gridx=3;c.gridy=5;c.gridwidth=1;c.gridheight=2;
-		panel.add(swOffMemProt,c);
+	c.gridx=0;c.gridy=3;c.gridwidth=3;c.gridheight=2;
+	panel.add(new JLabel("Enable Remote Control?"),c);
+	sPBP = new JCheckBox();
+	sPBP.setSelected( (getSPBPflag() & 0x01) == 0x01);
+	sPBP.setEnabled ( (getSPBPflag() & 0x02) == 0x02);
+	sPBP.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    JCheckBox chb = (JCheckBox)e.getSource();
+		    if (chb.isSelected()) setSPBPflag( getSPBPflag() | 0x01);
+		    else setSPBPflag( getSPBPflag() & 0xfe);
+		}
+	    });
+	c.gridx=3;c.gridy=3;c.gridwidth=1;c.gridheight=2;
+	panel.add(sPBP,c);
 
-		c.gridx=0;c.gridy=7;c.gridwidth=3;c.gridheight=2;
-		panel.add(new JLabel("Display Hints and Tips?"),c);
-		tipsMsg = new JCheckBox();
-		tipsMsg.setSelected( (getTipsMsgFlag() & 0x01) == 0x01);
-		tipsMsg.setEnabled ( (getTipsMsgFlag() & 0x02) == 0x02);
-		tipsMsg.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JCheckBox chb = (JCheckBox)e.getSource();
-				if (chb.isSelected()) setTipsMsgFlag( getTipsMsgFlag() | 0x01);
-				else setTipsMsgFlag( getTipsMsgFlag() & 0xfe);
-			}
-		});
-		c.gridx=3;c.gridy=7;c.gridwidth=1;c.gridheight=2;
-		panel.add(tipsMsg,c);
+	c.gridx=0;c.gridy=5;c.gridwidth=3;c.gridheight=2;
+	panel.add(new JLabel("Disable Memory Protection?"),c);
+	swOffMemProt = new JCheckBox();
+	swOffMemProt.setSelected( (getSwOffMemProtFlag() & 0x01) == 0x01);
+	swOffMemProt.setEnabled ( (getSwOffMemProtFlag() & 0x02) == 0x02);
+	swOffMemProt.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    JCheckBox chb = (JCheckBox)e.getSource();
+		    if (chb.isSelected()) setSwOffMemProtFlag( getSwOffMemProtFlag() | 0x01);
+		    else setSwOffMemProtFlag( getSwOffMemProtFlag() & 0xfe);
+		}
+	    });
+	c.gridx=3;c.gridy=5;c.gridwidth=1;c.gridheight=2;
+	panel.add(swOffMemProt,c);
 
-		return panel;
-	  }
+	c.gridx=0;c.gridy=7;c.gridwidth=3;c.gridheight=2;
+	panel.add(new JLabel("Display Hints and Tips?"),c);
+	tipsMsg = new JCheckBox();
+	tipsMsg.setSelected( (getTipsMsgFlag() & 0x01) == 0x01);
+	tipsMsg.setEnabled ( (getTipsMsgFlag() & 0x02) == 0x02);
+	tipsMsg.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    JCheckBox chb = (JCheckBox)e.getSource();
+		    if (chb.isSelected()) setTipsMsgFlag( getTipsMsgFlag() | 0x01);
+		    else setTipsMsgFlag( getTipsMsgFlag() & 0xfe);
+		}
+	    });
+	c.gridx=3;c.gridy=7;c.gridwidth=1;c.gridheight=2;
+	panel.add(tipsMsg,c);
 
-	// For storable interface
+	return panel;
+    }
 
-	/** Getter for sPBPflag */
-	public int getSPBPflag() { return this.sPBPflag; };
-	/** Setter for sPBPflag */
-	public void setSPBPflag(int sPBPflag) {
-		this.sPBPflag = sPBPflag;
-		if (prefs != null)
-			prefs.putInt("sPBPflag", sPBPflag);
-	};
+    /** Getter for sPBPflag */
+    public int getSPBPflag() {
+	return prefs.getInt("sPBPflag", 0);
+    }
+    /** Setter for sPBPflag */
+    public void setSPBPflag(int sPBPflag) {
+	prefs.putInt("sPBPflag", sPBPflag);
+    }
 
-	/** Getter for swOffMemProtFlag */
-	public int getSwOffMemProtFlag() { return this.swOffMemProtFlag; };
-	/** Setter for swOffMemProtFlag */
-	public void setSwOffMemProtFlag(int swOffMemProtFlag) {
-		this.swOffMemProtFlag = swOffMemProtFlag;
-		if (prefs != null)
-			prefs.putInt("swOffMemProtFlag", swOffMemProtFlag);
-	};
+    /** Getter for swOffMemProtFlag */
+    public int getSwOffMemProtFlag() {
+	return prefs.getInt("swOffMemProtFlag", 0);
+    }
+    /** Setter for swOffMemProtFlag */
+    public void setSwOffMemProtFlag(int swOffMemProtFlag) {
+	prefs.putInt("swOffMemProtFlag", swOffMemProtFlag);
+    }
 
-	/** Getter for tipsMsgFlag */
-	public int getTipsMsgFlag() { return this.tipsMsgFlag; };
-	/** Setter for tipsMsgFlag */
-	public void setTipsMsgFlag(int tipsMsgFlag) {
-		this.tipsMsgFlag = tipsMsgFlag;
-		if (prefs != null)
-			prefs.putInt("tipsMsgFlag", tipsMsgFlag);
-	};
+    /** Getter for tipsMsgFlag */
+    public int getTipsMsgFlag() {
+	return prefs.getInt("tipsMsgFlag", 0);
+    }
 
-	public void setPreferences(Preferences p) {
-		super.setPreferences(p);
-		sPBPflag = prefs.getInt("sPBPflag", sPBPflag);
-		swOffMemProtFlag = prefs.getInt("swOffMemProtFlag", swOffMemProtFlag);
-		tipsMsgFlag = prefs.getInt("tipsMsgFlag", tipsMsgFlag);
-	}
+    /** Setter for tipsMsgFlag */
+    public void setTipsMsgFlag(int tipsMsgFlag) {
+	prefs.putInt("tipsMsgFlag", tipsMsgFlag);
+    }
 }

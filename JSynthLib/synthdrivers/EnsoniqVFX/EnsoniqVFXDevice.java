@@ -2,6 +2,7 @@
 package synthdrivers.EnsoniqVFX;
 
 import core.*;
+import java.util.prefs.Preferences;
 
 /**
  * Ensoniq VFX device. Copied from the ESQ1.
@@ -18,7 +19,7 @@ import core.*;
  */
 public class EnsoniqVFXDevice extends Device
 {
-        private static final String infoText="JSynthLib supports librarian functions on VFX single/bank/multi patches.\n"+	       
+        private static final String infoText="JSynthLib supports librarian functions on VFX single/bank/multi patches.\n"+
 	         "This driver has been tested with VFX 2.10 version,  "+
 	         "older versions could not work if different sysex length are used.\n"+
 		 "The patch store send the patch in the edit buffer.";
@@ -32,11 +33,17 @@ public class EnsoniqVFXDevice extends Device
 		// i fix the required major version to 2
 		// i let the minor version number empty
 		super ("Ensoniq","VFX","F07E**06020F05000000000002**F7",infoText,"Denis Queffeulou");
-		setSynthName("VFX");
+	}
+
+	/** Constructor for for actual work. */
+	public EnsoniqVFXDevice(Preferences prefs) {
+		this();
+		this.prefs = prefs;
+
+		//setSynthName("VFX");
 		addDriver(new EnsoniqVFXBankDriver());
 		addDriver(new EnsoniqVFXSingleDriver());
 		addDriver(new EnsoniqVFXMultiDriver());
 	}
-
 }
 

@@ -4,7 +4,8 @@
  */
 
 package synthdrivers.KawaiK4;
-import core.*;
+import core.Device;
+import java.util.prefs.Preferences;
 
 /**
  * Device class for KAWAI K4/K4r.
@@ -17,10 +18,16 @@ public class KawaiK4Device extends Device {
     + "available for all K4 datatypes, Singles, Single Banks, Multis, MultiBanks, Effects, EffectBanks, and "
     + "Drumkits. Note that the K4r does not have the effects section that is present on the K4.";
 
-    /** Creates new K4Device */
+    /** Constructor for DeviceListWriter. */
     public KawaiK4Device() {
 	super("Kawai", "K4/K4R", "F07E**0602400000040000000000f7",
 	      INFO_TEXT, "Brian Klock & Gerrit Gehnen");
+    }
+
+    /** Constructor for for actual work. */
+    public KawaiK4Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
 
         addDriver(new KawaiK4BulkConverter());
         addDriver(new KawaiK4SingleDriver());

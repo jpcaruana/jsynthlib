@@ -5,6 +5,7 @@
 package synthdrivers.AlesisA6;
 
 import core.Device;
+import java.util.prefs.Preferences;
 
 public class AlesisA6Device extends Device
 {
@@ -17,7 +18,14 @@ public class AlesisA6Device extends Device
   public AlesisA6Device()
   {
     super ("Alesis","A6",null,DRIVER_INFO,"Kenneth L. Martinez");
-    setSynthName("Andromeda");
+  }
+
+  /** Constructor for for actual work. */
+  public AlesisA6Device(Preferences prefs) {
+    this();
+    this.prefs = prefs;
+
+    //setSynthName("Andromeda");
 
     addDriver(new AlesisA6PgmBankDriver());
     addDriver(new AlesisA6PgmSingleDriver());

@@ -10,6 +10,7 @@
 package synthdrivers.AlesisQS;
 
 import core.*;
+import java.util.prefs.Preferences;
 /**
  *
  * @author  Chris Halls
@@ -24,8 +25,14 @@ public class AlesisQSDevice extends Device
         super("Alesis", "QS7/QS8/QSR", "F07E7F060200000E0E000*00********f7",
               "Librarian support is working.  Work on editors is in progress.",
               "Chris Halls/Zellyn Hunter");
+    }
 
-        setSynthName("QS");
+    /** Constructor for for actual work. */
+    public AlesisQSDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+        //setSynthName("QS");
 
         addDriver (new AlesisQSProgramDriver ());
         addDriver (new AlesisQSMixDriver ());

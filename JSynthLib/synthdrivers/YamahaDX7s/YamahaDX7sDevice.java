@@ -23,41 +23,48 @@
  */
 package synthdrivers.YamahaDX7s;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import java.util.prefs.Preferences;
 
 public class YamahaDX7sDevice extends DX7FamilyDevice
 {
-	private static final String dxInfoText = YamahaDX7sStrings.INFO_TEXT;
+    private static final String dxInfoText = YamahaDX7sStrings.INFO_TEXT;
 
-	/** Creates new YamahaDX7s Device */
-	public YamahaDX7sDevice ()
-	{
-		super("Yamaha","DX7s",null,dxInfoText,"Torsten Tittmann");
+    /** Creates new YamahaDX7s Device */
+    public YamahaDX7sDevice ()
+    {
+	super("Yamaha","DX7s",null,dxInfoText,"Torsten Tittmann");
+    }
 
-		setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
-		setSwOffMemProtFlag(0x02);	// switched off 'Disable Memory Protection?'	and  enabled
-		setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
+    /** Constructor for for actual work. */
+    public YamahaDX7sDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
 
-		// voice patch
-		addDriver (new YamahaDX7sVoiceSingleDriver());
-		addDriver (new YamahaDX7sVoiceBankDriver());
+	setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
+	setSwOffMemProtFlag(0x02);	// switched off 'Disable Memory Protection?'	and  enabled
+	setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
 
-		// additional voice patch
-		addDriver (new YamahaDX7sAdditionalVoiceSingleDriver());	// experimental !!!!
-		addDriver (new YamahaDX7sAdditionalVoiceBankDriver());		// experimental !!!!
+	// voice patch
+	addDriver (new YamahaDX7sVoiceSingleDriver());
+	addDriver (new YamahaDX7sVoiceBankDriver());
 
-		// performance patch
-		addDriver (new YamahaDX7sPerformanceSingleDriver());		// experimental !!!!
-		addDriver (new YamahaDX7sPerformanceBankDriver());		// experimental !!!!
+	// additional voice patch
+	addDriver (new YamahaDX7sAdditionalVoiceSingleDriver());	// experimental !!!!
+	addDriver (new YamahaDX7sAdditionalVoiceBankDriver());		// experimental !!!!
 
-		// system setup patch
-		addDriver (new YamahaDX7sSystemSetupDriver());			// experimental !!!!
+	// performance patch
+	addDriver (new YamahaDX7sPerformanceSingleDriver());		// experimental !!!!
+	addDriver (new YamahaDX7sPerformanceBankDriver());		// experimental !!!!
 
-		// fractional scaling patch
-		addDriver (new YamahaDX7sFractionalScalingSingleDriver());	// experimental !!!!
-		addDriver (new YamahaDX7sFractionalScalingBankDriver());	// experimental !!!!
+	// system setup patch
+	addDriver (new YamahaDX7sSystemSetupDriver());			// experimental !!!!
 
-		// micro tuning patch
-		addDriver (new YamahaDX7sMicroTuningSingleDriver());		// experimental !!!!
-		addDriver (new YamahaDX7sMicroTuningBankDriver());		// experimental !!!!
-	}
+	// fractional scaling patch
+	addDriver (new YamahaDX7sFractionalScalingSingleDriver());	// experimental !!!!
+	addDriver (new YamahaDX7sFractionalScalingBankDriver());	// experimental !!!!
+
+	// micro tuning patch
+	addDriver (new YamahaDX7sMicroTuningSingleDriver());		// experimental !!!!
+	addDriver (new YamahaDX7sMicroTuningBankDriver());		// experimental !!!!
+    }
 }

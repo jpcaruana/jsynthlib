@@ -39,20 +39,21 @@ import javax.swing.JPanel;
 
 import core.Device;
 import core.ErrorMsg;
+import java.util.prefs.Preferences;
 
 public class MIDIboxSIDDevice extends Device
 {
-    private static final String infoText="This driver has been created for MIDIbox SID, a non-commercial DIY\n"+
-        "synthesizer based on the famous Commodore SID soundchip.\n"+
+    private static final String infoText="This driver has been created for MIDIbox SID, a non-commercial DIY "+
+        "synthesizer based on the famous Commodore SID soundchip."+
         "\n"+
-        "More informations about the features can be found under http://www.uCApps.de/midibox_sid.html\n"+
+        "More informations about the features can be found under http://www.uCApps.de/midibox_sid.html"+
         "\n"+
-        "The configuration menu provides a send button which allows you to change the device ID\n"+
-        "and the MIDI channel of your MIDIbox SID(s) via remote. Normaly all MIDIboxes should get\n"+
-        "their own unique ID, but sometimes it makes sense to assign the same ID to multiple SIDs\n"+
+        "The configuration menu provides a send button which allows you to change the device ID "+
+        "and the MIDI channel of your MIDIbox SID(s) via remote. Normaly all MIDIboxes should get "+
+        "their own unique ID, but sometimes it makes sense to assign the same ID to multiple SIDs "+
         "in order to realize nice stereo effects.\n"+
-        "Since JSynthLib doesn't differ between channel and ID, both values will be set to the\n"+
-        "same number to avoid any confusion.\n"+
+        "Since JSynthLib doesn't differ between channel and ID, both values will be set to the "+
+        "same number to avoid any confusion."+
         "\n"+
         "HowTo change the MIDI channel & ID:\n"+
         "   o connect only the SID(s) with the MIDI Out of your computer whose channel should be changed\n"+
@@ -68,7 +69,14 @@ public class MIDIboxSIDDevice extends Device
     public MIDIboxSIDDevice ()
     {
 	super ("MIDIbox","SID","F000007E46000FF7",infoText,"Thorsten Klose");
-        setSynthName("MIDIbox SID");
+    }
+
+    /** Constructor for for actual work. */
+    public MIDIboxSIDDevice(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+        //setSynthName("MIDIbox SID");
 
         addDriver(new MIDIboxSIDSingleDriver());
         addDriver(new MIDIboxSIDBankDriver());

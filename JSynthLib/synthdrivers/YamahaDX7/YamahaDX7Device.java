@@ -23,29 +23,37 @@
  */
 package synthdrivers.YamahaDX7;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import java.util.prefs.Preferences;
 
 public class YamahaDX7Device extends DX7FamilyDevice
 {
-	private static final String dxInfoText = YamahaDX7Strings.INFO_TEXT;
-	
-	/** Creates new YamahaDX7Device */
-	public YamahaDX7Device ()
-	{
-		super ("Yamaha","DX7",null,dxInfoText,"Torsten Tittmann");
-		setSynthName("DX7 MK-I");
+    private static final String dxInfoText = YamahaDX7Strings.INFO_TEXT;
 
-		setSPBPflag(0x02);		// switch off 'Enable Remote Control?', but enabled
-		setSwOffMemProtFlag(0x02);	// switch off 'Disable Memory Protection?', but enabled
-		setTipsMsgFlag(0x03);		// switch on  'Display Hints and Tips?', but enabled
+    /** Creates new YamahaDX7Device */
+    public YamahaDX7Device ()
+    {
+	super ("Yamaha","DX7",null,dxInfoText,"Torsten Tittmann");
+    }
 
-		// DX7 voice patch - basic patch for all modells of the DX7 family
-		addDriver (0, new YamahaDX7Converter());	// in case a DX7 has the SER7 firmware
-		addDriver (new YamahaDX7VoiceSingleDriver());
-		addDriver (new YamahaDX7VoiceBankDriver());
+    /** Constructor for for actual work. */
+    public YamahaDX7Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
 
-		// DX7 Function patch - the single patch is available for DX7-I
-		//			and the bank driver is added for patch handling
-		addDriver (new YamahaDX7PerformanceSingleDriver());
-		addDriver (new YamahaDX7PerformanceBankDriver());
-	}
+	//setSynthName("DX7 MK-I");
+
+	setSPBPflag(0x02);		// switch off 'Enable Remote Control?', but enabled
+	setSwOffMemProtFlag(0x02);	// switch off 'Disable Memory Protection?', but enabled
+	setTipsMsgFlag(0x03);		// switch on  'Display Hints and Tips?', but enabled
+
+	// DX7 voice patch - basic patch for all modells of the DX7 family
+	addDriver (new YamahaDX7Converter());	// in case a DX7 has the SER7 firmware
+	addDriver (new YamahaDX7VoiceSingleDriver());
+	addDriver (new YamahaDX7VoiceBankDriver());
+
+	// DX7 Function patch - the single patch is available for DX7-I
+	//			and the bank driver is added for patch handling
+	addDriver (new YamahaDX7PerformanceSingleDriver());
+	addDriver (new YamahaDX7PerformanceBankDriver());
+    }
 }

@@ -23,42 +23,48 @@
  */
 package synthdrivers.YamahaTX802;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import java.util.prefs.Preferences;
 
 public class YamahaTX802Device extends DX7FamilyDevice
 {
-	private static final String dxInfoText = YamahaTX802Strings.INFO_TEXT;
+    private static final String dxInfoText = YamahaTX802Strings.INFO_TEXT;
 
-	/** Creates new Yamaha TX802 Device */
-	public YamahaTX802Device ()
-	{
-		super("Yamaha","TX802",null,dxInfoText,"Torsten Tittmann");
+    /** Creates new Yamaha TX802 Device */
+    public YamahaTX802Device ()
+    {
+	super("Yamaha","TX802",null,dxInfoText,"Torsten Tittmann");
+    }
 
-		setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
-		setSwOffMemProtFlag(0x02);	// switched off 'Disable Memory Protection?'	and  enabled
-		setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
+    /** Constructor for for actual work. */
+    public YamahaTX802Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
 
+	setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
+	setSwOffMemProtFlag(0x02);	// switched off 'Disable Memory Protection?'	and  enabled
+	setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
 
-		// voice patch
-		addDriver (new YamahaTX802VoiceSingleDriver());
-		addDriver (new YamahaTX802VoiceBankDriver());
+	// voice patch
+	addDriver (new YamahaTX802VoiceSingleDriver());
+	addDriver (new YamahaTX802VoiceBankDriver());
 
-		// additional voice patch
-		addDriver (new YamahaTX802AdditionalVoiceSingleDriver());	// experimental !!!!
-		addDriver (new YamahaTX802AdditionalVoiceBankDriver());		// experimental !!!!
+	// additional voice patch
+	addDriver (new YamahaTX802AdditionalVoiceSingleDriver());	// experimental !!!!
+	addDriver (new YamahaTX802AdditionalVoiceBankDriver());		// experimental !!!!
 
-		// performance patch
-		addDriver (new YamahaTX802PerformanceSingleDriver());		// experimental !!!!
-		addDriver (new YamahaTX802PerformanceBankDriver());		// experimental !!!!
+	// performance patch
+	addDriver (new YamahaTX802PerformanceSingleDriver());		// experimental !!!!
+	addDriver (new YamahaTX802PerformanceBankDriver());		// experimental !!!!
 
-		// system setup patch
-		addDriver (new YamahaTX802SystemSetupDriver());			// experimental !!!!
+	// system setup patch
+	addDriver (new YamahaTX802SystemSetupDriver());			// experimental !!!!
 
-		// fractional scaling patch
-		addDriver (new YamahaTX802FractionalScalingSingleDriver());	// experimental !!!!
-		addDriver (new YamahaTX802FractionalScalingBankDriver());	// experimental !!!!
+	// fractional scaling patch
+	addDriver (new YamahaTX802FractionalScalingSingleDriver());	// experimental !!!!
+	addDriver (new YamahaTX802FractionalScalingBankDriver());	// experimental !!!!
 
-		// micro tuning patch
-		addDriver (new YamahaTX802MicroTuningSingleDriver());		// experimental !!!!
-		addDriver (new YamahaTX802MicroTuningBankDriver());		// experimental !!!!
-	}
+	// micro tuning patch
+	addDriver (new YamahaTX802MicroTuningSingleDriver());		// experimental !!!!
+	addDriver (new YamahaTX802MicroTuningBankDriver());		// experimental !!!!
+    }
 }

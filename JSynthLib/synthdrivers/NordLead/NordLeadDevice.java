@@ -13,23 +13,22 @@ import javax.swing.JPanel;
 
 import core.Device;
 
-
 public class NordLeadDevice extends Device implements ItemListener {
   static final String DRIVER_INFO =
       "Slot one's edit buffer will be used to send and play patches.\n"
-    + "Please be sure to properly set the two required midi channels -\n"
-    + "the global channel (default is 16), and the first slot's midi\n"
+    + "Please be sure to properly set the two required midi channels - "
+    + "the global channel (default is 16), and the first slot's midi "
     + "channel (default is 1).  Set the global channel on the\n"
     + "Configuration tab of Show Details.\n\n"
-    + "If the global channel is incorrect, patches can't be sent\n"
+    + "If the global channel is incorrect, patches can't be sent "
     + "or received via sysex.\n\n"
-    + "The Nord Lead requires the correct bank to be selected before\n"
-    + "storing a patch; if the slot one channel is incorrect,\n"
-    + "JSynthLib's attempt to select the bank will fail and the patch\n"
+    + "The Nord Lead requires the correct bank to be selected before "
+    + "storing a patch; if the slot one channel is incorrect, "
+    + "JSynthLib's attempt to select the bank will fail and the patch "
     + "may be stored in the wrong bank!\n\n"
-    + "When receiving performances from the Nord, you must manually\n"
-    + "select the ROM or card performance bank.  Patch or drum banks\n"
-    + "can be selected automatically by JSynthLib if the slot one midi\n"
+    + "When receiving performances from the Nord, you must manually "
+    + "select the ROM or card performance bank.  Patch or drum banks "
+    + "can be selected automatically by JSynthLib if the slot one midi "
     + "channel is correct.";
   String channels[] = { "1", "2", "3", "4", "5", "6", "7", "8",
     "9", "10", "11", "12", "13", "14", "15", "16"
@@ -37,13 +36,17 @@ public class NordLeadDevice extends Device implements ItemListener {
 
   JComboBox channelList;
 
-  /** Holds value of property globalChannel. */
-  private int globalChannel;
-  
   /** Creates new NordLead */
   public NordLeadDevice() {
     super ("Nord","Lead",null,DRIVER_INFO,"Kenneth L. Martinez");
-    setSynthName("NL1-2");
+  }
+
+  /** Constructor for for actual work. */
+  public NordLeadDevice(Preferences prefs) {
+    this();
+    this.prefs = prefs;
+
+    //setSynthName("NL1-2");
     //Driver drv;
     /*
     JOptionPane.showMessageDialog(PatchEdit.getInstance(),
@@ -81,26 +84,20 @@ public class NordLeadDevice extends Device implements ItemListener {
       setGlobalChannel(channelList.getSelectedIndex() + 1);
     }
   }
-  
+
   /** Getter for property globalChannel.
    * @return Value of property globalChannel.
    *
    */
   public int getGlobalChannel() {
-      return this.globalChannel;
+      return prefs.getInt("globalChannel", 0);
   }
-  
+
   /** Setter for property globalChannel.
    * @param globalChannel New value of property globalChannel.
    *
    */
   public void setGlobalChannel(int globalChannel) {
-      this.globalChannel = globalChannel;
-      if (prefs != null)
-      	prefs.putInt("globalChannel", globalChannel);
-  }
-  public void setPreferences(Preferences p) {
-  	super.setPreferences(p);
-  	globalChannel = prefs.getInt("globalChannel", globalChannel);
+      prefs.putInt("globalChannel", globalChannel);
   }
 }

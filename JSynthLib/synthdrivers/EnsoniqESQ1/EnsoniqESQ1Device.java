@@ -7,6 +7,7 @@
 package synthdrivers.EnsoniqESQ1;
 
 import core.*;
+import java.util.prefs.Preferences;
 /**
  *
  * @author  Gerrit Gehnen
@@ -18,14 +19,20 @@ public class EnsoniqESQ1Device extends Device
 	          "'exit' on the front panel before you can send another patch. This is kind of annoying, so if anyone "+
 		  "knows a way around this let me know. The other ESQ librarians I checked out had the same problem, so "+
 		   "it may be impossible";
-    
+
     /** Creates new EnsoniqESQ1Device */
     public EnsoniqESQ1Device ()
     {
 	super ("Ensoniq","ESQ-1","F07E**06020F0200************F7",infoText,"Brian Klock");
-        setSynthName("ESQ1");
+    }
+
+    /** Constructor for for actual work. */
+    public EnsoniqESQ1Device(Preferences prefs) {
+	this();
+	this.prefs = prefs;
+
+        //setSynthName("ESQ1");
         addDriver (new EnsoniqESQ1BankDriver ());
         addDriver (new EnsoniqESQ1SingleDriver ());
     }
-    
 }
