@@ -54,8 +54,7 @@ public class Patch implements IPatch {
     /** "Comment" comment. */
     private StringBuffer comment;
 
-    // not used. What's this?
-    // I belive this is used by java to maintain backwords compatabl
+    // This is used by java to maintain backwords compatibility.
     static final long serialVersionUID = 2220769917598497681L;
 
     /**
@@ -196,20 +195,21 @@ public class Patch implements IPatch {
 
     // Transferable interface methods
 
-    public Object getTransferData(DataFlavor p1)
+    public Object getTransferData(DataFlavor flavor)
             throws UnsupportedFlavorException, IOException {
-        return this;
+        Patch p = (Patch) this.clone();
+        ErrorMsg.reportStatus("Patch.getTransferData: flavor=" + flavor);
+        ErrorMsg.reportStatus("Patch.getTransferData: Patch=" + p + ", " + p.comment);
+        return p;
     }
 
-    public boolean isDataFlavorSupported(final DataFlavor p1) {
-        // ErrorMsg.reportStatus("isDataFlavorSupported "+driverNum);
-        return p1.match(PatchTransferHandler.PATCH_FLAVOR);
+    public boolean isDataFlavorSupported(final DataFlavor flavor) {
+        ErrorMsg.reportStatus("Patch.isDataFlavorSupported " + flavor);
+        return flavor.match(PatchTransferHandler.PATCH_FLAVOR);
     }
 
     public DataFlavor[] getTransferDataFlavors() {
-        // ErrorMsg.reportStatus("getTransferDataFlavors "+driverNum);
-        DataFlavor[] df = { PatchTransferHandler.PATCH_FLAVOR };
-        return df;
+        return new DataFlavor[] { PatchTransferHandler.PATCH_FLAVOR };
     }
 
     // end of Transferable interface methods
@@ -284,7 +284,7 @@ public class Patch implements IPatch {
         return driver.editPatch(this);
     }
 
-    public final void store(int bankNum, int patchNum) {
+    public final void send(int bankNum, int patchNum) {
         driver.storePatch(this, bankNum, patchNum);
     }
 

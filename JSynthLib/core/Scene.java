@@ -9,6 +9,7 @@
 package core;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.Serializable;
 /**
  * A scene is a container for all patches and their explicite
@@ -19,7 +20,7 @@ import java.io.Serializable;
  * @version $Id$
  * @author  Gerrit Gehnen
  */
-public class Scene extends java.lang.Object implements Serializable, Transferable {
+public class Scene implements Cloneable, Transferable, Serializable {
 
     private IPatch patch;
 
@@ -28,6 +29,9 @@ public class Scene extends java.lang.Object implements Serializable, Transferabl
     private int patchNumber;
 
     private String comment;
+
+    // This is used by java to maintain backwords compatibility.
+    static final long serialVersionUID = -7048122592493606437L;
 
     /** Creates a new instance of Scene */
     /*
@@ -87,24 +91,6 @@ public class Scene extends java.lang.Object implements Serializable, Transferabl
         this.patch = patch;
     }
 
-    public Object getTransferData(java.awt.datatransfer.DataFlavor dataFlavor)
-	throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException {
-        return this;
-    }
-
-    public java.awt.datatransfer.DataFlavor[] getTransferDataFlavors() {
-//         ErrorMsg.reportStatus("getTransferDataFlavors "+patch.driverNum);
-        DataFlavor[] df=new DataFlavor[1];
-        df[0]= new DataFlavor(patch.getDriver().getClass(),patch.getDriver().toString());
-        return df;
-    }
-
-    public boolean isDataFlavorSupported(java.awt.datatransfer.DataFlavor dataFlavor) {
-//         ErrorMsg.reportStatus("isDataFlavorSupported "+patch.driverNum);
-
-        return  dataFlavor.equals(new DataFlavor(patch.getDriver().getClass(),patch.getDriver().toString()));
-    }
-
     /** Getter for property comment.
      * @return Value of property comment.
      */
@@ -118,4 +104,42 @@ public class Scene extends java.lang.Object implements Serializable, Transferabl
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    // Transferable interface methods
+    public Object getTransferData(DataFlavor flavor)
+            throws UnsupportedFlavorException {
+        ErrorMsg.reportStatus("Scene.getTransferData: flavor=" + flavor);
+        //ErrorMsg.reportStatus("Patch.getTransferData: Patch=" + p + ", " + p.comment);
+        if (flavor.match(PatchTransferHandler.SCENE_FLAVOR))
+            return clone();
+        else if (flavor.match(PatchTransferHandler.PATCH_FLAVOR))
+            return getPatch().clone();
+        else
+            throw new UnsupportedFlavorException(flavor);
+    }
+
+    public boolean isDataFlavorSupported(final DataFlavor flavor) {
+        ErrorMsg.reportStatus("Scene.isDataFlavorSupported " + flavor);
+        return (flavor.match(PatchTransferHandler.SCENE_FLAVOR)
+                || flavor.match(PatchTransferHandler.PATCH_FLAVOR));
+    }
+
+    public DataFlavor[] getTransferDataFlavors() {
+        return new DataFlavor[] { 
+                PatchTransferHandler.SCENE_FLAVOR,
+                PatchTransferHandler.PATCH_FLAVOR
+        };
+    }
+    // end of Transferable interface methods
+
+    // Clone interface method
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            // Cannot happen -- we support clone, and so do arrays
+            throw new InternalError(e.toString());
+        }
+    }
+    // end of Clone interface method
 }

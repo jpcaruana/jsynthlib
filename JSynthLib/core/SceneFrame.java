@@ -1,21 +1,21 @@
 package core;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
@@ -36,7 +36,8 @@ class SceneFrame extends AbstractLibraryFrame {
     private static final int PATCH_NUM  = 4;
     private static final int COMMENT    = 5;
 
-    {
+    static {
+        pth = new SceneListTransferHandler();
         UNSAVED_MSG = "This Scene may contain unsaved data.\nSave before closing?";
     }
 
@@ -126,11 +127,11 @@ class SceneFrame extends AbstractLibraryFrame {
     void sendScene() {
         //     ErrorMsg.reportStatus("Transfering Scene");
         for (int i = 0; i < myModel.getRowCount(); i++) {
-            int bankNum = ((SceneListModel) myModel).getSceneAt(i).getBankNumber();
-            int patchNum = ((SceneListModel) myModel).getSceneAt(i).getPatchNumber();
-            IPatch myPatch = myModel.getPatchAt(i);
-            myPatch.calculateChecksum();
-            myPatch.store(bankNum, patchNum);
+            Scene scene = ((SceneListModel) myModel).getSceneAt(i);
+            int bankNum = scene.getBankNumber();
+            int patchNum = scene.getPatchNumber();
+            IPatch myPatch = scene.getPatch();
+            myPatch.send(bankNum, patchNum);
         }
     }
 
@@ -165,28 +166,39 @@ class SceneFrame extends AbstractLibraryFrame {
 
         public Object getValueAt(int row, int col) {
             Scene myScene = (Scene) list.get(row);
+            IPatch myPatch = myScene.getPatch();
             try {
                 switch (col) {
                 case SYNTH:
-                    return myScene.getPatch().getDevice().getSynthName();
+                    return myPatch.getDevice().getSynthName();
                 case TYPE:
-                    return myScene.getPatch().getDriver().getPatchType();
+                    return myPatch.getDriver().getPatchType();
                 case PATCH_NAME:
-                    return myScene.getPatch().getName();
+                    return myPatch.getName();
                 case BANK_NUM:
-                    return myScene.getPatch().getDriver().getBankNumbers()[myScene
-                            .getBankNumber()];
+                    // generic driver returns null
+                    String[] bn = myPatch.getDriver().getBankNumbers();
+                    if (bn != null)
+                        return bn[myScene.getBankNumber()];
+                    else
+                        return String.valueOf(myScene.getBankNumber());
                 case PATCH_NUM:
-                    return myScene.getPatch().getDriver().getPatchNumbers()[myScene
-                            .getPatchNumber()];
+                    String[] pn = myPatch.getDriver().getPatchNumbers();
+                    if (pn != null)
+                        return pn[myScene.getPatchNumber()];
+                    else
+                        return String.valueOf(myScene.getPatchNumber());
                 case COMMENT:
                     return myScene.getComment();
                 default:
-                    ErrorMsg.reportStatus("SceneFrame: internal error.");
+                    ErrorMsg.reportStatus("SceneFrame.getValueAt: internal error.");
                     return null;
                 }
-            } catch (Exception e) {
-                ErrorMsg.reportStatus(e);
+            } catch (NullPointerException e) {
+                ErrorMsg.reportStatus("SceneFrame.getValueAt: row=" + row
+                        + ", col=" + col + ", Patch=" + (Patch) myPatch);
+                ErrorMsg.reportStatus("row count =" + getRowCount());
+                e.printStackTrace();
                 return null;
             }
         }
@@ -197,15 +209,13 @@ class SceneFrame extends AbstractLibraryFrame {
          * would contain text ("true"/"false"), rather than a check box.
          */
         public Class getColumnClass(int c) {
-            try {
-                return Class.forName("java.lang.String");
-            } catch (Exception e) {
-                return null;
-            }
+            return String.class;
         }
 
         public boolean isCellEditable(int row, int col) {
-            return (col > PATCH_NAME);
+            return (col > PATCH_NAME
+                    && !((col == BANK_NUM || col == PATCH_NUM)
+                            && ((Scene) list.get(row)).getPatch().getDriver().isNullDriver()));
         }
 
         public void setValueAt(Object value, int row, int col) {
@@ -214,13 +224,6 @@ class SceneFrame extends AbstractLibraryFrame {
             changed = true;
             Scene myScene = getSceneAt(row);
             switch (col) {
-            case SYNTH:
-                myScene.getPatch().getDevice().setSynthName((String) value);
-                break;
-            case TYPE:
-            case PATCH_NAME:
-                // don't allow to change the Patch Type/Name
-                break;
             case BANK_NUM:
                 myScene.setBankNumber(((Integer) value).intValue());
                 break;
@@ -230,6 +233,8 @@ class SceneFrame extends AbstractLibraryFrame {
             case COMMENT:
                 myScene.setComment((String) value);
                 break;
+            default:
+                ErrorMsg.reportStatus("SceneFrame.setValueAt: internal error.");
             }
             list.set(row, myScene);
         }
@@ -277,9 +282,68 @@ class SceneFrame extends AbstractLibraryFrame {
             return (Scene) list.get(row);
         }
 
+        void addScene(Scene s) {
+            list.add(s);
+            this.fireTableDataChanged();
+        }
+
         void addPatch(IPatch p, int row) {
             list.add(row, new Scene(p));
             this.fireTableDataChanged();
+        }
+    }
+
+    private static class SceneListTransferHandler extends PatchTransferHandler {
+        protected Transferable createTransferable(JComponent c) {
+            SceneListModel pm = (SceneListModel) ((JTable) c).getModel();
+            Scene s = pm.getSceneAt(((JTable) c).getSelectedRow());
+            ErrorMsg.reportStatus("SceneFrame.createTransferable " + s);
+            return (Transferable) s;
+        }
+
+        public boolean importData(JComponent c, Transferable t) {
+            try {
+                if (t.isDataFlavorSupported(SCENE_FLAVOR)) {
+                    Scene s = (Scene) t.getTransferData(SCENE_FLAVOR);
+                    // FIXME Why s.getPatch() is null here????
+                    s.getPatch().setDriver(
+                            (IPatchDriver) DriverUtil.chooseDriver(s.getPatch()
+                                    .getByteArray()));
+                    ((SceneListModel) ((JTable) c).getModel()).addScene(s);
+                    return true;
+                } else if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
+                    IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
+                    // FIXME Why p.driver is null here????
+                    ErrorMsg.reportStatus("SceneListTransferHandler.importData: t=" + t);
+                    ErrorMsg.reportStatus("SceneListTransferHandler.importData: Patch="
+                            + (Patch) p + ((Patch) p).getComment());
+                    p.setDriver((IPatchDriver) DriverUtil.chooseDriver(p
+                            .getByteArray()));
+                    ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
+                    return true;
+                } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
+                    String s = (String) t.getTransferData(TEXT_FLAVOR);
+                    IPatch p = getPatchFromUrl(s);
+                    ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
+                    return true;
+                }
+            } catch (UnsupportedFlavorException e) {
+                ErrorMsg.reportStatus(e);
+            } catch (IOException e) {
+                ErrorMsg.reportStatus(e);
+            }
+            // Let user know we tried to paste.
+            Toolkit.getDefaultToolkit().beep();
+            return false;
+        }
+
+        protected boolean storePatch(IPatch p, JComponent c) { // not used
+            return false;
+        }
+
+        // only for debugging
+        protected void exportDone(JComponent source, Transferable data, int action) {
+            ErrorMsg.reportStatus("SceneListTransferHandler.exportDone " + data);
         }
     }
 

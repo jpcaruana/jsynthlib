@@ -1,62 +1,69 @@
 package core;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
-import javax.swing.*;
-import java.io.*;
-import java.net.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.swing.JComponent;
+import javax.swing.TransferHandler;
 
 public abstract class PatchTransferHandler extends TransferHandler {
-    public static final DataFlavor PATCH_FLAVOR = new DataFlavor(
-            IPatch[].class, "Patch Array");
+    public static final DataFlavor PATCH_FLAVOR =
+        new DataFlavor(IPatch[].class, "Patch Array");
 
-    public static final DataFlavor TEXT_FLAVOR = new DataFlavor(
-            "application/x-java-serialized-object; class=java.lang.String",
-            "string");
+    public static final DataFlavor SCENE_FLAVOR =
+        new DataFlavor(Scene[].class, "Scene Array");
 
-    protected static final DataFlavor[] flavors = { PATCH_FLAVOR, TEXT_FLAVOR };
+    public static final DataFlavor TEXT_FLAVOR =
+        new DataFlavor(String.class, "String");
 
-    protected abstract IPatch getSelectedPatch(JComponent c);
+    protected static final DataFlavor[] flavors = {
+            PATCH_FLAVOR, SCENE_FLAVOR, TEXT_FLAVOR
+    };
 
     protected abstract boolean storePatch(IPatch p, JComponent c);
-
-    protected Transferable createTransferable(JComponent c) {
-        IPatch p = getSelectedPatch(c);
-        if (p == null)
-            return null;
-        return new PatchTransferable(p);
-    }
 
     public int getSourceActions(JComponent c) {
         return COPY;
     }
 
+    // Used by LibraryFrame and BankEditorFrame.
+    // SceneFrame overrides this.
     public boolean importData(JComponent c, Transferable t) {
-        if (canImport(c, t.getTransferDataFlavors())) {
-            try {
+        try {
+            if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
                 IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
-
+                // FIXME Why p.driver is null here????
+                ErrorMsg.reportStatus("PatchTransferHandler.importData: t=" + t);
+                ErrorMsg.reportStatus("PatchTransferHandler.importData: Patch="
+                        + (Patch) p + ((Patch) p).getComment());
+                p.setDriver((IPatchDriver) DriverUtil.chooseDriver(p
+                        .getByteArray()));
                 if (p != null)
                     return storePatch(p, c);
-            } catch (UnsupportedFlavorException ufe) {
-            } catch (Exception ioe) {
-            }
-
-            try {
+            } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
                 String s = (String) t.getTransferData(TEXT_FLAVOR);
                 IPatch p = getPatchFromUrl(s);
                 if (p != null)
                     return storePatch(p, c);
-            } catch (UnsupportedFlavorException ufe) {
-            } catch (IOException ioe) {
             }
+        } catch (UnsupportedFlavorException e) {
+            ErrorMsg.reportStatus(e);
+        } catch (IOException e) {
+            ErrorMsg.reportStatus(e);
         }
         // Let user know we tried to paste.
         Toolkit.getDefaultToolkit().beep();
         return false;
     }
 
-    public IPatch getPatchFromUrl(String s) {
+    protected IPatch getPatchFromUrl(String s) {
 
         try {
             ErrorMsg.reportStatus("S = " + s);
@@ -77,9 +84,9 @@ public abstract class PatchTransferHandler extends TransferHandler {
             System.arraycopy(buff, 0, sysex, 0, i);
             return (DriverUtil.createPatch(sysex))[0];
         } catch (MalformedURLException e) {
-            ErrorMsg.reportStatus("Malformed URL");
-        } catch (IOException ioe) {
-            ErrorMsg.reportStatus("Network I/O Error");
+            ErrorMsg.reportError("Data Paste Error", "Malformed URL", e);
+        } catch (IOException e) {
+            ErrorMsg.reportError("Data Paste Error", "Network I/O Error", e);
         }
         return null;
     }
@@ -88,10 +95,8 @@ public abstract class PatchTransferHandler extends TransferHandler {
         for (int i = 0; i < flavors.length; i++) {
             //ErrorMsg.reportStatus(flavors[i].getMimeType());
             //ErrorMsg.reportStatus(TEXT_FLAVOR.getMimeType());
-            if (PATCH_FLAVOR.match(flavors[i])) {
-                return true;
-            }
-            if (TEXT_FLAVOR.match(flavors[i])) {
+            if (PATCH_FLAVOR.match(flavors[i])
+                    || TEXT_FLAVOR.match(flavors[i])) {
                 return true;
             }
         }
@@ -102,29 +107,6 @@ public abstract class PatchTransferHandler extends TransferHandler {
     public void exportToClipboard(JComponent comp, Clipboard clip, int action) {
         super.exportToClipboard(comp, clip, action);
         Actions.setEnabled(true, Actions.EN_PASTE);
-    }
-
-    /* Transferable containing patch and it's transient information. */
-    protected class PatchTransferable implements Transferable, Serializable {
-        protected IPatch patch;
-
-        public PatchTransferable(IPatch p) {
-            patch = p;
-        }
-
-        public Object getTransferData(DataFlavor df) {
-            if (df.match(flavors[0]))
-                return patch;
-            return null;
-        }
-
-        public boolean isDataFlavorSupported(DataFlavor df) {
-            return df.match(flavors[0]);
-        }
-
-        public DataFlavor[] getTransferDataFlavors() {
-            return flavors;
-        }
     }
 }
 

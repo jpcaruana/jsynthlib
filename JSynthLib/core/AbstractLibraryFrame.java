@@ -21,12 +21,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -44,9 +44,10 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     protected JTable table;
     protected JLabel statusBar;
     protected boolean changed = false;  //has the library been altered since it was last saved?
-    protected String UNSAVED_MSG;
 
-    static PatchTransferHandler pth = new PatchListTransferHandler();
+    protected static String UNSAVED_MSG;
+    protected static PatchTransferHandler pth;
+
     private File filename;
 
     AbstractLibraryFrame(String s, boolean resizable, boolean closable,
@@ -262,7 +263,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
 
     public void copySelectedPatch() {
         pth.exportToClipboard(table, Toolkit.getDefaultToolkit()
-                .getSystemClipboard(), PatchTransferHandler.COPY);
+                .getSystemClipboard(), TransferHandler.COPY);
     }
 
     public void pastePatch() {
@@ -465,28 +466,4 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         abstract void setList(ArrayList newList);
     }
 
-    private static class PatchListTransferHandler extends PatchTransferHandler {
-        protected IPatch getSelectedPatch(JComponent c) {
-            try {
-                JTable t = (JTable) c;
-                return ((PatchTableModel) t.getModel()).getPatchAt(t.getSelectedRow());
-            } catch (Exception e) {
-                ErrorMsg.reportStatus(e);
-                return null;
-            }
-        }
-
-        protected boolean storePatch(IPatch p, JComponent c) {
-            try {
-                // commented out by hiroo Sep.10, 2004
-                //p.chooseDriver();
-                JTable t = (JTable) c;
-                ((PatchTableModel) t.getModel()).addPatch(p);
-                return true;
-            } catch (Exception e) {
-                ErrorMsg.reportStatus(e);
-                return false;
-            }
-        }
-    }
 }

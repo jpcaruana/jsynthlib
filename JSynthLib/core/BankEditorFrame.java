@@ -4,6 +4,8 @@ package core;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
@@ -41,8 +43,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     protected int autoResizeMode = JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS;
     protected int preferredColumnWidth = 75;
 
-    protected static PatchGridTransferHandler pth =
-	new PatchGridTransferHandler();
+    protected static PatchTransferHandler pth = new PatchGridTransferHandler();
 
     /**
      * Creates a new <code>BankEditorFrame</code> instance.
@@ -171,10 +172,13 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         return true;
     }
 
+    private int getPatchNum(int row, int col) {
+        return col * bankDriver.getNumPatches() / bankDriver.getNumColumns()
+                + row;
+    }
+
     private int getSelectedPatchNum() {
-        table = table2;
-        return table.getSelectedColumn() * bankDriver.getNumPatches() / bankDriver.getNumColumns()
-	    + table.getSelectedRow();
+        return getPatchNum(table.getSelectedRow(), table.getSelectedColumn());
     }
 
     // PatchBasket methods
@@ -256,8 +260,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    return;
 	}
         //p.getDriver().choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com
-        new SysexStoreDialog(p, table.getSelectedColumn() * bankDriver.getNumPatches() / bankDriver.getNumColumns()
-			     + table.getSelectedRow());
+        new SysexStoreDialog(p, getSelectedPatchNum());
     }
 
     public JSLFrame editSelectedPatch() {
@@ -328,7 +331,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     // Enable pasting
-    public boolean canImport(java.awt.datatransfer.DataFlavor[] flavors) {
+    public boolean canImport(DataFlavor[] flavors) {
 	// changed by Hiroo July 5th, 2004
 // 	return checkSelected() && pth.canImport(table, flavors);
 	return (table.getSelectedRowCount() != 0
@@ -337,38 +340,25 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     private static class PatchGridTransferHandler extends PatchTransferHandler {
-	protected IPatch getSelectedPatch(JComponent c) {
-	    try {
-		JTable t = (JTable)c;
-		PatchGridModel m = (PatchGridModel) t.getModel();
-		return m.getPatchAt(t.getSelectedRow(), t.getSelectedColumn());
-	    } catch (Exception e) {
-		ErrorMsg.reportStatus(e);
-		return null;
-	    }
+	protected Transferable createTransferable(JComponent c) {
+	    JTable t = (JTable)c;
+	    PatchGridModel m = (PatchGridModel) t.getModel();
+	    return (Transferable) m.getPatchAt(t.getSelectedRow(), t.getSelectedColumn());
 	}
 
 	protected boolean storePatch(IPatch p, JComponent c) {
-	    try {
-	        // commented out by Hiroo Sep.10, 2004
-		//p.chooseDriver();
-		JTable t = (JTable)c;
-		PatchGridModel m =
-		    (PatchGridModel)t.getModel();
-		m.setPatchAt(p, t.getSelectedRow(), t.getSelectedColumn());
-		return true;
-	    } catch (Exception e) {
-		ErrorMsg.reportStatus(e);
-		return false;
-	    }
-	}
+            JTable t = (JTable) c;
+            PatchGridModel m = (PatchGridModel) t.getModel();
+            m.setPatchAt(p, t.getSelectedRow(), t.getSelectedColumn());
+            return true;
+        }
     }
 
     class PatchGridModel extends AbstractTableModel {
-	public IPatch bankData;
-	public IBankDriver bankDriver;
+        private IPatch bankData;
+        private IBankDriver bankDriver;
 
-	public PatchGridModel (IPatch p,IBankDriver d) {
+	PatchGridModel (IPatch p,IBankDriver d) {
 	    super();
 	    ErrorMsg.reportStatus("PatchGridModel");
 	    bankData=p;
@@ -389,42 +379,38 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
 	public Object getValueAt (int row, int col) {
 	    String patchNumbers[] = bankDriver.getPatchNumbers();
-	    int i = col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row;
+	    int i = getPatchNum(row, col);
 	    return (patchNumbers[i] + " " + bankDriver.getPatchName(bankData, i));
 	}
 
-	public IPatch getPatchAt(int row, int col) {
-	    int i = col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row;
-	    return bankDriver.getPatch(bankData, i);
-	}
 	public Class getColumnClass (int c) {
-	    return getValueAt (0, c).getClass ();
+	    return String.class;
 	}
 
 	public boolean isCellEditable (int row, int col) {
-	    //Note that the data/cell address is constant,
-	    //no matter where the cell appears onscreen.
-
 	    //----- Start phil@muqus.com (allow patch name editing from a bank edit window)
 	    //return false;
 	    return true;
 	    //----- End phil@muqus.com
-
-	}
-
-	public void setPatchAt(IPatch p,int row,int col) {
-	    bankDriver.checkAndPutPatch(bankData,p,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
-	    fireTableCellUpdated (row, col);
 	}
 
 	public void setValueAt (Object value, int row, int col) {
-	    //----- Start phil@muqus.com (allow patch name editing from a bank edit window)
-	    int patchNum = col * bankDriver.getNumPatches() / bankDriver.getNumColumns() + row;
+	    int patchNum = getPatchNum(row, col);
 	    String[] patchNumbers = bankDriver.getPatchNumbers();
 	    bankDriver.setPatchName(bankData, patchNum,
 				    ((String) value).substring((patchNumbers[patchNum] + " ").length()));
 	    //----- End phil@muqus.com
 	    fireTableCellUpdated (row, col);
 	}
+
+	IPatch getPatchAt(int row, int col) {
+	    return bankDriver.getPatch(bankData, getPatchNum(row, col));
+	}
+
+	void setPatchAt(IPatch p, int row, int col) {
+	    bankDriver.checkAndPutPatch(bankData, p, getPatchNum(row, col));
+	    fireTableCellUpdated (row, col);
+	}
+
     }
 }

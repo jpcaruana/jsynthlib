@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
@@ -24,10 +26,10 @@ class LibraryFrame extends AbstractLibraryFrame {
     private static final int FIELD2     = 4;
     private static final int COMMENT    = 5;
 
-    {
+    static {
+        pth = new PatchListTransferHandler();
         UNSAVED_MSG = "This Library may contain unsaved data.\nSave before closing?";
     }
-
     LibraryFrame(File file) {
         super(file.getName(),
                 true, //resizable
@@ -143,7 +145,6 @@ class LibraryFrame extends AbstractLibraryFrame {
         private ArrayList list = new ArrayList();
 
         PatchListModel(boolean c) {
-            super();
             changed = c;
         }
 
@@ -161,22 +162,28 @@ class LibraryFrame extends AbstractLibraryFrame {
 
         public Object getValueAt(int row, int col) {
             IPatch myPatch = (IPatch) list.get(row);
-
-            switch (col) {
-            case SYNTH:
-                return myPatch.getDevice().getSynthName();
-            case TYPE:
-                return myPatch.getDriver().getPatchType();
-            case PATCH_NAME:
-                return myPatch.getName();
-            case FIELD1:
-                return myPatch.getDate();
-            case FIELD2:
-                return myPatch.getAuthor();
-            case COMMENT:
-                return myPatch.getComment();
-            default:
-                ErrorMsg.reportStatus("LibraryFrame: internal error.");
+            try {
+                switch (col) {
+                case SYNTH:
+                    return myPatch.getDevice().getSynthName();
+                case TYPE:
+                    return myPatch.getDriver().getPatchType();
+                case PATCH_NAME:
+                    return myPatch.getName();
+                case FIELD1:
+                    return myPatch.getDate();
+                case FIELD2:
+                    return myPatch.getAuthor();
+                case COMMENT:
+                    return myPatch.getComment();
+                default:
+                    ErrorMsg.reportStatus("LibraryFrame.getValueAt: internal error.");
+                    return null;
+                }
+            } catch (NullPointerException e) {
+                ErrorMsg.reportStatus("LibraryFrame.getValueAt: row=" + row + ", col=" + col + ", Patch=" + (Patch) myPatch);
+                ErrorMsg.reportStatus("row count =" + getRowCount());
+                //e.printStackTrace();
                 return null;
             }
         }
@@ -188,11 +195,7 @@ class LibraryFrame extends AbstractLibraryFrame {
          * rather than a check box.
          */
         public Class getColumnClass(int c) {
-            Object obj = getValueAt(0, c);
-            if (obj != null) // Sometimes setValueAt delivers null pointers as value.....
-                return obj.getClass();
-            else
-                return Object.class;
+            return String.class;
         }
 
         /*
@@ -200,8 +203,6 @@ class LibraryFrame extends AbstractLibraryFrame {
          * editable.
          */
         public boolean isCellEditable(int row, int col) {
-            //Note that the data/cell address is constant,
-            //no matter where the cell appears onscreen.
             return (col > TYPE);
         }
 
@@ -225,18 +226,22 @@ class LibraryFrame extends AbstractLibraryFrame {
             case COMMENT:
                 myPatch.setComment((String) value);
                 break;
+            default:
+                ErrorMsg.reportStatus("LibraryFrame.setValueAt: internal error.");
             }
             fireTableCellUpdated(row, col);
         }
 
         // begin PatchTableModel interface methods
         void addPatch(IPatch p) {
+            ErrorMsg.reportStatus("LibraryFrame.addPatch: Patch=" + (Patch) p);
             list.add(p);
             //  fireTableRowsUpdated(getRowCount(),getRowCount());
             this.fireTableDataChanged();
         }
 
         void setPatchAt(IPatch p, int row) {
+            ErrorMsg.reportStatus("LibraryFrame.setPatchAt: row=" + row + ", Patch=" + (Patch) p);
             list.set(row, p);
             fireTableRowsUpdated(row, row);
         }
@@ -263,5 +268,24 @@ class LibraryFrame extends AbstractLibraryFrame {
             this.fireTableDataChanged();
         }
         // end PatchTableModel interface methods
+    }
+
+    private static class PatchListTransferHandler extends PatchTransferHandler {
+        protected Transferable createTransferable(JComponent c) {
+            PatchTableModel pm = (PatchTableModel) ((JTable) c).getModel();
+            IPatch p = pm.getPatchAt(((JTable) c).getSelectedRow());
+            ErrorMsg.reportStatus("PatchListTransferHandler.createTransferable " + p);
+            return (Transferable) p;
+        }
+
+        protected boolean storePatch(IPatch p, JComponent c) {
+            ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
+            return true;
+        }
+
+        // only for debugging
+        protected void exportDone(JComponent source, Transferable data, int action) {
+            ErrorMsg.reportStatus("PatchListTransferHandler.exportDone " + data);
+        }
     }
 }
