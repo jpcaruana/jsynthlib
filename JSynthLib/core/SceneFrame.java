@@ -1,9 +1,16 @@
 package core;
 
 import java.awt.event.MouseEvent;
-import javax.swing.JOptionPane;
 import java.io.File;
-import javax.swing.event.InternalFrameEvent;
+import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.*;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -11,17 +18,16 @@ import javax.swing.event.InternalFrameEvent;
  * @version $Id$
  */
 
-public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLibraryFrame {
-    static int openFrameCount = 0;
-    static final int xOffset = 30, yOffset = 30;
-    SceneListModel myModel;
-    public DNDLibraryTable table;
-    DNDLibraryTable table2;
-    javax.swing.JLabel statusBar;
-    File filename;
-    boolean changed=false;  //has the library been altered since it was last saved?
-    SceneTableCellEditor rowEditor ;
-
+public class SceneFrame extends JInternalFrame implements AbstractLibraryFrame {
+    private static int openFrameCount = 0;
+    private static final int xOffset = 30, yOffset = 30;
+    private SceneListModel myModel;
+    DNDLibraryTable table;
+    private DNDLibraryTable table2;
+    private JLabel statusBar;
+    private File filename;
+    private boolean changed=false;  //has the library been altered since it was last saved?
+    private SceneTableCellEditor rowEditor ;
 
     /**
      * @param file
@@ -46,47 +52,50 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
 
     protected void InitLibraryFrame() {
         //...Create the GUI and put it in the window...
-        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+        addInternalFrameListener(new InternalFrameListener() {
             public void internalFrameClosing(InternalFrameEvent e) {
                 if (!changed) return;
 
                 int i;
-                javax.swing.JInternalFrame[] jList =PatchEdit.desktop.getAllFrames();
+                JInternalFrame[] jList =PatchEdit.desktop.getAllFrames();
 
                 for (int j=0;j<jList.length;j++) {
                     if (jList[j] instanceof BankEditorFrame) {
                         for (i=0;i<myModel.sceneList.size();i++)
-                            if (((BankEditorFrame)(jList[j])).bankData==((Scene)myModel.sceneList.get(i)).getPatch())
-                            { jList[j].moveToFront();
-                              try{jList[j].setSelected(true);
-                              jList[j].setClosed(true); }catch (Exception e1){}
-                              break;}
+                            if (((BankEditorFrame)(jList[j])).bankData==((Scene)myModel.sceneList.get(i)).getPatch()) {
+				jList[j].moveToFront();
+				try {
+				    jList[j].setSelected(true);
+				    jList[j].setClosed(true);
+				} catch (Exception e1) {
+				}
+				break;
+			    }
                     }
 
                     if (jList[j] instanceof PatchEditorFrame) {
                         for (i=0;i<myModel.sceneList.size();i++)
-                            if (((PatchEditorFrame)(jList[j])).p==((Patch)(myModel.sceneList.get(i))))
-                            { jList[j].moveToFront();
-                              try{jList[j].setSelected(true);
-                              jList[j].setClosed(true); }catch (Exception e1){}
-                              break;}
+                            if (((PatchEditorFrame)(jList[j])).p==((Patch)(myModel.sceneList.get(i)))) {
+				jList[j].moveToFront();
+				try {
+				    jList[j].setSelected(true);
+				    jList[j].setClosed(true);
+				} catch (Exception e1) {
+				}
+				break;
+			    }
                     }
                 }
 
                 if (JOptionPane.showConfirmDialog(null,"This Scene may contain unsaved data.\nSave before closing?","Unsaved Data",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
 
                 if (getTitle().startsWith("Unsaved Scene")) {
-                    java.awt.FileDialog fc2=new java.awt.FileDialog(PatchEdit.instance);
-                    java.io.FilenameFilter type1 = new ExtensionFilter("PatchEdit Scene Files (*.scenelib)",".scenelib");
-                    fc2.setMode(fc2.SAVE);
-		    fc2.setFile("Untitled.scenelib");
-                    fc2.setFilenameFilter(type1);
-
-		    fc2.show();
-
-                    if (fc2.getFile() != null) {
-		        File file = new File(fc2.getDirectory(),fc2.getFile());
-
+                    CompatibleFileDialog fc2 = new CompatibleFileDialog();
+                    ExtensionFilter type1 = new ExtensionFilter("PatchEdit Scene Files (*.scenelib)", ".scenelib");
+                    fc2.addChoosableFileFilter(type1);
+                    fc2.setFileFilter(type1);
+                    if (fc2.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                        File file = fc2.getSelectedFile();
                         try {
                             if (!file.getName().toUpperCase().endsWith(".SCENELIB"))
                                 file=new File(file.getPath()+".scenelib");
@@ -246,7 +255,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         });
 
         //Create the scroll  pane and add the table to it.
-        final javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(table);
+        final JScrollPane scrollPane = new JScrollPane(table);
         DNDViewport myviewport=new DNDViewport();
         scrollPane.setViewport(myviewport);
         myviewport.setView(table);
@@ -260,15 +269,15 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         });
 
         //Add the scroll pane to this window.
-        javax.swing.JPanel statusPanel=new javax.swing.JPanel();
-        statusBar=new javax.swing.JLabel(myModel.sceneList.size()+" Patches");
+        JPanel statusPanel=new JPanel();
+        statusBar=new JLabel(myModel.sceneList.size()+" Patches");
         statusPanel.add(statusBar);
 
         getContentPane().setLayout(new java.awt.BorderLayout());
         getContentPane().add(scrollPane, java.awt.BorderLayout.CENTER);
         getContentPane().add(statusPanel, java.awt.BorderLayout.SOUTH);
 
-        javax.swing.table.TableColumn column = null;
+        TableColumn column = null;
         column = table.getColumnModel().getColumn(0); // Synth
         column.setPreferredWidth(50);
         column = table.getColumnModel().getColumn(1); // Type
@@ -305,8 +314,8 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
 
         });
 
-        table.getModel().addTableModelListener( new javax.swing.event.TableModelListener() {
-            public void tableChanged(javax.swing.event.TableModelEvent e) {
+        table.getModel().addTableModelListener( new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
                 statusBar.setText(myModel.sceneList.size()+" Patches");
                 if (((SceneListModel)e.getSource()).getRowCount()>0) {
                     PatchEdit.saveAction.setEnabled(true);
@@ -325,10 +334,10 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         }
         );
 
-        table.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
                 //System.out.println ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
-                if (((javax.swing.ListSelectionModel)e.getSource()).getMaxSelectionIndex()>=0) {
+                if (((ListSelectionModel)e.getSource()).getMaxSelectionIndex()>=0) {
                     PatchEdit.extractAction.setEnabled(true);
                     PatchEdit.sendAction.setEnabled(true);
                     PatchEdit.sendToAction.setEnabled(true);
@@ -480,7 +489,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
     /**
      * @return
      */
-    public javax.swing.JInternalFrame EditSelectedPatch() {
+    public JInternalFrame EditSelectedPatch() {
         if (table.getSelectedRowCount()==0) {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return null;

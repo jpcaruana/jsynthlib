@@ -1,32 +1,39 @@
-/* $Id$ */
-
 package core;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.event.*;
-import javax.swing.JScrollPane;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
-import javax.swing.JInternalFrame;
-import javax.swing.*;
-import java.util.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
 
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.*;
+import javax.swing.table.TableColumn;
+
+/**
+ * @version $Id$
+ */
 
 public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
 {
-    static int openFrameCount = 0;
-    static final int xOffset = 30, yOffset = 30;
+    private static int openFrameCount = 0;
+    private static final int xOffset = 30, yOffset = 30;
     PatchListModel myModel;
-    public DNDLibraryTable table;
-    DNDLibraryTable table2;
+    DNDLibraryTable table;
+    private DNDLibraryTable table2;
     JLabel statusBar;
-    File filename;
-    boolean changed=false;  //has the library been altered since it was last saved?
+    private File filename;
+    private boolean changed=false;  //has the library been altered since it was last saved?
 
     public LibraryFrame(File file)
     {
@@ -62,24 +69,30 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
 
                 for (int j=0;j<jList.length;j++)
                 {
-                    if (jList[j] instanceof BankEditorFrame)
-                    {
+                    if (jList[j] instanceof BankEditorFrame) {
                         for (i=0;i<myModel.PatchList.size();i++)
-                            if (((BankEditorFrame)(jList[j])).bankData==((Patch)(myModel.PatchList.get(i))))
-                            { jList[j].moveToFront();
-                              try{jList[j].setSelected(true);
-                              jList[j].setClosed(true); }catch (Exception e1){}
-                              break;}
+                            if (((BankEditorFrame)(jList[j])).bankData==((Patch)(myModel.PatchList.get(i)))) {
+				jList[j].moveToFront();
+				try {
+				    jList[j].setSelected(true);
+				    jList[j].setClosed(true);
+				} catch (Exception e1){
+				}
+				break;
+			    }
                     }
 
-                    if (jList[j] instanceof PatchEditorFrame)
-                    {
+                    if (jList[j] instanceof PatchEditorFrame) {
                         for (i=0;i<myModel.PatchList.size();i++)
-                            if (((PatchEditorFrame)(jList[j])).p==((Patch)(myModel.PatchList.get(i))))
-                            { jList[j].moveToFront();
-                              try{jList[j].setSelected(true);
-                              jList[j].setClosed(true); }catch (Exception e1){}
-                              break;}
+                            if (((PatchEditorFrame)(jList[j])).p==((Patch)(myModel.PatchList.get(i)))) {
+				jList[j].moveToFront();
+				try{
+				    jList[j].setSelected(true);
+				    jList[j].setClosed(true);
+				} catch (Exception e1){
+				}
+				break;
+			    }
                     }
                 }
 
@@ -87,17 +100,13 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
 
                 if (getTitle().startsWith("Unsaved Library"))
                 {
-                    FileDialog fc2=new FileDialog(PatchEdit.instance);
-                    FilenameFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)",".patchlib");
-
-                    fc2.setFilenameFilter(type1);
-		    fc2.setDirectory (PatchEdit.appConfig.getLibPath());
-		    fc2.show();
-
-                    if (fc2.getDirectory() == null || fc2.getFile() == null)
+                    CompatibleFileDialog fc2 = new CompatibleFileDialog();
+                    ExtensionFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)", ".patchlib");
+                    fc2.addChoosableFileFilter(type1);
+                    fc2.setFileFilter(type1);
+                    if (fc2.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
                     {
-		      File file = new File(fc2.getDirectory(), fc2.getFile());
-
+                        File file = fc2.getSelectedFile();
                         try
                         {
                             if (!file.getName().toUpperCase().endsWith(".PATCHLIB"))
@@ -627,5 +636,4 @@ return;
     public DNDLibraryTable getTable() {
         return table;
     }
-
 }

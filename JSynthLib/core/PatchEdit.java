@@ -6,6 +6,7 @@
 package core;
 import java.io.File;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.util.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -18,22 +19,16 @@ import com.apple.eawt.ApplicationEvent;
 //TODO import /*TODO org.jsynthlib.*/midi.*;
 public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     public static JDesktopPane desktop;
-    //   public static ArrayList DriverList = new ArrayList();
-    //   public static ArrayList deviceList = new ArrayList();
-    public static Patch Clipboard;
+    public static PatchEdit instance; // phil@muqus.com
     public static MidiWrapper MidiOut;
     public static MidiWrapper MidiIn;
-    public static JPopupMenu menuPatchPopup;
-    static JToolBar   toolBar;
 
-    public static int currentPort;
-    public static PrefsDialog prefsDialog;
+    public static JPopupMenu menuPatchPopup;
     public static AppConfig appConfig;
     // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
     public static WaitDialog waitDialog;
-    public static javax.swing.Timer echoTimer;
-    public static int[] newFaderValue = new int[33];
-    public static MidiMonitor midiMonitor;
+
+    // *Action is public since YamahaFS1RBankEditor is using them.
     public static ExtractAction extractAction;
     public static SendAction sendAction;
     public static SendToAction sendToAction;
@@ -61,9 +56,16 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     public static NewSceneAction newSceneAction;
     public static TransferSceneAction transferSceneAction;
 
-    SearchDialog searchDialog;
-    DocumentationWindow documentationWindow;
-    public static PatchEdit instance; // phil@muqus.com
+    static Patch Clipboard;
+    static javax.swing.Timer echoTimer;
+    static MidiMonitor midiMonitor;
+
+    private static JToolBar toolBar;
+    private static int currentPort;
+    private static int[] newFaderValue = new int[33];
+    private static PrefsDialog prefsDialog;
+    private SearchDialog searchDialog;
+    private DocumentationWindow documentationWindow;
 
     /** Initialize Application: */
     public PatchEdit() {
@@ -495,28 +497,14 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
     /** Save and specify a file name */
     protected void saveFrameAs() {
-        FileDialog fc2 = new FileDialog(PatchEdit.this);
-	fc2.setMode(fc2.SAVE);
-        FilenameFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)", ".patchlib");
-        fc2.setFilenameFilter(type1);
-	File file = null;
-	try {
-	    try {
-		file = ((LibraryFrame) desktop.getSelectedFrame()).filename;
-	    } catch (Exception e) {
-		file = ((SceneFrame) desktop.getSelectedFrame()).filename;
-	    }
-	    fc2.setDirectory(file.getParent());
-	    fc2.setFile(file.getName());
-	} catch (Exception e) {
-	    fc2.setDirectory(appConfig.getLibPath());
-	    fc2.setFile("Untitled.patchlib");
-	}
-	fc2.show();
-
-	if (fc2.getFile() == null)
-	    return;
-	file = new File(fc2.getDirectory(), fc2.getFile());
+        CompatibleFileDialog fc2 = new CompatibleFileDialog();
+        FileFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)", ".patchlib");
+        fc2.addChoosableFileFilter(type1);
+        fc2.setFileFilter(type1);
+        fc2.setCurrentDirectory(new File (appConfig.getLibPath()));
+        if (fc2.showSaveDialog(PatchEdit.this) != JFileChooser.APPROVE_OPTION)
+            return;
+        File file = fc2.getSelectedFile();
 	try {
 	    if (desktop.getSelectedFrame() == null) {
 		ErrorMsg.reportError("Error", "Unable to Save Library. Library to save must be focused");
@@ -797,15 +785,14 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
             setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
-            FileDialog fc3 = new FileDialog(PatchEdit.this);
-	    fc3.setMode(fc3.SAVE);
-            FilenameFilter type1 = new ExtensionFilter("Sysex Files (*.syx)", ".syx");
-            fc3.setDirectory(appConfig.getSysexPath());
-            fc3.setFilenameFilter(type1);
-	    fc3.show();
-	    if (fc3.getFile() == null)
+            CompatibleFileDialog fc3 = new CompatibleFileDialog();
+            FileFilter type1 = new ExtensionFilter("Sysex Files (*.syx)", ".syx");
+            fc3.addChoosableFileFilter(type1);
+            fc3.setFileFilter(type1);
+            fc3.setCurrentDirectory(new File (appConfig.getSysexPath()));
+            if (fc3.showSaveDialog(PatchEdit.this) != JFileChooser.APPROVE_OPTION)
 		return;
-	    File file = new File(fc3.getDirectory(), fc3.getFile());
+	    File file = fc3.getSelectedFile();
 	    try {
 		if (desktop.getSelectedFrame() == null) {
 		    ErrorMsg.reportError("Error", "Patch to export must be hilighted\n in the currently focuses Library");
@@ -860,17 +847,17 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
             setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
-            FileDialog fc2 = new FileDialog(PatchEdit.this);
-	    fc2.setMode(fc2.LOAD);
-            FilenameFilter type1 = new ExtensionFilter("Sysex Files (*.syx, *.mid)",
-						       new String[]{".syx", ".mid"});
+            CompatibleFileDialog fc2 = new CompatibleFileDialog();
+            FileFilter type1 = new ExtensionFilter("Sysex Files (*.syx)",".syx");
 	    // core.ImportMidiFile extracts Sysex Messages from MidiFile
-            fc2.setDirectory(appConfig.getSysexPath());
-            fc2.setFilenameFilter(type1);
-	    fc2.show();
-	    if (fc2.getFile() == null)
+            FileFilter type2 = new ExtensionFilter("MIDI Files (*.mid)" ,".mid");
+            fc2.addChoosableFileFilter(type1);
+            fc2.addChoosableFileFilter(type2);
+            fc2.setFileFilter(type1);
+            fc2.setCurrentDirectory(new File(appConfig.getSysexPath()));
+            if (fc2.showOpenDialog(PatchEdit.this) != JFileChooser.APPROVE_OPTION)
 		return;
-	    File file = new File(fc2.getDirectory(), fc2.getFile());
+	    File file = fc2.getSelectedFile();
 	    try {
 		if (desktop.getSelectedFrame() == null) {
 		    ErrorMsg.reportError("Error", "Library to Import Patch\n into Must be in Focus");
@@ -924,15 +911,15 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
             mnemonics.put(this, new Integer('O'));
         }
         public void actionPerformed(ActionEvent e) {
-            FileDialog fc = new FileDialog(PatchEdit.this);
-	    fc.setMode(fc.LOAD);
-            FilenameFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib, *.scenelib)", new String[] {".patchlib", ".scenelib"});
-            fc.setDirectory(appConfig.getLibPath());
-            fc.setFilenameFilter(type1);
-	    fc.show();
-	    if (fc.getFile() == null)
+            CompatibleFileDialog fc = new CompatibleFileDialog();
+            FileFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib, *.scenelib)",
+						   new String[] {".patchlib", ".scenelib"});
+            fc.addChoosableFileFilter(type1);
+            fc.setFileFilter(type1);
+            fc.setCurrentDirectory(new File(appConfig.getLibPath()));
+            if (fc.showOpenDialog(PatchEdit.this) != JFileChooser.APPROVE_OPTION)
 		return;
-	    File file = new File(fc.getDirectory(), fc.getFile());
+	    File file = fc.getSelectedFile();
 	    openFrame(file);
         }
     }
@@ -1025,10 +1012,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (appConfig.getLibPath() != null)
 		    fc.setSelectedFile(new File(appConfig.getLibPath()));
-		fc.showDialog(PatchEdit.this, "Choose Import All Directory");
-		File file = fc.getSelectedFile();
-		if (file == null)
+		if (fc.showDialog(PatchEdit.this, "Choose Import All Directory") != JFileChooser.APPROVE_OPTION)
 		    return;
+		File file = fc.getSelectedFile();
 
 		ImportAllDialog sd = new ImportAllDialog(PatchEdit.this, file);
 		sd.show();
