@@ -3,12 +3,14 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import javax.swing.*;
 import java.io.*;
-
+import java.net.*;
 public abstract class PatchTransferHandler extends TransferHandler {
     public static final DataFlavor PATCH_FLAVOR = 
 	new DataFlavor(Patch[].class, "Patch Array");
+    public static final DataFlavor TEXT_FLAVOR =
+	new DataFlavor("application/x-java-serialized-object; class=java.lang.String","string");
     protected static final DataFlavor[] flavors = {
-	PATCH_FLAVOR,
+	PATCH_FLAVOR,TEXT_FLAVOR
     };
 
     protected abstract Patch getSelectedPatch(JComponent c);
@@ -31,18 +33,69 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	    try {
 		Patch p = (Patch)t.getTransferData(PATCH_FLAVOR);
 		if (p == null)
-		    return false;
+		    {
+			String s = (String)t.getTransferData(TEXT_FLAVOR);
+			p = getPatchFromUrl(s);
+			if (p==null) 
+			    return false;			
+		    }
 		return storePatch(p, c);
 	    } catch (UnsupportedFlavorException ufe) {
 	    } catch (IOException ioe) {
 	    }
+       
+	    try{
+		String s = (String)t.getTransferData(TEXT_FLAVOR);
+		Patch p = getPatchFromUrl(s);
+		if (p==null) 
+		    return false;	
+		else return storePatch(p,c);
+	    
+	} catch (UnsupportedFlavorException ufe) {
+	} catch (IOException ioe) {
 	}
-	return false;
+    }
+    return false;
     }
     
+    public Patch getPatchFromUrl(String s)
+    {
+
+	try {
+	    URL u = new URL(s);
+	    InputStream in = u.openStream();
+	    int b; int i=0;
+	    byte []buff = new byte[65536];
+	    do
+	      {
+		b = in.read();
+		if (b!=-1)
+		  {
+		    buff[i]=(byte)b;
+		    i++;
+		  }
+	      }
+	    while (b!=-1 && i<65535);
+	    byte []sysex = new byte[i];
+	    System.arraycopy(buff,0,sysex,0,i);
+	in.close();
+	    Patch p = new Patch(sysex);
+	    return p;
+
+	}catch (MalformedURLException e) {System.out.println("Malformed URL");}
+	catch (IOException ioe) {System.out.println("Network I/O Error");}
+	
+
+
+	return null;
+    }
+
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
 	for (int i = 0; i < flavors.length; i++) {
 	    if (PATCH_FLAVOR.match(flavors[i])) {
+		return true;
+	    }
+	    if (TEXT_FLAVOR.match(flavors[i])) {
 		return true;
 	    }
 	}
@@ -58,9 +111,12 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	}
 
 	public Object getTransferData(DataFlavor df) {
-	    if (!df.match(flavors[0]))
-		return null;
-	    return patch;
+	    System.out.println(df.getMimeType());
+
+	    if (df.match(flavors[0]))
+		return patch;
+
+	    return null;
 	}
 
 	public boolean isDataFlavorSupported(DataFlavor df) {
