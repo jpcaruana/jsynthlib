@@ -79,8 +79,7 @@ class LibraryFrame extends AbstractLibraryFrame {
 
         // more than one patches are included.
         Actions.setEnabled(table.getRowCount() > 1, 
-                Actions.EN_CROSSBREED
-                | Actions.EN_DELETE_DUPLICATES | Actions.EN_SORT);
+                Actions.EN_DELETE_DUPLICATES | Actions.EN_SORT);
 
         // one or more patches are selected
         Actions.setEnabled(table.getSelectedRowCount() > 0,
@@ -90,7 +89,7 @@ class LibraryFrame extends AbstractLibraryFrame {
         Actions.setEnabled(table.getSelectedRowCount() == 1,
                 Actions.EN_COPY
                 | Actions.EN_CUT | Actions.EN_EXPORT | Actions.EN_REASSIGN
-                | Actions.EN_STORE | Actions.EN_UPLOAD);
+                | Actions.EN_STORE | Actions.EN_UPLOAD | Actions.EN_CROSSBREED);
 
         // one signle patch is selected
         Actions.setEnabled(table.getSelectedRowCount() == 1

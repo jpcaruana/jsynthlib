@@ -31,9 +31,8 @@ class CrossBreeder {
         lib = library.getPatchCollection();
         libSize = lib.size();
 
-        // Choose the base patch.
-        // XXX Users may want to specify the base patch.
-        IPatch base = getRandomPatch(); 
+        // get a base patch.
+        IPatch base = library.getSelectedPatch(); 
         ErrorMsg.reportStatus("base : " + base);
         int sysexSize = base.getSize();
         ErrorMsg.reportStatus("length : " + sysexSize);
