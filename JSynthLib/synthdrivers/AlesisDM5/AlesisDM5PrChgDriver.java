@@ -21,8 +21,6 @@
 
 package synthdrivers.AlesisDM5;
 import core.*;
-import java.io.UnsupportedEncodingException;
-import javax.swing.*;
 
 /** Line6 Single Driver. Used for Line6 program patch.
 * @author Jeff Weber
@@ -106,5 +104,12 @@ public class AlesisDM5PrChgDriver extends Driver {
                                     new SysexHandler.NameValue("channel", getChannel())
                                     )
              );
+    }
+    
+    /** Opens an edit window on the specified patch.
+        */
+    protected JSLFrame editPatch(Patch p)
+    {
+        return new AlesisDM5PrChgEditor((Patch)p);
     }
 }
