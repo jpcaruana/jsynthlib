@@ -14,9 +14,8 @@ import java.util.*;
 	Matrice de modulation.
 	@author denis queffeulou mailto:dqueffeulou@free.fr
 */
-class MatrixWindow extends JInternalFrame implements PatchContainer 
+class MatrixWindow extends JPanel 
 {
-
 	private Patch p;
 	
 	public Patch getPatch()
@@ -24,10 +23,10 @@ class MatrixWindow extends JInternalFrame implements PatchContainer
 		return p;
 	}
 	
+
 	MatrixWindow(Patch aPatch) {
-		super("Yamaha FS1R modulation matrix",true,true,true,true);
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		p = aPatch;
-		setSize(800, 300);
                 
 		Component oTableWidgets[][] = new Component[20][8];
 		MatrixCellRenderer oCellRender = new MatrixCellRenderer(p, oTableWidgets);
@@ -38,7 +37,6 @@ class MatrixWindow extends JInternalFrame implements PatchContainer
 			oDest.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 			oTableWidgets[14][i] = oDest;
 			// depth
-			//oTableWidgets[15][i] = new KnobWidget(null, p, 0, 0x7F, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x48+i), new YamahaFS1RPerformanceDriver.Sender(0x48+i));			
 			oTableWidgets[15][i] = new SpinnerWidget("",p , 0, 0x7F, -64, new YamahaFS1RPerformanceDriver.Model(p, 0x48+i), new YamahaFS1RPerformanceDriver.Sender(0x48+i));
 			// sources
 			for (int s = 0; s < 14; s++) {
@@ -61,7 +59,8 @@ class MatrixWindow extends JInternalFrame implements PatchContainer
 			TableColumn oColumn = oTable.getColumnModel().getColumn(i);
 			if (i == 15) {
 				oColumn.setPreferredWidth(250);
-			} else if (i == 16) {
+			} 
+			else if (i == 16) {
 				oColumn.setPreferredWidth(70);
 			}
 			else {
@@ -76,11 +75,9 @@ class MatrixWindow extends JInternalFrame implements PatchContainer
 		oTable.setRowMargin(0);
 		oTable.setAlignmentX(Component.LEFT_ALIGNMENT);
 		JScrollPane oScrollPane = new JScrollPane(oTable);
-		//JPanel oMatrixPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		//oMatrixPanel.add(oScrollPane);
-		//oScrollPane.setMaximumSize(new Dimension(600, 200));
-		oScrollPane.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),"Modulation matrix",TitledBorder.LEFT,TitledBorder.CENTER));
-		getContentPane().add(oScrollPane);
+		
+		oTable.setPreferredScrollableViewportSize(new Dimension(800, 300)); 
+		add(oScrollPane);
 	}
 
 	private static class MatrixTableModel extends AbstractTableModel {
@@ -91,15 +88,23 @@ class MatrixWindow extends JInternalFrame implements PatchContainer
 		MatrixTableModel(Object aTable[]) {
 			mTable = aTable;
 		}
-		public int getColumnCount() {return columnNames.length;}       
-		public String getColumnName(int col) { return columnNames[col];}
-		public int getRowCount() { return 8;}
-		public Class getColumnClass(int c) {return getValueAt(0, c).getClass();}
+		public int getColumnCount() {
+			return columnNames.length;
+		}       
+		public String getColumnName(int col) { 
+			return columnNames[col];
+		}
+		public int getRowCount() { 
+			return 8;
+		}
+		public Class getColumnClass(int c) {
+			return getValueAt(0, c).getClass();
+		}
 		public Object getValueAt(int row, int col) {
 			if (col == 0) {
 				return Integer.toString(row+1);
 			}
-			return new Integer(0);
+			return new Integer(row*col);
 		}
         public boolean isCellEditable(int row, int col) {
              return col > 0;
