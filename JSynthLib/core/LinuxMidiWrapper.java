@@ -40,10 +40,9 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		for (int i=0;i<midiDevList.size();i++) {
 			File file = new java.io.File( (String) midiDevList.get(i));
 			try {
-				RandomAccessFile pipe = new java.io.RandomAccessFile(file , "rw");
-				inStream[i] = new java.io.FileInputStream( pipe.getFD() );
-				outStream[i] = new java.io.FileOutputStream( pipe.getFD() );
-				outStream[i] = new BufferedOutputStream(outStream[i] ,4100);
+				inStream[i]  = new java.io.FileInputStream(file);
+				outStream[i] = new java.io.FileOutputStream(file);
+				outStream[i] = new BufferedOutputStream(outStream[i], 4100);
 			} catch (Exception e) {
 				e.printStackTrace ();
 			}
@@ -328,75 +327,84 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		 * @see "MIDI 1.0 Detailed Specification, Page A-3"
 		 * @See javax.sound.midi.SystemMessage
 		 */
-		boolean thirdByte = false;
-		int runningStatus = 0;
-		int data1;
-		final int BUFSIZE = 1024;
-		byte[] buf = new byte[BUFSIZE];	// sysex data buffer
-		int size;	// Sysex data size
+		private int runningStatus = 0;
+		private boolean thirdByte = false;
+		private final int BUFSIZE = 1024;
+		private byte[] buf = new byte[BUFSIZE]; // data buffer
+		private int size; // only for Sysex
 
 		private void addToList(int c) throws InvalidMidiDataException {
 		    MidiMessage msg;
+		    if ((c & ~0xff) != 0)
+			throw new InvalidMidiDataException();
 		    if ((c & 0x80) == 0x80) {
 			// status byte
-			if ((c & 0xf8) == 0xf8 // System Real Time Message
-			    || c == ShortMessage.TUNE_REQUEST) {
+			if ((c & 0xf8) == 0xf8) { // System Real Time Message
 			    // 0 byte message
 			    msg = (MidiMessage) new ShortMessage();
 			    ((ShortMessage) msg).setMessage(c);
 			    list.add(msg);
-			} else if (c == SysexMessage.SYSTEM_EXCLUSIVE) {
-			    buf[0] = (byte) c;
-			    size = 1;
-			} else if (c == ShortMessage.END_OF_EXCLUSIVE
-				   && runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
-			    byte[] d = new byte[size + 1];
-			    System.arraycopy(buf, 0, d, 0, size);
-			    d[size++] = (byte) c;
-			    msg = (MidiMessage) new SysexMessage();
-			    ((SysexMessage) msg).setMessage(d, size);
-			    list.add(msg);
-			}
-			if ((c & 0xf8) != 0xf8) {
-			    // System Real Time Message
-			    // should not affect runningStatus nor thirdByte
-			    runningStatus = c;
+			} else {
 			    thirdByte = false;
+			    if (c == SysexMessage.SYSTEM_EXCLUSIVE) { // f0
+				runningStatus = c;
+				buf[0] = (byte) c;
+				size = 1;
+			    } else if (c == ShortMessage.END_OF_EXCLUSIVE // f7
+				       && runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
+				runningStatus = 0;
+				byte[] d = new byte[size + 1];
+				System.arraycopy(buf, 0, d, 0, size);
+				d[size++] = (byte) c;
+				msg = (MidiMessage) new SysexMessage();
+				((SysexMessage) msg).setMessage(d, size);
+				list.add(msg);
+			    } else if (c == ShortMessage.TUNE_REQUEST) { // f6
+				// 0 byte message
+				runningStatus = c;
+				msg = (MidiMessage) new ShortMessage();
+				((ShortMessage) msg).setMessage(c);
+				list.add(msg);
+			    } else {
+				runningStatus = c;
+				buf[0] = (byte) c;
+			    }
 			}
 		    } else {
 			// data byte
 			if (thirdByte) {
 			    thirdByte = false;
 			    msg = (MidiMessage) new ShortMessage();
-			    ((ShortMessage) msg).setMessage(runningStatus, data1, c);
+			    ((ShortMessage) msg).setMessage((int) (buf[0] & 0xff),
+							    (int) (buf[1] & 0xff), c);
 			    list.add(msg);
 			} else if (runningStatus == 0) {
 			    ;	// ignore
-			} else if (runningStatus < ShortMessage.PROGRAM_CHANGE
-				   || (runningStatus >= ShortMessage.PITCH_BEND
-				       && runningStatus < SysexMessage.SYSTEM_EXCLUSIVE)) {
+			} else if (runningStatus < ShortMessage.PROGRAM_CHANGE // 0xc0
+				   || (runningStatus >= ShortMessage.PITCH_BEND // 0xe0
+				       && runningStatus < SysexMessage.SYSTEM_EXCLUSIVE)) { // 0xf0
 			    // 2 byte message
 			    thirdByte = true;
-			    data1 = c;
-			} else if (runningStatus == ShortMessage.SONG_POSITION_POINTER) {
+			    buf[1] = (byte) c;
+			} else if (runningStatus == ShortMessage.SONG_POSITION_POINTER) { // 0xf2
 			    // 2 byte message
 			    runningStatus = 0;
 			    thirdByte = true;
-			    data1 = c;
-			} else if (runningStatus >= ShortMessage.PROGRAM_CHANGE
-				   && runningStatus < ShortMessage.PITCH_BEND) {
+			    buf[1] = (byte) c;
+			} else if (runningStatus >= ShortMessage.PROGRAM_CHANGE // 0xc0
+				   && runningStatus < ShortMessage.PITCH_BEND) { // 0xe0
 			    // 1 byte message
 			    msg = (MidiMessage) new ShortMessage();
-			    ((ShortMessage) msg).setMessage(runningStatus, data1, 0);
+			    ((ShortMessage) msg).setMessage((int) (buf[0] & 0xff), c, 0);
 			    list.add(msg);
-			} else if (runningStatus == ShortMessage.MIDI_TIME_CODE
-				   || runningStatus == ShortMessage.SONG_SELECT) {
+			} else if (runningStatus == ShortMessage.MIDI_TIME_CODE // 0xf1
+				   || runningStatus == ShortMessage.SONG_SELECT) { // 0xf3
 			    // 1 byte message
 			    runningStatus = 0;
 			    msg = (MidiMessage) new ShortMessage();
-			    ((ShortMessage) msg).setMessage(runningStatus, data1, 0);
+			    ((ShortMessage) msg).setMessage((int) (buf[0] & 0xff), c, 0);
 			    list.add(msg);
-			} else if (runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) {
+			} else if (runningStatus == SysexMessage.SYSTEM_EXCLUSIVE) { // 0xf0
 			    buf[size++] = (byte) c;
 			    if (size == buf.length) {
 				// Sysex data buffer is full
