@@ -3,8 +3,8 @@
  * =====================================================================
  * @author  Torsten Tittmann
  * file:    YamahaDX7VoiceBankDriver.java
- * date:    25.02.2003
- * @version 0.3
+ * date:    $Date$
+ * @version $Id$
  *
  * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
  *
@@ -29,8 +29,9 @@
  *                          - changed driver configuration access
  *                          - unused setPatchName method removed
  *                          - unnecessary code removed
- *         25.02.2003 v0.3: - driver name changed (YamahaDX7BankVoiceDriver -> YamahaDX7VoiceBankDriver)
- *                          - setPatchName method is needed yet
+ *         25.02.2003:  - driver name changed (YamahaDX7BankVoiceDriver -> YamahaDX7VoiceBankDriver)
+ *                      - setPatchName method is needed yet
+ *                      - using CVS Keywords for date and version 
  */
 
 package synthdrivers.YamahaDX7;
@@ -524,7 +525,7 @@ public class YamahaDX7VoiceBankDriver extends BankDriver
       sysex[singleSize-1]=(byte)0xF7;
  
 
-      Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+      Patch p = new Patch(getDeviceNum(),sysex);        // single sysex
       PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);
 
       return p;
@@ -548,8 +549,8 @@ public class YamahaDX7VoiceBankDriver extends BankDriver
     sysex[05]=(byte)0x00;
     sysex[trimSize-1]=(byte)0xF7;
 
-    Patch v = new Patch(DX7Constants.INIT_VOICE);
-    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());
+    Patch v = new Patch(getDeviceNum(),DX7Constants.INIT_VOICE);        // single sysex
+    Patch p = new Patch(sysex,getDeviceNum(),getDriverNum());           // bank sysex
 
     for (int i=0;i<numPatches;i++)
         putPatch(p,v,i);
