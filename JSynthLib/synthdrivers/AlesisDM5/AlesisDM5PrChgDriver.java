@@ -31,6 +31,29 @@ public class AlesisDM5PrChgDriver extends Driver {
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.PROG_CHNG_DUMP_REQ_ID); //System Info Dump Request
     
+    /** Sysex program dump byte array representing a new program change table patch*/
+    static final byte NEW_SYSEX[] =
+    {
+        (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x13, (byte)0x00, (byte)0x03, (byte)0x00,
+        (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x04, (byte)0x05, (byte)0x06, (byte)0x07, (byte)0x08,
+        (byte)0x09, (byte)0x0A, (byte)0x0B, (byte)0x0C, (byte)0x0D, (byte)0x0E, (byte)0x0F, (byte)0x10,
+        (byte)0x11, (byte)0x12, (byte)0x13, (byte)0x14, (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03,
+        (byte)0x04, (byte)0x05, (byte)0x06, (byte)0x07, (byte)0x08, (byte)0x09, (byte)0x0A, (byte)0x0B,
+        (byte)0x0C, (byte)0x0D, (byte)0x0E, (byte)0x0F, (byte)0x10, (byte)0x11, (byte)0x12, (byte)0x13,
+        (byte)0x14, (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x04, (byte)0x05, (byte)0x06,
+        (byte)0x07, (byte)0x08, (byte)0x09, (byte)0x0A, (byte)0x0B, (byte)0x0C, (byte)0x0D, (byte)0x0E,
+        (byte)0x0F, (byte)0x10, (byte)0x11, (byte)0x12, (byte)0x13, (byte)0x14, (byte)0x00, (byte)0x01,
+        (byte)0x02, (byte)0x03, (byte)0x04, (byte)0x05, (byte)0x06, (byte)0x07, (byte)0x08, (byte)0x09,
+        (byte)0x0A, (byte)0x0B, (byte)0x0C, (byte)0x0D, (byte)0x0E, (byte)0x0F, (byte)0x10, (byte)0x11,
+        (byte)0x12, (byte)0x13, (byte)0x14, (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x04,
+        (byte)0x05, (byte)0x06, (byte)0x07, (byte)0x08, (byte)0x09, (byte)0x0A, (byte)0x0B, (byte)0x0C,
+        (byte)0x0D, (byte)0x0E, (byte)0x0F, (byte)0x10, (byte)0x11, (byte)0x12, (byte)0x13, (byte)0x14,
+        (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x04, (byte)0x05, (byte)0x06, (byte)0x07,
+        (byte)0x08, (byte)0x09, (byte)0x0A, (byte)0x0B, (byte)0x0C, (byte)0x0D, (byte)0x0E, (byte)0x0F,
+        (byte)0x10, (byte)0x11, (byte)0x12, (byte)0x13, (byte)0x14, (byte)0x00, (byte)0x01, (byte)0x6D,
+        (byte)0xF7
+    };
+    
     /** Constructs a AlesisDM5PrChgDriver.
     */
     public AlesisDM5PrChgDriver()
@@ -56,15 +79,16 @@ public class AlesisDM5PrChgDriver extends Driver {
         super(patchType, authors);
     }
     
-    /** Send Program Change MIDI message. The Alesis System Info driver does
-        * not utilize program change messages. This method is overrided with a
-        * null method.*/
+    /** Send Program Change MIDI message. The Alesis Program Change Table driver
+        * does not utilize program change messages. This method is overriden
+        * with a null method.
+        */
     protected void setPatchNum(int patchNum) {
     }
     
-    /** Send Control Change (Bank Select) MIDI message. The Alesis System Info 
-        * driver does not utilize bank select. This method is overrided with a
-        * null method.
+    /** Send Control Change (Bank Select) MIDI message. The Alesis Program 
+        * Change Table driver does not utilize bank select. This method is
+        * overriden with a null method.
         */
     protected void setBankNum(int bankNum) {
     }
@@ -100,6 +124,15 @@ public class AlesisDM5PrChgDriver extends Driver {
                                     new SysexHandler.NameValue("channel", getChannel())
                                     )
              );
+    }
+    
+    /** Creates a new program change table patch with default values.
+        */
+    protected Patch createNewPatch()
+    {
+        Patch p = new Patch(NEW_SYSEX, this);
+        calculateChecksum(p);
+        return p;
     }
     
     /** Opens an edit window on the specified patch.

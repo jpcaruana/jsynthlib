@@ -35,6 +35,20 @@ public class AlesisDM5TrSetDriver extends Driver {
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.TRIG_SETP_DUMP_REQ_ID); //System Info Dump Request
     
+    /** Sysex program dump byte array representing a new trigger setup patch*/
+    static final byte NEW_SYSEX[] =
+    {
+        (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x13, (byte)0x00, (byte)0x05, (byte)0x63,
+        (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x63,
+        (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07,
+        (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07,
+        (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07,
+        (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07,
+        (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07,
+        (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07, (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x07,
+        (byte)0x63, (byte)0x63, (byte)0x63, (byte)0x24, (byte)0xF7
+    };
+    
     /** Constructs a AlesisDM5TrSetDriver.
     */
     public AlesisDM5TrSetDriver()
@@ -60,14 +74,15 @@ public class AlesisDM5TrSetDriver extends Driver {
         super(patchType, authors);
     }
     
-    /** Send Program Change MIDI message. The Alesis System Info driver does
-        * not utilize program change messages. This method is overrided with a
-        * null method.*/
+    /** Send Program Change MIDI message. The Alesis Trigger Setup driver does
+        * not utilize program change messages. This method is overriden with a
+        * null method.
+        */
     protected void setPatchNum(int patchNum) {
     }
     
-    /** Send Control Change (Bank Select) MIDI message. The Alesis System Info 
-        * driver does not utilize bank select. This method is overrided with a
+    /** Send Control Change (Bank Select) MIDI message. The Alesis Trigger Setup 
+        * driver does not utilize bank select. This method is overriden with a
         * null method.
         */
     protected void setBankNum(int bankNum) {
@@ -102,6 +117,15 @@ public class AlesisDM5TrSetDriver extends Driver {
     public void requestPatchDump(int bankNum, int patchNum) {
         send(SYS_REQ.toSysexMessage(getChannel(),
                                     new SysexHandler.NameValue("channel", getChannel())));
+    }
+    
+    /** Creates a new trigger setup patch with default values.
+        */
+    protected Patch createNewPatch()
+    {
+        Patch p = new Patch(NEW_SYSEX, this);
+        calculateChecksum(p);
+        return p;
     }
     
     /** Opens an edit window on the specified patch.
