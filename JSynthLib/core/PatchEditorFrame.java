@@ -189,6 +189,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 				copySelectedPatch();
 			//restore backup
 			p.useSysexFromPatch(originalPatch);
+			// XXX Why don't we simply do as follows?
+			// p = originalPatch;
 		}
 	}
 	
@@ -556,10 +558,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     void revalidateDriver() {
-        ISingleDriver driver = (ISingleDriver) DriverUtil.chooseDriver(p.getByteArray());
-        if (driver != null) {
-            p.setDriver(driver);
-        } else {
+        p.setDriver();
+        if (p.getDriver().isNullDriver()) {
             try {
                 setClosed(true);
             } catch (PropertyVetoException e) {

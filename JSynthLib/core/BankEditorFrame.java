@@ -290,10 +290,8 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     // end of PatchBasket methods
 
     void revalidateDriver() {
-        bankDriver = (IBankDriver) DriverUtil.chooseDriver(bankData.getByteArray());
-        if (bankDriver != null) {
-            bankData.setDriver(bankDriver);
-        } else {
+        bankData.setDriver();
+        if (bankData.getDriver().isNullDriver()) {
             try {
                 setClosed(true);
             } catch (PropertyVetoException e) {

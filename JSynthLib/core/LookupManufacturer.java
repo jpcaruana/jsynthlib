@@ -368,12 +368,4 @@ public class LookupManufacturer {
 
         return "Invalid Manufacturer";
     }
-    
-    /**
-     * Returns Manufacturer name for patch.
-     */
-    public static String get(IPatch patch) {
-        byte[] sysex = patch.getByteArray();
-        return get(sysex[1], sysex[2], sysex[3]);
-    }
 }

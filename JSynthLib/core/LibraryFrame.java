@@ -284,8 +284,8 @@ class LibraryFrame extends AbstractLibraryFrame {
         }
 
         // only for debugging
-        protected void exportDone(JComponent source, Transferable data, int action) {
-            ErrorMsg.reportStatus("PatchListTransferHandler.exportDone " + data);
-        }
+//        protected void exportDone(JComponent source, Transferable data, int action) {
+//            ErrorMsg.reportStatus("PatchListTransferHandler.exportDone " + data);
+//        }
     }
 }

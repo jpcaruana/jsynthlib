@@ -333,8 +333,7 @@ abstract public class Driver implements ISingleDriver {
         // driver not found
         pk.setDriver(null); //reset
         pk.setComment("Probably a "
-                + LookupManufacturer.get(pk.getByteArray()[1], pk
-                        .getByteArray()[2], pk.getByteArray()[3])
+                + pk.lookupManufacturer()
                 + " Patch, Size: " + pk.getByteArray().length);
         JOptionPane.showMessageDialog(null, "You requested a "
                 + this.toString() + " patch!"

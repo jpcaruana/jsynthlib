@@ -411,14 +411,12 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     }
 
     private void chooseDriver(IPatch patch) {
-        byte[] sysex = patch.getByteArray();
-        IPatchDriver driver = (IPatchDriver) DriverUtil.chooseDriver(sysex);
-        patch.setDriver(driver);
-        if (driver == null) {
+        patch.setDriver();
+        if (patch.getDriver().isNullDriver()) {
             // Unkown patch, try to guess at least the manufacturer
             patch.setComment("Probably a "
-                    + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
-                    + " Patch, Size: " + sysex.length);
+                    + patch.lookupManufacturer()
+                    + " Patch, Size: " + patch.getSize());
         }
     }
 

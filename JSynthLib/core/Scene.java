@@ -108,12 +108,10 @@ public class Scene implements Cloneable, Transferable, Serializable {
     // Transferable interface methods
     public Object getTransferData(DataFlavor flavor)
             throws UnsupportedFlavorException {
-        ErrorMsg.reportStatus("Scene.getTransferData: flavor=" + flavor);
-        //ErrorMsg.reportStatus("Patch.getTransferData: Patch=" + p + ", " + p.comment);
         if (flavor.match(PatchTransferHandler.SCENE_FLAVOR))
-            return clone();
+            return this;
         else if (flavor.match(PatchTransferHandler.PATCH_FLAVOR))
-            return getPatch().clone();
+            return getPatch();
         else
             throw new UnsupportedFlavorException(flavor);
     }

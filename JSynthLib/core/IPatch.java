@@ -35,6 +35,12 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     void setDriver(IPatchDriver driver);
 
     /**
+     * Set driver which is for the sysex data.
+     * @see DriverUtil#chooseDriver(byte[])
+     */
+    void setDriver();
+
+    /**
      * Return a hexadecimal string for
      * {@link IDriver#supportsPatch IDriver.suppportsPatch} at most 16 byte
      * sysex data.
@@ -100,8 +106,19 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     /** Get an array of sysex messages representing this patch. */
     SysexMessage[] getMessages();
 
-    /** Get a byte array representing this patch. */
+    /**
+     * Get a byte array representing this patch. According to the implementation
+     * of IPatch interface, this method may be expensive. Be careful to use
+     * this. You may want to add a new method to IPatch interface, as getSize()
+     * or lookupManufacturer().
+     */
     byte[] getByteArray();
+    
+    /** Get the size (number of byte) of Patch. */
+    int getSize();
+
+    /** Look up manufacturer name from Sysex data. */
+    String lookupManufacturer();
 
     /**
      * Change this patch to contain the same data as p. Used for backing up

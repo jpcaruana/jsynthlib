@@ -7,18 +7,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
 
 import core.Device;
+import core.DriverUtil;
 import core.ErrorMsg;
 import core.IBankDriver;
 import core.IPatch;
 import core.IPatchDriver;
 import core.ISingleDriver;
 import core.JSLFrame;
+import core.LookupManufacturer;
 import core.PatchTransferHandler;
 
 /**
@@ -57,7 +58,7 @@ public class XMLPatch implements IPatch {
 
     private int size;
     
-    protected int getSize() {
+    public int getSize() {
         return size;
     }
     protected void setSize(int size) {
@@ -101,6 +102,10 @@ public class XMLPatch implements IPatch {
 
     public void setDriver(IPatchDriver driver) {
         this.driver = (XMLDriver)driver;
+    }
+
+    public final void setDriver() {
+        setDriver((IPatchDriver) DriverUtil.chooseDriver(sysex[0]));
     }
 
     public String getPatchHeader() {
@@ -326,5 +331,9 @@ public class XMLPatch implements IPatch {
         }
         patch.setName("New Patch");
         return patch;
+    }
+
+    public final String lookupManufacturer() {
+        return LookupManufacturer.get(sysex[0][1], sysex[0][2], sysex[0][3]);
     }
 }

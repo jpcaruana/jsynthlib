@@ -36,27 +36,24 @@ public abstract class PatchTransferHandler extends TransferHandler {
     // Used by LibraryFrame and BankEditorFrame.
     // SceneFrame overrides this.
     public boolean importData(JComponent c, Transferable t) {
-        try {
-            if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
-                IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
-                // FIXME Why p.driver is null here????
-                ErrorMsg.reportStatus("PatchTransferHandler.importData: t=" + t);
-                ErrorMsg.reportStatus("PatchTransferHandler.importData: Patch="
-                        + (Patch) p + ((Patch) p).getComment());
-                p.setDriver((IPatchDriver) DriverUtil.chooseDriver(p
-                        .getByteArray()));
-                if (p != null)
+        if (canImport(c, t.getTransferDataFlavors())) {
+            try {
+                if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
+                    IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
+                    // Serialization loses a transient field, driver.
+                    p.setDriver();
                     return storePatch(p, c);
-            } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
-                String s = (String) t.getTransferData(TEXT_FLAVOR);
-                IPatch p = getPatchFromUrl(s);
-                if (p != null)
-                    return storePatch(p, c);
+                } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
+                    String s = (String) t.getTransferData(TEXT_FLAVOR);
+                    IPatch p = getPatchFromUrl(s);
+                    if (p != null)
+                        return storePatch(p, c);
+                }
+            } catch (UnsupportedFlavorException e) {
+                ErrorMsg.reportStatus(e);
+            } catch (IOException e) {
+                ErrorMsg.reportStatus(e);
             }
-        } catch (UnsupportedFlavorException e) {
-            ErrorMsg.reportStatus(e);
-        } catch (IOException e) {
-            ErrorMsg.reportStatus(e);
         }
         // Let user know we tried to paste.
         Toolkit.getDefaultToolkit().beep();

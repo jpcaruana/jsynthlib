@@ -302,35 +302,31 @@ class SceneFrame extends AbstractLibraryFrame {
         }
 
         public boolean importData(JComponent c, Transferable t) {
-            try {
-                if (t.isDataFlavorSupported(SCENE_FLAVOR)) {
-                    Scene s = (Scene) t.getTransferData(SCENE_FLAVOR);
-                    // FIXME Why s.getPatch() is null here????
-                    s.getPatch().setDriver(
-                            (IPatchDriver) DriverUtil.chooseDriver(s.getPatch()
-                                    .getByteArray()));
-                    ((SceneListModel) ((JTable) c).getModel()).addScene(s);
-                    return true;
-                } else if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
-                    IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
-                    // FIXME Why p.driver is null here????
-                    ErrorMsg.reportStatus("SceneListTransferHandler.importData: t=" + t);
-                    ErrorMsg.reportStatus("SceneListTransferHandler.importData: Patch="
-                            + (Patch) p + ((Patch) p).getComment());
-                    p.setDriver((IPatchDriver) DriverUtil.chooseDriver(p
-                            .getByteArray()));
-                    ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
-                    return true;
-                } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
-                    String s = (String) t.getTransferData(TEXT_FLAVOR);
-                    IPatch p = getPatchFromUrl(s);
-                    ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
-                    return true;
+            if (canImport(c, t.getTransferDataFlavors())) {
+                try {
+                    if (t.isDataFlavorSupported(SCENE_FLAVOR)) {
+                        Scene s = (Scene) t.getTransferData(SCENE_FLAVOR);
+                        // Serialization loses a transient field, driver.
+                        s.getPatch().setDriver();
+                        ((SceneListModel) ((JTable) c).getModel()).addScene(s);
+                        return true;
+                    } else if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
+                        IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
+                        // Serialization loses a transient field, driver.
+                        p.setDriver();
+                        ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
+                        return true;
+                    } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
+                        String s = (String) t.getTransferData(TEXT_FLAVOR);
+                        IPatch p = getPatchFromUrl(s);
+                        ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
+                        return true;
+                    }
+                } catch (UnsupportedFlavorException e) {
+                    ErrorMsg.reportStatus(e);
+                } catch (IOException e) {
+                    ErrorMsg.reportStatus(e);
                 }
-            } catch (UnsupportedFlavorException e) {
-                ErrorMsg.reportStatus(e);
-            } catch (IOException e) {
-                ErrorMsg.reportStatus(e);
             }
             // Let user know we tried to paste.
             Toolkit.getDefaultToolkit().beep();
@@ -342,9 +338,9 @@ class SceneFrame extends AbstractLibraryFrame {
         }
 
         // only for debugging
-        protected void exportDone(JComponent source, Transferable data, int action) {
-            ErrorMsg.reportStatus("SceneListTransferHandler.exportDone " + data);
-        }
+//        protected void exportDone(JComponent source, Transferable data, int action) {
+//            ErrorMsg.reportStatus("SceneListTransferHandler.exportDone " + data);
+//        }
     }
 
     /**

@@ -174,6 +174,10 @@ public class Patch implements IPatch {
                 : (Driver) driver;
     }
 
+    public final void setDriver() {
+        setDriver((IPatchDriver) DriverUtil.chooseDriver(sysex));
+    }
+
     public final byte[] getByteArray() {
         return sysex;
     }
@@ -186,21 +190,25 @@ public class Patch implements IPatch {
         }
     }
 
+    public int getSize() {
+        return sysex.length;
+    }
+    
+    public final String lookupManufacturer() {
+        return LookupManufacturer.get(sysex[1], sysex[2], sysex[3]);
+    }
+
     public void useSysexFromPatch(IPatch ip) {
-        byte[] s = ip.getByteArray();
-        if (s.length != sysex.length)
+        if (ip.getSize() != sysex.length)
             throw new IllegalArgumentException();
-        sysex = s;
+        sysex = ip.getByteArray();
     }
 
     // Transferable interface methods
 
     public Object getTransferData(DataFlavor flavor)
             throws UnsupportedFlavorException, IOException {
-        Patch p = (Patch) this.clone();
-        ErrorMsg.reportStatus("Patch.getTransferData: flavor=" + flavor);
-        ErrorMsg.reportStatus("Patch.getTransferData: Patch=" + p + ", " + p.comment);
-        return p;
+        return (Patch) this;
     }
 
     public boolean isDataFlavorSupported(final DataFlavor flavor) {

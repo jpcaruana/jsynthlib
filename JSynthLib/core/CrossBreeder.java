@@ -35,7 +35,7 @@ class CrossBreeder {
         // XXX Users may want to specify the base patch.
         IPatch base = getRandomPatch(); 
         ErrorMsg.reportStatus("base : " + base);
-        int sysexSize = (base.getByteArray()).length;
+        int sysexSize = base.getSize();
         ErrorMsg.reportStatus("length : " + sysexSize);
         IDriver drv = (IDriver) base.getDriver();
 
