@@ -7,62 +7,56 @@ import java.io.Serializable;
 /**
  * Device.java<p>
  *
+ * Compatibility Note: The following fields are now
+ * <code>private</code>.  Use setter/getter method to access them.
+ * <pre>
+ *	manufacturerName, modelName, inquiryID, infoText, authors,
+ *	synthName, channel, inPort, port
+ * </pre>
  * Created on 5. Oktober 2001, 21:59
  * @author Gerrit Gehnen
  * @version $Id$
  */
-public abstract class Device implements Serializable, Storable {
+public /*abstract*/ class Device implements Serializable, Storable {
     // All field should be private.
     /**
      * The company which made the Synthesizer.
-     * @deprecated Use the getter method.
      */
-    // This can be "private static final".
-    protected String manufacturerName;
+    private String manufacturerName;
     /**
      * The fixed name of the model supported by this driver, as stated
      * on the type plate of the engine. eg TG33/SY22
-     * @deprecated Use the getter method.
      */
-    // This can be "private static final".
-    protected String modelName;
+    private String modelName;
     /**
      * The response to the Universal Inquiry Message.  It can have
      * wildcards (*). It can be up to 16 bytes.<p>
      * Ex. <code>"F07E**0602413F01000000020000f7"</code>
-     * @deprecated Use the getter method.
      */
-    // This can be "private static final".
-    protected String inquiryID;
+    private String inquiryID;
 
     /**
      * Information about Device.
-     * @deprecated Use the getter method.
      */
-    // This can be "private static final".
-    protected String infoText;
+    private String infoText;
     /**
      * Authors of the device driver.
-     * @deprecated Use the getter method.
      */
-    // This can be "private static final".
-    protected String authors;
+    private String authors;
 
     /**
      * The synthName is your personal naming of the device. You can
      * change it in the first column of the Synth-Configuration
      * dialog. As default they are the same at the creation.
-     * @deprecated Use the getter/setter method.
      */
-    protected String synthName;
+    private String synthName;
 
     /**
      * The channel the user assigns to this driver.  The value must be
      * 1 or greater than 1, and 16 or less than 16.  Some old drivers
      * use this for device ID.  Use deviceID field for device ID.
-     * @deprecated Use the getter/setter method.
      */
-    protected int channel = 1;
+    private int channel = 1;
 
     /**
      * The device ID.  The value must be 1 or greater than 1, and 256
@@ -80,29 +74,27 @@ public abstract class Device implements Serializable, Storable {
     /**
      * The MIDI input port number, where the cable <B>to</B> the
      * device is connected.
-     * @deprecated Use the getter/setter method.
      */
     // For simplicity every driver contains the port number as well.
     // So the setter must set the port in all drivers
-    protected int inPort;
+    private int inPort;
     /**
      * The MIDI output port number, where the cable <B>to</B> the
      * device is connected.
-     * @deprecated Use the getter/setter method.
      */
-    protected int port;   //outport
+    private int port;   //outport
 
     /**
      * The List for all available drivers of this device.
      */
     ArrayList driverList = new ArrayList ();
-    //private ListIterator li;
 
     /**
      * Creates new Device.
      * @deprecated Use Device(String, String, String, String, String).
      */
     public Device () {
+	/*
         inquiryID = "NONE";
 	infoText = "There is no information about this Device.";
 	// DeviceListWriter calls this constructor
@@ -111,6 +103,7 @@ public abstract class Device implements Serializable, Storable {
 	    setInPort(PatchEdit.appConfig.getInitPortIn());
 	    setPort(PatchEdit.appConfig.getInitPortOut());
 	}
+	*/
     }
 
     /**
@@ -158,7 +151,7 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property getManufacturerName.
      * @return Value of property getManufacturerName.
      */
-    public /*static*/ String getManufacturerName () {
+    public String getManufacturerName () {
         return manufacturerName;
     }
 
@@ -166,7 +159,7 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property modelName.
      * @return Value of property modelName.
      */
-    public /*static*/ String getModelName () {
+    public String getModelName () {
         return modelName;
     }
 
@@ -174,7 +167,7 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property inquiryID.
      * @return Value of property inquiryID.
      */
-    public /*static*/ String getInquiryID() {
+    public String getInquiryID() {
 	return inquiryID;
     }
 
@@ -182,7 +175,7 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property infoText.
      * @return Value of property infoText.
      */
-    public /*static*/ String getInfoText() {
+    public String getInfoText() {
 	return infoText;
     }
 
@@ -190,7 +183,7 @@ public abstract class Device implements Serializable, Storable {
      * Getter for property authors.
      * @return Value of property authors.
      */
-    public /*static*/ String getAuthors() {
+    public String getAuthors() {
 	return authors;
     }
 
@@ -226,10 +219,12 @@ public abstract class Device implements Serializable, Storable {
     public void setChannel (int channel) { // public for storable
         this.channel = channel;
 	// Remove the following lines when 'driver.channel' becomes 'private'.
+	/*
 	Iterator iter = driverList.iterator();
 	while (iter.hasNext()) {
  	    ((Driver) iter.next()).setChannel(channel);
 	}
+	*/
     }
 
     /**
@@ -272,13 +267,17 @@ public abstract class Device implements Serializable, Storable {
     public void setPort (int port) { // public for storable
         this.port = port;
 	// remove the following lines when 'driver.port' becomes 'private'.
+	/*
         Iterator iter = driverList.iterator();
         while (iter.hasNext ())
             ((Driver) iter.next()).setPort(port);
+	*/
+	/*
 	if (PatchEdit.newMidiAPI && PatchEdit.MidiOut != null) {
 	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) PatchEdit.MidiOut;
-	    //setMidiOut(jw.getOutputDevice(port));
+	    setMidiOut(jw.getOutputDevice(port));
 	}
+	*/
     }
 
     /**
@@ -288,13 +287,17 @@ public abstract class Device implements Serializable, Storable {
     public void setInPort (int inPort) { // public for storable
         this.inPort = inPort;
 	// remove the following lines when 'driver.inPort' becomes 'private'.
+	/*
         Iterator iter = driverList.iterator();
         while (iter.hasNext())
             ((Driver) iter.next()).setInPort(inPort);
+	*/
+	/*
 	if (PatchEdit.newMidiAPI && PatchEdit.MidiIn != null) {
 	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) PatchEdit.MidiIn;
-	    //setMidiIn(jw.getInputDevice(port));
+	    setMidiIn(jw.getInputDevice(port));
 	}
+	*/
     }
 
     // Getters/Setters, etc for Drivers
@@ -306,9 +309,11 @@ public abstract class Device implements Serializable, Storable {
      * @see Converter
      */
     protected void addDriver(Driver driver) {
+	/*
         driver.setChannel(channel);
         driver.setPort(port);
         driver.setInPort(inPort);
+	*/
 	driver.setDevice(this);
         driverList.add(driver);
     }
@@ -324,9 +329,11 @@ public abstract class Device implements Serializable, Storable {
     // order should be enough.  -- Hiroo
     // @deprecated
     protected void addDriver(int index, Driver driver) {
+	/*
         driver.setChannel(channel);
         driver.setPort(port);
         driver.setInPort(inPort);
+	*/
 	driver.setDevice(this);
         driverList.add(index, driver);
     }
@@ -415,7 +422,7 @@ public abstract class Device implements Serializable, Storable {
 	while (iter.hasNext()) {
  	    ((Driver) iter.next()).setDevice(this);
 	}
-//  	ErrorMsg.reportStatus("Device.afterRestore: " + this + " : " + driverList);
+  	//ErrorMsg.reportStatus("Device.afterRestore: " + this + " : " + driverList);
     }
     // end of storable interface
 
