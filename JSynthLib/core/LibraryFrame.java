@@ -484,6 +484,8 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
             byte [] mySysex = new byte[myPatch.sysex.length];
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
             PatchEdit.Clipboard=new Patch(mySysex,
+            myPatch.deviceNum,
+   	    myPatch.driverNum,
             (myPatch.date.toString()),
             (myPatch.author.toString()),
             (myPatch.comment.toString()));
@@ -524,7 +526,6 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
     {
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-         //PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).choosePatch(myPatch);
  	new SysexStoreDialog(myPatch);
     }
     
@@ -551,11 +552,15 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
             if (table.getSelectedRowCount()==0)
                 myModel.PatchList.add(new Patch(mySysex,
+                myPatch.deviceNum,
+ 		myPatch.driverNum,
                 (myPatch.date.toString()),
                 (myPatch.author.toString()),
                 (myPatch.comment.toString())));
             else
                 myModel.PatchList.add(table.getSelectedRow(),new Patch(mySysex,
+                myPatch.deviceNum,
+ 		myPatch.driverNum,
                 (myPatch.date.toString()),
                 (myPatch.author.toString()),
                 (myPatch.comment.toString())));

@@ -431,6 +431,8 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
             byte [] mySysex = new byte[myPatch.sysex.length];
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
             PatchEdit.Clipboard=new Patch(mySysex,
+            myPatch.deviceNum,
+            myPatch.driverNum,
             (myPatch.date.toString()),
             (myPatch.author.toString()),
             (myPatch.comment.toString()));
@@ -469,7 +471,6 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
     public void StoreSelectedPatch() {
         Patch myPatch=((Performance)myModel.performanceList.get(table.getSelectedRow())).getPatch();
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-        //PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).choosePatch(myPatch);
         new SysexStoreDialog(myPatch);
     }
     
@@ -490,11 +491,15 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
             if (table.getSelectedRowCount()==0)
                 myModel.performanceList.add(new Performance(new Patch(mySysex,
+                myPatch.deviceNum,
+                myPatch.driverNum,
                 (myPatch.date.toString()),
                 (myPatch.author.toString()),
                 (myPatch.comment.toString()))));
             else
                 myModel.performanceList.add(table.getSelectedRow(),new Performance(new Patch(mySysex,
+                myPatch.deviceNum,
+                myPatch.driverNum,
                 (myPatch.date.toString()),
                 (myPatch.author.toString()),
                 (myPatch.comment.toString()))));

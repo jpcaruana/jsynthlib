@@ -35,6 +35,16 @@ public class Patch extends Object implements Serializable,Transferable
         ChooseDriver ();
     }
     
+   public Patch (byte[] gsysex, int deviceNum, int driverNum)
+     {
+         comment = new StringBuffer ();
+         date= new StringBuffer ();
+         author= new StringBuffer ();
+         sysex= gsysex;
+ 	this.deviceNum= deviceNum;
+ 	this.driverNum= driverNum;
+     }
+
     public Patch (byte[] gsysex,int offset)
  {
          comment = new StringBuffer ();
@@ -55,6 +65,15 @@ public class Patch extends Object implements Serializable,Transferable
         ChooseDriver ();
     }
     
+     public Patch (byte[] gsysex, int deviceNum, int driverNum, String gdate, String gauthor, String gcomment)
+     {
+         this.comment = new StringBuffer (gcomment);
+         this.date= new StringBuffer (gdate);
+         this.author= new StringBuffer (gauthor);
+         this.sysex= gsysex;
+ 	this.deviceNum= deviceNum;
+ 	this.driverNum= driverNum;
+     }
     
     public void ChooseDriver ()
     {
@@ -145,15 +164,8 @@ public class Patch extends Object implements Serializable,Transferable
         if (patarray!=null)
         { // Conversion was sucessfull, we have at least one converted patch
             looplength=patarray.length;
-        }
-        else
-        { // No conversion. Try just the original patch....
-            looplength=1;
-            patarray=new Patch[1];
-            patarray[0]=this;
-        }
 
- 	// assign the original deviceNum/driverNum to each patch of patarray
+        // assign the original deviceNum and individual driverNum to each patch of patarray
  	for (int i=0; i<looplength; i++)
  	{
  	  patarray[i].deviceNum=this.deviceNum;
@@ -165,6 +177,13 @@ public class Patch extends Object implements Serializable,Transferable
  	    if ( ((Driver)dev.driverList.get(j)).supportsPatch(patchString,patarray[i]) ) patarray[i].driverNum=j;
  	  }
  	}
+        }
+        else
+        { // No conversion. Try just the original patch....
+            looplength=1;
+            patarray=new Patch[1];
+            patarray[0]=this;
+        }
  
         return patarray;
     }

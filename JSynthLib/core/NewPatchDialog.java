@@ -57,7 +57,7 @@ public class NewPatchDialog extends JDialog
     driverComboBox =new JComboBox();
     driverComboBox.setRenderer(new DriverCellRenderer());
 
-    //----- First Populate the Device/Driver List with Device/Driver. which supports the patch
+    //----- First Populate the Device/Driver List with Device/Driver. which supports the "createNewPatch" method
     try 
     {
       int index=0;	// maybe the enumeration of the devices differs from JS internal deviceList
@@ -129,10 +129,12 @@ public class NewPatchDialog extends JDialog
 	  driver = (Driver) ((driverAssignment)driverComboBox.getSelectedItem()).driver;
 
 	  System.out.println("Bingo "+driver.toString());
-	  System.out.println(deviceComboBox.getSelectedIndex()+" & "+ driverComboBox.getSelectedIndex());
+	  //System.out.println(deviceComboBox.getSelectedIndex()+" & "+ driverComboBox.getSelectedIndex());
           PatchEdit.Clipboard=driver.createNewPatch();
 	  PatchEdit.Clipboard.deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).deviceNum;
 	  PatchEdit.Clipboard.driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).driverNum;
+ 	  System.out.println("deviceNum="+PatchEdit.Clipboard.deviceNum+" & driverNum="+PatchEdit.Clipboard.driverNum);
+
           setVisible(false);
 	  dispose();
                         }
