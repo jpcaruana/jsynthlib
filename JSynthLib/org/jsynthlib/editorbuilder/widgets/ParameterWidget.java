@@ -2,7 +2,7 @@ package org.jsynthlib.editorbuilder.widgets;
 
 import org.jsynthlib.editorbuilder.Parameter;
 
-public abstract class ParameterWidget extends AnchoredWidget {
+public abstract class ParameterWidget extends LabeledWidget {
 	public ParameterWidget(String name) {
 		super(name);
 	}

@@ -128,8 +128,8 @@ public class GlassPane extends JPanel implements DropTargetListener,
             return false;
         Widget component = null;
         if (id.startsWith("Strut")) {
-            Strut s = new Strut(p.x, p.y);
-            ((SpringLayout) c.getLayout()).addLayoutComponent(s, s.getConstraints());
+            Strut s = new Strut();
+            c.addWidget(s, s.getConstraints());
             component = s;
         } else if (id.startsWith("Button"))
             component = new ButtonWidget();
@@ -139,17 +139,12 @@ public class GlassPane extends JPanel implements DropTargetListener,
             ContainerWidget cw = new PanelWidget();
             component = cw;
             //containers.add(component);
-            Strut s = new Strut(92, 0, 8, 100);
+            Strut s = new Strut(8, 100);
             addWidget(s);
-            cw.addWidget(s);
-            ((SpringLayout) component.getLayout()).addLayoutComponent(s, s
-                    .getConstraints());
-            s = new Strut(0, 92, 100, 8);
-            addWidget(s);
-            cw.addWidget(s);
-            ((SpringLayout) component.getLayout()).addLayoutComponent(s, s
-                    .getConstraints());
-                    
+            cw.addWidget(s,s.getConstraints());
+            new Anchor(s,Anchor.NORTH,cw,Anchor.NORTH,0);
+            new Anchor(s,Anchor.WEST,cw,Anchor.WEST,92);
+
         } else {
             Parameter pm = ParameterFrame.getParameter(id);
             switch (pm.getType()) {
@@ -168,7 +163,8 @@ public class GlassPane extends JPanel implements DropTargetListener,
 
         }
 
-        c.addWidget(component);
+        if (!(component instanceof Strut))
+            c.addWidget(component);
         if (component instanceof AnchoredWidget)
             setConstraints(component, p, c);
         addWidget(component);

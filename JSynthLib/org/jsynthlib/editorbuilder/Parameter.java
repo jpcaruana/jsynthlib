@@ -58,6 +58,9 @@ public class Parameter extends XMLParameter implements  Writable {
 	public int get(IPatch _p) {
 		return getDefault();
 	}
+	public String getString(IPatch _p) {
+	    return "";
+	}
 	public void setType(int type) {
 		super.setType(type);
 	}

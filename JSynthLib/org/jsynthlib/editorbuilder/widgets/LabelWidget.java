@@ -2,7 +2,7 @@ package org.jsynthlib.editorbuilder.widgets;
 
 import javax.swing.JLabel;
 
-public class LabelWidget extends AnchoredWidget {
+public class LabelWidget extends LabeledWidget {
 	
 	private JLabel label;
 	

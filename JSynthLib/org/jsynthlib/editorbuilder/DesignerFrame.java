@@ -10,7 +10,6 @@ import java.util.LinkedList;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -48,19 +47,14 @@ public class DesignerFrame extends JFrame implements ContainerListener {
 		getContentPane().add(sp, BorderLayout.CENTER);
 		
 		Container c = widget;
-		SpringLayout layout = (SpringLayout)c.getLayout();
 		
 		c.removeContainerListener(this);
 		
-		Strut strut = new Strut(0,392,600,8);
+		Strut strut = new Strut(8,400);
+		widget.addWidget(strut, strut.getConstraints());
+		new Anchor(strut, Anchor.NORTH, widget, Anchor.NORTH, 0);
+		new Anchor(strut, Anchor.WEST, widget, Anchor.WEST, 592);
 		glass.addWidget(strut);
-		c.add(strut);
-		layout.addLayoutComponent(strut, strut.getConstraints());
-		
-		strut = new Strut(592,0,8,400);
-		glass.addWidget(strut);
-		c.add(strut);
-		layout.addLayoutComponent(strut, strut.getConstraints());
 	}
 	
 	public JScrollPane getScrollPane() { return sp; }

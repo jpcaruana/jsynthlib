@@ -19,7 +19,7 @@ public class StrutDescription extends WidgetDescription {
 	 */
 	public Component create(Map widgets, XMLPatch patch)
 			throws Exception {
-		((AbsolutePosition) getPosition()).setSize(size);
+		getPosition().setSize(size);
 		JLabel result = new JLabel();
 		//result.setBorder(BorderFactory.createLineBorder(Color.RED));
 		widgets.put(getId(), result);

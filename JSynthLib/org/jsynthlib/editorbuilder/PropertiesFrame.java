@@ -35,8 +35,6 @@ java.io.Serializable, WidgetListListener {
     protected JTextField id;
     protected JTextField label;
     protected JTextField cn;
-    protected JTextField x;
-    protected JTextField y;
     protected JTextField width;
     protected JTextField height;
     protected AnchorEditor vanchor;
@@ -76,15 +74,12 @@ java.io.Serializable, WidgetListListener {
         JPanel box = new JPanel();
         box.setLayout(new BoxLayout(box, BoxLayout.Y_AXIS));
         
-        id = label = x = y = width = height = null;
+        id = label = width = height = null;
         vanchor = hanchor = null;
         type = null;
         
         Box row = Box.createHorizontalBox();
-        if (selection instanceof ParameterWidget)
-            row.add(new JLabel("Address"));
-        else
-            row.add(new JLabel("ID"));
+        row.add(new JLabel("ID"));
         
         row.add(Box.createHorizontalGlue());
         
@@ -124,31 +119,19 @@ java.io.Serializable, WidgetListListener {
             box.add(type);
         }
         
+        if (selection instanceof PanelWidget && ((PanelWidget)selection).isRoot()){ 
+        }else if (selection instanceof AnchoredWidget) {
+            vanchor = new AnchorEditor(((AnchoredWidget)selection).getNSAnchor());
+            vanchor.addChangeListener(this);
+            
+            hanchor = new AnchorEditor(((AnchoredWidget)selection).getEWAnchor());
+            hanchor.addChangeListener(this);
+            
+            box.add(vanchor);
+            box.add(hanchor);
+        }
+
         if (selection instanceof Strut) {
-            row = Box.createHorizontalBox();
-            row.add(new JLabel("X"));
-            row.add(Box.createHorizontalGlue());
-            
-            x = new JTextField();
-            setMaxSize(x);
-            x.setText("" + ((Strut)selection).getCX());
-            x.addActionListener(this);
-            row.add(x);
-            
-            row.add(Box.createHorizontalGlue());
-            row.add(Box.createHorizontalGlue());
-            
-            row.add(new JLabel("Y"));
-            row.add(Box.createHorizontalGlue());
-            
-            y = new JTextField();
-            setMaxSize(y);
-            y.setText("" + ((Strut)selection).getCY());
-            y.addActionListener(this);
-            row.add(y);
-            
-            box.add(row);
-            
             row = Box.createHorizontalBox();
             row.add(new JLabel("Width"));
             row.add(Box.createHorizontalGlue());
@@ -172,17 +155,8 @@ java.io.Serializable, WidgetListListener {
             row.add(height);
             
             box.add(row);
-        } else if (selection instanceof PanelWidget && ((PanelWidget)selection).isRoot()){ 
-        }else if (selection instanceof AnchoredWidget) {
-            vanchor = new AnchorEditor(((AnchoredWidget)selection).getNSAnchor());
-            vanchor.addChangeListener(this);
-            
-            hanchor = new AnchorEditor(((AnchoredWidget)selection).getEWAnchor());
-            hanchor.addChangeListener(this);
-            
-            box.add(vanchor);
-            box.add(hanchor);
-        }
+        }        
+        
         box.add(Box.createVerticalGlue());
         sp = new JScrollPane(box);
         getContentPane().add(sp);
@@ -238,16 +212,6 @@ java.io.Serializable, WidgetListListener {
             ((LabeledWidget)selection).setText(label.getText());
         } else if (source == cn) {
             ((ButtonWidget)selection).setClassName(cn.getText());
-        } else if (source == x) {
-            try {
-                ((Strut)selection).setX(Integer.parseInt(x.getText()));
-            } catch (Exception ex) {}
-            x.setText("" + ((Strut)selection).getCX());
-        } else if (source == y) {
-            try {
-                ((Strut)selection).setY(Integer.parseInt(y.getText()));
-            } catch (Exception ex) {}
-            y.setText("" + ((Strut)selection).getCY());
         } else if (source == width) {
             try {
                 ((Strut)selection).setWidth(Integer.parseInt(width.getText()));

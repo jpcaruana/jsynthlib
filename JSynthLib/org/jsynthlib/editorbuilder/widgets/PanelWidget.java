@@ -41,4 +41,6 @@ public class PanelWidget extends ContainerWidget {
 			xml.writeProperty("border", "true");
 		}
 	}
+
+
 }

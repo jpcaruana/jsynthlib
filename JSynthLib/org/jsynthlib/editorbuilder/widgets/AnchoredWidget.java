@@ -4,7 +4,7 @@ import org.jsynthlib.editorbuilder.Anchor;
 import org.jsynthlib.utils.XMLWriter;
 import org.xml.sax.SAXException;
 
-public class AnchoredWidget extends LabeledWidget {
+public class AnchoredWidget extends Widget {
 	protected void startElement(XMLWriter xml) throws SAXException {
 		super.startElement(xml);
 		writePosition(xml);

@@ -70,21 +70,7 @@ public class Widget extends JPanel implements Writable {
 	}
 	
 	protected void writeContent(XMLWriter xml) throws SAXException {
-		Component kids[] = getComponents();
-		boolean started = false;
-		if (kids != null && kids.length > 0) {
-			for (int i = 0; i < kids.length; i++) {
-				if (kids[i] instanceof Widget) {
-					if (!started) {
-					    xml.startElement("widgets");
-					    started = true;
-					}
-					((Widget)kids[i]).write(xml);
-				}
-			}
-			if (started)
-				xml.endElement("widgets");
-		}
+
 	}
 	
 	protected void endElement(XMLWriter xml) throws SAXException {

@@ -1,7 +1,7 @@
 package org.jsynthlib.editorbuilder.widgets;
 import javax.swing.JButton;
 
-public class ButtonWidget extends AnchoredWidget {
+public class ButtonWidget extends LabeledWidget {
 	private JButton button;
 	
 	protected String classname;

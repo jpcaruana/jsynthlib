@@ -3,7 +3,7 @@ package org.jsynthlib.editorbuilder.widgets;
 import org.jsynthlib.utils.XMLWriter;
 import org.xml.sax.SAXException;
 
-public class LabeledWidget extends Widget {
+public class LabeledWidget extends AnchoredWidget {
 	
 	public LabeledWidget(String name) {
 		super(name);

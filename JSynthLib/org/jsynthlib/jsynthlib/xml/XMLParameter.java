@@ -45,7 +45,7 @@ public class XMLParameter implements SysexWidget.IParameter {
         ((XMLPatch)p).cache(this, new ParamCacheEntry(val, false));
     }
 
-    public final String getString(IPatch _p) {
+    public String getString(IPatch _p) {
         XMLPatch p = (XMLPatch)_p;
         if (!p.isCached(this))
             p.cache(this, new ParamCacheEntry(decoder.decodeString(this,p.getMessage(sysex_index)),true));
