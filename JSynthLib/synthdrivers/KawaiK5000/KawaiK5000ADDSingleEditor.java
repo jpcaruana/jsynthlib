@@ -1,12 +1,15 @@
 package synthdrivers.KawaiK5000;
 import core.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import javax.swing.border.*;
 
 class KawaiK5000ADDSingleEditor extends PatchEditorFrame
 {
-  final String [] noteName = new String [] {"C-1","C#-1","D-1","D#-1","E-1","F-1","F#-1","G-1","G#-1","A-1","A#-1","B-1",
+  final String [] noteName = new String [] {
+                                            "C#-2","D-2","D#-2","E-2","F-2","F#-2","G-2","G#-2","A-2","A#-2","B-2",
+                                            "C-1","C#-1","D-1","D#-1","E-1","F-1","F#-1","G-1","G#-1","A-1","A#-1","B-1",
                                             "C0","C#0","D0","D#0","E0","F0","F#0","G0","G#0","A0","A#0","B0",
                                             "C1","C#1","D1","D#1","E1","F1","F#1","G1","G#1","A1","A#1","B1",
                                             "C2","C#2","D2","D#2","E2","F2","F#2","G2","G#2","A2","A#2","B2",
@@ -15,7 +18,8 @@ class KawaiK5000ADDSingleEditor extends PatchEditorFrame
                                             "C5","C#5","D5","D#5","E5","F5","F#5","G5","G#5","A5","A#5","B5",
                                             "C6","C#6","D6","D#6","E6","F6","F#6","G6","G#6","A6","A#6","B6",
                                             "C7","C#7","D7","D#7","E7","F7","F#7","G7","G#7","A7","A#7","B7",
-                                            "C8","C#8","D8","D#8","E8","F8","F#8","G8","G#8","A8","A#8","B8"
+                                            "C8","C#8","D8","D#8"
+                                            
   };    
   final String [] macroList = new String [] {"Pitch","Cutoff","Level","Vibrato Depth","Growl Depth","Tremolo Depth",
 	  				     "LFO Speed","Attack Time","Decay 1 Time","Release Time","Velocity",
@@ -48,11 +52,15 @@ class KawaiK5000ADDSingleEditor extends PatchEditorFrame
         "381 F. Horn 2 Attack"      , "382 Flute Attack",
         "383 T. Sax Attack"         , "384 Shamisen Attack"
   };
+
+  final JPanel srcPanel[] = new JPanel[6];
+  Patch p;
   public KawaiK5000ADDSingleEditor(Patch patch)
   {
     super ("Kawai K5000 Single Editor",patch);   
+    p=patch;
 // Common Pane
-  JTabbedPane tabPane=new JTabbedPane();
+  final JTabbedPane tabPane=new JTabbedPane();
   JPanel cmnPanel = new JPanel();
   cmnPanel.setLayout(new GridBagLayout());
   //modPanel.setLayout(new GridBagLayout()); 
@@ -62,7 +70,21 @@ class KawaiK5000ADDSingleEditor extends PatchEditorFrame
   cmn2Panel.setLayout(new GridBagLayout());
   addWidget(cmn2Panel,new PatchNameWidget(patch," Name  "),0,0,2,1,0);
   addWidget(cmn2Panel,new ScrollBarWidget("Volume",patch,0,127,0,new K5kCmnModel(patch,48),new K5kCmnSender(8)),0,1,2,1,1);
-  addWidget(cmn2Panel,new ScrollBarWidget("Num Sources",patch,2,6,0,new K5kCmnModel(patch,51),new K5kCmnSender(0x0B)),0,2,2,1,2);
+  final ScrollBarWidget numSources = new ScrollBarWidget("Num Sources",patch,2,6,0,new K5kCmnModel(patch,51),new K5kCmnSender(0x0B));
+  addWidget(cmn2Panel,numSources,0,2,2,1,2);
+
+    numSources.slider.addChangeListener(new ChangeListener() {
+	   public void stateChanged(ChangeEvent e) {
+                int i=numSources.slider.getValue();
+
+                for (int j = i; j<6; j++)
+                  tabPane.remove(srcPanel[j]);
+
+                for (int j = 0; j<i ; j++)
+                  tabPane.addTab("Source "+(j+1),srcPanel[j]);
+               }});
+
+
   addWidget(cmn2Panel,new ComboBoxWidget("Poly Mode",patch,new K5kCmnModel(patch,49),new K5kCmnSender(9),new String []   {"POLY","SOLO1","SOLO2"}),0,3,1,1,3);
   addWidget(cmn2Panel,new ComboBoxWidget("AM",patch,new K5kCmnModel(patch,53),new K5kCmnSender(0x0D),new String []   {"None","Source 2","Source 3","Source 4","Source 5","Source 6"}),1,3,1,1,4);
   addWidget(cmn2Panel,new ScrollBarWidget("Portamento Speed",patch,0,127,0,new K5kCmnModel(patch,61),new K5kCmnSender(0x15)),0,4,2,1,2);
@@ -126,12 +148,52 @@ class KawaiK5000ADDSingleEditor extends PatchEditorFrame
 
   
    gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=3;gbc.fill=GridBagConstraints.BOTH;
-   gbc.anchor=GridBagConstraints.EAST;
+   gbc.anchor=GridBagConstraints.NORTH;
    cmnPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Common",TitledBorder.CENTER,TitledBorder.CENTER));  
    scrollPane.add(tabPane,gbc);
+   for (int i=0;i<6;i++)
+     {
+       srcPanel[i]=createSourcePanel(i);
+       if (patch.sysex[60]>i) tabPane.addTab("Source "+(i+1),srcPanel[i]);
+     }
+
    pack();
    show();
  }
+
+public JPanel createSourcePanel(int src)
+{
+  JPanel panel = new JPanel();
+  gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=2;gbc.gridheight=3;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.WEST;
+  panel.setLayout(new GridBagLayout());
+  final JTabbedPane tabPane = new JTabbedPane();
+  JPanel srcPane = new JPanel();
+  JPanel addPane = new JPanel();
+  tabPane.addTab("Source",srcPane);
+  tabPane.addTab("Additive",addPane);
+  srcPane.setLayout(new GridBagLayout());
+  JPanel cmnPane = new JPanel();
+  cmnPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Common",TitledBorder.CENTER,TitledBorder.CENTER));  
+
+  addWidget(cmnPane,new ComboBoxWidget("Zone Low",p,new K5kSrcModel(p,src,1),new K5kSrcSender(src,0),noteName),0,0,1,1,5);
+  addWidget(cmnPane,new ComboBoxWidget("Zone Hi",p,new K5kSrcModel(p,src,2),new K5kSrcSender(src,1),noteName),1,0,1,1,5);
+
+
+
+  srcPane.add(cmnPane,gbc);
+  gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=2;gbc.gridheight=3;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.WEST;
+  
+
+  addPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Common",TitledBorder.CENTER,TitledBorder.CENTER));
+
+  panel.add(tabPane,gbc);
+  return panel;
+
+
+}
+
+
+
 }
 
 class K5kCmnSender extends SysexSender
@@ -152,9 +214,81 @@ class K5kCmnSender extends SysexSender
      return b;}
 }
 
+
+class K5kSrcSender extends SysexSender
+{
+  int parameter; 
+  byte []b = new byte [14];
+  public K5kSrcSender(int src,int param) 
+  {parameter=param;
+   b[0]=(byte)0xF0; b[1]=(byte)0x40;b[3]=(byte)0x10;b[4]=0; b[5]=0x0A;
+   b[6]=01;b[7]=0;b[8]=((byte)(src-1));b[9]=0;b[10]=((byte)parameter);
+   b[13]=(byte)0xF7;
+  }
+  public byte [] generate (int value)
+  {
+     b[11]=(byte)(value/128);
+     b[12]=(byte)(value&127);
+     b[2]=(byte)(channel-1);
+     return b;}
+}
+
+
  class K5kCmnModel extends ParamModel
 { 
  public K5kCmnModel(Patch p,int o) {ofs=o+9;patch=p;}
  public void set(int i) {patch.sysex[ofs]=(byte)(i);}
  public int get() {return (patch.sysex[ofs]);}
 }
+
+ class K5kSrcModel extends ParamModel
+{
+  public K5kSrcModel(Patch p, int src, int o) {ofs=91-1+o+86*(src-1);patch=p;}
+  public void set(int i) {patch.sysex[ofs]=(byte)(i);}
+  public int get() {return (patch.sysex[ofs]);}
+
+}
+
+  class K5kVelSwModel extends ParamModel
+{
+  int part;
+  //pt=0 means we are doing the "T" part in manual, pt=1 is "V"
+  public K5kVelSwModel (Patch p, int src,int pt)
+   {
+     ofs=91-1+3+86*(src-1);patch=p;part=pt;
+   }
+  public void set(int i)
+    {
+      if (part==0)
+        patch.sysex[ofs]=((byte)(i*32+(get() & 31)));
+      else
+        patch.sysex[ofs]=((byte)(i+(get() &(127-31))));
+    }
+  public int get()
+   {
+     if (part==0) return (patch.sysex[ofs] & (127-31) /32)  ;
+     else return (patch.sysex[ofs] &31);
+   }                         
+}
+
+
+//this code needs to be altered to handle the bitfields
+class K5kVelSwSender extends SysexSender
+{
+  int parameter; 
+  byte []b = new byte [14];
+  public K5kSrcSender(int src,int param) 
+  {parameter=4;
+   b[0]=(byte)0xF0; b[1]=(byte)0x40;b[3]=(byte)0x10;b[4]=0; b[5]=0x0A;
+   b[6]=01;b[7]=0;b[8]=((byte)(src-1));b[9]=0;b[10]=((byte)parameter);
+   b[13]=(byte)0xF7;
+  }
+  public byte [] generate (int value)
+  {
+     b[11]=(byte)(value/128);
+     b[12]=(byte)(value&127);
+     b[2]=(byte)(channel-1);
+     return b;}
+}
+
+
