@@ -31,13 +31,13 @@ import javax.sound.midi.*;
 
 
 public class LinuxCharDevMidiDevice implements MidiDevice {
-	private static 	String		devicePath;
-	private static 	boolean		open        = false;
-	private static 	InputStream	inStream    =null;
-	private static 	OutputStream	outStream   =null;
-	private 	Info		info;
-	private 	InputThread	inThread;
-	private 	List 		destinations = new ArrayList();
+	private String		devicePath;
+	private boolean		open        = false;
+	private InputStream	inStream    =null;
+	private OutputStream	outStream   =null;
+	private Info		info;
+	private InputThread	inThread;
+	private List 		destinations = new ArrayList();
 	
 	public LinuxCharDevMidiDevice (String devicePath) {
 		if ( open==false ) {
