@@ -1,12 +1,10 @@
 /*
  * JSynthlib - "Performance" Single Driver for Yamaha DX7-II
  * =========================================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    YamahaDX7IIPerformanceSingleDriver.java
- * date:    25.02.2003
- * @version 0.1
  *
- * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2004 Torsten.Tittmann@gmx.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,101 +20,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * CAUTION: This is an experimental driver. It is not tested on a real device yet!
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *
- * history:
- *         25.02.2003 v0.1: first published release
- *
  */
-
 package synthdrivers.YamahaDX7II;
+import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import	synthdrivers.YamahaDX7.common.DX7FamilyPerformanceIISingleDriver;
 import core.*;
 import javax.swing.*;
 
-public class YamahaDX7IIPerformanceSingleDriver extends Driver
+public class YamahaDX7IIPerformanceSingleDriver extends DX7FamilyPerformanceIISingleDriver
 {
-  public YamahaDX7IIPerformanceSingleDriver()
-  {
-    manufacturer="Yamaha";
-    model="DX7-II";
-    patchType="Performance Single";
-    id="DX7-II";
-    sysexID= "F0430*7E003d4c4d2020383937335045";
-    // inquiryID= NONE ;
-    patchNameStart=47;
-    patchNameSize=20;
-    deviceIDoffset=2;
-    checksumOffset=67;
-    checksumStart=6;
-    checksumEnd=66;
-    patchNumbers = DX7IIConstants.PATCH_NUMBERS_PERFORMANCE;
-    bankNumbers  = DX7IIConstants.BANK_NUMBERS_PERFORMANCE;
-    patchSize=69;
-    trimSize=69;
-    numSysexMsgs=1;         
-    sysexRequestDump=new SysexHandler("f0 43 @@ 7e 4c 4d 20 20 38 39 37 33 50 45 f7");
-    authors="Torsten Tittmann";
+	public YamahaDX7IIPerformanceSingleDriver()
+	{
+		super ( YamahaDX7IIPerformanceConstants.INIT_PERFORMANCE,
+			YamahaDX7IIPerformanceConstants.SINGLE_PERFORMANCE_PATCH_NUMBERS,
+			YamahaDX7IIPerformanceConstants.SINGLE_PERFORMANCE_BANK_NUMBERS
+		);
+	}
 
-  }
+	
+	public Patch createNewPatch()
+	{
+		return super.createNewPatch();
+	}
+		
 
+	public JInternalFrame editPatch(Patch p)
+	{
+		return super.editPatch(p);
+	}
 
-  public void storePatch (Patch p, int bankNum,int patchNum)
-  {
-    sendPatchWorker (p);
+	
+	public void storePatch (Patch p, int bankNum,int patchNum)
+	{
+		sendPatchWorker (p);
 
-    if( ((YamahaDX7IIDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-        // Information
-        JOptionPane.showMessageDialog(PatchEdit.instance,
-                                      getDriverName()+"Driver:"+ DX7IIStrings.STORE_SINGLE_PERFORMANCE_STRING,
-                                      getDriverName()+"Driver",
-                                      JOptionPane.INFORMATION_MESSAGE);
-  }
-
-
-  public void requestPatchDump(int bankNum, int patchNum)
-  {
-    sysexRequestDump.send(port, (byte)(channel+0x20) );
-  }
-
-
-  public Patch createNewPatch()
-  {
-    Patch p = new Patch(DX7IIConstants.INIT_PERFORMANCE,getDeviceNum(),getDriverNum());
-
-    return p;
-  }
-
-
-  // needed because the longer patchName!
-  public void setPatchName (Patch p, String name)
-  {
-    if (patchNameSize==0)
-    {
-      ErrorMsg.reportError ("Error", "The Driver for this patch does not support Patch Name Editing.");
-      return;
-    }
-
-    if (name.length ()<patchNameSize) name=name+"                              ";
-
-    byte [] namebytes = new byte [64];
-    try
-    {
-      namebytes=name.getBytes ("US-ASCII");
-
-      for (int i=0;i<patchNameSize;i++)
-           p.sysex[patchNameStart+i]=namebytes[i];
-
-    } catch (Exception e){}
-    
-    calculateChecksum (p);
-  }
-
-
-  public JInternalFrame editPatch(Patch p)
-  {
-    return new YamahaDX7IIPerformanceEditor(p);
-  }
+		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
+			// show Information
+			YamahaDX7IIStrings.dxShowInformation(getDriverName(), YamahaDX7IIStrings.STORE_SINGLE_PERFORMANCE_STRING);
+	}
 }

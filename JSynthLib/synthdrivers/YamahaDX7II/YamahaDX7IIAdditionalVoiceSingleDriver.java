@@ -1,12 +1,10 @@
 /*
  * JSynthlib - "Additional Voice" Single Driver for Yamaha DX7-II
  * ==============================================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    YamahaDX7IISingleAdditionalVoiceDriver.java
- * date:    25.02.2003
- * @version 0.1
  *
- * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2004 Torsten.Tittmann@gmx.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,81 +20,53 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * CAUTION: This is an experimental driver. It is not tested on a real device yet!
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *
- * history:
- *         25.02.2003 v0.1: first published release
- *
  */
-
 package synthdrivers.YamahaDX7II;
+import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import	synthdrivers.YamahaDX7.common.DX7FamilyAdditionalVoiceSingleDriver;
 import core.*;
 import javax.swing.*;
 
-public class YamahaDX7IIAdditionalVoiceSingleDriver extends Driver
+public class YamahaDX7IIAdditionalVoiceSingleDriver extends DX7FamilyAdditionalVoiceSingleDriver
 {
-  public YamahaDX7IIAdditionalVoiceSingleDriver()
-  {
-    manufacturer="Yamaha";
-    model="DX7-II";
-    patchType="Additional Voice Single";
-    id="DX7-II";
-    sysexID= "F0430*050031";
-    // inquiryID= NONE ;
-    patchNameStart=0; // !!!! no patchName !!!!
-    patchNameSize=0;  // !!!! no patchName !!!!
-    deviceIDoffset=2;
-    checksumOffset=55;
-    checksumStart=6;
-    checksumEnd=54;
-    patchNumbers = DX7IIConstants.PATCH_NUMBERS_ADDITIONAL_VOICE;
-    bankNumbers = DX7IIConstants.BANK_NUMBERS_SINGLE_ADDITIONAL_VOICE;
-    patchSize=57;
-    trimSize=57;
-    numSysexMsgs=1;         
-    sysexRequestDump=new SysexHandler("f0 43 @@ 05 f7");
-    authors="Torsten Tittmann";
-
-  }
+	public YamahaDX7IIAdditionalVoiceSingleDriver()
+	{
+		super ( YamahaDX7IIAdditionalVoiceConstants.INIT_ADDITIONAL_VOICE,
+			YamahaDX7IIAdditionalVoiceConstants.SINGLE_ADDITIONAL_VOICE_PATCH_NUMBERS,
+			YamahaDX7IIAdditionalVoiceConstants.SINGLE_ADDITIONAL_VOICE_BANK_NUMBERS
+		);
+	}
 
 
-  public void storePatch (Patch p, int bankNum,int patchNum)
-  {
-    sendPatchWorker (p);
-
-    if( ((YamahaDX7IIDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-        // Information
-        JOptionPane.showMessageDialog(PatchEdit.instance,
-                                      getDriverName()+"Driver:"+ DX7IIStrings.STORE_SINGLE_ADDITIONAL_VOICE_STRING,
-                                      getDriverName()+"Driver",
-                                      JOptionPane.INFORMATION_MESSAGE);
-  }
+	public Patch createNewPatch()
+	{
+		return super.createNewPatch();
+	}
 
 
-  public void requestPatchDump(int bankNum, int patchNum)
-  {
-    // keyswitch to voice mode
-    DX7IIParamChanges.chVoiceMode(port, (byte)(channel+0x10));
-    // 0-63 int voices, 64-127 cartridge voices
-    setPatchNum(patchNum+32*bankNum);
+	public JInternalFrame editPatch(Patch p)
+	{
+		return super.editPatch(p);
+	}
+	
 
-    sysexRequestDump.send(port, (byte)(channel+0x20) );
-  }
+	public void storePatch (Patch p, int bankNum,int patchNum)
+	{
+		sendPatchWorker (p);
 
-
-  public Patch createNewPatch()
-  {
-    Patch p = new Patch(DX7IIConstants.INIT_ADDITIONAL_VOICE,getDeviceNum(),getDriverNum());
-
-    return p;
-  }
+		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
+			// show Information
+			 YamahaDX7IIStrings.dxShowInformation(getDriverName(), YamahaDX7IIStrings.STORE_SINGLE_ADDITIONAL_VOICE_STRING);
+	}
 
 
-  public JInternalFrame editPatch(Patch p)
-  {
-    return new YamahaDX7IIAdditionalVoiceEditor(p);
-  }
+	public void requestPatchDump(int bankNum, int patchNum)
+	{
+		// keyswitch to voice mode
+		YamahaDX7IISysexHelpers.chVoiceMode(getPort(), (byte)(getChannel()+0x10));
+		// 0-63 int voices, 64-127 cartridge voices
+		setPatchNum(patchNum+32*bankNum);
+
+		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+	}
 }
