@@ -243,7 +243,6 @@ public class JSLFrame {
 	}
 	
 	public void setVisible(boolean b) {
-	    System.err.println("JSLJFrame("+getTitle()+").setVisible("+b+")");
 	    if (MacUtils.isMac()) {
 		if (b && getJMenuBar() == null) {
 		    setJMenuBar(PatchEdit.createMenuBar());
@@ -258,14 +257,6 @@ public class JSLFrame {
 		}
 	    }
 	    super.setVisible(b);
-	}
-	public void dispose() {
-	    System.err.println("JSLJFrame("+getTitle()+").dispose()");
-	    super.dispose();
-	}
-	protected void finalize() throws Throwable {
-	    System.err.println("JSLJFrame("+getTitle()+").finalize()");
-	    super.finalize();
 	}
 	public void windowActivated(WindowEvent e) {
 	    if (e.getWindow() == PatchEdit.desktop.getToolBar().getJFrame()) {
@@ -368,7 +359,8 @@ public class JSLFrame {
 	public void setPreferredSize(Dimension d) {}
 	// Pretend to be selected if switched to toolbar from this frame.
 	public boolean isSelected() {
-	    return isActive() || lastselection == this;
+	    //return isActive() || lastselection == this;
+	    return PatchEdit.desktop.getSelectedWindow() == this;
 	}
     }
 }

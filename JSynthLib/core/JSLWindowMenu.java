@@ -12,6 +12,15 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
     protected HashMap windows = new HashMap();
     protected JSLWindowMenuItem none = new JSLWindowMenuItem();
     private Boolean doing_selection = Boolean.FALSE;
+    private static Action close_action = new AbstractAction("Close") {
+	    public void actionPerformed(ActionEvent ex) {
+		try {
+		    PatchEdit.desktop.getSelectedFrame().setClosed(true);
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+	    }
+	};
 
     public JSLWindowMenu() {
 	super("Window");
@@ -23,7 +32,10 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 	add(PatchEdit.monitorAction);
 	add(PatchEdit.desktop.toolBarAction);
 	addSeparator();
-
+        int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+	JMenuItem mi = add(close_action);
+	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, mask));
+	addSeparator();
     }
     public void add(JFrame f) { 
 	if (f == null)

@@ -133,9 +133,7 @@ public class JSLDesktop {
 		        JFrame.DO_NOTHING_ON_CLOSE);
 	    }
 	    toolbar = new JSLFrame("JSynthLib",false,false,false,false);
-	    /*
 	    toolbar.getJFrame().setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-	    */
 	}
 	public void setupInitialMenuBar(JToolBar tb) {
 	    if (invisible != null) {
@@ -210,14 +208,16 @@ public class JSLDesktop {
 	}
 	public void JSLFrameClosed(JSLFrameEvent e) {
 	    windows.remove(e.getJSLFrame());
-	    if (windows.size() < 1 &&
-		    invisible == null &&
-		    !toolbar.isVisible() ) {
-		PatchEdit.appConfig.savePrefs();
-		// We shouldn't need to unload the midi driver if
-		// the whole JVM is going away.
-		// unloadMidiDriver();
-		System.exit(0);
+	    if (windows.size() < 1) {
+		if (toolbar.isVisible()) {
+		    selected = toolbar.getJFrame();
+		} else if (invisible == null) {
+		    PatchEdit.appConfig.savePrefs();
+		    // We shouldn't need to unload the midi driver if
+		    // the whole JVM is going away.
+		    // unloadMidiDriver();
+		    System.exit(0);
+		}
 	    }
 		
 	}
