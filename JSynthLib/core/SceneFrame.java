@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 
@@ -36,25 +37,17 @@ class SceneFrame extends AbstractLibraryFrame {
     private static final int PATCH_NUM  = 4;
     private static final int COMMENT    = 5;
 
-    static {
-        pth = new SceneListTransferHandler();
-        UNSAVED_MSG = "This Scene may contain unsaved data.\nSave before closing?";
-    }
+    static final String FILE_EXTENSION= ".scenelib";
+    private static final FileFilter FILE_FILTER = new Actions.ExtensionFilter(
+            "PatchEdit Scene Files (*" + FILE_EXTENSION + ")", FILE_EXTENSION);
+    private static final PatchTransferHandler pth = new SceneListTransferHandler();
 
     SceneFrame(File file) {
-        super(file.getName(),
-                true, //resizable
-                true, //closable
-                true, //maximizable
-                true); //iconifiable
+        super(file.getName(), "Scene", pth);
     }
 
     SceneFrame() {
-        super("Unsaved Scene #" + (++openFrameCount),
-                true, //resizable
-                true, //closable
-                true, //maximizable
-                true); //iconifiable
+        super("Unsaved Scene #" + (++openFrameCount), "Scene", pth);
     }
 
     PatchTableModel createTableModel() {
@@ -134,6 +127,14 @@ class SceneFrame extends AbstractLibraryFrame {
             Scene scene = ((SceneListModel) myModel).getSceneAt(i);
             scene.getPatch().send(scene.getBankNumber(), scene.getPatchNumber());
         }
+    }
+
+    FileFilter getFileFilter() {
+        return FILE_FILTER;
+    }
+
+    String getFileExtension() {
+        return FILE_EXTENSION;
     }
 
     /**

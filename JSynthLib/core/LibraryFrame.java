@@ -11,6 +11,7 @@ import java.util.Iterator;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumn;
 
 /**
@@ -26,24 +27,17 @@ class LibraryFrame extends AbstractLibraryFrame {
     private static final int FIELD2     = 4;
     private static final int COMMENT    = 5;
 
-    static {
-        pth = new PatchListTransferHandler();
-        UNSAVED_MSG = "This Library may contain unsaved data.\nSave before closing?";
-    }
+    static final String FILE_EXTENSION = ".patchlib";
+    private static final FileFilter FILE_FILTER = new Actions.ExtensionFilter(
+            "PatchEdit Library Files (*" + FILE_EXTENSION + ")", FILE_EXTENSION);
+    private static final PatchTransferHandler pth = new PatchListTransferHandler();
+    
     LibraryFrame(File file) {
-        super(file.getName(),
-                true, //resizable
-                true, //closable
-                true, //maximizable
-                true); //iconifiable
+        super(file.getName(), "Library", pth);
     }
 
     LibraryFrame() {
-        super("Unsaved Library #" + (++openFrameCount),
-                true, //resizable
-                true, //closable
-                true, //maximizable
-                true); //iconifiable
+        super("Unsaved Library #" + (++openFrameCount), "Library", pth);
     }
 
     PatchTableModel createTableModel() {
@@ -148,6 +142,14 @@ class LibraryFrame extends AbstractLibraryFrame {
     void sortPatch(Comparator c) {
         Collections.sort(myModel.getList(), c);
         changed();
+    }
+
+    FileFilter getFileFilter() {
+        return FILE_FILTER;
+    }
+
+    String getFileExtension() {
+        return FILE_EXTENSION;
     }
 
     /**

@@ -31,6 +31,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -42,17 +43,23 @@ import javax.swing.table.AbstractTableModel;
 abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     protected JTable table;
     protected PatchTableModel myModel;
-    protected static String UNSAVED_MSG;
-    protected static PatchTransferHandler pth;
 
+    private final String TYPE;
+    private PatchTransferHandler pth;
     /** Has the library been altered since it was last saved? */
     private boolean changed = false;
     private JLabel statusBar;
     private File filename;
 
-    AbstractLibraryFrame(String s, boolean resizable, boolean closable,
-            boolean maximizable, boolean iconifiable) {
-        super(s, resizable, closable, maximizable, iconifiable);
+    AbstractLibraryFrame(String title, String type, PatchTransferHandler pth) {
+        super(title,
+                true, //resizable
+                true, //closable
+                true, //maximizable
+                true); //iconifiable
+
+        TYPE = type;
+        this.pth = pth;
 
         //...Create the GUI and put it in the window...
         addJSLFrameListener(new MyFrameListener());
@@ -66,14 +73,15 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         // Enable drop on scrollpane
         scrollPane.getViewport().setTransferHandler(
                 new ProxyImportHandler(table, pth));
-        scrollPane.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                myModel.fireTableDataChanged(); // XXX ???
-            }
-        });
+// commented out by Hiroo
+//        scrollPane.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
+//            public void mousePressed(MouseEvent e) {
+//            }
+//
+//            public void mouseReleased(MouseEvent e) {
+//                //myModel.fireTableDataChanged();
+//            }
+//        });
 
         //Add the scroll pane to this window.
         JPanel statusPanel = new JPanel();
@@ -186,7 +194,8 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
                 }
             }
 
-            if (JOptionPane.showConfirmDialog(null, UNSAVED_MSG,
+            if (JOptionPane.showConfirmDialog(null, "This " + TYPE
+                    + " may contain unsaved data.\nSave before closing?",
                     "Unsaved Data", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
                 return;
 
@@ -354,14 +363,19 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     // for open/save/save-as actions
     void save() throws IOException {
         PatchEdit.showWaitDialog();
-        FileOutputStream f = new FileOutputStream(filename);
-        ObjectOutputStream s = new ObjectOutputStream(f);
-        s.writeObject(myModel.getList());
-        s.flush();
-        s.close();
-        f.close();
-        PatchEdit.hideWaitDialog();
-        changed = false;
+        try {
+            FileOutputStream f = new FileOutputStream(filename);
+            ObjectOutputStream s = new ObjectOutputStream(f);
+            s.writeObject(myModel.getList());
+            s.flush();
+            s.close();
+            f.close();
+            changed = false;
+            PatchEdit.hideWaitDialog();
+        } catch (IOException e) {
+            PatchEdit.hideWaitDialog();
+            throw e;
+        }
     }
 
     void save(File file) throws IOException {
@@ -372,7 +386,6 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     }
 
     void open(File file) throws IOException, ClassNotFoundException {
-        PatchEdit.showWaitDialog();
         setTitle(file.getName());
         filename = file;
         FileInputStream f = new FileInputStream(file);
@@ -383,8 +396,11 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         revalidateDrivers();
         myModel.fireTableDataChanged();
         changed = false;
-        PatchEdit.hideWaitDialog();
     }
+
+    abstract FileFilter getFileFilter();
+
+    abstract String getFileExtension();
 
     /**
      * Re-assigns drivers to all patches in libraryframe. Called after new

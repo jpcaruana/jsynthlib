@@ -489,20 +489,8 @@ final class Actions {
 	    uploadAction.setEnabled(b);
     }
 
-    /** This creates a new [empty] Library Window */
-    private static void createLibraryFrame() {
-        LibraryFrame frame = new LibraryFrame();
-        frame.setVisible(true);
-        JSLDesktop.add(frame);
-        try {
-	    frame.setSelected(true);
-	} catch (PropertyVetoException e) {
-	    ErrorMsg.reportStatus(e);
-	}
-    }
-
-    private static void createSceneFrame() {
-        SceneFrame frame = new SceneFrame();
+    /** This creates a new empty Library/Scene Window */
+    private static void createLibraryFrame(AbstractLibraryFrame frame) {
         frame.setVisible(true);
         JSLDesktop.add(frame);
         try {
@@ -516,35 +504,29 @@ final class Actions {
     /** Create a new Library Window and load a Library from disk to
 	fill it! Fun! */
     static void openFrame(File file) {
-        LibraryFrame frame = new LibraryFrame(file);
+        PatchEdit.showWaitDialog();
+        AbstractLibraryFrame frame = new LibraryFrame(file);
+        // try LibraryFrame then SceneFrame
         try {
-	    // Does this need to be before open?
-	    frame.setVisible(true);
-	    frame.open(file);
-	    JSLDesktop.add(frame);
-	} catch (Exception e) {
-	    frame.dispose();
-	    SceneFrame frame2 = new SceneFrame(file);
-	    try {
-		frame2.setVisible(true);
-		frame2.open(file);
-		JSLDesktop.add(frame2);
-	    } catch (Exception e2) {
-		frame2.dispose();
-		ErrorMsg.reportError("Error", "Error Loading Library", e2);
-		return;
-	    }
-	    try {
-		frame2.setSelected(true);
-	    } catch (PropertyVetoException e2) {
-		ErrorMsg.reportStatus(e2);
-	    }
-	}
+            frame.open(file);
+        } catch (Exception e) {
+            frame = new SceneFrame(file);
+            try {
+                frame.open(file);
+            } catch (Exception e1) {
+                PatchEdit.hideWaitDialog();
+                ErrorMsg.reportError("Error", "Error Loading Library", e1);
+                return;
+            }
+        }
+        frame.setVisible(true);
+        JSLDesktop.add(frame);
         try {
-	    frame.setSelected(true);
-	} catch (PropertyVetoException e) {
-	    ErrorMsg.reportStatus(e);
-	}
+            frame.setSelected(true);
+        } catch (PropertyVetoException e) {
+            ErrorMsg.reportStatus(e);
+        }
+        PatchEdit.hideWaitDialog();
     }
 
     /** This one saves a Library to Disk */
@@ -552,13 +534,13 @@ final class Actions {
 	try {
 	    AbstractLibraryFrame oFrame = (AbstractLibraryFrame) JSLDesktop.getSelectedFrame();
 	    if (oFrame.getTitle().startsWith("Unsaved ")) {
-	        File fn = showSaveDialog();
+	        File fn = showSaveDialog(oFrame);
 		if (fn != null)
 		    oFrame.save(fn);
 	    } else {
 	        oFrame.save();
 	    }
-	} catch (Exception e) {
+	} catch (IOException e) {
 	    ErrorMsg.reportError("Error", "Unable to Save Library", e);
 	}
     }
@@ -567,29 +549,28 @@ final class Actions {
     private static void saveFrameAs() {
 	try {
 	    AbstractLibraryFrame oFrame = (AbstractLibraryFrame) JSLDesktop.getSelectedFrame();
-	    File fn = showSaveDialog();
+	    File fn = showSaveDialog(oFrame);
 	    if (fn != null)
 	        oFrame.save(fn);
-	} catch (Exception ex) {
+	} catch (IOException ex) {
 	    ErrorMsg.reportError("Error", "Unable to Save Library", ex);
 	}
     }
 
-    private static File showSaveDialog() {
-	CompatibleFileDialog fc2 = new CompatibleFileDialog();
-        FileFilter type1 =
-	    new ExtensionFilter("PatchEdit Library Files (*.patchlib)",
-				".patchlib");
-        fc2.addChoosableFileFilter(type1);
-        fc2.setFileFilter(type1);
-        fc2.setCurrentDirectory(new File (AppConfig.getLibPath()));
-        if (fc2.showSaveDialog(PatchEdit.getInstance())
+    private static File showSaveDialog(AbstractLibraryFrame oFrame) {
+	CompatibleFileDialog fc = new CompatibleFileDialog();
+        FileFilter filter = oFrame.getFileFilter();
+	    
+        fc.addChoosableFileFilter(filter);
+        fc.setFileFilter(filter);
+        fc.setCurrentDirectory(new File (AppConfig.getLibPath()));
+        if (fc.showSaveDialog(PatchEdit.getInstance())
 	        != JFileChooser.APPROVE_OPTION)
             return null;
-        File file = fc2.getSelectedFile();
+        File file = fc.getSelectedFile();
 
-	if (!file.getName().toUpperCase().endsWith(".PATCHLIB"))
-	    file = new File(file.getPath() + ".patchlib");
+	if (!file.getName().toLowerCase().endsWith(oFrame.getFileExtension()))
+	    file = new File(file.getPath() + oFrame.getFileExtension());
 	if (file.isDirectory()) {
 	    ErrorMsg.reportError("Error", "Can not Save over a Directory");
 	    return null;
@@ -923,7 +904,7 @@ final class Actions {
 	    mnemonics.put(this, new Integer('N'));
         }
         public void actionPerformed(ActionEvent e) {
-	    createLibraryFrame();
+	    createLibraryFrame(new LibraryFrame());
 	}
     }
 
@@ -933,7 +914,7 @@ final class Actions {
         }
 
         public void actionPerformed(ActionEvent e) {
-            createSceneFrame();
+            createLibraryFrame(new SceneFrame());
         }
     }
 
@@ -953,21 +934,26 @@ final class Actions {
     }
 
     private static class OpenAction extends AbstractAction {
+        static final FileFilter filter;
+        static {
+            String lext = LibraryFrame.FILE_EXTENSION;
+            String sext = SceneFrame.FILE_EXTENSION;
+            filter = new ExtensionFilter("JSynthLib Library/Scene Files (*" + lext
+                    + ", *" + sext + ")", new String[] { lext, sext });
+        }
+
         public OpenAction(Map mnemonics) {
             super("Open...", null);
             mnemonics.put(this, new Integer('O'));
         }
         public void actionPerformed(ActionEvent e) {
             CompatibleFileDialog fc = new CompatibleFileDialog();
-            FileFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib, *.scenelib)",
-						   new String[] {".patchlib", ".scenelib"});
-            fc.addChoosableFileFilter(type1);
-            fc.setFileFilter(type1);
             fc.setCurrentDirectory(new File(AppConfig.getLibPath()));
-            if (fc.showOpenDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
-		return;
-	    File file = fc.getSelectedFile();
-	    openFrame(file);
+            fc.addChoosableFileFilter(filter);
+            fc.setFileFilter(filter);
+
+            if (fc.showOpenDialog(PatchEdit.getInstance()) == JFileChooser.APPROVE_OPTION)
+                openFrame(fc.getSelectedFile());
         }
     }
 
@@ -1249,7 +1235,7 @@ final class Actions {
     }
 
     ////////////////////////////////////////////////////////////////////////
-    private static class ExtensionFilter extends FileFilter {
+    static class ExtensionFilter extends FileFilter {
 	private String[] exts;
 	private String desc;
 
@@ -1270,7 +1256,7 @@ final class Actions {
 	    String path = file.getAbsolutePath();
 	    for (int i = 0; i < count; i++) {
 		String ext = exts[i];
-		if (path.toUpperCase().endsWith(ext.toUpperCase())
+		if (path.toLowerCase().endsWith(ext.toLowerCase())
 		    && (path.charAt(path.length() - ext.length()) == '.')) {
 		    return true;
 		}
