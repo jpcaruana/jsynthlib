@@ -1,11 +1,12 @@
 package core;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
-import javax.swing.event.*;
 import java.io.*;
+import java.util.*;
+import javax.sound.midi.*;
+import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.*;
 
 /**
  * A base class of a patch editor.
@@ -47,7 +48,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     private int patchCol;
     /** The last recently moved widget by fader. */
     private SysexWidget recentWidget;
-    private byte lastFader;
+    private int lastFader;
     private JScrollPane scroller;
 
     /**
@@ -71,6 +72,11 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	scroller = new JScrollPane(scrollPane);
 	getContentPane().add(scroller);
 	setSize(600, 400);
+
+	if (PatchEdit.newMidiAPI) {
+	    if (PatchEdit.appConfig.getFaderEnable())
+		enableFaderIn();
+	}
 
 	scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
@@ -283,7 +289,62 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 		       gbc.EAST, gbc.BOTH, slidernum);
     }
 
+    ////////////////////////////////////////////////////////////////////////
+    // MIDI Fader Input
+
+    private Transmitter trns;
+    private Receiver rcvr;
+    void enableFaderIn() {
+	try {
+	    trns = PatchEdit.appConfig.getMidiFaderIn().getTransmitter();
+	    rcvr = new FaderReceiver();
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportError("Error", "Fader Controller", e);
+	}
+	trns.setReceiver(rcvr);
+    }
+
+    void disableFaderIn() {
+	if (trns != null)
+	    trns.close();
+	if (rcvr != null)
+	    rcvr.close();
+    }
+
+    protected void finalize() {
+	disableFaderIn();
+    }
+
+    private class FaderReceiver implements Receiver {
+	//Receiver interface
+	public void close() {
+	}
+
+	public void send(MidiMessage message, long timeStamp) {
+	    // ignore unless Editor Window is active.
+	    if (!isSelected())
+		return;
+	    ShortMessage msg = (ShortMessage) message;
+	    if (msg.getCommand() == ShortMessage.CONTROL_CHANGE) {
+		int channel = msg.getChannel();
+		int controller = msg.getData1();
+		for (int i = 0; i < Constants.NUM_FADERS; i++) {
+		    if ((PatchEdit.appConfig.getFaderController(i) == controller)
+			&& (PatchEdit.appConfig.getFaderChannel(i) == channel)) {
+			faderMoved(i, msg.getData2());
+			break;
+		    }
+		}
+	    }
+	}
+    }
+
+    /** only for backward compatibility */
     void faderMoved(byte fader, byte value) {
+	faderMoved((int) fader, (int) value);
+    }
+
+    private void faderMoved(int fader, int value) {
 	if (fader == 32) {
 	    faderBank = (faderBank + 1) % numFaderBanks;
 	    faderHighlight();
