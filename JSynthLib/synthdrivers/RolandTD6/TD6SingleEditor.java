@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 Hiroo Hayashi
+ * Copyright 2003, 2004 Hiroo Hayashi
  *
  * This file is part of JSynthLib.
  *
@@ -82,9 +82,7 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	// default
 	gbc.gridwidth = 1; gbc.gridheight = 1; gbc.weightx = 1; gbc.weighty = 1;
 
-	/*
-	 * Kit Title
-	 */
+	// Kit Title
 	JPanel topPane = new JPanel();
 	topPane.setLayout(new GridBagLayout()); gbc.weightx = 1;
 	gbc.gridx = 0; gbc.gridy = 0;
@@ -92,417 +90,425 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	addWidget(topPane,
 		  new PatchNameWidget("Drum Kit Name ", patch),
 		  0, 0, 1, 1, 0);
-	/*
-	 * Tabbed Pane
-	 */
+
+	// Tabbed Pane
 	JTabbedPane tabbedPane = new JTabbedPane();
 	gbc.gridx = 0; gbc.gridy = 1;
 	scrollPane.add(tabbedPane, gbc);
 
-	/*
-	 * Pad Pane
-	 */
-	JPanel padPane = new JPanel();
-	padPane.setLayout(new GridBagLayout());
-	tabbedPane.addTab("Pad", padPane);
+	// Pad Pane
+	JPanel padPane = createPadPane(patch);
+	tabbedPane.addTab("Pad", padPane);
 
-	/*
-	 * Pad List
-	 */
-	JPanel padListPane = new JPanel();
-	padListPane.setLayout(new GridBagLayout());
-	padListPane.setBorder
-	    (new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-			      "Choose a Pad",
-			      TitledBorder.CENTER,
-			      TitledBorder.CENTER));
-	gbc.gridx = 0; gbc.gridy = 0;
-	padPane.add(padListPane, gbc);
-
-	JLabel l;
-	l = new JLabel("Head", JLabel.CENTER);
-	gbc.gridx = 1; gbc.gridy = 0;
-	padListPane.add(l, gbc);
-	l = new JLabel("Rim", JLabel.CENTER);
-	gbc.gridx = 2; gbc.gridy = 0;
-	padListPane.add(l, gbc);
-
-	for (int i = 0; i < padList.length; i++) {
-	    pad = i;
-	    l = new JLabel(padList[i].name, JLabel.CENTER);
-	    gbc.gridx = 0; gbc.gridy = 1 + i;
-	    padListPane.add(l, gbc);
-
-	    for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
-		isRim = (j == 1);
-		if (j == 1 && !padList[i].dualTrigger)
-		    continue;
-		TD6PadModel m = new TD6PadModel(patch, 0x0, true);
-		JButton b = new JButton(treeWidget.getNode(m.get()).toString());
-		if (j == 0)
-		    padList[i].buttonHead = b;
-		else
-		    padList[i].buttonRim = b;
-		if (j == 1 && !padList[i].dualTriggerActive) {
-		    b.setEnabled(false);	// true by default
-		} else {
-		    final int index = pad;
-		    final boolean rimp = isRim;
-		    b.addActionListener
-			(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				    // deselect privious selected button
-				    if (isRim) {
-					padList[pad].buttonRim.setBorderPainted(false);
-					padList[pad].buttonRim.setSelected(false);
-				    } else {
-					padList[pad].buttonHead.setBorderPainted(false);
-					padList[pad].buttonHead.setSelected(false);
-				    }
-				    JButton b = (JButton) e.getSource();
-				    b.setBorderPainted(true); // for Windows UI
-				    b.setSelected(true); // for Metal UI
-				    // pad and isRim are used by TD6PadSender and TD6PadModel.
-				    pad = index;
-				    isRim = rimp;
-
-				    // update the state of each widget in Pad Pane when
-				    // pad selection is changed.
-				    for (int i = 0; i < widgetList.size(); i++) {
-					SysexWidget w = (SysexWidget) widgetList.get(i);
-					//ErrorMsg.reportStatus(((Object) w).toString());
-					w.setValue();
-				    }
-				}
-			    });
-		}
-		b.setBorderPainted(false);
-		b.setSelected(false);
-		gbc.gridx = 1 + j; gbc.gridy = 1 + i;
-		padListPane.add(b, gbc);
-	    }	// j-loop
-	} // i-loop
-	// default selection
-	pad = 0;
-	isRim = false;
-	padList[pad].buttonHead.setBorderPainted(true);
-	padList[pad].buttonHead.setSelected(true);
-
-	/*
-	 * Instrument Tree
-	 */
-	JPanel treePane = new JPanel();
-	treePane.setLayout(new GridBagLayout());
-	addWidget(treePane, treeWidget,
-		  0, 0, 1, 1, snum++);
-	treePane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-					    "Instrument Selection",
-					    TitledBorder.CENTER,
-					    TitledBorder.CENTER));
-	gbc.gridx = 1; gbc.gridy = 0; gbc.gridheight = 2;
-	padPane.add(treePane, gbc);
-	gbc.gridheight = 1;
-
-	/*
-	 * Pad Parameters
-	 */
-	JPanel padParamPane = new JPanel();
-	padParamPane.setLayout(new GridBagLayout());
-	padParamPane.setBorder
-	    (new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-			      "Pad Setting",
-			      TitledBorder.CENTER,
-			      TitledBorder.CENTER));
-	gbc.gridx = 0; gbc.gridy = 1;
-	padPane.add(padParamPane, gbc);
-
-	int lw = (int) (new JLabel("Pad Pattern")).getPreferredSize().getWidth();
-
-	//   pitch
-	addWidget(padParamPane,
-		  new ScrollBarWidget("Pitch", patch,
-				      0, 960, -480, lw,
-				      new TD6PadModel(patch, 0x4, true),
-				      new TD6PadSender(0x4, true)),
-		  0, 0, 1, 1, snum++);
-	//   decay
-	addWidget(padParamPane,
-		  new ScrollBarWidget("Decay", patch,
-				      0, 62, -31, lw,
-				      new TD6PadModel(patch, 0x8),
-				      new TD6PadSender(0x8)),
-		  0, 1, 1, 1, snum++);
-	//   pad pattern off,1-250
-	String[] padText = new String[256];
-	padText[0] = "Off";
-	for (int i = 1; i < padText.length; i++)
-	    padText[i] = String.valueOf(i);
-	addWidget(padParamPane,
-		  new ScrollBarLookupWidget("Pad Pattern", patch,
-					    0, 250, lw,
-					    new TD6PadModel(patch, 0x9, true),
-					    new TD6PadSender(0x9, true),
-					    padText),
-		  0, 2, 1, 1, snum++);
-	// Pad Pattern Velocity
-	addWidget(padParamPane,
-		  new CheckBoxWidget("Pad Pattern Velocity", patch,
-				     new TD6PadModel(patch, 0xf),
-				     new TD6PadSender(0xf)),
-		  0, 3, 1, 1, 0);
-	// Pitch Control Switch on/off
-	addWidget(padParamPane,
-		  new CheckBoxWidget("Pedal Pitch Control", patch,
-				     new TD6PadModel(patch, 0x12),
-				     new TD6PadSender(0x12)),
-		  1, 0, 1, 1, 0);
-
-	lw = (int) (new JLabel("Pedal Pitch Control")).getPreferredSize().getWidth();
-	//   MIDI gate time (0.1 to 8.0)
-	addWidget(padParamPane,
-		  new ScrollBarWidget("Gate Time (x 0.1s)", patch,
-				      1, 80, 1, lw,
-				      new TD6PadModel(patch, 0xd),
-				      new TD6PadSender(0xd)),
-		  1, 1, 1, 1, snum++);
-	//   MIDI note number
-	addWidget(padParamPane,
-		  new ScrollBarWidget("Note Number", patch,
-				      0, 127, 0, lw,
-				      new TD6PadModel(patch, 0xe),
-				      new TD6PadSender(0xe)),
-		  1, 2, 1, 1, snum++);
-
-	/*
-	 * Mixer Pane
-	 */
-	JPanel mixerPane = new JPanel();
-	mixerPane.setLayout(new GridBagLayout());
+	// Mixer Pane
+	JPanel mixerPane = createMixerPane(patch);
 	tabbedPane.addTab("Mixer", mixerPane);
 
-	// Master Volume
-	JPanel padMx = new JPanel();
-	padMx.setLayout(new GridBagLayout());
-	padMx.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-					 "Master",
-					 TitledBorder.CENTER,
-					 TitledBorder.CENTER));
-	gbc.gridx = 0; gbc.gridy = 0;
-	gbc.gridwidth = 1; gbc.gridheight = 1;
-	gbc.anchor = GridBagConstraints.CENTER;
-	gbc.fill = GridBagConstraints.NONE;
-	mixerPane.add(padMx, gbc);
-	addWidget(padMx,
-		  new VertScrollBarWidget(" ", patch,
-					  0, 127, 0,
-					  new TD6KitModel(patch, 0x15),
-					  new TD6KitSender(0x15)),
-		  0, 0, 1, 1, snum++);
-
-	for (int i = 0; i < padList.length; i++) {
-	    padMx = new JPanel();
-	    padMx.setLayout(new GridBagLayout());
-	    padMx.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-					     padList[i].name,
-					     TitledBorder.CENTER,
-					     TitledBorder.CENTER));
-	    int w = 0;
-	    for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
-		if (j == 1
-		    && (!padList[i].dualTrigger || !padList[i].dualTriggerActive))
-		    continue;
-		addWidget(padMx,
-			  new VertScrollBarWidget
-			  (j == 0 ? "Head" : "Rim",
-			   patch,
-			   0, 127, 0,
-			   new TD6KitModel(patch, (padList[i].offset
-						   + (j == 0 ? 0x00 : 0x13) + 0x10)),
-			   new TD6KitSender(padList[i].offset
-					    + (j == 0 ? 0x00 : 0x13) + 0x10)),
-			  w++, 1, 1, 1, snum++);
-	    }
-	    if (padList[i].name == "Hi-Hat") {
-		// Pedal Hi-Hat Volume
-		addWidget(padMx,
-			  new VertScrollBarWidget("Pedal", patch,
-						  0, 15, 0,
-						  new TD6KitModel(patch, 0x13),
-						  new TD6KitSender(0x13)),
-			  w++, 1, 1, 1, snum++);
-	    }
-	    // How can I move Center to top?  Change DKnob class or add
-	    // radio button? !!!FIXIT!!!
-	    String[] panText = { "L15", "L14", "L13", "L12", "L11", "L10", "L9",
-				 "L8", "L7", "L6", "L5", "L4", "L3", "L2", "L1",
-				 "Center",
-				 "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8",
-				 "R9", "R10", "R11", "R12", "R13", "R14", "R15",
-				 "Random", "Alternative" };
-	    addWidget(padMx,
-		      new KnobLookupWidget(null, patch,
-					   0, 32,
-					   new TD6KitModel(patch,
-							   padList[i].offset + 0x26),
-					   new TD6KitSender(padList[i].offset + 0x26),
-					   panText),
-		      0, 0, w, 1,
-		      GridBagConstraints.CENTER, GridBagConstraints.NONE,
-		      snum++);
-
-	    gbc.gridx = i + 1; gbc.gridy = 0;
-	    gbc.gridwidth = 1; gbc.gridheight = 1;
-	    gbc.anchor = GridBagConstraints.CENTER;
-	    gbc.fill = GridBagConstraints.NONE;
-	    mixerPane.add(padMx, gbc);
-	}
-
-	/*
-	 * Effect Pane
-	 */
-	JPanel effectPane = new JPanel();
-	effectPane.setLayout(new GridBagLayout());
+	// Effect Pane
+	JPanel effectPane = createEffectPane(patch);
 	tabbedPane.addTab("Effect", effectPane);
-
-	// Top Pane
-	JPanel eTopPane = new JPanel();
-	eTopPane.setLayout(new GridBagLayout());
-	gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-	effectPane.add(eTopPane, gbc);
-	gbc.gridwidth = 1;
-
-	// Equilizer Pane
-	JPanel eqPane = new JPanel();
-	eqPane.setLayout(new GridBagLayout());
-	eqPane.setBorder
-	    (new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-			      "Equalizer",
-			      TitledBorder.CENTER,
-			      TitledBorder.CENTER));
-	gbc.gridx = 0; gbc.gridy = 1;
-	effectPane.add(eqPane, gbc);
-
-	// Ambience Pane
-	JPanel ambPane = new JPanel();
-	ambPane.setLayout(new GridBagLayout());
-	ambPane.setBorder
-	    (new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-			      "Ambience",
-			      TitledBorder.CENTER,
-			      TitledBorder.CENTER));
-	gbc.gridx = 1; gbc.gridy = 1;
-	effectPane.add(ambPane, gbc);
-
-	// studio (1 to 9)
-	addWidget(eTopPane,
-		  new ComboBoxWidget("Studio Type ", patch, 1,
-				     new TD6KitModel(patch, 0x8),
-				     new TD6KitSender(0x8),
-				     new String [] {"Living Room", "Bathroom",
-						    "Recording Studio", "Garage",
-						    "Locker Room", "Theater",
-						    "Cave", "Gymnasium",
-						    "Domed Stadium"}),
-		  0, 0, 1, 1, 0);
-	// Wall Type
-	addWidget(eTopPane,
-		  new ComboBoxWidget("Wall Type ", patch,
-				     new TD6KitModel(patch, 0xa),
-				     new TD6KitSender(0xa),
-				     new String [] {"Wood", "Plaster", "Glass"}),
-		  1, 0, 1, 1, 0);
-	// Room Size (1 to 3)
-	addWidget(eTopPane,
-		  new ComboBoxWidget("Room Size ", patch, 1,
-				     new TD6KitModel(patch, 0xb),
-				     new TD6KitSender(0xb),
-				     new String [] {"Small", "Medium", "Large"}),
-		  2, 0, 1, 1, 0);
-	// Pedal Pitch Control Range
-	addWidget(eTopPane,
-		  new ScrollBarWidget("Pedal Pitch Control Range", patch,
-				      0, 48, -24,
-				      new TD6KitModel(patch, 0x14),
-				      new TD6KitSender(0x14)),
-		  3, 0, 1, 1, snum++);
-
-	// Master Equalizer Switch
-	addWidget(eqPane,
-		  new CheckBoxWidget("Enable", patch,
-				     new TD6KitModel(patch, 0x11),
-				     new TD6KitSender(0x11)),
-		  0, 0, 1, 1, 0);
-
-	// Equalizer Low Gain
-	addWidget(eqPane,
-		  new VertScrollBarWidget("Low", patch,
-					  0, 24, -12,
-					  new TD6KitModel(patch, 0xd),
-					  new TD6KitSender(0xd)),
-		  0, 1, 1, 1, snum++);
-
-	// Equalizer High Gain
-	addWidget(eqPane,
-		  new VertScrollBarWidget("High", patch,
-					  0, 24, -12,
-					  new TD6KitModel(patch, 0xf),
-					  new TD6KitSender(0xf)),
-		  1, 1, 1, 1, snum++);
-
-	// Master Ambience Switch
-	addWidget(ambPane,
-		  new CheckBoxWidget("Enable", patch,
-				     new TD6KitModel(patch, 0x10),
-				     new TD6KitSender(0x10)),
-		  0, 0, 1, 1, 0);
-
-	// Master Ambience Level
-	JPanel padEq = new JPanel();
-	padEq.setLayout(new GridBagLayout());
-	padEq.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-					 "Master",
-					 TitledBorder.CENTER,
-					 TitledBorder.CENTER));
-	gbc.gridx = 0; gbc.gridy = 1;
-	ambPane.add(padEq, gbc);
-	addWidget(padEq,
-		  new VertScrollBarWidget(" ", patch,
-					  0, 127, 0,
-					  new TD6KitModel(patch, 0x9),
-					  new TD6KitSender(0x9)),
-		  0, 0, 1, 1, snum++);
-
-	// Pad Ambience Level
-	for (int i = 0; i < padList.length; i++) {
-	    padEq = new JPanel();
-	    padEq.setLayout(new GridBagLayout());
-	    for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
-		if (j == 1
-		    && (!padList[i].dualTrigger || !padList[i].dualTriggerActive))
-		    continue;
-		addWidget(padEq,
-			  new VertScrollBarWidget
-			  (j == 0 ? "Head" : "Rim",
-			   patch,
-			   0, 127, 0,
-			   new TD6KitModel(patch, (padList[i].offset
-						   + (j == 0 ? 0x00 : 0x13) + 0x11)),
-			   new TD6KitSender(padList[i].offset
-					    + (j == 0 ? 0x00 : 0x13) + 0x11)),
-			  j, 1, 1, 1, snum++);
-	    }
-	    padEq.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
-					     padList[i].name,
-					     TitledBorder.CENTER,
-					     TitledBorder.CENTER));
-	    gbc.gridx = 1 + i; gbc.gridy = 1;
-	    ambPane.add(padEq, gbc);
-	}
 
 	pack();
 	show();
     }
 
+    private JPanel createMixerPane(Patch patch) {
+        JPanel mixerPane = new JPanel();
+        mixerPane.setLayout(new GridBagLayout());
+
+        // Master Volume
+        JPanel padMx = new JPanel();
+        padMx.setLayout(new GridBagLayout());
+        padMx.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        				 "Master",
+        				 TitledBorder.CENTER,
+        				 TitledBorder.CENTER));
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridwidth = 1; gbc.gridheight = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.NONE;
+        mixerPane.add(padMx, gbc);
+        addWidget(padMx,
+        	  new VertScrollBarWidget(" ", patch,
+        				  0, 127, 0,
+        				  new TD6KitModel(patch, 0x15),
+        				  new TD6KitSender(0x15)),
+        	  0, 0, 1, 1, snum++);
+
+        for (int i = 0; i < padList.length; i++) {
+            padMx = new JPanel();
+            padMx.setLayout(new GridBagLayout());
+            padMx.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        				     padList[i].name,
+        				     TitledBorder.CENTER,
+        				     TitledBorder.CENTER));
+            int w = 0;
+            for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
+        	if (j == 1
+        	    && (!padList[i].dualTrigger || !padList[i].dualTriggerActive))
+        	    continue;
+        	addWidget(padMx,
+        		  new VertScrollBarWidget
+        		  (j == 0 ? "Head" : "Rim",
+        		   patch,
+        		   0, 127, 0,
+        		   new TD6KitModel(patch, (padList[i].offset
+        					   + (j == 0 ? 0x00 : 0x13) + 0x10)),
+        		   new TD6KitSender(padList[i].offset
+        				    + (j == 0 ? 0x00 : 0x13) + 0x10)),
+        		  w++, 1, 1, 1, snum++);
+            }
+            if (padList[i].name == "Hi-Hat") {
+        	// Pedal Hi-Hat Volume
+        	addWidget(padMx,
+        		  new VertScrollBarWidget("Pedal", patch,
+        					  0, 15, 0,
+        					  new TD6KitModel(patch, 0x13),
+        					  new TD6KitSender(0x13)),
+        		  w++, 1, 1, 1, snum++);
+            }
+            // How can I move Center to top?  Change DKnob class or add
+            // radio button? !!!FIXIT!!!
+            String[] panText = { "L15", "L14", "L13", "L12", "L11", "L10", "L9",
+        			 "L8", "L7", "L6", "L5", "L4", "L3", "L2", "L1",
+        			 "Center",
+        			 "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8",
+        			 "R9", "R10", "R11", "R12", "R13", "R14", "R15",
+        			 "Random", "Alternative" };
+            addWidget(padMx,
+        	      new KnobLookupWidget(null, patch,
+        				   0, 32,
+        				   new TD6KitModel(patch,
+        						   padList[i].offset + 0x26),
+        				   new TD6KitSender(padList[i].offset + 0x26),
+        				   panText),
+        	      0, 0, w, 1,
+        	      GridBagConstraints.CENTER, GridBagConstraints.NONE,
+        	      snum++);
+
+            gbc.gridx = i + 1; gbc.gridy = 0;
+            gbc.gridwidth = 1; gbc.gridheight = 1;
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.NONE;
+            mixerPane.add(padMx, gbc);
+        }
+        return mixerPane;
+    }
+
+    private JPanel createPadPane(Patch patch) {
+        JPanel padPane = new JPanel();
+        padPane.setLayout(new GridBagLayout());
+
+        /*
+         * Pad List
+         */
+        JPanel padListPane = new JPanel();
+        padListPane.setLayout(new GridBagLayout());
+        padListPane.setBorder
+            (new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        		      "Choose a Pad",
+        		      TitledBorder.CENTER,
+        		      TitledBorder.CENTER));
+        gbc.gridx = 0; gbc.gridy = 0;
+        padPane.add(padListPane, gbc);
+
+        JLabel l;
+        l = new JLabel("Head", JLabel.CENTER);
+        gbc.gridx = 1; gbc.gridy = 0;
+        padListPane.add(l, gbc);
+        l = new JLabel("Rim", JLabel.CENTER);
+        gbc.gridx = 2; gbc.gridy = 0;
+        padListPane.add(l, gbc);
+
+        for (int i = 0; i < padList.length; i++) {
+            pad = i;
+            l = new JLabel(padList[i].name, JLabel.CENTER);
+            gbc.gridx = 0; gbc.gridy = 1 + i;
+            padListPane.add(l, gbc);
+
+            for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
+        	isRim = (j == 1);
+        	if (j == 1 && !padList[i].dualTrigger)
+        	    continue;
+        	TD6PadModel m = new TD6PadModel(patch, 0x0, true);
+        	JButton b = new JButton(treeWidget.getNode(m.get()).toString());
+        	if (j == 0)
+        	    padList[i].buttonHead = b;
+        	else
+        	    padList[i].buttonRim = b;
+        	if (j == 1 && !padList[i].dualTriggerActive) {
+        	    b.setEnabled(false);	// true by default
+        	} else {
+        	    final int index = pad;
+        	    final boolean rimp = isRim;
+        	    b.addActionListener
+        		(new ActionListener() {
+        			public void actionPerformed(ActionEvent e) {
+        			    // deselect privious selected button
+        			    if (isRim) {
+        				padList[pad].buttonRim.setBorderPainted(false);
+        				padList[pad].buttonRim.setSelected(false);
+        			    } else {
+        				padList[pad].buttonHead.setBorderPainted(false);
+        				padList[pad].buttonHead.setSelected(false);
+        			    }
+        			    JButton b = (JButton) e.getSource();
+        			    b.setBorderPainted(true); // for Windows UI
+        			    b.setSelected(true); // for Metal UI
+        			    // pad and isRim are used by TD6PadSender and TD6PadModel.
+        			    pad = index;
+        			    isRim = rimp;
+
+        			    // update the state of each widget in Pad Pane when
+        			    // pad selection is changed.
+        			    for (int i = 0; i < widgetList.size(); i++) {
+        				SysexWidget w = (SysexWidget) widgetList.get(i);
+        				//ErrorMsg.reportStatus(((Object) w).toString());
+        				w.setValue();
+        			    }
+        			}
+        		    });
+        	}
+        	b.setBorderPainted(false);
+        	b.setSelected(false);
+        	gbc.gridx = 1 + j; gbc.gridy = 1 + i;
+        	padListPane.add(b, gbc);
+            }	// j-loop
+        } // i-loop
+        // default selection
+        pad = 0;
+        isRim = false;
+        padList[pad].buttonHead.setBorderPainted(true);
+        padList[pad].buttonHead.setSelected(true);
+
+        /*
+         * Instrument Tree
+         */
+        JPanel treePane = new JPanel();
+        treePane.setLayout(new GridBagLayout());
+        addWidget(treePane, treeWidget,
+        	  0, 0, 1, 1, snum++);
+        treePane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        				    "Instrument Selection",
+        				    TitledBorder.CENTER,
+        				    TitledBorder.CENTER));
+        gbc.gridx = 1; gbc.gridy = 0; gbc.gridheight = 2;
+        padPane.add(treePane, gbc);
+        gbc.gridheight = 1;
+
+        /*
+         * Pad Parameters
+         */
+        JPanel padParamPane = new JPanel();
+        padParamPane.setLayout(new GridBagLayout());
+        padParamPane.setBorder
+            (new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        		      "Pad Setting",
+        		      TitledBorder.CENTER,
+        		      TitledBorder.CENTER));
+        gbc.gridx = 0; gbc.gridy = 1;
+        padPane.add(padParamPane, gbc);
+
+        int lw = (int) (new JLabel("Pad Pattern")).getPreferredSize().getWidth();
+
+        //   pitch
+        addWidget(padParamPane,
+        	  new ScrollBarWidget("Pitch", patch,
+        			      0, 960, -480, lw,
+        			      new TD6PadModel(patch, 0x4, true),
+        			      new TD6PadSender(0x4, true)),
+        	  0, 0, 1, 1, snum++);
+        //   decay
+        addWidget(padParamPane,
+        	  new ScrollBarWidget("Decay", patch,
+        			      0, 62, -31, lw,
+        			      new TD6PadModel(patch, 0x8),
+        			      new TD6PadSender(0x8)),
+        	  0, 1, 1, 1, snum++);
+        //   pad pattern off,1-250
+        String[] padText = new String[256];
+        padText[0] = "Off";
+        for (int i = 1; i < padText.length; i++)
+            padText[i] = String.valueOf(i);
+        addWidget(padParamPane,
+        	  new ScrollBarLookupWidget("Pad Pattern", patch,
+        				    0, 250, lw,
+        				    new TD6PadModel(patch, 0x9, true),
+        				    new TD6PadSender(0x9, true),
+        				    padText),
+        	  0, 2, 1, 1, snum++);
+        // Pad Pattern Velocity
+        addWidget(padParamPane,
+        	  new CheckBoxWidget("Pad Pattern Velocity", patch,
+        			     new TD6PadModel(patch, 0xf),
+        			     new TD6PadSender(0xf)),
+        	  0, 3, 1, 1, 0);
+        // Pitch Control Switch on/off
+        addWidget(padParamPane,
+        	  new CheckBoxWidget("Pedal Pitch Control", patch,
+        			     new TD6PadModel(patch, 0x12),
+        			     new TD6PadSender(0x12)),
+        	  1, 0, 1, 1, 0);
+
+        lw = (int) (new JLabel("Pedal Pitch Control")).getPreferredSize().getWidth();
+        //   MIDI gate time (0.1 to 8.0)
+        addWidget(padParamPane,
+        	  new ScrollBarWidget("Gate Time (x 0.1s)", patch,
+        			      1, 80, 1, lw,
+        			      new TD6PadModel(patch, 0xd),
+        			      new TD6PadSender(0xd)),
+        	  1, 1, 1, 1, snum++);
+        //   MIDI note number
+        addWidget(padParamPane,
+        	  new ScrollBarWidget("Note Number", patch,
+        			      0, 127, 0, lw,
+        			      new TD6PadModel(patch, 0xe),
+        			      new TD6PadSender(0xe)),
+        	  1, 2, 1, 1, snum++);
+        return padPane;
+    }
+
+    private JPanel createEffectPane(Patch patch) {
+        JPanel effectPane = new JPanel();
+        effectPane.setLayout(new GridBagLayout());
+
+        // Top Pane
+        JPanel eTopPane = new JPanel();
+        eTopPane.setLayout(new GridBagLayout());
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        effectPane.add(eTopPane, gbc);
+        gbc.gridwidth = 1;
+
+        // Equilizer Pane
+        JPanel eqPane = new JPanel();
+        eqPane.setLayout(new GridBagLayout());
+        eqPane.setBorder
+            (new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        		      "Equalizer",
+        		      TitledBorder.CENTER,
+        		      TitledBorder.CENTER));
+        gbc.gridx = 0; gbc.gridy = 1;
+        effectPane.add(eqPane, gbc);
+
+        // Ambience Pane
+        JPanel ambPane = new JPanel();
+        ambPane.setLayout(new GridBagLayout());
+        ambPane.setBorder
+            (new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        		      "Ambience",
+        		      TitledBorder.CENTER,
+        		      TitledBorder.CENTER));
+        gbc.gridx = 1; gbc.gridy = 1;
+        effectPane.add(ambPane, gbc);
+
+        // studio (1 to 9)
+        addWidget(eTopPane,
+        	  new ComboBoxWidget("Studio Type ", patch, 1,
+        			     new TD6KitModel(patch, 0x8),
+        			     new TD6KitSender(0x8),
+        			     new String [] {"Living Room", "Bathroom",
+        					    "Recording Studio", "Garage",
+        					    "Locker Room", "Theater",
+        					    "Cave", "Gymnasium",
+        					    "Domed Stadium"}),
+        	  0, 0, 1, 1, 0);
+        // Wall Type
+        addWidget(eTopPane,
+        	  new ComboBoxWidget("Wall Type ", patch,
+        			     new TD6KitModel(patch, 0xa),
+        			     new TD6KitSender(0xa),
+        			     new String [] {"Wood", "Plaster", "Glass"}),
+        	  1, 0, 1, 1, 0);
+        // Room Size (1 to 3)
+        addWidget(eTopPane,
+        	  new ComboBoxWidget("Room Size ", patch, 1,
+        			     new TD6KitModel(patch, 0xb),
+        			     new TD6KitSender(0xb),
+        			     new String [] {"Small", "Medium", "Large"}),
+        	  2, 0, 1, 1, 0);
+        // Pedal Pitch Control Range
+        addWidget(eTopPane,
+        	  new ScrollBarWidget("Pedal Pitch Control Range", patch,
+        			      0, 48, -24,
+        			      new TD6KitModel(patch, 0x14),
+        			      new TD6KitSender(0x14)),
+        	  3, 0, 1, 1, snum++);
+
+        // Master Equalizer Switch
+        addWidget(eqPane,
+        	  new CheckBoxWidget("Enable", patch,
+        			     new TD6KitModel(patch, 0x11),
+        			     new TD6KitSender(0x11)),
+        	  0, 0, 1, 1, 0);
+
+        // Equalizer Low Gain
+        addWidget(eqPane,
+        	  new VertScrollBarWidget("Low", patch,
+        				  0, 24, -12,
+        				  new TD6KitModel(patch, 0xd),
+        				  new TD6KitSender(0xd)),
+        	  0, 1, 1, 1, snum++);
+
+        // Equalizer High Gain
+        addWidget(eqPane,
+        	  new VertScrollBarWidget("High", patch,
+        				  0, 24, -12,
+        				  new TD6KitModel(patch, 0xf),
+        				  new TD6KitSender(0xf)),
+        	  1, 1, 1, 1, snum++);
+
+        // Master Ambience Switch
+        addWidget(ambPane,
+        	  new CheckBoxWidget("Enable", patch,
+        			     new TD6KitModel(patch, 0x10),
+        			     new TD6KitSender(0x10)),
+        	  0, 0, 1, 1, 0);
+
+        // Master Ambience Level
+        JPanel padEq = new JPanel();
+        padEq.setLayout(new GridBagLayout());
+        padEq.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        				 "Master",
+        				 TitledBorder.CENTER,
+        				 TitledBorder.CENTER));
+        gbc.gridx = 0; gbc.gridy = 1;
+        ambPane.add(padEq, gbc);
+        addWidget(padEq,
+        	  new VertScrollBarWidget(" ", patch,
+        				  0, 127, 0,
+        				  new TD6KitModel(patch, 0x9),
+        				  new TD6KitSender(0x9)),
+        	  0, 0, 1, 1, snum++);
+
+        // Pad Ambience Level
+        for (int i = 0; i < padList.length; i++) {
+            padEq = new JPanel();
+            padEq.setLayout(new GridBagLayout());
+            for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
+        	if (j == 1
+        	    && (!padList[i].dualTrigger || !padList[i].dualTriggerActive))
+        	    continue;
+        	addWidget(padEq,
+        		  new VertScrollBarWidget
+        		  (j == 0 ? "Head" : "Rim",
+        		   patch,
+        		   0, 127, 0,
+        		   new TD6KitModel(patch, (padList[i].offset
+        					   + (j == 0 ? 0x00 : 0x13) + 0x11)),
+        		   new TD6KitSender(padList[i].offset
+        				    + (j == 0 ? 0x00 : 0x13) + 0x11)),
+        		  j, 1, 1, 1, snum++);
+            }
+            padEq.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+        				     padList[i].name,
+        				     TitledBorder.CENTER,
+        				     TitledBorder.CENTER));
+            gbc.gridx = 1 + i; gbc.gridy = 1;
+            ambPane.add(padEq, gbc);
+        }
+        return effectPane;
+    }
+
     /**
      * SysexSender for a selected pad.  Used by widgets in padParamPane.
      */
@@ -665,7 +671,6 @@ final class TD6SingleEditor extends PatchEditorFrame {
     }
 }
 
-
 /**
  * SysexSender for widgets which are not in padParamPane.
  *
