@@ -99,7 +99,7 @@ class DevicesConfig {
 		} catch (NullPointerException e) {
 		    ErrorMsg.reportError("Failed loading Devices",
 					 "Config file inconsistency found "
-					 + "for '" + shortName + "' device");
+					 + "for '" + shortName + "' device", e);
 		}
 		/*
 	    } else if (propName.startsWith(Constants.PROP_PREFIX_ID_STRING)) {
@@ -196,7 +196,7 @@ class DevicesConfig {
     			} catch (Exception e) {
     			    ErrorMsg.reportError("Failed to create device",
     						 "Failed to create device of class '"
-    						 + className + "'");
+    						 + className + "'", e);
     			    return null;
     			}
     		}

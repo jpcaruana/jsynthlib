@@ -207,17 +207,18 @@ the jar file.
 You can compile them by the following steps.
 
 <pre>
-    javac core/*.java
-    javac synthdrivers/*/*/*.java synthdrivers/*/*.java
     # On Windows use semicolon (;) instead of colon (:).
     javac -classpath '.:Groovy.jar:asm.jar' org/jsynthlib/*/*/*.java org/jsynthlib/*/*.java
+    javac core/*.java
+    javac synthdrivers/*/*/*.java synthdrivers/*/*.java
     javac *.java
 </pre>
 
 You may also use the following method:
 <pre>
-    find . -name "*.java" > js
-    javac @js
+    find . -name '*.java' | grep -v midiprovider/ > js
+    # On Windows use semicolon (;) instead of colon (:).
+    javac -classpath '.:Groovy.jar:asm.jar' @js
 </pre>
 
 And Makefile and ANT build file are included.  You may compile
