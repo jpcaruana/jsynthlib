@@ -60,11 +60,11 @@ public class PatchEdit implements MidiDriverChangeListener {
     static TransferSceneAction transferSceneAction;
     static SynthAction synthAction;
     static PrefsAction prefsAction;
+    static ExitAction exitAction;
 
     private static NextFaderAction nextFaderAction;
     private static NewAction newAction;
     private static OpenAction openAction;
-    private static ExitAction exitAction;
     private static AboutAction aboutAction;
 
     private static MidiMonitor midiMonitor;
@@ -960,9 +960,12 @@ public class PatchEdit implements MidiDriverChangeListener {
         }
 
         public void actionPerformed(ActionEvent e) {
+	    exit();
+        }
+	public void exit() {
             appConfig.savePrefs();
             System.exit(0);
-        }
+	}
     }
 
     public class ExtractAction extends AbstractAction {

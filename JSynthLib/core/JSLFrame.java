@@ -117,7 +117,7 @@ public class JSLFrame {
 	public boolean isSelected();
     }
 
-    private class JSLIFrame extends JInternalFrame implements JSLFrameProxy,
+    class JSLIFrame extends JInternalFrame implements JSLFrameProxy,
 						       InternalFrameListener {
 	private WeakReference parent;
 	protected ArrayList listeners = new ArrayList();
@@ -211,7 +211,7 @@ public class JSLFrame {
 	    listeners.remove(l);
 	}
     }
-    private class JSLJFrame extends JFrame implements JSLFrameProxy,
+    class JSLJFrame extends JFrame implements JSLFrameProxy,
 						      WindowListener {
 	private WeakReference parent;
 	protected ArrayList listeners = new ArrayList();
@@ -261,33 +261,6 @@ public class JSLFrame {
 	    super.setVisible(b);
 	}
 	public void windowActivated(WindowEvent e) {
-	    if (e.getWindow() == PatchEdit.desktop.getToolBar().getJFrame()) {
-		if (e.getOppositeWindow() instanceof JSLFrame.JSLFrameProxy ) {
-		    lastselection = (JFrame)e.getOppositeWindow();
-		} else {
-		    lastselection = null;
-		}
-	    } else if (e.getOppositeWindow()  ==
-		               PatchEdit.desktop.getToolBar().getJFrame()) {
-		if (e.getWindow() == lastselection) {
-		    lastselection = null;
-		    return;
-		} else if (lastselection != null) {
-		    WindowEvent ne = 
-			new WindowEvent(lastselection,
-					WindowEvent.WINDOW_DEACTIVATED,
-					e.getWindow());
-		    // We don't tell who the opposite window is, so this
-		    // isn't necessary.
-		    /*
-		    e = new WindowEvent(e.getWindow(),
-					WindowEvent.WINDOW_ACTIVATED,
-					lastselection);
-		    */
-		    lastselection = null;
-		    windowDeactivated(ne);
-		}
-	    }
 	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
 				  +"\" activated.");
 
@@ -318,11 +291,6 @@ public class JSLFrame {
 	    //	proxy.dispose();
 	}
 	public void windowDeactivated(WindowEvent e) {
-	    if (e.getOppositeWindow() == 
-		        PatchEdit.desktop.getToolBar().getJFrame()) {
-		// Don't notify if we're focusing the toolbar.
-		return;
-	    }
 	    ErrorMsg.reportStatus("\""+((JFrame)e.getWindow()).getTitle()
 				  +"\" deactivated.");
 	    JSLFrameEvent fe = 
@@ -364,11 +332,21 @@ public class JSLFrame {
 	    listeners.remove(l);
 	}
 	public void setPreferredSize(Dimension d) {}
-	// Pretend to be selected if switched to toolbar from this frame.
 	public boolean isSelected() {
 	    //return isActive() || lastselection == this;
-	    return PatchEdit.desktop.getSelectedWindow() == this;
+	    JSLDesktop d = PatchEdit.desktop;
+	    JFrame f = d.getSelectedWindow();
+	    return (f == this)
+		|| (f == d.getToolBar().getJFrame() 
+		    && d.getLastSelectedWindow() == this);
 	}
+	void fakeActivate() {
+	    WindowEvent we =
+		new WindowEvent(this,
+				WindowEvent.WINDOW_ACTIVATED, null);
+	    processWindowEvent(we);
+	}
+
     }
 }
 

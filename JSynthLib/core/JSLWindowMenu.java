@@ -38,7 +38,7 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 	    setMnemonic(KeyEvent.VK_W);
 	}
 	add(PatchEdit.monitorAction);
-	add(PatchEdit.desktop.toolBarAction);
+	//add(PatchEdit.desktop.toolBarAction);
 	addSeparator();
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 	JMenuItem mi = add(close_action);
@@ -95,7 +95,8 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 		if (doing_selection.booleanValue())
 		    return;
 		doing_selection = Boolean.TRUE;
-		f.toFront();
+		f.setVisible(true);
+		//f.toFront();
 		doing_selection = Boolean.FALSE;
 	    }
 	}

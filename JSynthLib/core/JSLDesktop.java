@@ -12,6 +12,7 @@ public class JSLDesktop {
 		PatchEdit.desktop.showToolBar();
 	    }
 	};
+    private static Boolean in_fake_activation = Boolean.FALSE;
 
     public JSLDesktop() {
 	if (JSLFrame.useInternalFrames()) {
@@ -24,6 +25,7 @@ public class JSLDesktop {
     public JSLFrame[] getAllFrames() { return proxy.getAllJSLFrames(); }
     public JSLFrame getSelectedFrame() { return proxy.getSelectedJSLFrame(); }
     public static JFrame getSelectedWindow() { return selected; }
+    static JFrame getLastSelectedWindow() { return proxy.getLastSelectedWindow(); }
     public Dimension getSize() { return proxy.getSize(); }
     public void add(JSLFrame f) { proxy.add(f); }
     public JMenu createWindowMenu() { return proxy.createWindowMenu(); }
@@ -43,6 +45,7 @@ public class JSLDesktop {
 	public void showToolBar();
 	public JSLFrame getToolBar();
 	public JSLFrame getInvisible();
+	JFrame getLastSelectedWindow();
      }
     private class JSLJDesktop extends JDesktopPane implements JSLDesktopProxy {
 
@@ -58,11 +61,7 @@ public class JSLDesktop {
 	    //Quit this app when the big window closes.
 	    selected.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e) {
-			PatchEdit.appConfig.savePrefs();
-			// We shouldn't need to unload the midi driver if
-			// the whole JVM is going away.
-			// unloadMidiDriver();
-			System.exit(0);
+			PatchEdit.exitAction.exit();
 		    }
 		});
 
@@ -117,12 +116,14 @@ public class JSLDesktop {
 	public void showToolBar() {}
 	public JSLFrame getToolBar() {return null;}
 	public JSLFrame getInvisible() { return null; }
+	public JFrame getLastSelectedWindow() { return null; }
     }
     private class JSLFakeDesktop implements JSLDesktopProxy, JSLFrameListener {
 	protected ArrayList windows = new ArrayList();
 	protected ArrayList windowMenus = new ArrayList();
 	protected JSLFrame toolbar;
 	private JSLFrame invisible = null;
+	private JSLFrame.JSLJFrame last_selected = null;
 
 	JSLFakeDesktop() {
 	    if (MacUtils.isMac()) {
@@ -132,7 +133,8 @@ public class JSLDesktop {
 		invisible.getJFrame().setDefaultCloseOperation(
 		        JFrame.DO_NOTHING_ON_CLOSE);
 	    }
-	    toolbar = new JSLFrame("JSynthLib",false,false,false,false);
+	    toolbar = new JSLFrame();
+	    toolbar.setTitle("JSynthLib Tool Bar");
 	    toolbar.getJFrame().setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
 	public void setupInitialMenuBar(JToolBar tb) {
@@ -146,7 +148,8 @@ public class JSLDesktop {
 		//selected.addWindowListener(this);
 	    }
 
-	    //registerFrame(toolbar);
+	    registerFrame(toolbar);
+	    //toolbar.addJSLFrameListener(this);
 	    toolbar.setJMenuBar(PatchEdit.createMenuBar());
 	    tb.setFloatable(false);
 	    toolbar.getContentPane().add(tb);
@@ -204,35 +207,60 @@ public class JSLDesktop {
 	}
 
 	public void JSLFrameActivated(JSLFrameEvent e) {
-	    selected = e.getJSLFrame().getJFrame();
+	    JSLFrame f = e.getJSLFrame();
+	    synchronized (in_fake_activation) {
+		if (in_fake_activation.booleanValue())
+		    return;
+		if (f == toolbar && last_selected != null 
+		    && last_selected != toolbar.getJFrame()) {
+		    in_fake_activation = Boolean.TRUE;
+		    last_selected.fakeActivate();
+		    in_fake_activation = Boolean.FALSE;
+		}
+	    }
+	    selected = f.getJFrame();
 	    ErrorMsg.reportStatus("\""+selected.getTitle()+"\" selected");
 	}
 	public void JSLFrameClosing(JSLFrameEvent e) {
-	    windows.remove(e.getJSLFrame());
-	    if (windows.size() < 1) {
+	    JSLFrame f = e.getJSLFrame();
+	    if (f == toolbar) {
+		if (windows.size() < 2) {
+		    PatchEdit.exitAction.exit();
+		} else {
+		    ErrorMsg.reportStatus("\"" + f.getTitle() + "\" hidden. " +
+					  (windows.size() - 1)
+					  + " windows still open.");
+		}
+	    }
+	}
+	public void JSLFrameClosed(JSLFrameEvent e) {
+	    JSLFrame f = e.getJSLFrame();
+	    windows.remove(f);
+	    if (windows.size() < 2) {
+		// toolbar should never be closed, only hidden
 		if (toolbar.isVisible()) {
 		    selected = toolbar.getJFrame();
 		    ErrorMsg.reportStatus("\""+selected.getTitle()+
 					  "\" selected");
 		} else if (invisible == null) {
-		    PatchEdit.appConfig.savePrefs();
-		    // We shouldn't need to unload the midi driver if
-		    // the whole JVM is going away.
-		    // unloadMidiDriver();
-		    System.exit(0);
+		    PatchEdit.exitAction.exit();
 		} else {
 		    ErrorMsg.reportStatus("All windows closed, but invisible "+
 					  "frame exists. Not exiting.");
 		}
 	    } else {
 		ErrorMsg.reportStatus("\""+e.getJSLFrame().getTitle()+
-				      "\" closed. " + windows.size() + 
+				      "\" closed. " + (windows.size() - 1) + 
 				      " windows still open.");
 	    }
-		
 	}
-	public void JSLFrameClosed(JSLFrameEvent e) {}
-	public void JSLFrameDeactivated(JSLFrameEvent e) {}
+	public void JSLFrameDeactivated(JSLFrameEvent e) {
+	    try {
+		last_selected = (JSLFrame.JSLJFrame)e.getJSLFrame().getJFrame();
+	    } catch (Exception ex) {
+		last_selected = null;
+	    }
+	}
 	public void JSLFrameDeiconified(JSLFrameEvent e) {}
 	public void JSLFrameIconified(JSLFrameEvent e) {}
 	public void JSLFrameOpened(JSLFrameEvent e) {}
@@ -241,5 +269,6 @@ public class JSLDesktop {
 	    toolbar.setVisible(true);
 	}
 	public JSLFrame getToolBar() { return toolbar; }
+	public JFrame getLastSelectedWindow() { return last_selected; }
     }
 }
