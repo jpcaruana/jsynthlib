@@ -48,6 +48,7 @@ public class MidiConfigPanel extends ConfigPanel {
 		public void actionPerformed (ActionEvent e) {
 		    setContainerEnabled(channelPanel, cbxEnMidi.isSelected());
 		    cbMC.setEnabled(cbxEnMC.isSelected());
+		    disableUnavailableWidgets();
 		}
 	});
 
@@ -165,7 +166,8 @@ public class MidiConfigPanel extends ConfigPanel {
     }
 
     public void init() {
-	if (MidiUtil.unavailable()) {
+	if (!MidiUtil.isOutputAvailable() && !MidiUtil.isInputAvailable()) {
+	    appConfig.setMidiEnable(false);
 	    cbxEnMidi.setSelected(false);
 	    cbxEnMidi.setEnabled(false);
 	} else {
@@ -178,6 +180,22 @@ public class MidiConfigPanel extends ConfigPanel {
 	setComboBox(cbOut, PatchEdit.appConfig.getInitPortOut());
 	setComboBox(cbIn,  PatchEdit.appConfig.getInitPortIn());
 	setComboBox(cbMC,  PatchEdit.appConfig.getMasterController());
+
+	disableUnavailableWidgets();
+    }
+
+    private void disableUnavailableWidgets() {
+	// master controller requires both MIDI input and output
+	if (!MidiUtil.isOutputAvailable() || !MidiUtil.isInputAvailable()) {
+	    appConfig.setMasterInEnable(false);
+	    cbxEnMC.setEnabled(false);
+	    cbxEnMC.setSelected(false);
+	    cbMC.setEnabled(false);
+	}
+
+	cbOut.setEnabled(MidiUtil.isOutputAvailable());
+	cbIn.setEnabled(MidiUtil.isInputAvailable());
+	//midiDriverSelected((MidiWrapper) cbDriver.getSelectedItem());
     }
 
     private static void setComboBox(JComboBox cb, int idx) {

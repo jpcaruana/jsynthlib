@@ -264,9 +264,12 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param port New value of property port.
      */
     protected void setPort (int port) {
+	if (!MidiUtil.isOutputAvailable())
+	    return;
+
 	if (!initPort || getPort() != port) {
-	    if (rcvr != null)
-		rcvr.close();
+	    // don't close
+	    //if (rcvr != null) rcvr.close();
 	    try {
 		rcvr = MidiUtil.getReceiver(port);
 	    } catch (MidiUnavailableException e) {
@@ -303,6 +306,9 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param inPort New value of property inPort.
      */
     protected void setInPort (int inPort) {
+	if (!MidiUtil.isInputAvailable())
+	    return;
+
 	if (!initInPort || getInPort() != inPort)
 	    MidiUtil.setSysexInputQueue(inPort);
 	prefs.putInt("inPort", inPort);

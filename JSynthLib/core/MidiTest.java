@@ -76,7 +76,6 @@ public class MidiTest implements Runnable {
 					     "connected to each other with a MIDI cable.",e);
 			return(false);
 		}
-		rcvr.close();
 		return(true);
 	}
 

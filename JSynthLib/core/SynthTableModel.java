@@ -46,9 +46,13 @@ public class SynthTableModel extends AbstractTableModel {
 	    return (myDevice.getManufacturerName ()
 		    + " " + myDevice.getModelName());
 	case MIDI_IN:
-	    return MidiUtil.getInputMidiDeviceInfo(myDevice.getInPort()).getName();
+	    return MidiUtil.isInputAvailable()
+		? MidiUtil.getInputMidiDeviceInfo(myDevice.getInPort()).getName()
+		: "not available";
 	case MIDI_OUT:
-	    return MidiUtil.getOutputMidiDeviceInfo(myDevice.getPort()).getName();
+	    return MidiUtil.isOutputAvailable()
+		? MidiUtil.getOutputMidiDeviceInfo(myDevice.getPort()).getName()
+		: "not available";
 	case MIDI_CHANNEL:
 	    return new Integer (myDevice.getChannel());
 	case MIDI_DEVICE_ID:
