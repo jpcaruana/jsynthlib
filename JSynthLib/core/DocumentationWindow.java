@@ -22,7 +22,7 @@ public class DocumentationWindow extends JDialog
         super(PatchEdit.getInstance(),"JSynthLib Documentation Viewer",false);
         JPanel container= new JPanel();
         container.setLayout (new BorderLayout());
-	final MyEditorPane jt = new MyEditorPane(); 
+	final MyEditorPane jt = new MyEditorPane();
 	jt.addHyperlinkListener(new HyperlinkListener() {
 	    public void hyperlinkUpdate (HyperlinkEvent e) {
 		if (e.getEventType()==HyperlinkEvent.EventType.ACTIVATED) {
@@ -42,13 +42,13 @@ public class DocumentationWindow extends JDialog
 			} catch (Exception e3) {
 			    ErrorMsg.reportError("Error",e.getURL().toString(),e3);
 			}
-		    }		
+		    }
 	        }
 	    }
         });
     	JScrollPane pane = new JScrollPane();
 	pane.getViewport().add(jt);
-	
+
 	getContentPane().add (pane, BorderLayout.CENTER);
 	 pane.getVerticalScrollBar ().addAdjustmentListener (new AdjustmentListener () {
             public void adjustmentValueChanged (AdjustmentEvent e) {
@@ -59,10 +59,16 @@ public class DocumentationWindow extends JDialog
             jt.setContentType("text/html");
 	    //FileInputStream in = new FileInputStream("doc/documentation.html");
 	    //jt.read(in,(new HTMLEditorKit()).createDefaultDocument());//new HTMLDocument());
-	    jt.setPage(new java.net.URL("file:./doc/documentation.html"));
+	    try {
+		jt.setPage(new java.net.URL("jar:file:JSynthLib-"
+					    + PatchEdit.VERSION
+					    + ".jar!/doc/documentation.html"));
+	    } catch (java.util.zip.ZipException e) {
+		jt.setPage(new java.net.URL("file:./doc/documentation.html"));
+	    }
             jt.setCaretPosition(0);
 	    jt.setEditable(false);
-	  
+
             JButton ok = new JButton("Close");
             ok.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
@@ -70,7 +76,7 @@ public class DocumentationWindow extends JDialog
 		}
 	    });
             getContentPane().add(ok,BorderLayout.SOUTH);
-	    getRootPane().setDefaultButton(ok);   
+	    getRootPane().setDefaultButton(ok);
             setSize(500,400);
 
 	    //pane.getVerticalScrollBar().setValue(pane.getVerticalScrollBar().getMinimum());
@@ -80,7 +86,7 @@ public class DocumentationWindow extends JDialog
 	}
 
     }
-    
+
     protected void centerDialog() {
         Dimension screenSize = this.getToolkit().getScreenSize();
 	Dimension size = this.getSize();
@@ -96,11 +102,11 @@ public class DocumentationWindow extends JDialog
     void OKPressed() {
  	this.setVisible(false);
     }
-    
+
     class MyEditorPane extends JEditorPane
     {
         public void myScrollToReference (String s)  {
 	    super.scrollToReference(s.substring(1));
-	} 
+	}
     }
 }
