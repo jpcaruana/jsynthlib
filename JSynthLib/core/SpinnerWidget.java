@@ -84,8 +84,7 @@ public class SpinnerWidget extends SysexWidget
     public void setEnabled(boolean e)
     {
         spinner.setEnabled (e);
-    }
-                           
+    }                           
         
 }
 
