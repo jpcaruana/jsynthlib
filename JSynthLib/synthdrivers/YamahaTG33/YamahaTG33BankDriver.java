@@ -39,7 +39,7 @@ public class YamahaTG33BankDriver extends BankDriver
         start+=3*((patchNum/4)); //checksum / block header
         return start;
     }
-    public String getPatchName (IPatch p,int patchNum)
+    public String getPatchName (Patch p,int patchNum)
     {
         int nameStart=getPatchStart (patchNum);
         nameStart+=12; //offset of name in patch data
@@ -53,7 +53,7 @@ public class YamahaTG33BankDriver extends BankDriver
         
     }
     
-    public void setPatchName (IPatch p,int patchNum, String name)
+    public void setPatchName (Patch p,int patchNum, String name)
     {
         patchNameSize=8;
         patchNameStart=getPatchStart (patchNum)+12;
@@ -72,7 +72,7 @@ public class YamahaTG33BankDriver extends BankDriver
     
     
     
-    public void calculateChecksum (IPatch p)
+    public void calculateChecksum (Patch p)
     {calculateChecksum (p,6,2363,2364);
      calculateChecksum (p,2367,4714,4715);
      calculateChecksum (p,2367+2351,4714+2351,4715+2351);
@@ -91,7 +91,7 @@ public class YamahaTG33BankDriver extends BankDriver
      calculateChecksum (p,2367+2351*14,4714+2351*14,4715+2351*14);
     }
     
-    public void putPatch (IPatch bank,IPatch p,int patchNum)
+    public void putPatch (Patch bank,Patch p,int patchNum)
     {
         if (!canHoldPatch (p))
         {JOptionPane.showMessageDialog (null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); return;}
@@ -99,7 +99,7 @@ public class YamahaTG33BankDriver extends BankDriver
         System.arraycopy (((Patch)p).sysex,16,((Patch)bank).sysex,getPatchStart (patchNum),587);
         calculateChecksum (bank);
     }
-    public IPatch getPatch (IPatch bank, int patchNum)
+    public Patch getPatch (Patch bank, int patchNum)
     {
         try
         {
@@ -111,14 +111,14 @@ public class YamahaTG33BankDriver extends BankDriver
             sysex[12]=(byte)0x31;sysex[13]=(byte)0x32;sysex[14]=(byte)0x56;
             sysex[15]=(byte)0x45;  sysex[604]=(byte)0xF7;
             System.arraycopy (((Patch)bank).sysex,getPatchStart (patchNum),sysex,16,587);
-            IPatch p = new Patch (sysex, getDevice());
+            Patch p = new Patch (sysex, getDevice());
             p.getDriver().calculateChecksum (p);
             return p;
         }catch (Exception e)
         {ErrorMsg.reportError ("Error","Error in TG33 Bank Driver",e);return null;}
     }
     
-    public IPatch createNewPatch ()
+    public Patch createNewPatch ()
     {
         byte [] sysex = new byte[37631];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x43;sysex[02]=(byte)0x00;
@@ -127,7 +127,7 @@ public class YamahaTG33BankDriver extends BankDriver
         sysex[9]=(byte)0x20;sysex[10]=(byte)0x30;sysex[11]=(byte)0x30;
         sysex[12]=(byte)0x31;sysex[13]=(byte)0x32;sysex[14]=(byte)0x56;
         sysex[15]=(byte)0x43;  sysex[37630]=(byte)0xF7;
-        IPatch p = new Patch (sysex, this);
+        Patch p = new Patch (sysex, this);
         for (int i=4;i<64;i+=4)
         {sysex[getPatchStart (i)-2]=0x12;sysex[getPatchStart (i)-1]=0x2C;};
         

@@ -24,7 +24,7 @@
 package synthdrivers.YamahaDX7s;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceIIBankDriver;
-import core.IPatch;
+import core.Patch;
 
 public class YamahaDX7sPerformanceBankDriver extends DX7FamilyPerformanceIIBankDriver
 {
@@ -37,13 +37,13 @@ public class YamahaDX7sPerformanceBankDriver extends DX7FamilyPerformanceIIBankD
 	}
 
 
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 
 
-	public void storePatch (IPatch p, int bankNum,int patchNum)
+	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection (internal+cartridge!)

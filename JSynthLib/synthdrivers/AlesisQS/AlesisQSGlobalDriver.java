@@ -2,7 +2,6 @@ package synthdrivers.AlesisQS;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -54,7 +53,7 @@ public class AlesisQSGlobalDriver extends Driver
 	 * @param end ignored
 	 * @param ofs ignored
 	 */
-	public void calculateChecksum(IPatch p,int start,int end,int ofs)
+	public void calculateChecksum(Patch p,int start,int end,int ofs)
 	{
 		//This synth does not use a checksum
 	}
@@ -63,7 +62,7 @@ public class AlesisQSGlobalDriver extends Driver
 	 * Create a new global patch
 	 * @return the new Patch
 	 */
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		// Copy over the Alesis QS header
 		byte [] sysex = new byte[patchSize];
@@ -75,11 +74,10 @@ public class AlesisQSGlobalDriver extends Driver
 		sysex[QSConstants.POSITION_OPCODE] = QSConstants.OPCODE_MIDI_GLOBAL_DATA_DUMP;
 
 		// Create the patch, and set the name
-		IPatch p = new Patch(sysex, this);
-		return p;
+		return new Patch(sysex, this);
 	}
 
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new GlobalEditor((Patch)p);
 	}
@@ -105,7 +103,7 @@ public class AlesisQSGlobalDriver extends Driver
 	 * Sends a patch to the synth's global data buffer.
 	 * @param p the patch to send to the global data area
 	 */
-	public void sendPatch (IPatch p)
+	public void sendPatch (Patch p)
 	{
 		storePatch(p, 0, 0);
 	}
@@ -116,7 +114,7 @@ public class AlesisQSGlobalDriver extends Driver
 	 * @param bankNum ignored
 	 * @param patchNum ignored
 	 */
-	public void storePatch (IPatch p, int bankNum, int patchNum)
+	public void storePatch (Patch p, int bankNum, int patchNum)
 	{
 		byte opcode = QSConstants.OPCODE_MIDI_GLOBAL_DATA_DUMP;
 		byte oldOpcode = ((Patch)p).sysex[QSConstants.POSITION_OPCODE];

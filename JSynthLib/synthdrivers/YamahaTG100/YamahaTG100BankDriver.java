@@ -198,7 +198,7 @@ public class YamahaTG100BankDriver extends BankDriver {
         this.calculateChecksum(p, patchNum);
     }
 
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte [] sysex = new byte[this.patchSize];
 
         Patch p;

@@ -66,7 +66,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 		return mInstance;
 	}	
 
-	public void setPatchName(IPatch p, String name) 
+	public void setPatchName(Patch p, String name) 
 	{
         if (name.length ()<patchNameSize) name=name+"            ";
         byte [] namebytes = new byte [64];
@@ -80,7 +80,7 @@ public class YamahaFS1RBankDriver extends BankDriver
         calculateChecksum (p);
 	}
 
-	public String getPatchName(IPatch ip) 
+	public String getPatchName(Patch ip) 
 	{
         try
         {
@@ -111,7 +111,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 
 
     /**Gets a patch from the bank, converting it as needed*/
-	public IPatch getPatch(IPatch bank,int patchNum) {
+	public Patch getPatch(Patch bank,int patchNum) {
 		int oStart = getPatchStart(patchNum);
 		int oSize = (patchNum > 127 ? YamahaFS1RVoiceDriver.PATCH_AND_HEADER_SIZE : YamahaFS1RPerformanceDriver.PATCH_AND_HEADER_SIZE);
 		byte oPatch[] = new byte[oSize];
@@ -120,7 +120,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	}
 
     /**Puts a patch into the bank, converting it as needed*/
-	public void putPatch(IPatch bank,IPatch p, int patchNum) {
+	public void putPatch(Patch bank,Patch p, int patchNum) {
 		int oStart = getPatchStart(patchNum);
 		int oSize = (patchNum > 127 ? YamahaFS1RVoiceDriver.PATCH_AND_HEADER_SIZE : YamahaFS1RPerformanceDriver.PATCH_AND_HEADER_SIZE);
 		if (oSize != ((Patch)p).sysex.length) {
@@ -138,7 +138,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	 *@param  patchNum  number of the patch in the bank
 	 *@return           The patchName 
 	 */
-	public String getPatchName(IPatch ip, int patchNum)
+	public String getPatchName(Patch ip, int patchNum)
 	{
 		Patch p = (Patch)ip;
 		int oPatchStart = getPatchStart(patchNum);
@@ -157,7 +157,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	 *@param  patchNum  The new patchName value
 	 *@param  name      The new patchName value
 	 */
-	public void setPatchName(IPatch ip, int patchNum, String name)
+	public void setPatchName(Patch ip, int patchNum, String name)
 	{
 		Patch p = (Patch)ip;
 		int oPatchStart = getPatchStart(patchNum);
@@ -167,20 +167,20 @@ public class YamahaFS1RBankDriver extends BankDriver
 			YamahaFS1RPerformanceDriver.getInstance().setPatchName(p, name, oPatchStart);
 	}
 
-	public void calculateChecksum(IPatch p)
+	public void calculateChecksum(Patch p)
 	{
 		// no checksum
 	}
 
-    public void storePatch (IPatch p, int bankNum,int patchNum)
+    public void storePatch (Patch p, int bankNum,int patchNum)
     {
 		// TODO patch by patch
 	}
 
 	/**Creates an editor window to edit this bank*/
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
-		return new YamahaFS1RBankEditor((IPatch)p);
+		return new YamahaFS1RBankEditor(p);
 	}	
 
 	/**
@@ -188,7 +188,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	 *
 	 * @return    the new "empty" bank
 	 */
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 	//System.out.println("createNewPatch");
 		byte[] sysex = new byte[BANK_AND_HEADER_SIZE];
@@ -215,14 +215,13 @@ public class YamahaFS1RBankDriver extends BankDriver
 		for (int i = 0; i < 128; i++) {
 			YamahaFS1RVoiceDriver.initPatch(sysex, HEADER_SIZE + 128*YamahaFS1RPerformanceDriver.PATCH_AND_HEADER_SIZE + i*YamahaFS1RVoiceDriver.PATCH_AND_HEADER_SIZE);
 		}
-		IPatch p = new Patch(sysex, this);
-		return p;
+		return new Patch(sysex, this);
 	}
 
 	/**
 		FS1R bank holds 2 types of patch, performance and voice.
 	*/
-    protected boolean canHoldPatch(IPatch p) 
+    protected boolean canHoldPatch(Patch p) 
 	{
 		// TODO 
 		return (((Patch)p).sysex.length == YamahaFS1RPerformanceDriver.PATCH_AND_HEADER_SIZE

@@ -45,22 +45,22 @@ public class QuasimidiQuasarTemporaryConverter extends Converter {
     * Converts 644 Byte sysex files to the 223 Bytes the "Single Performance" driver uses
     */
     public IPatch[] extractPatch(IPatch ip) {
-    		Patch p = (Patch)ip;
+    	byte[] sysex = ip.getByteArray();
         IPatch[] newPatchArray = new Patch[1];
         byte [] temporarySysex = new byte[QuasarConstants.PATCH_SIZE];
 
         // starting at 19h (=25): Temporary name: 17 Bytes
-        System.arraycopy(p.sysex,  25, temporarySysex, QuasarConstants.ARRAY_NAME_OFFSET, 17);
+        System.arraycopy(sysex,  25, temporarySysex, QuasarConstants.ARRAY_NAME_OFFSET, 17);
         // starting at 2Ah (= 42): Temporary common parameters: 74 Bytes
-        System.arraycopy(p.sysex,  42, temporarySysex, 0, 74);
+        System.arraycopy(sysex,  42, temporarySysex, 0, 74);
         // starting at 200h (=512): Part 13: 33 Bytes
-        System.arraycopy(p.sysex, 512, temporarySysex, QuasarConstants.ARRAY_PART_1_OFFSET, 33);
+        System.arraycopy(sysex, 512, temporarySysex, QuasarConstants.ARRAY_PART_1_OFFSET, 33);
         // starting at 221h (=545): Part 14: 33 Bytes
-        System.arraycopy(p.sysex, 545, temporarySysex, QuasarConstants.ARRAY_PART_2_OFFSET, 33);
+        System.arraycopy(sysex, 545, temporarySysex, QuasarConstants.ARRAY_PART_2_OFFSET, 33);
         // starting at 242h (=578): Part 15: 33 Bytes
-        System.arraycopy(p.sysex, 578, temporarySysex, QuasarConstants.ARRAY_PART_3_OFFSET, 33);
+        System.arraycopy(sysex, 578, temporarySysex, QuasarConstants.ARRAY_PART_3_OFFSET, 33);
         // starting at 263h (=611): Part 16: 33 Bytes
-        System.arraycopy(p.sysex, 611, temporarySysex, QuasarConstants.ARRAY_PART_4_OFFSET, 33);
+        System.arraycopy(sysex, 611, temporarySysex, QuasarConstants.ARRAY_PART_4_OFFSET, 33);
 
         newPatchArray[0] = new Patch(temporarySysex, getDevice());
 

@@ -19,10 +19,10 @@ public class YamahaMotifNormalVoiceDriver extends YamahaMotifSingleDriver
      numSysexMsgs = 35;
      yamaha_init();
    }
-  public JSLFrame editPatch(IPatch p) {
+  public JSLFrame editPatch(Patch p) {
     return new YamahaMotifNormalVoiceEditor((Patch)p);
   }
-  public IPatch createNewPatch() { return super.createNewPatch(); }
+  public Patch createNewPatch() { return super.createNewPatch(); }
 
 }
 

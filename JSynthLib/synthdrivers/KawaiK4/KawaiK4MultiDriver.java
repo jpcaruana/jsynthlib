@@ -1,6 +1,5 @@
 package synthdrivers.KawaiK4;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.NameValue;
 import core.Patch;
@@ -42,7 +41,7 @@ public class KawaiK4MultiDriver extends Driver {
 	System.arraycopy(generateNumbers(1, 16, "D-##"), 0, patchNumbers, 48, 16);
     }
 
-    public void storePatch(IPatch p, int bankNum, int patchNum) {
+    public void storePatch(Patch p, int bankNum, int patchNum) {
 	setBankNum(bankNum);
 	setPatchNum(patchNum);
 	try {
@@ -60,13 +59,13 @@ public class KawaiK4MultiDriver extends Driver {
 	setPatchNum(patchNum);
     }
 
-    public void sendPatch(IPatch p) {
+    public void sendPatch(Patch p) {
 	((Patch)p).sysex[3] = (byte) 0x23;
 	((Patch)p).sysex[7] = (byte) 0x40;
 	sendPatchWorker(p);
     }
 
-    public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+    public void calculateChecksum(Patch ip, int start, int end, int ofs) {
     	Patch p = (Patch)ip;
     	int sum = 0;
 	for (int i = start; i <= end; i++) {
@@ -76,7 +75,7 @@ public class KawaiK4MultiDriver extends Driver {
 	p.sysex[ofs] = (byte) (sum % 128);
     }
 
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
 	byte[] sysex = new byte[HSIZE + SSIZE + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x20; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
@@ -85,13 +84,13 @@ public class KawaiK4MultiDriver extends Driver {
 	    sysex[12 + 6 + 8 + i * 8] = 24;
 	    sysex[12 + 7 + 8 + i * 8] = 50;
 	}
-	IPatch p = new Patch(sysex, this);
+	Patch p = new Patch(sysex, this);
 	setPatchName(p, "New Patch");
 	calculateChecksum(p);
 	return p;
     }
 
-    public JSLFrame editPatch(IPatch p) {
+    public JSLFrame editPatch(Patch p) {
 	return new KawaiK4MultiEditor((Patch)p);
     }
 

@@ -4,7 +4,6 @@ package synthdrivers.NordLead;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -166,15 +165,15 @@ public class NLDrumSingleDriver extends Driver {
     patchNumbers = PATCH_LIST;
   }
 
-  public void calculateChecksum(IPatch p) {
+  public void calculateChecksum(Patch p) {
     // doesn't use checksum
   }
 
-  public void calculateChecksum(IPatch p, int start, int end, int ofs) {
+  public void calculateChecksum(Patch p, int start, int end, int ofs) {
     // doesn't use checksum
   }
 
-  public String getPatchName(IPatch p) {
+  public String getPatchName(Patch p) {
     Patch ip = (Patch)p;
     if (ip.sysex[PATCH_NUM_OFFSET] < 99) {
       return "drum Edit" + (ip.sysex[PATCH_NUM_OFFSET] - 16);
@@ -183,9 +182,9 @@ public class NLDrumSingleDriver extends Driver {
     }
   }
 
-  public void setPatchName(IPatch p, String name) {}
+  public void setPatchName(Patch p, String name) {}
 
-  public void sendPatch(IPatch p) {
+  public void sendPatch(Patch p) {
     sendPatch((Patch)p, 0, 16); // using edit buffer for slot A
   }
 
@@ -197,25 +196,24 @@ public class NLDrumSingleDriver extends Driver {
   }
 
   // Sends a patch to a set location in the user bank
-  public void storePatch(IPatch p, int bankNum, int patchNum) {
+  public void storePatch(Patch p, int bankNum, int patchNum) {
     setBankNum(bankNum); // must set bank - sysex patch dump always stored in current bank
     setPatchNum(patchNum); // must send program change to make bank change take effect
     sendPatch((Patch)p, bankNum + 1, patchNum + 99);
     setPatchNum(patchNum); // send another program change to get new sound in edit buffer
   }
 
-  public void playPatch(IPatch p) {
+  public void playPatch(Patch p) {
     byte sysex[] = new byte[patchSize];
     System.arraycopy(((Patch)p).sysex, 0, sysex, 0, patchSize);
     sysex[BANK_NUM_OFFSET] = 0; // edit buffer
     sysex[PATCH_NUM_OFFSET] = 16; // slot A
-    IPatch p2 = new Patch(sysex);
+    Patch p2 = new Patch(sysex);
     super.playPatch(p2);
   }
 
-  public IPatch createNewPatch() {
-    IPatch p = new Patch(NEW_PATCH, this);
-    return p;
+  public Patch createNewPatch() {
+    return new Patch(NEW_PATCH, this);
   }
 
   protected void mySendPatch(Patch p) {

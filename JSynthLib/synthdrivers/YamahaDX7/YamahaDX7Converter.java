@@ -38,13 +38,13 @@ public class YamahaDX7Converter extends Converter
 	
 	public IPatch[] extractPatch (IPatch ip)
 	{
-		Patch p = (Patch)ip;
+		byte[] sysex = ip.getByteArray();
 		byte[] sx=new byte [163]; //single voice
 		byte[] tx= new byte [102]; //single performance
 		byte[] px=new byte [112]; // rest of data
        
-		System.arraycopy (p.sysex,0,sx,0,163);		// Copy single voice data into the single voice patch
-		System.arraycopy (p.sysex,163,px,0,112);	// Copy remaining data bytes, which are sent by SER-7 ROM
+		System.arraycopy (sysex,0,sx,0,163);		// Copy single voice data into the single voice patch
+		System.arraycopy (sysex,163,px,0,112);	// Copy remaining data bytes, which are sent by SER-7 ROM
 		System.arraycopy (YamahaDX7PerformanceConstants.INIT_PERFORMANCE,0,tx,0,102);	// copy init performance patch
 
 		// extract performance data, which are sent by SER-7 ROM per function change messages

@@ -6,7 +6,6 @@ import java.io.InputStream;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 
@@ -38,7 +37,7 @@ public class BossDR660DrumkitDriver extends Driver
     } catch (Exception e) {};
   }
 
- public void calculateChecksum (IPatch ip)
+ public void calculateChecksum (Patch ip)
    {
  	Patch p = (Patch)ip;
  	for (int i=0;i<55;i++)
@@ -56,7 +55,7 @@ public class BossDR660DrumkitDriver extends Driver
 
    }
 
-  public void calculateChecksum(IPatch ip,int start,int end,int ofs)
+  public void calculateChecksum(Patch ip,int start,int end,int ofs)
   {
   	Patch p = (Patch)ip;
   	int i;
@@ -69,14 +68,14 @@ public class BossDR660DrumkitDriver extends Driver
     p.sysex[ofs]=(byte)(p.sysex[ofs]%128);
 
   }
-   public void sendPatch (IPatch p)
+   public void sendPatch (Patch p)
    { setPatchNum(0);
      sendPatchWorker (p);
      try {Thread.sleep(25);}catch (Exception e){};
  //    setPatchNum(0);
    }
 
- public void storePatch (IPatch p, int bankNum,int patchNum)
+ public void storePatch (Patch p, int bankNum,int patchNum)
   {
 //   setBankNum(bankNum);
    setPatchNum(patchNum);
@@ -88,7 +87,7 @@ public class BossDR660DrumkitDriver extends Driver
  public void setBankNum(int bankNum)
   {
   }
- public void playPatch(IPatch p)
+ public void playPatch(Patch p)
   {
      try {
 
@@ -108,18 +107,17 @@ public class BossDR660DrumkitDriver extends Driver
         send((0x80+(getChannel()-1)),46,0);
      } catch (Exception e){ErrorMsg.reportError("Error","Unable to Play Drums",e);}
   }
-public IPatch createNewPatch()
+public Patch createNewPatch()
   {
   try {
     InputStream fileIn= getClass().getResourceAsStream("BossDR660Drumkit.new");
     byte [] buffer =new byte [1387];
     fileIn.read(buffer);
     fileIn.close();
-    IPatch p=new Patch(buffer, this);
-    return p;
+    return new Patch(buffer, this);
   }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
   }
-public JSLFrame editPatch(IPatch p)
+public JSLFrame editPatch(Patch p)
  {
      return new BossDR660DrumkitEditor((Patch)p);
  }

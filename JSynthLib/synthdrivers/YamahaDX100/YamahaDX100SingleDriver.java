@@ -4,7 +4,6 @@
 package synthdrivers.YamahaDX100;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 public class YamahaDX100SingleDriver extends Driver
@@ -22,7 +21,7 @@ public class YamahaDX100SingleDriver extends Driver
                               "I09","I10","I11","I12","I13","I14","I15","I16", 
                               "I17","I18","I19","I20","I21","I22","I23","I24"};
    }
-public void calculateChecksum(IPatch ip)
+public void calculateChecksum(Patch ip)
  {
 	Patch p = (Patch)ip;
    if (p.sysex.length>101)
@@ -33,7 +32,7 @@ public void calculateChecksum(IPatch ip)
    calculateChecksum(p,6,98,99);  //calculate VCED Checksum
  }
 
- public void storePatch (IPatch p, int bankNum,int patchNum)
+ public void storePatch (Patch p, int bankNum,int patchNum)
   {   
    setBankNum(bankNum);
    setPatchNum(patchNum);
@@ -41,18 +40,18 @@ public void calculateChecksum(IPatch ip)
 
   ErrorMsg.reportWarning("Yamaha DX 4op","The patch has been placed in the edit buffer.\n You must choose to store it from the synths\nfront panel");
   }
-public IPatch createNewPatch()
+public Patch createNewPatch()
  {
    byte [] sysex = new byte[101];
      sysex[0]=(byte)0xF0;sysex[1]=(byte)0x43;sysex[2]=(byte)0x00;
      sysex[3]=(byte)0x03;sysex[4]=(byte)0x00;sysex[5]=(byte)0x5D;
      sysex[100]=(byte)0xF7 ; 
-	IPatch p = new Patch(sysex, this);
+	 Patch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;
  }
-public JSLFrame editPatch(IPatch p)
+public JSLFrame editPatch(Patch p)
  {
    return new YamahaDX100SingleEditor((Patch)p);
  }

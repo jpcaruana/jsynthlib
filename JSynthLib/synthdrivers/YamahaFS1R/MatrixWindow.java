@@ -17,7 +17,6 @@ import javax.swing.table.TableColumn;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.IPatch;
 import core.Patch;
 import core.SpinnerWidget;
 
@@ -30,7 +29,7 @@ class MatrixWindow extends JPanel
 {
 	private Patch p;
 	
-	public IPatch getPatch()
+	public Patch getPatch()
 	{
 		return p;
 	}
@@ -127,10 +126,10 @@ class MatrixWindow extends JPanel
 	}
 
 	static class MatrixCellRenderer  implements TableCellRenderer {
-		IPatch patch;
+		Patch patch;
 		private Component[][] mTable;
 		
-		MatrixCellRenderer(IPatch p, Component[][] aTable) {
+		MatrixCellRenderer(Patch p, Component[][] aTable) {
 			patch=p;
 			mTable = aTable;
 		}	

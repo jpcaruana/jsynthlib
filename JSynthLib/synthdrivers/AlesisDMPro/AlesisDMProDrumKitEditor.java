@@ -170,7 +170,7 @@ class AlesisDMProDrumKitEditor extends PatchEditorFrame
 
       JComboBox m_cboOther = null;
 
-      public BuddyCombo (String l,IPatch p,ParamModel ofs,SysexSender s, String []o,JComboBox cboOther)
+      public BuddyCombo (String l,Patch p,ParamModel ofs,SysexSender s, String []o,JComboBox cboOther)
         {
         super(l,p,ofs,s,o);
         m_cboOther = cboOther;

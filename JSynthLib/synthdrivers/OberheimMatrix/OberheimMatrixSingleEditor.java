@@ -546,8 +546,8 @@ MtxModel(patch,104),new ModSender(patch,0),source);
  }
 
  class CheckBoxCellRenderer  implements TableCellRenderer {
-  IPatch patch;
-  CheckBoxCellRenderer(IPatch p) {patch=p;}
+  Patch patch;
+  CheckBoxCellRenderer(Patch p) {patch=p;}
   public Component getTableCellRendererComponent (JTable table, Object value, boolean isSelected, boolean hasFocus,
                                                   int row, int col)
     {

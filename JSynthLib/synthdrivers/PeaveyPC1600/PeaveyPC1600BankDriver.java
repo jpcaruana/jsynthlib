@@ -15,7 +15,6 @@
 package synthdrivers.PeaveyPC1600;
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.NibbleSysex;
 import core.Patch;
 import core.SysexHandler;
@@ -43,7 +42,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
   final static int PRESET_POINTER_FACTOR = 2;
 
   public int[] patchIndex = new int[NUM_PATCHES + 1];
-  public IPatch indexedBank = null;
+  public Patch indexedBank = null;
 
   final static byte[] BSYSEX_INIT_PRESET = (new SysexHandler(
     "f0 00 00 1b 0b 0d 04 02 0d 02 0d 04 09 06 0e 06 09 07 04 06 09 06 " +
@@ -97,7 +96,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 // PeaveyPC1600BankDriver->getPatchName(Patch, int)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public String getPatchName(IPatch bank) {
+  public String getPatchName(Patch bank) {
     return (((Patch)bank).sysex.length/1024) + " Kilobytes";
   }
 
@@ -124,7 +123,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 // PeaveyPC1600BankDriver->getPatchName(Patch, int)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public String getPatchName(IPatch bank, int patchNum) {
+  public String getPatchName(Patch bank, int patchNum) {
     NibbleSysex nibbleSysex = new NibbleSysex(((Patch)bank).sysex,  FIRST_NAME_START + patchNum*PATCH_NAME_SIZE*PATCH_NAME_CHAR_BYTES);
     return nibbleSysex.getNibbleStr(PATCH_NAME_SIZE, PATCH_NAME_CHAR_BYTES, NIBBLE_MULTIPLIER);
   }
@@ -133,7 +132,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 // PeaveyPC1600BankDriver->setPatchName(Patch, int, String)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void setPatchName(IPatch bank, int patchNum, String name) {
+  public void setPatchName(Patch bank, int patchNum, String name) {
     NibbleSysex nibbleSysex = new NibbleSysex(
       ((Patch)bank).sysex,  FIRST_NAME_START + patchNum*PATCH_NAME_SIZE*PATCH_NAME_CHAR_BYTES
     );
@@ -144,7 +143,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 // PeaveyPC1600BankDriver->getPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public IPatch getPatch(IPatch bank, int patchNum) {
+  public Patch getPatch(Patch bank, int patchNum) {
     try {
       generateIndex((Patch)bank);
       return createPatchFromData(
@@ -163,7 +162,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 //----------------------------------------------------------------------------------------------------------------------
 
 
-  public void putPatch(IPatch bank, IPatch p, int patchNum) {
+  public void putPatch(Patch bank, Patch p, int patchNum) {
     generateIndex((Patch)bank);
 
     // Set the <name>
@@ -193,10 +192,10 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 // PeaveyPC1600BankDriver->deletePatch(Patch, int)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void deletePatch (IPatch bank, int patchNum) {
+  public void deletePatch (Patch bank, int patchNum) {
 //ErrorMsg.reportStatus("PeaveyPC1600BankDriver->deletePatch: " + patchNum);
 
-    IPatch p = new Patch(BSYSEX_INIT_PRESET, getDevice());
+    Patch p = new Patch(BSYSEX_INIT_PRESET, getDevice());
 //ErrorMsg.reportStatus("  PeaveyPC1600BankDriver->deletePatch: " + p.getDriver().getPatchName(p));
     putPatch(bank,  p, patchNum);
   }
@@ -206,7 +205,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 // Notes: F0 00 00 1B 0B ch 04 <name> <size> <data> F7
 //----------------------------------------------------------------------------------------------------------------------
 
-  public IPatch createPatchFromData(byte[] data, int dataOffset, int dataLength, String name) {
+  public Patch createPatchFromData(byte[] data, int dataOffset, int dataLength, String name) {
 	  byte[] sysex = new byte[
       dataLength + BSYSEX_HEADER.length +
       PATCH_NAME_SIZE*PATCH_NAME_CHAR_BYTES +
@@ -221,9 +220,8 @@ public class PeaveyPC1600BankDriver extends BankDriver {
     nibbleSysex.putSysex(data, dataOffset, dataLength);
     nibbleSysex.putSysex((byte)0xF7);
 
-    IPatch p = new Patch(sysex);
+    return new Patch(sysex);
     //p.ChooseDriver();
-	  return p;
   }
 
 }

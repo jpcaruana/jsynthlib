@@ -12,7 +12,6 @@
 package synthdrivers.AlesisQS;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.NameValue;
 import core.Patch;
@@ -59,7 +58,7 @@ public class AlesisQSProgramDriver extends Driver
    * @param ip the patch to get the name from
    * @return the name of the patch
    */
-  public String getPatchName(IPatch ip)
+  public String getPatchName(Patch ip)
   {
     //ErrorMsg.reportStatus("Alesis getPatchName ", p.sysex);
     return SysexRoutines.getChars(((Patch)ip).sysex,
@@ -73,7 +72,7 @@ public class AlesisQSProgramDriver extends Driver
    * @param p the patch to set the name in
    * @param name the string to set the name to
    */
-  public void setPatchName(IPatch p, String name)
+  public void setPatchName(Patch p, String name)
   {
     //ErrorMsg.reportStatus("Alesis setPatchName ", p.sysex);
     SysexRoutines.setChars(name,
@@ -90,7 +89,7 @@ public class AlesisQSProgramDriver extends Driver
    * @param end ignored
    * @param ofs ignored
    */
-  public void calculateChecksum(IPatch p,int start,int end,int ofs)
+  public void calculateChecksum(Patch p,int start,int end,int ofs)
   {
     //This synth does not use a checksum
   }
@@ -99,7 +98,7 @@ public class AlesisQSProgramDriver extends Driver
    * Create a new program patch
    * @return the new Patch
    */
-  public IPatch createNewPatch()
+  public Patch createNewPatch()
   {
     // Copy over the Alesis QS header
     byte [] sysex = new byte[patchSize];
@@ -112,12 +111,12 @@ public class AlesisQSProgramDriver extends Driver
     sysex[QSConstants.POSITION_LOCATION] = 0;
 
     // Create the patch, and set the name
-    IPatch p = new Patch(sysex, this);
+    Patch p = new Patch(sysex, this);
     setPatchName(p, QSConstants.DEFAULT_NAME_PROG);
     return p;
   }
 
-  public JSLFrame editPatch(IPatch p)
+  public JSLFrame editPatch(Patch p)
   {
        return new AlesisQSProgramEditor((Patch)p);
   }
@@ -158,7 +157,7 @@ public class AlesisQSProgramDriver extends Driver
    * Sends a patch to the synth's edit buffer.
    * @param p the patch to send to the edit buffer
    */
-  public void sendPatch (IPatch p)
+  public void sendPatch (Patch p)
   {
     storePatch(p, 0, QSConstants.MAX_LOCATION_PROG + 1);
   }
@@ -171,7 +170,7 @@ public class AlesisQSProgramDriver extends Driver
    * @param bankNum ignored - you can only send to the User bank on Alesis QS synths
    * @param patchNum the patch number to send it to
    */
-  public void storePatch (IPatch p, int bankNum, int patchNum)
+  public void storePatch (Patch p, int bankNum, int patchNum)
   {
     // default to simple case - set specified patch in the User bank
     int location = patchNum;

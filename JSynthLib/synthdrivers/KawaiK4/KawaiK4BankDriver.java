@@ -42,7 +42,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	return HSIZE + (SSIZE * patchNum);
     }
 
-    public String getPatchName(IPatch p, int patchNum) {
+    public String getPatchName(Patch p, int patchNum) {
 	int nameStart = getPatchStart(patchNum);
 	nameStart += 0; //offset of name in patch data
 	try {
@@ -54,7 +54,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	}
     }
 
-    public void setPatchName(IPatch p, int patchNum, String name) {
+    public void setPatchName(Patch p, int patchNum, String name) {
 	patchNameSize = 10;
 	patchNameStart = getPatchStart(patchNum);
 
@@ -71,7 +71,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	}
     }
 
-    public void calculateChecksum(IPatch ip, int start, int end, int ofs)  {
+    public void calculateChecksum(Patch ip, int start, int end, int ofs)  {
     	Patch p = (Patch)ip;
     	int i;
 	int sum = 0;
@@ -84,14 +84,14 @@ public class KawaiK4BankDriver extends BankDriver {
 	// p.sysex[ofs]=(byte)(p.sysex[ofs]+1);
     }
 
-    public void calculateChecksum(IPatch p) {
+    public void calculateChecksum(Patch p) {
 	for (int i = 0; i < NS; i++)
 	    calculateChecksum(p, HSIZE + (i * SSIZE),
 			      HSIZE + (i * SSIZE) + SSIZE - 2,
 			      HSIZE + (i * SSIZE) + SSIZE - 1);
     }
 
-    public void putPatch(IPatch bank, IPatch p, int patchNum) {
+    public void putPatch(Patch bank, Patch p, int patchNum) {
 	if (!canHoldPatch(p)) {
 	    JOptionPane.showMessageDialog
 		(null,
@@ -104,7 +104,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	calculateChecksum(bank);
     }
 
-    public IPatch getPatch(IPatch bank, int patchNum) {
+    public Patch getPatch(Patch bank, int patchNum) {
 	byte[] sysex = new byte[HSIZE + SSIZE + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x20; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
@@ -113,7 +113,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	System.arraycopy(((Patch)bank).sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
 	try {
 	    // pass Single Driver !!!FIXIT!!!
-	    IPatch p = new Patch(sysex, getDevice());
+	    Patch p = new Patch(sysex, getDevice());
 	    p.getDriver().calculateChecksum(p);
 	    return p;
 	} catch (Exception e) {
@@ -122,13 +122,13 @@ public class KawaiK4BankDriver extends BankDriver {
 	}
     }
 
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
 	byte[] sysex = new byte[HSIZE + SSIZE * NS + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x21; sysex[4] = (byte) 0x00;	sysex[5] = (byte) 0x04;
 	sysex[6] = (byte) 0x0;  sysex[7] = 0;
 	sysex[HSIZE + SSIZE * NS] = (byte) 0xF7;
-	IPatch p = new Patch(sysex, this);
+	Patch p = new Patch(sysex, this);
 	for (int i = 0; i < NS; i++)
 	    setPatchName(p, i, "New Patch");
 	calculateChecksum(p);
@@ -140,7 +140,7 @@ public class KawaiK4BankDriver extends BankDriver {
 				    new NameValue("bankNum", bankNum << 1)));
     }
 
-    public void storePatch(IPatch p, int bankNum, int patchNum) {
+    public void storePatch(Patch p, int bankNum, int patchNum) {
         try {
 	    Thread.sleep(100);
 	} catch (Exception e) {

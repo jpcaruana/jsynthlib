@@ -35,15 +35,15 @@ public class KorgX3SingleConverter extends Converter {
    * @return Converted patch
    */
   public IPatch[] extractPatch (IPatch ip) {
-    Patch p = (Patch)ip;
+    byte[] sysex = ip.getByteArray();
     byte[] ps; // source
     byte[] pd; // destination
     
     ps = new byte[188+KorgX3SingleDriver.EXTRA_HEADER]; // patch with 7-bit bytes
     pd = new byte[164+KorgX3SingleDriver.EXTRA_HEADER]; // patch as normal bytearray
     
-    System.arraycopy(p.sysex, 0, ps, 0, 188+KorgX3SingleDriver.EXTRA_HEADER); 
-    System.arraycopy(p.sysex, 0, pd, 0, KorgX3SingleDriver.EXTRA_HEADER);
+    System.arraycopy(sysex, 0, ps, 0, 188+KorgX3SingleDriver.EXTRA_HEADER); 
+    System.arraycopy(sysex, 0, pd, 0, KorgX3SingleDriver.EXTRA_HEADER);
     int j = KorgX3SingleDriver.EXTRA_HEADER;
     byte b7=0; // bit 7
     for(int i = 0; i < 188; i++) {

@@ -26,7 +26,6 @@
 
 package synthdrivers.RolandMT32;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.NameValue;
 import core.Patch;
@@ -115,7 +114,7 @@ public class RolandMT32SingleDriver extends Driver {
     }
 
     // not used
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte[] sysex = new byte[HSIZE + SSIZE + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x41; sysex[2] = (byte) 0x10;
 	sysex[3] = (byte) 0x16; sysex[4] = (byte) 0x12; sysex[5] = (byte) 0x04;

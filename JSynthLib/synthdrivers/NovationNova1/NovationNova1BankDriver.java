@@ -53,7 +53,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         start+=10;  //sysex header
         return start;
     }
-    public String getPatchName(IPatch p,int patchNum) 
+    public String getPatchName(Patch p,int patchNum) 
     {
         int nameStart=getPatchStart(patchNum);
         try
@@ -64,7 +64,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         } catch (UnsupportedEncodingException ex) {return "-";}
     }
 
-    public void setPatchName(IPatch p,int patchNum, String name)
+    public void setPatchName(Patch p,int patchNum, String name)
     {
         patchNameSize=16;
         patchNameStart=getPatchStart(patchNum);
@@ -83,18 +83,18 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
     }
 
 
-    public void calculateChecksum(IPatch p,int start,int end,int ofs)
+    public void calculateChecksum(Patch p,int start,int end,int ofs)
     {
 
     }
 
 
-    public void calculateChecksum (IPatch p)
+    public void calculateChecksum (Patch p)
     {
 
     }
 
-    public void putPatch(IPatch bank,IPatch p,int patchNum)
+    public void putPatch(Patch bank,Patch p,int patchNum)
     {
         // This method is called when doing a paste (from another bank or a single)
         // the patch received will be a single dump (meant for the edit buffer)
@@ -108,7 +108,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         System.arraycopy(((Patch)p).sysex,9,((Patch)bank).sysex,getPatchStart(patchNum),296-9);
         calculateChecksum(bank);
     }
-    public IPatch getPatch(IPatch bank, int patchNum)
+    public Patch getPatch(Patch bank, int patchNum)
     {
         // this method is call when you have a bank opened and want to send or play individual patches
         // OR when you do a Cut/Copy
@@ -125,13 +125,13 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
             sysex[8]=(byte)0x09;
             sysex[295]=(byte)0xF7;
             System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,9,296-9);
-            IPatch p = new Patch(sysex, getDevice());
+            Patch p = new Patch(sysex, getDevice());
             p.getDriver().calculateChecksum(p);   
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }
 
-    public IPatch createNewPatch()
+    public Patch createNewPatch()
     {
         // On the Nova, Bank A or Bank B dump are just a collection of 128 writable single dump
         // ie : single dump meant to go to a specific memory location (see the storePatch method
@@ -165,7 +165,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         return p;
     }
 
-    public void storePatch (IPatch bank, int bankNum,int patchNum)
+    public void storePatch (Patch bank, int bankNum,int patchNum)
     { 
         // This is called when the user want to Store a bank.
         // The bank number (bank A or B) information is written in EACH writable single dump

@@ -24,8 +24,8 @@
 package synthdrivers.YamahaTX802;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilySystemSetupIIIDriver;
-import core.IPatch;
 import core.JSLFrame;
+import core.Patch;
 
 public class YamahaTX802SystemSetupDriver extends DX7FamilySystemSetupIIIDriver
 {
@@ -38,19 +38,19 @@ public class YamahaTX802SystemSetupDriver extends DX7FamilySystemSetupIIIDriver
 	}
 
 
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 
 
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}
 
 
-	public void storePatch (IPatch p, int bankNum,int patchNum)
+	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection

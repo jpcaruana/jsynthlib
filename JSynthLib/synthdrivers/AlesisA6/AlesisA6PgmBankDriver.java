@@ -26,17 +26,17 @@ public class AlesisA6PgmBankDriver extends BankDriver
     singleSysexID = "F000000E1D00";
   }
 
-  public void calculateChecksum(IPatch p)
+  public void calculateChecksum(Patch p)
   {
     // A6 doesn't use checksum
   }
 
-  public void calculateChecksum(IPatch p, int start, int end, int ofs)
+  public void calculateChecksum(Patch p, int start, int end, int ofs)
   {
     // A6 doesn't use checksum
   }
 
-  public void storePatch (IPatch p, int bankNum, int patchNum)
+  public void storePatch (Patch p, int bankNum, int patchNum)
   {
     if (bankNum == 1 || bankNum == 2)
       JOptionPane.showMessageDialog(PatchEdit.getInstance(),
@@ -48,7 +48,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
       sendPatchWorker((Patch)p, bankNum);
   }
 
-  public void putPatch(IPatch bank, IPatch p, int patchNum)
+  public void putPatch(Patch bank, Patch p, int patchNum)
   {
     if (!canHoldPatch(p))
     {
@@ -61,15 +61,14 @@ public class AlesisA6PgmBankDriver extends BankDriver
     ((Patch)bank).sysex[patchNum * 2350 + 7] = (byte)patchNum; // set program #
   }
 
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
   {
     byte sysex[] = new byte[2350];
     System.arraycopy(((Patch)bank).sysex, patchNum * 2350, sysex, 0, 2350);
-    IPatch p = new Patch(sysex, getDevice());
-    return p;
-  }
+    return new Patch(sysex, getDevice());
+   }
 
-  public String getPatchName(IPatch p, int patchNum)
+  public String getPatchName(Patch p, int patchNum)
   {
     Patch pgm = (Patch)getPatch(p, patchNum);
     try {
@@ -84,7 +83,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
     }
   }
 
-  public void setPatchName(IPatch p,int patchNum, String name)
+  public void setPatchName(Patch p,int patchNum, String name)
   {
     Patch pgm = (Patch)getPatch(p, patchNum);
     if (name.length() < patchNameSize + 4)
@@ -97,7 +96,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
     putPatch(p, pgm, patchNum);
   }
 
-  protected void sendPatch (IPatch p)
+  protected void sendPatch (Patch p)
   {
     sendPatchWorker((Patch)p, 0);
   }

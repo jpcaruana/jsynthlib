@@ -87,7 +87,7 @@ public class KorgX3BankDriver extends BankDriver
    * @param patchNum Patch number
    * @return Patch name
    */
-  public String getPatchName(IPatch p,int patchNum) {
+  public String getPatchName(Patch p,int patchNum) {
     int nameStart=getPatchStart(patchNum);
     nameStart+=0; //offset of name in patch data
     try {
@@ -106,7 +106,7 @@ public class KorgX3BankDriver extends BankDriver
    * @param patchNum Patch number
    * @param name Name
    */
-  public void setPatchName(IPatch p,int patchNum, String name)
+  public void setPatchName(Patch p,int patchNum, String name)
   {
     patchNameSize=10;
     patchNameStart=getPatchStart(patchNum);
@@ -124,14 +124,14 @@ public class KorgX3BankDriver extends BankDriver
   /**
    * Not used in KorgX3.
    */
-  public void calculateChecksum(IPatch p,int start,int end,int ofs)
+  public void calculateChecksum(Patch p,int start,int end,int ofs)
   {
   }
 
   /**
    * Not used in KorgX3.
    */
-  public void calculateChecksum (IPatch p)
+  public void calculateChecksum (Patch p)
   {
   }                                     
 
@@ -142,7 +142,7 @@ public class KorgX3BankDriver extends BankDriver
    * @param p Patch
    * @param patchNum Patch number in bank
    */
-  public void putPatch(IPatch bank,IPatch p,int patchNum)
+  public void putPatch(Patch bank,Patch p,int patchNum)
   { 
     if (!canHoldPatch(p)) {
       JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); 
@@ -159,7 +159,7 @@ public class KorgX3BankDriver extends BankDriver
    * @param patchNum Patch number
    * @return Single patch
    */
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
   {
     try {
       byte [] sysex=new byte[187];
@@ -167,15 +167,14 @@ public class KorgX3BankDriver extends BankDriver
       sysex[03]=(byte)0x35;sysex[186]=(byte)0xF7;
       
       System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,KorgX3SingleDriver.EXTRA_HEADER,164);
-      IPatch p = new Patch(sysex);
-      return p;
+      return new Patch(sysex);
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in Korg X3 Bank Driver",e);return null;}
   }
    
   /**
    * Not implemented as not needed.
    */
-  public IPatch createNewPatch()
+  public Patch createNewPatch()
   {
     JOptionPane.showMessageDialog(null, "Creating a new Bank is not possible.","Error", JOptionPane.ERROR_MESSAGE);
     return null;

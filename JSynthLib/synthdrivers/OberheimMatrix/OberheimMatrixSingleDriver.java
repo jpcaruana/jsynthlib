@@ -3,7 +3,6 @@
  */
 package synthdrivers.OberheimMatrix;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -37,13 +36,13 @@ public class OberheimMatrixSingleDriver extends Driver
                               "88-","89-","90-","91-","92-","93-","94-","95-",
                               "96-","97-","98-","99-"};
    }
-public void calculateChecksum(IPatch p)
+public void calculateChecksum(Patch p)
  {
    calculateChecksum(p,5,272,273); 
  
  }
 
-public void calculateChecksum(IPatch ip,int start,int end,int ofs)
+public void calculateChecksum(Patch ip,int start,int end,int ofs)
   {
     Patch p = (Patch)ip;
     int i;
@@ -63,7 +62,7 @@ public void calculateChecksum(IPatch ip,int start,int end,int ofs)
 	    });
 	} catch (Exception e) {}
   }
-  public void storePatch (IPatch p, int bankNum,int patchNum)
+  public void storePatch (Patch p, int bankNum,int patchNum)
   {   
    setBankNum(bankNum);
    setPatchNum(patchNum);
@@ -73,14 +72,14 @@ public void calculateChecksum(IPatch ip,int start,int end,int ofs)
    
   }
 
-  public void sendPatch (IPatch p)
+  public void sendPatch (Patch p)
   {
     ((Patch)p).sysex[3]=0x0D;
     ((Patch)p).sysex[4]=0;
     sendPatchWorker(p);
   }
 
-  public String getPatchName(IPatch p) {
+  public String getPatchName(Patch p) {
   	Patch ip = (Patch)p;
   	try {
             byte []b = new byte[8];
@@ -96,7 +95,7 @@ public void calculateChecksum(IPatch ip,int start,int end,int ofs)
            return s.toString();
          } catch (Exception ex) {return "-";}
    }
-  public void setPatchName(IPatch p, String name)	
+  public void setPatchName(Patch p, String name)	
   {
 	byte [] namebytes = new byte[32];
 	try{
@@ -120,17 +119,17 @@ public void calculateChecksum(IPatch ip,int start,int end,int ofs)
 	((Patch)p).sysex[20]=((byte)(namebytes[7]/16));
 	}catch (Exception e) {}
   }
-public IPatch createNewPatch()
+public Patch createNewPatch()
  {
 	 byte [] sysex = new byte[275];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x10;sysex[2]=(byte)0x06;sysex[3]=(byte)0x0D;sysex[4]=(byte)0x00;
 	 sysex[274]=(byte)0xF7;
-         IPatch p = new Patch(sysex, this);
+         Patch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;
  }
-public JSLFrame editPatch(IPatch p)
+public JSLFrame editPatch(Patch p)
  {
      return new OberheimMatrixSingleEditor((Patch)p);
  }

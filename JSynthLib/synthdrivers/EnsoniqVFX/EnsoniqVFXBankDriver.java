@@ -3,7 +3,6 @@ import javax.swing.JOptionPane;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -67,7 +66,7 @@ public class EnsoniqVFXBankDriver extends BankDriver
 	 *@param  patchNum  number of the patch in the bank
 	 *@return           The patchName 
 	 */
-	public String getPatchName(IPatch p, int patchNum)
+	public String getPatchName(Patch p, int patchNum)
 	{
 		int oPatchStart = getPatchStart(patchNum);
 		return EnsoniqVFXSingleDriver.getPatchName(((Patch)p).sysex, oPatchStart);
@@ -81,18 +80,18 @@ public class EnsoniqVFXBankDriver extends BankDriver
 	 *@param  patchNum  The new patchName value
 	 *@param  name      The new patchName value
 	 */
-	public void setPatchName(IPatch p, int patchNum, String name)
+	public void setPatchName(Patch p, int patchNum, String name)
 	{
 		int oPatchStart = getPatchStart(patchNum);
 		EnsoniqVFXSingleDriver.setPatchName(((Patch)p).sysex, name, oPatchStart);
 	}
 
 
-	public void calculateChecksum(IPatch p, int start, int end, int ofs)
+	public void calculateChecksum(Patch p, int start, int end, int ofs)
 	{
 	}
 
-	public void calculateChecksum(IPatch p)
+	public void calculateChecksum(Patch p)
 	{
 	}
 
@@ -104,7 +103,7 @@ public class EnsoniqVFXBankDriver extends BankDriver
 	 *@param  p         Description of the Parameter
 	 *@param  patchNum  Description of the Parameter
 	 */
-	public void putPatch(IPatch bank, IPatch p, int patchNum)
+	public void putPatch(Patch bank, Patch p, int patchNum)
 	{
 		if (!canHoldPatch(p))
 		{
@@ -123,7 +122,7 @@ public class EnsoniqVFXBankDriver extends BankDriver
 	 *@param  patchNum  number of patch in the bank
 	 *@return           The patch 
 	 */
-	public IPatch getPatch(IPatch bank, int patchNum)
+	public Patch getPatch(Patch bank, int patchNum)
 	{
 		try
 		{
@@ -142,7 +141,7 @@ public class EnsoniqVFXBankDriver extends BankDriver
 	 *
 	 * @return    the new "empty" bank
 	 */
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		byte[] sysex = new byte[BANK_AND_HEADER_SIZE];
 		sysex[0] = (byte) 0xF0;
@@ -152,7 +151,7 @@ public class EnsoniqVFXBankDriver extends BankDriver
 		sysex[4] = (byte) 0x00;
 		sysex[5] = (byte) 0x03;
 		sysex[BANK_AND_HEADER_SIZE-1] = (byte) 0xF7;
-		IPatch p = new Patch(sysex, this);
+		Patch p = new Patch(sysex, this);
 		for (int i = 0; i < BANK_NB_PATCHES; i++)
 		{
 			setPatchName(p, i, "NEWSND");

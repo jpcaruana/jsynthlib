@@ -29,7 +29,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
 
    }
                      
-   public String getPatchName(IPatch ip) {
+   public String getPatchName(Patch ip) {
          if (patchNameSize==0) return ("-");
          try {
            StringBuffer s= new StringBuffer(new String(((Patch)ip).sysex,patchNameStart,
@@ -39,7 +39,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
          } catch (UnsupportedEncodingException ex) {return "-";}
    }
 
-  public void setPatchName(IPatch p, String name)
+  public void setPatchName(Patch p, String name)
   {
     if (patchNameSize==0)
        {JOptionPane.showMessageDialog(null,
@@ -57,7 +57,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
     calculateChecksum(p);
   }
     
-   public void storePatch (IPatch p,int bankNum,int patchNum)
+   public void storePatch (Patch p,int bankNum,int patchNum)
    {
      ((Patch)p).sysex[5]=(byte)((bankNum*100+patchNum)%128);
      ((Patch)p).sysex[6]=(byte)((bankNum*100+patchNum)/128);
@@ -79,7 +79,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
          }catch (Exception e) {JOptionPane.showMessageDialog(null, "Invalid Patch Number Entered!","Error", JOptionPane.ERROR_MESSAGE);}
    }
     */
-   public void sendPatch (IPatch p)
+   public void sendPatch (Patch p)
    {
 
      Integer patchNum=new Integer(100);
@@ -90,7 +90,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
      sendPatchWorker (p);
    }
 
-  public void calculateChecksum(IPatch ip)
+  public void calculateChecksum(Patch ip)
   {
   	Patch p = (Patch)ip;
     int i;
@@ -102,17 +102,17 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
 
 
   }
- public IPatch createNewPatch()
+ public Patch createNewPatch()
  {
 	 byte [] sysex = new byte[319];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x18;sysex[2]=(byte)0x08;sysex[3]=(byte)0x00;sysex[4]=(byte)0x01;
 	 sysex[318]=(byte)0xF7;
-         IPatch p = new Patch(sysex, this);
+         Patch p = new Patch(sysex, this);
 	 setPatchName(p,"New Patch");
 	 calculateChecksum(p);
 	 return p;
  }
-public JSLFrame editPatch(IPatch p)
+public JSLFrame editPatch(Patch p)
  {
      return new EmuProteusMPSSingleEditor((Patch)p);
  }

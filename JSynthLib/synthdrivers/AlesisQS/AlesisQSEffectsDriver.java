@@ -2,7 +2,6 @@ package synthdrivers.AlesisQS;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -54,7 +53,7 @@ public class AlesisQSEffectsDriver extends Driver
    * @param end ignored
    * @param ofs ignored
    */
-  public void calculateChecksum(IPatch p,int start,int end,int ofs)
+  public void calculateChecksum(Patch p,int start,int end,int ofs)
   {
     //This synth does not use a checksum
   }
@@ -63,7 +62,7 @@ public class AlesisQSEffectsDriver extends Driver
    * Create a new effects patch
    * @return the new Patch
    */
-  public IPatch createNewPatch()
+  public Patch createNewPatch()
   {
     // Copy over the Alesis QS header
     byte [] sysex = new byte[patchSize];
@@ -76,8 +75,7 @@ public class AlesisQSEffectsDriver extends Driver
     sysex[QSConstants.POSITION_LOCATION] = 0;
 
     // Create the patch
-    IPatch p = new Patch(sysex, this);
-    return p;
+    return new Patch(sysex, this);
   }
 
   //public JSLFrame editPatch(Patch p)
@@ -122,7 +120,7 @@ public class AlesisQSEffectsDriver extends Driver
    * Sends a patch to the synth's program effects edit buffer.
    * @param p the patch to send to the edit buffer
    */
-  public void sendPatch (IPatch p)
+  public void sendPatch (Patch p)
   {
     storePatch(p, 0, QSConstants.MAX_LOCATION_PROG + 1);
   }
@@ -135,7 +133,7 @@ public class AlesisQSEffectsDriver extends Driver
    * @param bankNum ignored - you can only send to the User bank on Alesis QS synths
    * @param patchNum the patch number to send it to
    */
-  public void storePatch (IPatch p, int bankNum, int patchNum)
+  public void storePatch (Patch p, int bankNum, int patchNum)
   {
     // default to simple case - set specified patch in the User bank
     int location = patchNum;

@@ -5,7 +5,6 @@ package synthdrivers.SCIProphet600;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -46,21 +45,21 @@ public class P600ProgSingleDriver extends Driver {
     patchNumbers = PATCH_LIST;
   }
 
-  public void calculateChecksum(IPatch p) {
+  public void calculateChecksum(Patch p) {
     // doesn't use checksum
   }
 
-  public void calculateChecksum(IPatch p, int start, int end, int ofs) {
+  public void calculateChecksum(Patch p, int start, int end, int ofs) {
     // doesn't use checksum
   }
 
-  public String getPatchName(IPatch ip) {
+  public String getPatchName(Patch ip) {
     return "prog" + ((Patch)ip).sysex[PATCH_NUM_OFFSET];
   }
 
-  public void setPatchName(IPatch p, String name) {}
+  public void setPatchName(Patch p, String name) {}
 
-  public void sendPatch(IPatch p) {
+  public void sendPatch(Patch p) {
     sendPatch((Patch)p, 0, 99); // using user program # 99 as edit buffer
   }
 
@@ -71,16 +70,16 @@ public class P600ProgSingleDriver extends Driver {
   }
 
   // Sends a patch to a set location in the user bank
-  public void storePatch(IPatch p, int bankNum, int patchNum) {
+  public void storePatch(Patch p, int bankNum, int patchNum) {
     sendPatch((Patch)p, bankNum, patchNum);
   }
 
   // program 99 is being used for edit buffer
-  public void playPatch(IPatch p) {
+  public void playPatch(Patch p) {
     byte sysex[] = new byte[patchSize];
     System.arraycopy(((Patch)p).sysex, 0, sysex, 0, patchSize);
     sysex[PATCH_NUM_OFFSET] = 99; // program # 99
-    IPatch p2 = new Patch(sysex);
+    Patch p2 = new Patch(sysex);
     try {
       Thread.sleep (50);  // kludge: patch sent twice for Ctl-P from editor, so add
                           //  delay between them (otherwise P600 may not process properly)
@@ -94,12 +93,11 @@ public class P600ProgSingleDriver extends Driver {
     }
   }
 
-  public IPatch createNewPatch() {
-    IPatch p = new Patch(NEW_PATCH, this);
-    return p;
+  public Patch createNewPatch() {
+     return new Patch(NEW_PATCH, this);
   }
 
-  public JSLFrame editPatch(IPatch p) {
+  public JSLFrame editPatch(Patch p) {
      return new P600ProgSingleEditor((Patch)p);
   }
 }

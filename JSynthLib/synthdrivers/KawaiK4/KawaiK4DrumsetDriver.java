@@ -1,6 +1,5 @@
 package synthdrivers.KawaiK4;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.NameValue;
 import core.Patch;
@@ -35,7 +34,7 @@ public class KawaiK4DrumsetDriver extends Driver {
 	};
     }
 
-    public void storePatch(IPatch p, int bankNum, int patchNum) {
+    public void storePatch(Patch p, int bankNum, int patchNum) {
         try {
 	    Thread.sleep(100);
 	} catch (Exception e) {
@@ -50,13 +49,13 @@ public class KawaiK4DrumsetDriver extends Driver {
 	}
     }
 
-    public void sendPatch(IPatch p) {
+    public void sendPatch(Patch p) {
         ((Patch)p).sysex[3] = (byte) 0x23;
         ((Patch)p).sysex[7] = (byte) 0x20;
         sendPatchWorker(p);
     }
 
-    public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+    public void calculateChecksum(Patch ip, int start, int end, int ofs) {
     	Patch p = (Patch)ip;
     	// a litte strange this, but there is a checksum for each key!
         for (int i = 8; i < HSIZE + SSIZE - 1; i += 11) {
@@ -69,7 +68,7 @@ public class KawaiK4DrumsetDriver extends Driver {
         }
     }
 
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte[] sysex = new byte[HSIZE + SSIZE + 1];
         sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x23; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
@@ -81,16 +80,16 @@ public class KawaiK4DrumsetDriver extends Driver {
         }
 
 	sysex[HSIZE + SSIZE] = (byte) 0xF7;
-	IPatch p = new Patch(sysex, this);
+	Patch p = new Patch(sysex, this);
 	calculateChecksum(p);
 	return p;
     }
 
-    public JSLFrame editPatch(IPatch p) {
+    public JSLFrame editPatch(Patch p) {
         return new KawaiK4DrumsetEditor((Patch)p);
     }
 
-    public String getPatchName(IPatch ip) {
+    public String getPatchName(Patch ip) {
 	return "Drumset";
     }
 

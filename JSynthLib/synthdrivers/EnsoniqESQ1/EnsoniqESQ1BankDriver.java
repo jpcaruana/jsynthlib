@@ -6,7 +6,6 @@ import javax.swing.JOptionPane;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 public class EnsoniqESQ1BankDriver extends BankDriver
 {
@@ -35,7 +34,7 @@ public class EnsoniqESQ1BankDriver extends BankDriver
      start+=5;  //sysex header
    return start;
    }
-  public String getPatchName(IPatch p,int patchNum) {
+  public String getPatchName(Patch p,int patchNum) {
      int nameStart=getPatchStart(patchNum);
      nameStart+=0; //offset of name in patch data
 
@@ -53,7 +52,7 @@ public class EnsoniqESQ1BankDriver extends BankDriver
      
   }
 
-  public void setPatchName(IPatch p,int patchNum, String name)
+  public void setPatchName(Patch p,int patchNum, String name)
   {
 	byte [] namebytes = new byte[32];
         int nameStart=getPatchStart(patchNum);
@@ -77,18 +76,18 @@ public class EnsoniqESQ1BankDriver extends BankDriver
   }
  
 
-  public void calculateChecksum(IPatch p,int start,int end,int ofs)
+  public void calculateChecksum(Patch p,int start,int end,int ofs)
   {
 
 
   }
 
 
-  public void calculateChecksum (IPatch p)
+  public void calculateChecksum (Patch p)
    {
    }                                     
 
-  public void putPatch(IPatch bank,IPatch p,int patchNum)
+  public void putPatch(Patch bank,Patch p,int patchNum)
    { 
    if (!canHoldPatch(p))
        {JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); return;}
@@ -96,7 +95,7 @@ public class EnsoniqESQ1BankDriver extends BankDriver
    System.arraycopy(((Patch)p).sysex,5,((Patch)bank).sysex,getPatchStart(patchNum),204);
    calculateChecksum(bank);
    }
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
    {
   try{
      byte [] sysex=new byte[210];
@@ -104,17 +103,17 @@ public class EnsoniqESQ1BankDriver extends BankDriver
      sysex[03]=(byte)0x00;sysex[04]=(byte)0x01;
      sysex[209]=(byte)0xF7;     
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,5,204);
-     IPatch p = new Patch(sysex, getDevice());
+     Patch p = new Patch(sysex, getDevice());
      p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in ESQ1 Bank Driver",e);return null;}
    }
-public IPatch createNewPatch()
+public Patch createNewPatch()
  {
 	 byte [] sysex = new byte[15123];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x21;sysex[4]=(byte)0x00;
 	  sysex[5]=(byte)0x04; sysex[6]=(byte)0x0;sysex[15122]=(byte)0xF7;
-         IPatch p = new Patch(sysex, this);
+	 Patch p = new Patch(sysex, this);
 	 for (int i=0;i<64;i++)
            setPatchName(p,i,"NEWSND");
 	 calculateChecksum(p);	 

@@ -3,7 +3,6 @@ package synthdrivers.YamahaFS1R;
 import java.io.UnsupportedEncodingException;
 
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -166,7 +165,7 @@ public class YamahaFS1RVoiceDriver extends Driver
 	}
 
     /**Sends a patch to a set location on a synth.*/
-    public void storePatch (IPatch p, int bankNum,int patchNum)
+    public void storePatch (Patch p, int bankNum,int patchNum)
     {
 		// change the address to internal voice
 		((Patch)p).sysex[6] = (byte)0x51;
@@ -227,12 +226,11 @@ public class YamahaFS1RVoiceDriver extends Driver
 	 *
 	 *@return    an Init Voice copy
 	 */
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		byte[] sysex = new byte[PATCH_AND_HEADER_SIZE];
 		initPatch(sysex, 0);
-		IPatch oPatch = new Patch(sysex, this);
-		return oPatch;
+		return new Patch(sysex, this);
 	}
 
 	static void initPatch(byte[] sysex, int aOffset) {
@@ -247,7 +245,7 @@ public class YamahaFS1RVoiceDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new YamahaFS1RVoiceEditor((Patch)p);
 	}

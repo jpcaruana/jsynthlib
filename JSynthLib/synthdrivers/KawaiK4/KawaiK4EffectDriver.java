@@ -1,6 +1,5 @@
 package synthdrivers.KawaiK4;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.NameValue;
 import core.Patch;
@@ -44,7 +43,7 @@ public class KawaiK4EffectDriver extends Driver {
         patchNumbers = generateNumbers(1, 31, "00");
     }
 
-    public void storePatch(IPatch p, int bankNum, int patchNum) {
+    public void storePatch(Patch p, int bankNum, int patchNum) {
         setBankNum(bankNum);
         setPatchNum(patchNum);
         try {
@@ -62,13 +61,13 @@ public class KawaiK4EffectDriver extends Driver {
         setPatchNum(patchNum);
     }
 
-    public void sendPatch(IPatch p) {
+    public void sendPatch(Patch p) {
         ((Patch)p).sysex[3] = (byte) 0x23;
         ((Patch)p).sysex[7] = (byte) 0x00;
         sendPatchWorker(p);
     }
 
-    public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+    public void calculateChecksum(Patch ip, int start, int end, int ofs) {
     		Patch p = (Patch)ip;
     	    int sum = 0;
         for (int i = start; i <= end; i++) {
@@ -78,7 +77,7 @@ public class KawaiK4EffectDriver extends Driver {
         p.sysex[ofs] = (byte) (sum % 128);
     }
 
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte[] sysex = new byte[HSIZE + SSIZE + 1];
         sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x23; sysex[4] = (byte) 0x00;
@@ -94,17 +93,17 @@ public class KawaiK4EffectDriver extends Driver {
         sysex[39] = 0x07;
 
         sysex[HSIZE + SSIZE] = (byte) 0xF7;
-        IPatch p = new Patch(sysex, this);
+        Patch p = new Patch(sysex, this);
         //setPatchName(p,"New Effect");
         calculateChecksum(p);
         return p;
     }
 
-    public JSLFrame editPatch(IPatch p) {
+    public JSLFrame editPatch(Patch p) {
         return new KawaiK4EffectEditor((Patch)p);
     }
 
-    public String getPatchName(IPatch ip) {
+    public String getPatchName(Patch ip) {
         String s  = "Effect Type "  + (((Patch)ip).sysex[HSIZE] + 1);
         return s;
     }

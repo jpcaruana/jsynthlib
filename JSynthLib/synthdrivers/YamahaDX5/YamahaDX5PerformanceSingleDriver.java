@@ -24,8 +24,8 @@
 package synthdrivers.YamahaDX5;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceSingleDriver;
-import core.IPatch;
 import core.JSLFrame;
+import core.Patch;
 
 public class YamahaDX5PerformanceSingleDriver extends DX7FamilyPerformanceSingleDriver
 {
@@ -38,19 +38,19 @@ public class YamahaDX5PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	}
 
 
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 
 
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}
 		
 
-	public void sendPatch (IPatch p, int bankNum,int patchNum)
+	public void sendPatch (Patch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 			// show Information 
@@ -60,8 +60,8 @@ public class YamahaDX5PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	}
 
 	
-	public void storePatch (IPatch p, int bankNum,int patchNum) {
-		sendPatch((IPatch)p, bankNum, patchNum);
+	public void storePatch (Patch p, int bankNum,int patchNum) {
+		sendPatch(p, bankNum, patchNum);
 	}
 
 		

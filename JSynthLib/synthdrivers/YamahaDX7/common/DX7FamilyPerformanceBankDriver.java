@@ -27,7 +27,6 @@ import java.io.UnsupportedEncodingException;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -79,7 +78,7 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 	}
 
 	
-	public String getPatchName(IPatch p,int patchNum)
+	public String getPatchName(Patch p,int patchNum)
 	{
 		int nameStart=getPatchNameStart(patchNum);
 
@@ -93,7 +92,7 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 	}
 
 
-	public void setPatchName(IPatch p,int patchNum, String name)
+	public void setPatchName(Patch p,int patchNum, String name)
 	{
 		System.out.println("PatchNum: "+patchNum+"; PatchName: "+name);
 		int nameStart=getPatchNameStart(patchNum);
@@ -112,7 +111,7 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 	}
 
 
-	public void putPatch(IPatch bank,IPatch p,int patchNum)		//puts a patch into the bank, converting it as needed
+	public void putPatch(Patch bank,Patch p,int patchNum)		//puts a patch into the bank, converting it as needed
 	{
 		if (!canHoldPatch(p))
 		{
@@ -217,7 +216,7 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 	}
 
 
-	public IPatch getPatch(IPatch bank, int patchNum)		//Gets a patch from the bank, converting it as needed
+	public Patch getPatch(Patch bank, int patchNum)		//Gets a patch from the bank, converting it as needed
 	{
 		try {
 			byte [] sysex=new byte[singleSize];
@@ -337,7 +336,7 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 			sysex[singleSize-1]=(byte)0xF7;
  
 
-			IPatch p = new Patch(sysex, getDevice());	// single sysex
+			Patch p = new Patch(sysex, getDevice());	// single sysex
 			p.getDriver().calculateChecksum(p);
 
 			return p;
@@ -347,7 +346,7 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 	}
 
 
-	public IPatch createNewPatch() // create a bank with 64 " YAMAHA TX7 FUNCTION DATA  " patches
+	public Patch createNewPatch() // create a bank with 64 " YAMAHA TX7 FUNCTION DATA  " patches
 	{
 		byte [] sysex = new byte[trimSize];
 		
@@ -359,8 +358,8 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 		sysex[05]=(byte)0x00;
 		sysex[trimSize-1]=(byte)0xF7;
 
-		IPatch v = new Patch(initSysex,getDevice());	// single sysex
-		IPatch p = new Patch(sysex,    this);		// bank sysex
+		Patch v = new Patch(initSysex,getDevice());	// single sysex
+		Patch p = new Patch(sysex,    this);		// bank sysex
 
 		for (int i=0;i<getNumPatches();i++)
 			putPatch(p,v,i);

@@ -35,7 +35,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
     }
 
   
-    public String getPatchName(IPatch ip) 
+    public String getPatchName(Patch ip) 
     {
         // This method get the name of the performance
         try 
@@ -46,7 +46,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
         } catch (UnsupportedEncodingException ex) {return "-";}   
     }
 
-    public String getPatchName(IPatch p,int patchNum) 
+    public String getPatchName(Patch p,int patchNum) 
     {
         // This method get the name of individual patch in the performance
         int nameStart=getPatchStart(patchNum);
@@ -58,7 +58,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
         } catch (UnsupportedEncodingException ex) {return "-";}   
     }
 
-    public void setPatchName(IPatch p,int patchNum, String name)
+    public void setPatchName(Patch p,int patchNum, String name)
     {
         patchNameSize=16;
         patchNameStart=getPatchStart(patchNum);
@@ -77,18 +77,18 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
     }
  
 
-    public void calculateChecksum(IPatch p,int start,int end,int ofs)
+    public void calculateChecksum(Patch p,int start,int end,int ofs)
     {
 
     }
 
 
-    public void calculateChecksum (IPatch p)
+    public void calculateChecksum (Patch p)
     {
 
     }                                     
 
-    public void putPatch(IPatch bank,IPatch p,int patchNum)
+    public void putPatch(Patch bank,Patch p,int patchNum)
     {
         // This method is called when doing a paste (from another bank or a single)
         // the patch received will be a single dump (meant for the edit buffer)
@@ -100,7 +100,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
         System.arraycopy(((Patch)p).sysex,9,((Patch)bank).sysex,getPatchStart(patchNum),296-9);
         calculateChecksum(bank);
     }
-    public IPatch getPatch(IPatch bank, int patchNum)
+    public Patch getPatch(Patch bank, int patchNum)
     {
         // this method is call when you have a single perf opened and want to send or play individual patches
         // OR when you do a Cut/Copy
@@ -117,13 +117,13 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
             sysex[8]=(byte)0x09;
             sysex[295]=(byte)0xF7;
             System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,9,296-9);
-            IPatch p = new Patch(sysex, getDevice());
+            Patch p = new Patch(sysex, getDevice());
             p.getDriver().calculateChecksum(p);   
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }
 
-    public IPatch createNewPatch()
+    public Patch createNewPatch()
     {
         byte [] sysex = new byte[((296*8)+406)]; // 406 is the size of the actual Performance data
                                                  // Note that there is 8 part even if only 6 are usable 
@@ -154,7 +154,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
         return p;
     }
 
-    public void storePatch (IPatch bank, int bankNum,int patchNum)
+    public void storePatch (Patch bank, int bankNum,int patchNum)
     {
         JOptionPane.showMessageDialog(null,
         "You can not store performance data with this driver.\nUse send and save it from the Nova front pannel\n(you will have to decide where to save the actual patch)","Error", JOptionPane.ERROR_MESSAGE);
@@ -162,7 +162,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
 
 
 
-    public void sendPatch (IPatch bank)
+    public void sendPatch (Patch bank)
     { 
         byte [] newsysex = new byte[296];
         Patch p = new Patch(newsysex);

@@ -24,7 +24,6 @@
  */
 package synthdrivers.YamahaDX7.common;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -64,19 +63,19 @@ public class DX7FamilyMicroTuningSingleDriver extends Driver
 	}
 
 
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return new Patch(initSysex, this);
 	}
 
 
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new DX7FamilyMicroTuningEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", (Patch)p);
 	}
 
 
-	public void sendPatch (IPatch p)
+	public void sendPatch (Patch p)
 	{
 		// This is an edit buffer patch!
 		((Patch)p).sysex[14]=(byte)(0x45);
@@ -86,7 +85,7 @@ public class DX7FamilyMicroTuningSingleDriver extends Driver
 	}
 
 
-	public void storePatch (IPatch p, int bankNum,int patchNum)
+	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		// Is it necessary to switch off Memory Protection for edit buffer and/or User 1,2?
 		if (patchNum==0) {	   // edit buffer

@@ -22,7 +22,7 @@ public class YamahaFS1RBankConverter extends Converter
 	public IPatch[] extractPatch (IPatch p) 
 	{
 		Patch oBank[] = new Patch[1];
-		oBank[0] = importFSEditor(((Patch)p).sysex);
+		oBank[0] = importFSEditor(p.getByteArray());
 		return oBank;
 	}
 	

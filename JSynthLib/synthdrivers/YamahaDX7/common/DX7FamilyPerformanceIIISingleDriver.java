@@ -24,7 +24,6 @@
  */
 package synthdrivers.YamahaDX7.common;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -60,13 +59,13 @@ public class DX7FamilyPerformanceIIISingleDriver extends Driver
 	}
 
 	
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return new Patch(initSysex, this);
 	}
 
 
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new DX7FamilyPerformanceIIIEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor" ,(Patch)p);
 	}
@@ -78,7 +77,7 @@ public class DX7FamilyPerformanceIIISingleDriver extends Driver
         }
 
 
-	public String getPatchName (IPatch p)
+	public String getPatchName (Patch p)
 	{
 	    Patch ip = (Patch)p;
 		try {
@@ -98,7 +97,7 @@ public class DX7FamilyPerformanceIIISingleDriver extends Driver
 	}
 
 
-	public void setPatchName (IPatch p, String name)
+	public void setPatchName (Patch p, String name)
 	{
 		byte [] namebytes = new byte[patchNameSize/2];	// 1 character encoded in 2 bytes!
 

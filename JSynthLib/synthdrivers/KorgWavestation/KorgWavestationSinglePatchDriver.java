@@ -1,7 +1,6 @@
 package synthdrivers.KorgWavestation;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.SysexHandler;
@@ -43,7 +42,7 @@ public class KorgWavestationSinglePatchDriver extends Driver {
      * A seperate command must transmitted to store the edit
      * buffer contents in the RAM.
      */    
-    public void storePatch(IPatch p, int bankNum,int patchNum) {        
+    public void storePatch(Patch p, int bankNum,int patchNum) {        
         setBankNum(bankNum);
         setPatchNum(patchNum);
 
@@ -78,7 +77,7 @@ public class KorgWavestationSinglePatchDriver extends Driver {
 
     }
     
-    public void sendPatch(IPatch p) {
+    public void sendPatch(Patch p) {
         ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
         
         try {
@@ -87,7 +86,7 @@ public class KorgWavestationSinglePatchDriver extends Driver {
             {ErrorMsg.reportStatus(e);}
     }
     
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte [] sysex=new byte[852+9];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
         sysex[2]=(byte)(0x30+getChannel()-1);
@@ -97,13 +96,13 @@ public class KorgWavestationSinglePatchDriver extends Driver {
         /*sysex[852+7]=checksum;*/
         sysex[852+8]=(byte)0xF7;
     
-        IPatch p = new Patch(sysex, this);
+        Patch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
     }
     
-    public void calculateChecksum(IPatch ip,int start,int end,int ofs) {
+    public void calculateChecksum(Patch ip,int start,int end,int ofs) {
         Patch p = (Patch)ip;
         int i;
         int sum=0;

@@ -49,7 +49,7 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
     private static JTabbedPane oTabs;
     private static JPanel element2Panel;
 
-    public YamahaTG100SingleEditor(IPatch iPatch) {
+    public YamahaTG100SingleEditor(Patch iPatch) {
 	    super ("Yamaha TG100 Single Editor", iPatch);
 
 	    Patch patch = (Patch) iPatch;

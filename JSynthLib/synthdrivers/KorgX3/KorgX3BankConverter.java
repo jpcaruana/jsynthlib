@@ -34,23 +34,23 @@ public class KorgX3BankConverter extends Converter {
    * @return Converted patch
    */
   public IPatch[] extractPatch (IPatch ip) {
-  	Patch p = (Patch)ip;
+    byte[] sysex = ip.getByteArray();
     byte[] ps;
     byte[] pd;
     pd = new byte[37600+KorgX3BankDriver.EXTRA_HEADER];
     //37600 = 188*200
-    System.arraycopy(p.sysex, 0, pd, 0, KorgX3BankDriver.EXTRA_HEADER);
+    System.arraycopy(sysex, 0, pd, 0, KorgX3BankDriver.EXTRA_HEADER);
     
     int j = KorgX3BankDriver.EXTRA_HEADER;
     byte b7=0; // bit 7
     for(int i = 0; i < 37486; i++) {
       if(i%8==0) {
-	b7 = p.sysex[i+KorgX3BankDriver.EXTRA_HEADER];
+	b7 = sysex[i+KorgX3BankDriver.EXTRA_HEADER];
       } else {
 	//byte b8 = (byte)(getBit( b7, (byte)( ((i%8)-1) ) ) << 7);
 	byte b8 = (byte)(((b7 & ( (byte)0x01 << ( ((i%8)-1) )   )) >> ( ((i%8)-1) )) << 7);
 	
-	pd[j] = (byte)((byte)p.sysex[i+KorgX3BankDriver.EXTRA_HEADER] + (byte)b8); 
+	pd[j] = (byte)((byte)sysex[i+KorgX3BankDriver.EXTRA_HEADER] + (byte)b8); 
 	j++;
       }
     }

@@ -69,12 +69,12 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	checksumOffset=128*256+8;   
     }
 
-    public void storePatch (IPatch p, int bankNum, int patchNum)
+    public void storePatch (Patch p, int bankNum, int patchNum)
     { 
 	MIDIboxSIDSlowSender SlowSender = new MIDIboxSIDSlowSender();
 
 	for(int i=0; i<128; ++i) {
-	    Patch ps = (Patch)getPatch((IPatch)p, i);
+	    Patch ps = getPatch(p, i);
 	    System.out.println("Sending Patch #" + i);
 	    //SlowSender.sendSysEx(p.getDriver().getPort(), ps.sysex, 500);
 	    send(ps.sysex);
@@ -82,7 +82,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	}
     }
 
-    public void sendPatch(IPatch p)
+    public void sendPatch(Patch p)
     {
 	storePatch(p, 0, 0);
     }
@@ -92,7 +92,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	return start;
     }
 
-    public String getPatchName(IPatch p, int patchNum) {
+    public String getPatchName(Patch p, int patchNum) {
 	int nameStart=getPatchStart(patchNum);
 	nameStart+=0; //offset of name in patch data
 	try {
@@ -101,7 +101,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	} catch (UnsupportedEncodingException ex) {return "-";}   
     }
     
-    public void setPatchName(IPatch p, int patchNum, String name)
+    public void setPatchName(Patch p, int patchNum, String name)
     {
 	patchNameSize=16;
 	patchNameStart=getPatchStart(patchNum);
@@ -115,7 +115,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	} catch (UnsupportedEncodingException ex) {return;}
     }
     
-    public void putPatch(IPatch bank, IPatch p, int patchNum)
+    public void putPatch(Patch bank, Patch p, int patchNum)
     { 
 	if( !canHoldPatch(p) ) {
 	    JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); 
@@ -126,7 +126,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	calculateChecksum(bank);
     }
 
-    public IPatch getPatch(IPatch bank, int patchNum)
+    public Patch getPatch(Patch bank, int patchNum)
     {
 	try{
 	    byte [] sysex=new byte[266];
@@ -141,13 +141,13 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	    sysex[265]=(byte)0xF7;
 
 	    System.arraycopy(((Patch)bank).sysex, getPatchStart(patchNum), sysex, 8, 256);
-	    IPatch p = new Patch(sysex, getDevice());
+	    Patch p = new Patch(sysex, getDevice());
 	    p.getDriver().calculateChecksum(p);   
 	    return p;
 	} catch( Exception e ) { ErrorMsg.reportError("Error","Error in MIDIboxSID Bank Driver",e);return null; }
     }
     
-    public IPatch createNewPatch()
+    public Patch createNewPatch()
     {
 	byte [] sysex = new byte[128*256+9];
 	sysex[0]=(byte)0xF0; 
@@ -159,9 +159,9 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	sysex[6]=(byte)0x04;
 	sysex[128*256+8]=(byte)0xF7;
 
-	IPatch p = new Patch(sysex, this);
+	Patch p = new Patch(sysex, this);
 	MIDIboxSIDSingleDriver SingleDriver = new MIDIboxSIDSingleDriver();
-	IPatch ps = (IPatch)SingleDriver.createNewPatch();
+	Patch ps = SingleDriver.createNewPatch();
 
 	for(int i=0; i<128; i++)
 	    putPatch(p, ps, i);

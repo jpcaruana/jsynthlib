@@ -36,7 +36,7 @@ public abstract class YamahaMotifSingleDriver extends Driver
     }
   }
 
-  public String getPatchName (IPatch ip) {
+  public String getPatchName (Patch ip) {
     int address = Byte.parseByte(parameter_base_address, 16);
     address = (address << 16) | 0x007000;
     int offset=YamahaMotifSysexUtility.findBaseAddressOffset(((Patch)ip).sysex, address);
@@ -47,7 +47,7 @@ public abstract class YamahaMotifSingleDriver extends Driver
       return "-";
     }
   }
-  public void setPatchName (IPatch p, String name) {
+  public void setPatchName (Patch p, String name) {
     byte[] namebytes;
     int address = Byte.parseByte(parameter_base_address, 16);
     address = (address << 16) | 0x007000;
@@ -64,12 +64,12 @@ public abstract class YamahaMotifSingleDriver extends Driver
     } catch (UnsupportedEncodingException e) { return; }
   }
 
-  public void storePatch (IPatch p, int bankNum,int patchNum) {
+  public void storePatch (Patch p, int bankNum,int patchNum) {
     sendPatchWorker ((Patch)p, patchNum);
   }
 
   /** Send to edit buffer */
-  protected void sendPatch (IPatch p) {
+  protected void sendPatch (Patch p) {
     sendPatchWorker((Patch)p, -1);
   }
   /**Does the actual work to send a patch to the synth*/
@@ -96,7 +96,7 @@ public abstract class YamahaMotifSingleDriver extends Driver
       Byte.parseByte(base_address, 16);
   }
 
-  public void calculateChecksum (IPatch p) {
+  public void calculateChecksum (Patch p) {
     YamahaMotifSysexUtility.checksum( ((Patch)p).sysex );
   }
 
@@ -105,14 +105,13 @@ public abstract class YamahaMotifSingleDriver extends Driver
   }
   // Stolen from the YamahaFS1RVoiceEditor
   // I probably should use some other method to do this, but I'm lazy.
-  public IPatch createNewPatch() { 
+  public Patch createNewPatch() { 
     try {
       InputStream fileIn= getClass().getResourceAsStream(defaults_filename);
       byte [] buffer =new byte [patchSize];
       fileIn.read(buffer);
       fileIn.close();
-      IPatch p=new Patch(buffer, this);
-      return p;
+      return new Patch(buffer, this);
     }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find " + defaults_filename,e);return null;}
   }
 

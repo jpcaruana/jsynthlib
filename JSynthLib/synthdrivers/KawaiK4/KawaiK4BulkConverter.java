@@ -30,26 +30,26 @@ public class KawaiK4BulkConverter extends Converter {
      * drumset, and effect bank patches.
      */
     public IPatch[] extractPatch(IPatch ip) {
-    		Patch p = (Patch)ip;
-        // System.out.println("Length p: "+p.sysex.length);
+        byte[] sysex = ip.getByteArray();
+        // System.out.println("Length p: " + sysex.length);
         byte[] sx = new byte[HSIZE + SSIZE + 1]; // Single Bank
         byte[] mx = new byte[HSIZE + MSIZE + 1]; // Multi Bank
         byte[] dx = new byte[HSIZE + DSIZE + 1]; // Drumset
         byte[] ex = new byte[HSIZE + ESIZE + 1]; // Effect Bank
 
 	// Copy the data into the Single Bank
-        System.arraycopy(p.sysex, 0, sx, 0, HSIZE + SSIZE);
+        System.arraycopy(sysex, 0, sx, 0, HSIZE + SSIZE);
 	// Copy the data into the Multi Bank
-        System.arraycopy(p.sysex, 0, mx, 0, HSIZE);
-        System.arraycopy(p.sysex, HSIZE + SSIZE,
+        System.arraycopy(sysex, 0, mx, 0, HSIZE);
+        System.arraycopy(sysex, HSIZE + SSIZE,
 			 mx, HSIZE, MSIZE);
         // Copy the data into the  drumset
-        System.arraycopy(p.sysex, 0, dx, 0, HSIZE);
-        System.arraycopy(p.sysex, HSIZE + SSIZE + MSIZE,
+        System.arraycopy(sysex, 0, dx, 0, HSIZE);
+        System.arraycopy(sysex, HSIZE + SSIZE + MSIZE,
 			 dx, HSIZE, DSIZE);
 	// Copy the data into the Effect Bank
-        System.arraycopy(p.sysex, 0, ex, 0, HSIZE);
-        System.arraycopy(p.sysex, HSIZE + SSIZE + MSIZE + DSIZE,
+        System.arraycopy(sysex, 0, ex, 0, HSIZE);
+        System.arraycopy(sysex, HSIZE + SSIZE + MSIZE + DSIZE,
 			 ex, HSIZE, ESIZE);
 
         sx[HSIZE + SSIZE] = (byte) 0xF7;
@@ -76,6 +76,6 @@ public class KawaiK4BulkConverter extends Converter {
         pf[2] = new Patch(ex);
         pf[3] = new Patch(dx);
 
-        return pf;
+        return (IPatch[]) pf;
     }
 }

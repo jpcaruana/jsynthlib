@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import core.ColumnLayout;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -60,7 +59,7 @@ public class NovationNova1SingleDriver extends Driver
                                    "124-","125-","126-","127"};
     }
 
-    public void storePatch (IPatch p, int bankNum,int patchNum)
+    public void storePatch (Patch p, int bankNum,int patchNum)
     {
         byte [] newsysex = new byte[297]; // a dump and write format is one byte longer than an edit buffer dump
         System.arraycopy(((Patch)p).sysex,0,newsysex,0,7);
@@ -68,7 +67,7 @@ public class NovationNova1SingleDriver extends Driver
         newsysex[8] = (byte)(0x05+bankNum);
         newsysex[9] = (byte)(patchNum);
         System.arraycopy(((Patch)p).sysex,9,newsysex,10,296-9); //-10);
-        IPatch patchtowrite = new Patch(newsysex, this);
+        Patch patchtowrite = new Patch(newsysex, this);
         // need to convert to a "patch dump and write" format
         try {Thread.sleep(100); } catch (Exception e){}
         sendPatchWorker(patchtowrite );
@@ -77,7 +76,7 @@ public class NovationNova1SingleDriver extends Driver
         setPatchNum(patchNum);
     }
 
-    public void sendPatch (IPatch p)
+    public void sendPatch (Patch p)
     {
         if( NovationNova1PatchSender.bShowMenu == true )
         {
@@ -92,17 +91,17 @@ public class NovationNova1SingleDriver extends Driver
         }
     }
 
-    public void calculateChecksum(IPatch p,int start,int end,int ofs)
+    public void calculateChecksum(Patch p,int start,int end,int ofs)
     {
         // no checksum
     }
 
-    public IPatch createNewPatch()
+    public Patch createNewPatch()
     {
         byte [] sysex = new byte[296];
         System.arraycopy(NovationNova1InitPatch.initpatch,0,sysex,0,296);
         sysex[6]=(byte)(getChannel()-1);
-        IPatch p = new Patch(sysex, this);
+        Patch p = new Patch(sysex, this);
         calculateChecksum(p);
         return p;
     }

@@ -4,7 +4,6 @@ package synthdrivers.AccessVirus;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.PatchEdit;
@@ -44,15 +43,15 @@ public class VirusMultiBankDriver extends BankDriver {
     sysex[ofs] = (byte)(sum & 0x7F);
   }
 
-  public void calculateChecksum(IPatch p, int start, int end, int ofs) {
+  public void calculateChecksum(Patch p, int start, int end, int ofs) {
     calculateChecksum(((Patch)p).sysex, start, end, ofs);
   }
 
-  public void storePatch (IPatch p, int bankNum, int patchNum) {
+  public void storePatch (Patch p, int bankNum, int patchNum) {
     sendPatchWorker((Patch)p, 1);
   }
 
-  public void putPatch(IPatch bank, IPatch p, int patchNum) {
+  public void putPatch(Patch bank, Patch p, int patchNum) {
     if (!canHoldPatch(p)) {
       ErrorMsg.reportError("Error", "This type of patch does not fit in to this type of bank.");
       return;
@@ -62,14 +61,13 @@ public class VirusMultiBankDriver extends BankDriver {
     ((Patch)bank).sysex[patchNum * singleSize + PATCH_NUM_OFFSET] = (byte)patchNum; // set multi #
   }
 
-  public IPatch getPatch(IPatch bank, int patchNum) {
+  public Patch getPatch(Patch bank, int patchNum) {
     byte sysex[] = new byte[singleSize];
     System.arraycopy(((Patch)bank).sysex, patchNum * singleSize, sysex, 0, singleSize);
-    IPatch p = new Patch(sysex, getDevice());
-    return p;
-  }
+    return new Patch(sysex, getDevice());
+   }
 
-  public String getPatchName(IPatch p, int patchNum) {
+  public String getPatchName(Patch p, int patchNum) {
     Patch pgm = (Patch)getPatch(p, patchNum);
     try {
       char c[] = new char[patchNameSize];
@@ -81,7 +79,7 @@ public class VirusMultiBankDriver extends BankDriver {
     }
   }
 
-  public void setPatchName(IPatch p,int patchNum, String name) {
+  public void setPatchName(Patch p,int patchNum, String name) {
     Patch pgm = (Patch)getPatch(p, patchNum);
     if (name.length() < patchNameSize + 4) {
       name = name + "                ";
@@ -93,7 +91,7 @@ public class VirusMultiBankDriver extends BankDriver {
     putPatch(p, pgm, patchNum);
   }
 
-  protected void sendPatch (IPatch p) {
+  protected void sendPatch (Patch p) {
     sendPatchWorker((Patch)p, 0);
   }
 
@@ -118,7 +116,7 @@ public class VirusMultiBankDriver extends BankDriver {
     }
   }
 
-  public IPatch createNewPatch() {
+  public Patch createNewPatch() {
     byte tmp[] = new byte[singleSize];
     byte sysex[] = new byte[patchSize];
     System.arraycopy(VirusMultiSingleDriver.NEW_PATCH, 0, tmp, 0, singleSize);
@@ -126,8 +124,7 @@ public class VirusMultiBankDriver extends BankDriver {
       tmp[PATCH_NUM_OFFSET] = (byte)i; // multi #
       System.arraycopy(tmp, 0, sysex, i * singleSize, singleSize);
     }
-    IPatch p = new Patch(sysex, this);
-    return p;
+    return new Patch(sysex, this);
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {

@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.NameValue;
 import core.Patch;
 import core.PatchEdit;
@@ -257,7 +256,7 @@ public class QuasimidiQuasarSingleDriver extends Driver {
     /**
     * Creates a new "Single Performance"
     */
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         return createNewPatch(0);
     }
 

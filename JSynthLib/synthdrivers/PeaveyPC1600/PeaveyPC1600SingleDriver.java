@@ -16,7 +16,6 @@
 
 package synthdrivers.PeaveyPC1600;
 import core.Driver;
-import core.IPatch;
 import core.NibbleSysex;
 import core.Patch;
 import core.SysexHandler;
@@ -81,7 +80,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
 // PeaveyPC1600SingleDriver->getPatchName
 //----------------------------------------------------------------------------------------------------------------------
 
-   public String getPatchName(IPatch ip) {
+   public String getPatchName(Patch ip) {
      NibbleSysex nibbleSysex = new NibbleSysex(((Patch)ip).sysex, PATCH_NAME_START);
      return nibbleSysex.getNibbleStr(PATCH_NAME_SIZE, PATCH_NAME_CHAR_BYTES, NIBBLE_MULTIPLIER);
    }
@@ -90,7 +89,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
 // PeaveyPC1600SingleDriver->setPatchName
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void setPatchName(IPatch p, String name) {
+  public void setPatchName(Patch p, String name) {
      NibbleSysex nibbleSysex = new NibbleSysex(((Patch)p).sysex, PATCH_NAME_START);
      nibbleSysex.putNibbleStr(name, PATCH_NAME_SIZE, PATCH_NAME_CHAR_BYTES, NIBBLE_MULTIPLIER);
   }
@@ -99,7 +98,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
 // PeaveyPC1600SingleDriver->sendPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void sendPatch(IPatch p) {
+  public void sendPatch(Patch p) {
     storePatch(p, 0, 0);
   }
 
@@ -107,7 +106,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
 // PeaveyPC1600SingleDriver->storePatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void storePatch (IPatch p, int bankNum, int patchNum) {
+  public void storePatch (Patch p, int bankNum, int patchNum) {
     sendPatchWorker(p);
 
     // Request PC1600 stores edit buffer with this patchNum

@@ -23,7 +23,6 @@ import javax.swing.border.TitledBorder;
 import core.BankEditorFrame;
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.IPatch;
 import core.JSLDesktop;
 import core.JSLFrameEvent;
 import core.JSLFrameListener;
@@ -386,7 +385,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	static class PartDetailsWindow extends JPanel
 	{
 		private Patch p;
-		public IPatch getPatch()
+		public Patch getPatch()
 		{
 			return p;
 		}

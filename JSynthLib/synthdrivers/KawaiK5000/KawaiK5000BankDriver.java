@@ -124,9 +124,9 @@ public class KawaiK5000BankDriver extends BankDriver
      return  patchIndex[patchNum];
    }
 
-  public String getPatchName(IPatch ip)
+  public String getPatchName(Patch ip)
    {return (((Patch)ip).sysex.length/1024)+" Kilobytes";}
-  public String getPatchName(IPatch ip,int patchNum) {
+  public String getPatchName(Patch ip,int patchNum) {
   	Patch p = (Patch)ip;
      int nameStart=getPatchStart(p,patchNum);
      if (nameStart==0) return "[empty]";
@@ -146,8 +146,8 @@ public class KawaiK5000BankDriver extends BankDriver
 // KawaiK5000BankDriver->setPatchName(Patch, int, String)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void setPatchName(IPatch bank, int patchNum, String name) {
-    IPatch p = (IPatch)getPatch(bank, patchNum);
+  public void setPatchName(Patch bank, int patchNum, String name) {
+    Patch p = getPatch(bank, patchNum);
     Driver singleDriver = p.getDriver();
     singleDriver.setPatchName(p, name);
     singleDriver.calculateChecksum(p);
@@ -156,13 +156,13 @@ public class KawaiK5000BankDriver extends BankDriver
 
 //----- End phil@muqus.com
 
-  public void calculateChecksum(IPatch p,int start,int end,int ofs)
+  public void calculateChecksum(Patch p,int start,int end,int ofs)
   {
 
   }
 
 
-  public void calculateChecksum (IPatch p)
+  public void calculateChecksum (Patch p)
    {
    }
 
@@ -172,7 +172,7 @@ public class KawaiK5000BankDriver extends BankDriver
 // KawaiK5000BankDriver->putPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void putPatch(IPatch b, IPatch p, int patchNum) {
+  public void putPatch(Patch b, Patch p, int patchNum) {
   	Patch bank = (Patch)b;
     if (!canHoldPatch(p)) {
       JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE);
@@ -200,7 +200,7 @@ public class KawaiK5000BankDriver extends BankDriver
 
 //----- End phil@muqus.com
 
-  public IPatch getPatch(IPatch b, int patchNum)
+  public Patch getPatch(Patch b, int patchNum)
    {
   	Patch bank = (Patch)b;
   try{
@@ -217,21 +217,20 @@ public class KawaiK5000BankDriver extends BankDriver
      sysex[06]=(byte)0x00;sysex[07]=(byte)0x00;sysex[8]=(byte)0x00;
      sysex[patchSize-1]=(byte)0xF7;
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,9,patchSize-10);
-     IPatch p = new Patch(sysex, getDevice());
+     Patch p = new Patch(sysex, getDevice());
      p.getDriver().calculateChecksum(p);
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in K5000 Bank Driver",e);return null;}
    }
-public IPatch createNewPatch()
+public Patch createNewPatch()
  {
          byte [] sysex = new byte[28];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x21;sysex[4]=(byte)0x00;
-          sysex[5]=(byte)0x0a; sysex[6]=(byte)0x00;sysex[27]=(byte)0xF7;
-         IPatch p = new Patch(sysex, this);
-	 return p;
+	 sysex[5]=(byte)0x0a; sysex[6]=(byte)0x00;sysex[27]=(byte)0xF7;
+	 return new Patch(sysex, this);
  }
 
-  public void storePatch (IPatch p, int bankNum,int patchNum)
+  public void storePatch (Patch p, int bankNum,int patchNum)
     {
      if (bankNum==0)((Patch)p).sysex[7]=0;   //bank a
      if (bankNum==3)((Patch)p).sysex[7]=2;   //bank d
@@ -248,7 +247,7 @@ public IPatch createNewPatch()
 // KawaiK5000BankDriver->deletePatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void deletePatch (IPatch b, int patchNum) {
+  public void deletePatch (Patch b, int patchNum) {
   	Patch bank = (Patch)b;
     if (!patchExists(bank, patchNum)) {
       JOptionPane.showMessageDialog(null, "Patch does not exist, so can not be deleted.", "Error", JOptionPane.ERROR_MESSAGE);

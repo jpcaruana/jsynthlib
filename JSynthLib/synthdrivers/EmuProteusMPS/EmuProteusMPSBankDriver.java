@@ -40,7 +40,7 @@ public class EmuProteusMPSBankDriver extends BankDriver
      int start=(319*patchNum);
    return start;
    }
-  public String getPatchName(IPatch p,int patchNum) {
+  public String getPatchName(Patch p,int patchNum) {
      int nameStart=getPatchStart(patchNum);
      nameStart+=7; //offset of name in patch data
          try {
@@ -52,7 +52,7 @@ public class EmuProteusMPSBankDriver extends BankDriver
      
   }
 
-  public void setPatchName(IPatch p,int patchNum, String name)
+  public void setPatchName(Patch p,int patchNum, String name)
   {
      patchNameSize=12;
      patchNameStart=getPatchStart(patchNum)+7;
@@ -70,7 +70,7 @@ public class EmuProteusMPSBankDriver extends BankDriver
  
 
 
-  public void calculateChecksum(IPatch ip,int start,int end,int ofs)
+  public void calculateChecksum(Patch ip,int start,int end,int ofs)
   {
   	Patch p = (Patch)ip;
   	int i;
@@ -84,13 +84,13 @@ public class EmuProteusMPSBankDriver extends BankDriver
   }
 
 
-  public void calculateChecksum (IPatch p)
+  public void calculateChecksum (Patch p)
    {
      for (int i=0;i<100;i++)
       calculateChecksum (p,7+(i*319),7+(i*319)+309,7+(i*319)+310);
    }                                     
 
-  public void putPatch(IPatch bank,IPatch p,int patchNum)
+  public void putPatch(Patch bank,Patch p,int patchNum)
    { 
    if (!canHoldPatch(p))
        {JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); return;}
@@ -98,18 +98,18 @@ public class EmuProteusMPSBankDriver extends BankDriver
    System.arraycopy(((Patch)p).sysex,0,((Patch)bank).sysex,getPatchStart(patchNum),319);
    calculateChecksum(bank);
    }
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
    {
   try{
      byte [] sysex=new byte[319];
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,0,319);
-     IPatch p = new Patch(sysex, getDevice());
+     Patch p = new Patch(sysex, getDevice());
      p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in Proteus MPS Bank Driver",e);return null;}
    }
 
-  public void storePatch (IPatch p, int bankNum,int patchNum)
+  public void storePatch (Patch p, int bankNum,int patchNum)
     { setBankNum(bankNum);
       for (int i = 0;i<100;i++)
         { ((Patch)p).sysex[getPatchStart(i)+5]=(byte)((bankNum*100+i)%128);
@@ -118,14 +118,14 @@ public class EmuProteusMPSBankDriver extends BankDriver
       sendPatchWorker(p);
     }
     
-public IPatch createNewPatch()
+public Patch createNewPatch()
  {
 	 byte [] sysex = new byte[31900];
 	 for (int i=0;i<100;i++) {
 	 sysex[i*319+0]=(byte)0xF0; sysex[i*319+1]=(byte)0x18;sysex[i*319+2]=(byte)0x08;
 	 sysex[i*319+3]=(byte)0x00;sysex[i*319+4]=(byte)0x01;
 	 sysex[i*319+318]=(byte)0xF7;}
-         IPatch p = new Patch(sysex, this);
+         Patch p = new Patch(sysex, this);
 	 for (int i=0;i<100;i++) 	 
 	   setPatchName(p,i,"New Patch");
 	 calculateChecksum(p);	 

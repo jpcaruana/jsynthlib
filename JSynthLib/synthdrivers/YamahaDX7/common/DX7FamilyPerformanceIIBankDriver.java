@@ -27,7 +27,6 @@ import java.io.UnsupportedEncodingException;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -41,8 +40,8 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 	private static final int	dxPatchNameOffset	= 31;  // offset in packed bank format
 	private static final int	dxSinglePackedSize	= 51;	// size of single patch in packed bank format
 	private static final int	dxSysexHeaderSize	= 16;	// length of sysex header
-					       
-	
+
+
 	public DX7FamilyPerformanceIIBankDriver(byte[] initSysex, String[] dxPatchNumbers, String[] dxBankNumbers)
 	{
 		super ("Performance Bank", "Torsten Tittmann", dxPatchNumbers.length, 4);
@@ -80,9 +79,9 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 	{
 		return getPatchStart(patchNum)+dxPatchNameOffset;
 	}
-		
 
-	public String getPatchName(IPatch p,int patchNum)
+
+	public String getPatchName(Patch p,int patchNum)
 	{
 		int nameStart=getPatchNameStart(patchNum);
 
@@ -95,13 +94,13 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 	}
 
 
-	public void setPatchName(IPatch p,int patchNum, String name)
+	public void setPatchName(Patch p,int patchNum, String name)
 	{
 		int nameStart=getPatchNameStart(patchNum);
 
 		while (name.length()<dxPatchNameSize)
 			name=name+" ";
-		
+
 		byte [] namebytes = new byte [dxPatchNameSize];
 
 		try {
@@ -115,7 +114,7 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 	}
 
 
-	public void putPatch(IPatch bank,IPatch p,int patchNum)	//puts a patch into the bank, converting it as needed
+	public void putPatch(Patch bank,Patch p,int patchNum)	//puts a patch into the bank, converting it as needed
 	{
 		if (!canHoldPatch(p)) {
 			DX7FamilyStrings.dxShowError(toString(), "This type of patch does not fit in to this type of bank.");
@@ -131,7 +130,7 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 	}
 
 
-	public IPatch getPatch(IPatch bank, int patchNum)		//Gets a patch from the bank, converting it as needed
+	public Patch getPatch(Patch bank, int patchNum)		//Gets a patch from the bank, converting it as needed
 	{
 		try {
 			byte [] sysex=new byte[singleSize];
@@ -159,9 +158,9 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 				sysex[16+i]=(byte)(((Patch)bank).sysex[getPatchStart(patchNum)+i]);
 			}
 
-			IPatch p = new Patch(sysex, getDevice());	// single sysex
+			Patch p = new Patch(sysex, getDevice());	// single sysex
 			p.getDriver().calculateChecksum(p);
-			
+
 			return p;
 		} catch (Exception e) {
 			ErrorMsg.reportError(getManufacturerName()+" "+getModelName(),"Error in "+toString(),e);return null;
@@ -169,10 +168,10 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 	}
 
 
-	public IPatch createNewPatch()		// create a bank with 32 performance patches
+	public Patch createNewPatch()		// create a bank with 32 performance patches
 	{
 		byte [] sysex = new byte[trimSize];
-		
+
 		sysex[ 0]=(byte)0xf0;
 		sysex[ 1]=(byte)0x43;
 		sysex[ 2]=(byte)0x00;
@@ -189,18 +188,18 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 		sysex[13]=(byte)0x33;
 		sysex[14]=(byte)0x50;
 		sysex[15]=(byte)0x4d;
-		
+
 		sysex[trimSize-1]=(byte)0xf7;
 
 
-		IPatch v = new Patch(initSysex, getDevice());	// single sysex
-		IPatch p = new Patch(sysex,     this);		// bank sysex
-		
+		Patch v = new Patch(initSysex, getDevice());	// single sysex
+		Patch p = new Patch(sysex,     this);		// bank sysex
+
 		for (int i=0;i<getNumPatches();i++)
 			putPatch(p,v,i);
-		
+
 		calculateChecksum(p);
-		
+
 		return p;
 	}
 

@@ -100,21 +100,21 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Offset of checksum byte.<p>
      * Need to be set if default <code>calculateChecksum(Patch)</code>
      * method is used.
-     * @see #calculateChecksum(IPatch)
+     * @see #calculateChecksum(Patch)
      */
     protected int checksumOffset;
     /**
      * Start of range that Checksum covers.<p>
      * Need to be set if default <code>calculateChecksum(Patch)</code>
      * method is used.
-     * @see #calculateChecksum(IPatch)
+     * @see #calculateChecksum(Patch)
      */
     protected int checksumStart;
     /**
      * End of range that Checksum covers.<p>
      * Need to be set if default <code>calculateChecksum(Patch)</code>
      * method is used.
-     * @see #calculateChecksum(IPatch)
+     * @see #calculateChecksum(Patch)
      */
     protected int checksumEnd;
 
@@ -339,8 +339,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * some weird format or encoding, this needs to be overidden in
      * the particular driver.
      */
-    public String getPatchName(IPatch ip) { // called by bank driver
-    		Patch p = (Patch)ip;
+    protected String getPatchName(Patch p) { // called by bank driver
         if (patchNameSize == 0)
 	    return ("-");
         try {
@@ -355,7 +354,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * weird format or encoding, this needs to be overidden in the
      * particular driver.
      */
-    public void setPatchName(IPatch p, String name) { // called by bank driver
+    protected void setPatchName(Patch p, String name) { // called by bank driver
         if (patchNameSize == 0) {
 	    ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Name Editing.");
 	    return;
@@ -386,7 +385,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @param end end offset
      * @param ofs offset of the checksum data
      */
-    protected void calculateChecksum(IPatch patch, int start, int end, int ofs) {
+    protected void calculateChecksum(Patch patch, int start, int end, int ofs) {
     	Patch p = (Patch)patch;
     	// 	ErrorMsg.reportStatus("Driver:calcChecksum:1st byte is " + p.sysex[start]);
 // 	ErrorMsg.reportStatus("Last byte is " + p.sysex[end]);
@@ -414,7 +413,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      *
      * @param p a <code>Patch</code> value
      */
-    public void calculateChecksum(IPatch p) { // called by bank driver
+    protected void calculateChecksum(Patch p) { // called by bank driver
 	calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
     }
 
@@ -425,7 +424,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * The caller checks if your driver support this by using
      * getDeclaredMethod.
      */
-    protected IPatch createNewPatch() {
+    protected Patch createNewPatch() {
 	return null;
     }
 
@@ -434,12 +433,11 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * patch to a correct size. Useful for files containg more than one
      * bank for example. Some drivers are incompatible with this method
      * so it reqires explicit activation with the trimSize variable.
-     * @param ip the patch, which should be trimmed to the right size
+     * @param p the patch, which should be trimmed to the right size
      * @return the size of the (modified) patch
      */
-    protected int trimSysex(IPatch ip) { // no driver overrides this now.
-    		Patch p = (Patch)ip;
-        if (trimSize > 0 && p.sysex.length > trimSize
+    protected int trimSysex(Patch p) { // no driver overrides this now.
+           if (trimSize > 0 && p.sysex.length > trimSize
 	    && p.sysex[trimSize - 1] == (byte) 0xf7) {
 	    byte[] sysex = new byte[trimSize];
 	    System.arraycopy(p.sysex, 0, sysex, 0, trimSize);
@@ -457,7 +455,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * <code>JSLFrame</code>.
      * @see #hasEditor
      */
-    protected JSLFrame editPatch(IPatch p) {
+    protected JSLFrame editPatch(Patch p) {
 	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
 	return null;
     }
@@ -474,7 +472,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	else {
 	    try {
 		getClass().getDeclaredMethod("editPatch",
-					     new Class[] {IPatch.class});
+					     new Class[] {Patch.class});
 		return true;
 	    } catch (NoSuchMethodException e) {
 		return false;
@@ -491,7 +489,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @param patchNum initially selected patch number.
      * @deprecated Nobody uses this method now.
      */
-    protected void choosePatch(IPatch p, int bankNum, int patchNum) {
+    protected void choosePatch(Patch p, int bankNum, int patchNum) {
 	int bank = 0;
 	int patch = 0;
 	String bankstr;
@@ -538,7 +536,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * @param p a <code>Patch</code> value
      * @deprecated Nobody uses this method now.
      */
-    protected void choosePatch(IPatch p) {
+    protected void choosePatch(Patch p) {
 	choosePatch(p, 0, 0);
     }
 
@@ -547,14 +545,13 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * this driver is the correct one to support the patch.
      *
      * @param patchString the result of <code>p.getPatchHeader()</code>.
-     * @param ip a <code>Patch</code> value
+     * @param p a <code>Patch</code> value
      * @return <code>true</code> if this driver supports the Patch.
      * @see #patchSize
      * @see #sysexID
      */
-    protected boolean supportsPatch(StringBuffer patchString, IPatch ip) {
-    		Patch p = (Patch)ip;
-	// check the length of Patch
+    protected boolean supportsPatch(StringBuffer patchString, Patch p) {
+  	// check the length of Patch
         if ((patchSize != p.sysex.length) && (patchSize != 0))
 	    return false;
 
@@ -614,7 +611,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Override this if required.
      */
     // sendPatch(Patch) may be better name.
-    protected void storePatch(IPatch p, int bankNum, int patchNum) {
+    protected void storePatch(Patch p, int bankNum, int patchNum) {
         setBankNum(bankNum);
         setPatchNum(patchNum);
         sendPatch(p);
@@ -627,14 +624,14 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * be sent to the user (aka if the particular synth does not have
      * a edit buffer or it is not MIDI accessable.
      */
-    protected void sendPatch(IPatch p) {
+    protected void sendPatch(Patch p) {
 	sendPatchWorker(p);
     }
 
     /**
      * Set Device ID and send the sysex data to MIDI output.
      */
-    protected final void sendPatchWorker(IPatch p) {
+    protected final void sendPatchWorker(Patch p) {
         if (deviceIDoffset > 0)
 	    ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
         try {
@@ -680,10 +677,10 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     //----- End phil@muqus.com
 
     /** Play note. 
-     * @param p a <code>IPatch</code> value, which isn't used! !!!FIXIT!!!
-     * @deprecated Use playPatch().
+     * @param p a <code>Patch</code> value, which isn't used! !!!FIXIT!!!
+     * @Xdeprecated Use playPatch().
      */
-    public void playPatch(IPatch p) { // called by core and some Editors
+    public void playPatch(Patch p) { // called by core and some Editors
 	playPatch();
     }
     
@@ -761,7 +758,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Returns String .. full name for referring to this patch for
      * debugging purposes
      */
-    protected String getFullPatchName(IPatch p) {
+    protected String getFullPatchName(Patch p) {
 	return getManufacturerName() + " | " + getModelName() + " | "
 	    + getPatchType() + " | " + getSynthName() + " | " + getPatchName(p);
     }
@@ -833,5 +830,38 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
         while (max >= min)
             retval[max - min] = df.format(max--);
         return retval;
+    }
+
+    // stub methods to convert IPatch -> Patch.
+    public void calculateChecksum(IPatch myPatch) {
+        calculateChecksum((Patch) myPatch);
+    }
+
+    public JSLFrame editPatch(IPatch p) {
+         return editPatch((Patch) p);
+    }
+
+    public String getPatchName(IPatch patch) {
+         return getPatchName((Patch) patch);
+    }
+
+    public void playPatch(IPatch p) {
+        playPatch((Patch) p);
+    }
+
+    public void sendPatch(IPatch p) {
+        sendPatch((Patch) p);
+    }
+
+    public void setPatchName(IPatch patch, String text) {
+        setPatchName((Patch) patch, text);
+    }
+
+    public void storePatch(IPatch myPatch, int bankNum, int patchNum) {
+        storePatch((Patch) myPatch, bankNum, patchNum);
+    }
+    
+    public boolean supportsPatch(StringBuffer patchString, IPatch p) {
+        return supportsPatch(patchString, (Patch) p);
     }
 }

@@ -22,6 +22,7 @@
 package synthdrivers.QuasimidiQuasar;
 
 import core.*;
+
 import javax.swing.*;
 import java.io.*;
 
@@ -217,7 +218,7 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
     /**
     * Creates a new bank with 100 new Quasar Performances
     */
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte [] sysex = new byte[this.patchSize];
 
         Patch tempPatch;

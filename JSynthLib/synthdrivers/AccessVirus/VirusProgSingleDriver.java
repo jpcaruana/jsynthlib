@@ -83,7 +83,7 @@ public class VirusProgSingleDriver extends Driver {
     patchNumbers = PATCH_LIST;
   }
 
-  public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+  public void calculateChecksum(Patch ip, int start, int end, int ofs) {
   	Patch p = (Patch)ip;
   	int sum = 0;
     for (int i = start; i <= end; i++) {
@@ -92,7 +92,7 @@ public class VirusProgSingleDriver extends Driver {
     p.sysex[ofs] = (byte)(sum & 0x7F);
   }
 
-  public void sendPatch(IPatch p) {
+  public void sendPatch(Patch p) {
     sendPatch((Patch)p, 0, 64); // using single mode edit buffer
   }
 
@@ -106,7 +106,7 @@ public class VirusProgSingleDriver extends Driver {
   }
 
   // Sends a patch to a set location in the user bank
-  public void storePatch(IPatch p, int bankNum, int patchNum) {
+  public void storePatch(Patch p, int bankNum, int patchNum) {
     if (bankNum > 1) {
       JOptionPane.showMessageDialog(PatchEdit.getInstance(),
         "Cannot send to a preset bank",
@@ -118,7 +118,7 @@ public class VirusProgSingleDriver extends Driver {
     }
   }
 
-  public void playPatch(IPatch p) {
+  public void playPatch(Patch p) {
     Patch p2 = new Patch(((Patch)p).sysex);
     p2.sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
     p2.sysex[BANK_NUM_OFFSET] = 0; // edit buffer
@@ -127,9 +127,8 @@ public class VirusProgSingleDriver extends Driver {
     super.playPatch(p2);
   }
 
-  public IPatch createNewPatch() {
-    IPatch p = new Patch(NEW_PATCH, this);
-    return p;
+  public Patch createNewPatch() {
+    return new Patch(NEW_PATCH, this);
   }
   /*
   protected void sendPatchWorker(Patch p) {

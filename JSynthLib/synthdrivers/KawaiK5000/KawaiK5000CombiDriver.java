@@ -8,7 +8,6 @@
 package synthdrivers.KawaiK5000;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -67,7 +66,7 @@ public class KawaiK5000CombiDriver extends Driver {
 // KawaiK5000CombiDriver->storePatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void storePatch (IPatch p, int bankNum, int patchNum) {
+  public void storePatch (Patch p, int bankNum, int patchNum) {
 ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + patchNum);
     setBankNum(bankNum);
     setPatchNum(patchNum);
@@ -84,7 +83,7 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
 // KawaiK5000CombiDriver->sendPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void sendPatch (IPatch p) {
+  public void sendPatch (Patch p) {
     storePatch(p, 0, 0);
   }
 
@@ -105,7 +104,7 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
 // KawaiK5000CombiDriver->calculateChecksum(Patch, int, int, int)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void calculateChecksum(IPatch ip, int start, int end, int ofs) {
+  public void calculateChecksum(Patch ip, int start, int end, int ofs) {
 //ErrorMsg.reportStatus("KawaiK5000CombiDriver->calculateChecksum");
   	Patch p = (Patch)ip;
   	int i;
@@ -120,9 +119,9 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
 // KawaiK5000CombiDriver->createNewPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public IPatch createNewPatch() {
+  public Patch createNewPatch() {
 //ErrorMsg.reportStatus("KawaiK5000CombiDriver->createNewPatch");
-    IPatch p = createPatchFromData(new byte[PATCH_DATA_SIZE], 0, PATCH_DATA_SIZE);
+    Patch p = createPatchFromData(new byte[PATCH_DATA_SIZE], 0, PATCH_DATA_SIZE);
     Driver singleDriver = p.getDriver();
     singleDriver.setPatchName(p, "New Patch");
     singleDriver.calculateChecksum(p);
@@ -134,13 +133,13 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
 // static KawaiK5000CombIDriver->createPatchFromData
 //----------------------------------------------------------------------------------------------------------------------
 
-    static public IPatch createPatchFromData(byte[] data, int dataOffset, int dataLength) {
+    static public Patch createPatchFromData(byte[] data, int dataOffset, int dataLength) {
 	  byte[] sysex = new byte[dataLength + BSYSEX_HEADER.length + 1];
     System.arraycopy(BSYSEX_HEADER, 0, sysex, 0, BSYSEX_HEADER.length);
     System.arraycopy(data, dataOffset, sysex, BSYSEX_HEADER.length, dataLength);
     sysex[sysex.length-1] = (byte)0xF7;
 
-    IPatch p = new Patch(sysex);
+    Patch p = new Patch(sysex);
     p.getDriver().calculateChecksum(p);
 
     return p;

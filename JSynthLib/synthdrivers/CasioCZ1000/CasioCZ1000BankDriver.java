@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 public class CasioCZ1000BankDriver extends BankDriver
 {
@@ -37,18 +36,18 @@ public class CasioCZ1000BankDriver extends BankDriver
         return start;
     }
 
-    public void calculateChecksum(IPatch p,int start,int end,int ofs)
+    public void calculateChecksum(Patch p,int start,int end,int ofs)
     {
 
     }
 
 
-    public void calculateChecksum (IPatch p)
+    public void calculateChecksum (Patch p)
     {
 
     }                                     
 
-    public void putPatch(IPatch bank,IPatch p,int patchNum)
+    public void putPatch(Patch bank,Patch p,int patchNum)
     {
         // This method is called when doing a paste (from another bank or a single)
         // the patch received will be a single dump (meant for the edit buffer)
@@ -62,7 +61,7 @@ public class CasioCZ1000BankDriver extends BankDriver
         System.arraycopy(((Patch)p).sysex,7,((Patch)bank).sysex,getPatchStart(patchNum),264-7);
         calculateChecksum(bank);
     }
-    public IPatch getPatch(IPatch bank, int patchNum)
+    public Patch getPatch(Patch bank, int patchNum)
     {
         // this method is call when you have a bank opened and want to send or play individual patches
         // OR when you do a Cut/Copy
@@ -81,13 +80,13 @@ public class CasioCZ1000BankDriver extends BankDriver
             sysex[6]=(byte)(0x60); // to send to edit buffer
             sysex[263]=(byte)0xF7;
             System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,7,264-7);
-            IPatch p = new Patch(sysex, getDevice());
-            p.getDriver().calculateChecksum(p);   
+            Patch p = new Patch(sysex, getDevice());
+            p.getDriver().calculateChecksum(p);
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }
 
-    public IPatch createNewPatch()
+    public Patch createNewPatch()
     {
         // There is no additionnal header on the Bank dump itself.
 
@@ -114,7 +113,7 @@ public class CasioCZ1000BankDriver extends BankDriver
         return p;
     }
 
-    public void storePatch (IPatch bank, int bankNum,int patchNum)
+    public void storePatch (Patch bank, int bankNum,int patchNum)
     { 
         // This is called when the user want to Store a bank.
         byte [] newsysex = new byte[264];

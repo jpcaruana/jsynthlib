@@ -30,7 +30,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import core.IPatch;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEdit;
@@ -196,11 +195,11 @@ public class DX7FamilyFractionalScalingEditor extends PatchEditorFrame
 	 */
 	class FractionalScalingSender extends SysexSender
 	{
-		IPatch patch;
+		Patch patch;
 		int keyNumber, opNumber;
 		byte []b = new byte [10];
 
-		public FractionalScalingSender(IPatch p, int o, int k)
+		public FractionalScalingSender(Patch p, int o, int k)
 		{
 			patch	= p;
 			opNumber  = o;

@@ -24,7 +24,7 @@
 package synthdrivers.YamahaDX7II;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyFractionalScalingBankDriver;
-import core.IPatch;
+import core.Patch;
 
 public class YamahaDX7IIFractionalScalingBankDriver extends DX7FamilyFractionalScalingBankDriver
 {
@@ -37,13 +37,13 @@ public class YamahaDX7IIFractionalScalingBankDriver extends DX7FamilyFractionalS
 	}
 
 
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 	
 	
-	public void storePatch (IPatch p, int bankNum,int patchNum)
+	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information

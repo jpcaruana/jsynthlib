@@ -6,7 +6,6 @@ import java.io.InputStream;
 
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -45,7 +44,7 @@ public class KawaiK5000ADDSingleDriver extends Driver
                               "120-","121-","122-","123-","124-","125-","126-","127-","128-" };
 
   }
-public void storePatch (IPatch p, int bankNum,int patchNum)
+public void storePatch (Patch p, int bankNum,int patchNum)
   {
    setBankNum(bankNum);
    setPatchNum(patchNum);
@@ -59,11 +58,11 @@ public void storePatch (IPatch p, int bankNum,int patchNum)
    try {Thread.sleep(100); } catch (Exception e){}
    setPatchNum(patchNum);
   }
-public void sendPatch (IPatch p)
+public void sendPatch (Patch p)
   {
    storePatch(p,0,0);
   }
-public void calculateChecksum(IPatch ip)
+public void calculateChecksum(Patch ip)
   {
 	Patch p = (Patch)ip;
     calculateChecksum(p,checksumStart,90+p.sysex[60]*86,checksumOffset);
@@ -82,7 +81,7 @@ public void calculateChecksum(IPatch ip)
       waveDataStart+=806;
     }
   }
-  public void calculateChecksum(IPatch ip,int start,int end,int ofs)
+  public void calculateChecksum(Patch ip,int start,int end,int ofs)
   {
   	Patch p = (Patch)ip;
   	int i;
@@ -123,20 +122,19 @@ public void calculateChecksum(IPatch ip)
 //----- End phil@muqus.com
 
 
-public JSLFrame editPatch(IPatch p)
+public JSLFrame editPatch(Patch p)
  {
      return new KawaiK5000ADDSingleEditor((Patch)p);
  }
 
-public IPatch createNewPatch()
+public Patch createNewPatch()
   { 
   try {
     InputStream fileIn= getClass().getResourceAsStream("k5k.syx");
     byte [] buffer =new byte [2768];
     fileIn.read(buffer);
     fileIn.close();
-    IPatch p=new Patch(buffer, this);
-    return p;
+    return new Patch(buffer, this);
   }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
   }
 

@@ -1,7 +1,6 @@
 package synthdrivers.EnsoniqVFX;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
@@ -56,7 +55,7 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 *@param  ip  Description of the Parameter
 	 *@return    The patchName value
 	 */
-	public String getPatchName(IPatch ip)
+	public String getPatchName(Patch ip)
 	{
 		return getPatchName(((Patch)ip).sysex, 6);
 	}
@@ -91,7 +90,7 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 *@param  p     the patch
 	 *@param  name  The new patch Name value
 	 */
-	public void setPatchName(IPatch p, String name)
+	public void setPatchName(Patch p, String name)
 	{
 		setPatchName(((Patch)p).sysex, name, HEADER_SIZE-1);
 	}
@@ -141,7 +140,7 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 *@param  bankNum   Description of the Parameter
 	 *@param  patchNum  Description of the Parameter
 	 */
-	public void storePatch(IPatch p, int bankNum, int patchNum)
+	public void storePatch(Patch p, int bankNum, int patchNum)
 	{
 		// TODO choose the patchnum by sysex
 		sendPatch(p);
@@ -153,14 +152,14 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 *
 	 *@param  p  Description of the Parameter
 	 */
-	public void sendPatch(IPatch p)
+	public void sendPatch(Patch p)
 	{
 		sendPatchWorker(p);
 		ErrorMsg.reportWarning("Ensoniq VFX!", "The patch has been placed in the edit buffer\nYou must now hold the 'write' button on the VFX's\nand choose a location to store the patch.");
 	}
 
 
-	public void calculateChecksum(IPatch p, int start, int end, int ofs)
+	public void calculateChecksum(Patch p, int start, int end, int ofs)
 	{
 		//This synth does not use a checksum
 	}
@@ -171,7 +170,7 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 *
 	 *@return    Description of the Return Value
 	 */
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return newPatch();
 	}
@@ -201,7 +200,7 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 * @param aOffset offset in the sysex
 	 * @return    the patch
 	 */
-	static IPatch newPatch(byte aSysex[], int aOffset)
+	static Patch newPatch(byte aSysex[], int aOffset)
 	{
 		Patch oNewPatch = newPatch();
 		System.arraycopy(aSysex, aOffset, oNewPatch.sysex, HEADER_SIZE-1, PATCH_SIZE);
@@ -214,7 +213,7 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return null;
 	}

@@ -5,7 +5,6 @@ package synthdrivers.RolandMKS50;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 
 public class MKS50PatchBankDriver extends BankDriver
@@ -32,17 +31,17 @@ public class MKS50PatchBankDriver extends BankDriver
     singleSysexID = "F041350*233001";
   }
 
-  public void calculateChecksum(IPatch p)
+  public void calculateChecksum(Patch p)
   {
     // MKS-50 doesn't use checksum
   }
 
-  public void calculateChecksum(IPatch p, int start, int end, int ofs)
+  public void calculateChecksum(Patch p, int start, int end, int ofs)
   {
     // MKS-50 doesn't use checksum
   }
 
-  public void storePatch (IPatch p, int bankNum, int patchNum)
+  public void storePatch (Patch p, int bankNum, int patchNum)
   {
     sendPatchWorker(p);
   }
@@ -63,7 +62,7 @@ public class MKS50PatchBankDriver extends BankDriver
     storePatch(p, 0, 0);
   }
   */
-  public void putPatch(IPatch bank, IPatch p, int patchNum)
+  public void putPatch(Patch bank, Patch p, int patchNum)
   {
     if (!canHoldPatch(p))
     {
@@ -113,7 +112,7 @@ public class MKS50PatchBankDriver extends BankDriver
     System.arraycopy(bankSysexNibbles, 0, ((Patch)bank).sysex, patchOffset, 64);
   }
 
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
   {
       byte bankSysexNibbles[] = new byte[64];
       byte bankSysex[] = new byte[32];
@@ -166,11 +165,10 @@ public class MKS50PatchBankDriver extends BankDriver
         sysex[20+i] = (byte)(bankSysex[i+11] & 0x3F);
       }
 
-      IPatch p = new Patch(sysex);
-      return p;
+      return new Patch(sysex);
   }
 
-  public String getPatchName(IPatch p, int patchNum)
+  public String getPatchName(Patch p, int patchNum)
   {
       byte bankSysexNibbles[] = new byte[64];
       byte bankSysex[] = new byte[32];
@@ -194,7 +192,7 @@ public class MKS50PatchBankDriver extends BankDriver
     return PatchNum/4*266 + PatchNum%4*64 + 9;
   }
 
-  protected void sendPatch (IPatch p)
+  protected void sendPatch (Patch p)
   {
     byte []tmp = new byte[266];  // send in 16 messages containing 4 tones each
     try

@@ -1,7 +1,6 @@
 package synthdrivers.KorgWavestation;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -32,7 +31,7 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
 
     /**
      */    
-    public void storePatch(IPatch p, int bankNum,int patchNum) {
+    public void storePatch(Patch p, int bankNum,int patchNum) {
         //        int patchValue = patchNum;
         //int bankValue  = 0;
                calculateChecksum(p);
@@ -53,7 +52,7 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
      */
     }
     
-    public void sendPatch(IPatch p) {
+    public void sendPatch(Patch p) {
         ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
         
         try {
@@ -62,7 +61,7 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
         {ErrorMsg.reportStatus(e);}
     }
     
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte [] sysex=new byte[2761];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
         sysex[2]=(byte)(0x30+getChannel()-1);
@@ -71,13 +70,13 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
         /*sysex[2759]=checksum;*/
         sysex[2760]=(byte)0xF7;
         
-        IPatch p = new Patch(sysex, this);
+        Patch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
     }
     
-    public void calculateChecksum(IPatch ip,int start,int end,int ofs) {
+    public void calculateChecksum(Patch ip,int start,int end,int ofs) {
     		Patch p = (Patch)ip;
     		int i;
         int sum=0;

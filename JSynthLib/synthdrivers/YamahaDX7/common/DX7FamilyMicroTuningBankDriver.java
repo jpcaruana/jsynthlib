@@ -25,7 +25,6 @@
 package synthdrivers.YamahaDX7.common;
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -65,7 +64,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 	}
 
 	
-	public void calculateChecksum(IPatch p)
+	public void calculateChecksum(Patch p)
 	{
 		// This patch doesn't uses an over-all checksum for bank bulk data
 	}
@@ -77,7 +76,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 	}
 
 
-	public void putPatch(IPatch bank,IPatch p,int patchNum)		//puts a patch into the bank, converting it as needed
+	public void putPatch(Patch bank,Patch p,int patchNum)		//puts a patch into the bank, converting it as needed
 	{
 		if (!canHoldPatch(p)) {
 			DX7FamilyStrings.dxShowError(toString(), "This type of patch does not fit in to this type of bank.");
@@ -108,7 +107,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 	}
 
 
-	public IPatch getPatch(IPatch bank, int patchNum)			//Gets a patch from the bank, converting it as needed
+	public Patch getPatch(Patch bank, int patchNum)			//Gets a patch from the bank, converting it as needed
 	{
 		try {
 			byte [] sysex=new byte[singleSize];
@@ -137,7 +136,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 				sysex[16+i]=(byte)(((Patch)bank).sysex[getPatchStart(patchNum)+12+i]);
 			}
 
-			IPatch p = new Patch(sysex, getDevice());	// single sysex
+			Patch p = new Patch(sysex, getDevice());	// single sysex
 			p.getDriver().calculateChecksum(p);
 
 			return p;
@@ -147,7 +146,7 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 	}
 
 
-	public IPatch createNewPatch()		// create a bank with 64 micro tuning patches
+	public Patch createNewPatch()		// create a bank with 64 micro tuning patches
 	{
 		byte [] sysex = new byte[trimSize];
 		
@@ -157,8 +156,8 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 		sysex[ 3]=(byte)0x7e;
 		sysex[trimSize-1]=(byte)0xF7;
 
-		IPatch v = new Patch(initSysex, getDevice());	// single sysex
-		IPatch p = new Patch(sysex,     this);		// bank sysex
+		Patch v = new Patch(initSysex, getDevice());	// single sysex
+		Patch p = new Patch(sysex,     this);		// bank sysex
 
 		for (int i=0;i<getNumPatches();i++)
 			putPatch(p,v,i);

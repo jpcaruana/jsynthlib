@@ -31,7 +31,7 @@ public class YamahaDX100BankDriver extends BankDriver
      
    return start;
    }
-  public String getPatchName(IPatch p,int patchNum) {
+  public String getPatchName(Patch p,int patchNum) {
      int nameStart=getPatchStart(patchNum);
      nameStart+=57; //offset of name in patch data
          try {
@@ -42,7 +42,7 @@ public class YamahaDX100BankDriver extends BankDriver
      
   }
 
-  public void setPatchName(IPatch p,int patchNum, String name)
+  public void setPatchName(Patch p,int patchNum, String name)
   {
      patchNameSize=10;
      patchNameStart=getPatchStart(patchNum)+57;
@@ -60,12 +60,12 @@ public class YamahaDX100BankDriver extends BankDriver
  
 
 
-  public void calculateChecksum (IPatch p)
+  public void calculateChecksum (Patch p)
    {calculateChecksum (p,6,4101,4102);
  
    }                                     
 
-  public void putPatch(IPatch bank,IPatch p,int patchNum)
+  public void putPatch(Patch bank,Patch p,int patchNum)
    { 
    if (!canHoldPatch(p))
        {JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); return;}
@@ -132,7 +132,7 @@ public class YamahaDX100BankDriver extends BankDriver
   
    calculateChecksum(bank);
    }
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
    {
   try{
      byte [] sysex=new byte[101];
@@ -218,19 +218,19 @@ public class YamahaDX100BankDriver extends BankDriver
   
      sysex[100]=(byte)0xF7;     
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum)+51,sysex,77,22);
-     IPatch p = new Patch(sysex, getDevice());
+     Patch p = new Patch(sysex, getDevice());
      p.getDriver().calculateChecksum(p);
      return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in TX81z Bank Driver",e);return null;}
    }
-public IPatch createNewPatch()
+public Patch createNewPatch()
  {
       byte [] sysex = new byte[4104];
      sysex[00]=(byte)0xF0;sysex[01]=(byte)0x43;sysex[02]=(byte)0x00;
      sysex[03]=(byte)0x04;sysex[04]=(byte)0x20;sysex[05]=(byte)0x00;
      sysex[4103]=(byte)0xF7;
      
-	IPatch p = new Patch(sysex, this);
+	 Patch p = new Patch(sysex, this);
 	 for (int i=0;i<32;i++) 
 	   setPatchName(p,i,"NewPatch");
 	 calculateChecksum(p);	 

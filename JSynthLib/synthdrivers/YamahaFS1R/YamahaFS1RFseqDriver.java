@@ -1,6 +1,5 @@
 package synthdrivers.YamahaFS1R;
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.ParamModel;
 import core.Patch;
@@ -77,7 +76,7 @@ public class YamahaFS1RFseqDriver extends Driver
 	 *
 	 *@return    Description of the Return Value
 	 */
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{/*
 		byte[] sysex = new byte[PATCH_AND_HEADER_SIZE];
 		sysex[0] = (byte) 0xF0;
@@ -102,7 +101,7 @@ public class YamahaFS1RFseqDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new YamahaFS1RFseqEditor((Patch)p);
 	}

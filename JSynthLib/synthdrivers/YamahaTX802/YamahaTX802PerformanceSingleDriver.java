@@ -23,8 +23,8 @@
  */
 package synthdrivers.YamahaTX802;
 import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceIIISingleDriver;
-import core.IPatch;
 import core.JSLFrame;
+import core.Patch;
 
 public class YamahaTX802PerformanceSingleDriver extends DX7FamilyPerformanceIIISingleDriver
 {
@@ -37,19 +37,19 @@ public class YamahaTX802PerformanceSingleDriver extends DX7FamilyPerformanceIIIS
 	}
 
 
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 
 
-	public JSLFrame editPatch(IPatch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}
 
 
-	public void storePatch (IPatch p, int bankNum,int patchNum)
+	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		sendPatchWorker (p);
 

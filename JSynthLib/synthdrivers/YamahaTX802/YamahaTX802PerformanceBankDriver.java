@@ -24,7 +24,7 @@
 package synthdrivers.YamahaTX802;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceIIIBankDriver;
-import core.IPatch;
+import core.Patch;
 
 public class YamahaTX802PerformanceBankDriver extends DX7FamilyPerformanceIIIBankDriver
 {
@@ -37,13 +37,13 @@ public class YamahaTX802PerformanceBankDriver extends DX7FamilyPerformanceIIIBan
 	}
 
 
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		return super.createNewPatch();
 	}
 
 
-	public void storePatch (IPatch p, int bankNum,int patchNum)
+	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection

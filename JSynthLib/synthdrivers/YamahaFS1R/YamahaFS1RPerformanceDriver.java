@@ -134,7 +134,7 @@ public class YamahaFS1RPerformanceDriver extends Driver
     }
 
 
-    public void sendPatch(IPatch p) {
+    public void sendPatch(Patch p) {
 	super.sendPatch(p);
     }
 	
@@ -154,7 +154,7 @@ public class YamahaFS1RPerformanceDriver extends Driver
 
 
     /**Sends a patch to a set location on a synth.*/
-    public void storePatch (IPatch p, int bankNum,int patchNum)
+    public void storePatch (Patch p, int bankNum,int patchNum)
     {
 		// change the address to internal performance
 		((Patch)p).sysex[6] = (byte)0x11;
@@ -206,12 +206,11 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	 *
 	 *@return    Description of the Return Value
 	 */
-	public IPatch createNewPatch()
+	public Patch createNewPatch()
 	{
 		byte[] sysex = new byte[PATCH_AND_HEADER_SIZE];
 		initPatch(sysex, 0);
-		IPatch oPatch = new Patch(sysex, this);
-		return oPatch;
+		return new Patch(sysex, this);
 	}
 	
 	static void initPatch(byte[] sysex, int aOffset) {
@@ -227,7 +226,7 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	 *@param ip  data of the performance
 	 *@return    Description of the Return Value
 	 */
-	public JSLFrame editPatch(IPatch ip)
+	public JSLFrame editPatch(Patch ip)
 	{
 		Patch p = (Patch)ip;
 		// set the address to "current performance" so when patch is sent

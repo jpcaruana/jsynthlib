@@ -4,7 +4,6 @@
 package synthdrivers.OberheimMatrix;
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 public class OberheimMatrixBankDriver extends BankDriver
 {
@@ -29,14 +28,14 @@ public int getPatchStart(int PatchNum)
 	return PatchNum*275;
 }
 
-public void calculateChecksum(IPatch p)
+public void calculateChecksum(Patch p)
  {
    for (int i=0;i<100;i++)
      calculateChecksum(p,5+getPatchStart(i),272+getPatchStart(i),273+getPatchStart(i)); 
  
  }
 
-public void calculateChecksum(IPatch ip,int start,int end,int ofs)
+public void calculateChecksum(Patch ip,int start,int end,int ofs)
   {
     Patch p = (Patch)ip;
     int i;
@@ -57,7 +56,7 @@ public void calculateChecksum(IPatch ip,int start,int end,int ofs)
 	  });
       } catch (Exception e) {}
   }
-  public void storePatch (IPatch p, int bankNum,int patchNum)
+  public void storePatch (Patch p, int bankNum,int patchNum)
   {   
    setBankNum(bankNum);
    for (int i=0;i<100;i++)
@@ -69,7 +68,7 @@ public void calculateChecksum(IPatch ip,int start,int end,int ofs)
 
  
 
-  public String getPatchName(IPatch p,int patchNum) {
+  public String getPatchName(Patch p,int patchNum) {
           try {
             int start=getPatchStart(patchNum);
 	    byte []b = new byte[8];
@@ -85,7 +84,7 @@ public void calculateChecksum(IPatch ip,int start,int end,int ofs)
            return s.toString();
          } catch (Exception ex) {return "-";}
    }
-  public void setPatchName(IPatch p, int patchNum,String name)	
+  public void setPatchName(Patch p, int patchNum,String name)	
   {
 	byte [] namebytes = new byte[32];
 	try{
@@ -110,7 +109,7 @@ public void calculateChecksum(IPatch ip,int start,int end,int ofs)
 	((Patch)p).sysex[start+20]=((byte)(namebytes[7]/16));
 	}catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix1000 Bank Driver",e);}
   }
-public void putPatch(IPatch bank,IPatch p,int patchNum)
+public void putPatch(Patch bank,Patch p,int patchNum)
    { 
    if (!canHoldPatch(p))
        {ErrorMsg.reportError("Error", "This type of patch does not fit in to this type of bank."); return;}
@@ -118,17 +117,17 @@ public void putPatch(IPatch bank,IPatch p,int patchNum)
    System.arraycopy(((Patch)p).sysex,0,((Patch)bank).sysex,getPatchStart(patchNum),275);
    calculateChecksum(bank);
    }
-  public IPatch getPatch(IPatch bank, int patchNum)
+  public Patch getPatch(Patch bank, int patchNum)
    {
   try{
      byte [] sysex=new byte[275];
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,0,275);
-     IPatch p = new Patch(sysex, getDevice());
+     Patch p = new Patch(sysex, getDevice());
      p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix 1000 Bank Driver",e);return null;}
    }
-  protected void sendPatch (IPatch p)
+  protected void sendPatch (Patch p)
    {
      byte []tmp=new byte[275];
     if (deviceIDoffset>0) ((Patch)p).sysex[deviceIDoffset]=(byte)(getChannel()-1);
@@ -141,13 +140,13 @@ public void putPatch(IPatch bank,IPatch p,int patchNum)
        }
     }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}
    }
-public IPatch createNewPatch()
+public Patch createNewPatch()
  {
 	 byte [] sysex = new byte[27500];
 	 for (int i=0;i<100;i++){
 	 sysex[0+275*i]=(byte)0xF0; sysex[1+275*i]=(byte)0x10;sysex[2+275*i]=(byte)0x06;sysex[3+275*i]=(byte)0x0D;sysex[4+275*i]=(byte)0x00;
 	 sysex[274+275*i]=(byte)0xF7;}
-         IPatch p = new Patch(sysex, this);
+         Patch p = new Patch(sysex, this);
 	 for (int i=0;i<100;i++)
 	  setPatchName(p,i,"NewPatch");
 	 calculateChecksum(p);	 

@@ -28,7 +28,6 @@ import javax.swing.table.TableColumn;
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
 import core.EnvelopeWidget;
-import core.IPatch;
 import core.JSLDesktop;
 import core.JSLFrame;
 import core.KnobLookupWidget;
@@ -286,9 +285,9 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 	}
 
 	class CheckBoxCellRenderer  implements TableCellRenderer {
-		IPatch patch;
+		Patch patch;
 		private Component[][] mCheck;
-		CheckBoxCellRenderer(IPatch p, Component[][] aCheck) {
+		CheckBoxCellRenderer(Patch p, Component[][] aCheck) {
 			patch=p;
 			mCheck = aCheck;
 		}

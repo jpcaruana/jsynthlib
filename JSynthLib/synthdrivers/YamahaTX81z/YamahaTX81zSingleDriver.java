@@ -4,7 +4,6 @@
 package synthdrivers.YamahaTX81z;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 public class YamahaTX81zSingleDriver extends Driver
@@ -23,13 +22,13 @@ public class YamahaTX81zSingleDriver extends Driver
                               "I17","I18","I19","I20","I21","I22","I23","I24",
                               "I25","I26","I27","I28","I29","I30","I31","I32"};  
    }
-public void calculateChecksum(IPatch p)
+public void calculateChecksum(Patch p)
  {
    calculateChecksum(p,6,38,39);  //calculate ACED Checksum
    calculateChecksum(p,47,139,140);  //calculate VCED Checksum
    ((Patch)p).sysex[43]=((byte)(getChannel()-1));
  }
-public void storePatch (IPatch p, int bankNum,int patchNum)
+public void storePatch (Patch p, int bankNum,int patchNum)
   {   
    setBankNum(bankNum);
    setPatchNum(patchNum);
@@ -45,7 +44,7 @@ public void storePatch (IPatch p, int bankNum,int patchNum)
    send(new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+getChannel()-1),(byte)0x13,(byte)0x48,(byte)0x7F,(byte)0xF7});
    }catch (Exception e){ErrorMsg.reportError("Error","Unable to Play Patch",e);}
   }
-public IPatch createNewPatch()
+public Patch createNewPatch()
  {
       byte [] sysex = new byte[142];
      sysex[00]=(byte)0xF0;sysex[01]=(byte)0x43;sysex[02]=(byte)0x00;
@@ -58,12 +57,12 @@ public IPatch createNewPatch()
      sysex[44]=(byte)0x03;sysex[45]=(byte)0x00;sysex[46]=(byte)0x5D;
      sysex[141]=(byte)0xF7 ;
 
-	IPatch p = new Patch(sysex, this);
+	Patch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;
  }
-public JSLFrame editPatch(IPatch p)
+public JSLFrame editPatch(Patch p)
  {
      return new YamahaTX81zSingleEditor((Patch)p);
  }

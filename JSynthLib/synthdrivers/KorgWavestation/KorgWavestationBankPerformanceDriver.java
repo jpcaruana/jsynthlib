@@ -41,7 +41,7 @@ public class KorgWavestationBankPerformanceDriver extends BankDriver {
         return start;
     }
     
-    public String getPatchName(IPatch p,int patchNum) {
+    public String getPatchName(Patch p,int patchNum) {
         int nameStart=getPatchStart(patchNum);
         
         nameStart+=0; //offset of name in patch data
@@ -59,7 +59,7 @@ public class KorgWavestationBankPerformanceDriver extends BankDriver {
         
     }
     
-    public void setPatchName(IPatch p,int patchNum, String name) {
+    public void setPatchName(Patch p,int patchNum, String name) {
         patchNameSize=16;
         patchNameStart=getPatchStart(patchNum);
         
@@ -74,13 +74,13 @@ public class KorgWavestationBankPerformanceDriver extends BankDriver {
         } catch (UnsupportedEncodingException ex) {return;}
     }
     
-    public void storePatch(IPatch p, int bankNum,int patchNum) {
+    public void storePatch(Patch p, int bankNum,int patchNum) {
         ((Patch)p).sysex[2]=(byte)(0x30+getChannel()-1);
         ((Patch)p).sysex[5]=(byte)bankNum;
         sendPatchWorker(p);
     }
     
-    public void calculateChecksum(IPatch ip,int start,int end,int ofs) {
+    public void calculateChecksum(Patch ip,int start,int end,int ofs) {
     		Patch p = (Patch)ip;
     		int i;
         int sum=0;
@@ -94,11 +94,11 @@ public class KorgWavestationBankPerformanceDriver extends BankDriver {
     }
     
     
-    public void calculateChecksum(IPatch p) {
+    public void calculateChecksum(Patch p) {
         calculateChecksum(p,6,6+(362*50)-1,6+(362*50));
     }
     
-    public void putPatch(IPatch bank,IPatch p,int patchNum) {
+    public void putPatch(Patch bank,Patch p,int patchNum) {
         if (!canHoldPatch(p))
         {JOptionPane.showMessageDialog(null, "This type of patch does not fit in to this type of bank.","Error", JOptionPane.ERROR_MESSAGE); return;}
         
@@ -106,7 +106,7 @@ public class KorgWavestationBankPerformanceDriver extends BankDriver {
         calculateChecksum(bank);
     }
     
-    public IPatch getPatch(IPatch bank, int patchNum) {
+    public Patch getPatch(Patch bank, int patchNum) {
         try{
             byte [] sysex=new byte[362+9];
             sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
@@ -117,13 +117,13 @@ public class KorgWavestationBankPerformanceDriver extends BankDriver {
             /*sysex[852+7]=checksum;*/
             sysex[362+8]=(byte)0xF7;
             System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,7,362);
-            IPatch p = new Patch(sysex, getDevice());
+            Patch p = new Patch(sysex, getDevice());
             p.getDriver().calculateChecksum(p);
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Wavestation Bank Driver",e);return null;}
     }
     
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte [] sysex = new byte[50*362+8];
         sysex[0]=(byte)0xF0; sysex[1]=(byte)0x42;
         sysex[2]=(byte)(0x30+getChannel()-1);
@@ -132,7 +132,7 @@ public class KorgWavestationBankPerformanceDriver extends BankDriver {
         
         /*sysex[50*362+6]=checksum;*/
         sysex[50*362+7]=(byte)0xF7;
-        IPatch p = new Patch(sysex, this);
+        Patch p = new Patch(sysex, this);
         for (int i=0;i<35;i++)
             setPatchName(p,i,"New Patch");
         calculateChecksum(p);

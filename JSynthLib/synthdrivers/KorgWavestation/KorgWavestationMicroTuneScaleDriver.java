@@ -1,7 +1,6 @@
 package synthdrivers.KorgWavestation;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -29,7 +28,7 @@ public class KorgWavestationMicroTuneScaleDriver extends Driver {
         checksumOffset=295;
     }
     
-    public void storePatch(IPatch p, int bankNum,int patchNum) {
+    public void storePatch(Patch p, int bankNum,int patchNum) {
         
         try
         {Thread.sleep(100); } catch (Exception e)
@@ -43,7 +42,7 @@ public class KorgWavestationMicroTuneScaleDriver extends Driver {
 
     }
     
-    public void sendPatch(IPatch p) {
+    public void sendPatch(Patch p) {
         ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
         
         try {
@@ -52,7 +51,7 @@ public class KorgWavestationMicroTuneScaleDriver extends Driver {
         {ErrorMsg.reportStatus(e);}
     }
     
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         byte [] sysex=new byte[297];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
         sysex[2]=(byte)(0x30+getChannel()-1);
@@ -61,13 +60,13 @@ public class KorgWavestationMicroTuneScaleDriver extends Driver {
         /*sysex[295]=checksum;*/
         sysex[296]=(byte)0xF7;
         
-        IPatch p = new Patch(sysex, this);
+        Patch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
     }
     
-    public void calculateChecksum(IPatch ip,int start,int end,int ofs) {
+    public void calculateChecksum(Patch ip,int start,int end,int ofs) {
     		Patch p=(Patch)ip;
     		int i;
         int sum=0;

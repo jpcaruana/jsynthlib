@@ -23,17 +23,17 @@ public class AlesisA6MixSingleDriver extends Driver
     patchNumbers = AlesisA6PgmSingleDriver.patchList;
   }
 
-  public void calculateChecksum(IPatch p)
+  public void calculateChecksum(Patch p)
   {
     // A6 doesn't use checksum
   }
 
-  public void calculateChecksum(IPatch p, int start, int end, int ofs)
+  public void calculateChecksum(Patch p, int start, int end, int ofs)
   {
     // A6 doesn't use checksum
   }
 
-  public String getPatchName(IPatch ip)
+  public String getPatchName(Patch ip)
   {
   	Patch p = (Patch)ip;
     try {
@@ -48,7 +48,7 @@ public class AlesisA6MixSingleDriver extends Driver
     }
   }
 
-  public void setPatchName(IPatch p, String name)
+  public void setPatchName(Patch p, String name)
   {
     if (name.length() < patchNameSize + 4)
       name = name + "                ";
@@ -59,7 +59,7 @@ public class AlesisA6MixSingleDriver extends Driver
     }
   }
 
-  public void sendPatch(IPatch p)
+  public void sendPatch(Patch p)
   {
     sendPatch((Patch)p, 0, 127); // using user mix # 127 as edit buffer
   }
@@ -73,7 +73,7 @@ public class AlesisA6MixSingleDriver extends Driver
   }
 
   // Sends a patch to a set location in the user bank
-  public void storePatch(IPatch p, int bankNum, int patchNum)
+  public void storePatch(Patch p, int bankNum, int patchNum)
   {
     if (bankNum == 1 || bankNum == 2)
       JOptionPane.showMessageDialog(PatchEdit.getInstance(),
@@ -91,7 +91,7 @@ public class AlesisA6MixSingleDriver extends Driver
 
   // Kludge: A6 doesn't seem to receive edit buffer dump, so user mix 127
   // is being used for that purpose.
-  public void playPatch(IPatch p)
+  public void playPatch(Patch p)
   {
     byte sysex[] = new byte[1182];
     System.arraycopy(((Patch)p).sysex, 0, sysex, 0, 1180);
@@ -99,7 +99,7 @@ public class AlesisA6MixSingleDriver extends Driver
     sysex[7] = 127; // mix # 127
     sysex[1180] = (byte)(0xC0 + getChannel() - 1); // program change
     sysex[1181] = (byte)127; // mix # 127
-    IPatch p2 = new Patch(sysex);
+    Patch p2 = new Patch(sysex);
     try
     {
       super.playPatch(p2);
@@ -110,7 +110,7 @@ public class AlesisA6MixSingleDriver extends Driver
     }
   }
 
-  public IPatch createNewPatch()
+  public Patch createNewPatch()
   {
     byte sysex[] = {
       (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x1D, (byte)0x04, (byte)0x00, (byte)0x7F,
@@ -262,7 +262,7 @@ public class AlesisA6MixSingleDriver extends Driver
       (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
       (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xF7
     };
-    IPatch p = new Patch(sysex, this);
+    Patch p = new Patch(sysex, this);
     setPatchName(p, "NewPatch");
     return p;
   }

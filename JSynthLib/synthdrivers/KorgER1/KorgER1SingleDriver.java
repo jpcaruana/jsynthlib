@@ -8,7 +8,6 @@
 package synthdrivers.KorgER1;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -42,7 +41,7 @@ public class KorgER1SingleDriver extends Driver
 
     }
     
-    public void storePatch (IPatch p, int bankNum,int patchNum)
+    public void storePatch (Patch p, int bankNum,int patchNum)
     {
         int patchValue = patchNum;
         int bankValue  = 0;
@@ -92,7 +91,7 @@ public class KorgER1SingleDriver extends Driver
 
     }
     
-    public void sendPatch (IPatch p)
+    public void sendPatch (Patch p)
     {
         ((Patch)p).sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
         
@@ -103,7 +102,7 @@ public class KorgER1SingleDriver extends Driver
         {ErrorMsg.reportStatus (e);}
     }
     
-    public IPatch createNewPatch ()
+    public Patch createNewPatch ()
     {
         byte [] sysex = new byte[1085];
         sysex[0]=(byte)0xF0;
@@ -112,13 +111,13 @@ public class KorgER1SingleDriver extends Driver
         sysex[3]=(byte)0x51;
         sysex[4]=(byte)0x40;
         sysex[1084]=(byte)0xF7;
-        IPatch p = new Patch (sysex, this);
+        Patch p = new Patch (sysex, this);
         setPatchName (p,"New Patch");
         calculateChecksum (p);
         return p;
     }
     
-    public void calculateChecksum (IPatch p,int start,int end,int ofs)
+    public void calculateChecksum (Patch p,int start,int end,int ofs)
     {
         // no checksum
     }

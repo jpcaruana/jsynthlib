@@ -25,7 +25,6 @@
 package synthdrivers.YamahaDX7.common;
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 
@@ -71,7 +70,7 @@ public class DX7FamilyAdditionalVoiceBankDriver extends BankDriver
 	}
 
 
-	public void putPatch(IPatch bank,IPatch p,int patchNum)		//puts a patch into the bank, converting it as needed
+	public void putPatch(Patch bank,Patch p,int patchNum)		//puts a patch into the bank, converting it as needed
 	{
 		if (!canHoldPatch(p))
 		{
@@ -135,7 +134,7 @@ public class DX7FamilyAdditionalVoiceBankDriver extends BankDriver
 	}
 
 
-	public IPatch getPatch(IPatch bank, int patchNum)		//Gets a patch from the bank, converting it as needed
+	public Patch getPatch(Patch bank, int patchNum)		//Gets a patch from the bank, converting it as needed
 	{
 		try
 		{
@@ -203,7 +202,7 @@ public class DX7FamilyAdditionalVoiceBankDriver extends BankDriver
 			sysex[singleSize-1]=(byte)0xF7;
  
 
-			IPatch p = new Patch(sysex, getDevice());	// single sysex
+			Patch p = new Patch(sysex, getDevice());	// single sysex
 			p.getDriver().calculateChecksum(p);
 
 			return p;
@@ -213,7 +212,7 @@ public class DX7FamilyAdditionalVoiceBankDriver extends BankDriver
 	}
 
 
-	public IPatch createNewPatch() // create a bank with 32 additional voice patches
+	public Patch createNewPatch() // create a bank with 32 additional voice patches
 	{
 		byte [] sysex = new byte[trimSize];
 		
@@ -225,8 +224,8 @@ public class DX7FamilyAdditionalVoiceBankDriver extends BankDriver
 		sysex[05]=(byte)0x60;
 		sysex[trimSize-1]=(byte)0xF7;
 
-		IPatch v = new Patch(initSysex, getDevice());	// single sysex
-		IPatch p = new Patch(sysex    , this);		// bank sysex
+		Patch v = new Patch(initSysex, getDevice());	// single sysex
+		Patch p = new Patch(sysex    , this);		// bank sysex
 
 		for (int i=0;i<getNumPatches();i++)
 			putPatch(p,v,i);

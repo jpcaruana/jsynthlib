@@ -11,7 +11,6 @@ import java.io.UnsupportedEncodingException;
 import core.BankDriver;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatch;
 import core.Patch;
 import core.SysexHandler;
 import core.Utility;
@@ -72,7 +71,7 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
 // KawaiK5000CombiBankDriver->getPatchName(Patch)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public String getPatchName(IPatch ip) {
+  public String getPatchName(Patch ip) {
     return (((Patch)ip).sysex.length/1024) + " Kilobytes";
   }
 
@@ -88,7 +87,7 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
 // KawaiK5000CombiBankDriver->getPatchName(Patch, int)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public String getPatchName(IPatch p, int patchNum) {
+  public String getPatchName(Patch p, int patchNum) {
 //ErrorMsg.reportStatus("KawaiK5000CombiBankDriver->getPatchName: " + patchNum);
     try {
       return new String(
@@ -103,8 +102,8 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
 // KawaiK5000CombiBankDriver->setPatchName(Patch, int, String)
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void setPatchName(IPatch bank, int patchNum, String name) {
-    IPatch p = (IPatch)getPatch(bank, patchNum);
+  public void setPatchName(Patch bank, int patchNum, String name) {
+    Patch p = getPatch(bank, patchNum);
     Driver singleDriver = p.getDriver();
     singleDriver.setPatchName(p, name);
     singleDriver.calculateChecksum(p);
@@ -115,7 +114,7 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
 // KawaiK5000CombiBankDriver->getPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public IPatch getPatch(IPatch bank, int patchNum) {
+  public Patch getPatch(Patch bank, int patchNum) {
 //ErrorMsg.reportStatus("KawaiK5000CombiBankDriver->getPatch: " + patchNum);
     try{
       return KawaiK5000CombiDriver.createPatchFromData(((Patch)bank).sysex, patchIndex(patchNum), KawaiK5000CombiDriver.PATCH_DATA_SIZE);
@@ -129,7 +128,7 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
 // KawaiK5000CombiBankDriver->putPatch
 //----------------------------------------------------------------------------------------------------------------------
 
-  public void putPatch(IPatch bank, IPatch p, int patchNum) {
+  public void putPatch(Patch bank, Patch p, int patchNum) {
 //ErrorMsg.reportStatus("KawaiK5000CombiBankDriver->putPatch: " + patchNum);
     ((Patch)bank).sysex = Utility.byteArrayReplace(
       ((Patch)bank).sysex, patchIndex(patchNum), KawaiK5000CombiDriver.PATCH_DATA_SIZE,

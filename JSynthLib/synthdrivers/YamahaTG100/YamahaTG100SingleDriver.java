@@ -22,7 +22,6 @@
 package synthdrivers.YamahaTG100;
 
 import core.Driver;
-import core.IPatch;
 import core.JSLFrame;
 import core.Patch;
 
@@ -67,7 +66,7 @@ public class YamahaTG100SingleDriver extends Driver {
     }
 
     // For internal use only!!!
-    private void storePatch(IPatch p, int patchNum) {
+    private void storePatch(Patch p, int patchNum) {
         int iTemp = TG100Constants.SYSEX_VOICE_START_ADDRESS3
                     + (patchNum * TG100Constants.SYSEX_SINGLE_VOICE_SIZE);
 
@@ -81,7 +80,7 @@ public class YamahaTG100SingleDriver extends Driver {
     /**
     * Saves the Patch to Voice 1 as there is no Edit Buffer
     */
-    public void sendPatch(IPatch p) {
+    public void sendPatch(Patch p) {
         setPatchNum(0);
         storePatch(p, 0);
     }
@@ -93,7 +92,7 @@ public class YamahaTG100SingleDriver extends Driver {
     * @param bankNum    Ignored
     * @param patchNum   The number of the internal voice memory
     */
-    public void storePatch (IPatch p, int bankNum, int patchNum) {
+    public void storePatch (Patch p, int bankNum, int patchNum) {
         //setBankNum(64);
         setPatchNum(patchNum);
         storePatch(p, patchNum);
@@ -146,7 +145,7 @@ public class YamahaTG100SingleDriver extends Driver {
         }
     }*/
 
-    public IPatch createNewPatch() {
+    public Patch createNewPatch() {
         Patch p = this.createNewPatch(0);
         calculateChecksum(p);
         return p;
@@ -278,7 +277,7 @@ public class YamahaTG100SingleDriver extends Driver {
         return p;
     }
     
-    public JSLFrame editPatch(IPatch p) {
+    public JSLFrame editPatch(Patch p) {
 	    return new YamahaTG100SingleEditor(p);
     }
 }
