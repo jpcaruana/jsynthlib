@@ -1,0 +1,112 @@
+The MT-32 is a multi timbral synthesizer, so responds at multiple 
+MIDI channels. MIDI channel 2 corresponds with Timbre Temp Area 1.
+The MT-32 front panel allows selecting a timbre from a set of 128
+for each channel.
+
+The MIDI inplementation specifies addresses in 7 bit hex, so 
+'00 7F' is followed by '01 00'.
+
+
+
+Timbre Temp Area (part 1) 04 00 00 - 04 01 75 
+
+Timbre common
+in real hex
+---------------
+00-09         Timbre name
+0A            Structure of Partial 1&2 (0-12)
+0B            Structure of Partial 3&4 (0-12)
+0C            Partial mute (0-15)
+0D            ENV mode (0-1)
+0E-47         Partial parameters (for partial# 1)
+48-81         Partial parameters (for partial# 2)
+82-BB         Partial parameters (for partial# 3)
+BC-F5         Partial parameters (for partial# 4)
+
+Offset Address      Description
+--------------      -----------
+00 00H              0aaa aaaa     WG PITCH COARSE 0-96 (C1,C#1-C9)
+00 01H              0aaa aaaa     WG PITCH FINE  0-100 (-50 - +50)
+00 02H              0000 aaaa     WG PITCH KEYFOLLOW 0-16 (-1,-1/2,                
+                                   0,1,1/8,1/4,3/8,1/2,5/8,3/4,7/8,
+                                   1,5/4,3/2,2.s1,s2)
+00 03H              0000 000a     WG PITCH BENDER SWITCH 0,1 (ON/OFF)
+00 04H              0000 000A     WG WAVE FORM 0-1 (SQU/SAW)
+00 05H              0aaa aaaa     WG PITCH PCM WAVE# 0-127 (1-128)
+00 06H              0aaa aaaa     WG PITCH PULSE WIDTH 0-100
+00 07H              0000 aaaa     WG PITCH PW VELO SENS 0-14 (-7 - +7)
+00 08H              0000 aaaa     P-ENV DEPTH 0-10
+00 09H              0aaaaaa       P-ENV VELO SENSITIVITY 1-100
+00 0AH              0000 aaaa     P-ENV TIME KEY FOLLOW 0-4
+00 0BH              0aaa aaaa     P-ENV TIME 1  1-100
+00 0CH              0aaa aaaa     P-ENV TIME 2  1-100
+00 0DH              0aaa aaaa     P-ENV TIME 3  1-100
+00 0EH              0aaa aaaa     P-ENV TIME 4   1-100
+00 0FH              0aaa aaaa     P-ENV Level 0 1-100 (-50 - +50)
+00 10H              0aaa aaaa     P-ENV  LEVEL 1  1-100 (-50 - +50)
+00 11H              0aaa aaaa     P-ENV LEVEL 2  1-100 (-50 - +50)
+00 12H              0aaa aaaa     P-ENV SUSTAIN LEVEL 1-100 (-50 - +50)
+00 13H              0aaa aaaa     P-ENV END LEVEL  1-100 (-50 - +50)
+00 14H              0aaa aaaa     P-LFO RATE 0-100
+00 15H              0aaa aaaa     P-LFO DEPTH 0-100
+00 16H              0aaa aaaa     P-LFO MOD SENSITIVITY 0-100
+00 17H              0aaa aaaa     TVF CUT-OFF FREQ 0-100
+00 18H              0aaa aaaa     TVF RESONANCE 0-30
+00 19H              0aaa aaaa     TVF KEY FOLLOW  0-16 (-1,-1/2,1/4,0,1,
+                                    1/8,1/4,3/8,1/2,5/8,3/2,7/8,1
+                                    5/4,3/2,2,s1,s2)
+00 1AH              0aaa aaaa     TVF BIAS POINT/DIR 0-127
+                                    (<1A-<7C >1A-7C)
+00 1BH              0aaa aaaa     TVF BIAS LEVEL 0-14 (-7 - +7)
+00 1CH              0aaa aaaa     TVF ENV DEPTH 0-100
+00 1DH              0aaa aaaa     TVF ENV VELO SENSITIVITY 0-100
+00 1EH              0aaa aaaa     TVF ENV DEPTH KEY FOLL0W 0-4
+00 1FH              0aaa aaaa     TVF ENV TIME KEY FOLLOW 0-4
+00 20H              0aaa aaaa     TVF ENV TIME 1  1-100
+00 21H              0aaa aaaa     TVF ENV TIME 2  1-100
+00 22H              0aaa aaaa     TVF ENV TIME 3  1-100
+00 23H              0aaa aaaa     TVF ENV TIME 4  1-100
+00 24H              0aaa aaaa     TVF ENV TIME 5  1-100 
+00 25H              0aaa aaaa     TVF ENV LEVEL 1 1-100
+00 26H              0aaa aaaa     TVF ENV LEVEL 2 1-100
+00 27H              0aaa aaaa     TVF ENV LEVEL 3 1-100
+00 28H              0aaa aaaa     TVF ENV SUSTAIN LEVEL 0-100
+00 29H              0aaa aaaa     TVA  LEVEL 0-100
+00 2AH              0aaa aaaa     TVA VELO SENS  0-100
+00 2BH              0aaa aaaa     TVA BIAS POINT 1 0-127
+                                      (<1A-<7C >1A-7C)                   
+   
+00 2CH              0aaa aaaa     TVA  BIAS LEVEL 1 0-12 (-12 - 0)
+00 2DH              0aaa aaaa     TVA BIAS POINT 2 0-127 
+                                    (<1A-<7C >1A-7C)
+00 2EH              0aaa aaaa     TVA  BIAS LEVEL 1 0-12 (12 - 0)
+00 2FH              0aaa aaaa     TVA ENV TIME KEY FOLLOW 0-4
+00 30H              0aaa aaaa     TVA ENV TIME V FOLLOW 0-4
+00 31H              0aaa aaaa     TVA ENV TIME 1  0-100
+00 32H              0aaa aaaa     TVA ENV TIME 2  0-100
+00 33H              0aaa aaaa     TVA ENV TIME 3  0-100
+00 34H              0aaa aaaa     TVA ENV TIME 4  0-100
+00 35H              0aaa aaaa     TVA ENV TIME 5  0-100
+00 36H              0aaa aaaa     TVA ENV LEVEL  0-100
+00 37H              0aaa aaaa     TVA ENV LEVEL 2 0-100
+00 38H              0aaa aaaa     TVA ENV LEVEL 3 0-100
+00 39H              0aaa aaaa     TVA ENV SUSTAIN LEVEL 0-100
+TOTAL SIZE          00 3AH
+
+Timbre Temp Area Offset Address
+Each Timbre Temp Area is '01 76' (0xF6, 246) bytes large
+
+*)Partial parameters Offset Address 
+Each Partial Parameter set is (0x39, 57) bytes large
+Checksum is (00 - (04 + aa + aa + dd) & 0x7F)
+
+
+Skeleton SysEx command for setting parameter
+
+Data set DT1 12h
+
+00-04 F0 41 10 16 12
+05-07 aa aa aa
+08    dd
+09    cc
+0A    F7
