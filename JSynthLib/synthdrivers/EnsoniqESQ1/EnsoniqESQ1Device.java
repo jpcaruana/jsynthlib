@@ -10,7 +10,7 @@ import core.*;
 /**
  *
  * @author  Gerrit Gehnen
- * @version 0.1
+ * @version $Id$
  */
 public class EnsoniqESQ1Device extends Device
 {
@@ -25,7 +25,7 @@ public class EnsoniqESQ1Device extends Device
 	          "'exit' on the front panel before you can send another patch. This is kind of annoying, so if anyone "+
 		  "knows a way around this let me know. The other ESQ librarians I checked out had the same problem, so "+
 		   "it may be impossible";
-     inquiryID="F07E**06020F0200*************F7";
+     inquiryID="F07E**06020F0200************F7";
         addDriver (new EnsoniqESQ1BankDriver ());
         addDriver (new EnsoniqESQ1SingleDriver ());
     }

@@ -1,4 +1,5 @@
 /*
+ * 
  * KorgER1Device.java
  *
  * Created on 10. Oktober 2001, 22:18
@@ -10,7 +11,7 @@ import core.Device;
 /**
  *
  * @author Gerrit Gehnen
- * @version 0.1
+ * @version $Id$
  */
 public class KorgER1Device extends Device
 {
@@ -21,7 +22,7 @@ public class KorgER1Device extends Device
         manufacturerName="Korg";
         modelName="Electribe ER1";
         synthName="ER1";
-        inquiryID="F07E**06024251***************F7";
+        inquiryID="F07E**06024251**************F7";
         addDriver (new KorgER1SingleDriver ());
         
     }

@@ -14,6 +14,7 @@ import core.*;
  *
  * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
  * @created    17 septembre 2002
+ * @version    $Id$
  */
 public class EnsoniqVFXDevice extends Device
 {

@@ -9,8 +9,8 @@ package synthdrivers.KawaiK5000;
 import core.*;
 /**
  *
- * @author  Administrator
- * @version
+ * @author  
+ * @version $Id$
  */
 public class KawaiK5000Device extends Device
 {
@@ -21,7 +21,7 @@ public class KawaiK5000Device extends Device
         manufacturerName="Kawai";
         modelName="K5000";
         synthName="K5k";
-        inquiryID="F07E**06024000000A***********F7";
+        inquiryID="F07E**06024000000A**********F7";
 	infoText="These Drivers should work with the Kawai K5000s, K5000r, and K5000w, though note that the 'B' bank PCM "+
 	          "singles on the K5000w are not supported, only the additive type 'A' and 'D' bank type is supported. "+
                   "In addition, JSynthLib's librarian functions will also extend to K5k Combi patches. Only Librarian features "+

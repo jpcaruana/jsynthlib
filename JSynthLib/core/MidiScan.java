@@ -108,7 +108,7 @@ public class MidiScan extends  Thread {
                                 StringBuffer responseString= new StringBuffer("F0");
                                 if (((answerData[0]&0xff)==0xf0)&&(answerData[1]==0x7e)&&(answerData[3]==6)&&(answerData[4]==2)) {  // check, wether it is really an inquiry response
                                     for (int k=1;k<msgsize;k++) {
-                                        if (answerData[k]<16) responseString.append("0");
+                                        if ((answerData[k]<16)&&(answerData[k]>=0)) responseString.append("0");
                                         responseString.append(Integer.toHexString(0xff&answerData[k]));
                                     }
                                     //  System.out.println ("ResponseString "+responseString);

@@ -15,7 +15,7 @@ public class KawaiK4Device extends Device {
     
     /** Creates new K4Device */
     public KawaiK4Device() {
-        inquiryID="F07E**06024000000400000000000f7";
+        inquiryID="F07E**0602400000040000000000f7";
         manufacturerName="Kawai";
         modelName="K4/K4R";
         setSynthName("K4");

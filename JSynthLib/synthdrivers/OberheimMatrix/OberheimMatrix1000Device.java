@@ -9,8 +9,8 @@ package synthdrivers.OberheimMatrix;
 import core.*;
 /**
  *
- * @author  Administrator
- * @version
+ * @author  
+ * @version $Id$
  */
 public class OberheimMatrix1000Device extends Device
 {
@@ -23,7 +23,7 @@ public class OberheimMatrix1000Device extends Device
         //patchType="Bank";
         synthName="Matrix 1000";
         
-        inquiryID="F07E**06021006000200*********F7";
+        inquiryID="F07E**06021006000200********F7";
         addDriver ( new OberheimMatrixBankDriver ());
         addDriver ( new OberheimMatrixSingleDriver ());
         infoText="JSynthLib supports all librarian and editing functions on both Matrix 1000 Single Patches and "+
