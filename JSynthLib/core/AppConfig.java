@@ -374,9 +374,15 @@ public class AppConfig implements Storable {
 	//reassignDeviceDriverNums();
     }
 
-    /** Adder for deviceList elements */
+    /**
+     * Adder for deviceList elements.  Called by DeviceAddDialog and
+     * MidiScan.
+     */
     public boolean addDevice(Device device) {
 	//reassignDeviceDriverNums(deviceList.size(), device);
+	// set default MIDI in/out port number
+	device.setPort(PatchEdit.appConfig.getInitPortOut());
+	device.setInPort(PatchEdit.appConfig.getInitPortIn());
 	return this.deviceList.add(device);
     }
     /**
