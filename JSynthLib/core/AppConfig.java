@@ -20,7 +20,7 @@ import javax.swing.UIManager;
 
 import org.jsynthlib.jsynthlib.Dummy;
 
-final class AppConfig {
+public final class AppConfig {
     private static ArrayList deviceList = new ArrayList();
     private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
     private static Preferences prefsDev = prefs.node("devices");
@@ -132,17 +132,17 @@ final class AppConfig {
     static void setSequencePath(String sequencePath) { prefs.put("sequencePath", sequencePath); }
     
     /** Getter for note */
-    static int getNote() { return  prefs.getInt("note", 0); }
+    public static int getNote() { return  prefs.getInt("note", 0); }
     /** Setter for note */
     static void setNote(int note) { prefs.putInt("note", note); }
 
     /** Getter for velocity */
-    static int getVelocity() { return  prefs.getInt("velocity", 0); }
+    public static int getVelocity() { return  prefs.getInt("velocity", 0); }
     /** Setter for velocity */
     static void setVelocity(int velocity) { prefs.putInt("velocity", velocity); }
 
     /** Getter for delay */
-    static int getDelay() { return  prefs.getInt("delay", 0); }
+    public static int getDelay() { return  prefs.getInt("delay", 0); }
     /** Setter for delay */
     static void setDelay(int delay) { prefs.putInt("delay", delay); }
 
