@@ -4,7 +4,7 @@
  * @version $Id$
  * @author  Torsten Tittmann
  *
- * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2004 Torsten.Tittmann@gmx.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,100 +20,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * CAUTION: This is an experimental driver. It is not tested on a real device yet!
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *
  */
 package synthdrivers.YamahaTX802;
+import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import	synthdrivers.YamahaDX7.common.DX7FamilySystemSetupIIIDriver;
 import core.*;
 import javax.swing.*;
 
-public class YamahaTX802SystemSetupDriver extends Driver
+public class YamahaTX802SystemSetupDriver extends DX7FamilySystemSetupIIIDriver
 {
-  public YamahaTX802SystemSetupDriver()
-  {
-    manufacturer="Yamaha";
-    model="TX802";
-    patchType="System Setup";
-    id="TX802";
-    sysexID= "F0430*7E02114C4D2020383935325320";
-    // inquiryID= NONE ;
-    patchNameStart=0; // !!!! no patchName !!!!
-    patchNameSize=0;  // !!!! no patchName !!!!
-    deviceIDoffset=2;
-    checksumOffset=279;
-    checksumStart=6;
-    checksumEnd=278;
-    patchNumbers = TX802Constants.PATCH_NUMBERS_SYSTEM_SETUP;
-    bankNumbers  = TX802Constants.BANK_NUMBERS_SYSTEM_SETUP;
-    patchSize=281;
-    trimSize=281;
-    numSysexMsgs=1;         
-    sysexRequestDump=new SysexHandler("F0 43 @@ 7E 4C 4D 20 20 38 39 35 32 53 20 F7");
-    authors="Torsten Tittmann";
-
-  }
+	public YamahaTX802SystemSetupDriver()
+	{
+		super ( YamahaTX802SystemSetupConstants.INIT_SYSTEM_SETUP,
+			YamahaTX802SystemSetupConstants.SINGLE_SYSTEM_SETUP_PATCH_NUMBERS,
+			YamahaTX802SystemSetupConstants.SINGLE_SYSTEM_SETUP_BANK_NUMBERS
+		);
+	}
 
 
-  public void storePatch (Patch p, int bankNum,int patchNum)
-  {
-    if ( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getSwOffMemProtFlag()==1 )
-    {
-      // switch off memory protection
-      TX802ParamChanges.swOffMemProt(port, (byte)(channel+0x10) );
-    }
-    else
-    {
-      if( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-          // Information
-          JOptionPane.showMessageDialog(PatchEdit.instance,
-                                        getDriverName()+"Driver:"+ TX802Strings.MEMORY_PROTECTION_STRING,
-                                        getDriverName()+"Driver",
-                                        JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    sendPatchWorker (p);
-  }
+	public Patch createNewPatch()
+	{
+		return super.createNewPatch();
+	}
 
 
-  public void requestPatchDump(int bankNum, int patchNum)
-  {
-    sysexRequestDump.send(port, (byte)(channel+0x20) );
-  }
+	public JInternalFrame editPatch(Patch p)
+	{
+		return super.editPatch(p);
+	}
 
 
-  public Patch createNewPatch()
-  {
-    Patch p = new Patch(TX802Constants.INIT_SYSTEM_SETUP,getDeviceNum(),getDriverNum());
+	public void storePatch (Patch p, int bankNum,int patchNum)
+	{
+		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
+			// switch off memory protection
+			YamahaTX802SysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10) );
+		} else {
+			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
+				// Information
+				YamahaTX802Strings.dxShowInformation(getDriverName(), YamahaTX802Strings.MEMORY_PROTECTION_STRING);
+		}
 
-    return p;
-  }
-
-
-  public JInternalFrame editPatch(Patch p)
-  {
-    if ( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getSpinnerEditorFlag()==1 )
-    {
-      if ( (float)(Float.parseFloat(java.lang.System.getProperty("java.specification.version"))) >= (float)(1.4)  )
-      {
-	return new YamahaTX802SystemSetupEditor2(p); // use of JSpinner requires jdk>=1.4 !
-      }
-      else
-      {
-        if ( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-          // Information
-          JOptionPane.showMessageDialog(PatchEdit.instance,
-                                        getDriverName()+"Driver:"+
-                                        TX802Strings.JDK14_NEEDED_STRING,
-                                        getDriverName()+"Driver",
-                                        JOptionPane.INFORMATION_MESSAGE);
-
-	return new YamahaTX802SystemSetupEditor(p);
-      }
-    }
-    else
-	return new YamahaTX802SystemSetupEditor(p);
-  }
+		sendPatchWorker (p);
+	}
 }

@@ -4,7 +4,7 @@
  * @version $Id$
  * @author  Torsten Tittmann
  *
- * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2004 Torsten.Tittmann@gmx.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,70 +22,50 @@
  *
  */
 package synthdrivers.YamahaTX802;
+import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import	synthdrivers.YamahaDX7.common.DX7FamilyVoiceSingleDriver;
 import core.*;
 import javax.swing.*;
 
-public class YamahaTX802VoiceSingleDriver extends Driver
+public class YamahaTX802VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 {
-  public YamahaTX802VoiceSingleDriver()
-  {
-    manufacturer="Yamaha";
-    model="TX802";
-    patchType="Voice Single";
-    id="TX802";
-    sysexID= "F0430*00011B";
-    // inquiryID= NONE ;
-    patchNameStart=151;
-    patchNameSize=10;
-    deviceIDoffset=2;
-    checksumOffset=161;
-    checksumStart=6;
-    checksumEnd=160;
-    patchNumbers = TX802Constants.PATCH_NUMBERS_VOICE;
-    bankNumbers  = TX802Constants.BANK_NUMBERS_SINGLE_VOICE;
-    patchSize=163;
-    trimSize=163;
-    numSysexMsgs=1;         
-    sysexRequestDump=new SysexHandler("F0 43 @@ 00 F7");
-    authors="Torsten Tittmann";
+	public YamahaTX802VoiceSingleDriver()
+	{
+		super ( YamahaTX802VoiceConstants.INIT_VOICE,
+			YamahaTX802VoiceConstants.SINGLE_VOICE_PATCH_NUMBERS,
+			YamahaTX802VoiceConstants.SINGLE_VOICE_BANK_NUMBERS
+		);
+	}
 
-  }
+	public Patch createNewPatch()
+	{
+		return super.createNewPatch();
+	}
 
 
-  public void storePatch (Patch p, int bankNum,int patchNum)
-  {
-    sendPatchWorker(p);
-
-    if( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-        // Information
-        JOptionPane.showMessageDialog(PatchEdit.instance,
-                                      getDriverName()+"Driver:"+ TX802Strings.STORE_SINGLE_VOICE_STRING,
-                                      getDriverName()+"Driver",
-                                      JOptionPane.INFORMATION_MESSAGE);
-  }
+	public JInternalFrame editPatch(Patch p)
+	{
+		return super.editPatch(p);
+	}
 
 
-  public void requestPatchDump(int bankNum, int patchNum)
-  {
-    // keyswitch to voice mode
-    TX802ParamChanges.chVoiceMode(port, (byte)(channel+0x10));
-    // 0-63 int voices
-    setPatchNum(patchNum+32*bankNum);
+	public void storePatch (Patch p, int bankNum,int patchNum)
+	{
+		sendPatchWorker(p);
 
-    sysexRequestDump.send(port, (byte)(channel+0x20) );
-  }
-
-
-  public Patch createNewPatch()
-  {
-    Patch p = new Patch(TX802Constants.INIT_VOICE,getDeviceNum(),getDriverNum());
-
-    return p;
-  }
+		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
+			// show Information
+			YamahaTX802Strings.dxShowInformation(getDriverName(), YamahaTX802Strings.STORE_SINGLE_VOICE_STRING);
+	}
 
 
-  public JInternalFrame editPatch(Patch p)
-  {
-    return new YamahaTX802VoiceEditor(p);
-  }
+	public void requestPatchDump(int bankNum, int patchNum)
+	{
+		// keyswitch to voice mode
+		YamahaTX802SysexHelpers.chVoiceMode(getPort(), (byte)(getChannel()+0x10));
+		// 0-63 int voices
+		setPatchNum(patchNum+32*bankNum);
+
+		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+	}
 }

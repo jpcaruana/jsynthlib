@@ -4,7 +4,7 @@
  * @version $Id$
  * @author  Torsten Tittmann
  *
- * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2004 Torsten.Tittmann@gmx.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,107 +20,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * CAUTION: This is an experimental driver. It is not tested on a real device yet!
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *
  */
 package synthdrivers.YamahaTX802;
+import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import	synthdrivers.YamahaDX7.common.DX7FamilyPerformanceIIISingleDriver;
 import core.*;
 import javax.swing.*;
 
-public class YamahaTX802PerformanceSingleDriver extends Driver
+public class YamahaTX802PerformanceSingleDriver extends DX7FamilyPerformanceIIISingleDriver
 {
-  public YamahaTX802PerformanceSingleDriver()
-  {
-    manufacturer="Yamaha";
-    model="TX802";
-    patchType="Performance Single";
-    id="TX802";
-    sysexID= "F0430*7E01684C4D2020383935325045";
-    // inquiryID= NONE ;
-    patchNameStart=208;
-    patchNameSize=40;
-    deviceIDoffset=2;
-    checksumOffset=248;
-    checksumStart=6;
-    checksumEnd=247;
-    patchNumbers = TX802Constants.PATCH_NUMBERS_PERFORMANCE;	
-    bankNumbers  = TX802Constants.BANK_NUMBERS_PERFORMANCE;
-    patchSize=250;
-    trimSize=250;
-    numSysexMsgs=1;         
-    sysexRequestDump=new SysexHandler("F0 43 @@ 7E 4C 4D 20 20 38 39 35 32 50 45 F7");
-    authors="Torsten Tittmann";
-
-  }
+	public YamahaTX802PerformanceSingleDriver()
+	{
+		super ( YamahaTX802PerformanceConstants.INIT_PERFORMANCE,
+			YamahaTX802PerformanceConstants.SINGLE_PERFORMANCE_PATCH_NUMBERS,
+			YamahaTX802PerformanceConstants.SINGLE_PERFORMANCE_BANK_NUMBERS
+		);
+	}
 
 
-  public void storePatch (Patch p, int bankNum,int patchNum)
-  {
-    sendPatchWorker (p);
-
-    if ( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-       // Information 
-       JOptionPane.showMessageDialog(PatchEdit.instance,
-                                     getDriverName()+"Driver:"+ TX802Strings.STORE_SINGLE_PERFORMANCE_STRING,
-                                     getDriverName()+"Driver",
-                                     JOptionPane.INFORMATION_MESSAGE);
-  }
+	public Patch createNewPatch()
+	{
+		return super.createNewPatch();
+	}
 
 
-  public void requestPatchDump(int bankNum, int patchNum)
-  {
-    sysexRequestDump.send(port, (byte)(channel+0x20) );
-  }
+	public JInternalFrame editPatch(Patch p)
+	{
+		return super.editPatch(p);
+	}
 
 
-  public Patch createNewPatch()
-  {
-    Patch p = new Patch(TX802Constants.INIT_PERFORMANCE,getDeviceNum(),getDriverNum());
+	public void storePatch (Patch p, int bankNum,int patchNum)
+	{
+		sendPatchWorker (p);
 
-    return p;
-  }
-
-
-  public JInternalFrame editPatch(Patch p)
-  {
-    return new YamahaTX802PerformanceEditor(p);
-  }
-
-
-  public String getPatchName (Patch p)
-  {
-    try {
-          byte []b = new byte[20];
-          for (int i=0; i < b.length; i++)
-          {
-            b[i] =(byte)( TX802ParamChanges.AsciiHex2Value(p.sysex[16+2*(96+i)  ])*16 +
-                          TX802ParamChanges.AsciiHex2Value(p.sysex[16+2*(96+i)+1]) );
-          }
-          StringBuffer s= new StringBuffer(new String(b,0,20,"US-ASCII"));
-
-          return s.toString();
-        } catch (Exception ex) {return "-";}
-
-  }
-
-
-  public void setPatchName (Patch p, String name)
-  {
-    byte [] namebytes = new byte[20];
-    try{
-         if (name.length()<20) name=name+"                    ";
-         namebytes=name.getBytes("US-ASCII");
-
-         for (int i=0; i < 20; i++)
-         {
-           p.sysex[16+2*(96+i)  ] = (byte)(TX802ParamChanges.Value2AsciiHexHigh(namebytes[i]));
-           p.sysex[16+2*(96+i)+1] = (byte)(TX802ParamChanges.Value2AsciiHexLow( namebytes[i]));
-         }
-       }catch (Exception e) {}
-    calculateChecksum (p);
-  }
-
+		if ( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
+			// show Information 
+			YamahaTX802Strings.dxShowInformation(getDriverName(), YamahaTX802Strings.STORE_SINGLE_PERFORMANCE_STRING);
+	}
 }
