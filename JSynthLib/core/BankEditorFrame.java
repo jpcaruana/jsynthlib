@@ -42,24 +42,24 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /**
      * Creates a new <code>BankEditorFrame</code> instance.
      * 
-     * @param p
+     * @param bankPatch
      *            a <code>Patch</code> value
      */
-    protected BankEditorFrame(IBankPatch p) {
-        super(p.getDevice().getModelName() + " " + p.getType() + " Window",
+    protected BankEditorFrame(IBankPatch bankPatch) {
+        super(bankPatch.getDevice().getModelName() + " " + bankPatch.getType() + " Window",
                 true, //resizable
                 true, //closable
                 true, //maximizable
                 true); // iconifiable
         instance = this;
-        bankData = p;
+        bankData = bankPatch;
         initBankEditorFrame();
     }
 
     /** Initialize the bank editor frame. */
     protected void initBankEditorFrame() {
         //...Create the GUI and put it in the window...
-        myModel = new PatchGridModel(bankData);
+        myModel = new PatchGridModel();
         table = new JTable(myModel);
         table.setTransferHandler(pth);
         table.setDragEnabled(true);
@@ -224,7 +224,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         fileOut.close();
     }
 
-    public void deleteSelectedPatch() { // XXX Do we really need this?
+    public void deleteSelectedPatch() {
         bankData.delete(getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
@@ -327,12 +327,10 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     private class PatchGridModel extends AbstractTableModel {
-        private IBankPatch bankData;
 
-        PatchGridModel(IBankPatch p) {
+        PatchGridModel() {
             super();
             ErrorMsg.reportStatus("PatchGridModel");
-            bankData = p;
         }
 
         public int getColumnCount() {
