@@ -68,8 +68,9 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
     "C8","C#8","D8","D#8","E8","F8","F#8","G8"};
 
 	static String[] mVoicesBanks = new String[] {"off", "int", "PrA", "PrB", "PrC", "PrD", "PrE", "PrF", "PrG", "PrH", "PrI", "PrJ", "PrK"};
-    static VoiceName[][] mPrVoices;
-	static String[] mVoicesNames = {"voicespra.txt", "voicesprb.txt", "voicesprc.txt",
+	/** 128 noms de voices */
+    static VoiceName[][] mPrVoices = new VoiceName[mVoicesBanks.length-1][128];
+	static String[] mVoicesNamesFiles = {"voicespra.txt", "voicesprb.txt", "voicesprc.txt",
 	"voicesprd.txt", "voicespre.txt", "voicesprf.txt", "voicesprg.txt", "voicesprh.txt",
 	"voicespri.txt", "voicesprj.txt", "voicesprk.txt"};
 	
@@ -90,7 +91,6 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	public YamahaFS1RPerformanceEditor(Patch patch)
 	{
 		super ("Yamaha FS1R Performance Editor",patch);   
-
 		initVoicesNames();
 		
 		JTabbedPane oTabs = new JTabbedPane();
@@ -131,41 +131,23 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			public void internalFrameIconified(InternalFrameEvent e) {}
 		});
 		addInternalFrameListener(oList[0]);
-		
-		pack();
+
+		setSize(600, 410);
+
+//		pack();
 		setVisible(true);	
 	}
 	
 	/**
 		Cree les tableaux contenant les noms des voices pour toutes les banques.
 	*/
-	private void initVoicesNames() {
-		if (mPrVoices == null) {
-			try {
-				mPrVoices = new VoiceName[mVoicesNames.length+1][128];
-				for (int f = 0; f < (mVoicesNames.length+1); f++) {
-					if (f == 0) {
-						for(int i = 0; i < 128; i++) {
-							mPrVoices[f][i] = new VoiceName(Integer.toString(i+1)+" --------");
-						}
-					}
-					else {
-						InputStream oIS = getClass().getResourceAsStream(mVoicesNames[f-1]);
-						InputStreamReader oISR = new InputStreamReader(oIS);
-						BufferedReader oBR = new BufferedReader(oISR);
-						String oLine = oBR.readLine();
-						int i = 0;
-						while(oLine != null && i < 128) {
-							mPrVoices[f][i++] = new VoiceName(oLine);
-							oLine = oBR.readLine();
-						}
-					}
-				}
-			}
-			catch(IOException ioe) {
-				ioe.printStackTrace();
-			}
-		}
+	private void initVoicesNames() 
+	{
+		// init temporaire qui sert juste a creer les combo
+		for(int i = 0; i < 128; i++) 
+		{
+			mPrVoices[0][i] = new VoiceName(i+" ---------");
+		}		
 	}
 	
 	/** Classe permettant de changer les noms de voices dans les combo 
@@ -192,11 +174,52 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	public void setBankEditorInformation (BankEditorFrame bf, int row,int col)
 	{
 		super.setBankEditorInformation(bf, row, col);
-		// init des noms des voices de la banque interne
-		if (bankFrame != null) {
-			for(int part = 0; part < 4; part++) {
-				for(int i = 0; i < 128; i++) {
-					mPrVoices[0][i].setName(""+i+" "+YamahaFS1RBankDriver.getInstance().getPatchName(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+i));
+		// init des noms des voices 
+		if (bankFrame != null) 
+		{
+		for (int b = 0; b < (mVoicesBanks.length-1); b++)
+		{
+			if (b == 0)
+			{
+				// interne
+				for(int i = 0; i < 128; i++) 
+				{
+					mPrVoices[b][i] = new VoiceName(""+(i+1)+" "+YamahaFS1RBankDriver.getInstance().getPatchName(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+i));
+				}
+			}
+			else
+			{
+				try
+				{
+					InputStream oIS = getClass().getResourceAsStream(mVoicesNamesFiles[b-1]);
+					InputStreamReader oISR = new InputStreamReader(oIS);
+					BufferedReader oBR = new BufferedReader(oISR);
+					String oLine = oBR.readLine();
+					int c = 0;
+					while(oLine != null && c < 128) {
+						mPrVoices[b][c++] = new VoiceName(c+" "+oLine.trim());
+						oLine = oBR.readLine();
+					}
+				}
+				catch(IOException ioe)
+				{
+					ioe.printStackTrace();
+				}
+			}
+		}
+			for (int part = 0; part < 4; part++)
+			{
+				// rafraichir les menus
+				int oSelIndex = mBankSelector[part].cb.getSelectedIndex ();
+				mVoiceSelector[part].cb.removeAllItems();
+				if (oSelIndex > 0)
+				{
+					int oVoiceIndex = mVoiceSelector[part].getValue();
+					for(int i = 0; i < 128; i++) 
+					{
+						mVoiceSelector[part].cb.addItem(mPrVoices[oSelIndex-1][i]);
+					}
+					mVoiceSelector[part].setValue(oVoiceIndex);
 				}
 			}
 		}
@@ -346,15 +369,26 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	/** combo box listener for voices names change according to the chosen bank */
 	class BankItemListener implements ItemListener
 	{
-		private Container mCard;
-		BankItemListener(Container aCard) {
-			mCard = aCard;
+		private int mPart;
+		BankItemListener(int aPart) 
+		{
+			mPart = aPart;
 		}
 		public void itemStateChanged (ItemEvent e)
 		{
-			JComboBox cb = (JComboBox)e.getSource();
-			int i = cb.getSelectedIndex ();
-			((CardLayout)mCard.getLayout()).show(mCard, mVoicesBanks[i]);
+			if (e.getStateChange() == ItemEvent.SELECTED)
+			{
+				JComboBox cb = (JComboBox)e.getSource();
+				int oSelIndex = cb.getSelectedIndex ();
+				mVoiceSelector[mPart-1].cb.removeAllItems();
+				if (oSelIndex > 0)
+				{
+					for(int i = 0; i < 128; i++) 
+					{
+						mVoiceSelector[mPart-1].cb.addItem(mPrVoices[oSelIndex-1][i]);
+					}
+				}
+			}
 		}
 	}
 	
@@ -365,48 +399,38 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		
 		JPanel oPartPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		// afficher les noms de voices PrA..PrK
-		CardLayout oCard = new CardLayout();
-		JPanel oVoicesPanel = new JPanel(oCard);
-		Component oCB[] = new Component[mVoicesBanks.length];
-		for (int i = 0; i < mVoicesBanks.length; i++) {
-			if (i == 0) {
-				oCB[i] = new JLabel("off");
-			}
-			else {
-				oCB[i] = new ComboBoxWidget("Voice", p, new YamahaFS1RPerformanceDriver.Model(p, 2, aPart), new YamahaFS1RPerformanceDriver.Sender(2, aPart), mPrVoices[i-1]);
-				if (i == 1) {
-					// get int voice selector
-					mVoiceSelector[aPart-1] = (ComboBoxWidget)oCB[i];
-					// j'inverse l'ordre des listeners sinon le sysex annule
-					// l'envoi du patch et on retombe sur un son interne du FS1R et non 
-					// celui de la banque courante
-					ItemListener oList[] = mVoiceSelector[aPart-1].cb.getItemListeners();
-					mVoiceSelector[aPart-1].cb.removeItemListener(oList[0]);
-					mVoiceSelector[aPart-1].cb.addItemListener(new ItemListener() {
-						// send the bank voice to the current part
-						public void itemStateChanged (ItemEvent e) {
-							if (e.getStateChange() == ItemEvent.SELECTED)
-							{
-				//System.out.println("SEND PATCH");
-								JComboBox oCB = (JComboBox)e.getSource();
-								Patch oPatch = YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+oCB.getSelectedIndex());
-								YamahaFS1RVoiceDriver.getInstance().sendPatch (oPatch, aPart);
-							}
-						}
-					});
-					mVoiceSelector[aPart-1].cb.addItemListener(oList[0]);
-				}
-			}
-			oVoicesPanel.add(mVoicesBanks[i], oCB[i]);
-		}
 		YamahaFS1RPerformanceDriver.Model oModel = new YamahaFS1RPerformanceDriver.Model(p, 1, aPart);
 		ComboBoxWidget oBankCB = new ComboBoxWidget("Bank", p, oModel, new YamahaFS1RPerformanceDriver.Sender(1, aPart), mVoicesBanks);
-		oBankCB.cb.addItemListener(new BankItemListener(oVoicesPanel));
+		ItemListener oList1[] = oBankCB.cb.getItemListeners();
+		oBankCB.cb.removeItemListener(oList1[0]);
+		oBankCB.cb.addItemListener(new BankItemListener(aPart));
+		oBankCB.cb.addItemListener(oList1[0]);
 		mBankSelector[aPart-1] = oBankCB;
-		// choisir la bonne banque au depart
-		oCard.show(oVoicesPanel, mVoicesBanks[oModel.get()]);
 		oPartPane.add(oBankCB);
-		oPartPane.add(oVoicesPanel);
+				
+		mVoiceSelector[aPart-1] = new ComboBoxWidget("Voice", p, new YamahaFS1RPerformanceDriver.Model(p, 2, aPart), new YamahaFS1RPerformanceDriver.Sender(2, aPart), mPrVoices[0]);
+		// j'inverse l'ordre des listeners sinon le sysex annule
+		// l'envoi du patch et on retombe sur un son interne du FS1R et non 
+		// celui de la banque courante
+		ItemListener oList[] = mVoiceSelector[aPart-1].cb.getItemListeners();
+		mVoiceSelector[aPart-1].cb.removeItemListener(oList[0]);
+		mVoiceSelector[aPart-1].cb.addItemListener(new ItemListener() {
+			// send the bank voice to the current part
+			public void itemStateChanged (ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED)
+				{
+					if (mBankSelector[aPart-1].cb.getSelectedIndex() == 1)
+					{ 
+						// envoi sysex de la voice interne selectionnee
+						JComboBox oCB = (JComboBox)e.getSource();
+						Patch oPatch = YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+oCB.getSelectedIndex());
+						YamahaFS1RVoiceDriver.getInstance().sendPatch (oPatch, aPart);
+					}
+				}
+			}
+		});
+		mVoiceSelector[aPart-1].cb.addItemListener(oList[0]);
+		oPartPane.add(mVoiceSelector[aPart-1]);
 		
 		// get the part voice
 		JButton oEditButton = new JButton("Edit");
