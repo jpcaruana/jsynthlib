@@ -1,27 +1,35 @@
-// $Id$
-
-/* This class handles error conditions and debug messages. It shows
-   error message dialogs to the user and can also log debug
-   information if a flag is set.
-
-   The Meaning for the debug variable flag is: (Each # does all of
-   preceding as well)
-
-   0 = No Debugging Info at all
-   1 = Just print Stack Trace for Exceptions
-   2 = Print Debug Status Messages & Error Messages
-   3 = Print Stack Trace for all for non-exception Errors
-*/
 package core;
 import javax.swing.*;
 
+/**
+ * This class handles error conditions and debug messages. It shows
+ * error message dialogs to the user and can also log debug
+ * information if a flag is set.<p>
+ *
+ * The Meaning for the <code>debug</code> variable flag is: (Each
+ * number does all of preceding as well.)<p>
+ * <pre>
+ * 0 = No Debugging Info at all
+ * 1 = Just print Stack Trace for Exceptions
+ * 2 = Print Debug Status Messages & Error Messages
+ * 3 = Print Stack Trace for all for non-exception Errors
+ * </pre>
+ * @author ???
+ * @version $Id$
+ */
 public class ErrorMsg {
-    /** are we in debugging mode? */
+    /** @see ErrorMsg */
     public static int debug;
 
+    /**
+     * Report an error.
+     *
+     * @param errorTitle title for error dialog.
+     * @param errorMSG error message.
+     */
     public static void reportError(String errorTitle, String errorMSG) {
-	//JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
-	//errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
+// 	JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+// 				      errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
 	ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.ERROR_MESSAGE);
@@ -31,35 +39,87 @@ public class ErrorMsg {
 	    Thread.dumpStack();
     }
 
+    /**
+     * Report an error.
+     *
+     * @param errorTitle title for error dialog.
+     * @param errorMSG error message.
+     * @param e an <code>Exception</code> value
+     */
     public static void reportError(String errorTitle, String errorMSG,
 				   Exception e) {
-	//JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
-	//errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
+// 	JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+// 				      errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
 	ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.ERROR_MESSAGE, e);
 	if (debug > 1)
 	    System.out.println("ERR> '" + errorMSG + "' reported.");
-	reportStatus(e);
-    }
-
-    public static void reportWarning(String errorTitle, String errorMSG) {
-	//JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
-	//errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
-        ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
-				      errorMSG, errorTitle,
-				      JOptionPane.WARNING_MESSAGE);
-	if (debug > 1)
-	    System.out.println("WAR> '" + errorMSG + "' reported.");
+	if (debug > 0) {
+	    System.out.println("ERR> [Exception] " + e.getMessage());
+	    e.printStackTrace(System.out);
+	}
 	if (debug > 2)
 	    Thread.dumpStack();
     }
 
+    /**
+     * Report a warning.
+     *
+     * @param errorTitle title for warning dialog.
+     * @param errorMSG warning message.
+     */
+    public static void reportWarning(String errorTitle, String errorMSG) {
+// 	JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+// 				      errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
+        ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+				      errorMSG, errorTitle,
+				      JOptionPane.WARNING_MESSAGE);
+	if (debug > 1)
+	    System.out.println("WRN> '" + errorMSG + "' reported.");
+	if (debug > 2)
+	    Thread.dumpStack();
+    }
+
+    /**
+     * Report a warning.
+     *
+     * @param errorTitle title for warning dialog.
+     * @param errorMSG warning message.
+     * @param e an <code>Exception</code> value
+     */
+    public static void reportWarning(String errorTitle, String errorMSG,
+				     Exception e) {
+// 	JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+// 				      errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
+        ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+				      errorMSG, errorTitle,
+				      JOptionPane.WARNING_MESSAGE);
+	if (debug > 1)
+	    System.out.println("WRN> '" + errorMSG + "' reported.");
+	if (debug > 0) {
+	    System.out.println("WRN> [Exception] " + e.getMessage());
+	    e.printStackTrace(System.out);
+	}
+	if (debug > 2)
+	    Thread.dumpStack();
+    }
+
+    /**
+     * Report a debug message.
+     *
+     * @param msg a <code>String</code> value
+     */
     public static void reportStatus(String msg) {
 	if (debug > 1)
 	    System.out.println("DBG>" + msg);
     }
 
+    /**
+     * Report a debug message.
+     *
+     * @param e an <code>Exception</code> value
+     */
     public static void reportStatus(Exception e) {
 	if (debug > 0) {
 	    System.out.println("DBG> [Exception] " + e.getMessage());
@@ -69,21 +129,30 @@ public class ErrorMsg {
 
     //----- Start phil@muqus.com
 
-    //---------------------------------------------------------------------
-    // ErrorMsg->reportStatus(byte[])
-    // Notes: Output byte array as a pretty printed hex dump
-    //---------------------------------------------------------------------
+    /**
+     * Output byte array as a pretty printed hex dump.
+     *
+     * @param data a <code>byte</code> array.
+     */
     public static void reportStatus(byte[] data) {
-	reportStatus("No message", data);
+	reportStatus(null, data);
     }
 
-    //---------------------------------------------------------------------
-    // ErrorMsg->reportStatus(String, byte[])
-    //---------------------------------------------------------------------
+    /**
+     * Output a debug message and byte array as a pretty printed hex
+     * dump.
+     *
+     * @param sMsg a debug message.
+     * @param data a <code>byte</code> array.
+     */
     public static void reportStatus(String sMsg, byte[] data) {
-	//===== Output Hex dump
-	reportStatus(sMsg);
+	if (debug < 2)
+	    return;
 
+	if (sMsg != null)
+	    reportStatus(sMsg);
+
+	//===== Output Hex dump
 	for (int i = 0; i < data.length; i++) {
 	    String sHex = Integer.toHexString((int) (data[i] & 0xFF));
 	    System.out.print(((sHex.length() == 1) ? "0" : "") + sHex);
@@ -95,9 +164,16 @@ public class ErrorMsg {
 	System.out.println();
     }
 
-    //----------------------------------------------------------------------
-    // ErrorMsg->reportStatus(String, byte[], int, int)
-    //----------------------------------------------------------------------
+    /**
+     * Output a debug message and byte array as a pretty printed hex
+     * dump.
+     *
+     * @param sMsg a debug message.
+     * @param data a <code>byte</code> array.
+     * @param offset an index of <code>data</code> from which hex dump
+     * starts.
+     * @param len the length of hex dump.
+     */
     public static void reportStatus(String sMsg,
 				    byte[] data, int offset, int len) {
 	byte[] subData = new byte[len];
