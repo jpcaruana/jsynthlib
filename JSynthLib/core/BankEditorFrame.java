@@ -159,8 +159,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
         // always enabled
         Actions.setEnabled(true,
-                Actions.EN_IMPORT
-                | Actions.EN_IMPORT_ALL | Actions.EN_NEW_PATCH);
+                Actions.EN_IMPORT | Actions.EN_NEW_PATCH);
 
         enableActions();
     }
@@ -171,8 +170,8 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         Actions.setEnabled(table.getRowCount() > 0, Actions.EN_SAVE
                 | Actions.EN_SAVE_AS | Actions.EN_SEARCH);
 
-        // more than one patches are included.
-        Actions.setEnabled(table.getRowCount() > 1, Actions.EN_SORT);
+        // sort is not supported yet.
+        //Actions.setEnabled(table.getRowCount() > 1, Actions.EN_SORT);
 
         // only one valid patch is selected.
         boolean selectedOne = (table.getSelectedRowCount() == 1
