@@ -523,6 +523,7 @@ public class PatchEdit extends JFrame
     // This code loads the midi driver specified in the preferences.
     boolean loadMidiDriver ()
     {
+        Class wrapperClass;
         
         if (appConfig.getInitPortIn()<0) appConfig.setInitPortIn(0);
         if (appConfig.getInitPortOut()<0) appConfig.setInitPortOut(0);
@@ -537,7 +538,12 @@ public class PatchEdit extends JFrame
                 case 0: MidiOut=new DoNothingMidiWrapper (0,0); break;
                 case 2: MidiOut=new WireMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
                 case 3: MidiOut=new LinuxMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
-                case 4: MidiOut=new MacOSXMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
+                case 4: wrapperClass=java.lang.Class.forName("core.MacOSXMidiWrapper");
+                        MidiOut= (MidiWrapper)(wrapperClass.newInstance());
+                        MidiOut.setInputDeviceNum(appConfig.getInitPortIn());
+                        MidiOut.setOutputDeviceNum(appConfig.getInitPortOut());
+                        break;
+                //new MacOSXMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
                 case 5: MidiOut=new JavasoundMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
             }
             MidiIn=MidiOut;
