@@ -108,14 +108,12 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
     * Puts a patch into the bank, converting it as needed
     */
     public void putPatch(Patch bank, Patch p, int patchNum) {
-        if (!canHoldPatch(p)) {
-            {
-                JOptionPane.showMessageDialog(  null,
-                                                "This type of patch does not fit in to this type of bank.",
-                                                "Error",
-                                                JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+        if (!canHoldPatch(p)) {            
+            JOptionPane.showMessageDialog(  null,
+                    "This type of patch does not fit in to this type of bank.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;            
         }
 
         System.arraycopy(   p.sysex,
@@ -165,19 +163,19 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
 
     /** Set the name of the patch at the given number <code>patchNum</code>. */
     public void setPatchName(Patch p, int patchNum, String name) {
-        int tempPatchNameStart = this.patchNameStart + this.getPatchStart(patchNum);
-
+        int tempPatchNameStart = QuasarConstants.PATCH_NAME_START + this.getPatchStart(patchNum);
+        
         while (name.length() < patchNameSize)
-		    name = name + " ";
-
+            name = name + " ";
+        
         byte[] namebytes = new byte[patchNameSize];
         try {
-	        namebytes = name.getBytes("US-ASCII");
-	        for (int i = 0; i < patchNameSize; i++)
-		        p.sysex[tempPatchNameStart + i] = namebytes[i];
-	    } catch (UnsupportedEncodingException ex) {
-	        return;
-	    }
+            namebytes = name.getBytes("US-ASCII");
+            for (int i = 0; i < patchNameSize; i++)
+                p.sysex[tempPatchNameStart + i] = namebytes[i];
+        } catch (UnsupportedEncodingException ex) {
+            return;
+        }
     }
 
     /**
