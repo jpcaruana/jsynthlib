@@ -134,9 +134,12 @@ public class YamahaFS1RPerformanceDriver extends Driver
     }
 
 
-    public void sendPatch(Patch p) {
-	super.sendPatch(p);
-    }
+	public void sendPatch(Patch p) 
+	{
+		// le cs n'est pas toujours calcule donc je le rajoute ici
+		super.calculateChecksum(p);
+		super.sendPatch(p);
+	}
 	
     /**
        Met a jour la requete selon le type de banque.
