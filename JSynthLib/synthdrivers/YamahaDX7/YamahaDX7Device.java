@@ -1,10 +1,8 @@
 /*
  * JSynthlib - Device for Yamaha DX7 Mark-I
  * ========================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    YamahaDX7Device.java
- * date:    25.02.2003
- * @version 0.3
  *
  * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
  *
@@ -22,18 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.i
  *
- *
- * history:
- *         23.08.2002 v0.1: first published release
- *         31.10.2002 v0.2: - name of voice driver changed (YamahaDX7SingleDriver -> YamahaDX7SingleVoiceDriver)
- *                                                         (YamahaDX7BankDriver   -> YamahaDX7BankVoiceDriver)
- *                          - added "TX7 Performance data" support
- *                          - changed driver configuration access
- *         25.02.2003 v0.3: - added "Spinner Editor" inquiry, but no editor available yet
- *			    - creating separated JS devices for each member of DX7 family 
- *
  */
-
 package synthdrivers.YamahaDX7;
 import core.*;
 import javax.swing.*;
@@ -74,6 +61,7 @@ public class YamahaDX7Device extends Device
     infoText=DX7Strings.INFO_TEXT;
 
     // DX7 voice patch - basic patch for all modells of the DX7 family
+    addDriver (0, new YamahaDX7Converter());
     addDriver (new YamahaDX7VoiceSingleDriver());
     addDriver (new YamahaDX7VoiceBankDriver());
 
