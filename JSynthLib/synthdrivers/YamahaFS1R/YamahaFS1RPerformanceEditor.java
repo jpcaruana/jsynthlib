@@ -68,7 +68,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
     "C8","C#8","D8","D#8","E8","F8","F#8","G8"};
 
 	static String[] mVoicesBanks = new String[] {"off", "int", "PrA", "PrB", "PrC", "PrD", "PrE", "PrF", "PrG", "PrH", "PrI", "PrJ", "PrK"};
-    static String[][] mPrVoices;
+    static VoiceName[][] mPrVoices;
 	static String[] mVoicesNames = {"voicespra.txt", "voicesprb.txt", "voicesprc.txt",
 	"voicesprd.txt", "voicespre.txt", "voicesprf.txt", "voicesprg.txt", "voicesprh.txt",
 	"voicespri.txt", "voicesprj.txt", "voicesprk.txt"};
@@ -142,11 +142,11 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	private void initVoicesNames() {
 		if (mPrVoices == null) {
 			try {
-				mPrVoices = new String[mVoicesNames.length+1][128];
+				mPrVoices = new VoiceName[mVoicesNames.length+1][128];
 				for (int f = 0; f < (mVoicesNames.length+1); f++) {
 					if (f == 0) {
 						for(int i = 0; i < 128; i++) {
-							mPrVoices[f][i] = Integer.toString(i+1);
+							mPrVoices[f][i] = new VoiceName(Integer.toString(i+1)+" --------");
 						}
 					}
 					else {
@@ -156,7 +156,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 						String oLine = oBR.readLine();
 						int i = 0;
 						while(oLine != null && i < 128) {
-							mPrVoices[f][i++] = oLine;
+							mPrVoices[f][i++] = new VoiceName(oLine);
 							oLine = oBR.readLine();
 						}
 					}
@@ -167,6 +167,27 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			}
 		}
 	}
+	
+	/** Classe permettant de changer les noms de voices dans les combo 
+		sans regenerer un setSelectedItem (dans setBankEditorInformation).
+		Elle ne se sert veritablement que pour la banque int.
+	*/		
+	static class VoiceName
+	{
+		private String mName;
+		VoiceName(String aName)
+		{
+			mName = aName;
+		}
+		public String toString()
+		{
+			return mName;
+		}
+		void setName(String aName)
+		{
+			mName = aName;
+		}
+	}
 
 	public void setBankEditorInformation (BankEditorFrame bf, int row,int col)
 	{
@@ -174,10 +195,8 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		// init des noms des voices de la banque interne
 		if (bankFrame != null) {
 			for(int part = 0; part < 4; part++) {
-				mVoiceSelector[part].cb.removeAllItems();
 				for(int i = 0; i < 128; i++) {
-					mPrVoices[0][i] = ""+i+" "+YamahaFS1RBankDriver.getInstance().getPatchName(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+i);
-					mVoiceSelector[part].cb.addItem(mPrVoices[0][i]);
+					mPrVoices[0][i].setName(""+i+" "+YamahaFS1RBankDriver.getInstance().getPatchName(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+i));
 				}
 			}
 		}
@@ -185,7 +204,6 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	
 	/** send patch to current performance part */
 	public void SendSelectedPatch() {
-		System.out.println("SendSelectedPatch");
 		super.SendSelectedPatch();
 	}
 	
