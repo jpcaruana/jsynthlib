@@ -78,8 +78,6 @@ public class MidiTest implements Runnable {
 					     "connected to each other with a MIDI cable.",e);
 			return(false);
 		}
-		if (PatchEdit.newMidiAPI)
-			rcvr.close();
 		return(true);
 	}
 

@@ -273,8 +273,8 @@ public abstract class Device /*implements Serializable, Storable*/ {
 
     	if (PatchEdit.newMidiAPI) {
 	    if (!initPort || getPort() != port) {
-		if (rcvr != null)
-		    rcvr.close();
+		// don't close
+		//if (rcvr != null) rcvr.close();
 		try {
 		    rcvr = MidiUtil.getReceiver(port);
 		} catch (MidiUnavailableException e) {

@@ -34,14 +34,15 @@ import java.util.*;
  * <pre>
  *   Receiver rcvr = MidiUtil.getReceiver(outport);
  *   MidiUtil.send(rcvr, msg);
- *   rcvr.close();
  * </pre>
- * MIDI input
+ * MIDI input (System Exclusive Message)
  * <pre>
  *   MidiUtil.clearSysexInputQueue(inport);
- *   msg = MidiUtil.getMessage(inport, 1000);
+ *   SysexMessage msg = MidiUtil.getMessage(inport, 1000);
  * </pre>
- * See the description for each method for more details.
+ * The example above uses a shared input data queue.
+ * See the description for each method and code of Master-In and
+ * Fader-In for more details and MIDI short message input.
  *
  * @author Hiroo Hayashi
  * @version $Id$
@@ -243,13 +244,14 @@ public final class MidiUtil {
     }
 
     /**
-     * get a Receiver for Output.
+     * get a Receiver for Output.<p>
+     *
+     * Don't close Receiver returned since it may be shared with others.
      *
      * @param port an index in an array returned by
      * <code>getOutputMidiDeviceInfo()</code>.
      * @return a <code>Receiver</code> object for MIDI output.
      * @see #getOutputMidiDeviceInfo()
-     * @see #getReceiver
      * @see #send
      * @throws MidiUnavailableException
      */
@@ -325,7 +327,7 @@ public final class MidiUtil {
      * @see #clearSysexInputQueue
      */
     static void setSysexInputQueue(int port) {
-	if (sysexInputQueue[port] != null)
+	if (sysexInputQueue[port] != null) // already ready
 	    return;
 	MidiUtil.SysexInputQueue rcvr = new MidiUtil.SysexInputQueue();
 	Transmitter trns;
@@ -495,7 +497,7 @@ public final class MidiUtil {
 	public void send(MidiMessage msg, long timeStamp) {
 	    //ErrorMsg.reportStatus("InputQueue: " + msg);
 	    list.add(msg);
-	    log("XMIT: ", msg);
+	    //log("RECV: ", msg);
 	}
 
 	void clearQueue() {

@@ -141,7 +141,6 @@ public class MidiScan extends Thread {
 		    }
 		} // i : input
 	    } // devID
-	    rcvr.close();
 	} //  j : output
 	if (pb != null)
 	    // clear progress bar
