@@ -2,10 +2,13 @@ package core;
 import javax.swing.*;
 import javax.sound.midi.*;
 import java.util.*;
-import java.io.Serializable;
+//import java.io.Serializable;
 
 /**
- * Device.java<p>
+ * Device class defines some informations for your synthsizer, such as
+ * a name of manufacturer, the model name, author(s) of drivers, etc.
+ * It also manages a list of Driver classes which provides actual
+ * functions.<p>
  *
  * Compatibility Note: The following fields are now
  * <code>private</code>.  Use setter/getter method to access them.
@@ -16,12 +19,10 @@ import java.io.Serializable;
  * Created on 5. Oktober 2001, 21:59
  * @author Gerrit Gehnen
  * @version $Id$
+ * @see Driver
  */
-public /*abstract*/ class Device implements Serializable, Storable {
-    // All field should be private.
-    /**
-     * The company which made the Synthesizer.
-     */
+public class Device implements /*Serializable,*/ Storable {
+    /** The company which made the Synthesizer. */
     private String manufacturerName;
     /**
      * The fixed name of the model supported by this driver, as stated
@@ -34,63 +35,34 @@ public /*abstract*/ class Device implements Serializable, Storable {
      * Ex. <code>"F07E**0602413F01000000020000f7"</code>
      */
     private String inquiryID;
-
     /**
      * Information about Device.
+     * @see DeviceDetailsDialog
      */
     private String infoText;
-    /**
-     * Authors of the device driver.
-     */
+    /** Authors of the device driver. */
     private String authors;
-
-    /**
-     * The synthName is your personal naming of the device. You can
-     * change it in the first column of the Synth-Configuration
-     * dialog. As default they are the same at the creation.
-     */
+    /** The synthName is your personal naming of the device. */
     private String synthName;
-
-    /**
-     * The channel the user assigns to this driver.  The value must be
-     * 1 or greater than 1, and 16 or less than 16.  Some old drivers
-     * use this for device ID.  Use deviceID field for device ID.
-     */
+    /** The channel the user assigns to this driver. */
     private int channel = 1;
-
-    /**
-     * The device ID.  The value must be 1 or greater than 1, and 256
-     * or less than 256.  For backward compatibility if this has the
-     * initial value (-1), The value of <code>channel</code> is used
-     * as device ID.
-     */
+    /** The device ID. */
     private int deviceID = -1;
 
-    /** The input MIDI Device. */
-    private JSLMidiDevice midiIn;
-    /** The output MIDI Device. */
-    private JSLMidiDevice midiOut;
-
-    /**
-     * The MIDI input port number, where the cable <B>to</B> the
-     * device is connected.
-     */
-    // For simplicity every driver contains the port number as well.
-    // So the setter must set the port in all drivers
-    private int inPort = -1;
-    /**
-     * The MIDI output port number, where the cable <B>to</B> the
-     * device is connected.
-     */
-    private int port = -1;	// outport
-
-    /**
-     * The List for all available drivers of this device.
-     */
-    ArrayList driverList = new ArrayList ();
-
+    /** The MIDI output port number. */
+    private int port = -1;
     /** MIDI output Receiver */
     private Receiver rcvr;
+    /** The MIDI input port number. */
+    private int inPort = -1;
+    /** The input MIDI Device. */
+    //private JSLMidiDevice midiIn;
+    /** The output MIDI Device. */
+    //private JSLMidiDevice midiOut;
+
+    /** The List for all available drivers of this device. */
+    private ArrayList driverList = new ArrayList ();
+
     /**
      * Creates new Device.
      * @deprecated Use Device(String, String, String, String, String).
@@ -132,11 +104,14 @@ public /*abstract*/ class Device implements Serializable, Storable {
 	this.synthName = modelName;
 
 	// DeviceListWriter calls this constructor
+	// DeviceListWriter calls only no arg constructor. Hiroo
+	/*
 	if (PatchEdit.appConfig != null) {
 	    // set default MIDI port number
 	    setInPort(PatchEdit.appConfig.getInitPortIn());
 	    setPort(PatchEdit.appConfig.getInitPortOut());
 	}
+	*/
     }
 
     /**
@@ -198,7 +173,10 @@ public /*abstract*/ class Device implements Serializable, Storable {
     }
 
     /**
-     * Setter for property synthName.
+     * Setter for property synthName.  The synthName is your personal
+     * naming of the device.  A user can change it in the first column
+     * of the Synth-Configuration dialog.  modelName is used as
+     * default value. A synth driver should not use this.
      * @param synthName New value of property synthName.
      */
     public void setSynthName (String synthName) { // public for storable
@@ -214,7 +192,11 @@ public /*abstract*/ class Device implements Serializable, Storable {
     }
 
     /**
-     * Setter for property channel.
+     * Setter for property channel which is used for playPatch, etc.
+     * The value must be 1 or greater than 1, and 16 or less than 16.
+     * A synth driver may use this method to set default value.<p>
+     * Some old drivers use this for device ID.  Use setDeviceID
+     * method to set device ID.
      * @param channel The value must be 1 or greater than 1, and 16 or
      * less than 16.
      */
@@ -234,13 +216,20 @@ public /*abstract*/ class Device implements Serializable, Storable {
      * @return Value of property deviceID.
      */
     public int getDeviceID() { // public for storable
+	// For backward compatibility if this has the initial value
+	// (-1), The value of <code>channel</code> is used as device
+	// ID.
         return deviceID == -1 ? channel : deviceID;
     }
 
     /**
-     * Setter for property deviceID.
-     * @param deviceID The value must be 1 or greater than 1, and 256 or less
-     * than 256.
+     * Setter for property deviceID.  The value must be 1 or greater
+     * than 1, and 256 or less than 256.  A synth driver may use this
+     * to set default device ID.<p>
+     * For backward compatibility if this has the initial value (-1),
+     * The value of <code>channel</code> is used as device ID.
+     * @param deviceID The value must be 1 or greater than 1, and 256
+     * or less than 256.
      */
     public void setDeviceID(int deviceID) { // public for storable
         this.deviceID = deviceID;
@@ -255,24 +244,12 @@ public /*abstract*/ class Device implements Serializable, Storable {
     }
 
     /**
-     * Getter for property inPort.
-     * @return Value of property inPort.
-     */
-    public int getInPort () {
-        return inPort;
-    }
-
-    /**
-     * Setter for property port.
+     * Setter for property port, the MIDI output port number, where
+     * the cable <B>to</B> the device is connected.  A synth driver
+     * should not use this.
      * @param port New value of property port.
      */
     public void setPort (int port) { // public for storable
-	// remove the following lines when 'driver.port' becomes 'private'.
-	/*
-        Iterator iter = driverList.iterator();
-        while (iter.hasNext ())
-            ((Driver) iter.next()).setPort(port);
-	*/
 	if (PatchEdit.newMidiAPI) {
 	    if (this.port != port) {
 		if (rcvr != null)
@@ -284,7 +261,7 @@ public /*abstract*/ class Device implements Serializable, Storable {
     }
 
     /** send MidiMessage to MIDI output. Called by Driver.send(). */
-    void send(MidiMessage message) {
+    protected void send(MidiMessage message) {
 	try {
 	    MidiUtil.send(rcvr, message);
 	} catch (MidiUnavailableException e) {
@@ -295,17 +272,21 @@ public /*abstract*/ class Device implements Serializable, Storable {
     }
 
     /**
-     * Setter for property inPort.
+     * Getter for property inPort.
+     * @return Value of property inPort.
+     */
+    public int getInPort () {
+        return inPort;
+    }
+
+    /**
+     * Setter for property inPort, the MIDI input port number, where
+     * the cable <B>to</B> the device is connected.  A synth driver
+     * should not use this.
      * @param inPort New value of property inPort.
      */
     public void setInPort (int inPort) { // public for storable
         this.inPort = inPort;
-	// remove the following lines when 'driver.inPort' becomes 'private'.
-	/*
-        Iterator iter = driverList.iterator();
-        while (iter.hasNext())
-            ((Driver) iter.next()).setInPort(inPort);
-	*/
 	if (PatchEdit.newMidiAPI)
 	    MidiUtil.setSysexInputQueue(inPort);
     }
@@ -319,11 +300,6 @@ public /*abstract*/ class Device implements Serializable, Storable {
      * @see Converter
      */
     protected void addDriver(Driver driver) {
-	/*
-        driver.setChannel(channel);
-        driver.setPort(port);
-        driver.setInPort(inPort);
-	*/
 	driver.setDevice(this);
         driverList.add(driver);
     }
@@ -339,40 +315,8 @@ public /*abstract*/ class Device implements Serializable, Storable {
     // order should be enough.  -- Hiroo
     // @deprecated
     protected void addDriver(int index, Driver driver) {
-	/*
-        driver.setChannel(channel);
-        driver.setPort(port);
-        driver.setInPort(inPort);
-	*/
 	driver.setDevice(this);
         driverList.add(index, driver);
-    }
-
-    /** Indexed getter for driverList elements. */
-    protected Driver getDriver(int i) {
-	return (Driver) this.driverList.get(i);
-    }
-
-    /** Indexed setter for driverList elements. */
-    protected Driver setDriver(int i, Driver drv) {
-	return (Driver) this.driverList.set(i, drv);
-    }
-
-    /** Getter for driverList. ??? */
-    public Driver[] getDriver() { // public for storable
-	return (Driver[]) this.driverList.toArray(new Driver[0]);
-    }
-
-    /** setter for driverList. */
-    public void setDriver(Driver[] drivers) { // public for storable
-	ArrayList newList = new ArrayList();
-	newList.addAll(Arrays.asList(drivers));
-	this.driverList = newList;
-    }
-
-    /** Remover for driverList elements. */
-    Driver removeDriver(int i) {
-	return (Driver) this.driverList.remove(i);
     }
 
     /** Size query for driverList. */
@@ -380,6 +324,43 @@ public /*abstract*/ class Device implements Serializable, Storable {
 	return this.driverList.size();
     }
 
+    /** Indexed getter for driverList elements. */
+    protected Driver getDriver(int i) {
+	return (Driver) this.driverList.get(i);
+    }
+
+    /** Returns the index of a Driver */
+    int getDriverNum(Driver drv) {
+ 	return driverList.indexOf(drv);
+    }
+
+    /** Remover for driverList elements. */
+    Driver removeDriver(int i) {
+	return (Driver) this.driverList.remove(i);
+    }
+
+    // The following methods are obsoleted since 'driver' is not
+    // Storable now.
+    /** Indexed setter for driverList elements. */
+    /*
+    protected Driver setDriver(int i, Driver drv) {
+	return (Driver) this.driverList.set(i, drv);
+    }
+    */
+    /** Set an array of Drivers on driverList. */
+    /*
+    void setDriver(Driver[] drivers) {
+	ArrayList newList = new ArrayList();
+	newList.addAll(Arrays.asList(drivers));
+	this.driverList = newList;
+    }
+    */
+    /** Returns an array of all Drivers of driverList. */
+    /*
+    protected Driver[] getDriver() {
+	return (Driver[]) this.driverList.toArray(new Driver[0]);
+    }
+    */
     /** getter for device number. */
     int getDeviceNum() {
 	return PatchEdit.appConfig.getDeviceIndex(this);
@@ -408,9 +389,10 @@ public /*abstract*/ class Device implements Serializable, Storable {
     }
     */
 
-    // For storable interface
+    // For Storable interface
     /**
      * Get the names of properties that should be stored and loaded.
+     * Only for Storable interface.
      * @return a Set of field names.
      */
     public Set storedProperties() {
@@ -423,7 +405,8 @@ public /*abstract*/ class Device implements Serializable, Storable {
 	return set;
     }
 
-    /** Method that will be called after loading. */
+    /** Method that will be called after loading. Only for Storable
+	interface.*/
     public void afterRestore() {
 	Iterator iter = driverList.iterator();
 	while (iter.hasNext()) {
@@ -441,12 +424,12 @@ public /*abstract*/ class Device implements Serializable, Storable {
 	try {
 	    if (PatchEdit.newMidiAPI) {
 		return getManufacturerName() + " " + getModelName()
-		    + " <" + getSynthName() + ">  -  MIDI In Port: "
+		    + " <" + getSynthName() + ">  -  MIDI Out Port: "
 		    + MidiUtil.getOutputMidiDeviceInfo(getPort()).getName()
 		    + "  -  MIDI Channel: " + getChannel();
 	    } else {
 		return getManufacturerName() + " " + getModelName()
-		    + " <" + getSynthName() + ">  -  MIDI In Port: "
+		    + " <" + getSynthName() + ">  -  MIDI Out Port: "
 		    + PatchEdit.MidiOut.getOutputDeviceName(getPort())
 		    + "  -  MIDI Channel: " + getChannel();
 	    }
