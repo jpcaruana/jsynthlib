@@ -3,8 +3,12 @@ package synthdrivers.YamahaFS1R;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.*;
 
 import core.IPatch;
+import core.Patch;
+import core.SysexWidget;
+
 
 /**
 	Dialog to choose sources and destinations for operator paste. 
@@ -15,13 +19,21 @@ class PasteDialog extends JDialog
 	private JCheckBox mDest[] = new JCheckBox[8];
 	private IPatch mSourcePatch;
 	private IPatch mDestPatch;
+	private int mPart;
+	private ArrayList[] mWidgets;
 	
-	PasteDialog(IPatch aSource, IPatch aDest)
+	/**
+		@param aOwner owner for dialog
+		@param aWidgets table of operator widgets lists
+	*/
+	PasteDialog(Frame aOwner, IPatch aSource, IPatch aDest, int aPart, ArrayList aWidgets[])
 	{
-		super(core.PatchEdit.getInstance(), "Paste operators", true);
+		super(aOwner, "Paste operators", true);
 		
 		mSourcePatch = aSource;
 		mDestPatch = aDest;
+		mPart = aPart;
+		mWidgets = aWidgets;
 		
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		rbg = new ButtonGroup();
@@ -46,6 +58,7 @@ class PasteDialog extends JDialog
 				setVisible (false);
 		}});
 		getContentPane().add(oCopyVoices);
+		/*
 		JButton oCopyUnvoices = new JButton ("Paste Unvoices");
 		oCopyUnvoices.addActionListener (new ActionListener () {
 			public void actionPerformed (ActionEvent e)
@@ -53,6 +66,7 @@ class PasteDialog extends JDialog
 				setVisible (false);
 		}});
 		getContentPane().add(oCopyUnvoices);
+		*/
 		JButton cancel = new JButton ("Cancel");
 		cancel.addActionListener (new ActionListener () {
 			public void actionPerformed (ActionEvent e)
@@ -76,8 +90,14 @@ class PasteDialog extends JDialog
 			int oIndexDest = YamahaFS1RVoiceDriver.VOICE_VOICE_OFFSET + YamahaFS1RVoiceDriver.VOICE_SIZE * i;
 			if (mDest[i].isSelected())
 			{
-			System.out.println("copy from "+oIndexSource+" to "+oIndexDest);
 				System.arraycopy(mSourcePatch.getByteArray(), oIndexSource,  mDestPatch.getByteArray(),  oIndexDest,  YamahaFS1RVoiceDriver.VOICE_VOICE_SIZE);
+				// update widgets
+				ArrayList oWidgets = mWidgets[i];
+				for (int w = 0; w < oWidgets.size(); w++)
+				{
+					SysexWidget oWid = (SysexWidget)oWidgets.get(w);
+					oWid.setValue();
+				}
 			}
 		}
 	}
