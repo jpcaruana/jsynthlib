@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.8 2004-09-17 06:19:19 jbackhaus Exp $
+	Version: $Id: build.xml,v 1.9 2005-01-27 07:39:07 jbackhaus Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -82,6 +82,24 @@
 		<copy todir="${build}/images">
 			<fileset dir="images"/>
 		</copy>
+		<copy todir="${build}/synthdrivers/MIDIboxFM/images">
+			<fileset dir="synthdrivers/MIDIboxFM/images" includes="**/*.gif"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/RolandJV80/images">
+			<fileset dir="synthdrivers/RolandJV80/images" includes="**/*.png"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/YamahaDX100">
+			<fileset dir="synthdrivers/YamahaDX100" includes="**/*.gif"/>				
+		</copy>
+		<copy todir="${build}/synthdrivers/YamahaDX7/images">
+			<fileset dir="synthdrivers/YamahaDX7/images" includes="**/*.gif"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/YamahaFS1R/images">
+			<fileset dir="synthdrivers/YamahaFS1R/images" includes="**/*.gif"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/YamahaTX81z">
+			<fileset dir="synthdrivers/YamahaTX81z" includes="**/*.gif"/>
+		</copy>
 		<copy file="doc/documentation.html" todir="${build}/doc"/>
 		<copy file="doc/programming.html" todir="${build}/doc"/>
 		<copy file="synthdrivers.properties" todir="${build}"/>
@@ -126,6 +144,8 @@
 			<tarfileset dir="." prefix="${ant.project.name}-${version}/">
 				<!-- Base files -->
 				<include name="**/*.java"/>
+				<include name="**/*.gif"/> <!-- needed e.g. for the Yamaha DX-7 driver -->
+				<include name="**/*.png"/> <!-- needed e.g. for the Roland JV80 driver -->
 				<include name="images/**"/>
 				<include name="synthdrivers.properties"/>
 				<include name="${docs}"/>
