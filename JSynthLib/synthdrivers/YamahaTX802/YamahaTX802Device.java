@@ -1,10 +1,8 @@
 /*
  * JSynthlib - Device for Yamaha TX802
  * ===================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    YamahaTX802Device.java
- * date:    25.02.2003
- * @version 0.1
  *
  * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
  *
@@ -22,12 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.i
  *
- *
- * history:
- *         25.02.2003 v0.1: first published release
- *
  */
-
 package synthdrivers.YamahaTX802;
 import core.*;
 import javax.swing.*;
@@ -117,7 +110,7 @@ public class YamahaTX802Device extends Device
     panel.add(new JLabel("Disable Memory Protection?"),c);
     swOffMemProt = new JCheckBox();
     swOffMemProt.setSelected(getSwOffMemProtFlag()==1);
-    swOffMemProt.setEnabled(false);
+    swOffMemProt.setEnabled(true);
     swOffMemProt.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -129,8 +122,8 @@ public class YamahaTX802Device extends Device
     });
     c.gridx=3;c.gridy=5;c.gridwidth=1;c.gridheight=2;
     panel.add(swOffMemProt,c);
-    c.gridx=4;c.gridy=5;c.gridwidth=3;c.gridheight=1;
-    panel.add(new JLabel(" ( not available yet! )"),c);
+    //c.gridx=4;c.gridy=5;c.gridwidth=3;c.gridheight=1;
+    //panel.add(new JLabel(" ( not available yet! )"),c);
 
     c.gridx=0;c.gridy=7;c.gridwidth=3;c.gridheight=2;
     panel.add(new JLabel("Display Hints and Tips?"),c);

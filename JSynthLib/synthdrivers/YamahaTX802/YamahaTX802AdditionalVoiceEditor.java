@@ -1,10 +1,8 @@
 /*
  * JSynthlib - "Additional Voice" Editor for Yamaha TX802
  * ======================================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    YamahaTX802AdditionalVoiceEditor.java
- * date:    25.02.2003
- * @version 0.1
  *
  * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
  *
@@ -27,12 +25,7 @@
  * CAUTION: This is an experimental driver. It is not tested on a real device yet!
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  *
- * history:
- *         25.02.2003 v0.1: first published release
- *                          
- *
  */
-
 package synthdrivers.YamahaTX802;
 import core.*;
 import java.lang.String.*;

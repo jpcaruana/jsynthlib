@@ -1,10 +1,8 @@
 /*
  * JSynthlib - Parameter Changes for Yamaha TX802
  * ==============================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    TX802ParamChanges.java
- * date:    25.02.2003
- * @version 0.1
  *
  * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
  *
@@ -22,13 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *
- * history:
- *         25.02.2003 v0.1: first published release
- *
  */
 package synthdrivers.YamahaTX802;
 import core.*;
+
 public class TX802ParamChanges
 {
  
@@ -41,13 +36,38 @@ public class TX802ParamChanges
   { VoiceOPstate.send(p, ch, new NameValue("value", st)); }
 
   // ###############################################  TX802  ############################################
+  // simulate panel button pushes constants
+  // 
+  protected final static int DEPRESS   = 0x7F;
+  protected final static int RELEASE   = 0x00;
+          
+  protected final static int SYSTEM_SETUP = 0x53;
+  protected final static int TG8          = 0x60;       // Tongenerator 1 On/Off / Parameter Select
+  protected final static int OFF          = 0x4e;       // Off / -1 / no
+  protected final static int ON           = 0x4f;       // On  / +1 / yes
+  
+  
   // parameter change
   protected final static SysexHandler System       = new SysexHandler("f0 43 @@ 19 *param* *action* f7"); 
-  protected final static SysexHandler Button       = new SysexHandler("f0 43 @@ 1B *switch* *OnOff* f7"); 
+  protected final static SysexHandler Button       = new SysexHandler("f0 43 @@ 1B *switch* *OnOff* f7"); // don't care about "OnOff"
 
   // switch off internal/cartridge memory protection (!!!!!!! Not valid, just dummy !!!!!) 
-  protected static void swOffMemProt(int p, byte ch, byte bn)				// port, channel, 
-  { System.send(p, ch, new NameValue("param", 0x53), new NameValue("action",bn)); }	// bn: bit0 = internal, bit1 = cartridge
+        //protected static void swOffMemProt(int p, byte ch, byte bn)				// port, channel,bn: bit0 = internal, bit1 = cartridge
+        //{ System.send(p, ch, new NameValue("param", 0x53), new NameValue("action",bn)); }
+  protected static void swOffMemProt(int p, byte ch)            				// port, channel
+  {
+    Button.send(p, ch, new NameValue("switch",SYSTEM_SETUP), new NameValue("OnOff",DEPRESS));
+    Button.send(p, ch, new NameValue("switch",TG8),          new NameValue("OnOff",DEPRESS));
+    Button.send(p, ch, new NameValue("switch",OFF),          new NameValue("OnOff",DEPRESS));
+  }
+
+  protected static void swOnMemProt(int p, byte ch)            				        // port, channel
+  {
+    Button.send(p, ch, new NameValue("switch",SYSTEM_SETUP), new NameValue("OnOff",DEPRESS));
+    Button.send(p, ch, new NameValue("switch",TG8),          new NameValue("OnOff",DEPRESS));
+    Button.send(p, ch, new NameValue("switch",ON),           new NameValue("OnOff",DEPRESS));
+  }
+
 
   // choose the desired MIDI receive/transmit block 
   protected static void chBlock(int p, byte ch, byte bn)				// port, channel, 
