@@ -12,8 +12,8 @@ import javax.sound.midi.*;
 import java.util.*;
 
 public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
-    private int currentOutport;
-    private int currentInport;
+    private int currentOutport = -1;
+    private int currentInport = -1;
     private int faderPort;
     private Vector sourceInfoVector;
     private Vector destinationInfoVector;
@@ -93,7 +93,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	// ignore System Real Time Message
 	if ((msg.getStatus() & 0xf8) == 0xf8)
 	    return;
-	//System.out.println("MidiWrapper:Got Message length "+msg.getLength());
+	//ErrorMsg.reportStatus("MidiWrapper:Got Message length "+msg.getLength());
         list.add(msg);
     }
 
@@ -118,6 +118,13 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     }
 
     private void setInputDeviceNum(int port) {
+	if (PatchEdit.newMidiAPI)
+	    return;
+
+	if (port >= getNumInputDevices()) {
+	    ErrorMsg.reportStatus("setInputDeviceNum: port, " + port + ", is out of range. Set to 0.");
+	    port = 0; // temporally fix
+	}
         try {
             if ((port==PatchEdit.appConfig.getFaderPort()) && (fader!=null)) {
                 MidiDevice srcDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(port));
@@ -147,6 +154,9 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     }
 
     private void setOutputDeviceNum(int port) throws MidiUnavailableException {
+	if (PatchEdit.newMidiAPI)
+	    return;
+
         if (currentOutport!=port) {
 	    if (output != null)
 		output.close();
@@ -212,8 +222,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     }
 
     public void clearMidiInBuffer(int port) {
-	while (!list.isEmpty())
-	    list.remove(0);
+	list.clear();
     }
 
     MidiMessage getMessage(int port)
@@ -222,48 +231,15 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 
 	// pop the oldest message
 	MidiMessage msg = (MidiMessage) list.remove(0);
-
-	// Javasound 1.4.2 returns com.sun.media.sound.FastShortMessage object.
-	// We cannot use
-	//   "msg instanceof com.sun.media.sound.FastShortMessage"
-	// since we don't have the class.
-	if (msg.getClass().toString().equals("class com.sun.media.sound.FastShortMessage"))
-	    msg = (MidiMessage) conv(msg);
-
+	MidiUtil.logIn(port, msg);
+	// for java 1.4.2 bug
+	msg = (MidiMessage) MidiUtil.fixShortMessage(msg);
 	MidiUtil.logIn(port, msg);
 	return msg;
     }
 
-    /**
-     * Convert a <code>com.sun.media.sound.FastShortMessage</code>
-     * object to a <code>ShortMessage</code> object.
-     */
-    private ShortMessage conv(MidiMessage mm)
-	throws InvalidMidiDataException {
-	ShortMessage m = (ShortMessage) mm;
-	ShortMessage msg = new ShortMessage();
-	int c = m.getStatus();
-	switch (c < 0xf0 ? c & 0xf0 : c) {
-	case 0x80: case 0x90: case 0xa0: case 0xb0:
-	case 0xe0: case 0xf2:
-	    msg.setMessage(c, m.getData1(), m.getData2());
-	    break;
-	case 0xc0: case 0xd0: case 0xf1: case 0xf3:
-	    msg.setMessage(c, m.getData1(), 0);
-	    break;
-	case 0xf4: case 0xf5: case 0xf6: case 0xf7:
-	case 0xf8: case 0xf9: case 0xfa: case 0xfb:
-	case 0xfc: case 0xfd: case 0xfe: case 0xff:
-	    msg.setMessage(c);
-	    break;
-	default:
-	    throw new InvalidMidiDataException();
-	}
-	return msg;
-    }
-
     public String getWrapperName() {
-	return("MS Windows (JavaSound)");
+	return("JavaSound");
     }
 
     public static boolean supportsPlatform(String platform) {
@@ -285,5 +261,35 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 
     public boolean isReady() {
 	return(initialized);
+    }
+
+    /**
+     * Get input JSLMidiDevice from port number. This method will be
+     * useless when "port" is not used.
+     */
+    public JSLMidiDevice getInputDevice(int port) {
+	MidiDevice md = null;
+	try {
+	    md = MidiSystem.getMidiDevice((MidiDevice.Info) sourceInfoVector.get(port));
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus("getInputDevice : " + e);
+	}
+	ErrorMsg.reportStatus("getInputDevice : " + md);
+	return new JSLMidiDevice(md);
+    }
+
+    /**
+     * Get output JSLMidiDevice from port number. This method will be
+     * useless when "port" is not used.
+     */
+    public JSLMidiDevice getOutputDevice(int port) {
+	MidiDevice md = null;
+	try {
+	    md = MidiSystem.getMidiDevice((MidiDevice.Info) destinationInfoVector.get(port));
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus("getOutputDevice : " + e);
+	}
+	ErrorMsg.reportStatus("getOutputDevice : " + md);
+	return new JSLMidiDevice(md);
     }
 }
