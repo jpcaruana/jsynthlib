@@ -47,34 +47,33 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     private static final int SYNTH      = 0;
     private static final int TYPE       = 1;
     private static final int PATCH_NAME = 2;
+    //!!!
     private static final int BANK_NUM   = 3;
     private static final int PATCH_NUM  = 4;
     private static final int COMMENT    = 5;
 
-    private SceneListModel myModel;
+    private SceneListModel myModel; // !!!
     private JTable table;
     private JTable table2;
     private JLabel statusBar;
     private File filename;
     private boolean changed = false;  //has the library been altered since it was last saved?
-    private SceneTableCellEditor rowEditor ;
+    private SceneTableCellEditor rowEditor ; // !!!
     private static PatchTransferHandler pth = new PatchListTransferHandler();
 
     public SceneFrame(File file) {
-        super(file.getName(),
-          true,     //resizable
-          true,     //closable
-          true,     //maximizable
-          true);        //iconifiable
+        super(file.getName(), true, //resizable
+                true, //closable
+                true, //maximizable
+                true); //iconifiable
         initLibraryFrame();
     }
 
     public SceneFrame() {
-        super("Unsaved Scene #" + (++openFrameCount),
-          true,     //resizable
-          true,     //closable
-          true,     //maximizable
-          true);        //iconifiable
+        super("Unsaved Scene #" + (++openFrameCount), true, //resizable
+                true, //closable
+                true, //maximizable
+                true); //iconifiable
         initLibraryFrame();
     }
 
@@ -82,20 +81,21 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         //...Create the GUI and put it in the window...
         addJSLFrameListener(new MyFrameListener());
 
-    // create Table
-    table = createTable();
+        // create Table
+        table = createTable();
 
-        //Create the scroll  pane and add the table to it.
+        //Create the scroll pane and add the table to it.
         final JScrollPane scrollPane = new JScrollPane(table);
-    // Enable drop on scrollpane
-    scrollPane.getViewport()
-        .setTransferHandler(new ProxyImportHandler(table, pth));
+        // Enable drop on scrollpane
+        scrollPane.getViewport().setTransferHandler(
+                new ProxyImportHandler(table, pth));
         scrollPane.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) { }
+            public void mousePressed(MouseEvent e) {
+            }
 
-        public void mouseReleased(MouseEvent e) {
-            myModel.fireTableDataChanged();
-        }
+            public void mouseReleased(MouseEvent e) {
+                myModel.fireTableDataChanged();
+            }
         });
 
         //Add the scroll pane to this window.
@@ -111,85 +111,88 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         setSize(600, 300);
 
         //Set the window's location.
-    moveToDefaultLocation();
+        moveToDefaultLocation();
     }
 
     private class MyFrameListener implements JSLFrameListener {
-    public void JSLFrameClosing(JSLFrameEvent e) {
-        if (!changed) return;
+        public void JSLFrameClosing(JSLFrameEvent e) {
+            if (!changed)
+                return;
 
-        // close Patch/Bank Editor editing a patch in this frame.
-        JSLFrame[] jList = JSLDesktop.getAllFrames();
-        for (int j = 0; j < jList.length; j++) {
-        if (jList[j] instanceof BankEditorFrame) {
-            for (int i = 0; i < myModel.getRowCount(); i++)
-            if (((BankEditorFrame) (jList[j])).bankData
-                == myModel.getPatchAt(i)) {
-                jList[j].moveToFront();
-                try {
-                jList[j].setSelected(true);
-                jList[j].setClosed(true);
-                } catch (Exception e1) {
-                ErrorMsg.reportStatus(e1);
+            // close Patch/Bank Editor editing a patch in this frame.
+            JSLFrame[] jList = JSLDesktop.getAllFrames();
+            for (int j = 0; j < jList.length; j++) {
+                if (jList[j] instanceof BankEditorFrame) {
+                    for (int i = 0; i < myModel.getRowCount(); i++)
+                        if (((BankEditorFrame) (jList[j])).bankData == myModel
+                                .getPatchAt(i)) {
+                            jList[j].moveToFront();
+                            try {
+                                jList[j].setSelected(true);
+                                jList[j].setClosed(true);
+                            } catch (Exception e1) {
+                                ErrorMsg.reportStatus(e1);
+                            }
+                            break;
+                        }
                 }
-                break;
-            }
-        }
-        if (jList[j] instanceof PatchEditorFrame) {
-            for (int i = 0; i < myModel.getRowCount(); i++)
-            if (((PatchEditorFrame) (jList[j])).p == myModel.getPatchAt(i)) {
-                jList[j].moveToFront();
-                try {
-                jList[j].setSelected(true);
-                jList[j].setClosed(true);
-                } catch (Exception e1) {
-                ErrorMsg.reportStatus(e1);
+                if (jList[j] instanceof PatchEditorFrame) {
+                    for (int i = 0; i < myModel.getRowCount(); i++)
+                        if (((PatchEditorFrame) (jList[j])).p == myModel
+                                .getPatchAt(i)) {
+                            jList[j].moveToFront();
+                            try {
+                                jList[j].setSelected(true);
+                                jList[j].setClosed(true);
+                            } catch (Exception e1) {
+                                ErrorMsg.reportStatus(e1);
+                            }
+                            break;
+                        }
                 }
-                break;
             }
+
+            if (JOptionPane
+                    .showConfirmDialog(
+                            null,
+                            "This Scene may contain unsaved data.\nSave before closing?", // !!!
+                            "Unsaved Data", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+                return;
+
+            moveToFront();
+            Actions.saveFrame();
         }
+
+        public void JSLFrameOpened(JSLFrameEvent e) {
         }
 
-        if (JOptionPane.showConfirmDialog
-        (null,
-         "This Scene may contain unsaved data.\nSave before closing?",
-         "Unsaved Data", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
-        return;
+        public void JSLFrameActivated(JSLFrameEvent e) {
+            Actions.setEnabled(true, Actions.EN_GET | Actions.EN_IMPORT
+                    | Actions.EN_IMPORT_ALL | Actions.EN_NEW_PATCH);
+            // not implemented !!!
+            Actions.setEnabled(false, Actions.EN_DELETE_DUPLICATES
+                    | Actions.EN_SORT);
+            enableActions();
+        }
 
-        moveToFront();
-        Actions.saveFrame();
-    }
+        public void JSLFrameClosed(JSLFrameEvent e) {
+        }
 
-    public void JSLFrameOpened(JSLFrameEvent e) { }
+        public void JSLFrameDeactivated(JSLFrameEvent e) {
+            Actions.setEnabled(false, Actions.EN_ALL);
+        }
 
-    public void JSLFrameActivated(JSLFrameEvent e) {
-        Actions.setEnabled(true,
-                   Actions.EN_GET
-                   | Actions.EN_IMPORT
-                   | Actions.EN_IMPORT_ALL
-                   | Actions.EN_NEW_PATCH);
-        // not implemented
-        Actions.setEnabled(false,
-                   Actions.EN_DELETE_DUPLICATES
-                   | Actions.EN_SORT);
-        enableActions();
-    }
+        public void JSLFrameDeiconified(JSLFrameEvent e) {
+        }
 
-    public void JSLFrameClosed(JSLFrameEvent e) { }
-
-    public void JSLFrameDeactivated(JSLFrameEvent e) {
-        Actions.setEnabled(false, Actions.EN_ALL);
-    }
-
-    public void JSLFrameDeiconified(JSLFrameEvent e) { }
-
-    public void JSLFrameIconified(JSLFrameEvent e) { }
+        public void JSLFrameIconified(JSLFrameEvent e) {
+        }
     }
 
     private JTable createTable() {
-        myModel = new SceneListModel(changed);
+        myModel = new SceneListModel(changed); // !!!
         final JTable table = new JTable(myModel);
-        table2 = table;     // What's this?
+        table2 = table; // What's this?
 
         rowEditor = new SceneTableCellEditor(table);
 
@@ -198,18 +201,18 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             public void mousePressed(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
-                    table2.setRowSelectionInterval
-                        (table2.rowAtPoint(new Point(e.getX(), e.getY())),
-                         table2.rowAtPoint(new Point(e.getX(), e.getY())));
+                    table2.setRowSelectionInterval(
+                            table2.rowAtPoint(new Point(e.getX(), e.getY())),
+                            table2.rowAtPoint(new Point(e.getX(), e.getY())));
                 }
             }
 
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
-                    table2.setRowSelectionInterval
-                        (table2.rowAtPoint(new Point(e.getX(), e.getY())),
-                         table2.rowAtPoint(new Point(e.getX(), e.getY())));
+                    table2.setRowSelectionInterval(
+                            table2.rowAtPoint(new Point(e.getX(), e.getY())),
+                            table2.rowAtPoint(new Point(e.getX(), e.getY())));
                 }
             }
 
@@ -220,9 +223,9 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             }
         });
 
-    //table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    table.setTransferHandler(pth);
-    table.setDragEnabled(true);
+        //table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setTransferHandler(pth);
+        table.setDragEnabled(true);
 
         TableColumn column = null;
         column = table.getColumnModel().getColumn(SYNTH);
@@ -233,89 +236,48 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         column.setPreferredWidth(100);
         column = table.getColumnModel().getColumn(BANK_NUM);
         column.setPreferredWidth(50);
-        column.setCellEditor(rowEditor); // Set the special pop-up Editor for Bank numbers
+        column.setCellEditor(rowEditor); // Set the special pop-up Editor for
+                                         // Bank numbers
         column = table.getColumnModel().getColumn(PATCH_NUM);
         column.setPreferredWidth(50);
-        column.setCellEditor(rowEditor); // Set the special pop-up Editorfor Patch Numbers
+        column.setCellEditor(rowEditor); // Set the special pop-up Editorfor
+                                         // Patch Numbers
         column = table.getColumnModel().getColumn(COMMENT);
         column.setPreferredWidth(200);
 
         table.getModel().addTableModelListener(new TableModelListener() {
-        public void tableChanged(TableModelEvent e) {
-            statusBar.setText(myModel.getRowCount() + " Patches");
-            /*
-            int c = ((AbstractPatchListModel) e.getSource()).getRowCount();
-            Actions.setEnabled(c > 0,
-                       Actions.EN_EXPORT
-                       | Actions.EN_SAVE
-                       | Actions.EN_SAVE_AS
-                       | Actions.EN_SEARCH
-                       | Actions.EN_TRANSFER_SCENE);
-
-            Actions.setEnabled(c > 1,
-                       Actions.EN_CROSSBREED
-                       | Actions.EN_DELETE_DUPLICATES
-                       | Actions.EN_SORT);
-            */
-            enableActions();
-        }
+            public void tableChanged(TableModelEvent e) {
+                statusBar.setText(myModel.getRowCount() + " Patches");
+                enableActions();
+            }
         });
 
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-            //ErrorMsg.reportStatus ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
-            /*
-            int i = ((ListSelectionModel) e.getSource()).getMaxSelectionIndex();
-            Actions.setEnabled(i >= 0,
-                       Actions.EN_COPY
-                       | Actions.EN_CUT
-                       | Actions.EN_DELETE
-                       | Actions.EN_EXPORT
-                       | Actions.EN_EXTRACT
-                       | Actions.EN_PLAY
-                       | Actions.EN_REASSIGN
-                       | Actions.EN_SEND
-                       | Actions.EN_SEND_TO
-                       | Actions.EN_STORE
-                       | Actions.EN_UPLOAD);
-
-            Actions.setEnabled(i >= 0
-                       && myModel.getPatchAt(table.getSelectedRow()).getDriver().hasEditor(),
-                       Actions.EN_EDIT);
-            */
-            enableActions();
-        }
-        });
-    return table;
+        table.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
+                    public void valueChanged(ListSelectionEvent e) {
+                        enableActions();
+                    }
+                });
+        return table;
     }
 
     /** change state of Actions based on the state of the table. */
     private void enableActions() {
-    Actions.setEnabled(table.getRowCount() > 0,
-               Actions.EN_SAVE
-               | Actions.EN_SAVE_AS
-               | Actions.EN_SEARCH
-               | Actions.EN_TRANSFER_SCENE);
+        Actions.setEnabled(table.getRowCount() > 0, Actions.EN_SAVE
+                | Actions.EN_SAVE_AS | Actions.EN_SEARCH
+                | Actions.EN_TRANSFER_SCENE);
 
-    Actions.setEnabled(table.getRowCount() > 1,
-               Actions.EN_CROSSBREED);
+        Actions.setEnabled(table.getRowCount() > 1, Actions.EN_CROSSBREED);
 
-    Actions.setEnabled(table.getSelectedRowCount() > 0,
-               Actions.EN_COPY
-               | Actions.EN_CUT
-               | Actions.EN_DELETE
-               | Actions.EN_EXPORT
-               | Actions.EN_EXTRACT
-               | Actions.EN_PLAY
-               | Actions.EN_REASSIGN
-               | Actions.EN_SEND
-               | Actions.EN_SEND_TO
-               | Actions.EN_STORE
-               | Actions.EN_UPLOAD);
+        Actions.setEnabled(table.getSelectedRowCount() > 0, Actions.EN_COPY
+                | Actions.EN_CUT | Actions.EN_DELETE | Actions.EN_EXPORT
+                | Actions.EN_EXTRACT | Actions.EN_PLAY | Actions.EN_REASSIGN
+                | Actions.EN_SEND | Actions.EN_SEND_TO | Actions.EN_STORE
+                | Actions.EN_UPLOAD);
 
-    Actions.setEnabled(table.getSelectedRowCount() > 0
-               && myModel.getPatchAt(table.getSelectedRow()).getDriver().hasEditor(),
-               Actions.EN_EDIT);
+        Actions.setEnabled(table.getSelectedRowCount() > 0
+                && myModel.getPatchAt(table.getSelectedRow()).getDriver()
+                        .hasEditor(), Actions.EN_EDIT);
     }
 
     // begin PatchBasket methods
@@ -340,7 +302,8 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         //statusBar.setText(myModel.getRowCount() + " Patches");
     }
 
-    public void exportPatch(File file) throws IOException, FileNotFoundException {
+    public void exportPatch(File file) throws IOException,
+            FileNotFoundException {
         if (table.getSelectedRowCount() == 0) {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return;
@@ -361,71 +324,72 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     public void copySelectedPatch() {
-        pth.exportToClipboard(table,
-                  Toolkit.getDefaultToolkit().getSystemClipboard(),
-                  PatchTransferHandler.COPY);
+        pth.exportToClipboard(table, Toolkit.getDefaultToolkit()
+                .getSystemClipboard(), PatchTransferHandler.COPY);
     }
 
     public void pastePatch() {
-        if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
+        if (!pth.importData(table, Toolkit.getDefaultToolkit()
+                .getSystemClipboard().getContents(this)))
             Actions.setEnabled(false, Actions.EN_PASTE);
     }
 
     public void pastePatch(IPatch p) {
-	pth.importData(table, p);
+        pth.importData(table, p);
     }
 
     public IPatch getSelectedPatch() {
-	try {
-	    return myModel.getPatchAt(table.getSelectedRow());
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	    return null;
-	}
+        try {
+            return myModel.getPatchAt(table.getSelectedRow());
+        } catch (Exception e) {
+            ErrorMsg.reportStatus(e);
+            return null;
+        }
     }
 
     public void sendSelectedPatch() {
-	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-	if (myPatch.getDriver() instanceof ISingleDriver) {
-	    myPatch.calculateChecksum();
-	    myPatch.send();
-	}
+        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
+        if (myPatch.getDriver() instanceof ISingleDriver) {
+            myPatch.calculateChecksum();
+            myPatch.send();
+        }
     }
 
     public void sendToSelectedPatch() {
-	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
+        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.calculateChecksum();
         new SysexSendToDialog(myPatch);
     }
 
     public void reassignSelectedPatch() {
-	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
+        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.calculateChecksum();
         new ReassignPatchDialog(myPatch);
         myModel.fireTableDataChanged();
     }
 
     public void playSelectedPatch() {
-	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-	if (myPatch.getDriver() instanceof ISingleDriver) {
-	    myPatch.calculateChecksum();
-	    myPatch.send();
-	    myPatch.play();
-	}
+        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
+        if (myPatch.getDriver() instanceof ISingleDriver) {
+            myPatch.calculateChecksum();
+            myPatch.send();
+            myPatch.play();
+        }
     }
 
     public void storeSelectedPatch() {
-	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
+        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         myPatch.calculateChecksum();
         new SysexStoreDialog(myPatch);
     }
 
     public JSLFrame editSelectedPatch() {
         if (table.getSelectedRowCount() == 0) {
-            ErrorMsg.reportError("Error", "No Patch Selected. EditAction must be disabled.");
+            ErrorMsg.reportError("Error",
+                    "No Patch Selected. EditAction must be disabled.");
             return null;
         }
-	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
+        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         changed = true;
         return myPatch.edit();
     }
@@ -436,6 +400,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             ar.add(myModel.getPatchAt(i));
         return ar;
     }
+
     // end of PatchBasket methods
 
     // begin AbstarctLibraryFrame methods
@@ -443,7 +408,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         return myModel;
     }
 
-    public JTable getTable() {  // for SearchDialog
+    public JTable getTable() { // for SearchDialog
         return table;
     }
 
@@ -459,8 +424,9 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
                 myModel.addPatch(myDriver.getPatch(myPatch, i));
         myModel.fireTableDataChanged();
         changed = true;
-    //statusBar.setText(myModel.getRowCount() + " Patches");
+        //statusBar.setText(myModel.getRowCount() + " Patches");
     }
+
     // end AbstarctLibraryFrame methods
 
     // for open/save/save-as actions
@@ -497,14 +463,13 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     /**
-     * Send all patches of the scene to the
-     * configured places in the synth's.
+     * Send all patches of the scene to the configured places in the synth's.
      */
     void sendScene() {
         //     ErrorMsg.reportStatus("Transfering Scene");
         for (int i = 0; i < myModel.getRowCount(); i++) {
-            int bankNum   = myModel.getSceneAt(i).getBankNumber();
-            int patchNum  = myModel.getSceneAt(i).getPatchNumber();
+            int bankNum = myModel.getSceneAt(i).getBankNumber();
+            int patchNum = myModel.getSceneAt(i).getPatchNumber();
             IPatch myPatch = myModel.getPatchAt(i);
             myPatch.calculateChecksum();
             myPatch.store(bankNum, patchNum);
@@ -512,8 +477,8 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     /**
-     * Re-assigns drivers to all patches in libraryframe. Called after
-     * new drivers are added or or removed
+     * Re-assigns drivers to all patches in libraryframe. Called after new
+     * drivers are added or or removed
      */
     protected void revalidateDrivers() {
         for (int i = 0; i < myModel.getRowCount(); i++)
@@ -524,7 +489,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     private void chooseDriver(IPatch patch) {
         byte[] sysex = patch.getByteArray();
         IPatchDriver driver = (IPatchDriver) DriverUtil.chooseDriver(sysex);
-  	patch.setDriver(driver);
+        patch.setDriver(driver);
         if (driver == null) {
             // Unkown patch, try to guess at least the manufacturer
             patch.setComment("Probably a "
@@ -545,18 +510,16 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
     /**
      * Refactored from PerformanceListModel
-     * @author  Gerrit Gehnen
+     * 
+     * @author Gerrit Gehnen
      */
-    private class SceneListModel extends AbstractTableModel implements AbstractPatchListModel {
-        private final String[] columnNames = {
-            "Synth",
-            "Type",
-            "Patch Name",
-            "Bank Number",
-            "Patch Number",
-            "Comment"
-        };
+    private class SceneListModel extends AbstractTableModel implements
+            AbstractPatchListModel {
+        private final String[] columnNames = { "Synth", "Type", "Patch Name",
+                "Bank Number", "Patch Number", "Comment" };
+
         private boolean changed;
+
         private ArrayList list = new ArrayList();
 
         public SceneListModel(boolean c) {
@@ -575,21 +538,23 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             Scene myScene = (Scene) list.get(row);
             try {
                 switch (col) {
-                    case SYNTH:
-                        return myScene.getPatch().getDevice().getSynthName();
-                    case TYPE:
-                        return myScene.getPatch().getDriver().getPatchType();
-                    case PATCH_NAME:
-                        return myScene.getPatch().getName();
-                    case BANK_NUM:
-                        return myScene.getPatch().getDriver().getBankNumbers()[myScene.getBankNumber()];
-                    case PATCH_NUM:
-                        return myScene.getPatch().getDriver().getPatchNumbers()[myScene.getPatchNumber()];
-                    case COMMENT:
-                        return myScene.getComment();
-                    default:
-                        ErrorMsg.reportStatus("SceneFrame: internal error.");
-                        return null;
+                case SYNTH:
+                    return myScene.getPatch().getDevice().getSynthName();
+                case TYPE:
+                    return myScene.getPatch().getDriver().getPatchType();
+                case PATCH_NAME:
+                    return myScene.getPatch().getName();
+                case BANK_NUM:
+                    return myScene.getPatch().getDriver().getBankNumbers()[myScene
+                            .getBankNumber()];
+                case PATCH_NUM:
+                    return myScene.getPatch().getDriver().getPatchNumbers()[myScene
+                            .getPatchNumber()];
+                case COMMENT:
+                    return myScene.getComment();
+                default:
+                    ErrorMsg.reportStatus("SceneFrame: internal error.");
+                    return null;
                 }
             } catch (Exception e) {
                 ErrorMsg.reportStatus(e);
@@ -598,10 +563,9 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         }
 
         /*
-         * JTable uses this method to determine the default renderer/
-         * editor for each cell.  If we didn't implement this method,
-         * then the last column would contain text ("true"/"false"),
-         * rather than a check box.
+         * JTable uses this method to determine the default renderer/ editor for
+         * each cell. If we didn't implement this method, then the last column
+         * would contain text ("true"/"false"), rather than a check box.
          */
         public Class getColumnClass(int c) {
             try {
@@ -616,26 +580,27 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         }
 
         public void setValueAt(Object value, int row, int col) {
-            //ErrorMsg.reportStatus("SetValue at "+row+"  "+col+" Value:"+value);
+            //ErrorMsg.reportStatus("SetValue at "+row+" "+col+"
+            // Value:"+value);
             changed = true;
             Scene myScene = getSceneAt(row);
             switch (col) {
-                case SYNTH:
-                    myScene.getPatch().getDevice().setSynthName((String) value);
-                    break;
-                case TYPE:
-                case PATCH_NAME:
-                    // don't allow to change the Patch Type/Name
-                    break;
-                case BANK_NUM:
-                    myScene.setBankNumber(((Integer) value).intValue());
-                    break;
-                case PATCH_NUM:
-                    myScene.setPatchNumber(((Integer) value).intValue());
-                    break;
-                case COMMENT:
-                    myScene.setComment((String) value);
-                    break;
+            case SYNTH:
+                myScene.getPatch().getDevice().setSynthName((String) value);
+                break;
+            case TYPE:
+            case PATCH_NAME:
+                // don't allow to change the Patch Type/Name
+                break;
+            case BANK_NUM:
+                myScene.setBankNumber(((Integer) value).intValue());
+                break;
+            case PATCH_NUM:
+                myScene.setPatchNumber(((Integer) value).intValue());
+                break;
+            case COMMENT:
+                myScene.setComment((String) value);
+                break;
             }
             list.set(row, myScene);
         }
@@ -662,6 +627,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         public int getRowCount() {
             return list.size();
         }
+
         // end AbstractPatchListModel interface methods
 
         public void setSceneAt(Scene p, int row) {
@@ -698,17 +664,21 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     /**
      * @author Gerrit Gehnen
      */
-    private class SceneTableCellEditor implements TableCellEditor, TableModelListener {
+    private class SceneTableCellEditor implements TableCellEditor,
+            TableModelListener {
         private TableCellEditor editor, defaultEditor;
+
         private JComboBox box;
+
         private JTable table;
+
         private int oldrow = -1;
+
         private int oldcol = -1;
 
         /**
-         * Constructs a SceneTableCellEditor.
-         * create default editor
-         *
+         * Constructs a SceneTableCellEditor. create default editor
+         * 
          * @see TableCellEditor
          * @see DefaultCellEditor
          */
@@ -719,30 +689,38 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         }
 
         public Component getTableCellEditorComponent(JTable table,
-                                 Object value, boolean isSelected, int row, int column) {
-            return editor.getTableCellEditorComponent(table, value, isSelected, row, column);
+                Object value, boolean isSelected, int row, int column) {
+            return editor.getTableCellEditorComponent(table, value, isSelected,
+                    row, column);
         }
 
         public Object getCellEditorValue() {
-            //         ErrorMsg.reportStatus("getCellEditorValue "+box.getSelectedItem());
+            //         ErrorMsg.reportStatus("getCellEditorValue
+            // "+box.getSelectedItem());
             return new Integer(box.getSelectedIndex());
         }
+
         public boolean stopCellEditing() {
             return editor.stopCellEditing();
         }
+
         public void cancelCellEditing() {
             editor.cancelCellEditing();
         }
+
         public boolean isCellEditable(EventObject anEvent) {
             selectEditor((MouseEvent) anEvent);
             return editor.isCellEditable(anEvent);
         }
+
         public void addCellEditorListener(CellEditorListener l) {
             editor.addCellEditorListener(l);
         }
+
         public void removeCellEditorListener(CellEditorListener l) {
             editor.removeCellEditorListener(l);
         }
+
         public boolean shouldSelectCell(EventObject anEvent) {
             selectEditor((MouseEvent) anEvent);
             return editor.shouldSelectCell(anEvent);
@@ -753,35 +731,36 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             int row, col;
 
             if (e == null) {
-            row = table.getSelectionModel().getAnchorSelectionIndex();
-            col = table.getSelectedColumn();
+                row = table.getSelectionModel().getAnchorSelectionIndex();
+                col = table.getSelectedColumn();
             } else {
-            row = table.rowAtPoint(e.getPoint());
-            col = table.columnAtPoint(e.getPoint());
+                row = table.rowAtPoint(e.getPoint());
+                col = table.columnAtPoint(e.getPoint());
             }
             //    ErrorMsg.reportStatus("selectEditor "+ row);
             if ((row != oldrow) || (col != oldcol)) {
-            oldrow = row;
-            oldcol = col;
-            box = new JComboBox();
+                oldrow = row;
+                oldcol = col;
+                box = new JComboBox();
 
-            driver = ((SceneListModel) table.getModel()).getPatchAt(row).getDriver();
-            String[] patchNumbers = driver.getPatchNumbers();
-            String[] bankNumbers  = driver.getBankNumbers();
-            if (patchNumbers.length > 1) {
-                if (col == BANK_NUM) {
-                for (int i = 0; i < bankNumbers.length; i++) {
-                    box.addItem(bankNumbers[i]);
+                driver = ((SceneListModel) table.getModel()).getPatchAt(row)
+                        .getDriver();
+                String[] patchNumbers = driver.getPatchNumbers();
+                String[] bankNumbers = driver.getBankNumbers();
+                if (patchNumbers.length > 1) {
+                    if (col == BANK_NUM) {
+                        for (int i = 0; i < bankNumbers.length; i++) {
+                            box.addItem(bankNumbers[i]);
+                        }
+                    } else if (col == PATCH_NUM)
+                        for (int i = 0; i < patchNumbers.length; i++) {
+                            box.addItem(patchNumbers[i]);
+                        }
                 }
-                } else if (col == PATCH_NUM)
-                for (int i = 0; i < patchNumbers.length; i++) {
-                    box.addItem(patchNumbers[i]);
+                editor = new DefaultCellEditor(box);
+                if (editor == null) {
+                    editor = defaultEditor;
                 }
-            }
-            editor = new DefaultCellEditor(box);
-            if (editor == null) {
-                editor = defaultEditor;
-            }
             }
         }
 
