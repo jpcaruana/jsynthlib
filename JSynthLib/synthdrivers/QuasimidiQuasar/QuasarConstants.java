@@ -136,11 +136,19 @@ public class QuasarConstants {
 		"Bank S04",
 		"Bank S05",
 		"Bank S06",
-		"Bank S07",
-		"Bank 1, Card 1",
-		"Bank 2, Card 1",
-		"Bank 1, Card 2",
-		"Bank 2, Card 2"
+		"Bank S07"
+	};
+	
+	public static final String[] CARDS    = {
+		"No card",
+	    "T.R.E",
+	    "Hardcore",
+	    "RAM"
+	};
+	
+	/** Arpeggiator resolutions */	
+	public static final String[] ARP_RESOLUTIONS = { 
+		"4", "8", "16", "32"
 	};
 
 	/** The effect names for FX1 */
@@ -196,7 +204,7 @@ public class QuasarConstants {
 		8, 9, 10,		// Special FX / Equalizer / WahWah + Overdrive
 		11,	12, 13, 12,	// Auto WahWah / Overdrive / Distortion / Ring Mod
 		14, 5, -1		// Vocoder / HQ-Delay / Bypass		
-	};
+	};		
 
 	/**
 	* FX2 parameter labels
@@ -356,5 +364,5 @@ public class QuasarConstants {
 	public static final String[] SWITCH    = {
 	    SWITCH_OFF,
 	    SWITCH_ON
-	};
+	};		
 }

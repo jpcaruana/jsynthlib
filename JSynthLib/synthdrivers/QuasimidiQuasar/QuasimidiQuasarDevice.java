@@ -24,6 +24,15 @@ package synthdrivers.QuasimidiQuasar;
 import core.Device;
 
 import java.util.prefs.Preferences;
+
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 /**
  * Device class for the Quasimidi Quasar
  *
@@ -32,7 +41,10 @@ import java.util.prefs.Preferences;
  */
 public class QuasimidiQuasarDevice extends Device {
     private static final String INFO_TEXT
-    = "Currently only supporting the librarian features for single perfomances and performance banks.";
+    = "Librarian & editor for single perfomances and performance banks.";
+
+    protected JComboBox	firstCardSlot;
+    protected JComboBox	secondCardSlot;
 
     /**
     * Constructor for DeviceListWriter.
@@ -59,6 +71,57 @@ public class QuasimidiQuasarDevice extends Device {
         addDriver(new QuasimidiQuasarTemporaryConverter());
         addDriver(new QuasimidiQuasarSingleDriver());
         addDriver(new QuasimidiQuasarBankDriver());
+    }
+
+    /**
+     * Create a configration panel.  Override this if your device
+     * supports a configration panel.
+     */
+    protected JPanel config() {
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+		firstCardSlot = new JComboBox(QuasarConstants.CARDS);
+		firstCardSlot.setSelectedIndex( getCardInFirstSlot() );
+		firstCardSlot.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			    JComboBox cBox = (JComboBox)e.getSource();
+
+			    setCardInFirstSlot( cBox.getSelectedIndex() );
+			}
+		});
+
+		secondCardSlot = new JComboBox(QuasarConstants.CARDS);
+		secondCardSlot.setSelectedIndex( getCardInSecondSlot() );
+		secondCardSlot.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			    JComboBox cBox = (JComboBox)e.getSource();
+
+			    setCardInSecondSlot( cBox.getSelectedIndex() );
+			}
+	    });
+
+		panel.add(new JLabel("Select the cards."));		
+		panel.add(firstCardSlot);
+		panel.add(secondCardSlot);
+		return panel;
+    }
+
+    /** Getter for firstCardSlot */
+    public int getCardInFirstSlot() {
+		return this.prefs.getInt("cardInFirstSlot", 0);
+    }
+    /** Setter for firstCardSlot */
+    public void setCardInFirstSlot(int cardInSlot) {
+		this.prefs.putInt("cardInFirstSlot", cardInSlot);
+    }
+
+    /** Getter for secondCardSlot */
+    public int getCardInSecondSlot() {
+		return this.prefs.getInt("cardInSecondSlot", 0);
+    }
+    /** Setter for secondCardSlot */
+    public void setCardInSecondSlot(int cardInSlot) {
+		this.prefs.putInt("cardInSecondSlot", cardInSlot);
     }
 
 }

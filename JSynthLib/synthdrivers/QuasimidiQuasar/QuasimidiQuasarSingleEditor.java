@@ -68,8 +68,8 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
 			oTabs.add(buildPartWindow(i, patch), "Part " + i);
 		}
 
-		// Needed for initial tab enabling/disabling		
-		changePerfMode	( (int)patch.sysex[9]);		
+		// Needed for initial tab enabling/disabling
+		changePerfMode	( (int)patch.sysex[9]);
 		changeFX1		( (int)patch.sysex[50]);
 		changeFX2		( (int)patch.sysex[58]);
 
@@ -310,7 +310,7 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5,2,5,2);  // padding
-        
+
         fx2ParWidgets[0] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 59), new QuasarSender(0x00, 0x33) );
         fx2ParWidgets[1] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 60), new QuasarSender(0x00, 0x34) );
         fx2ParWidgets[2] = new KnobWidget(" ", p, 0, 127, 0, new ParamModel(patch, 61), new QuasarSender(0x00, 0x35) );
@@ -381,6 +381,10 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
 
 // Arp pak 1
 // new ParamModel(patch, 68), new QuasarSender(0x00, 0x3C)
+		// Arp on/off
+		tempPanel.add(new JCheckBox("On/Off") );
+		// Arpeggiator resolution		
+		tempPanel.add(new JComboBox(QuasarConstants.ARP_RESOLUTIONS) );
 
 		// Arpeggiator speed
 		tempPanel.add(new KnobWidget("Speed", p, 0, 127, 0, new ParamModel(patch, 69), new QuasarSender(0x00, 0x3D) ) );
@@ -405,8 +409,47 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
 
 		JPanel partPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
+		int cardInFirstSlot		= ( (QuasimidiQuasarDevice)p.getDevice() ).getCardInFirstSlot();
+		int cardInSecondSlot	= ( (QuasimidiQuasarDevice)p.getDevice() ).getCardInSecondSlot();
+		int banks = QuasarConstants.BANK_NAMES.length;
+
+		// If a card is in the second slot it is not relevant
+		// for the number of banks if a card is also in the first slot
+		// so process this first
+		if (cardInSecondSlot > 0) {
+			banks += 4;
+		}
+		else if (cardInFirstSlot > 0) {
+			banks += 2;
+		}
+
+		String bankNames[] = new String[banks];
+		// Copy the bank names from the default banks to the temporary array
+		int count = 0;
+		for ( ; count < QuasarConstants.BANK_NAMES.length; count++) {
+			bankNames[count] = QuasarConstants.BANK_NAMES[count];
+		}
+
+		if (banks > QuasarConstants.BANK_NAMES.length) {
+			if (cardInFirstSlot > 0) {
+				// No ++count here as the count is incremented enough in the for loop!
+				bankNames[count] = QuasarConstants.CARDS[cardInFirstSlot] + " Bank 1";
+				bankNames[++count] = QuasarConstants.CARDS[cardInFirstSlot] + " Bank 2";
+			}
+			// There is no card in slot 1 but one in slot 2
+			else if (cardInSecondSlot > 0) {
+				bankNames[++count] = "No card in slot 1";
+				bankNames[++count] = "No card in slot 1";
+			}
+
+			if (cardInSecondSlot > 0) {
+				bankNames[++count] = QuasarConstants.CARDS[cardInSecondSlot] + " Bank 1";
+				bankNames[++count] = QuasarConstants.CARDS[cardInSecondSlot] + " Bank 2";
+			}
+		}
+
 		// Bank number (up to 7 w/o cards, up to 11 with cards)
-		partPanel.add(new ComboBoxWidget("Bank No.", p, new ParamModel(patch, 82 + offset), new QuasarSender(partNo, 0x00), QuasarConstants.BANK_NAMES) );
+		partPanel.add(new ComboBoxWidget("Bank No.", p, new ParamModel(patch, 82 + offset), new QuasarSender(partNo, 0x00), bankNames) );
 		// Patch number
 		partPanel.add(new SpinnerWidget("Patch No.", p, 0, 127, 0, new ParamModel(patch, 83 + offset), new QuasarSender(partNo, 0x01) ) );
         // Trackmode (00h = muted, 01h = poly, 02h = mono)
@@ -489,8 +532,8 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
 			perfValueWidget.setLabel(" ");
 		}
 	}
-	
-	public void changeFX1(final int fx1) {
+
+	private void changeFX1(final int fx1) {
 		int parameterIndex = QuasarConstants.FX1_HELPER[fx1];
 
 		if (parameterIndex > -1) {
@@ -514,8 +557,8 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
 			}
 		}
 	}
-	
-	public void changeFX2(final int fx2) {
+
+	private void changeFX2(final int fx2) {
 		int parameterIndex = QuasarConstants.FX2_HELPER[fx2];
 
 		if (parameterIndex > -1) {
