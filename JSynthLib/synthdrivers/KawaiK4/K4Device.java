@@ -22,7 +22,11 @@ public class K4Device extends Device
         manufacturerName="Kawai";
         modelName="K4/K4R";
         setSynthName("K4");
-        addDriver (0,new KawaiK4BulkConverter ());
+        infoText="There are no known issues or problems with this synthesizer. Librarian and Editing functions are "+
+	         "available for all K4 datatypes, Singles, Single Banks, Multis, MultiBanks, Effects, EffectBanks, and "+
+		 "Drumkits. Note that the K4r does not have the effects section that is present on the K4.";
+		 
+      addDriver (0,new KawaiK4BulkConverter ());
         addDriver (new KawaiK4SingleDriver ());
         addDriver (new KawaiK4BankDriver ());
         addDriver (new KawaiK4MultiDriver ());

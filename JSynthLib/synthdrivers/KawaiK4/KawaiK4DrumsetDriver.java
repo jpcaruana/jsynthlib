@@ -17,7 +17,7 @@ public class KawaiK4DrumsetDriver extends Driver
         patchNameStart=0;
         patchNameSize=0;
         deviceIDoffset=2;
-        
+       authors="Gerrit Gehnen";
         bankNumbers =new String[]
         {"0-Internal"};
         patchNumbers= new String [1];

@@ -51,7 +51,7 @@ public class RolandXV5080PerfDriver extends Driver {
     sysexID = "F0411000101220**0000";
 //    inquiryID = "F07E**06024000000A***********F7";
     sysexRequestDump = SYSEX_REQUEST_DUMP;
-
+authors="Phil Shepherd";
     patchSize = PATCH_SIZE;
     patchNameStart = PATCH_NAME_START;
     patchNameSize = PATCH_NAME_SIZE;

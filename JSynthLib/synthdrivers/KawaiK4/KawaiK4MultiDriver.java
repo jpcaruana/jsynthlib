@@ -16,6 +16,7 @@ public class KawaiK4MultiDriver extends Driver
    id="K4";
    sysexID="F040**200004";
  //  inquiryID="F07E**06024000000400000000000f7";
+       authors="Gerrit Gehnen";
 
    patchSize=77+9;
    patchNameStart=8;

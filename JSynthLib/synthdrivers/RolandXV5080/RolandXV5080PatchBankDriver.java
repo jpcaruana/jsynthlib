@@ -31,6 +31,7 @@ public class RolandXV5080PatchBankDriver extends BankDriver {
     model = "XV5080";
     patchType = "PatchBank";
     id = "RdXv5";
+    authors="Phil Shepherd";
     sysexID = "F0411000101230000000";
 //    inquiryID = "F07E**06024000000A***********F7";
     sysexRequestDump = SYSEX_REQUEST_DUMP;

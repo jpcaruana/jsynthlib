@@ -26,7 +26,8 @@ public class KorgER1SingleDriver extends Driver
         checksumStart=0;
         checksumEnd=0;
         checksumOffset=0;
-        bankNumbers =new String[]
+        authors="Yves Lefebvre";
+       bankNumbers =new String[]
         {"Bank A","Bank B","Bank C","Bank D"};
         patchNumbers=new String[]
         {"01-","02-","03-","04-","05-","06-","07-",

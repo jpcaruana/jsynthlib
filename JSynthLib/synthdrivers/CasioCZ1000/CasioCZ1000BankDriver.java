@@ -24,6 +24,7 @@ public class CasioCZ1000BankDriver extends BankDriver
                                    "16-"};
    
         numPatches=patchNumbers.length;
+        authors="Yves Lefebvre";
         numColumns=4;
         singleSysexID="F04400007*";
         singleSize=264;

@@ -44,7 +44,7 @@ public class RolandXV5080PerfBankDriver extends BankDriver {
     numColumns = 4;
     singleSysexID = "F0411000101220**0000";
     singleSize = RolandXV5080PerfDriver.PATCH_SIZE;
-
+authors="Phil Shepherd";
 //  checksumStart =
 //  checksumEnd =
 //  checksumOffset =

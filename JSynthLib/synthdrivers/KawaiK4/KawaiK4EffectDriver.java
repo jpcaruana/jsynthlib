@@ -12,7 +12,8 @@ public class KawaiK4EffectDriver extends Driver
         patchType="Effect";
         id="K4";
         sysexID="F040**2*0004";
-        
+             authors="Gerrit Gehnen";
+  
         inquiryID="F07E**06024000000400000000000f7";
 	sysexRequestDump=new SysexHandler("F0 40 @@ 00 00 04 01 *patchNum* F7");
         patchSize=44;

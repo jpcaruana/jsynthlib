@@ -39,6 +39,7 @@ public class CasioCZ1000SingleDriver extends Driver
         patchSize=264;
         patchNameStart=0;
         patchNameSize=0;
+        authors="Yves Lefebvre";
         deviceIDoffset=0;
         checksumStart=0;
         checksumEnd=0;

@@ -21,7 +21,8 @@ public class KawaiK4EffectBankDriver extends BankDriver
         sysexID="F040**2100040100";
 //        inquiryID="F07E**06024000000400000000000f7";
 	sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 01 00 F7");
-        
+               authors="Gerrit Gehnen";
+
         deviceIDoffset=2;
         bankNumbers =new String[]
         {"0-Internal"};

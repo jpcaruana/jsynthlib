@@ -7,7 +7,7 @@ public class KawaiK4BulkConverter extends Converter {
         manufacturer="Kawai";
         model="K4/K4r";
         patchType="Bulk Dump Converter";
-        
+        authors="Brian Klock & Gerrit Gehnen";
         sysexID="F040**220004**00";
     }
     

@@ -29,6 +29,7 @@ public class NovationNova1SingleDriver extends Driver
         patchType="Single";
         id="Nova1";
         sysexID="F000202901210*0009";
+        authors="Yves Lefebvre";
         sysexRequestDump=new SysexHandler("F0 00 20 29 01 21 @@ 03 F7"); 
 	patchSize=296;
         patchNameStart=9;

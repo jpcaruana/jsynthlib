@@ -67,7 +67,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
     sysexID = "F000001b0b**0132";
 //    inquiryID = "F07E**06024000000A***********F7";
     sysexRequestDump = SYSEX_REQUEST_DUMP;
-
+    authors="Phil Shepherd";
 //    patchSize =
     numSysexMsgs = 1;
 //    patchNameStart =

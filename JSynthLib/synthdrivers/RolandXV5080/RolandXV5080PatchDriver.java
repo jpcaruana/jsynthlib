@@ -55,7 +55,8 @@ public class RolandXV5080PatchDriver extends Driver {
     patchType = "Patch";
     id = "RdXv5";
     sysexID = "F0411000101230**0000";
-//    inquiryID = "F07E**06024000000A***********F7";
+authors="Phil Shepherd";
+    //    inquiryID = "F07E**06024000000A***********F7";
 //    sysexRequestDump = SYSEX_REQUEST_DUMP;
 
     patchSize = PATCH_SIZE;

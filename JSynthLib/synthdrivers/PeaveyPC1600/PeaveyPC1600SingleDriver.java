@@ -62,7 +62,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
     id = "PvPC16";
     sysexID = "F000001B0B**04";
 //    inquiryID = "F07E**06024000000A***********F7";
-
+    authors="Phil Shepherd";
 //    patchSize = PATCH_SIZE;
     numSysexMsgs = 1;
     patchNameStart = PATCH_NAME_START;

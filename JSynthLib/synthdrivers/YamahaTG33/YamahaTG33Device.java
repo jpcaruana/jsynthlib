@@ -21,6 +21,10 @@ public class YamahaTG33Device extends Device
         manufacturerName="Yamaha";
         modelName="TG33/SY22";
         synthName="TG33";
+	infoText=" There are no known issues or problems with support for this synthesizer. Only Librarian support "+
+	"is available. I am looking for information which would allow me to write a Single Editor. The information "+
+	"available in the manuel and on the web is incomplete. If you can help, please email jsynthlib@overwhelmed.org";
+
         addDriver (new YamahaTG33BankDriver ());
         addDriver (new YamahaTG33SingleDriver ());
     }

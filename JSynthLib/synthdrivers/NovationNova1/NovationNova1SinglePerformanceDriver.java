@@ -18,7 +18,8 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
         id="Nova1";
         sysexID="F000202901210*000*";
         //sysexID="";
-        sysexRequestDump=new SysexHandler("F0 00 20 29 01 21 @@ 08 F7");
+        authors="Yves Lefebvre";
+       sysexRequestDump=new SysexHandler("F0 00 20 29 01 21 @@ 08 F7");
         deviceIDoffset=6;
         bankNumbers =new String[] {"Single Performance"};
         patchNumbers=new String[] {"Part 1-","Part 2-","Part 3-","Part 4-","Part 5-","Part 6-" };

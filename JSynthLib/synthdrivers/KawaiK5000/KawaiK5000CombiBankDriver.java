@@ -29,7 +29,8 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
     id = "K5k";
     sysexID = "F040**21000A20";
 //    inquiryID = "F07E**06024000000A***********F7";
-    sysexRequestDump = SYSEX_REQUEST_DUMP;
+   authors="Phil Shepherd";
+   sysexRequestDump = SYSEX_REQUEST_DUMP;
 
     patchSize = 0;
     numSysexMsgs = 1;
