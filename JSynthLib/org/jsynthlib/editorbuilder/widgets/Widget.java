@@ -69,8 +69,10 @@ public class Widget extends JPanel implements Writable {
 		if (kids != null && kids.length > 0) {
 			for (int i = 0; i < kids.length; i++) {
 				if (kids[i] instanceof Widget) {
-					if (!started)
-						xml.startElement("widgets");
+					if (!started) {
+					    xml.startElement("widgets");
+					    started = true;
+					}
 					((Widget)kids[i]).write(xml);
 				}
 			}
