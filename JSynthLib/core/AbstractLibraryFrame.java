@@ -7,7 +7,7 @@
 package core;
 
 /** Abstract interface for unified handling of
- * Library and Performance frames.
+ * Library and Scene frames.
  * @author Gerrit.Gehnen
  * @version $Id$
  */

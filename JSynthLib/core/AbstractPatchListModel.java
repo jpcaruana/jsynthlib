@@ -6,7 +6,7 @@
 package core;
 
 /** This is the general interface to unify the handling of
- * the LibraryTable and PerformanceTable.
+ * the LibraryTable and SceneTable.
  * @author  Gerrit
  * @version $Id$
  */

@@ -56,8 +56,8 @@ public class PatchEdit extends JFrame
     public static DocsAction docsAction;
     public static MonitorAction monitorAction;
 
-    public static NewPerformanceAction newPerformanceAction;
-    public static TransferPerformanceAction transferPerformanceAction;
+    public static NewSceneAction newSceneAction;
+    public static TransferSceneAction transferSceneAction;
     
     SearchDialog searchDialog;
     DocumentationWindow documentationWindow; 
@@ -157,11 +157,11 @@ public class PatchEdit extends JFrame
         menuLib.add (menuSaveAs);
         
         menuLib.add (new JSeparator ());
-        newPerformanceAction=new NewPerformanceAction();
-        menuLib.add(newPerformanceAction);
+        newSceneAction=new NewSceneAction();
+        menuLib.add(newSceneAction);
         
-        transferPerformanceAction=new TransferPerformanceAction();
-        menuLib.add(transferPerformanceAction);
+        transferSceneAction=new TransferSceneAction();
+        menuLib.add(transferSceneAction);
         menuLib.add (new JSeparator ());
         
         sortAction=new SortAction ();
@@ -368,9 +368,9 @@ public class PatchEdit extends JFrame
  {}
     }
 
-    protected void createPerformanceFrame ()
+    protected void createSceneFrame ()
     {
-        PerformanceFrame frame = new PerformanceFrame ();
+        SceneFrame frame = new SceneFrame ();
         frame.setVisible (true);
         desktop.add (frame);
         try
@@ -391,7 +391,7 @@ public class PatchEdit extends JFrame
             desktop.add (frame);
         } catch (Exception e)
         {
-            PerformanceFrame frame2=new PerformanceFrame(file);
+            SceneFrame frame2=new SceneFrame(file);
             try
             {
                 frame2.setVisible (true);
@@ -424,13 +424,13 @@ public class PatchEdit extends JFrame
             libFrame.save ();
         } catch (Exception e)
         {
-        PerformanceFrame perFrame;
+        SceneFrame sceneFrame;
         try
         {
-            perFrame=(PerformanceFrame)desktop.getSelectedFrame ();
-            if (perFrame.getTitle ().startsWith ("Unsaved "))
+            sceneFrame=(SceneFrame)desktop.getSelectedFrame ();
+            if (sceneFrame.getTitle ().startsWith ("Unsaved "))
             {saveFrameAs ();return;}
-            perFrame.save ();
+            sceneFrame.save ();
         } catch (Exception e2)               {
         ErrorMsg.reportError ("Error", "Unable to Save Library",e2);return;}
     }
@@ -466,7 +466,7 @@ public class PatchEdit extends JFrame
                     ((LibraryFrame)desktop.getSelectedFrame ()).save (file);
                        } catch (Exception pr)
                        {
-                         ((PerformanceFrame)desktop.getSelectedFrame()).save(file);
+                         ((SceneFrame)desktop.getSelectedFrame()).save(file);
                        }
                 }
             } catch (Exception ex)
@@ -901,25 +901,25 @@ public class PatchEdit extends JFrame
 
     }
 
-    class NewPerformanceAction extends AbstractAction
+    class NewSceneAction extends AbstractAction
     {
-        public NewPerformanceAction ()
+        public NewSceneAction ()
         {
-            super ("NewPerformance",null);
+            super ("New Scene",null);
         }
 
         public void actionPerformed (ActionEvent e)
         {
-            createPerformanceFrame ();
+            createSceneFrame ();
         }
     }
     
 
-   class TransferPerformanceAction extends AbstractAction
+   class TransferSceneAction extends AbstractAction
     {
-        public TransferPerformanceAction ()
+        public TransferSceneAction ()
         {
-            super ("Transfer Performance",null);
+            super ("Transfer Scene",null);
             //putValue (Action.MNEMONIC_KEY, new Integer ('S'));
             setEnabled (false);
         }
@@ -927,9 +927,9 @@ public class PatchEdit extends JFrame
         {
             try
             {
-                ((PerformanceFrame)desktop.getSelectedFrame ()).sendPerformance ();
+                ((SceneFrame)desktop.getSelectedFrame ()).sendScene ();
             } catch (Exception ex)
-            {ErrorMsg.reportError ("Error","Performance Library must be the selected window.",ex);};
+            {ErrorMsg.reportError ("Error","Scene Library must be the selected window.",ex);};
         }
     }
     class OpenAction extends AbstractAction
@@ -941,7 +941,7 @@ public class PatchEdit extends JFrame
         public void actionPerformed (ActionEvent e)
         {
             JFileChooser fc=new JFileChooser ();
-            javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("PatchEdit Library Files",new String[] {".patchlib",".perflib"});
+            javax.swing.filechooser.FileFilter type1 = new ExtensionFilter ("PatchEdit Library Files",new String[] {".patchlib",".scenelib"});
             fc.setCurrentDirectory (new File (appConfig.getLibPath()));
             fc.addChoosableFileFilter (type1);
             fc.setFileFilter (type1);

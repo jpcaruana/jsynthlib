@@ -59,7 +59,7 @@ public class SearchDialog extends JDialog {
          group.add(button4);
          group.add(button5);
 
-         if (PatchEdit.desktop.getSelectedFrame() instanceof PerformanceFrame)
+         if (PatchEdit.desktop.getSelectedFrame() instanceof SceneFrame)
          {
              button2.setEnabled(false);
              button3.setEnabled(false);
@@ -116,7 +116,7 @@ public class SearchDialog extends JDialog {
 
 public void show()
 {
-    if (PatchEdit.desktop.getSelectedFrame() instanceof PerformanceFrame)
+    if (PatchEdit.desktop.getSelectedFrame() instanceof SceneFrame)
          {
              button2.setEnabled(false);
              button3.setEnabled(false);
