@@ -3,6 +3,7 @@ import core.*;
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListDataEvent;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -77,6 +78,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     addWidget(panel, bar, slidercount++ );
     return bar;
   }
+  /*
   protected ScrollBarWidget addLabeledSlider(String name, int address, int mid,
 					     boolean _short, int min, int max,
 					     int offset) {
@@ -97,7 +99,38 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     addWidget(null, bar, slidercount++, false);
     return bar;
   }
+  */
+  class MyScrollBarWidget extends ScrollBarWidget {
+    MyScrollBarWidget(String l, Patch p, int min, int max, int b,
+			     ParamModel ofs, SysexSender s) {
+      super(l, p, min, max, b, ofs, s);
+    }
 
+    protected void layoutWidgets() {
+      setLayout(new BorderLayout());
+      JLabel label = getJLabel();
+      label.setHorizontalAlignment(SwingConstants.CENTER);
+      slider.setMinimumSize(new Dimension(50, 25));
+      slider.setMaximumSize(new Dimension(125, 25));
+
+      add(label, BorderLayout.NORTH);
+      add(slider, BorderLayout.CENTER);
+      add(text, BorderLayout.EAST);
+    }
+  }
+  protected MyScrollBarWidget addLabeledSlider(String name, int address, int mid,
+					       boolean _short, int min, int max,
+					       int offset) {
+    int sendaddress = address;
+    if ( (byte)(address >> 8) == (byte) -1)
+      sendaddress = (address & 0x7f007f) | (mid << 8);
+    MyScrollBarWidget bar =
+      new MyScrollBarWidget(name, p, min, max, offset,
+			    new MotifParamModel(p, address, mid, _short),
+			    new ParamSender(sendaddress, _short));
+    addWidget(panel, bar, slidercount++, false);
+    return bar;
+  }
   protected void addFiller(int w, int h) {
     panel.add(Box.createRigidArea(new Dimension(w, h)));
   }
