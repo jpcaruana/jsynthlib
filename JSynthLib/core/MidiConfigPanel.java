@@ -20,30 +20,30 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
     private JComboBox cb2 = null;
     /** ComboBox for MIDI In port for Master Controller. */
     private JComboBox cb3 = null;
+    /** CheckBox for Master Controller */
+    private JCheckBox enabledBox;
     /** ComboBox for MIDI Wrapper. */
     private JComboBox cbDriver = null;
 
     private JPanel channelPanel = null;
     private JPanel cbPanel = null;
-    private Vector midiImps;
     private Vector driverChangeListeners;
-    private MidiWrapper currentDriver;
 
     public MidiConfigPanel(AppConfig appConfig) {
 	super(appConfig);
-	currentDriver = null;
 	driverChangeListeners = new Vector();
 
 	setLayout (new core.ColumnLayout ());
 	setPreferredSize(new Dimension(500,250));
 
+	// MIDI wrapper selection Combobox
         JLabel l2 = new JLabel ("MIDI Access Method:");
         add (l2);
 
 	cbDriver=new JComboBox ();
 	add (cbDriver);
 	// Fill the combo box with all Midi wrappers in the midiimps vector
-	midiImps = MidiWrapper.getSuitableWrappers();
+	Vector midiImps = appConfig.midiWrappers;
 	for(int i=0; i<midiImps.size(); i++) {
 	    cbDriver.addItem(midiImps.elementAt(i));
 	}
@@ -51,11 +51,13 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 		public void itemStateChanged (ItemEvent e) {
 		    if (e.getStateChange ()==ItemEvent.SELECTED) {
 			System.out.println("itemStateChanged");
-			midiDriverSelected((MidiWrapper) ((JComboBox)e.getSource()).getSelectedItem());
+			resetPortComboBoxes();
+			//midiDriverSelected((MidiWrapper) ((JComboBox)e.getSource()).getSelectedItem());
 		    }
 		}
 	    });
 
+	// panel for other settings
 	channelPanel = new JPanel();
         channelPanel.setLayout(new core.ColumnLayout());
 
@@ -67,15 +69,17 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	gbc.anchor=gbc.WEST;
 
 
+	// make a space
 	gbc.gridx=0; gbc.gridy=2; gbc.gridheight=1; gbc.gridwidth=1;
 	JLabel l3=new JLabel (" ");
 	gridbag.setConstraints(l3, gbc);
         cbPanel.add (l3);
+	// Output Port/Input Port selection
 	gbc.gridx=0; gbc.gridy=3; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
         JLabel cbLabel = new JLabel ("Run Startup Initialization on MIDI Ports:");
 	gridbag.setConstraints(cbLabel, gbc);
 	cbPanel.add (cbLabel);
-	
+
 	gbc.gridx=0; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=1;
 	JLabel cb1Label = new JLabel("Out Port:");
 	gridbag.setConstraints(cb1Label, gbc);
@@ -94,24 +98,32 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	gridbag.setConstraints(cb2, gbc);
         cbPanel.add (cb2);
 
+	// MIDI loopback test
 	gbc.gridx=1; gbc.gridy=6; gbc.gridheight=1; gbc.gridwidth=1;gbc.fill=gbc.NONE;
-        JButton testButton = new JButton("Test MIDI");
+        JButton testButton = new JButton("MIDI Loopback Test...");
 	testButton.addActionListener (new ActionListener () {
 		public void actionPerformed (ActionEvent e) {
-		    MidiTest.runLoopbackTest(currentDriver, cb2.getSelectedIndex(), cb1.getSelectedIndex());
+		    MidiTest.runLoopbackTest(AppConfig.getMidiWrapper(), cb2.getSelectedIndex(), cb1.getSelectedIndex());
 		}
 	    });
 	gridbag.setConstraints(testButton, gbc);
 	cbPanel.add(testButton);
-	
+
+	// make a space
 	gbc.gridx=0; gbc.gridy=7; gbc.gridheight=1; gbc.gridwidth=1; gbc.fill=gbc.HORIZONTAL;
 	JLabel l0=new JLabel (" ");
 	gridbag.setConstraints(l0, gbc);
         cbPanel.add (l0);
-	gbc.gridx=0; gbc.gridy=8; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
+	// master controller selection
+	gbc.gridx=0; gbc.gridy=8; gbc.gridheight=1; gbc.gridwidth=3;
 	JLabel l1=new JLabel ("Receive from Master Controller on MIDI Port:");
 	gridbag.setConstraints(l1, gbc);
         cbPanel.add (l1);
+
+	enabledBox = new JCheckBox ("Enable Master Controller");
+	gbc.gridx = 3; gbc.gridy = 8; gbc.gridwidth = 1; gbc.gridheight = 1;
+	cbPanel.add(enabledBox, gbc);
+
 	gbc.gridx=1; gbc.gridy=9; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
         cb3 = new JComboBox ();
 	gridbag.setConstraints(cb3, gbc);
@@ -119,8 +131,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 
 	channelPanel.add(cbPanel);
 	add(channelPanel);
-        
-	init();
+	//init();
     }
 
     /**
@@ -133,7 +144,6 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	    driverChangeListeners.add(listener);
 	}
     }
-
     /**
      * This should return the name that should go on the tab (if using
      * a tabbed config dialog).  Otherwise, it could be used for a
@@ -153,20 +163,36 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
     }
 
     public void commitSettings() {
-	appConfig.setInitPortIn(cb2.getSelectedIndex ());
-	appConfig.setInitPortOut(cb1.getSelectedIndex ());
-	appConfig.setMasterController(cb3.getSelectedIndex() - 1);
 	appConfig.setMidiPlatform(cbDriver.getSelectedIndex());
+
+	int midiIn = cb2.getSelectedIndex();
+	int midiOut = cb1.getSelectedIndex();
+	int masterIn = cb3.getSelectedIndex();
+
+	appConfig.setInitPortIn(midiIn);
+	appConfig.setInitPortOut(midiOut);
+	appConfig.setMasterController(masterIn);
+
+	if (PatchEdit.newMidiAPI) {
+	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) appConfig.getMidiWrapper();
+	    appConfig.setMidiIn(jw.getInputDevice(midiIn));
+	    appConfig.setMidiOut(jw.getOutputDevice(midiOut));
+	    appConfig.setMidiMasterIn(jw.getInputDevice(masterIn));
+	}
+	appConfig.setMasterInEnable(enabledBox.isSelected());
+
+	// Notify all listeners
+	for(int i = 0; i < driverChangeListeners.size(); i++) {
+	    ((MidiDriverChangeListener) driverChangeListeners.elementAt(i)).midiDriverChanged(AppConfig.getMidiWrapper());
+	}
+	resetPortComboBoxes();
+	repackContainer();
     }
 
     public void init() {
-	if (PatchEdit.appConfig.getMidiPlatform()<0) PatchEdit.appConfig.setMidiPlatform(0);
-	if (PatchEdit.appConfig.getInitPortIn()<0) PatchEdit.appConfig.setInitPortIn(0);
-	if (PatchEdit.appConfig.getInitPortOut()<0) PatchEdit.appConfig.setInitPortOut(0);
-	if (PatchEdit.appConfig.getFaderPort()<0) PatchEdit.appConfig.setFaderPort(0);
-	//if (PatchEdit.appConfig.getMasterController()<0) PatchEdit.appConfig.setMasterController(0);
-	setComboBox(cbDriver,PatchEdit.appConfig.getMidiPlatform());
-	midiDriverSelected((MidiWrapper) cbDriver.getSelectedItem());
+	setComboBox(cbDriver, PatchEdit.appConfig.getMidiPlatform());
+	enabledBox.setSelected(appConfig.getMasterInEnable());
+	//midiDriverSelected((MidiWrapper) cbDriver.getSelectedItem());
     }
 
     /**
@@ -174,6 +200,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
      * ports available from the current MIDI driver - emenaker 2003.03.19
      */
     private void resetPortComboBoxes() {
+	MidiWrapper currentDriver = appConfig.getMidiWrapper();
 	cb1.removeAllItems ();
 	try {
 	    for (int j=0; j< currentDriver.getNumOutputDevices ();j++)
@@ -190,7 +217,6 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	} catch (Exception e) {}
 	cb3.removeAllItems ();
 	try {
-	    cb3.addItem ("Disable Master Controller");
 	    for (int j=0; j< currentDriver.getNumInputDevices ();j++)
 		try {
 		    cb3.addItem (j+": "+currentDriver.getInputDeviceName (j));
@@ -198,14 +224,14 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	} catch (Exception e) {}
 	setComboBox(cb1, PatchEdit.appConfig.getInitPortOut());
 	setComboBox(cb2, PatchEdit.appConfig.getInitPortIn());
-	setComboBox(cb3, PatchEdit.appConfig.getMasterController() + 1);
+	setComboBox(cb3, PatchEdit.appConfig.getMasterController());
 	setContainerEnabled(channelPanel,currentDriver.isReady());
     }
 
     /**
      * This handles the issues surrounding switching to a new
      * driver. This breaks down to several tasks:
-
+     *
      * 1 - Make sure that we weren't asked to switch to the driver
      *     we're already using
      * 2 - Close the old driver
@@ -216,7 +242,9 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
      *
      * @param selectedDriver The new driver to switch to
      */
+    /*
     private void midiDriverSelected(MidiWrapper selectedDriver) {
+	MidiWrapper currentDriver = appConfig.getMidiWrapper();
 	System.out.println("Something selected \""+selectedDriver+"\"");
 	if(currentDriver != null) {
 	    // Did they select the driver we're already using?
@@ -226,18 +254,17 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 		System.out.println("We're already using that driver");
 		return;
 	    }
-	}
-	// Either the current driver is null, or they selected a
-	// different driver from the current one
-	if(currentDriver != null) {
+	    // Either the current driver is null, or they selected a
+	    // different driver from the current one
 	    currentDriver.close();
 	}
+
 	System.out.println("Initializing driver:"+selectedDriver.toString());
 	initNewMidiDriver(selectedDriver);
 	resetPortComboBoxes();
 	return;
     }
-
+    */
     /**
      * This initializes a new midi driver. Basically, it just trys to
      * call the "init(int,int)" method on it and, provided that there
@@ -247,6 +274,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
      *
      * @param newDriver The driver to initialize
      */
+    /*
     private void initNewMidiDriver(MidiWrapper newDriver) {
 	// We're probably supposed to show this to the user.....
 	//JOptionPane.showMessageDialog (null, "You must exit and restart the program for your changes to take effect","Changing L&F / Platform", JOptionPane.INFORMATION_MESSAGE);
@@ -274,7 +302,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	    return;
         }
     }
-
+    */
     /**
      * This returns the currently-selected midi wrapper. At present,
      * it's only used by the main app to obtain the midi driver after
@@ -282,22 +310,24 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
      * midiDriverChanged() callback).
      * @return
      */
+    /*
     public MidiWrapper getMidiWrapper() {
 	return(currentDriver);
     }
-
+    */
     /**
      * This checks if the first item in the combobox is a
      * DoNothingMidiWrapper. If so, it switches to it. - emenaker
      * 2003.03.19
      *
      */
+    /*
     private void switchToDoNothingMidiWrapper() {
 	if(cbDriver.getItemAt(0) instanceof DoNothingMidiWrapper) {
 	    cbDriver.setSelectedIndex(0);
 	}
     }
-
+    */
     /**
      * Recursively enables or disables all components in a container - emenaker 2003.03.08
      * @param container
