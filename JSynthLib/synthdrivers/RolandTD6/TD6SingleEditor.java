@@ -20,6 +20,7 @@
  */
 
 package synthdrivers.RolandTD6;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -151,12 +152,16 @@ final class TD6SingleEditor extends PatchEditorFrame {
 			(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 				    // deselect privious selected button
-				    if (isRim)
+				    if (isRim) {
 					padList[pad].buttonRim.setBorderPainted(false);
-				    else
+					padList[pad].buttonRim.setSelected(false);
+				    } else {
 					padList[pad].buttonHead.setBorderPainted(false);
+					padList[pad].buttonHead.setSelected(false);
+				    }
 				    JButton b = (JButton) e.getSource();
-				    b.setBorderPainted(true);
+				    b.setBorderPainted(true); // for Windows UI
+				    b.setSelected(true); // for Metal UI
 				    // pad and isRim are used by TD6PadSender and TD6PadModel.
 				    pad = index;
 				    isRim = rimp;
@@ -172,6 +177,7 @@ final class TD6SingleEditor extends PatchEditorFrame {
 			    });
 		}
 		b.setBorderPainted(false);
+		b.setSelected(false);
 		gbc.gridx = 1 + j; gbc.gridy = 1 + i;
 		padListPane.add(b, gbc);
 	    }	// j-loop
@@ -180,6 +186,7 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	pad = 0;
 	isRim = false;
 	padList[pad].buttonHead.setBorderPainted(true);
+	padList[pad].buttonHead.setSelected(true);
 
 	/*
 	 * Instrument Tree
@@ -209,17 +216,19 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	gbc.gridx = 0; gbc.gridy = 1;
 	padPane.add(padParamPane, gbc);
 
+	int lw = (int) (new JLabel("Pad Pattern")).getPreferredSize().getWidth();
+
 	//   pitch
 	addWidget(padParamPane,
 		  new ScrollBarWidget("Pitch", patch,
-				      0, 960, -480,
+				      0, 960, -480, lw,
 				      new TD6PadModel(patch, 0x4, true),
 				      new TD6PadSender(0x4, true)),
 		  0, 0, 1, 1, snum++);
 	//   decay
 	addWidget(padParamPane,
 		  new ScrollBarWidget("Decay", patch,
-				      0, 62, -31,
+				      0, 62, -31, lw,
 				      new TD6PadModel(patch, 0x8),
 				      new TD6PadSender(0x8)),
 		  0, 1, 1, 1, snum++);
@@ -230,7 +239,7 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	    padText[i] = String.valueOf(i);
 	addWidget(padParamPane,
 		  new ScrollBarLookupWidget("Pad Pattern", patch,
-					    0, 250,
+					    0, 250, lw,
 					    new TD6PadModel(patch, 0x9, true),
 					    new TD6PadSender(0x9, true),
 					    padText),
@@ -247,17 +256,19 @@ final class TD6SingleEditor extends PatchEditorFrame {
 				     new TD6PadModel(patch, 0x12),
 				     new TD6PadSender(0x12)),
 		  1, 0, 1, 1, 0);
+
+	lw = (int) (new JLabel("Pedal Pitch Control")).getPreferredSize().getWidth();
 	//   MIDI gate time (0.1 to 8.0)
 	addWidget(padParamPane,
 		  new ScrollBarWidget("Gate Time (x 0.1s)", patch,
-				      1, 80, 1,
+				      1, 80, 1, lw,
 				      new TD6PadModel(patch, 0xd),
 				      new TD6PadSender(0xd)),
 		  1, 1, 1, 1, snum++);
 	//   MIDI note number
 	addWidget(padParamPane,
 		  new ScrollBarWidget("Note Number", patch,
-				      0, 127, 0,
+				      0, 127, 0, lw,
 				      new TD6PadModel(patch, 0xe),
 				      new TD6PadSender(0xe)),
 		  1, 2, 1, 1, snum++);
@@ -277,6 +288,9 @@ final class TD6SingleEditor extends PatchEditorFrame {
 					 TitledBorder.CENTER,
 					 TitledBorder.CENTER));
 	gbc.gridx = 0; gbc.gridy = 0;
+	gbc.gridwidth = 1; gbc.gridheight = 1;
+	gbc.anchor = GridBagConstraints.CENTER;
+	gbc.fill = GridBagConstraints.NONE;
 	mixerPane.add(padMx, gbc);
 	addWidget(padMx,
 		  new VertScrollBarWidget(" ", patch,
@@ -292,8 +306,6 @@ final class TD6SingleEditor extends PatchEditorFrame {
 					     padList[i].name,
 					     TitledBorder.CENTER,
 					     TitledBorder.CENTER));
-	    gbc.gridx = i + 1; gbc.gridy = 0;
-	    mixerPane.add(padMx, gbc);
 	    int w = 0;
 	    for (int j = 0; j < 2; j++) { // j: 0:head, 1:rim
 		if (j == 1
@@ -308,8 +320,7 @@ final class TD6SingleEditor extends PatchEditorFrame {
 						   + (j == 0 ? 0x00 : 0x13) + 0x10)),
 			   new TD6KitSender(padList[i].offset
 					    + (j == 0 ? 0x00 : 0x13) + 0x10)),
-			  j, 1, 1, 1, snum++);
-		w++;
+			  w++, 1, 1, 1, snum++);
 	    }
 	    if (padList[i].name == "Hi-Hat") {
 		// Pedal Hi-Hat Volume
@@ -318,8 +329,7 @@ final class TD6SingleEditor extends PatchEditorFrame {
 						  0, 15, 0,
 						  new TD6KitModel(patch, 0x13),
 						  new TD6KitSender(0x13)),
-			  2, 1, 1, 1, snum++);
-		w++;
+			  w++, 1, 1, 1, snum++);
 	    }
 	    // How can I move Center to top?  Change DKnob class or add
 	    // radio button? !!!FIXIT!!!
@@ -336,7 +346,15 @@ final class TD6SingleEditor extends PatchEditorFrame {
 							   padList[i].offset + 0x26),
 					   new TD6KitSender(padList[i].offset + 0x26),
 					   panText),
-		      0, 0, 1, 1, snum++);
+		      0, 0, w, 1,
+		      GridBagConstraints.CENTER, GridBagConstraints.NONE,
+		      snum++);
+
+	    gbc.gridx = i + 1; gbc.gridy = 0;
+	    gbc.gridwidth = 1; gbc.gridheight = 1;
+	    gbc.anchor = GridBagConstraints.CENTER;
+	    gbc.fill = GridBagConstraints.NONE;
+	    mixerPane.add(padMx, gbc);
 	}
 
 	/*
