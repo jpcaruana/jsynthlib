@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 
 import core.BankDriver;
 import core.ErrorMsg;
-import core.IPatchDriver;
 import core.Patch;
 import core.SysexHandler;
 import core.Utility;
@@ -104,9 +103,8 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
 
   public void setPatchName(Patch bank, int patchNum, String name) {
     Patch p = getPatch(bank, patchNum);
-    IPatchDriver singleDriver = p.getDriver();
     p.setName(name);
-    singleDriver.calculateChecksum(p);
+    p.calculateChecksum();
     putPatch(bank, p, patchNum);
   }
 

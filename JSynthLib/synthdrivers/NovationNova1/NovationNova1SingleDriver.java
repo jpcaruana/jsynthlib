@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import core.ColumnLayout;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatchDriver;
 import core.Patch;
 import core.SysexHandler;
 
@@ -129,10 +128,10 @@ class NovationNova1PatchSender extends JDialog
     public static int channel = 0;
 
     // The Midi Out Port the user assigns
-    public IPatchDriver localDriver;
+    public Driver localDriver;
 
 
-    public NovationNova1PatchSender(JFrame Parent,Patch p, IPatchDriver driver)
+    public NovationNova1PatchSender(JFrame Parent,Patch p, Driver driver)
     {
         super(Parent,"Nova1 Patch Sender",true);
 

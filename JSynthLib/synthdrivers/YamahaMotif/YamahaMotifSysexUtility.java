@@ -1,6 +1,6 @@
 package synthdrivers.YamahaMotif;
 import core.ErrorMsg;
-import core.IPatchDriver;
+import core.Driver;
 public abstract class YamahaMotifSysexUtility {
 
   public static final int DEVICE_ID_OFFSET = 2;
@@ -99,7 +99,7 @@ public abstract class YamahaMotifSysexUtility {
       && setParameter(sysex, address + 1, value & 127, offset);
   }
 
-  public static void splitAndSendBulk( byte[] sysex, IPatchDriver driver, int deviceid ) {
+  public static void splitAndSendBulk( byte[] sysex, Driver driver, int deviceid ) {
     byte[] msg;
      for ( int size = 0, offset = 0;
 	  offset <= sysex.length - SYSEX_OVERHEAD;

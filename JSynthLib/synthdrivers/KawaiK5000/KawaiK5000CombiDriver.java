@@ -8,7 +8,6 @@
 package synthdrivers.KawaiK5000;
 import core.Driver;
 import core.ErrorMsg;
-import core.IPatchDriver;
 import core.Patch;
 import core.SysexHandler;
 
@@ -123,9 +122,8 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
   public Patch createNewPatch() {
 //ErrorMsg.reportStatus("KawaiK5000CombiDriver->createNewPatch");
     Patch p = createPatchFromData(new byte[PATCH_DATA_SIZE], 0, PATCH_DATA_SIZE);
-    IPatchDriver singleDriver = p.getDriver();
     p.setName("New Patch");
-    singleDriver.calculateChecksum(p);
+    p.calculateChecksum();
     return p;
   }
 

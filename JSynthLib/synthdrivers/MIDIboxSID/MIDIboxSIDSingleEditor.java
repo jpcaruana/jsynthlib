@@ -48,6 +48,7 @@ import javax.swing.table.TableColumn;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
+import core.Driver;
 import core.EnvelopeWidget;
 import core.ParamModel;
 import core.Patch;
@@ -490,7 +491,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	    {
 		System.out.println("Wavetable Field changed: " + i);
 	        ((Patch)p).sysex[8+0x80+i] = cooked_dump[i];
-		SlowSender.sendParameter(p.getDriver(), 0x80+i, cooked_dump[i], 10);
+		SlowSender.sendParameter((Driver) p.getDriver(), 0x80+i, cooked_dump[i], 10);
 	    }
 	}
     }
