@@ -125,6 +125,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       if (alignleft)
 	widget.setAlignmentX(widget.LEFT_ALIGNMENT);
       widget.setMaximumSize(widget.getPreferredSize());
+	 setPreferredSize(getMinimumSize());
 
       if (widget instanceof ScrollBarWidget)
 	sliderList.add(((ScrollBarWidget)widget).slider);
@@ -517,49 +518,46 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
 								element),
 					    0,0,null,
 					    0, false,
-					    new ParamSender(0x410011 |
-							    (element<<8)),null,
-					    "Delay", null), new
+					    new ParamSender(0x41ff11,element)
+ 					    ,null,"Delay", null), new
 			       EnvelopeNode(10,10,null,
 					    0,127,
 					    new MotifParamModel(p,0x41ff28,
 								element),
 					    0,false,
 					    null,new
-					    ParamSender(0x410028|(element<<8)),
+					    ParamSender(0x41ff28, element),
 					    null,"Init"), new
 			       EnvelopeNode(0,127,new
 					    MotifParamModel(p,0x41ff24,element),
 					    127,127,null,0,false,new
-					    ParamSender(0x410024|(element<<8)),
+					    ParamSender(0x41ff24, element),
 					    null,"Attack",null), new
 			       EnvelopeNode(0,127,new
 					    MotifParamModel(p,0x41ff25,element),
 					    0,127,new
 					    MotifParamModel(p,0x41ff2a,element),
 					    0,false,new
-					    ParamSender(0x410025|(element<<8)),
-					    new ParamSender(0x410025 |
-							    (element<<8)),
+					    ParamSender(0x41ff25, element),
+ 					    new ParamSender(0x41ff25,element),
 					    "Decay 1 Time", "Decay 1 Level"),
 			       new EnvelopeNode(0,127,new
 					    MotifParamModel(p,0x41ff26,element),
 					    0,127,new
 					    MotifParamModel(p,0x41ff2b,element),
 					    0,false,new
-					    ParamSender(0x410025|(element<<8)),
-					    new ParamSender(0x410025 |
-							    (element<<8)),
+                                            ParamSender(0x410025, element),
+ 					    new ParamSender(0x41ff25,element),
 					    "Decay 2", "Sustain"), new
 			       EnvelopeNode(100,100,null,
 					    EnvelopeNode.SAME,EnvelopeNode.SAME,
 					    null,0,false,null,
 					    null,null,null), new
 			       EnvelopeNode(0,127,new
-					    MotifParamModel(p,0x41ff24,element),
+					    MotifParamModel(p,0x41ff27,element),
 					    0,0,
 					    null,0,false,new
-					    ParamSender(0x410024|(element<<8)),
+					    ParamSender(0x41ff27, element),
 					    null,"Release",null),
 
 			       }),600+10*element);
@@ -602,6 +600,20 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       sysex = new byte[ (twobytes ? 10 : 9 ) ];
       setup(address);
     }
+    public ParamSender (int address, int mid) {
+       if ( (byte)(address >> 8) == -1 )
+ 	address = (address & 0x7f007f) | (mid << 8);
+       twobytes = false;
+       sysex = new byte[9];
+       setup(address);
+     }
+     public ParamSender (int address, int mid, boolean _twobytes) {
+       if ( (byte)(address >> 8) == -1 )
+ 	address = (address & 0x7f007f) | (mid << 8);
+       twobytes = _twobytes;
+       sysex = new byte[ (twobytes ? 10 : 9 ) ];
+       setup(address);
+     }
     private void setup(int address) {
       sysex[0] = (byte) 0xF0;
       sysex[1] = (byte) 0x43;
@@ -623,39 +635,36 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     }
   }
   class MotifParamModel extends ParamModel {
-    byte mid;
     boolean twobytes;
     public MotifParamModel ( Patch p, int address ) {
       super(p, address);
-      if ( (byte)(address >> 8) == -1 )
-	mid = 0;
+      setAddress( 0 );
       twobytes = false;
     }
     public MotifParamModel(Patch p, int address, boolean _short) {
       super(p, address);
-      if ( (byte)(address >> 8) == (byte)-1 )
-	mid = 0;
+      setAddress( 0 );
       twobytes = _short;
     }
     public MotifParamModel(Patch p, int address, int _mid) {
       super(p, address);
-      mid = (byte)(_mid & 127);
+      setAddress( _mid & 127 );
       twobytes = false;
     }
     public MotifParamModel(Patch p, int address, int _mid, boolean _short) {
       super(p, address);
-      mid = (byte)(_mid & 127);
+      setAddress( _mid & 127 );
       twobytes = _short;
     }
-
+    protected void setAddress( int mid ) {
+       if ( (byte)(ofs >> 8) == -1 )
+ 	ofs = (ofs & 0x7f007f) | (mid << 8);
+     }	
     public void set(int value) {
-      int address = ofs;
-      if ( (byte)(address >> 8) == (byte) -1)
-	address = (address & 0x7f007f) | (mid << 8);
       if (twobytes)
-	YamahaMotifSysexUtility.setShortParameter(patch.sysex, address, value);
+	YamahaMotifSysexUtility.setShortParameter(patch.sysex, ofs, value);
       else
-	YamahaMotifSysexUtility.setParameter(patch.sysex, address, value);
+	YamahaMotifSysexUtility.setParameter(patch.sysex, ofs, value);
     }
     public int get () {
       if (twobytes)

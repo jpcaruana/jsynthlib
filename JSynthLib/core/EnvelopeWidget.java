@@ -3,6 +3,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
+/**
+ * @version $Id$
+ */
 public class EnvelopeWidget extends SysexWidget
 {
     int base;
@@ -125,6 +128,7 @@ public class EnvelopeWidget extends SysexWidget
         public EnvelopeCanvas (EnvelopeNode [] e,Patch pa,JTextField[] f)
         {super(); values=f;nodes=e;p=pa;    nodeX=new int[nodes.length];
          setMinimumSize (new Dimension (300,50));
+	 setPreferredSize(getMinimumSize());
          MyListener myListener = new MyListener ();
          addMouseListener (myListener);
          addMouseMotionListener (myListener);
