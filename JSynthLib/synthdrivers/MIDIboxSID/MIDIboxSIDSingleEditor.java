@@ -55,12 +55,13 @@ import core.Patch;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.ScrollBarWidget;
+import core.KnobWidget;
 import core.SysexSender;
 
 class MIDIboxSIDSingleEditor extends PatchEditorFrame
 {
     final String [] ccName = new String [] {
-	"  0 | -",
+	"  0 | -",              
 	"  1 | Modulation Wheel",
 	"  2 | Velocity Init Value",
 	"  3 | Modulation Wheel Init Value",
@@ -72,8 +73,8 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	"  9 | Voice 1 Note",
 	" 10 | Voice 2 Note",
 	" 11 | Voice 3 Note",
-	" 12 | WT Patch number",
-	" 13 | Velocity Depth",
+	" 12 | WT Patch number",               
+	" 13 | Velocity Depth",  
 	" 14 | Modulation Wheel",
 	" 15 | Aftertouch Depth",
 	" 16 | Voice 1/2/3 Transpose",
@@ -93,9 +94,9 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	" 30 | Voice 2 Portamento",
 	" 31 | Voice 3 Portamento",
 	" 32 | Voice 1/2/3 Waveform",
-	" 33 | Voice 1 Waveform",
-	" 34 | Voice 2 Waveform",
-	" 35 | Voice 3 Waveform",
+	" 33 | Voice 1 Waveform", 
+	" 34 | Voice 2 Waveform", 
+	" 35 | Voice 3 Waveform", 
 	" 36 | Voice 1/2/3 Pulse",
 	" 37 | Voice 1 Pulsewidth",
 	" 38 | Voice 2 Pulsewidth",
@@ -104,10 +105,10 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	" 41 | Voice 1 Arpeggiator",
 	" 42 | Voice 2 Arpeggiator",
 	" 43 | Voice 3 Arpeggiator",
-	" 44 | Filter Channels",
-	" 45 | Filter Mode",
+	" 44 | Filter Channels",  
+	" 45 | Filter Mode",      
 	" 46 | Filter CutOff frequency",
-	" 47 | Filter Resonance",
+	" 47 | Filter Resonance", 
 	" 48 | Voice 1/2/3 Attack",
 	" 49 | Voice 1 Single Attack",
 	" 50 | Voice 2 Single Attack",
@@ -121,57 +122,57 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	" 58 | Voice 2 Single Sustain",
 	" 59 | Voice 3 Single Sustain",
 	" 60 | Voice 1/2/3 Release",
-	" 61 | Voice 1 Release",
-	" 62 | Voice 2 Release",
-	" 63 | Voice 3 Release",
-	" 64 | LFO1 Rate",
-	" 65 | LFO2 Rate",
-	" 66 | LFO3 Rate",
-	" 67 | LFO4 Rate",
-	" 68 | LFO5 Rate",
-	" 69 | LFO6 Rate",
-	" 70 | -",
-	" 71 | -",
-	" 72 | LFO1 Depth",
-	" 73 | LFO2 Depth",
-	" 74 | LFO3 Depth",
-	" 75 | LFO4 Depth",
-	" 76 | LFO5 Depth",
-	" 77 | LFO6 Depth",
-	" 78 | ENV1 Depth",
-	" 79 | ENV2 Depth",
-	" 80 | LFO1 Mode",
-	" 81 | LFO2 Mode",
-	" 82 | LFO3 Mode",
-	" 83 | LFO4 Mode",
-	" 84 | LFO5 Mode",
-	" 85 | LFO6 Mode",
-	" 86 | -",
-	" 87 | -",
+	" 61 | Voice 1 Release",  
+	" 62 | Voice 2 Release",  
+	" 63 | Voice 3 Release",  
+	" 64 | LFO1 Rate",        
+	" 65 | LFO2 Rate",        
+	" 66 | LFO3 Rate",        
+	" 67 | LFO4 Rate",        
+	" 68 | LFO5 Rate",        
+	" 69 | LFO6 Rate",        
+	" 70 | -",                
+	" 71 | -",                
+	" 72 | LFO1 Depth",       
+	" 73 | LFO2 Depth",       
+	" 74 | LFO3 Depth",       
+	" 75 | LFO4 Depth",       
+	" 76 | LFO5 Depth",       
+	" 77 | LFO6 Depth",       
+	" 78 | ENV1 Depth",       
+	" 79 | ENV2 Depth",       
+	" 80 | LFO1 Mode",        
+	" 81 | LFO2 Mode",        
+	" 82 | LFO3 Mode",        
+	" 83 | LFO4 Mode",        
+	" 84 | LFO5 Mode",        
+	" 85 | LFO6 Mode",        
+	" 86 | Envelope 1 Curve",
+	" 87 | Envelope 2 Curve",
 	" 88 | Envelope 1 Attack",
-	" 89 | Envelope 1 Decay",
+	" 89 | Envelope 1 Decay", 
 	" 90 | Envelope 1 Sustain",
 	" 91 | Envelope 1 Release",
 	" 92 | Envelope 2 Attack",
-	" 93 | Envelope 2 Decay",
+	" 93 | Envelope 2 Decay", 
 	" 94 | Envelope 2 Sustain",
 	" 95 | Envelope 2 Release",
 	" 96 | Voice 1/2/3 assigned LFOs for Pitch",
-	" 97 | Voice 1 assigned LFOs for Pitch",
-	" 98 | Voice 2 assigned LFOs for Pitch",
-	" 99 | Voice 3 assigned LFOs for Pitch",
+	" 97 | Voice 1 assigned LFOs for Pitch", 
+	" 98 | Voice 2 assigned LFOs for Pitch", 
+	" 99 | Voice 3 assigned LFOs for Pitch", 
 	"100 | Voice 1/2/3 assigned LFOs for PW",
-	"101 | Voice 1 assigned LFOs for PW",
-	"102 | Voice 2 assigned LFOs for PW",
-	"103 | Voice 3 assigned LFOs for PW",
+	"101 | Voice 1 assigned LFOs for PW", 
+	"102 | Voice 2 assigned LFOs for PW", 
+	"103 | Voice 3 assigned LFOs for PW", 
 	"104 | Voice 1/2/3 assigned Envelopes",
-	"105 | Voice 1 assigned Envelopes",
-	"106 | Voice 2 assigned Envelopes",
-	"107 | Voice 3 assigned Envelopes",
+	"105 | Voice 1 assigned Envelopes", 
+	"106 | Voice 2 assigned Envelopes", 
+	"107 | Voice 3 assigned Envelopes", 
 	"108 | Assigned LFOs for Filter",
 	"109 | Assigned Envelopes for Filter",
-	"110 | -",
-	"111 | -",
+	"110 | Assigned Envelope Curves",
+	"111 | -",                
 	"112 | Voice 1/2/3 Note Delay",
 	"113 | Voice 1 Single Note Delay",
 	"114 | Voice 2 Single Note Delay",
@@ -184,11 +185,24 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	"121 | Assign Wavetable Par. #1 to CC",
 	"122 | Assign Wavetable Par. #2 to CC",
 	"123 | Assign Wavetable Par. #3 to CC",
-	"124 | -",
-	"125 | MIDI Clock Synchronization",
+	"124 | Oscillator Phase Synchronization",                
+	"125 | MIDI Clock Synchronization",                
 	"126 | Mono On",
 	"127 | Poly On",
     };
+
+    final String [] NoteName = new String [] {
+	"---","c#2","d-2","d#2","e-2","f-2","f#2","g-2","g#2","a-2","a#2","b-2",
+	"c-1","c#1","d-1","d#1","e-1","f-1","f#1","g-1","g#1","a-1","a#1","b-1",
+	"C-0","C#0","D-0","D#0","E-0","F-0","F#0","G-0","G#0","A-0","A#0","B-0",
+	"C-1","C#1","D-1","D#1","E-1","F-1","F#1","G-1","G#1","A-1","A#1","B-1",
+	"C-2","C#2","D-2","D#2","E-2","F-2","F#2","G-2","G#2","A-2","A#2","B-2",
+	"C-3","C#3","D-3","D#3","E-3","F-3","F#3","G-3","G#3","A-3","A#3","B-3",
+	"C-4","C#4","D-4","D#4","E-4","F-4","F#4","G-4","G#4","A-4","A#4","B-4",
+	"C-5","C#5","D-5","D#5","E-5","F-5","F#5","G-5","G#5","A-5","A#5","B-5",
+	"C-6","C#6","D-6","D#6","E-6","F-6","F#6","G-6","G#6","A-6","A#6","B-6",
+	"C-7","C#7","D-7","D#7","E-7","F-7","F#7","G-7","G#7","A-7","A#7","B-7",
+	"C-8"};
 
     MIDIboxSIDWavetableModel dataModel = new MIDIboxSIDWavetableModel();
     JTable table = new JTable(dataModel);
@@ -199,22 +213,73 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
     {
 	super ("MIDIbox SID Patch Editor",patch);
 	gbc.weightx=0; gbc.weighty=0;
-	// Common Pane
+
+///////////////////////////////////////////////////////////////////////////////
+//  Common Pane
+///////////////////////////////////////////////////////////////////////////////
 	JPanel cmnPane=new JPanel();
 	cmnPane.setLayout(new GridBagLayout());
-	addWidget(cmnPane,new PatchNameWidget(" Name  ", patch),0,0,2,1,0);
+	addWidget(cmnPane,new PatchNameWidget(" Name  ",patch),0,0,2,1,0);
 
 	// horizontal location, the vertical location, the horizontal size, and the vertical size). The last number is the fader number
 
-	addWidget(cmnPane,new ScrollBarWidget("Volume",patch,0,127,0,new SIDModel(patch,0x10),new SIDSender(patch,0x10)),0,1,5,1,1);
-        addWidget(cmnPane,new ComboBoxWidget("Play Mode",patch,new SIDModel(patch,0x11,0,0x7f,new int[]{0x0,0x01,0x3,0x7f}),new SIDSender(patch,0x11,0,0x7f,new int[]{0x0,0x1,0x3,0x7f}),new String []{"MONO", "LEGATO","WT Seq only","POLY"}),0,2,2,1,2);
-	addWidget(cmnPane,new ComboBoxWidget("Portam. Mode",patch,new SIDModel(patch,0x12),new SIDSender(patch,0x12),new String []{"Full Time", "Fingered (SusKey)"}),0,3,2,1,3);
+        addWidget(cmnPane,new ComboBoxWidget("Play Mode",patch,new SIDModel(patch,0x11,0,0x7f,new int[]{0x0,0x01,0x3,0x7f}),new SIDSender(patch,0x11,0,0x7f,new int[]{0x0,0x1,0x3,0x7f}),new String []{"MONO", "LEGATO","WT Seq only","POLY"}),0,1,2,1,1);
+	addWidget(cmnPane,new ComboBoxWidget("Portam. Mode",patch,new SIDModel(patch,0x12),new SIDSender(patch,0x12),new String []{"Full Time", "Fingered (SusKey)"}),0,2,2,1,2);
+	addWidget(cmnPane,new KnobWidget("Volume",patch,0,127,0,new SIDModel(patch,0x10),new SIDSender(patch,0x10)),2,1,1,3,3);
 
-	gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=6;
-	cmnPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Common",TitledBorder.CENTER,TitledBorder.CENTER));
+	gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=2;
+	cmnPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Common",TitledBorder.CENTER,TitledBorder.CENTER));  
 	scrollPane.add(cmnPane,gbc);
 
-	// Controller Assigns
+
+///////////////////////////////////////////////////////////////////////////////
+// ENVs
+///////////////////////////////////////////////////////////////////////////////
+	JTabbedPane ENVPane=new JTabbedPane();   
+	for(int i=0; i<2; i++) {     
+	    JPanel panel = new JPanel();
+	    panel.setLayout(new GridBagLayout());
+	    ENVPane.addTab("Envelope"+(i+1),panel);gbc.weightx=0;
+
+	    addWidget(panel,new EnvelopeWidget("SW Envelope",patch,new EnvelopeWidget.Node[] {
+		new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),     
+		new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x73+i*5),127,127,null,25,false,new SIDSender(patch,0x73+i*5),null,"A",null),
+		new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x74+i*5),0,127,new SIDModel(patch,0x75+i*5),25,false,new SIDSender(patch,0x74+i*5),new SIDSender(patch,0x75+i*5),"D","S"),
+		new EnvelopeWidget.Node(127,127,null,5000,5000,null,0,false,null,null,null,null),     
+		new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x76+i*5),0,0,null,0,false,new SIDSender(patch,0x76+i*5),null,"R",null),
+		}     ),0,0,10,3,50);
+	    addWidget(panel,new KnobWidget("Depth",patch,0,127,-64,new SIDModel(patch,0x72+i*5),new SIDSender(patch,0x72+i*5)),0,5,1,3,51);
+	    addWidget(panel,new KnobWidget("Curve",patch,0,127,-64,new SIDModel(patch,0x1e+i),new SIDSender(patch,0x1e+i)),1,5,1,3,52);
+	    gbc.gridx=2;gbc.gridy=5;gbc.gridwidth=3;gbc.gridheight=1; panel.add(new JLabel("Curve used on"),gbc);
+	    addWidget(panel,new CheckBoxWidget("Attack", patch,new SIDModel(patch,0x15,0+i*4),new SIDSender(patch,0x15,0+i*4)),5,5,1,1,-100);
+	    addWidget(panel,new CheckBoxWidget("Decay", patch,new SIDModel(patch,0x15,1+i*4),new SIDSender(patch,0x15,1+i*4)),5,6,1,1,-101);
+	    addWidget(panel,new CheckBoxWidget("Release", patch,new SIDModel(patch,0x15,2+i*4),new SIDSender(patch,0x15,2+i*4)),5,7,1,1,-102);
+	}
+	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=2;
+	scrollPane.add(ENVPane,gbc);
+
+
+///////////////////////////////////////////////////////////////////////////////
+// LFOs
+///////////////////////////////////////////////////////////////////////////////
+	JTabbedPane LFOPane=new JTabbedPane();   
+	for(int i=0; i<6; i++) {     
+	    JPanel panel = new JPanel();
+	    panel.setLayout(new GridBagLayout());
+	    LFOPane.addTab("LFO"+(i+1),panel);gbc.weightx=0;
+
+	    addWidget(panel,new KnobWidget("Rate",patch,0,127,0,new SIDModel(patch,0x61+i*3),new SIDSender(patch,0x61+i*3)),0,0,1,3,40);
+	    addWidget(panel,new KnobWidget("Depth",patch,0,127,-64,new SIDModel(patch,0x62+i*3),new SIDSender(patch,0x62+i*3)),1,0,1,3,41);
+	    addWidget(panel,new ComboBoxWidget("Mode",patch,new SIDModel(patch,0x60+i*3,0,0x7,new int[]{0x0,0x01,0x3,0x7}),new SIDSender(patch,0x60+i*3,0,0x7,new int[]{0x0,0x01,0x3,0x7}),new String []{"off", "unsynced","Sync w/ assigned notes","Sync w/ all notes"}),2,0,5,1,42);
+	    addWidget(panel,new ComboBoxWidget("Waveform",patch,new SIDModel(patch,0x60+i*3,4,0x7),new SIDSender(patch,0x60+i*3,4,0x7),new String []{"SINE", "TRIANGLE","SAW","PULSE","RANDOM"}),3,1,5,1,43);
+	}
+	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
+	scrollPane.add(LFOPane,gbc);
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Controller Assigns
+///////////////////////////////////////////////////////////////////////////////
 	JTabbedPane assignPane=new JTabbedPane();
 
 	// Assign Velocity Pane
@@ -233,18 +298,6 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
   	addWidget(MODAPane,new ScrollBarWidget("Init Value",patch,0,127,0,new SIDModel(patch,0x54),new SIDSender(patch,0x54)),0,1,5,1,8);
   	addWidget(MODAPane,new ScrollBarWidget("Depth",patch,0,127,-64,new SIDModel(patch,0x55),new SIDSender(patch,0x55)),0,2,5,1,9);
 
-	// MIDI Sync
-	JPanel CLKPane=new JPanel();
-	CLKPane.setLayout(new GridBagLayout());
-	gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; CLKPane.add(new JLabel("Targets   "),gbc);
-	addWidget(CLKPane,new CheckBoxWidget("Wavetable Seq./Arp.", patch,new SIDModel(patch,0x13,0),new SIDSender(patch,0x13,0)),1,0,1,1,-10);
-	addWidget(CLKPane,new CheckBoxWidget("LFOs", patch,new SIDModel(patch,0x13,1),new SIDSender(patch,0x13,1)),2,0,1,1,-11);
-	addWidget(CLKPane,new CheckBoxWidget("ENVs", patch,new SIDModel(patch,0x13,2),new SIDSender(patch,0x13,2)),3,0,1,1,-12);
-
-	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
-	CLKPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"MIDI Clock Synchronization",TitledBorder.CENTER,TitledBorder.CENTER));
-	scrollPane.add(CLKPane,gbc);
-
   	// Assign Aftertouch Pane
   	JPanel AFTAPane=new JPanel();
   	AFTAPane.setLayout(new GridBagLayout());
@@ -253,32 +306,150 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
   	addWidget(AFTAPane,new ScrollBarWidget("Init Value",patch,0,127,0,new SIDModel(patch,0x57),new SIDSender(patch,0x57)),0,1,5,1,11);
   	addWidget(AFTAPane,new ScrollBarWidget("Depth",patch,0,127,-64,new SIDModel(patch,0x58),new SIDSender(patch,0x58)),0,2,5,1,12);
 
-	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=4;
+	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
 	scrollPane.add(assignPane,gbc);
 
-	// Filter
+
+///////////////////////////////////////////////////////////////////////////////
+// Oscillators
+///////////////////////////////////////////////////////////////////////////////
+	JTabbedPane oscPane=new JTabbedPane();
+   
+	for(int i=0; i<3; i++) {     
+	    JPanel panel = new JPanel();
+	    panel.setLayout(new GridBagLayout());
+	    oscPane.addTab("OSC"+(i+1),panel);gbc.weightx=0;
+	    addWidget(panel,new EnvelopeWidget("VCA Envelope",patch,new EnvelopeWidget.Node[] {
+		new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),     
+		new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x27+i*16),0,0,null,0,false,new SIDSender(patch,0x27+i*16),null,"Dly",null),
+		new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x28+i*16),127,127,null,25,false,new SIDSender(patch,0x28+i*16),null,"A",null),
+		new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x29+i*16),0,127,new SIDModel(patch,0x2a+i*16),25,false,new SIDSender(patch,0x29+i*16),new SIDSender(patch,0x2a+i*16),"D","S"),
+		new EnvelopeWidget.Node(127,127,null,5000,5000,null,0,false,null,null,null,null),     
+		new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x2b+i*16),0,0,null,0,false,new SIDSender(patch,0x2b+i*16),null,"R",null),
+		}     ),0,0,5,5,33);
+	    addWidget(panel,new KnobWidget(" Transpose ",patch,0,127,-64,new SIDModel(patch,0x20+i*16),new SIDSender(patch,0x20+i*16)),0,6,1,3,20);
+	    addWidget(panel,new KnobWidget(" FineTune ",patch,0,127,-64,new SIDModel(patch,0x21+i*16),new SIDSender(patch,0x21+i*16)),1,6,1,3,21);
+	    addWidget(panel,new KnobWidget(" PitchRange ",patch,0,127,0,new SIDModel(patch,0x22+i*16),new SIDSender(patch,0x22+i*16)),2,6,1,3,22);
+	    addWidget(panel,new KnobWidget(" Arpeggiator ",patch,0,127,0,new SIDModel(patch,0x26+i*16),new SIDSender(patch,0x26+i*16)),0,9,1,3,23);
+	    addWidget(panel,new KnobWidget(" Portamento ",patch,0,127,0,new SIDModel(patch,0x23+i*16),new SIDSender(patch,0x23+i*16)),1,9,1,3,25);
+	    addWidget(panel,new KnobWidget(" PulseWidth ",patch,0,127,0,new SIDModel(patch,0x25+i*16),new SIDSender(patch,0x25+i*16)),2,9,1,3,26);
+
+	    addWidget(panel,new CheckBoxWidget("Tri",  patch,new SIDModel(patch,0x24+i*16,0),new SIDSender(patch,0x24+i*16,0)),3,7,1,1,-20);
+	    addWidget(panel,new CheckBoxWidget("Saw",  patch,new SIDModel(patch,0x24+i*16,1),new SIDSender(patch,0x24+i*16,1)),3,8,1,1,-21);
+	    addWidget(panel,new CheckBoxWidget("Rec",  patch,new SIDModel(patch,0x24+i*16,2),new SIDSender(patch,0x24+i*16,2)),4,7,1,1,-22);
+	    addWidget(panel,new CheckBoxWidget("Noise",patch,new SIDModel(patch,0x24+i*16,3),new SIDSender(patch,0x24+i*16,3)),4,8,1,1,-23);
+     
+	    addWidget(panel,new CheckBoxWidget("Sync",patch,new SIDModel(patch,0x24+i*16,5),new SIDSender(patch,0x24+i*16,5)),3,9,1,1,-24);
+	    addWidget(panel,new CheckBoxWidget("Ring",patch,new SIDModel(patch,0x24+i*16,6),new SIDSender(patch,0x24+i*16,6)),3,10,1,1,-25);
+	    addWidget(panel,new CheckBoxWidget("Off", patch,new SIDModel(patch,0x24+i*16,4),new SIDSender(patch,0x24+i*16,4)),4,9,1,1,-26);
+	    addWidget(panel,new CheckBoxWidget("Phase", patch,new SIDModel(patch,0x14,i),new SIDSender(patch,0x14,i)),4,10,1,1,-27);
+	    addWidget(panel,new ComboBoxWidget("Lower Limit",patch,new SIDModel(patch,0x2f+i*16),new SIDSender(patch,0x2f+i*16),NoteName),0,12,2,1,27);
+	    addWidget(panel,new ComboBoxWidget("Upper Limit",patch,new SIDModel(patch,0x5d+i),new SIDSender(patch,0x5d+i),NoteName),2,12,2,1,28);
+	}
+	gbc.gridx=5;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=4;
+	scrollPane.add(oscPane,gbc);
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Wavetables
+///////////////////////////////////////////////////////////////////////////////
+	JPanel WAVTPane=new JPanel();
+	WAVTPane.setLayout(new GridBagLayout());
+
+	addWidget(WAVTPane,new ComboBoxWidget("Parameter #1",patch,new SIDModel(patch,0x5a),new SIDSender(patch,0x5a),ccName),0,0,3,1,13);
+	addWidget(WAVTPane,new ComboBoxWidget("Parameter #2",patch,new SIDModel(patch,0x5b),new SIDSender(patch,0x5b),ccName),0,1,3,1,14);
+	addWidget(WAVTPane,new ComboBoxWidget("Parameter #3",patch,new SIDModel(patch,0x5c),new SIDSender(patch,0x5c),ccName),0,2,3,1,15);
+	addWidget(WAVTPane,new ScrollBarWidget("Rate",patch,0,127,0,new SIDModel(patch,0x59),new SIDSender(patch,0x59)),0,3,5,1,16);
+
+       
+        table.setPreferredScrollableViewportSize(new Dimension(100, 100));
+        JScrollPane scrollpane = new JScrollPane(table);
+	gbc.gridx=0;gbc.gridy=5;gbc.gridwidth=5;gbc.gridheight=20;
+        WAVTPane.add(scrollpane, gbc);
+        
+        TableColumn column = null;
+
+        column = table.getColumnModel().getColumn(0);
+        column = table.getColumnModel().getColumn(1);
+	JComboBox comboBox = new JComboBox();
+	for(int i=0; i<dataModel.modeNames.length; ++i) {
+	    comboBox.addItem(dataModel.modeNames[i]);
+	}
+	column.setCellEditor(new DefaultCellEditor(comboBox));
+        column = table.getColumnModel().getColumn(2);
+        column = table.getColumnModel().getColumn(3);
+        column = table.getColumnModel().getColumn(4);
+
+	byte[] cooked_dump = dataModel.getCookedDump();
+	for(int i=0; i<cooked_dump.length; ++i)
+	    cooked_dump[i] = ((Patch)p).sysex[8+0x80+i];
+	dataModel.setCookedDump(cooked_dump);
+
+	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	ListSelectionModel tableSM = table.getSelectionModel();
+	tableSM.addListSelectionListener(new ListSelectionListener() {
+		public void valueChanged(ListSelectionEvent e) {
+		    sendDumpChanges();
+		}
+	    });
+
+	// JButton switchViewButton = new JButton(dataModel.getHexView() ? "Switch to Dec" : "Switch to Hex");
+	// (defined as global button)
+        switchViewButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e)
+		{
+		    viewPressed();
+		}
+	    });
+	gbc.gridx=0;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
+        WAVTPane.add(switchViewButton, gbc);
+
+	// JButton updateWavetableButton = new JButton("Update Wavetable");	
+	// (defined as global button)
+        updateWavetableButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e)
+		{
+		    sendDumpChanges();
+		}
+	    });
+	gbc.gridx=1;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
+        WAVTPane.add(updateWavetableButton, gbc);
+
+	gbc.gridx=5;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
+	WAVTPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Wavetable",TitledBorder.CENTER,TitledBorder.CENTER));  
+	scrollPane.add(WAVTPane,gbc);
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Filter
+///////////////////////////////////////////////////////////////////////////////
 	JPanel FILTPane=new JPanel();
 	FILTPane.setLayout(new GridBagLayout());
-	gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; FILTPane.add(new JLabel("Channel   "),gbc);
-	addWidget(FILTPane,new CheckBoxWidget("O1", patch,new SIDModel(patch,0x18,0),new SIDSender(patch,0x18,0)),1,0,1,1,-13);
-	addWidget(FILTPane,new CheckBoxWidget("O2", patch,new SIDModel(patch,0x18,1),new SIDSender(patch,0x18,1)),2,0,1,1,-14);
-	addWidget(FILTPane,new CheckBoxWidget("O3", patch,new SIDModel(patch,0x18,2),new SIDSender(patch,0x18,2)),3,0,1,1,-15);
-	addWidget(FILTPane,new CheckBoxWidget("Ext",patch,new SIDModel(patch,0x18,3),new SIDSender(patch,0x18,3)),4,0,1,1,-16);
 
-	gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1; FILTPane.add(new JLabel("Mode   "),gbc);
-	addWidget(FILTPane,new CheckBoxWidget("LP",patch,new SIDModel(patch,0x19,0),new SIDSender(patch,0x19,0)),1,1,1,1,-17);
-	addWidget(FILTPane,new CheckBoxWidget("HP",patch,new SIDModel(patch,0x19,1),new SIDSender(patch,0x19,1)),2,1,1,1,-18);
-	addWidget(FILTPane,new CheckBoxWidget("BP",patch,new SIDModel(patch,0x19,2),new SIDSender(patch,0x19,2)),3,1,1,1,-19);
-	addWidget(FILTPane,new CheckBoxWidget("3O",patch,new SIDModel(patch,0x19,3),new SIDSender(patch,0x19,3)),4,1,1,1,-20);
+	addWidget(FILTPane,new KnobWidget("CutOff",patch,0,127,0,new SIDModel(patch,0x1a),new SIDSender(patch,0x1a)),0,0,2,3,30);
+	addWidget(FILTPane,new KnobWidget("Resonance",patch,0,127,0,new SIDModel(patch,0x1b),new SIDSender(patch,0x1b)),2,0,2,3,31);
 
-	addWidget(FILTPane,new ScrollBarWidget("CutOff",patch,0,127,0,new SIDModel(patch,0x1a),new SIDSender(patch,0x1a)),0,2,5,1,30);
-	addWidget(FILTPane,new ScrollBarWidget("Resonance",patch,0,127,0,new SIDModel(patch,0x1b),new SIDSender(patch,0x1b)),0,3,5,1,31);
+	gbc.gridx=4;gbc.gridy=0;gbc.gridwidth=2;gbc.gridheight=1; FILTPane.add(new JLabel("Channel"),gbc);
+	addWidget(FILTPane,new CheckBoxWidget("O1", patch,new SIDModel(patch,0x18,0),new SIDSender(patch,0x18,0)),4,1,1,1,-13);
+	addWidget(FILTPane,new CheckBoxWidget("O2", patch,new SIDModel(patch,0x18,1),new SIDSender(patch,0x18,1)),5,1,1,1,-14);
+	addWidget(FILTPane,new CheckBoxWidget("O3", patch,new SIDModel(patch,0x18,2),new SIDSender(patch,0x18,2)),4,2,1,1,-15);
+	addWidget(FILTPane,new CheckBoxWidget("Ext",patch,new SIDModel(patch,0x18,3),new SIDSender(patch,0x18,3)),5,2,1,1,-16);
 
-	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=4;
-	FILTPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Filter",TitledBorder.CENTER,TitledBorder.CENTER));
+
+	addWidget(FILTPane,new CheckBoxWidget("LP",patch,new SIDModel(patch,0x19,0),new SIDSender(patch,0x19,0)),0,4,1,1,-17);
+	addWidget(FILTPane,new CheckBoxWidget("HP",patch,new SIDModel(patch,0x19,1),new SIDSender(patch,0x19,1)),1,4,1,1,-18);
+	addWidget(FILTPane,new CheckBoxWidget("BP",patch,new SIDModel(patch,0x19,2),new SIDSender(patch,0x19,2)),2,4,1,1,-19);
+	addWidget(FILTPane,new CheckBoxWidget("3O",patch,new SIDModel(patch,0x19,3),new SIDSender(patch,0x19,3)),3,4,1,1,-20);
+
+	gbc.gridx=10;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
+	FILTPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Filter",TitledBorder.CENTER,TitledBorder.CENTER));  
 	scrollPane.add(FILTPane,gbc);
 
-	// Matrix
+
+///////////////////////////////////////////////////////////////////////////////
+// Modulation Matrix
+///////////////////////////////////////////////////////////////////////////////
 	JPanel MODMPane=new JPanel();
 	MODMPane.setLayout(new GridBagLayout());
 
@@ -329,151 +500,25 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	addWidget(MODMPane,new CheckBoxWidget("",patch,new SIDModel(patch,0x1c,4),new SIDSender(patch,0x1c,4)),7,7,1,1,-62);
 	addWidget(MODMPane,new CheckBoxWidget("",patch,new SIDModel(patch,0x1c,5),new SIDSender(patch,0x1c,5)),8,7,1,1,-63);
 
-	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=9;gbc.gridheight=8;
-	MODMPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Modulation Matrix",TitledBorder.CENTER,TitledBorder.CENTER));
+	gbc.gridx=10;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=3;
+	MODMPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Modulation Matrix",TitledBorder.CENTER,TitledBorder.CENTER));  
 	scrollPane.add(MODMPane,gbc);
 
 
-	// Oscillators
-	JTabbedPane oscPane=new JTabbedPane();
+///////////////////////////////////////////////////////////////////////////////
+// MIDI Sync
+///////////////////////////////////////////////////////////////////////////////
+	JPanel CLKPane=new JPanel();
+	CLKPane.setLayout(new GridBagLayout());
+	gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; CLKPane.add(new JLabel("Targets   "),gbc);
+	addWidget(CLKPane,new CheckBoxWidget("Wavetable Seq./Arp.", patch,new SIDModel(patch,0x13,0),new SIDSender(patch,0x13,0)),1,1,1,1,-10);
+	addWidget(CLKPane,new CheckBoxWidget("LFOs", patch,new SIDModel(patch,0x13,1),new SIDSender(patch,0x13,1)),1,2,1,1,-11);
+	addWidget(CLKPane,new CheckBoxWidget("ENVs", patch,new SIDModel(patch,0x13,2),new SIDSender(patch,0x13,2)),1,3,1,1,-12);
 
-	for(int i=0; i<3; i++) {
-	    JPanel panel = new JPanel();
-	    panel.setLayout(new GridBagLayout());
-	    oscPane.addTab("OSC"+(i+1),panel);gbc.weightx=0;
-	    addWidget(panel,new EnvelopeWidget("VCA Envelope",patch,new EnvelopeWidget.Node [] {
-		new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),
-		    new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x27+i*16),0,0,null,0,false,new SIDSender(patch,0x27+i*16),null,"Dly",null),
-		    new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x28+i*16),127,127,null,25,false,new SIDSender(patch,0x28+i*16),null,"A",null),
-		    new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x29+i*16),0,127,new SIDModel(patch,0x2a+i*16),25,false,new SIDSender(patch,0x29+i*16),new SIDSender(patch,0x2a+i*16),"D","S"),
-		    new EnvelopeWidget.Node(127,127,null,5000,5000,null,0,false,null,null,null,null),
-		    new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x2b+i*16),0,0,null,0,false,new SIDSender(patch,0x2b+i*16),null,"R",null),
-		    }     ),0,0,5,5,33);
-	    addWidget(panel,new ScrollBarWidget("Transpose",patch,0,127,-64,new SIDModel(patch,0x20+i*16),new SIDSender(patch,0x20+i*16)),0,6,5,1,20);
-	    addWidget(panel,new ScrollBarWidget("Fine Tune",patch,0,127,-64,new SIDModel(patch,0x21+i*16),new SIDSender(patch,0x21+i*16)),0,7,5,1,21);
-	    addWidget(panel,new ScrollBarWidget("Pitch Range",patch,0,127,0,new SIDModel(patch,0x22+i*16),new SIDSender(patch,0x22+i*16)),0,8,5,1,22);
-	    addWidget(panel,new ScrollBarWidget("Arpeggiator",patch,0,127,0,new SIDModel(patch,0x26+i*16),new SIDSender(patch,0x26+i*16)),0,9,5,1,23);
-	    addWidget(panel,new ScrollBarWidget("Portamento",patch,0,127,0,new SIDModel(patch,0x23+i*16),new SIDSender(patch,0x23+i*16)),0,11,5,1,25);
-	    addWidget(panel,new ScrollBarWidget("PulseWidth",patch,0,127,0,new SIDModel(patch,0x25+i*16),new SIDSender(patch,0x25+i*16)),0,12,5,1,26);
+	gbc.gridx=10;gbc.gridy=gbc.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
+	CLKPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"MIDI Clock Synchronization",TitledBorder.CENTER,TitledBorder.CENTER));  
+	scrollPane.add(CLKPane,gbc);
 
-	    gbc.gridx=0;gbc.gridy=12;gbc.gridwidth=1;gbc.gridheight=1; panel.add(new JLabel("Waveform:    "),gbc);
-	    addWidget(panel,new CheckBoxWidget("Tri",  patch,new SIDModel(patch,0x24+i*16,0),new SIDSender(patch,0x24+i*16,0)),1,13,1,1,-20);
-	    addWidget(panel,new CheckBoxWidget("Saw",  patch,new SIDModel(patch,0x24+i*16,1),new SIDSender(patch,0x24+i*16,1)),2,13,1,1,-21);
-	    addWidget(panel,new CheckBoxWidget("Rec",  patch,new SIDModel(patch,0x24+i*16,2),new SIDSender(patch,0x24+i*16,2)),3,13,1,1,-22);
-	    addWidget(panel,new CheckBoxWidget("Noise",patch,new SIDModel(patch,0x24+i*16,3),new SIDSender(patch,0x24+i*16,3)),4,13,1,1,-23);
-
-	    addWidget(panel,new CheckBoxWidget("Sync",patch,new SIDModel(patch,0x24+i*16,5),new SIDSender(patch,0x24+i*16,5)),1,14,1,1,-24);
-	    addWidget(panel,new CheckBoxWidget("Ring",patch,new SIDModel(patch,0x24+i*16,6),new SIDSender(patch,0x24+i*16,6)),2,14,1,1,-25);
-	    addWidget(panel,new CheckBoxWidget("Off", patch,new SIDModel(patch,0x24+i*16,4),new SIDSender(patch,0x24+i*16,4)),3,14,1,1,-26);
-	}
-	gbc.gridx=5;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=11;
-	scrollPane.add(oscPane,gbc);
-
-
-	// Wavetables
-	JPanel WAVTPane=new JPanel();
-	WAVTPane.setLayout(new GridBagLayout());
-
-	addWidget(WAVTPane,new ComboBoxWidget("Parameter #1",patch,new SIDModel(patch,0x5a),new SIDSender(patch,0x5a),ccName),0,0,3,1,13);
-	addWidget(WAVTPane,new ComboBoxWidget("Parameter #2",patch,new SIDModel(patch,0x5b),new SIDSender(patch,0x5b),ccName),0,1,3,1,14);
-	addWidget(WAVTPane,new ComboBoxWidget("Parameter #3",patch,new SIDModel(patch,0x5c),new SIDSender(patch,0x5c),ccName),0,2,3,1,15);
-	addWidget(WAVTPane,new ScrollBarWidget("Rate",patch,0,127,0,new SIDModel(patch,0x59),new SIDSender(patch,0x59)),0,3,5,1,16);
-
-
-        table.setPreferredScrollableViewportSize(new Dimension(100, 100));
-        JScrollPane scrollpane = new JScrollPane(table);
-	gbc.gridx=0;gbc.gridy=5;gbc.gridwidth=5;gbc.gridheight=20;
-        WAVTPane.add(scrollpane, gbc);
-
-        TableColumn column = null;
-
-        column = table.getColumnModel().getColumn(0);
-        column = table.getColumnModel().getColumn(1);
-	JComboBox comboBox = new JComboBox();
-	for(int i=0; i<dataModel.modeNames.length; ++i) {
-	    comboBox.addItem(dataModel.modeNames[i]);
-	}
-	column.setCellEditor(new DefaultCellEditor(comboBox));
-        column = table.getColumnModel().getColumn(2);
-        column = table.getColumnModel().getColumn(3);
-        column = table.getColumnModel().getColumn(4);
-
-	byte[] cooked_dump = dataModel.getCookedDump();
-	for(int i=0; i<cooked_dump.length; ++i)
-	    cooked_dump[i] = ((Patch)p).sysex[8+0x80+i];
-	dataModel.setCookedDump(cooked_dump);
-
-	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	ListSelectionModel tableSM = table.getSelectionModel();
-	tableSM.addListSelectionListener(new ListSelectionListener() {
-		public void valueChanged(ListSelectionEvent e) {
-		    sendDumpChanges();
-		}
-	    });
-
-	// JButton switchViewButton = new JButton(dataModel.getHexView() ? "Switch to Dec" : "Switch to Hex");
-	// (defined as global button)
-        switchViewButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e)
-		{
-		    viewPressed();
-		}
-	    });
-	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
-        WAVTPane.add(switchViewButton, gbc);
-
-	// JButton updateWavetableButton = new JButton("Update Wavetable");
-	// (defined as global button)
-        updateWavetableButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e)
-		{
-		    sendDumpChanges();
-		}
-	    });
-	gbc.gridx=1;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=1;gbc.gridheight=1;
-        WAVTPane.add(updateWavetableButton, gbc);
-
-	gbc.gridx=5;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=50;
-	WAVTPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Wavetable",TitledBorder.CENTER,TitledBorder.CENTER));
-	scrollPane.add(WAVTPane,gbc);
-
-
-
-
-	// LFOs
-	JTabbedPane LFOPane=new JTabbedPane();
-	for(int i=0; i<6; i++) {
-	    JPanel panel = new JPanel();
-	    panel.setLayout(new GridBagLayout());
-	    LFOPane.addTab("LFO"+(i+1),panel);gbc.weightx=0;
-
-	    addWidget(panel,new ComboBoxWidget("Mode",patch,new SIDModel(patch,0x60+i*3,0,0x7,new int[]{0x0,0x01,0x3,0x7}),new SIDSender(patch,0x60+i*3,0,0x7,new int[]{0x0,0x01,0x3,0x7}),new String []{"off", "unsynced","Sync w/ assigned notes","Sync w/ all notes"}),0,0,5,1,40);
-	    addWidget(panel,new ComboBoxWidget("Waveform",patch,new SIDModel(patch,0x60+i*3,4,0x7),new SIDSender(patch,0x60+i*3,4,0x7),new String []{"SINE", "TRIANGLE","SAW","PULSE","RANDOM"}),0,1,5,1,41);
-	    addWidget(panel,new ScrollBarWidget("Rate",patch,0,127,0,new SIDModel(patch,0x61+i*3),new SIDSender(patch,0x61+i*3)),0,2,5,1,42);
-	    addWidget(panel,new ScrollBarWidget("Depth",patch,0,127,-64,new SIDModel(patch,0x62+i*3),new SIDSender(patch,0x62+i*3)),0,3,5,1,43);
-	}
-	gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=5;
-	scrollPane.add(LFOPane,gbc);
-
-	// ENVs
-	JTabbedPane ENVPane=new JTabbedPane();
-	for(int i=0; i<2; i++) {
-	    JPanel panel = new JPanel();
-	    panel.setLayout(new GridBagLayout());
-	    ENVPane.addTab("Envelope"+(i+1),panel);gbc.weightx=0;
-
-	    addWidget(panel,new EnvelopeWidget("SW Envelope",patch,new EnvelopeWidget.Node [] {
-		new EnvelopeWidget.Node(0,0,null,0,0,null,0,false,null,null,null,null),
-		    new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x73+i*5),127,127,null,25,false,new SIDSender(patch,0x73+i*5),null,"A",null),
-		    new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x74+i*5),0,127,new SIDModel(patch,0x75+i*5),25,false,new SIDSender(patch,0x74+i*5),new SIDSender(patch,0x75+i*5),"D","S"),
-		    new EnvelopeWidget.Node(127,127,null,5000,5000,null,0,false,null,null,null,null),
-		    new EnvelopeWidget.Node(0,127,new SIDModel(patch,0x76+i*5),0,0,null,0,false,new SIDSender(patch,0x76+i*5),null,"R",null),
-		    }     ),0,0,3,5,51);
-	    addWidget(panel,new ScrollBarWidget("Depth",patch,0,127,-64,new SIDModel(patch,0x72+i*5),new SIDSender(patch,0x72+i*5)),0,5,3,1,50);
-	}
-	gbc.gridx=10;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=6;
-
-	scrollPane.add(ENVPane,gbc);
 
 	pack();
 	show();
@@ -491,12 +536,12 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	    {
 		System.out.println("Wavetable Field changed: " + i);
 	        ((Patch)p).sysex[8+0x80+i] = cooked_dump[i];
-		SlowSender.sendParameter((Driver) p.getDriver(), 0x80+i, cooked_dump[i], 10);
+		SlowSender.sendParameter((Driver) ((Patch)p).getDriver(), 0x80+i, cooked_dump[i], 10);
 	    }
 	}
     }
 
-    void viewPressed()
+    void viewPressed() 
     {
 	if( dataModel.getHexView() ) {
 	    dataModel.setHexView(false);
@@ -524,7 +569,7 @@ class SIDSender extends SysexSender
     {
 	patch = _patch;
 	parameter = _parameter;
-	b[0] = (byte)0xF0;
+	b[0] = (byte)0xf0;
 	b[1] = (byte)0x00;
 	b[2] = (byte)0x00;
 	b[3] = (byte)0x7e;
@@ -534,7 +579,7 @@ class SIDSender extends SysexSender
 	b[7] = (byte)(parameter > 0x80 ? 0x01 : 0x00);
 	b[8] = (byte)(parameter & 0x7f);
 	//b[9] = (byte)(value&0x7f);
-	b[10] = (byte)0xF7;
+	b[10] = (byte)0xf7;
     }
 
     public SIDSender(Patch _patch, int parameter)
