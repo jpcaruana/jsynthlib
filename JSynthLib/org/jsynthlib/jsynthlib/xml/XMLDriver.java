@@ -1,8 +1,15 @@
 package org.jsynthlib.jsynthlib.xml;
 
+import java.io.File;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.SysexMessage;
+
+import org.jsynthlib.jsynthlib.xml.editor.EditorDescription;
+import org.jsynthlib.jsynthlib.xml.editor.EditorParser;
+import org.jsynthlib.jsynthlib.xml.editor.XMLEditor;
+import org.xml.sax.SAXException;
 
 import core.Device;
 import core.ErrorMsg;
@@ -21,6 +28,8 @@ public class XMLDriver implements IPatchDriver {
     private String manufacturer;
     private String model;
     private String name;
+    private File editorPath;
+    private EditorDescription editor;
     private final String[] patch_numbers;
     private final String[] writable_patch_numbers;
     private final String[] bank_numbers;
@@ -86,8 +95,42 @@ public class XMLDriver implements IPatchDriver {
             return null;
         }
     }
+
     public JSLFrame edit(IPatch p) {
-        return null;
+    	EditorDescription editor = getEditor();
+    	try {
+    		if (editor != null)
+    			return new XMLEditor(editor, (XMLPatch) p);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		if (e.getCause() != null)
+    			e.getCause().printStackTrace();
+    		ErrorMsg.reportError("Error Creating Editor", "There was an error creating the patch editor", e);
+    	}
+    	return null;
+    }
+    
+    private EditorDescription getEditor() {
+    	EditorParser p = new EditorParser();
+    	try {
+    		p.parse(editorPath);
+    	} catch (SAXException e) {
+    		Exception ex = e;
+    		if (e.getException() != null)
+    			ex = e.getException();
+    		e.printStackTrace();
+    		ErrorMsg.reportError("Parse Error", "Error parsing editor", ex);
+    		return null;
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    		ErrorMsg.reportError("Parse Error", "Error parsing editor", e);
+    		return null;
+    	}
+    	return p.getEditor();
+    }
+    
+    public boolean hasEditor() {
+    	return (editorPath != null) && editorPath.canRead();
     }
 
     public String getAuthors() {
@@ -148,10 +191,6 @@ public class XMLDriver implements IPatchDriver {
         name = s;
     }
     
-    // XXX: XML Editors
-    public boolean hasEditor() {
-        return false;
-    }
     public void play(IPatch patch) {
         imp.playPatch((XMLPatch)patch);
     }
@@ -224,4 +263,8 @@ public class XMLDriver implements IPatchDriver {
         return getManufacturerName() + " " + getModelName() + " "
             + getPatchType();
     }
+
+	public void setEditor(File file) {
+		editorPath = file;
+	}
 }

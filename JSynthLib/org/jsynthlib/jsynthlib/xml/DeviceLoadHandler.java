@@ -88,6 +88,7 @@ public class DeviceLoadHandler extends AdvDefaultHandler {
         private String[] wbnums;
         private XMLPatch patch;
         private Class imp = XMLDriverImplementation.class;
+        private String editor;
         
         public DriverBuilder() { }
         
@@ -98,9 +99,14 @@ public class DeviceLoadHandler extends AdvDefaultHandler {
             d.setAuthors(authors);
             d.setModelName(model);
             d.setManufacturerName(manufacturer);
+            if (editor != null)
+                d.setEditor(new File(base_path, editor));
             return d;
         }
         
+        public void setEditor(String s) {
+            editor = s;
+        }
         public void setName(String s) {
             name = s;
         }
