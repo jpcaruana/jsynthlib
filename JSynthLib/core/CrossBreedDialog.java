@@ -1,3 +1,5 @@
+/* $Id$ */
+
 package core;
 import javax.swing.JList;
 import jmidi.*;
@@ -46,7 +48,7 @@ public class CrossBreedDialog extends JDialog {
 	keep.addActionListener(new ActionListener() {
 	                       public void actionPerformed(ActionEvent e) {
 			       try {
-			        LibraryFrame library=(LibraryFrame)PatchEdit.desktop.getSelectedFrame();   
+			        PatchBasket library=(PatchBasket)PatchEdit.desktop.getSelectedFrame();   
 				Patch q=PatchEdit.Clipboard;
 				PatchEdit.Clipboard=crossBreeder.getCurrentPatch();
 				library.PastePatch();

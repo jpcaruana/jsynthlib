@@ -94,7 +94,6 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
                             }
                             
                             if (file.exists())
-                                
                                 if (JOptionPane.showConfirmDialog(null,"Are you sure?","File Exists",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) return;
                             
                             save(file);
@@ -120,7 +119,6 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
                 PatchEdit.importAction.setEnabled(true);
                 PatchEdit.importAllAction.setEnabled(true);
                 PatchEdit.newPatchAction.setEnabled(true);
-                //PatchEdit.crossBreedAction.setEnabled(true);
                 
                 if (table.getRowCount()>0) {
                     PatchEdit.saveAction.setEnabled(true);
@@ -132,6 +130,7 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
                 if (table.getRowCount()>1) {
                     PatchEdit.sortAction.setEnabled(true);
                     PatchEdit.dupAction.setEnabled(true);
+                    PatchEdit.crossBreedAction.setEnabled(true);
                 }
                 
                 if (table.getSelectedRowCount()>0) {
@@ -517,7 +516,11 @@ public class PerformanceFrame extends javax.swing.JInternalFrame implements Abst
     }
     
     public java.util.ArrayList getPatchCollection() {
-        return myModel.performanceList;
+        java.util.ArrayList ar=new java.util.ArrayList();
+        int i;
+        for (i=0;i<myModel.performanceList.size();i++)
+            ar.add(myModel.getPatchAt(i));
+        return ar;
     }
     
     //Re-assigns drivers to all patches in libraryframe. Called after new drivers are added or or removed

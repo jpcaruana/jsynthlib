@@ -1,4 +1,5 @@
 package core;
+/* $Id$ */
 /* As of version 0.14 the actual functionality of the crossbreeder dialog is hidden away in this file. It seems like a good
    idea to be seperating functionality from GUI code, something I didn't do when I first started JSynthLib. */
 public class CrossBreeder
@@ -12,6 +13,7 @@ public class CrossBreeder
      Patch source;
      byte [] sysex= new byte[father.sysex.length];
      p=new Patch(sysex);
+     p.comment=new StringBuffer(); // Clear the wrong "Invalid Manufacturer" comment!
      for (int i=0;i<father.sysex.length;i++)
        {do {source=getRandomPatch(); } while ((source.driverNum!=father.driverNum)||(source.sysex.length<i));
          p.sysex[i]=source.sysex[i];
