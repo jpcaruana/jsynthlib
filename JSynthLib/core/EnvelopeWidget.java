@@ -13,7 +13,7 @@ public class EnvelopeWidget extends SysexWidget {
     JTextField[] values;
     EnvelopeNode[] nodes;
     int numValues;
-        
+
     public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n) {
 	label = l;
 	patch = p;
@@ -45,13 +45,13 @@ public class EnvelopeWidget extends SysexWidget {
 		valueLabels[j] = new JLabel(nodes[i].nameX);
 		values[j] = new JTextField(new Integer(nodes[i].ofsX.get()).toString(), 4);
 		values[j].setEditable(false);
-              j++;
+		j++;
             }
 	    if (nodes[i].minY != nodes[i].maxY) {
 		valueLabels[j] = new JLabel(nodes[i].nameY);
 		values[j] = new JTextField(new Integer(nodes[i].ofsY.get()).toString(), 4);
 		values[j].setEditable(false);
-              j++;
+		j++;
             }
         }
         numValues = j;
@@ -78,7 +78,7 @@ public class EnvelopeWidget extends SysexWidget {
         add(jlabel, BorderLayout.NORTH);
         add(new EnvelopeCanvas(nodes, patch, values), BorderLayout.CENTER);
     }
-    
+
     public void setValue(int fader, int value) {
         fader -= sliderNum;
         int j = 0;
@@ -121,11 +121,11 @@ public class EnvelopeWidget extends SysexWidget {
             }
         }
     }
-    
+
     class EnvelopeCanvas extends JPanel {
-        EnvelopeNode nodes[];
-        int nodeX[];
-        int nodeY[];
+        EnvelopeNode[] nodes;
+        int[] nodeX;
+        int[] nodeY;
         JTextField[] values;
         Patch p;
 
@@ -136,7 +136,7 @@ public class EnvelopeWidget extends SysexWidget {
 	    p = pa;
 	    nodeX = new int[nodes.length];
 	    setMinimumSize(new Dimension(300, 50));
-	 setPreferredSize(getMinimumSize());
+	    setPreferredSize(getMinimumSize());
 	    MyListener myListener = new MyListener();
 	    addMouseListener(myListener);
 	    addMouseMotionListener(myListener);
@@ -162,15 +162,15 @@ public class EnvelopeWidget extends SysexWidget {
 		    && (nodes[i].maxY != 5000))
 		    maxY = nodes[i].maxY + nodes[i].baseY;
 	    }
-            
+
             scaleX = (float) currentWidth / (float) maxX;
             scaleY = (float) (currentHeight - 5) / (float) maxY;
-            
+
             for (int i = 0; i < nodes.length; i++) {
                 int x; int y;
 		x = getX(i);
 		y = getY(i);
-                
+
 		if (g != null)
 		    g.fillRect((int) ((currX + x) * scaleX) - 3,
 			       currentHeight - ((int) (y * scaleY)) - 3, 6, 6);
@@ -186,7 +186,7 @@ public class EnvelopeWidget extends SysexWidget {
 		currX += x;
             }
         }
-        
+
         public int getX(int i) {
 	    if (nodes[i].minX == nodes[i].maxX)
 		return nodes[i].minX;
@@ -202,12 +202,12 @@ public class EnvelopeWidget extends SysexWidget {
 		return nodes[i].minY + nodes[i].baseY;
 	    return (nodes[i].ofsY.get() + nodes[i].baseY);
         }
-        
+
         class MyListener extends MouseInputAdapter {
             int oldx;
 	    int oldy;
             int dragNode;
-        
+
             public void mousePressed(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
@@ -250,7 +250,7 @@ public class EnvelopeWidget extends SysexWidget {
 			paintComponent(null);
 		    }
 		} else if (y - oldy > 0) {
-		    while ((y - nodeY[dragNode] > 5) 
+		    while ((y - nodeY[dragNode] > 5)
 			   && (getY(dragNode) > nodes[dragNode].minY + nodes[dragNode].baseY)) {
 			nodes[dragNode].ofsY.set(nodes[dragNode].ofsY.get() - 1);
 			paintComponent(null);
@@ -258,7 +258,7 @@ public class EnvelopeWidget extends SysexWidget {
 		}
                 oldx = x;
 		oldy = y;
-                
+
                 int j = 0;
                 for (int i = 0; i < nodes.length; i++) {
 		    if (nodes[i].minX != nodes[i].maxX) {
@@ -271,14 +271,14 @@ public class EnvelopeWidget extends SysexWidget {
 			    values[j].setText(new Integer(nodes[i].ofsY.get()).toString());
 			j++;
 		    }
-        }
+		}
                 repaint();
-        }
-        
+	    }
+
             public void mouseReleased(MouseEvent e) {
 		updateSize(e);
 	    }
-        
+
             void updateSize(MouseEvent e) {
                 if (nodes[dragNode].senderX != null) {
                     try {
@@ -289,8 +289,8 @@ public class EnvelopeWidget extends SysexWidget {
 			     nodes[dragNode].senderX.generate(nodes[dragNode].ofsX.get()));
 		    } catch (Exception e1) {
 			ErrorMsg.reportStatus(e1);
-                }
-                    }
+		    }
+		}
 		if (nodes[dragNode].senderY != null) {
 		    try {
 			nodes[dragNode].senderY.channel
@@ -303,6 +303,6 @@ public class EnvelopeWidget extends SysexWidget {
                     }
                 }
             }
-            }
-        }
+	}
+    }
 }

@@ -31,7 +31,7 @@ public class SysexWidget extends JPanel {
         label = l;
         setup();
     }
-    
+
     public SysexWidget(String l, Patch p, int min, int max,
 		       ParamModel ofs) {
         super();
@@ -102,7 +102,7 @@ public class SysexWidget extends JPanel {
 	    }
         }
     }
-    
+
     public void setSliderNum(int num) {
         sliderNum = num;
         if (num > 0)
@@ -114,7 +114,7 @@ public class SysexWidget extends JPanel {
 			   + "  Button " + (((num - 1) % 16) + 1));
         }
     }
-    
+
     public void setup() {
         if (sysexString != null) {
 	    // If there is no Sysex-Sender avaliable, don't initialize it

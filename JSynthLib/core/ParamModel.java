@@ -1,8 +1,8 @@
 package core;
 
-public class ParamModel { 
- public int ofs;
- public Patch patch;
+public class ParamModel {
+    public int ofs;
+    public Patch patch;
 
     public ParamModel() {
     }

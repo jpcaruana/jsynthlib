@@ -18,16 +18,16 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	allocated to the size of p.sysex, but cannot be due to a
 	design "feature" in Java */
     final byte[] originalPatch = new byte[32000];
-  public GridBagLayout layout;
-  public GridBagConstraints gbc;
-  public JPanel scrollPane;
+    public GridBagLayout layout;
+    public GridBagConstraints gbc;
+    public JPanel scrollPane;
     public ArrayList sliderList = new ArrayList(); //workaround for Java Swing Bug (What is this comment? Does anyone knows about this bug?)
-  public ArrayList widgetList = new ArrayList();
-  public SysexWidget recentWidget;
-  public int faderBank;
-  public int numFaderBanks;
-  public byte lastFader;
-  public JScrollPane scroller;
+    public ArrayList widgetList = new ArrayList();
+    public SysexWidget recentWidget;
+    public int faderBank;
+    public int numFaderBanks;
+    public byte lastFader;
+    public JScrollPane scroller;
 
     /** information about BankEditorFrame which created this
 	PatchEditor frame (if applicable) so we can update that frame
@@ -43,30 +43,30 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	//make backup copy
 	System.arraycopy(p.sysex, 0, originalPatch, 0, p.sysex.length);
 	layout = new GridBagLayout();
-    gbc = new GridBagConstraints();
+	gbc = new GridBagConstraints();
 	scrollPane = new JPanel();
-    scrollPane.setLayout(layout);
-	scrollPane.setSize(600, 400); 
+	scrollPane.setLayout(layout);
+	scrollPane.setSize(600, 400);
 	scroller = new JScrollPane(scrollPane);
-    getContentPane().add(scroller);
+	getContentPane().add(scroller);
 	setSize(600, 400);
-    scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
+	scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
 		}
-            public void mouseReleased(MouseEvent e) {
+		public void mouseReleased(MouseEvent e) {
                     repaint();
-                }            
-        });
-    scroller.getHorizontalScrollBar().addMouseListener(new MouseAdapter() {
+                }
+	    });
+	scroller.getHorizontalScrollBar().addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
 		}
-            public void mouseReleased(MouseEvent e) {
+		public void mouseReleased(MouseEvent e) {
                     repaint();
-                }            
-        });
-    addInternalFrameListener(new InternalFrameListener() {
+                }
+	    });
+	addInternalFrameListener(new InternalFrameListener() {
 		public void internalFrameClosing(InternalFrameEvent e) {
-		    String choices[] = new String[] {"Keep Changes",
+		    String[] choices = new String[] {"Keep Changes",
 						     "Revert to Original",
 						     "Place Changed Version on Clipboard"
 		    };
@@ -79,24 +79,24 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 							      null, choices, choices[0]);
 		    if (choice == 0) {
 			if (bankFrame == null)
-                        return;
+			    return;
 			bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
 			return;
 		    }
 		    if (choice == 2)
 			//put on clipboard but don't 'return' just yet
-			CopySelectedPatch(); 
+			CopySelectedPatch();
 		    //restore backup
 		    System.arraycopy(originalPatch, 0, p.sysex, 0, p.sysex.length);
-                        }
-  	    
+		}
+
 		public void internalFrameOpened(InternalFrameEvent e) {
 		}
 
 		public void internalFrameActivated(InternalFrameEvent e) {
 		    ((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).calculateChecksum(p);
 		    ((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).sendPatch(p);
-               gotFocus();
+		    gotFocus();
 		    PatchEdit.receiveAction.setEnabled(false);
 		    PatchEdit.pasteAction.setEnabled(false);
 		    PatchEdit.sendAction.setEnabled(true);
@@ -110,8 +110,8 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 
 		public void internalFrameClosed(InternalFrameEvent e) {
 		}
-	     
-	     public void internalFrameDeactivated(InternalFrameEvent e) {
+
+		public void internalFrameDeactivated(InternalFrameEvent e) {
 		    PatchEdit.sendAction.setEnabled(false);
 		    PatchEdit.playAction.setEnabled(false);
 		    PatchEdit.storeAction.setEnabled(false);
@@ -119,38 +119,39 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		    PatchEdit.copyAction.setEnabled(false);
 		    PatchEdit.reassignAction.setEnabled(false);
 		    PatchEdit.exportAction.setEnabled(false);
-               lostFocus();
+		    lostFocus();
 		}
 
 		public void internalFrameDeiconified(InternalFrameEvent e) {
 		}
-		
+
 		public void internalFrameIconified(InternalFrameEvent e) {
 		}
-	});
+	    });
     }
 
     public ArrayList getPatchCollection() {
 	return null;
     }
-  
+
+    // IOException is verbose !!!FIXIT!!!
     public void ImportPatch (File file) throws IOException, FileNotFoundException {
     }
 
     public void ExportPatch (File file) throws IOException, FileNotFoundException {
     }
-  
+
     public void DeleteSelectedPatch () {
-  }
+    }
 
     public void CopySelectedPatch() {
 	try {
 	    byte[] mySysex = new byte[p.sysex.length];
 	    System.arraycopy(p.sysex, 0, mySysex, 0, p.sysex.length);
 	    PatchEdit.Clipboard = new Patch(mySysex,
-                                  (p.date.toString()),
-                                  (p.author.toString()),
-                                  (p.comment.toString()));     
+					    (p.date.toString()),
+					    (p.author.toString()),
+					    (p.comment.toString()));
 	} catch (Exception e) {
 	}
     }
@@ -162,12 +163,12 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 
     public void SendToSelectedPatch() {
 	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).calculateChecksum(p);
- 	  new SysexSendToDialog(p);
+	new SysexSendToDialog(p);
     }
 
     public void ReassignSelectedPatch() {
 	((Driver) (PatchEdit.getDriver(p.deviceNum, p.driverNum))).calculateChecksum(p);
- 	  new ReassignPatchDialog(p);
+	new ReassignPatchDialog(p);
     }
 
     public void PlaySelectedPatch() {
@@ -189,7 +190,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
     public void addWidget(SysexWidget widget,
 			  int gridx, int gridy, int gridwidth, int gridheight,
 			  int slidernum) {
-	  try {
+	try {
 	    gbc.fill = gbc.BOTH;
 	    gbc.anchor = gbc.EAST;
 	    gbc.gridx = gridx;
@@ -197,23 +198,23 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	    gbc.gridwidth = gridwidth;
 	    gbc.gridheight = gridheight;
 	    scrollPane.add(widget, gbc);
-    widget.setSliderNum(slidernum);
+	    widget.setSliderNum(slidernum);
 	    if (widget instanceof ScrollBarWidget)
 		sliderList.add(((ScrollBarWidget) widget).slider);
 	    if (widget instanceof VertScrollBarWidget)
 		sliderList.add(((VertScrollBarWidget) widget).slider);
 	    if (widget instanceof ScrollBarLookupWidget)
 		sliderList.add(((ScrollBarLookupWidget) widget).slider);
-    widgetList.add(widget);
+	    widgetList.add(widget);
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
 	}
     }
- 
+
     public void addWidget(JComponent parent, SysexWidget widget,
 			  int gridx, int gridy, int gridwidth, int gridheight,
 			  int slidernum) {
-	  try {
+	try {
 	    gbc.fill = gbc.HORIZONTAL;
 	    gbc.anchor = gbc.NORTHEAST;
 	    gbc.gridx = gridx;
@@ -221,7 +222,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	    gbc.gridwidth = gridwidth;
 	    gbc.gridheight = gridheight;
 	    parent.add(widget, gbc);
-    widget.setSliderNum(slidernum);
+	    widget.setSliderNum(slidernum);
 
 	    if (widget instanceof ScrollBarWidget)
 		sliderList.add(((ScrollBarWidget) widget).slider);
@@ -229,14 +230,14 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		sliderList.add(((VertScrollBarWidget) widget).slider);
 	    if (widget instanceof ScrollBarLookupWidget)
 		sliderList.add(((ScrollBarLookupWidget) widget).slider);
-    widgetList.add(widget);
+	    widgetList.add(widget);
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
 	}
-	  }
+    }
 
     public void faderMoved(byte fader, byte value) {
-    SysexWidget w;
+	SysexWidget w;
 	if (fader == 32) {
 	    faderBank = (faderBank + 1) % numFaderBanks;
 	    faderHighlight();
@@ -259,12 +260,12 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	    if (recentWidget.isShowing() && (recentWidget.sliderNum == fader)) {
 		if (recentWidget.numFaders == 1)
 		    recentWidget.setValue((int) (recentWidget.valueMin + ((float) (value) / 127 * (recentWidget.valueMax - recentWidget.valueMin))));
-		 else 
+		else
 		    recentWidget.setValue(fader, (int) value);
 		recentWidget.repaint();
 		return;
 	    }
-    }
+	}
 	lastFader = fader;
 	for (int i = 0; i < widgetList.size(); i++) {
 	    w = (SysexWidget) widgetList.get(i);
@@ -275,50 +276,50 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		recentWidget = w;
 		if (recentWidget.numFaders == 1)
 		    recentWidget.setValue((int) (recentWidget.valueMin + ((float) (value) / 127 * (recentWidget.valueMax - recentWidget.valueMin))));
-		 else 
+		else
 		    recentWidget.setValue(fader, (int) value);
 		recentWidget.repaint();
 		return;
 	    }
-      }
-     }
+	}
+    }
 
     public void faderHighlight() {
-      SysexWidget w;
+	SysexWidget w;
 	for (int i = 0; i < widgetList.size(); i++) {
 	    w = (SysexWidget) widgetList.get(i);
 	    if (w.jlabel != null) {
 		if (((Math.abs(w.sliderNum - 1) & 0xf0)) == faderBank * 16) {
-	    Color c = UIManager.getColor("controlText");
-	    if (c == null)
+		    Color c = UIManager.getColor("controlText");
+		    if (c == null)
 			c = new Color(75, 75, 100);
-	    w.jlabel.setForeground(c);
-	  } else {
-	    Color c = UIManager.getColor("textInactiveText");
-	    if (c == null)
+		    w.jlabel.setForeground(c);
+		} else {
+		    Color c = UIManager.getColor("textInactiveText");
+		    if (c == null)
 			c = new Color(102, 102, 153);
-	    w.jlabel.setForeground(c);
-	  }
-	  w.jlabel.repaint();
+		    w.jlabel.setForeground(c);
+		}
+		w.jlabel.repaint();
+	    }
 	}
-     }
-  }
+    }
 
     /** when showing the dialog, also check how many components there
 	are to determine the number of widget banks needed */
-    public void show() { 
+    public void show() {
 	int high = 0;
-      SysexWidget x;
+	SysexWidget x;
 	for (int i = 0; i < widgetList.size(); i++) {
 	    x = (SysexWidget) widgetList.get(i);
 	    if ((x.sliderNum + x.numFaders - 1) > high)
-		high = x.sliderNum + x.numFaders - 1;	  
-      }
+		high = x.sliderNum + x.numFaders - 1;
+	}
 	numFaderBanks = (high / 16) + 1;
-       faderHighlight();
+	faderHighlight();
 	ErrorMsg.reportStatus("PatchEditorFrame:Show   Num Fader Banks =  "
 			      + numFaderBanks);
-    
+
 	Dimension screenSize = PatchEdit.desktop.getSize();
         Dimension frameSize = this.getSize();
         if (frameSize.height > screenSize.height) {
@@ -336,7 +337,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
             this.setSize(screenSize.width, frameSize.height);
         }
         super.show();
-       } // end of method
+    } // end of method
 
     // Let bankeditorframe set information about itself when it
     // creates a patch editor frame.
@@ -345,7 +346,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	patchRow = row;
 	patchCol = col;
     }
-    
+
     public void revalidateDriver() {
 	p.ChooseDriver();
 	if (p.deviceNum == 0) {
@@ -354,12 +355,12 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	    } catch (Exception e) {
 	    }
 	    return;
-  }
-  }
-  
+	}
+    }
+
     public void gotFocus() {
     }
 
     public void lostFocus() {
-  }
-}      
+    }
+}

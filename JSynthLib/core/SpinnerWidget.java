@@ -9,7 +9,7 @@ public class SpinnerWidget extends SysexWidget {
     int base;
     JTextField text;
     public JSpinner spinner;
-    
+
     /** Constructor for setting up the ScrollBarWidget without an
      * initial value.
      * @param l
@@ -18,7 +18,7 @@ public class SpinnerWidget extends SysexWidget {
      * @param max
      * @param b
      * @param ofs
-     * @param s  */    
+     * @param s  */
     public SpinnerWidget(String l, Patch p, int min, int max, int b,
 			 ParamModel ofs, SysexSender s) {
         valueMin = min;
@@ -31,7 +31,7 @@ public class SpinnerWidget extends SysexWidget {
         patch = p;
         setup();
     }
-    
+
     /** Constructor for setting up the ScrollBarWidget including an
      * initial value.
      * @param l Label for the Widget
@@ -43,19 +43,19 @@ public class SpinnerWidget extends SysexWidget {
      * @param ofs Offset of the parameter in the patch
      * @param s ysexSender for transmitting the value at editing the parameter
      * @param valueInit initial value, displayed at construction of the widget
-     */    
+     */
     public SpinnerWidget(String l, Patch p, int min, int max, int b,
 			 ParamModel ofs, SysexSender s, int valueInit) {
         this(l, p, min, max, b, ofs, s);
         setValue(valueInit);
     }
-    
+
     public void setup() {
         super.setup();
         setLayout(new BorderLayout());
         jlabel = new JLabel(label);
         add(jlabel, BorderLayout.WEST);
-        
+
         if (valueCurr > valueMax)
 	    valueCurr = valueMax;
 
@@ -67,19 +67,20 @@ public class SpinnerWidget extends SysexWidget {
 		    // value for 'base'
 		    setValue(((Integer) spinner.getValue()).intValue() - base);
 		    sendSysex();
-            }
-        });
+		}
+	    });
         add(spinner, BorderLayout.CENTER);
     }
-            
+
     public void setValue(int v) {
 	super.setValue(v);
 	// Maybe the displayed value differ from sysex value for 'base'
-	spinner.setValue(new Integer(v + base));	
+	spinner.setValue(new Integer(v + base));
     }
 
     public void setMinMax(int min, int max) {
-        valueMin = min;valueMax = max;
+        valueMin = min;
+	valueMax = max;
         if (valueCurr > max)
 	    valueCurr = max;
         if (valueCurr < min)
@@ -88,8 +89,8 @@ public class SpinnerWidget extends SysexWidget {
         ((SpinnerNumberModel) (spinner.getModel())).setMaximum(new Integer(max));
         spinner.setValue(new Integer(valueCurr));
     }
-    
+
     public void setEnabled(boolean e) {
         spinner.setEnabled(e);
-    }                           
+    }
 }
