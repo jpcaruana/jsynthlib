@@ -89,10 +89,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
         gbc = new GridBagConstraints();
         scrollPane = new JPanel();
         scrollPane.setLayout(new GridBagLayout());
-        //scrollPane.setSize(600, 400);
         scroller = new JScrollPane(scrollPane);
         getContentPane().add(scroller);
-        setSize(600, 400);
 
         faderInEnable(AppConfig.getFaderEnable());
 
@@ -145,7 +143,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                                   + numFaderBanks);
             faderHighlight();
 
-            // resize if frame size is bigger than screen size 
+            // first layout in full size
+            pack();
+
+            // resize if the frame size is bigger than the screen size 
             Dimension screenSize = PatchEdit.getDesktop().getSize();
             Dimension frameSize = this.getSize();
             ErrorMsg.reportStatus("PatchEditorFrame.show(): scrollPane size = " + scrollPane.getSize() + ", frame size = " + frameSize);
