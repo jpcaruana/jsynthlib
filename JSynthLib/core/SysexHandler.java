@@ -8,11 +8,11 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.SysexMessage;
 
 /**
- * A class for efficient and convenient processing of sysex messages
- * in Driver class.  The basic concept is to store the sysex as a byte
- * array, using an index to the special bytes (eg <code>@@</code>,
- * <code>*patchNum*</code>, ..)  to insert values during
- * toSysexMessage.
+ * A class for efficient and convenient creatation of sysex messages.
+ * The basic concept is to store a sysex as a byte array, using an
+ * index to the special bytes (eg <code>@@</code>,
+ * <code>*patchNum*</code>, ..) to insert values.
+ *
  * <OL>
  * <LI> Understands space seperated "Sysex" strings of the form:
  *        <pre>"F0 00 00 1B 0B @@ 14 *patchNum* 00 *bankNum* 00 F7"</pre>
@@ -23,11 +23,15 @@ import javax.sound.midi.SysexMessage;
  * <LI> On converstion to byte array (prior to being sent as a
  *      sysex message):
  *      <DIR>
- *       <LI><code>*name*</code> - Replaced by the appropriate
- *           value by using a <code>NameValue</code> instance.
- *       <LI><code>**</code> - Replace by THE value (What does this mean?)
- *       <LI><code>@@</code> - Replaced by the deviceID number
- *       <LI><code>##</code> - Replaced by (deviceID number + 16)
+ *       <LI><code>**</code> - Replace by the value of argument
+ *       <code>value</code>.
+ *       <LI><code>@@</code> - Replaced by the value of argument
+ *       <code>deviceID</code> argument.
+ *       <LI><code>##</code> - Replaced by the value of argument
+ *       <code>deviceID</code> argument + 16.
+ *       <LI><code>*name*</code> - Replaced by the appropriate value
+ *       by using a <code>NameValue</code> instance.  This is useful
+ *       if you have to replace multiple values.
  *      </DIR>
  * </OL>
  * Example:
@@ -130,9 +134,9 @@ public class SysexHandler /*implements Serializable*/ {
     //        handled multiple values such as *patchNum*, *bankNum*)
     //   2) The ** values end up with the name ** such that they can be
     //      replaced using:
-    //       Either - sysexHandler.toByteArray((byte)deviceID, new
+    //       Either - sysexHandler.toByteArray(deviceID, new
     //       SysexHandler.NameValue("**", patchNum));
-    //       Or(simpler)  - sysexHandler.toByteArray((byte) deviceID, patchNum);
+    //       Or(simpler)  - sysexHandler.toByteArray(deviceID, patchNum);
     //   3) private as setSysex initialises channelIndex etc..
     private void setSysexFromDenseHexStr(String src) {
 	int nBytes = src.length() / 2;
@@ -182,17 +186,20 @@ public class SysexHandler /*implements Serializable*/ {
      * @see NameValue
      */
     public SysexMessage toSysexMessage(int deviceID, NameValue[] nameValues) {
-	return toSysexMessage(toByteArray((byte) deviceID, nameValues));
+	return toSysexMessage(toByteArray(deviceID, nameValues));
     }
 
     /**
      * Return SysexMessage with replacable values set via data passed
-     * as arguments.
+     * as arguments.<p>
+     * <code>toSysexMessage(int deviceID, int value)</code> is a
+     * simple form of this method.
      *
      * @param deviceID Device ID
      * @param nameValue a <code>NameValue</code> value
      * @return a <code>SysexMessage</code> value
      * @see NameValue
+     * @see #toSysexMessage(int deviceID, int value)
      */
     public SysexMessage toSysexMessage(int deviceID, NameValue nameValue) {
 	NameValue[] nameValues = new NameValue[] {nameValue};
@@ -220,7 +227,7 @@ public class SysexHandler /*implements Serializable*/ {
      * be replaced (so the *patchNum* syntax is wasteful).
      */
     public SysexMessage toSysexMessage(int deviceID, int value) {
-	return toSysexMessage(toByteArray((byte) deviceID, value));
+	return toSysexMessage(toByteArray(deviceID, value));
     }
 
     /**
@@ -228,7 +235,7 @@ public class SysexHandler /*implements Serializable*/ {
      * (so the *patchNum* syntax is wasteful).
      */
     public SysexMessage toSysexMessage(int deviceID) {
-	return toSysexMessage(toByteArray((byte) deviceID, 0));
+	return toSysexMessage(toByteArray(deviceID, 0));
     }
 
     /** convert byte array into SysexMessage */
@@ -250,14 +257,14 @@ public class SysexHandler /*implements Serializable*/ {
      * @param nameValues a array of <code>NameValue</code> value
      * @return a <code>byte[]</code> value
      * @see NameValue
-     * @Xdeprecated Use toSysexArray(int deviceID, NameValue[] nameValues).
+     * @see #toSysexMessage(int deviceID, NameValue[] nameValues)
      */
-    public byte[] toByteArray(byte deviceID, NameValue[] nameValues) {
+    public byte[] toByteArray(int deviceID, NameValue[] nameValues) {
 	// Replace the deviceID number
 	if (channelIndex != -1)
-	    sysex[channelIndex] = (byte) ((int) deviceID - 1);
+	    sysex[channelIndex] = (byte) (deviceID - 1);
 	if (channel16Index != -1)
-	    sysex[channel16Index] = (byte) ((int) deviceID - 1 + 16);
+	    sysex[channel16Index] = (byte) (deviceID - 1 + 16);
 
 	// Replace values
 	for (Enumeration en = vNameValueIndex.elements(); en.hasMoreElements();) {
@@ -282,14 +289,14 @@ public class SysexHandler /*implements Serializable*/ {
     /**
      * A simplified methodology to use when there's only one value to
      * be replaced (so the *patchNum* syntax is wasteful).
-     * @Xdeprecated Use toSysexArray(int deviceID, int value).
+     * @see #toSysexMessage(int deviceID, int value)
      */
-    public byte[] toByteArray(byte deviceID, int value) {
+    public byte[] toByteArray(int deviceID, int value) {
 	// Replace the channel number
 	if (channelIndex != -1)
-	    sysex[channelIndex] = (byte) ((int) deviceID - 1);
+	    sysex[channelIndex] = (byte) (deviceID - 1);
 	if (channel16Index != -1)
-	    sysex[channel16Index] = (byte) ((int) deviceID - 1 + 16);
+	    sysex[channel16Index] = (byte) (deviceID - 1 + 16);
 
 	// Replace values
 	for (Enumeration en = vNameValueIndex.elements(); en.hasMoreElements();)
@@ -299,11 +306,12 @@ public class SysexHandler /*implements Serializable*/ {
     }
 
     /**
-     * Return a byte array where @@, ** etc.. have been replaced by 0.
-     * @Xdeprecated Use toSysexArray(0, 0).
+     * Return a byte array where <code>@@</code>, <code>**</code>
+     * etc.. have been replaced by 0.
+     * @see #toSysexMessage(int 0, int 0)
      */
     public byte[] toByteArray() {
-	return toByteArray((byte) 0, 0);
+	return toByteArray(0, 0);
     }
 
     /**
@@ -311,10 +319,10 @@ public class SysexHandler /*implements Serializable*/ {
      *
      * @param port MIDI output port number.
      * @param deviceID device ID
-     * @Xdeprecated Use toSysexArray(int deviceID) and Driver.send().
+     * @deprecated Use toSysexMessage(int deviceID) and Driver.send().
      */
     public void send(int port, byte deviceID) {
-	send(port, deviceID, 0);
+	send(port, toByteArray(deviceID, 0));
     }
 
     /**
@@ -323,11 +331,10 @@ public class SysexHandler /*implements Serializable*/ {
      * @param port MIDI output port number.
      * @param deviceID device ID
      * @param value data value
-     * @Xdeprecated Use toSysexArray(int deviceID, int value) and Driver.send().
+     * @deprecated Use toSysexMessage(int deviceID, int value) and Driver.send().
      */
     public void send(int port, byte deviceID, int value) {
-	byte[] sysex = toByteArray(deviceID, value);
-	send(port, sysex);
+	send(port, toByteArray(deviceID, value));
     }
 
     /**
@@ -337,12 +344,11 @@ public class SysexHandler /*implements Serializable*/ {
      * @param deviceID device ID
      * @param nameValue1 a <code>NameValue</code> value
      * @see NameValue
-     * @Xdeprecated Use toSysexArray(int deviceID, NameValue
+     * @deprecated Use toSysexMessage(int deviceID, NameValue
      * nameValue1) and Driver.send().
      */
     public void send(int port, byte deviceID, NameValue nameValue1) {
-	NameValue[] nameValues = new NameValue[] {nameValue1};
-	send(port, deviceID, nameValues);
+ 	send(port, toByteArray(deviceID, new NameValue[] { nameValue1 }));
     }
 
     /**
@@ -353,12 +359,11 @@ public class SysexHandler /*implements Serializable*/ {
      * @param nameValue1 a <code>NameValue</code> value
      * @param nameValue2 a <code>NameValue</code> value
      * @see NameValue
-     * @Xdeprecated Use toSysexArray(int deviceID, NameValue
+     * @deprecated Use toSysexMessage(int deviceID, NameValue
      * nameValue1, NameValue nameValue2) and Driver.send().
      */
     public void send(int port, byte deviceID, NameValue nameValue1, NameValue nameValue2) {
-	NameValue[] nameValues = new NameValue[] {nameValue1, nameValue2};
-	send(port, deviceID, nameValues);
+	send(port, toByteArray(deviceID, new NameValue[] { nameValue1, nameValue2}));
     }
 
     /**
@@ -368,12 +373,11 @@ public class SysexHandler /*implements Serializable*/ {
      * @param deviceID device ID
      * @param nameValues an array of <code>NameValue</code>.
      * @see NameValue
-     * @Xdeprecated Use toSysexArray(int deviceID, NameValue[]
+     * @deprecated Use toSysexMessage(int deviceID, NameValue[]
      * nameValues) and Driver.send().
      */
     public void send(int port, byte deviceID, NameValue[] nameValues) {
-	byte[] sysex = toByteArray(deviceID, nameValues);
-	send(port, sysex);
+	send(port, toByteArray(deviceID, nameValues));
     }
 
     /**
@@ -383,7 +387,7 @@ public class SysexHandler /*implements Serializable*/ {
      * @param port MIDI output port number
      * @param sysex an array of sysex byte data
      * <code>SysexHandler.send(getPort(), sysex)</code>.
-     * @Xdeprecated use <code>Driver.send(sysex)</code>.
+     * @deprecated use <code>Driver.send(sysex)</code>.
      */
     public static void send(int port, byte[] sysex) {
 	try {
