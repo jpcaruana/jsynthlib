@@ -35,8 +35,9 @@ public class NoteChooserConfigPanel extends ConfigPanel {
     private JPanel 			sequencePanel;
     private final 			JTextField t0 = new JTextField(null, 20);
     
-    private boolean sequencerEnable;
-    private String  sequencePath;
+    // not used yet.
+    //private boolean sequencerEnable;
+    //private String  sequencePath;
 
     /* note chooser parts */
     private static final int DEFAULT_NOTE = 60;

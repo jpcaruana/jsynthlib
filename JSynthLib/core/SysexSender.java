@@ -68,7 +68,6 @@ public class SysexSender implements SysexWidget.ISender {
 	    else if (sysex.charAt(i) == '#')
 		b[i / 2] = (byte) (channel - 1 + 16);
 	    else {
-		Integer in = new Integer(0);
 		b[i / 2] = (byte) Integer.parseInt(sysex.substring(i, i + 2), 16);
 	    }
 	}

@@ -333,7 +333,7 @@ public class JSLFrame {
 		} else if (!b) {
 		    // Remove menubar so frame can be disposed.
 		    // http://archives:archives@lists.apple.com/archives/java-dev/2003/Dec/04/disposingofjframesusescr.001.txt
-		    JMenuBar mb = getJMenuBar();
+		    //JMenuBar mb = getJMenuBar();
 		    setJMenuBar(null);
 
 		    desktop.getInvisible().getJFrame().requestFocus();

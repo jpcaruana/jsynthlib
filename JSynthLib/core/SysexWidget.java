@@ -84,7 +84,7 @@ public abstract class SysexWidget extends JPanel {
     private int numFaders = 1;
 
     /** <code>Device</code> associated with the <code>patch</code>. */
-    private Device device;
+    //private Device device;
     /** <code>Driver</code> associated with the <code>patch</code>. */
     private IPatchDriver driver;
 
@@ -118,7 +118,7 @@ public abstract class SysexWidget extends JPanel {
 	// the constructor is called, the following code have to be
 	// moved to methods which use them.
 	if (patch != null) {
-	    device = patch.getDevice();
+	    //device = patch.getDevice();
 	    driver = patch.getDriver();
 	}
 	if (paramModel != null)

@@ -89,7 +89,7 @@ public class MidiTest implements Runnable {
 		// If not, we'll put one on...
 		if(msg instanceof SysexMessage) {
 			// We need to send the stop message....
-			SysexMessage sysexstop = new SysexMessage();
+			//SysexMessage sysexstop = new SysexMessage();
 			byte[] buffer = msg.getMessage();
 			int len = msg.getLength();
 			// buffer.length may not be equal to msg.getLength()
@@ -128,7 +128,7 @@ public class MidiTest implements Runnable {
 	}
 
 	
-	private static final boolean testShortMessage = true;
+	private static final boolean testShortMessage = false;
 	private static final boolean testSysexMessage = true;
 	
 	/**
@@ -141,8 +141,8 @@ public class MidiTest implements Runnable {
 	private static Vector getMidiMessages() throws Exception {
 		Vector msgList = new Vector();
 		ShortMessage msg = new ShortMessage();
-		/*
-		if (testShortMessage && !PatchEdit.newMidiAPI) {
+		// XXX shortMessage test does not work with new MIDI layer.
+		if (testShortMessage) {
 			// Make a bunch of messages and try sending
 			// them. Why use data bytes 0x4B, 0x70?  Well,
 			// it's binary 0100110001110000 (a zero, a
@@ -194,7 +194,6 @@ public class MidiTest implements Runnable {
 			msg.setMessage(ShortMessage.SONG_SELECT, 0x4B, 0x70); // 1B
 			msgList.addElement(msg.clone());
 		}
-		*/
 		if (testSysexMessage) {
 			// Sysex messages
 			SysexMessage sysexmsg = new SysexMessage();
@@ -251,4 +250,3 @@ public class MidiTest implements Runnable {
 		return true;
 	}
 }
-//(setq c-basic-offset 8)
