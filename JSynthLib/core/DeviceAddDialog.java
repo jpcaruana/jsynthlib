@@ -82,7 +82,7 @@ public class DeviceAddDialog extends JDialog {
 	    PatchEdit.appConfig.addDevice(device);
 	    String info = device.getInfoText();
 	    if (info != null && info.length() > 0) {
-		JTextArea jta = new JTextArea(info, 25, 80);
+		JTextArea jta = new JTextArea(info, 15, 40);
 		jta.setEditable(false);
 		jta.setLineWrap(true);
 		jta.setWrapStyleWord(true);
