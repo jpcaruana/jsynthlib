@@ -49,6 +49,7 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     private SysexWidget[] sysexWidget = new SysexWidget[8];
     
     private DM5ScrollBarLookupWidget selectedNoteWidget;
+    private NRPNSender selectedNoteSender;
     private DM5ScrollBarLookupWidget rootNoteWidget;
     private DM5ScrollBarLookupWidget closeNoteWidget;
     private DM5ScrollBarLookupWidget heldNoteWidget;
@@ -87,26 +88,21 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
 //        noteSelectPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"noteSelectPanel",TitledBorder.CENTER,TitledBorder.CENTER));
         panel.add(noteSelectPanel,gbc);        
 
-        JPanel selectPanel = new JPanel();        
-        selectPanel.setLayout(new BoxLayout(selectPanel, BoxLayout.Y_AXIS));
-        //        noteSelectPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"selectPanel",TitledBorder.CENTER,TitledBorder.CENTER));
-        noteSelectPanel.add(selectPanel,gbc);        
-        
+        JPanel triggerPanel = new JPanel();        
+        triggerPanel.setLayout(new BoxLayout(triggerPanel, BoxLayout.Y_AXIS));
+//        triggerPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"triggerPanel",TitledBorder.CENTER,TitledBorder.CENTER));
+        triggerPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Trigger Parameters",TitledBorder.CENTER,TitledBorder.CENTER));
+        panel.add(triggerPanel,gbc);        
+        addTriggerWidgets(patch, triggerPanel);
+
+        addSelectedNoteWidget(patch, noteSelectPanel);
+
         JPanel parmsPanel = new JPanel();        
         parmsPanel.setLayout(new BoxLayout(parmsPanel, BoxLayout.Y_AXIS));
 //        parmsPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"parmsPanel",TitledBorder.CENTER,TitledBorder.CENTER));
         parmsPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Selected Note Parameters",TitledBorder.CENTER,TitledBorder.CENTER));
         noteSelectPanel.add(parmsPanel,gbc);        
         addParmsSubPanels(patch, parmsPanel);
-        
-        JPanel triggerPanel = new JPanel();        
-        triggerPanel.setLayout(new BoxLayout(triggerPanel, BoxLayout.Y_AXIS));
-        //        parmsPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"triggerPanel",TitledBorder.CENTER,TitledBorder.CENTER));
-        triggerPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Trigger Parameters",TitledBorder.CENTER,TitledBorder.CENTER));
-        panel.add(triggerPanel,gbc);        
-        addTriggerWidgets(patch, triggerPanel);
-
-        addSelectedNoteWidget(patch, selectPanel);
     }
     
     private void addParmsSubPanels(Patch patch, JPanel panel) {
@@ -127,15 +123,12 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     }
     
     private void addSelectedNoteWidget(Patch patch, JPanel panel) {
-        JPanel selectedNoteWidgetPanel = new JPanel();        
-        selectedNoteWidgetPanel.setLayout(new BorderLayout());
-        panel.add(selectedNoteWidgetPanel,gbc);
-        
-        NRPNSender selectedNoteSender = new NRPNSender(NRPNSender.PREVIEW_NOTE, 60);
+        selectedNoteSender = new NRPNSender(NRPNSender.PREVIEW_NOTE, 60);
         selectedNoteWidget = new DM5ScrollBarLookupWidget("Selected Note", patch, 0, 60, -1,
-                                                                        null,
-                                                                        selectedNoteSender,
-                                                                        rootNoteWidget.getValue(), 61);
+                                                          null,
+//                                                          selectedNoteSender,
+                                                          null,
+                                                          rootNoteWidget.getValue(), 61);
         selectedNoteSender.send(patch.getDriver(), 0);
         addWidget(panel, selectedNoteWidget, ctrlBase++, 0, 1, 1, widgetCount++);
         selectedNoteWidget.addEventListener(new ChangeListener() {
@@ -143,7 +136,6 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
                 selNoteChanged(e);
             }
 	    });
-        
     }
 
     public void selNoteChanged(ChangeEvent e) {
@@ -155,39 +147,40 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     }    
 
     private void setPacketModels(int noteValue) {
-        int newValue;
+        selectedNoteSender.send(patch.getDriver(), noteValue);
+        
         notePacketModel[0].setPacketIndex(noteValue);
-        int newValue0 = notePacketModel[0].get();
+        int familyValue = notePacketModel[0].get();
 
         notePacketModel[1].setPacketIndex(noteValue);
-        int newValue1 = notePacketModel[1].get();
+        int drumSoundValue = notePacketModel[1].get();
 
         notePacketModel[2].setPacketIndex(noteValue);
-        int newValue2 = notePacketModel[2].get();
+        int coarseTuneValue = notePacketModel[2].get();
 
         notePacketModel[3].setPacketIndex(noteValue);
-        int newValue3 = notePacketModel[3].get();
+        int fineTuneValue = notePacketModel[3].get();
 
         notePacketModel[4].setPacketIndex(noteValue);
-        int newValue4 = notePacketModel[4].get();
+        int volValue = notePacketModel[4].get();
 
         notePacketModel[5].setPacketIndex(noteValue);
-        int newValue5 = notePacketModel[5].get();
+        int panValue = notePacketModel[5].get();
 
         notePacketModel[6].setPacketIndex(noteValue);
-        int newValue6 = notePacketModel[6].get();
+        int outputValue = notePacketModel[6].get();
         
         notePacketModel[7].setPacketIndex(noteValue);
-        int newValue7 = notePacketModel[7].get();
+        int groupValue = notePacketModel[7].get();
         
-        ((ComboBoxWidget)sysexWidget[0]).setValue(newValue0);
-//        ((ComboBoxWidget)sysexWidget[1]).setValue(newValue1);
-        ((ScrollBarLookupWidget)sysexWidget[2]).setValue(newValue2);
-        ((ScrollBarWidget)sysexWidget[3]).setValue(newValue3);
-        ((ScrollBarWidget)sysexWidget[4]).setValue(newValue4);
-        ((ScrollBarLookupWidget)sysexWidget[5]).setValue(newValue5);
-        ((ComboBoxWidget)sysexWidget[6]).setValue(newValue6);
-        ((ComboBoxWidget)sysexWidget[7]).setValue(newValue7);
+        ((ComboBoxWidget)sysexWidget[0]).setValue(familyValue);
+//        ((ComboBoxWidget)sysexWidget[1]).setValue(drumSoundValue);
+        ((ScrollBarLookupWidget)sysexWidget[2]).setValue(coarseTuneValue);
+        ((ScrollBarLookupWidget)sysexWidget[3]).setValue(fineTuneValue);
+        ((ScrollBarWidget)sysexWidget[4]).setValue(volValue);
+        ((ScrollBarLookupWidget)sysexWidget[5]).setValue(panValue);
+        ((ComboBoxWidget)sysexWidget[6]).setValue(outputValue);
+        ((ComboBoxWidget)sysexWidget[7]).setValue(groupValue);
     }
         
     private void addVoiceWidgets(Patch patch, JPanel panel) {
@@ -230,18 +223,36 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     
     private void addParmWidgets(Patch patch, JPanel panel) {
         notePacketModel[2] = new PacketModel(patch, 36+4, BitModel.CRSE_TUNE_MASK);
-        sysexWidget[2] = new ScrollBarLookupWidget("Coarse Tune", patch, 0, 7, -1,
-                                                   notePacketModel[2],
-                                                   new NRPNSender(NRPNSender.NOTE_COARSE_TUNE, new int [] {28, 42, 56, 71, 85, 99, 113, 127}),
-                                                   new String[] {"-4", "-3", "-2", "-1", "0", "1", "2", "3"});
+//        sysexWidget[2] = new ScrollBarLookupWidget("Coarse Tune", patch, 0, 7, -1,
+//                                                   notePacketModel[2],
+//                                                   new NRPNSender(NRPNSender.NOTE_COARSE_TUNE, new int [] {28, 42, 56, 71, 85, 99, 113, 127}),
+//                                                   new String[] {"-4", "-3", "-2", "-1", "0", "1", "2", "3"});
+        sysexWidget[2] = new CoarseTuneScrollBarLookupWidget("Coarse Tune", 
+                                                             patch, 0, 7, -1,
+                                                             notePacketModel[2],
+                                                             new NRPNSender(NRPNSender.NOTE_COARSE_TUNE, new int [] {28, 42, 56, 71, 85, 99, 113, 127}));
         addWidget(panel, sysexWidget[2], ctrlBase++, 0, 1, 1, widgetCount++);
+        ((ScrollBarLookupWidget)sysexWidget[2]).addEventListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                coarseTuneChanged(e);
+            }
+	    });
         
         notePacketModel[3] = new PacketModel(patch, 36+3, BitModel.FINE_TUNE_MASK);
-        sysexWidget[3] = new ScrollBarWidget("Fine Tune",
-                                             patch, 0, 99, 0,
-                                             notePacketModel[3],
-                                             new NRPNSender(NRPNSender.NOTE_FINE_TUNE, 99));
+//        sysexWidget[3] = new ScrollBarWidget("Fine Tune",
+        sysexWidget[3] = new FineTuneScrollBarLookupWidget("Fine Tune",
+                                                           patch, 0, 99, 0,
+                                                           notePacketModel[3],
+                                                           new NRPNSender(NRPNSender.NOTE_FINE_TUNE, 99));
         addWidget(panel, sysexWidget[3], ctrlBase++, 0, 1, 1, widgetCount++);
+        ((ScrollBarLookupWidget)sysexWidget[3]).addEventListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                fineTuneChanged(e);
+            }
+	    });
+        
+        ((CoarseTuneScrollBarLookupWidget)sysexWidget[2]).setOptions(sysexWidget[3].getValue());
+        ((FineTuneScrollBarLookupWidget)sysexWidget[3]).setOptions(sysexWidget[2].getValue());
         
         notePacketModel[4] = new PacketModel(patch, 36+0, BitModel.VOL_MASK);
         sysexWidget[4] = new ScrollBarWidget("Volume",
@@ -258,6 +269,18 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         addWidget(panel,sysexWidget[5], ctrlBase++, 0, 1, 1, widgetCount++);
     }
 
+    public void coarseTuneChanged(ChangeEvent e) {
+        JSlider sl = (JSlider)e.getSource();
+        int slVal = (int)sl.getValue();
+        ((FineTuneScrollBarLookupWidget)sysexWidget[3]).setOptions(slVal);
+    }
+    
+    public void fineTuneChanged(ChangeEvent e) {
+        JSlider sl = (JSlider)e.getSource();
+        int slVal = (int)sl.getValue();
+        ((CoarseTuneScrollBarLookupWidget)sysexWidget[2]).setOptions(slVal);
+    }
+    
     private void addOutputWidgets(Patch patch, JPanel panel) {
         notePacketModel[6] = new PacketModel(patch, 36+1, BitModel.OUTP_MASK);
         sysexWidget[6] = new ComboBoxWidget("Output", patch,
@@ -337,5 +360,89 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
                 triggerWidget[i].updateRootNote(noteVal);
             }
         }
+    }
+    }
+
+class CoarseTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
+    private static final String[] posOptions = new String[] {
+        "-4", "-3", "-2", "-1", "+0", "+1", "+2", "+3", "+4"        
+    }; 
+    
+    private static final String[] negOptions = new String[] {
+        "-3", "-2", "-1", "-0", "+0", "+1", "+2", "+3", "+4"        
+    }; 
+    
+    CoarseTuneScrollBarLookupWidget(String label,
+                                    IPatch patch, 
+                                    int min, 
+                                    int max,
+                                    int labelWidth,
+                                    IParamModel pmodel, 
+                                    ISender sender) {
+        super(label, patch, min, max, labelWidth, pmodel, sender, posOptions);
+    }
+    
+    void setOptions(int fineTuneValue) {
+        if (fineTuneValue > 0) {
+            options = negOptions;
+        } else {
+            options = posOptions;
+        }
+        int v = slider.getValue();
+        text.setText(options[v]);
+    }
+}
+
+class FineTuneScrollBarLookupWidget extends ScrollBarLookupWidget {
+    private static final String[] posOptions = new String[] {
+        ".00", ".01", ".02", ".03", ".04", ".05", ".06", ".07", ".08", ".09",
+        ".10", ".11", ".12", ".13", ".14", ".15", ".16", ".17", ".18", ".19",
+        ".20", ".21", ".22", ".23", ".24", ".25", ".26", ".27", ".28", ".29",
+        ".30", ".31", ".32", ".33", ".34", ".35", ".36", ".37", ".38", ".39",
+        ".40", ".41", ".42", ".43", ".44", ".45", ".46", ".47", ".48", ".49",
+        ".50", ".51", ".52", ".53", ".54", ".55", ".56", ".57", ".58", ".59",
+        ".60", ".61", ".62", ".63", ".64", ".65", ".66", ".67", ".68", ".69",
+        ".70", ".71", ".72", ".73", ".74", ".75", ".76", ".77", ".78", ".79",
+        ".80", ".81", ".82", ".83", ".84", ".85", ".86", ".87", ".88", ".89",
+        ".90", ".91", ".92", ".93", ".94", ".95", ".96", ".97", ".98", ".99"
+    };
+    
+    private static final String[] negOptions = new String[] {
+        ".00", "-.99", "-.98", "-.97", "-.96", "-.95", "-.94", "-.93", "-.92", "-.91", 
+        "-.90", "-.89", "-.88", "-.87", "-.86", "-.85", "-.84", "-.83", "-.82", "-.81", 
+        "-.80", "-.79", "-.78", "-.77", "-.76", "-.75", "-.74", "-.73", "-.72", "-.71", 
+        "-.70", "-.69", "-.68", "-.67", "-.66", "-.65", "-.64", "-.63", "-.62", "-.61", 
+        "-.60", "-.59", "-.58", "-.57", "-.56", "-.55", "-.54", "-.53", "-.52", "-.51", 
+        "-.50", "-.49", "-.48", "-.47", "-.46", "-.45", "-.44", "-.43", "-.42", "-.41", 
+        "-.40", "-.39", "-.38", "-.37", "-.36", "-.35", "-.34", "-.33", "-.32", "-.31", 
+        "-.30", "-.29", "-.28", "-.27", "-.26", "-.25", "-.24", "-.23", "-.22", "-.21", 
+        "-.20", "-.19", "-.18", "-.17", "-.16", "-.15", "-.14", "-.13", "-.12", "-.11", 
+        "-.10", "-.09", "-.08", "-.07", "-.06", "-.05", "-.04", "-.03", "-.02", "-.01"
+    };
+    
+    FineTuneScrollBarLookupWidget(String label,
+                                  IPatch patch, 
+                                  int min, 
+                                  int max,
+                                  int labelWidth,
+                                  IParamModel pmodel, 
+                                  ISender sender) {
+        super(label, patch, min, max, labelWidth, pmodel, sender, posOptions);
+    }
+    
+    void setOptions(int coarseTuneValue) {
+        if (coarseTuneValue < 4) {
+            options = negOptions;
+        } else {
+            options = posOptions;
+            if (coarseTuneValue > 6) {
+                slider.setValue(0);
+                slider.setEnabled(false);
+            } else {
+                slider.setEnabled(true);
+            }
+        }
+        int v = slider.getValue();
+        text.setText(options[v]);
     }
 }
