@@ -253,7 +253,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
 	    implementationVersion.startsWith("1.4.0") ||
 	    implementationVersion.startsWith("1.4.1"))
 	    return false;
-	if(platform.length()==0 || platform.indexOf("Windows")>-1) {
+	if(platform.length()==0 || platform.indexOf("Windows")>-1 || platform.indexOf("Linux")>-1) {
 	    return(true);
 	}
 	return(false);
