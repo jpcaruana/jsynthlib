@@ -1,10 +1,16 @@
 package org.jsynthlib.jsynthlib.xml;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.codehaus.groovy.control.CompilationFailedException;
+import org.jsynthlib.plugins.PluginRegistry;
 import org.jsynthlib.utils.AdvDefaultHandler;
 import org.jsynthlib.utils.Generator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import core.IDriver;
 
@@ -15,7 +21,7 @@ public class DeviceLoadHandler extends AdvDefaultHandler {
     public DeviceLoadHandler() {
         super("device", "patch", new PatchLoadHandler());
         generators.put("device", new Generator(DeviceBuilder.class));
-        generators.put("driver", new Generator(DriverBuilder.class));
+        generators.put("driver", new DriverGenerator());
         generators.put("banknames", new Generator(LinkedList.class));
         generators.put("patchnames", new Generator(LinkedList.class));
         generators.put("decoder", new DecoderGenerator());
@@ -68,7 +74,13 @@ public class DeviceLoadHandler extends AdvDefaultHandler {
         }
     }
 
-    public static class DriverBuilder {
+    private class DriverGenerator extends Generator {
+        public Object generate(String element, String type) throws SAXException {
+            return new DriverBuilder();
+        }
+    }
+    public class DriverBuilder {
+        private String name;
         private String model;
         private String authors;
         private String manufacturer;
@@ -77,12 +89,14 @@ public class DeviceLoadHandler extends AdvDefaultHandler {
         private String[] bnums;
         private String[] wbnums;
         private XMLPatch patch;
+        private Class imp = XMLDriverImplementation.class;
         
-        public DriverBuilder() {}
+        public DriverBuilder() { }
         
-        public XMLDriver getDriver() {
-            //FIXME: load method implementation
-            XMLDriver d = new XMLDriver(pnums, wpnums, bnums, wbnums, patch,null);
+        public XMLDriver getDriver() throws SAXParseException {
+            XMLDriverImplementation i = getImp();
+            XMLDriver d = new XMLDriver(pnums, wpnums, bnums, wbnums, patch, i);
+            d.setPatchType(name);
             d.setAuthors(authors);
             d.setModelName(model);
             d.setManufacturerName(manufacturer);
@@ -90,6 +104,9 @@ public class DeviceLoadHandler extends AdvDefaultHandler {
         }
         
         public void setName(String s) {
+            name = s;
+        }
+        public void setModel(String s) {
             model = s;
         }
         public void setManufacturer(String s) {
@@ -112,6 +129,21 @@ public class DeviceLoadHandler extends AdvDefaultHandler {
         }
         public void setPatch(XMLPatch p) {
             patch = p;
+        }
+        public void setClass(String f) throws SAXParseException {
+            try {
+                imp = PluginRegistry.groovyLoader().parseClass(new File(base_path, f));
+            } catch (Exception e) {
+                throw new SAXParseException("Error parsing driver class", locator, e);
+            }
+        }
+        private XMLDriverImplementation getImp() throws SAXParseException {
+            try {
+                return (XMLDriverImplementation) imp.newInstance();
+            } catch (Exception e) {
+                throw new SAXParseException("Error instantiating driver class", locator, e);
+            }
+                
         }
     }
 

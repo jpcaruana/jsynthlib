@@ -97,7 +97,7 @@ public class XMLParameter implements SysexWidget.IParameter {
     public void setName(String name) {
         this.name = name;
     }
-    protected int getType() {
+    public int getType() {
         return type;
     }
     protected void setType(int type) {
@@ -132,5 +132,11 @@ public class XMLParameter implements SysexWidget.IParameter {
         } else {
             decoder.encode(get(p), this, p.getMessage(sysex_index));
         }
+    }
+    public byte[] getMessage(XMLPatch p) {
+        return p.getMessage(sysex_index);
+    }
+    public String encode(XMLPatch p) {
+        return decoder.encode(get(p), this);
     }
 }

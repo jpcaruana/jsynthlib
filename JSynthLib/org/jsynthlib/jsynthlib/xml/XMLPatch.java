@@ -110,7 +110,7 @@ public class XMLPatch implements IPatch {
     protected String getHeader(byte[] data) {
         StringBuffer patchstring = new StringBuffer("F0");
         int end = Math.min(16, data.length);
-        for (int i = 1; i < end; i++) {
+        for (int i = 0; i < end; i++) {
             if ((int) (data[i] & 0xff) < 0x10)
                 patchstring.append("0");
             patchstring.append(Integer.toHexString((int) (data[i] & 0xff)));
@@ -260,9 +260,15 @@ public class XMLPatch implements IPatch {
             if (!found)
                 throw new IllegalArgumentException("Unrecognized message with header "+header);
         }
+        try {
+            XMLParameter p = getParameter("name");
+            setName(p.getString(this));
+        } catch (Exception ex) {
+            setName("Unknown");
+        }
     }
     boolean supportsMessages(SysexMessage[] messages) {
-        if (messages.length != sysex.length) {
+        if (messages.length != descs.length) {
             return false;
         }
         LinkedList l = new LinkedList();
@@ -308,16 +314,17 @@ public class XMLPatch implements IPatch {
     public XMLPatch newPatch() {
         XMLPatch patch = newEmptyPatch();
         for (int i = 0; i < descs.length; i++) {
-            sysex[i] = new byte[descs[i].getSize() - 1];
-            sysex[i][sysex[i].length - 1] = (byte) 0xF7;
+            patch.sysex[i] = new byte[descs[i].getSize() - 1];
+            patch.sysex[i][patch.sysex[i].length - 1] = (byte) 0xF7;
             XMLParameter[] params = descs[i].getParams();
             for (int j = 0; j < params.length; j++) {
-                XMLParameter p = params[i];
+                XMLParameter p = params[j];
                 if (p.getDefault() != 0) {
-                    descs[i].getDecoder().encode(p.getDefault(),p, sysex[i]);
+                    descs[i].getDecoder().encode(p.getDefault(),p, patch.sysex[i]);
                 }
             }
         }
+        patch.setName("New Patch");
         return patch;
     }
 }

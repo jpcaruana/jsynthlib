@@ -5,6 +5,7 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.SysexMessage;
 
 import core.Device;
+import core.ErrorMsg;
 import core.IPatch;
 import core.ISingleDriver;
 import core.JSLFrame;
@@ -73,8 +74,13 @@ public class XMLDriver implements ISingleDriver {
 
     public IPatch[] createPatch(SysexMessage[] msgs) {
         XMLPatch np = base_patch.newEmptyPatch();
-        np.setMessages(msgs);
-        return null;
+        try {
+            np.setMessages(msgs);
+        } catch (IllegalArgumentException ex) {
+            ErrorMsg.reportStatus(ex);
+            return new IPatch[0];
+        }
+        return new IPatch[] {np};
     }
     public JSLFrame edit(IPatch p) {
         return null;
@@ -134,7 +140,10 @@ public class XMLDriver implements ISingleDriver {
     public String getPatchType() {
         return name;
     }
-
+    protected void setPatchType(String s) {
+        name = s;
+    }
+    
     // XXX: XML Editors
     public boolean hasEditor() {
         return false;
@@ -144,7 +153,7 @@ public class XMLDriver implements ISingleDriver {
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-        imp.requestPatchDump(bankNum, patchNum);
+        imp.requestPatchDump(device, bankNum, patchNum);
     
     }
 
@@ -153,7 +162,7 @@ public class XMLDriver implements ISingleDriver {
     }
 
     public void sendParameter(IPatch patch, SysexWidget.IParameter param) {
-        imp.sendParameter((XMLPatch)patch, param);
+        imp.sendParameter((XMLPatch)patch, (XMLParameter)param);
     
     }
 
@@ -190,4 +199,8 @@ public class XMLDriver implements ISingleDriver {
         return base_patch.supportsMessages(patch.getMessages());
     }
 
+    public String toString() {
+        return getManufacturerName() + " " + getModelName() + " "
+            + getPatchType();
+    }
 }
