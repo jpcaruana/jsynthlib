@@ -244,7 +244,15 @@ public class XMLPatch implements ISinglePatch {
     }
 
     public Object clone() {
-        throw new RuntimeException("Unimplemented");
+    	XMLPatch p;
+    	try {
+    	    p = (XMLPatch)super.clone();
+	} catch (CloneNotSupportedException e) {
+	    throw new RuntimeException(e);
+	}
+	p.sysex = (byte[][]) sysex.clone();
+    	p.cache = (HashMap) cache.clone();
+        return p;
     }
 
     public void useSysexFromPatch(IPatch p) {
