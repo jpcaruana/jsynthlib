@@ -97,7 +97,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         if (!loadPrefsSuccessfull)
             ErrorMsg.reportError
 		("Error",
-		 "Unable to load user preferences. Defaults loaded instead."); 
+		 "Unable to load user preferences. Defaults loaded instead.");
 
 	// popup menu for Library window, etc.
 	menuPatchPopup = createPopupMenu();
@@ -117,7 +117,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     // PatchEdit.getInstance() can/should be replaced by
     // JSLDesktop.getSelectedWindow(). Hiroo
-    public static JFrame getInstance() {return JSLDesktop.getSelectedWindow();}
+    public static JFrame getInstance() {
+	return JSLDesktop.getSelectedWindow();
+    }
 
     /**
      * Setup preference dialog window.
@@ -275,8 +277,10 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	menuPatch.add(uploadAction);
         menuBar.add(menuPatch);
 	menuPatch.addMenuListener(new MenuListener() {
-		public void menuCanceled(MenuEvent e) {}
-		public void menuDeselected(MenuEvent e) {}
+		public void menuCanceled(MenuEvent e) {
+		}
+		public void menuDeselected(MenuEvent e) {
+		}
 		public void menuSelected(MenuEvent e) {
 		    pasteAction.enable();
 		}
@@ -376,7 +380,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     private static JButton createToolBarButton(Action a, String label, String tooltip) {
 	String label2 = label.toLowerCase();
 	URL u1 = PatchEdit.class.getResource("/images/" + label2 + ".png");
-	URL u2 = PatchEdit.class.getResource("/images/disabled-"+label2+".png");
+	URL u2 = PatchEdit.class.getResource("/images/disabled-" + label2 + ".png");
 	//Create and initialize the button.
 	JButton button = new JButton(a);
 	button.setToolTipText(tooltip);
@@ -408,6 +412,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 				try {
 				    aboutAction.actionPerformed(event);
 				} catch (Exception e) {
+				    ErrorMsg.reportStatus(e);
 				}
 			    }
 			});
@@ -420,6 +425,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 				try {
 				    openFrame(file);
 				} catch (Exception e) {
+				    ErrorMsg.reportStatus(e);
 				}
 			    }
 			});
@@ -434,6 +440,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 				try {
 				    prefsAction.actionPerformed(event);
 				} catch (Exception e) {
+				    ErrorMsg.reportStatus(e);
 				}
 			    }
 			});
@@ -454,6 +461,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         try {
 	    frame.setSelected(true);
 	} catch (java.beans.PropertyVetoException e) {
+	    ErrorMsg.reportStatus(e);
 	}
     }
 
@@ -464,7 +472,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         try {
 	    frame.setSelected(true);
 	} catch (java.beans.PropertyVetoException e) {
-	}  //I don't *actually* know what this is for :-)
+	    //I don't *actually* know what this is for :-)
+	    ErrorMsg.reportStatus(e);
+	}
     }
 
     /** Create a new Library Window and load a Library from disk to
@@ -491,11 +501,13 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	    try {
 		frame2.setSelected(true);
 	    } catch (java.beans.PropertyVetoException e2) {
+		ErrorMsg.reportStatus(e2);
 	    }
 	}
         try {
 	    frame.setSelected(true);
 	} catch (java.beans.PropertyVetoException e) {
+	    ErrorMsg.reportStatus(e);
 	}
     }
 
@@ -510,9 +522,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		    return;
 	    }
 	    if (oFrame instanceof LibraryFrame) {
-		saveFrame((LibraryFrame)oFrame, fn);
+		saveFrame((LibraryFrame) oFrame, fn);
 	    } else if (oFrame instanceof SceneFrame) {
-		saveFrame((SceneFrame)oFrame, fn);
+		saveFrame((SceneFrame) oFrame, fn);
 	    }
 	} catch (Exception e) {
 	    ErrorMsg.reportError("Error", "Unable to Save Library", e);
@@ -555,9 +567,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	    if (fn == null)
 		return;
 	    if (oFrame instanceof LibraryFrame) {
-		saveFrame((LibraryFrame)oFrame, fn);
+		saveFrame((LibraryFrame) oFrame, fn);
 	    } else if (oFrame instanceof SceneFrame) {
-		saveFrame((SceneFrame)oFrame, fn);
+		saveFrame((SceneFrame) oFrame, fn);
 	    }
 	} catch (Exception ex) {
 	    ErrorMsg.reportError("Error", "Unable to Save Library", ex);
@@ -821,7 +833,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 			*/
 			try {
 			    frm.setSelected(true);
-			} catch (java.beans.PropertyVetoException ex) {
+			} catch (java.beans.PropertyVetoException e) {
+			    ErrorMsg.reportStatus(e);
 			}
 		    }
 		} catch (Exception ex) {
@@ -1099,7 +1112,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (appConfig.getLibPath() != null)
 		    fc.setSelectedFile(new File(appConfig.getLibPath()));
-		if (fc.showDialog(PatchEdit.getInstance(), "Choose Import All Directory") != JFileChooser.APPROVE_OPTION)
+		if (fc.showDialog(PatchEdit.getInstance(),
+				  "Choose Import All Directory") != JFileChooser.APPROVE_OPTION)
 		    return;
 		File file = fc.getSelectedFile();
 
@@ -1316,6 +1330,27 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	waitDialog.hide();
     }
 
+    private class WaitDialog extends JDialog {
+	WaitDialog(JFrame parent) {
+	    super(parent,
+		  "Please wait while the operation is completed", false);
+	    setSize(350, 24);
+	    centerDialog();
+	}
+
+	void centerDialog() {
+	    Dimension screenSize = this.getToolkit().getScreenSize();
+	    Dimension size = this.getSize();
+	    screenSize.height = screenSize.height / 2;
+	    screenSize.width = screenSize.width / 2;
+	    size.height = size.height / 2;
+	    size.width = size.width / 2;
+	    int y = screenSize.height - size.height;
+	    int x = screenSize.width - size.width;
+	    this.setLocation(x, y);
+	}
+    }
+
     ////////////////////////////////////////////////////////////////////////
     // MIDI Master Input
     // masterInTrans (trns) -> MasterReceiver (rcvr1) -> initPortOut(rcvr)
@@ -1369,5 +1404,40 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     protected void finalize() {	// ???
 	disableMasterIn();
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    private static class ExtensionFilter extends FileFilter {
+	private String[] exts;
+	private String desc;
+
+	public ExtensionFilter (String desc, String exts) {
+	    this (desc, new String[] {exts});
+	}
+
+	public ExtensionFilter (String desc, String[] exts) {
+	    this.desc = desc;
+	    this.exts = (String[]) exts.clone();
+	}
+
+	public boolean accept (File file) {
+	    if (file.isDirectory()) {
+		return true;
+	    }
+	    int count = exts.length;
+	    String path = file.getAbsolutePath();
+	    for (int i = 0; i < count; i++) {
+		String ext = exts[i];
+		if (path.toUpperCase().endsWith(ext.toUpperCase())
+		    && (path.charAt(path.length() - ext.length()) == '.')) {
+		    return true;
+		}
+	    }
+	    return false;
+	}
+
+	public String getDescription() {
+	    return (desc == null ? exts[0] : desc);
+	}
     }
 }
