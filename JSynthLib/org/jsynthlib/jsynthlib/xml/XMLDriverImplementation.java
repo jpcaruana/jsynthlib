@@ -56,6 +56,9 @@ public class XMLDriverImplementation {
             sb.append('0');
         return sb.reverse().toString();
     }
+    public static final String hex(Byte b) {
+    	return hex(b.intValue());
+    }
     public void playPatch(XMLPatch p) {
         try {
             Thread.sleep(100);
