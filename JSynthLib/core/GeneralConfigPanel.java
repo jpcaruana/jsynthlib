@@ -26,7 +26,7 @@ public class GeneralConfigPanel extends ConfigPanel {
 	super(parent);
 	setLayout(new core.ColumnLayout());
 
-	JLabel l0 = new JLabel("Application Look and Feel:");
+	JLabel l0 = new JLabel("GUI Look and Feel:");
 	cbLF = new JComboBox();
 	for (int j = 0; j < installedLF.length; j++)
 	    cbLF.addItem(installedLF[j].getName());
@@ -43,7 +43,7 @@ public class GeneralConfigPanel extends ConfigPanel {
 	JLabel l1 = new JLabel("GUI Style:                 ");
 	cbGS = new JComboBox(new String[] {
 	    "MDI (Single Window)",
-	    "SDI (Many Windows)",
+	    "SDI (Multiple Windows)",
 	});
 	cbGS.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -62,13 +62,17 @@ public class GeneralConfigPanel extends ConfigPanel {
     }
 
     void commitSettings() {
-	if (AppConfig.getLookAndFeel() != cbLF.getSelectedIndex()
-	    || AppConfig.getGuiStyle() != cbGS.getSelectedIndex())
-	    JOptionPane.showMessageDialog
-		(null,
-		 "You must exit and restart the program for your changes to take effect",
-		 "Changing L&F / Platform", JOptionPane.INFORMATION_MESSAGE);
-	AppConfig.setLookAndFeel(cbLF.getSelectedIndex());
-	AppConfig.setGuiStyle(cbGS.getSelectedIndex());
+	if (AppConfig.getLookAndFeel() != cbLF.getSelectedIndex()) {
+            AppConfig.setLookAndFeel(cbLF.getSelectedIndex());
+            PatchEdit.getDesktop().updateLookAndFeel();
+	}
+	if (AppConfig.getGuiStyle() != cbGS.getSelectedIndex()) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "You must exit and restart the program for your changes to take effect",
+                    "Changing GUI Style",
+                    JOptionPane.INFORMATION_MESSAGE);
+            AppConfig.setGuiStyle(cbGS.getSelectedIndex());
+        }
     }
 }

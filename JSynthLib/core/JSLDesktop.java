@@ -47,7 +47,6 @@ public class JSLDesktop {
 	    ((JSLFakeDesktop) proxy).setupInitialMenuBar(tb);
 	}
 //	setupInitialMenuBar(tb);
-//	instance = this;
     }
 
     /**
@@ -63,20 +62,6 @@ public class JSLDesktop {
     }
     static boolean useMDI() {
         return useMDI;
-    }
-
-    /** @deprecated don't use this. */
-    JSLDesktop getInstance() {
-//	if (instance == null) {
-//	    synchronized (in_get_instance) {
-//		if (!in_get_instance.booleanValue()) {
-//		    in_get_instance = Boolean.TRUE;
-//		    instance = new JSLDesktop();
-//		    in_get_instance = Boolean.FALSE;
-//		}
-//	    }
-//	}
-	return this; // now this method is useless
     }
 
     /** @see JSLFrame#moveToDefaultLocation() */
@@ -119,7 +104,7 @@ public class JSLDesktop {
     // original (non-JDesktopPane compatible) methods
     /**
      * In MDI mode returns the root JFrame created. In SDI mode returns the
-     * current active JFrame including Toolbar frame.
+     * current active JFrame which may be the Toolbar frame.
      */
     public JFrame getSelectedWindow() { return selected; }
     /**
@@ -135,6 +120,12 @@ public class JSLDesktop {
         f.add(this); // let JSLFrame know his parent
         proxy.add(f);
     }
+    /**
+     * Notification from the UIManager that the L&F has changed. Replaces the
+     * current UI object with the latest version from the UIManager.
+     */
+    public void updateLookAndFeel() { proxy.updateLookAndFeel(); }
+
     /** add frame in SDI mode. Do nothing in MDI mode. */
     //static void registerFrame(JSLFrame f) { proxy.registerFrame(f); }
     /**  */
@@ -145,12 +136,13 @@ public class JSLDesktop {
     JSLFrame getInvisible() { return proxy.getInvisible(); }
     /**  */
     private void showToolBar() { proxy.showToolBar(); }
-
+    
     private interface JSLDesktopProxy {
         JSLFrame[] getAllJSLFrames();
         JSLFrame getSelectedJSLFrame();
         Dimension getSize();
         void add(JSLFrame f);
+        void updateLookAndFeel();
         JMenu createWindowMenu();
         //void registerFrame(JSLFrame f);
         //void setupInitialMenuBar(JToolBar tb);
@@ -159,6 +151,8 @@ public class JSLDesktop {
         JSLFrame getInvisible();
         JFrame getLastSelectedWindow();
     }
+
+    /** use JDesktopPane for SDI (Single Document Interface) mode. */
     private class JSLJDesktop extends JDesktopPane implements JSLDesktopProxy {
 
 	JSLJDesktop(String title, JToolBar tb) {
@@ -204,6 +198,11 @@ public class JSLDesktop {
 		add((JInternalFrame)f.getProxy());
 	    }
 	}
+	public void updateLookAndFeel() {
+            SwingUtilities.updateComponentTreeUI(selected);
+            //selected.pack();
+	}
+
 	public JSLFrame getSelectedJSLFrame() {
 	    try {
 		return ((JSLFrame.JSLFrameProxy)getSelectedFrame()).getJSLFrame();
@@ -227,6 +226,8 @@ public class JSLDesktop {
 	public JSLFrame getInvisible() { return null; }
 	public JFrame getLastSelectedWindow() { return null; }
     }
+
+    /** fake desktop for MDI (Multiple Document Interface) mode. */
     private class JSLFakeDesktop implements JSLDesktopProxy, JSLFrameListener {
 	protected ArrayList windows = new ArrayList();
 	protected ArrayList windowMenus = new ArrayList();
@@ -284,7 +285,6 @@ public class JSLDesktop {
 	    wm.setSelectedWindow(selected);
 	    return wm;
 	}
-//	private void registerFrame(JSLFrame f) {
 	public void add(JSLFrame f) {
 	    if (windows.contains(f))
 		return;
@@ -302,7 +302,19 @@ public class JSLDesktop {
 		jf.setVisible(true);
 	    }
 	}
-//	public void add(JSLFrame f) { registerFrame(f); }
+	public void updateLookAndFeel() {
+            // update toolbar
+            SwingUtilities.updateComponentTreeUI(toolbar.getJFrame());
+            toolbar.pack();
+            // update each Frame
+            Iterator it = windows.iterator();
+            while (it.hasNext()) {
+                JFrame frame = ((JSLFrame) it.next()).getJFrame();
+                SwingUtilities.updateComponentTreeUI(frame);
+                frame.pack();
+            }
+        }
+
 	public Dimension getSize() {
 	    return Toolkit.getDefaultToolkit().getScreenSize();
 	}
