@@ -34,7 +34,9 @@ final class Constants {
     /** Name of Converter for device*/
     static final String CONVERTER_NAME = "Alesis DM5 All Dump Converter";
     /** Alesis DM5 Universal Device Inquiry*/
-    static final String INQUIRY_ID = "F07E..0601F7";
+    // Comment by Joachim Backhaus: This is wrong. The inquiry ID should be the response message!!    
+    //static final String INQUIRY_ID = "F07E..0601F7";
+    static final String INQUIRY_ID = null;
     /** Text displayed in the synth driver device details window in preferences*/
     static final String INFO_TEXT = "Device for Alesis DM5. The DM5 must be set to \"Omni On\" to work with JSynthLib. This must be done by setting the channel to 00 on the front panel of the device. See your DM5 manual for details";
     /** Author of this Driver*/
