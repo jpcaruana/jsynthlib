@@ -39,7 +39,10 @@ public interface IBankPatch extends IPatch {
      */
     void put(IPatch singlePatch, int patchNum);
 
-    /** Delete a Single patch in a bank patch. */
+    /**
+     * Delete a Single patch in a bank patch. A recommented implementation is
+     * putting a default patch created by a single driver, and put a null name.
+     */
     void delete(int patchNum);
 
     /** Gets a patch from the bank, converting it as needed. */
