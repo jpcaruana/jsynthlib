@@ -28,8 +28,11 @@ JSynthLib Programmer's Guide.
 
 <font face="Verdana,arial,helvetica" size="-1">
 
-<h1><a name="toc">JSynthLib Programmer's Guide</a></h1>
+<h1>JSynthLib Programmer's Guide</h1>
 
+Go to <a href="documentation.html">JSynthLib User's Guide</a>.
+
+<h2><a name="toc">Table of Contents</a></h2>
 <ol type="I">
   <li><a href="#common">Before we start...</a>
   <ol type="a">
@@ -294,11 +297,11 @@ sit in the main JSynthLib directory and type
 Don't enter that directory and just type 
 <kbd>javac BossDR660DrumkitDriver.java</kbd>, it won't work.
 
-You can make API document by executing;
+<p>You can make API document by executing;
 <pre>
-javadoc -locale en_US -breakiterator -quiet -d html -use -author -version core/*.java
+javadoc -locale en_US -breakiterator -quiet -d doc/API -use -author -version -overview doc/programming.html core/*.java
 </pre>
-View html/index.html with your favarite browser.
+View <strong>doc/API/index.html</strong> with your favarite browser.
 
 <h3><a name="areas" href="#toc">III.d. The Four Areas of Synthesizer Support</a></h3>
 
