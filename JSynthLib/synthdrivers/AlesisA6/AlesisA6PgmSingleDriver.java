@@ -47,10 +47,10 @@ public class AlesisA6PgmSingleDriver extends Driver
     // A6 doesn't use checksum
   }
 
-  protected void calculateChecksum(Patch p, int start, int end, int ofs)
-  {
-    // A6 doesn't use checksum
-  }
+//  protected static void calculateChecksum(Patch p, int start, int end, int ofs)
+//  {
+//    // A6 doesn't use checksum
+//  }
 
   // The program sysex dump is 2350 bytes, beginning with an 8-byte
   // header followed by 2341 7-bit sysex bytes which correspond to 2048 bytes

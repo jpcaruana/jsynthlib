@@ -29,9 +29,9 @@ public class NL2PerfBankDriver extends BankDriver {
     // doesn't use checksum
   }
 
-  protected void calculateChecksum(Patch p, int start, int end, int ofs) {
-    // doesn't use checksum
-  }
+//  protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
+//    // doesn't use checksum
+//  }
 
   public void storePatch (Patch p, int bankNum, int patchNum) {
     if (bankNum == 0) {

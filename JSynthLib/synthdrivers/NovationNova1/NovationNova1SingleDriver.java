@@ -91,7 +91,7 @@ public class NovationNova1SingleDriver extends Driver
         }
     }
 
-    protected void calculateChecksum(Patch p,int start,int end,int ofs)
+    protected static void calculateChecksum(Patch p,int start,int end,int ofs)
     {
         // no checksum
     }

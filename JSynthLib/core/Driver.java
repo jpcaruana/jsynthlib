@@ -6,12 +6,9 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.InvalidMidiDataException;
 import java.text.*;
-// import java.util.Set;
-// import java.util.HashSet;
-// import java.util.Arrays;
 
 /**
- * This is the base class for all Drivers which use Patch.<p>
+ * This is the base class for synth drivers which use <code>Patch<IPatch>.<p>
  *
  * Compatibility Note: The following fields are now
  * <code>private</code>.  Use setter/getter method to access them.
@@ -34,6 +31,7 @@ import java.text.*;
  *
  * @author Brian Klock
  * @version $Id$
+ * @see Patch
  */
 public class Driver implements ISingleDriver {
     /**
@@ -375,38 +373,38 @@ public class Driver implements ISingleDriver {
     }
 
     /**
-     * Caluculate check sum of a <code>Patch</code>.<p>
-     *
-     * This method is called by extended classes.
+     * Caluculate check sum of a <code>Patch</code>.
+     * <p>
+     * 
+     * This method is called by calculateChecksum(Patch). The checksum
+     * calculation method of this method is used by Roland, YAMAHA, etc.
      * Override this for different checksum calculation method.
-     *
-     * @param patch a <code>Patch</code> value
-     * @param start start offset
-     * @param end end offset
-     * @param ofs offset of the checksum data
+     * <p>
+     * 
+     * Compatibility Note: This method became 'static' method.
+     * 
+     * @param patch
+     *            a <code>Patch</code> value
+     * @param start
+     *            start offset
+     * @param end
+     *            end offset
+     * @param ofs
+     *            offset of the checksum data
+     * @see #calculateChecksum(IPatch)
      */
-    // XXX This is not 'static' to keep compatibility.
-    protected void calculateChecksum(Patch patch, int start, int end, int ofs) {
-        CalculateChecksum(patch, start, end, ofs);
-    }
-    
-    public final static void CalculateChecksum(Patch p, int start, int end, int ofs) {
-    	// 	ErrorMsg.reportStatus("Driver:calcChecksum:1st byte is " + p.sysex[start]);
-// 	ErrorMsg.reportStatus("Last byte is " + p.sysex[end]);
-// 	ErrorMsg.reportStatus("Checksum was " + p.sysex[ofs]);
+    protected static void calculateChecksum(Patch patch, int start, int end, int ofs) {
         int sum = 0;
         for (int i = start; i <= end; i++)
-            sum += p.sysex[i];
-	// Here is an example of checksum calculation (for Roland, etc.)
+            sum += patch.sysex[i];
+	patch.sysex[ofs] = (byte) (-sum & 0x7f);
 	/*
+	Equivalent with above.
 	p.sysex[ofs] = (byte) (sum & 0x7f);
 	p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0x7f);
 	p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
-	p.sysex[ofs] = (byte) (p.sysex[ofs] & 0x7f);   //to ensure that checksum is in range 0-127;
-	*/
-	//p.sysex[ofs] = (byte) ((~sum + 1) & 0x7f);
-	p.sysex[ofs] = (byte) (-sum & 0x7f);
-//      ErrorMsg.reportStatus("Checksum is now " + p.sysex[ofs]);
+	p.sysex[ofs] = (byte) (p.sysex[ofs] & 0x7f);
+	*/	
     }
 
     /**
@@ -417,7 +415,7 @@ public class Driver implements ISingleDriver {
      *
      * @param p a <code>Patch</code> value
      */
-    protected void calculateChecksum(Patch p) { // called by bank driver
+    protected void calculateChecksum(Patch p) {
 	calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
     }
 
@@ -636,7 +634,7 @@ public class Driver implements ISingleDriver {
     }
     //----- End phil@muqus.com
 
-    protected void playPatch(Patch p) { // called by core and some Editors
+    protected void playPatch(Patch p) {
 	playPatch();
     }
     
@@ -644,7 +642,7 @@ public class Driver implements ISingleDriver {
      * plays a MIDI file or a single note depending which preference is set.
      * Currently the MIDI sequencer support isn't implemented!
      */
-    protected void playPatch() { // called by core and some Editors
+    protected void playPatch() {
 	if (PatchEdit.appConfig.getSequencerEnable()) playSequence();
 	else playNote();
     }
@@ -721,10 +719,8 @@ public class Driver implements ISingleDriver {
     }
 
     /**
-     * Returns full name for referring to this Driver for
-     * debugging purposes
+     * Returns full name for referring to this Driver.  Use for the label for comboBox.
      */
-    // Doesn't look like this is only for debugging.
     public String toString() {
 	return getManufacturerName() + " " + getModelName() + " "
 	    + getPatchType();

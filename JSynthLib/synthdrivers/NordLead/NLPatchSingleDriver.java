@@ -66,9 +66,9 @@ public class NLPatchSingleDriver extends Driver {
     // doesn't use checksum
   }
 
-  protected void calculateChecksum(Patch p, int start, int end, int ofs) {
-    // doesn't use checksum
-  }
+//  protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
+//    // doesn't use checksum
+//  }
 
   public String getPatchName(Patch ip) {
     return "prog" + (((Patch)ip).sysex[PATCH_NUM_OFFSET] + 1);

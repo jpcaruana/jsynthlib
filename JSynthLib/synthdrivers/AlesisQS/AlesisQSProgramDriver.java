@@ -89,7 +89,7 @@ public class AlesisQSProgramDriver extends Driver
    * @param end ignored
    * @param ofs ignored
    */
-  protected void calculateChecksum(Patch p,int start,int end,int ofs)
+  protected static void calculateChecksum(Patch p,int start,int end,int ofs)
   {
     //This synth does not use a checksum
   }

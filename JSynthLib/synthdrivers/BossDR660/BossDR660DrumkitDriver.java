@@ -55,12 +55,11 @@ public class BossDR660DrumkitDriver extends Driver
 
    }
 
-  protected void calculateChecksum(Patch ip,int start,int end,int ofs)
+  // XXX this method can be commented out, because same as superclass.
+  protected static void calculateChecksum(Patch p,int start,int end,int ofs)
   {
-  	Patch p = (Patch)ip;
-  	int i;
     int sum=0;
-    for (i=start;i<=end;i++)
+    for (int i=start;i<=end;i++)
       sum+=p.sysex[i];
     p.sysex[ofs]=(byte)(sum % 128);
     p.sysex[ofs]=(byte)(p.sysex[ofs]^127);

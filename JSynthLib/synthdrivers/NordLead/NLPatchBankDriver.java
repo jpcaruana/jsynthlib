@@ -32,9 +32,9 @@ public class NLPatchBankDriver extends BankDriver {
     // doesn't use checksum
   }
 
-  protected void calculateChecksum(Patch p, int start, int end, int ofs) {
-    // doesn't use checksum
-  }
+//  protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
+//    // doesn't use checksum
+//  }
 
   public void storePatch (Patch p, int bankNum, int patchNum) {
     setBankNum(bankNum); // must set bank - sysex patch dump always stored in current bank

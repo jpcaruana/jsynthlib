@@ -80,9 +80,8 @@ public class KorgWavestationBankPatchDriver extends BankDriver {
         sendPatchWorker(p);
     }
 
-    protected void calculateChecksum(Patch ip,int start,int end,int ofs) {
-    	    Patch p = (Patch)ip;
-    	    int i;
+    protected static void calculateChecksum(Patch p,int start,int end,int ofs) {
+        int i;
         int sum=0;
 
         //   System.out.println("Checksum was" + p.sysex[ofs]);

@@ -155,10 +155,10 @@ public class KawaiK5000BankDriver extends BankDriver
 
 //----- End phil@muqus.com
 
-  protected void calculateChecksum(Patch p,int start,int end,int ofs)
-  {
-
-  }
+//  protected static void calculateChecksum(Patch p,int start,int end,int ofs)
+//  {
+//
+//  }
 
 
   public void calculateChecksum (Patch p)

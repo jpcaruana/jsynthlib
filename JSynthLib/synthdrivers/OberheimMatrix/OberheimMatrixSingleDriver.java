@@ -42,12 +42,10 @@ public void calculateChecksum(Patch p)
  
  }
 
-protected void calculateChecksum(Patch ip,int start,int end,int ofs)
+protected static void calculateChecksum(Patch p,int start,int end,int ofs)
   {
-    Patch p = (Patch)ip;
-    int i;
     int sum=0;
-    for (i=start;i<=end;i++)
+    for (int i=start;i<=end;i++)
       if (i%2!=0) sum+=p.sysex[i]; else sum+=(p.sysex[i]*16);
     p.sysex[ofs]=(byte)(sum % 128);
 

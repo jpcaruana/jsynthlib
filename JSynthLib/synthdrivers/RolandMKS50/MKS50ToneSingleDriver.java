@@ -46,10 +46,10 @@ public class MKS50ToneSingleDriver extends Driver
     // MKS-50 doesn't use checksum
   }
 
-  protected void calculateChecksum(Patch p, int start, int end, int ofs)
-  {
-    // MKS-50 doesn't use checksum
-  }
+//  protected static void calculateChecksum(Patch p, int start, int end, int ofs)
+//  {
+//    // MKS-50 doesn't use checksum
+//  }
 
   public void setBankNum(int bankNum)
   {

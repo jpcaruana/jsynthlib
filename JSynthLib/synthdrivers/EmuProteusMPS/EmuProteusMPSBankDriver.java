@@ -70,18 +70,16 @@ public class EmuProteusMPSBankDriver extends BankDriver
  
 
 
-  protected void calculateChecksum(Patch ip,int start,int end,int ofs)
-  {
-  	Patch p = (Patch)ip;
-  	int i;
-    int sum=0;
-  
-    for (i=start;i<=end;i++)
-      sum+=p.sysex[i];
-    p.sysex[ofs]=(byte)(sum % 128);
+  protected static void calculateChecksum(Patch p, int start, int end,
+            int ofs) {
+        int i;
+        int sum = 0;
 
-   
-  }
+        for (i = start; i <= end; i++)
+            sum += p.sysex[i];
+        p.sysex[ofs] = (byte) (sum % 128);
+
+    }
 
 
   public void calculateChecksum (Patch p)

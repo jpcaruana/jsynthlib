@@ -104,12 +104,10 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
 // KawaiK5000CombiDriver->calculateChecksum(Patch, int, int, int)
 //----------------------------------------------------------------------------------------------------------------------
 
-  protected void calculateChecksum(Patch ip, int start, int end, int ofs) {
+  protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
 //ErrorMsg.reportStatus("KawaiK5000CombiDriver->calculateChecksum");
-  	Patch p = (Patch)ip;
-  	int i;
     int sum = 0;
-    for (i = start; i <= end; i++)
+    for (int i = start; i <= end; i++)
       sum += p.sysex[i];
     sum += (byte)0xA5;
     p.sysex[ofs] = (byte)(sum % 128);

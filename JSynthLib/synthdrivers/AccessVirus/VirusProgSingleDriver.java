@@ -83,9 +83,8 @@ public class VirusProgSingleDriver extends Driver {
     patchNumbers = PATCH_LIST;
   }
 
-  protected void calculateChecksum(Patch ip, int start, int end, int ofs) {
-  	Patch p = (Patch)ip;
-  	int sum = 0;
+  protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
+    int sum = 0;
     for (int i = start; i <= end; i++) {
       sum += p.sysex[i];
     }

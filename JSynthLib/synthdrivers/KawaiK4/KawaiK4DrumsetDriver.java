@@ -55,8 +55,7 @@ public class KawaiK4DrumsetDriver extends Driver {
         sendPatchWorker(p);
     }
 
-    protected void calculateChecksum(Patch ip, int start, int end, int ofs) {
-    	Patch p = (Patch)ip;
+    protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
     	// a litte strange this, but there is a checksum for each key!
         for (int i = 8; i < HSIZE + SSIZE - 1; i += 11) {
 	    int sum = 0;

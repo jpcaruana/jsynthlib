@@ -28,10 +28,10 @@ public class AlesisA6MixSingleDriver extends Driver
     // A6 doesn't use checksum
   }
 
-  protected void calculateChecksum(Patch p, int start, int end, int ofs)
-  {
-    // A6 doesn't use checksum
-  }
+//  protected static void calculateChecksum(Patch p, int start, int end, int ofs)
+//  {
+//    // A6 doesn't use checksum
+//  }
 
   public String getPatchName(Patch ip)
   {

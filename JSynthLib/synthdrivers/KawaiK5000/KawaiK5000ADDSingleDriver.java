@@ -81,21 +81,18 @@ public void calculateChecksum(Patch ip)
       waveDataStart+=806;
     }
   }
-  protected void calculateChecksum(Patch ip,int start,int end,int ofs)
-  {
-  	Patch p = (Patch)ip;
-  	int i;
-    int sum=0;
-    for (i=start;i<=end;i++)
-      sum+=p.sysex[i];
-    sum+=(byte)0xA5;
-    p.sysex[ofs]=(byte)(sum % 128);
-   // p.sysex[ofs]=(byte)(p.sysex[ofs]^127);
-   // p.sysex[ofs]=(byte)(p.sysex[ofs]+1);
+  protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
+        int sum = 0;
+        for (int i = start; i <= end; i++)
+            sum += p.sysex[i];
+        sum += (byte) 0xA5;
+        p.sysex[ofs] = (byte) (sum % 128);
+        // p.sysex[ofs]=(byte)(p.sysex[ofs]^127);
+        // p.sysex[ofs]=(byte)(p.sysex[ofs]+1);
 
+    }
 
-  }
-/*public Patch createNewPatch()
+    /*public Patch createNewPatch()
  {
 	 byte [] sysex = new byte[140];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x23;sysex[4]=(byte)0x00;

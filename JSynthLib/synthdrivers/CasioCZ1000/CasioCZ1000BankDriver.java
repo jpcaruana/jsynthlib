@@ -36,10 +36,10 @@ public class CasioCZ1000BankDriver extends BankDriver
         return start;
     }
 
-    protected void calculateChecksum(Patch p,int start,int end,int ofs)
-    {
-
-    }
+//    protected static void calculateChecksum(Patch p,int start,int end,int ofs)
+//    {
+//
+//    }
 
 
     public void calculateChecksum (Patch p)

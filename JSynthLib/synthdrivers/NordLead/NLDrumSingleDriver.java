@@ -169,9 +169,9 @@ public class NLDrumSingleDriver extends Driver {
     // doesn't use checksum
   }
 
-  protected void calculateChecksum(Patch p, int start, int end, int ofs) {
-    // doesn't use checksum
-  }
+//  protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
+//    // doesn't use checksum
+//  }
 
   public String getPatchName(Patch p) {
     Patch ip = (Patch)p;

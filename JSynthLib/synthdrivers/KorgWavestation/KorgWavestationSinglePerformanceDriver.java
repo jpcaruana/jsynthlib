@@ -99,8 +99,7 @@ public class KorgWavestationSinglePerformanceDriver extends Driver {
         return p;
     }
     
-    protected void calculateChecksum(Patch ip,int start,int end,int ofs) {
-        Patch p = (Patch)ip;
+    protected static void calculateChecksum(Patch p,int start,int end,int ofs) {
         int i;
         int sum=0;
 
