@@ -67,8 +67,11 @@ public final class TD6SingleDriver extends Driver {
 
 	bankNumbers	= new String[] {"Internal"};
 	patchNumbers	= new String[NUM_PATCH];
+	/*
 	for (int i = 1; i <= NUM_PATCH; i++)
 	    patchNumbers[i - 1] = (i < 10 ? "0" : "") + String.valueOf(i);
+	*/
+	patchNumbers	= generateNumbers(1, NUM_PATCH, "Patch 00");
 	patchSize	= SINGLE_SIZE;
 
 	// Data set 1 DT1 followed by 4 byte address (MSB first) and data

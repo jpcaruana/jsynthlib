@@ -24,6 +24,7 @@ public class KawaiK4SingleDriver extends Driver {
 	bankNumbers = new String[] {
 	    "0-Internal", "1-External"
 	};
+	/*
 	patchNumbers = new String[] {
 	    "A-1", "A-2", "A-3", "A-4", "A-5", "A-6", "A-7", "A-8",
 	    "A-9", "A-10", "A-11", "A-12", "A-13", "A-14", "A-15", "A-16",
@@ -34,6 +35,12 @@ public class KawaiK4SingleDriver extends Driver {
 	    "D-1", "D-2", "D-3", "D-4", "D-5", "D-6", "D-7", "D-8",
 	    "D-9", "D-10", "D-11", "D-12", "D-13", "D-14", "D-15", "D-16"
 	};
+	*/
+	patchNumbers = new String[16 * 4];
+	System.arraycopy(generateNumbers(1, 16, "A-##"), 0, patchNumbers,  0, 16);
+	System.arraycopy(generateNumbers(1, 16, "B-##"), 0, patchNumbers, 16, 16);
+	System.arraycopy(generateNumbers(1, 16, "C-##"), 0, patchNumbers, 32, 16);
+	System.arraycopy(generateNumbers(1, 16, "D-##"), 0, patchNumbers, 48, 16);
     }
 
     public void storePatch(Patch p, int bankNum, int patchNum) {
