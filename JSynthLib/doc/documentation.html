@@ -871,7 +871,7 @@ diagnostic test of your MIDI port.
 
 <p>The <b>Master Controller Port</b> determines which MIDI port JSynthLib
 will watch for Notes being played. If notes are played (for example
-from a MIDI keyboard) on this port, JSynthLib will echo them to
+from a MIDI keyboard or MIDI sequencer) on this port, JSynthLib will echo them to
 whatever Synthesizer you are currently working with. (Either by having
 an editor open in the foreground or having a library open in the
 foreground and having a patch selected). This allows you more
@@ -1050,7 +1050,7 @@ to look right. Anyone have a fix for this?
 bug?</b><br>
 
 If you run JSynthLib with the parameter '2' as in <kbd>java JSynthLib 2
-&gt; outputfile</kbd>, JSynthLib will place information regarding any errors
+&gt; outputfile</kbd>, JSynthLib will place debug information regarding any errors
 that occur in the file 'outputfile'. Sending this file with your bug
 report would be useful. Also, make sure to include all relevant
 information about what you were doing when the bug occurred and what
@@ -1059,7 +1059,7 @@ your system setup is like.
 <h2><a name="contrib" href="#toc">Contributing to JSynthLib</a></h2>
 If you like JSynthLib and want to contribute, you can do this in many ways:
 <ul>
-<li>bugreports
+<li>bug reports
 <li>suggestions how to improve the usability or functionality
 <li>providing wanted documentation of synthesizers or others
 <li>writing/improving JSynthLib's documentation
@@ -1067,13 +1067,15 @@ If you like JSynthLib and want to contribute, you can do this in many ways:
 <li>writing own drivers and editors
 <li>adding support of other platforms/OS (JavaSound MidiProvider)
 <li>improving the JSynthLib core
+<li><a href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
+SourceForge site</a> maintenance
 <li>...
 </ul>
 
 The common place to address your notes should be the Tracker on <a
 href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
 SourceForge site</a> or
-<a href="./programming.html#yahoogroup">jsynthlib-dev mailing list</a>.
+<a href="mailto:jsynthlib-devel@lists.sourceforge.net">jsynthlib-devel mailing list</a>.
 
 <p>If you want write bug fixes, additional drivers/editor or core elements please take
 a look at the <a href="./programming.html">JSynthLib Programmer's Guide</a>.
