@@ -10,7 +10,6 @@ import java.util.ArrayList;
  * @version $Id$
  */
 public interface PatchBasket {
-    // Are the following javadoc comments correct?
     /** Import a patch from a file. */
     void importPatch(File file) throws IOException;
     /** Export a patch to a file. */
@@ -20,23 +19,33 @@ public interface PatchBasket {
     void deleteSelectedPatch();
     /** Copy the selected patch. */
     void copySelectedPatch();
-    /** Paste a patch. */
+    /** Paste a patch from system clipboard or drag&drop buffer. */
     void pastePatch();
-    /** Paste a patch. */
-    void pastePatch(IPatch p);
+    /** Add a patch into the table of patches. */
+    void pastePatch(IPatch p); // XXX Shall we rename?
     /** Get the selected patch. */
     IPatch getSelectedPatch();
 
-    /** Send the selected patch. */
+    /**
+     * Send the selected patch to the Edit buffer of the synth for the patch.
+     * Only for Single Patch.
+     */
     void sendSelectedPatch();
-    /** SendTo the selected patch. */
+    /**
+     * Send the selected patch to the Edit buffer of the synth specified by
+     * user. Only for Single Patch.
+     */
     void sendToSelectedPatch();
+    /**
+     * Send the selected patch to a buffer of the synth specified by user. Only
+     * for Single Patch.
+     */
+    void storeSelectedPatch();
+    /** Reassign the driver of the selected patch. */
+    void reassignSelectedPatch();
+
     /** Play the selected patch. */
     void playSelectedPatch();
-    /** Store the selected patch. */
-    void storeSelectedPatch();
-    /** Reassign the selected patch. */
-    void reassignSelectedPatch();
 
     /** Invoke an editor for the selected patch. */
     JSLFrame editSelectedPatch();
