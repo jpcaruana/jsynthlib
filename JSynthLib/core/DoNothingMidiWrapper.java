@@ -16,4 +16,18 @@ package core;
   public  String getOutputDeviceName(int port)throws Exception{return "-";}
   public  int messagesWaiting(int port)throws Exception{return 0;}
   public  int readMessage(int port,byte []sysex,int maxSize)throws Exception{return 0;}
+  
+  /** This method should return true, if this wrapper is
+   * supported on the actual platform (a wrapper for
+   * MacOSX should return true only on Mac's with OSX
+   * etc.)
+   * @return true, if wrapper is supported, false if wrapper is not supported at this
+   * platform.
+   *
+   */
+  public boolean isSupported() throws Exception {
+      // Yep, that's the real implementation.....
+      return true;
+  }
+  
 }
