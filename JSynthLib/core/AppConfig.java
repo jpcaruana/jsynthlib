@@ -380,7 +380,7 @@ public class AppConfig {
     		Class args[] = new Class[0];
     		for (int i = 0; i < size; i++) {
     			try {
-    				Class c = Class.forName(prefs.get("device" + (i),""));
+    				Class c = Class.forName(devices.get("device" + (i),""));
     				Constructor cons = c.getConstructor(args);
     				Device dev = (Device)cons.newInstance(args);
     				dev.setPreferences(getPreferences(i));
