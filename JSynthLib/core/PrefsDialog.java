@@ -235,6 +235,12 @@ public class PrefsDialog extends JDialog
             cb3.removeAllItems ();
             for (int j=0; j< PatchEdit.MidiIn.getNumInputDevices ();j++)
                 cb3.addItem (j+": "+PatchEdit.MidiOut.getInputDeviceName (j));
+            cb1.setSelectedIndex (initPortOut);
+            cb2.setSelectedIndex (initPortIn);
+            cb3.setSelectedIndex (masterController);
+            cb4.setSelectedIndex (faderPort);
+            cb5.setSelectedIndex (lookAndFeel);
+
         } catch (Exception e)
         {ErrorMsg.reportStatus (e);}
         
