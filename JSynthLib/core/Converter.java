@@ -4,6 +4,8 @@ package core;
  * An implementation of IConverter interface for Patch class.
  * @author ???
  * @version $Id$
+ * @see IDriver
+ * @see Device#addDriver(IDriver)
  */
 abstract public class Converter extends Driver implements IConverter {
     public Converter(String patchType, String authors) {
@@ -19,7 +21,7 @@ abstract public class Converter extends Driver implements IConverter {
     //    public IPatch[] createPatch(byte[] sysex) {
     //        return extractPatch(new Patch(sysex, this));
     //    }
-    public IPatch[] createPatch(byte[] sysex) {
+    public IPatch[] createPatches(byte[] sysex) {
         Patch patch = new Patch(sysex, this);
         Patch[] patarray = extractPatch(patch);
         if (patarray == null)

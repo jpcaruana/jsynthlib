@@ -227,7 +227,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         fileIn.close();
 
         //ErrorMsg.reportStatus("Buffer length:" + buffer.length);
-        IPatch[] patarray = DriverUtil.createPatch(buffer);
+        IPatch[] patarray = DriverUtil.createPatches(buffer);
         for (int j = 0; j < patarray.length; j++) {
             if (table.getSelectedRowCount() == 0)
                 myModel.addPatch(patarray[j]);

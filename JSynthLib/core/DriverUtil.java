@@ -37,10 +37,33 @@ public class DriverUtil {
 
     /**
      * Factory method of Patch. Look up the driver for sysex byte array, and
-     * create a patch by using the driver found.
+     * create a patch by using the driver found. This is used for a byte array
+     * read from a Sysex file, for which a Driver is not known.
      */
-    public static IPatch[] createPatch(byte[] sysex) {
-        IDriver driver = chooseDriver(sysex);
+    public static IPatch[] createPatches(byte[] sysex) {
+        return createPatches(sysex, chooseDriver(sysex));
+    }
+
+    /**
+     * Factory method of Patch. Look up the driver of the specified Device for
+     * sysex byte array, and create a patch by using the driver found.
+     * @param device Device whose driver is looked up.
+     */
+    public static IPatch[] createPatches(byte[] sysex, Device device) {
+        return createPatches(sysex, chooseDriver(sysex, device));
+    }
+
+    private static IPatch[] createPatches(byte[] sysex, IDriver driver) {
+        if (driver == null)
+            return null;
+        else if (driver.isConverter())
+            return ((IConverter) driver).createPatches(sysex);
+        else
+            return new IPatch[] { ((IPatchDriver) driver).createPatch(sysex) };
+    }
+
+    public static IPatch createPatch(byte[] sysex) {
+        IPatchDriver driver = (IPatchDriver) chooseDriver(sysex);
         return driver != null ? driver.createPatch(sysex) : null;
     }
 
@@ -187,7 +210,7 @@ public class DriverUtil {
                     .getResourceAsStream(fileName);
             fileIn.read(buffer);
             fileIn.close();
-            return driver.createPatch(buffer)[0];
+            return driver.createPatch(buffer);
         } catch (IOException e) {
             ErrorMsg.reportError("Error", "Unable to open " + fileName, e);
             return null;

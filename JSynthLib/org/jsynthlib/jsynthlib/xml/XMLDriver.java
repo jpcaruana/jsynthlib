@@ -63,7 +63,7 @@ public class XMLDriver implements ISingleDriver {
         return base_patch.newPatch();
     }
 
-    public IPatch[] createPatch(byte[] sysex) {
+    public IPatch createPatch(byte[] sysex) {
         SysexMessage[] msgs;
         try {
             msgs = MidiUtil.byteArrayToSysexMessages(sysex);
@@ -73,15 +73,19 @@ public class XMLDriver implements ISingleDriver {
         return createPatch(msgs);
     }
 
-    public IPatch[] createPatch(SysexMessage[] msgs) {
+    public IPatch[] createPatches(SysexMessage[] msgs) {
+        return new IPatch[] { createPatch(msgs) };
+    }
+
+    private IPatch createPatch(SysexMessage[] msgs) {
         XMLPatch np = base_patch.newEmptyPatch();
         try {
             np.setMessages(msgs);
+            return np;
         } catch (IllegalArgumentException ex) {
             ErrorMsg.reportStatus(ex);
-            return new IPatch[0];
+            return null;
         }
-        return new IPatch[] {np};
     }
     public JSLFrame edit(IPatch p) {
         return null;

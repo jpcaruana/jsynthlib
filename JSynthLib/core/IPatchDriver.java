@@ -43,24 +43,39 @@ public interface IPatchDriver extends IDriver {
     String[] getBankNumbers();
 
     /**
-     * Check if this driver supports creating a new patch. By default it uses
-     * reflection to test if the method createNewPatch is declared in the
-     * subclass of Driver.
+     * Check if this driver supports (implements createPatch()) creating a new
+     * patch.
+     * @see #createPatch()
      */
     boolean canCreatePatch();
 
     /**
-     * Create a new Patch.
+     * Create a new Patch for this driver.
      */
     IPatch createPatch();
 
     /**
-     * Create an array of patch from an array of SysexMessage for the driver.
+     * Create a patch from a byte array for the driver. This must be called only
+     * when <code>IDriver.supportsPatch()</code> returns <code>true</code>.
+     * 
+     * @param sysex a byte array of sysex data.
+     * @return a array of <code>IPatch</code> object.
+     * @see IDriver#supportsPatch(String, byte[])
+     * @see DriverUtil#createPatch(byte[])
+     */
+    IPatch createPatch(byte[] sysex);
+
+    /**
+     * Create an array of patches from an array of SysexMessage for the driver.
+     * Returns an array of patches because Converter may be used. This is used
+     * for SysexMessages received by using <code>requestPatchDump(int, int)</code>.
+     * 
      * @param msgs an array of SysexMessage.
      * @return an array of <code>IPatch</code> value.
+     * @see #requestPatchDump(int, int)
+     * @see SysexGetDialog
      */
-    // for SysexGetDialog.pasterInfoSelectedFrame()
-    IPatch[] createPatch(SysexMessage[] msgs);
+    IPatch[] createPatches(SysexMessage[] msgs);
 
     /**
      * Caluculate check sum of a <code>patch</code>.<p>

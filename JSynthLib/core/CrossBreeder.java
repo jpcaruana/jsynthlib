@@ -37,7 +37,7 @@ class CrossBreeder {
         ErrorMsg.reportStatus("base : " + base);
         int sysexSize = base.getSize();
         ErrorMsg.reportStatus("length : " + sysexSize);
-        IDriver drv = (IDriver) base.getDriver();
+        IPatchDriver drv = base.getDriver();
 
         byte[] dsysex = new byte[sysexSize];
         dsysex[0] = (byte) SysexMessage.SYSTEM_EXCLUSIVE;
@@ -53,7 +53,7 @@ class CrossBreeder {
         }
         dsysex[dsysex.length - 1] = (byte) ShortMessage.END_OF_EXCLUSIVE; // EOX
 
-        patch = (drv.createPatch(dsysex))[0];
+        patch = (drv.createPatch(dsysex));
         ErrorMsg.reportStatus("done : " + patch);
     }
 

@@ -1,8 +1,8 @@
 package core;
 
 /**
- * This is an interface for Device.driverList. All of drivers (single driver,
- * bank driver, and converter) implement this.
+ * This is an interface for Device.driverList. All of drivers (single driver and
+ * bank driver) implement this.
  * 
  * @author ribrdb
  * @version $Id$
@@ -39,15 +39,6 @@ public interface IDriver {
      * @return <code>true</code> if this driver supports the Patch.
      */
     boolean supportsPatch(String patchString, byte[] sysex);
-
-    /**
-     * Create a patch from a byte array for the driver.
-     * @param sysex a byte array of sysex data.
-     * @return a array of <code>IPatch</code> object.
-     * @see DriverUtil#createPatch(byte[])
-     */
-    // called by Patch.valueOf and CrossBreeder.generateNewPatch
-    IPatch[] createPatch(byte[] sysex);
 
     /**
      * Returns whether this driver is a Single Driver.

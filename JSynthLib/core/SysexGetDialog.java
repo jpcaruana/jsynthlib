@@ -151,8 +151,8 @@ public class SysexGetDialog extends JDialog {
             return;
 
         IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
-        IPatch[] patarray = driver.createPatch((SysexMessage[]) queue
-                .toArray(new SysexMessage[0]));
+        SysexMessage[] msgs = (SysexMessage[]) queue.toArray(new SysexMessage[0]);
+        IPatch[] patarray = driver.createPatches(msgs);
 
         try {
             PatchBasket frame = (PatchBasket) JSLDesktop.getSelectedFrame();

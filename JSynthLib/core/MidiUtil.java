@@ -23,6 +23,7 @@ package core;
 
 import java.io.File;
 import javax.sound.midi.*;
+
 import java.util.*;
 
 /**
@@ -402,6 +403,24 @@ public final class MidiUtil {
 	    }
 	}
 	return (SysexMessage[]) list.toArray(new SysexMessage[0]);
+    }
+
+    /**
+     * Convert an array of SysexMessage to a byte array.
+     * @param msgs an array of SysexMessage.
+     * @return byte array of System Exclusive data.
+     */
+    public static byte[] sysexMessagesToByteArray(SysexMessage[] msgs) {
+        int totalSize = 0;
+        for (int i = 0; i < msgs.length; i++)
+            totalSize += msgs[i].getLength();
+        byte[] sysex = new byte[totalSize];
+        for (int size, ofst = 0, i = 0; i < msgs.length; ofst += size, i++) {
+            size = msgs[i].getLength();
+            byte[] d = msgs[i].getMessage();
+            System.arraycopy(d, 0, sysex, ofst, size);
+        }
+        return sysex;
     }
 
     /**

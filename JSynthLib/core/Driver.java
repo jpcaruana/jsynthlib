@@ -227,8 +227,8 @@ abstract public class Driver implements ISingleDriver {
 		(patchString.substring(0, sysexID.length())));
     }
 
-    public IPatch[] createPatch(byte[] sysex) {
-        return new IPatch[] {new Patch(sysex, this)};
+    public IPatch createPatch(byte[] sysex) {
+        return new Patch(sysex, this);
     }
     // end of IDriver interface methods
 
@@ -250,6 +250,11 @@ abstract public class Driver implements ISingleDriver {
         return bankNumbers;
     }
 
+    /**
+     * Check if this driver supports creating a new patch. By default it uses
+     * reflection to test if the method createNewPatch() is overridden by the
+     * subclass of Driver.
+     */
     public boolean canCreatePatch() {
         try {
             getClass().getDeclaredMethod("createNewPatch", null);
@@ -272,21 +277,9 @@ abstract public class Driver implements ISingleDriver {
 	return null;
     }
 
-    public IPatch[] createPatch(SysexMessage[] msgs) {
-        // convert to one byte array.
-        int sysexSize = 0;
-        for (int i = 0; i < msgs.length; i++)
-            sysexSize += msgs[i].getLength();
-        byte[] patchSysex = new byte[sysexSize];
-        for (int size, ofst = 0, i = 0; i < msgs.length; ofst += size, i++) {
-            size = msgs[i].getLength();
-            byte[] d = msgs[i].getMessage();
-            System.arraycopy(d, 0, patchSysex, ofst, size);
-        }
-
-        // if Conveter for the patch exist, use it.
-        IDriver drv = DriverUtil.chooseDriver(patchSysex, getDevice());
-        IPatch[] patarray = drv.createPatch(patchSysex);
+    public IPatch[] createPatches(SysexMessage[] msgs) {
+        byte[] sysex = MidiUtil.sysexMessagesToByteArray(msgs);
+        IPatch[] patarray = DriverUtil.createPatches(sysex, getDevice());
 
         // Maybe you don't get the expected patch!
         // Check all devices/drivers again! Call fixpatch() if supportsPatch
