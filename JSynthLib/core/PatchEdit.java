@@ -144,7 +144,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	prefsDialog.addPanel(faderbox);
 
 	prefsDialog.addPanel(new NoteChooserConfigPanel(appConfig));
-
+	prefsDialog.addPanel(new RepositoryConfigPanel(appConfig));
 	// Create preference dialog window and initialize each config
 	// panel.
 	prefsDialog.init();
