@@ -213,9 +213,10 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JSLFrame editPatch(Patch p)
-	{
-		return null;
-	}
+// Don't override editPatch() without implementing.
+//	public JSLFrame editPatch(Patch p)
+//	{
+//		return null;
+//	}
 }
 
