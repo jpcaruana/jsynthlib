@@ -16,7 +16,7 @@ import core.Driver;
  */
 public class GenericDevice extends Device {
     public GenericDevice() {
-	super("Generic", "Device", null, null, "Brian Klock");
+	super("Generic", "Unknown", null, null, "Brian Klock");
     }
 
     public GenericDevice(Preferences prefs) {
@@ -28,7 +28,7 @@ public class GenericDevice extends Device {
 
     private class GenericDriver extends Driver {
         private GenericDriver() {
-            super("Sysex", "Brian Klock");
+            super("-", "Brian Klock");
         }
     }
 }
