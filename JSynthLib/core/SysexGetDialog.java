@@ -168,7 +168,7 @@ public class SysexGetDialog extends JDialog {
 
     for (int k = 0; k < patarray.length; k++) {
       IPatch pk = patarray[k];
-      StringBuffer patchString = pk.getPatchHeader();
+      String patchString = pk.getPatchHeader();
 
       // Maybe you don't get the expected patch!
       // Check all devices/drivers again!

@@ -23,7 +23,7 @@ public class DevDrvPatchSelector extends JDialog {
     private int driverNum;
     protected int patchNum;
     protected IPatch p;
-    private StringBuffer patchString;
+    private String patchString;
 
     private JLabel myLabel;
     private JComboBox deviceComboBox;

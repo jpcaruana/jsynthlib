@@ -140,7 +140,7 @@ public class Patch implements IPatch {
      * @see Driver#supportsPatch
      */
     private boolean chooseDriver(Device dev) {
-        StringBuffer patchString = getPatchHeader();
+        String patchString = getPatchHeader();
 
         for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
             // iterating over all Drivers of the given device
@@ -162,7 +162,7 @@ public class Patch implements IPatch {
     public boolean chooseDriver() {
         //Integer intg = new Integer(0);
         //StringBuffer driverString = new StringBuffer();
-        StringBuffer patchString = getPatchHeader();
+        String patchString = getPatchHeader();
 
         for (int idev = 0; idev < PatchEdit.appConfig.deviceCount(); idev++) {
             // Outer Loop, iterating over all installed devices
@@ -272,7 +272,7 @@ public class Patch implements IPatch {
         IPatch[] patarray;
         Device dev = getDevice();
         search: {
-            StringBuffer patchString = this.getPatchHeader();
+            String patchString = this.getPatchHeader();
 
             for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
                 IDriver drv = dev.getDriver(idrv);
@@ -289,7 +289,7 @@ public class Patch implements IPatch {
         // Conversion was sucessfull, we have at least one
         // converted patch. Assign a proper driver to each patch of patarray
         for (int i = 0; i < patarray.length; i++) {
-            StringBuffer patchString = patarray[i].getPatchHeader();
+            String patchString = patarray[i].getPatchHeader();
             for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {
                 IPatchDriver drv = (IPatchDriver) dev.getDriver(jdrv);
                 if (drv.supportsPatch(patchString, patarray[i]))
@@ -305,7 +305,7 @@ public class Patch implements IPatch {
      * 
      * @see Driver#supportsPatch
      */
-    public StringBuffer getPatchHeader() {
+    public String getPatchHeader() {
         StringBuffer patchstring = new StringBuffer("F0");
 
         // Some Sysex Messages are shorter than 16 Bytes!
@@ -316,7 +316,7 @@ public class Patch implements IPatch {
                 patchstring.append("0");
             patchstring.append(Integer.toHexString((int) (sysex[i] & 0xff)));
         }
-        return patchstring;
+        return patchstring.toString();
     }
 
     /**

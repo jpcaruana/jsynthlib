@@ -27,7 +27,7 @@ public interface IDriver {
      *            a <code>Patch</code> value
      * @return <code>true</code> if this driver supports the Patch.
      */
-    public abstract boolean supportsPatch(StringBuffer patchString, IPatch patch);
+    public abstract boolean supportsPatch(String patchString, IPatch patch);
 
     /** Set <code>Device</code> with which this driver go. */
     public abstract void setDevice(Device device);

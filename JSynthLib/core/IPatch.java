@@ -64,7 +64,7 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      * 
      * @see IDriver#supportsPatch
      */
-    StringBuffer getPatchHeader();
+    String getPatchHeader();
 
     /**
      * Returns the patch's name. This is not necessarily the name stored on the

@@ -538,7 +538,7 @@ public class Driver implements ISingleDriver {
 	choosePatch(p, 0, 0);
     }
 
-    protected boolean supportsPatch(StringBuffer patchString, Patch p) {
+    protected boolean supportsPatch(String patchString, Patch p) {
   	// check the length of Patch
         if ((patchSize != p.sysex.length) && (patchSize != 0))
 	    return false;
@@ -561,7 +561,7 @@ public class Driver implements ISingleDriver {
 // 	ErrorMsg.reportStatus("DriverString:" + driverString);
 // 	ErrorMsg.reportStatus("PatchString: " + patchString);
         return (compareString.toString().equalsIgnoreCase
-		(patchString.toString().substring(0, sysexID.length())));
+		(patchString.substring(0, sysexID.length())));
     }
 
     //
@@ -836,7 +836,7 @@ public class Driver implements ISingleDriver {
      * @see #patchSize
      * @see #sysexID
      */
-    public boolean supportsPatch(StringBuffer patchString, IPatch p) {
+    public boolean supportsPatch(String patchString, IPatch p) {
         return supportsPatch(patchString, (Patch) p);
     }
 

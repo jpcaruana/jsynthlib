@@ -71,7 +71,7 @@ public class XMLPatch implements IPatch {
         return null;
     }
 
-    public StringBuffer getPatchHeader() {
+    public String getPatchHeader() {
         StringBuffer patchstring = new StringBuffer("F0");
         byte[] data = null;
         try {
@@ -86,7 +86,7 @@ public class XMLPatch implements IPatch {
                 patchstring.append("0");
             patchstring.append(Integer.toHexString((int) (data[i] & 0xff)));
         }
-        return patchstring;
+        return patchstring.toString();
     }
 
     public String getName() {
