@@ -56,7 +56,10 @@ class SimpleDecoder extends Decoder {
     public void finishParameter(XMLParameter p) {
         if (p === null)
             throw new Exception("Uh oh")
-        size += p.getSize();
+        if (p.type == XMLParameter.STRING)
+            size += p.length*p.size
+        else
+            size += p.size
     }
 
     public void setSize(String s) {
@@ -141,15 +144,15 @@ class SimpleDecoder extends Decoder {
         size = p.getSize()
         offset = p.getOffset()
         while (i < p.length && i < value.length() ) {
-            b = _encode(value.charAt(i), size)
+            b = _encode((int)value.charAt(i), size)
             for (j in 0 .. size - 1)
-                msg[offset + i*size + j] = b[i]
+                msg[offset + i*size + j] = b[j]
             i += 1
         }
         while (i < p.getLength()) {
             b = _encode(32, size) // " "
             for (j in 0 .. size - 1)
-                msg[offset + i*size + j] = b[i]
+                msg[offset + i*size + j] = b[j]
             i += 1        
         }
     }
@@ -186,12 +189,6 @@ class Parameter extends XMLParameter {
     }
     public void setSize(String s) {
         this.size = Integer.decode(s)
-    }
-    public void setLength(String s) {
-        setSize(s);
-    }
-    public int getLength() {
-        return size;
     }
     public void setCharset(String s) {
         charset = s
