@@ -1104,47 +1104,19 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         }
 
         public void actionPerformed(ActionEvent e) {
+	    if (JOptionPane.showConfirmDialog
+		(null,
+		 "This Operation will change the ordering of the Patches. Continue?",
+		 "Delete Duplicate Patches",
+		 JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+		return;
+	    PatchEdit.waitDialog.show();
             try {
-		if (JOptionPane.showConfirmDialog(null,
-						  "This Operation will change the ordering of the Patches. Continue?",
-						  "Delete Duplicate Patches",
-						  JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
-		    return;
-		PatchEdit.waitDialog.show();
-		Collections.sort(((LibraryFrame) JSLDesktop.getSelectedFrame()).myModel.PatchList, new SysexSort());
-		int numDeleted = 0;
-		Patch p, q;
-		Iterator it = ((LibraryFrame) JSLDesktop.getSelectedFrame()).myModel.PatchList.iterator();
-		p = (Patch) it.next();
-		while (it.hasNext()) {
-		    q = (Patch) it.next();
-		    if (Arrays.equals(p.sysex, q.sysex)) {
-			it.remove();
-			numDeleted++;
-		    } else
-			p = q;
-		}
-		JOptionPane.showMessageDialog(null, numDeleted + " Patches were Deleted",
-					      "Delete Duplicates", JOptionPane.INFORMATION_MESSAGE);
-		((LibraryFrame) JSLDesktop.getSelectedFrame()).myModel.fireTableDataChanged();
-		((LibraryFrame) JSLDesktop.getSelectedFrame()).statusBar.setText
-		    (((LibraryFrame) JSLDesktop.getSelectedFrame()).myModel.PatchList.size() + " Patches");
+		((LibraryFrame) JSLDesktop.getSelectedFrame()).deleteDuplicates();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Library to Delete Duplicates in must be Focused", ex);
 	    }
             PatchEdit.waitDialog.hide();
-        }
-    }
-
-    //This is a comparator class used by the delete duplicated action
-    //to sort based on the sysex data
-    //Sorting this way makes the Dups search much easier, since the
-    //dups must be next to each other
-    static class SysexSort implements Comparator {
-        public int compare(Object a1, Object a2) {
-	    String s1 = new String(((Patch) (a1)).sysex);
-	    String s2 = new String(((Patch) (a2)).sysex);
-	    return s1.compareTo(s2);
         }
     }
 

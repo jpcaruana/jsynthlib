@@ -59,9 +59,8 @@ public class SortDialog extends JDialog {
 			setVisible (false);
 			PatchEdit.showWaitDialog();
 			String command = group.getSelection ().getActionCommand ();
-			Collections.sort(((LibraryFrame) JSLDesktop.getSelectedFrame ()).myModel.PatchList,
-					 new MyOrder (command));
-			((LibraryFrame) JSLDesktop.getSelectedFrame ()).myModel.fireTableDataChanged ();
+			((LibraryFrame) JSLDesktop.getSelectedFrame())
+			    .sortPatch(new MyOrder(command));
 			PatchEdit.hideWaitDialog();
 		    }
 		});
@@ -86,7 +85,7 @@ public class SortDialog extends JDialog {
 	}
     }
 
-    static class MyOrder implements Comparator {
+    private static class MyOrder implements Comparator {
         private int field = 0;
 
         public MyOrder (String s) {

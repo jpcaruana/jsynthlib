@@ -13,11 +13,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 public class BankEditorFrame extends JSLFrame implements PatchBasket {
@@ -111,7 +113,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 			PatchEdit.importAction.setEnabled(true);
 			PatchEdit.importAllAction.setEnabled(true);
 			PatchEdit.newPatchAction.setEnabled(true);
-			
+
 			if (table.getRowCount() > 0) {
 			    PatchEdit.saveAction.setEnabled(true);
 			    PatchEdit.saveAsAction.setEnabled(true);
@@ -350,5 +352,96 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	return (table.getSelectedRowCount() != 0
 		&& table.getSelectedColumnCount() != 0
 		&& pth.canImport(table, flavors));
+    }
+
+    private static class PatchGridTransferHandler extends PatchTransferHandler {
+	protected Patch getSelectedPatch(JComponent c) {
+	    try {
+		JTable t = (JTable)c;
+		PatchGridModel m = (PatchGridModel) t.getModel();
+		return m.getPatchAt(t.getSelectedRow(), t.getSelectedColumn());
+	    } catch (Exception e) {
+		ErrorMsg.reportStatus(e);
+		return null;
+	    }
+	}
+
+	protected boolean storePatch(Patch p, JComponent c) {
+	    try {
+		p.chooseDriver();
+		JTable t = (JTable)c;
+		PatchGridModel m =
+		    (PatchGridModel)t.getModel();
+		m.setPatchAt(p, t.getSelectedRow(), t.getSelectedColumn());
+		return true;
+	    } catch (Exception e) {
+		ErrorMsg.reportStatus(e);
+		return false;
+	    }
+	}
+    }
+
+    class PatchGridModel extends AbstractTableModel {
+	public Patch bankData;
+	public BankDriver bankDriver;
+
+	public PatchGridModel (Patch p,BankDriver d) {
+	    super();
+	    ErrorMsg.reportStatus("PatchGridModel");
+	    bankData=p;
+	    bankDriver=d;
+	}
+
+	public int getColumnCount () {
+	    return bankDriver.getNumColumns();
+	}
+
+	public int getRowCount () {
+	    return bankDriver.getNumPatches()/bankDriver.getNumColumns();
+	}
+
+	public String getColumnName (int col) {
+	    return "";
+	}
+
+	public Object getValueAt (int row, int col) {
+	    String patchNumbers[] = bankDriver.getPatchNumbers();
+	    int i = col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row;
+	    return (patchNumbers[i] + " " + bankDriver.getPatchName(bankData, i));
+	}
+
+	public Patch getPatchAt(int row, int col) {
+	    int i = col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row;
+	    return bankDriver.getPatch(bankData, i);
+	}
+	public Class getColumnClass (int c) {
+	    return getValueAt (0, c).getClass ();
+	}
+
+	public boolean isCellEditable (int row, int col) {
+	    //Note that the data/cell address is constant,
+	    //no matter where the cell appears onscreen.
+
+	    //----- Start phil@muqus.com (allow patch name editing from a bank edit window)
+	    //return false;
+	    return true;
+	    //----- End phil@muqus.com
+
+	}
+
+	public void setPatchAt(Patch p,int row,int col) {
+	    bankDriver.checkAndPutPatch(bankData,p,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
+	    fireTableCellUpdated (row, col);
+	}
+
+	public void setValueAt (Object value, int row, int col) {
+	    //----- Start phil@muqus.com (allow patch name editing from a bank edit window)
+	    int patchNum = col * bankDriver.getNumPatches() / bankDriver.getNumColumns() + row;
+	    String[] patchNumbers = bankDriver.getPatchNumbers();
+	    bankDriver.setPatchName(bankData, patchNum,
+				    ((String) value).substring((patchNumbers[patchNum] + " ").length()));
+	    //----- End phil@muqus.com
+	    fireTableCellUpdated (row, col);
+	}
     }
 }
