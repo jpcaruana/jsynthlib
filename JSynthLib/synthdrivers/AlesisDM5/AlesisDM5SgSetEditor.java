@@ -31,13 +31,14 @@ import java.awt.event.*;
 
 // packages needed for class DummySender
 import javax.sound.midi.SysexMessage;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.InvalidMidiDataException;
 
 /** Alesis DM5 Single Drumset Editor
 * 
 * @author Jeff Weber
 */
-public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ChangeListener, ActionListener {
+public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ActionListener {
     /** Size of program patch header--7 bytes.
     */
     static final int headerSize = Constants.HDR_SIZE;
@@ -66,6 +67,11 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ChangeList
     
     private PacketModel[] notePacketModel= new PacketModel[8];
     private SysexWidget[] sysexWidget = new SysexWidget[8];
+    
+    private ScrollBarLookupWidget rootNoteWidget;
+    private UpdateableScrollBarLookupWidget closeNoteWidget;
+    private UpdateableScrollBarLookupWidget heldNoteWidget;
+    private UpdateableScrollBarLookupWidget[] triggerWidget = new UpdateableScrollBarLookupWidget[12];
     
    /** Constructs a AlesisDM5SgSetEditor for the selected patch.*/
     AlesisDM5SgSetEditor(Patch patch)
@@ -119,45 +125,42 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ChangeList
         addOutputWidgets(patch, outputPanel);
     }
     
-    private String[] getNoteNames(int numNotes, int startOctave) {
+    private String[] getNoteNames(int startValue, int numNotes) {
         String noteTitle[] = new String[numNotes];
         for (int i = 0; i < numNotes; i++) {
-            noteTitle[i] = String.valueOf(i) + "/" + noteNames[i % 12] + String.valueOf((i / 12) + startOctave);
+            noteTitle[i] = String.valueOf(i + startValue) + "/" + noteNames[(i + startValue) % 12] + String.valueOf(((i + startValue) / 12) - 2);
         }
         return noteTitle;
     }
-    
+
     private void addSelectedNoteWidget(Patch patch, JPanel panel) {
         JPanel selectedNoteWidgetPanel = new JPanel();        
         selectedNoteWidgetPanel.setLayout(new BorderLayout());
         panel.add(selectedNoteWidgetPanel,gbc);
-
-        JSlider selNote = new JSlider(0, 60, 0);
-        selNote.addChangeListener(this);
-
-        JLabel label = new JLabel("Selected Note");
-
-        selectedNoteField = new JTextField(getNoteNames(61, 1)[selNote.getValue()], 4);
-        selectedNoteField.setEditable(false);
-
-        selNote.setMinimumSize(new Dimension(75, 25));
-        selNote.setMaximumSize(new Dimension(125, 25));
         
-        selectedNoteWidgetPanel.add(label, BorderLayout.WEST);
-        selectedNoteWidgetPanel.add(selNote, BorderLayout.CENTER);
-        selectedNoteWidgetPanel.add(selectedNoteField, BorderLayout.EAST);
-
+        ScrollBarLookupWidget selNote = new ScrollBarLookupWidget("Selected Note", patch, 0, 60, 0,
+                                                   null,
+                                                   new NRPNSender(NRPNSender.PREVIEW_NOTE, NRPNSender.CC_MAP_0_60),
+                                                   getNoteNames(36, 61));
+        addWidget(panel, selNote, ctrlBase++, 0, 1, 1, widgetCount++);
+//        selNote.addEventListener(this);
+        selNote.addEventListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                selNoteChanged(e);
+            }
+	    });
+        
     }
-    
-    public void stateChanged(ChangeEvent e) {
+
+    public void selNoteChanged(ChangeEvent e) {
         JSlider sl = (JSlider)e.getSource();
         int noteVal = (int)sl.getValue();
         if (!sl.getValueIsAdjusting()) {
-//            System.out.println("----------------------------------------------");
-//            System.out.println("ChangeEvent on Slider. New value is " + noteVal);
+            //            System.out.println("----------------------------------------------");
+            //            System.out.println("ChangeEvent on Slider. New value is " + noteVal);
             setPacketModels(noteVal);
         }
-        selectedNoteField.setText(getNoteNames(61,1)[noteVal]);
+        //        selectedNoteField.setText(getNoteNames(0, 61)[noteVal]);
     }    
 
     private void setPacketModels(int noteValue) {
@@ -245,7 +248,7 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ChangeList
         notePacketModel[2] = new PacketModel(patch, 36+4, BitModel.CRSE_TUNE_MASK);
         sysexWidget[2] = new ScrollBarLookupWidget("Coarse Tune", patch, 0, 7, -1,
                                                    notePacketModel[2],
-                                                   new DummySender(0, 3, 99),
+                                                   new NRPNSender(NRPNSender.NOTE_COARSE_TUNE, 7),
                                                    new String[] {"-4", "-3", "-2", "-1", "0", "1", "2", "3"});
         addWidget(panel, sysexWidget[2], ctrlBase++, 0, 1, 1, widgetCount++);
         
@@ -253,20 +256,20 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ChangeList
         sysexWidget[3] = new ScrollBarWidget("Fine Tune",
                                              patch, 0, 99, 0,
                                              notePacketModel[3],
-                                             new DummySender(0, 6, 99));
+                                             new NRPNSender(NRPNSender.NOTE_FINE_TUNE, 99));
         addWidget(panel, sysexWidget[3], ctrlBase++, 0, 1, 1, widgetCount++);
         
         notePacketModel[4] = new PacketModel(patch, 36+0, BitModel.VOL_MASK);
         sysexWidget[4] = new ScrollBarWidget("Volume",
                                              patch, 0, 99, 0,
                                              notePacketModel[4],
-                                             new DummySender(0, 5, 99));        
+                                             new NRPNSender(NRPNSender.NOTE_VOLUME, 99));
         addWidget(panel, sysexWidget[4], ctrlBase++, 0, 1, 1, widgetCount++);
         
         notePacketModel[5] = new PacketModel(patch, 36+1, BitModel.PAN_MASK);
         sysexWidget[5] = new ScrollBarLookupWidget("Pan", patch, 0, 6, -1,
                                                    notePacketModel[5],
-                                                   new DummySender(0, 3, 99),
+                                                   new NRPNSender(NRPNSender.NOTE_PAN, 6),
                                                    new String[] {"-3", "-2", "-1", "0", "1", "2", "3"});
         addWidget(panel,sysexWidget[5], ctrlBase++, 0, 1, 1, widgetCount++);
     }
@@ -275,56 +278,126 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame implements ChangeList
         notePacketModel[6] = new PacketModel(patch, 36+1, BitModel.OUTP_MASK);
         sysexWidget[6] = new ComboBoxWidget("Output", patch,
                                             notePacketModel[6],
-                                            new DummySender(0, 3, 99),
+                                            new NRPNSender(NRPNSender.NOTE_OUTPUT, 1),
                                             new String[] {"Main", "Aux"});
         addWidget(panel, sysexWidget[6], ctrlBase++, 0, 1, 1, widgetCount++);
 
         notePacketModel[7] = new PacketModel(patch, 36+4, BitModel.GROUP_MASK);
         sysexWidget[7] = new ComboBoxWidget("Group", patch,
                                             notePacketModel[7],
-                                            new DummySender(0, 3, 99),
+                                            new NRPNSender(NRPNSender.NOTE_GROUP, 3),
                                             new String[] {"Multi", "Single", "Group 1", "Group 2"});
         addWidget(panel, sysexWidget[7], ctrlBase++, 0, 1, 1, widgetCount++);
     }
     
     private void addTriggerWidgets(Patch patch, JPanel panel) {
+        rootNoteWidget = new ScrollBarLookupWidget("Root Note", patch, 0, 67, -1,
+                                                   new BitModel(patch, 21, BitModel.ROOT_NOTE_MASK),
+                                                   new NRPNSender(NRPNSender.SET_ROOT_NOTE, NRPNSender.CC_MAP_0_67),
+                                                   getNoteNames(0, 68));
         addWidget(panel,
-                  new ScrollBarLookupWidget("Root Note", patch, 0, 67, -1,
-                        new BitModel(patch, 21, BitModel.ROOT_NOTE_MASK),
-                        new DM5PatchSender(patch),
-                        getNoteNames(68, -2)),
+                  rootNoteWidget,
                   ctrlBase++, 0,
                   1, 1,
                   widgetCount++);
-    
+        rootNoteWidget.addEventListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                rootNoteChangeListener(e);
+            }
+	    });
+                
+
+        closeNoteWidget =  new UpdateableScrollBarLookupWidget("Closing Note", patch, 0, 60, -1,
+                                                               new BitModel(patch, 22, BitModel.NOTE_MASK),
+                                                               new NRPNSender(NRPNSender.FW_CLOSE_NOTE, NRPNSender.CC_MAP_0_60),
+                                                               rootNoteWidget.getValue(), 61);
         addWidget(panel,
-                new ScrollBarLookupWidget("Closing Note", patch, 0, 60, -1,
-                        new BitModel(patch, 22, BitModel.NOTE_MASK),
-                        new DM5PatchSender(patch),
-                        getNoteNames(61, 1)),
-                ctrlBase++, 0,
-                1, 1,
-                widgetCount++);
-  
+                  closeNoteWidget,
+                  ctrlBase++, 0,
+                  1, 1,
+                  widgetCount++);
+        
+
+        heldNoteWidget = new UpdateableScrollBarLookupWidget("Held Note", patch, 0, 60, -1,
+                                                             new BitModel(patch, 23, BitModel.NOTE_MASK),
+                                                             new NRPNSender(NRPNSender.FW_HELD_NOTE, NRPNSender.CC_MAP_0_60),
+                                                             rootNoteWidget.getValue(), 61);
         addWidget(panel,
-                new ScrollBarLookupWidget("Held Note", patch, 0, 60, -1,
-                      new BitModel(patch, 23, BitModel.NOTE_MASK),
-                      new DM5PatchSender(patch),
-                      getNoteNames(61, 1)),
-                ctrlBase++, 0,
-                1, 1,
-                widgetCount++);
-  
+                  heldNoteWidget,
+                  ctrlBase++, 0,
+                  1, 1,
+                  widgetCount++);
+        
         for (int i = 0; i < 12; i++) { 
+            triggerWidget[i] = new UpdateableScrollBarLookupWidget("Trigger " + String.valueOf(i + 1),
+                                                                   patch, 0, 60, 80,
+                                                                   new BitModel(patch, 24 + i, BitModel.NOTE_MASK),
+                                                                   new TrigSender(i, TrigSender.TR_NOTE_NBR, 60),
+                                                                   rootNoteWidget.getValue(), 61);
             addWidget(panel,
-                    new ScrollBarLookupWidget("Trigger " + String.valueOf(i + 1),
-                          patch, 0, 60, -1,
-                          new BitModel(patch, 24 + i, BitModel.NOTE_MASK),
-                          new DM5PatchSender(patch),
-                          getNoteNames(61, 1)),
-                    ctrlBase++, 0,
-                    1, 1,
-                    widgetCount++);
+                      triggerWidget[i],
+                      ctrlBase++, 0,
+                      1, 1,
+                      widgetCount++);
+        }
+    }
+
+    public void rootNoteChangeListener(ChangeEvent e) {
+        JSlider sl = (JSlider)e.getSource();
+        int noteVal = (int)sl.getValue();
+        if (!sl.getValueIsAdjusting()) {            
+            closeNoteWidget.updateRootNote(noteVal);
+            heldNoteWidget.updateRootNote(noteVal);
+            for (int i = 0; i < 12; i++) { 
+                triggerWidget[i].updateRootNote(noteVal);
+            }
+        }
+    }
+    
+    class UpdateableComboBoxWidget extends ComboBoxWidget {
+        /** <code>min</code> is set to 0. */
+        UpdateableComboBoxWidget(String label, IPatch patch,
+                                 IParamModel pmodel, ISender sender, Object [] options) {
+            super(label, patch, 0, pmodel, sender, options);
+        }
+        
+        void updateComboBoxWidgetList(String[] list) {
+            cb.removeAllItems();
+            for (int i = 0; i < list.length; i++) {
+                cb.addItem(list[i]);
+            }
+        }
+    }
+    
+    class UpdateableScrollBarLookupWidget extends ScrollBarLookupWidget {
+        int numNotes;
+        
+        public UpdateableScrollBarLookupWidget(String label, IPatch patch, int min, int max,
+                                               int labelWidth,
+                                               IParamModel pmodel, ISender sender,
+                                               int startValue,
+                                               int numNotes) {
+            super(label, patch, min, max, labelWidth, pmodel, sender, new String[numNotes]);
+            this.numNotes = numNotes;
+            updateRootNote(startValue);
+        }
+
+        void updateRootNote(int newRootNoteValue) {
+            options = getNoteNames(newRootNoteValue, numNotes);
+            int v = slider.getValue();
+            text.setText(options[v]);
+        }
+            
+        private String[] getNoteNames(int startValue, int numNotes) {
+            String noteTitle[] = new String[numNotes];
+            for (int i = 0; i < numNotes; i++) {
+                noteTitle[i] = String.valueOf(i + startValue) + "/" + noteNames[(i + startValue) % 12] + String.valueOf(((i + startValue) / 12) - 2);
+            }
+            return noteTitle;
+        }
+        
+        void updateNoteList() {
+            
         }
     }
 }
@@ -467,64 +540,84 @@ class DummySender implements SysexWidget.ISender {
         this.max = max;
     }
     
+    DummySender() {
+    }
+    
     public void send(IPatchDriver driver, int value) {
-/*
-        if (trigNum != lastTrigNum) {
-            ShortMessage msgMSB = new ShortMessage();
-            ShortMessage msgTrigNumLSB = new ShortMessage();
-            ShortMessage msgTrigNumDataEntry = new ShortMessage();
-            try {
-                msgMSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                                  driver.getDevice().getChannel() - 1, 99, 0);
-                
-                msgTrigNumLSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                                         driver.getDevice().getChannel() - 1, 98, 0);
-                
-                msgTrigNumDataEntry.setMessage(ShortMessage.CONTROL_CHANGE,
-                                               driver.getDevice().getChannel() - 1, 6, trigNum * 127 / maxTrigNum);
-                
-                driver.send(msgMSB);
-                driver.send(msgTrigNumLSB);
-                driver.send(msgTrigNumDataEntry);
-            } catch  (InvalidMidiDataException e) {
-                ErrorMsg.reportStatus(e);
-            }
-            lastTrigNum = trigNum;            
+    }
+}
 
-            try {
-                Thread.sleep (50);
-            } catch (Exception e) {}
-        }
+class NRPNSender implements SysexWidget.ISender {
+    
+    final static int NOTE_BANK         = 0x08;
+    final static int NOTE_SOUND        = 0x09;
+    final static int NOTE_COARSE_TUNE  = 0x0A;
+    final static int NOTE_FINE_TUNE    = 0x0B;
+    final static int NOTE_VOLUME       = 0x0C;
+    final static int NOTE_PAN          = 0x0D;
+    final static int NOTE_OUTPUT       = 0x0E;
+    final static int NOTE_GROUP        = 0x0F;
+    final static int SET_ROOT_NOTE     = 0x10;
+    final static int PREVIEW_NOTE      = 0x19;
+    final static int FW_CLOSE_NOTE     = 0x1C;
+    final static int FW_HELD_NOTE      = 0x1D;
+    
+    private final static int NRPN_MSB          = 99;
+    private final static int NRPN_LSB          = 98;
+    private final static int DATA_ENTRY_MSB    = 6;
+    
+    private int param;
+    private int max;
+    private int ccMap[];
+    
+    static final int[] CC_MAP_0_60 = new int[] {
+        1,   4,   5,   7,   9,  11,  13,  16,  17,  19,  22,  24,
+        26,  28,  30,  32,  34,  36,  38,  40,  42,  45,  47,  49,
+        51,  53,  55,  57,  59,  61,  64,  66,  68,  70,  72,  74, 
+        77,  78,  80,  82,  84,  87,  89,  91,  93,  95,  97,  99,
+        101, 103, 105, 108, 110, 112, 114, 116, 118, 120, 122, 124,
+        126   
+    }; 
 
-        ShortMessage msgParamLSB = new ShortMessage();
-        ShortMessage msgValueDataEntry = new ShortMessage();
+    static final int[] CC_MAP_0_67 = new int[] {
+        0,   2,   4,   6,   8,   10,  12,  14,  16,  17,  19,  21,
+        23,  25,  27,  29,  31,  32,  34,  36,  38,  40,  42,  44,
+        46,  48,  49,  51,  53,  55,  57,  59,  61,  63,  64,  66,
+        68,  70,  72,  74,  76,  78,  80,  81,  83,  85,  87,  89,
+        91,  93,  95,  96,  98,  100, 102, 104, 106, 108, 110, 112,
+        113, 115, 117, 119, 121, 123, 125, 127
+    }; 
+    
+    public NRPNSender(int param, int ccMap[]) {
+        this.param = param;
+        this.max = 0;
+        this.ccMap = ccMap;
+    }
+    
+    public NRPNSender(int param, int max) {
+        this.param = param;
+        this.max = max;
+        this.ccMap = null;
+    }
+    
+    public void send(IPatchDriver driver, int value) {
         try {
-            msgParamLSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                                   driver.getDevice().getChannel() - 1, 98, param);
-            
-            msgValueDataEntry.setMessage(ShortMessage.CONTROL_CHANGE,
-                                         driver.getDevice().getChannel() - 1, 6, value * 127 / max);
-
-            driver.send(msgParamLSB);
-            driver.send(msgValueDataEntry);
+            driver.send(newControlChange(driver, NRPN_MSB, 0));  // Send NRPN MSB
+            driver.send(newControlChange(driver, NRPN_LSB, param));  // Command to select the parameter
+            if (max == 0) {
+                driver.send(newControlChange(driver, DATA_ENTRY_MSB, ccMap[value]));  // Set the NRPN value using the table
+            } else {
+                driver.send(newControlChange(driver, DATA_ENTRY_MSB, (value * 127) / max));  // Calculate the NRPN value
+            }
         } catch (InvalidMidiDataException e) {
             ErrorMsg.reportStatus(e);
         }
-*/
+    }
+    
+    private ShortMessage newControlChange(IPatchDriver driver, int controlNumber, int value) throws InvalidMidiDataException {
+        ShortMessage ccMessage = new ShortMessage();
+        ccMessage.setMessage(ShortMessage.CONTROL_CHANGE, driver.getDevice().getChannel() - 1, controlNumber, value);
+        return ccMessage;
     }
 }
 
-class UpdateableComboBoxWidget extends ComboBoxWidget {
-    /** <code>min</code> is set to 0. */
-    UpdateableComboBoxWidget(String label, IPatch patch,
-                             IParamModel pmodel, ISender sender, Object [] options) {
-        super(label, patch, 0, pmodel, sender, options);
-    }
-    
-    void updateComboBoxWidgetList(String[] list) {
-        cb.removeAllItems();
-        for (int i = 0; i < list.length; i++) {
-            cb.addItem(list[i]);
-        }
-    }
-}
