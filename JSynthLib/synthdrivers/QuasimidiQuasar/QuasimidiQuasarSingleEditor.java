@@ -74,8 +74,8 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
         changeFX2		( (int)patch.sysex[58]);
         
         setSize(500, 600);
-        pack();
-        setVisible(true);
+        //pack();
+        //setVisible(true);
     }
     
     /**

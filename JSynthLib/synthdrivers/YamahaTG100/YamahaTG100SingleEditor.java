@@ -76,7 +76,7 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
         changeVoiceMode( (int)patch.sysex[7] );
 
         setSize(500, 600);
-        pack();
+        //pack();
         //setVisible(true);
     }
 
