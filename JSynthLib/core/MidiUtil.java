@@ -234,7 +234,7 @@ public final class MidiUtil {
      * @see #getOutputMidiDeviceInfo()
      * @see #getReceiver
      * @see #send
-     @ throws MidiUnavailableException
+     * @throws MidiUnavailableException
      */
     static Receiver getReceiver(int port) throws MidiUnavailableException {
 	if (midiOutRcvr[port] != null)
