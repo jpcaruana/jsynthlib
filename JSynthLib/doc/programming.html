@@ -115,16 +115,8 @@ in the future. Use consistent coding style.
 language) are good examples.  We encourage you to follow the coding
 style in these documents especially you are editing source code in
 core package.<br>
-<p><strong>Important:</strong> Use an indentation level of 4 and a "tab stop"/ "displayed tab width" value of 8.<br>
-The reason for this is compatibility with:</p>
-<ul>
-  <li>... Emacs in Java mode which replaces 8 blank spaces to 1 tab if possible.</li>
-  <li>... Unix command line tools like cat, less, tail, ...</li>
-  <li>... viewcvs, the CVS browser that SourceForge uses.</li>
-</ul>
-The JSynthLib team recommends the use of <a href="#setupEclipse">Eclipse</a> which is able to support this settings.<br>
-Text editors that also support these settings are e.g. <a href="http://www.jedit.org/">jEdit</a> and
-<a href="http://scintilla.sourceforge.net/SciTE.html">SciTE</a> which are both open source and availabe for Linux, Mac OS X and Windows like Eclipse.
+<p><strong>Important note:</strong> Please use an indentation level of 4 and a displayed tab width value of 8
+(see <a href="#tabWidthFAQ">FAQ</a> for reasons).<br>
 
 <h3>I.b. Using Javadoc</h3>
 
@@ -332,12 +324,17 @@ synthesizer?</h4>
    work. I wrote a significant part of the JSynthLib core code using
    EDIT.COM which comes with Windows. More recently, I've switched to
    <a href="#jedit">jEdit</a>, a Java based emacs-like
-   programmer's editor with syntax highlighting and bracket matching.<p>
+   programmer's editor with syntax highlighting and bracket matching.
 
-   Some of the most active developers of this project started using <a
-   href="http://www.eclipse.org/">Eclipse</a>.  It knows Java syntax
+   <p>To be compliant with the JSynthLib core sources it is best if you
+   use an editor which supports our <a href=#codeconv>code conventions</a>
+   (especially concerning the <a href=#tabWidthFAQ">tab settings</a>).</p>
+
+   <p>Some of the most active developers of this project started using <a
+   href="http://www.eclipse.org/">Eclipse</a> (for setup have a look
+   at the <a href="#setupEclipse">FAQ</a>).  It knows Java syntax
    well.  I can search reference and/or definition of a member,
-   compile files auto-magically, has integrated CVS support, etc.
+   compile files auto-magically, has integrated CVS support, etc.</p>
 
 <li>Finally, you'll need to be able to program in Java. If you've
    programmed in C++ before, you can probably pick it up in about an
@@ -1248,12 +1245,24 @@ called.
  -->
 </ol>
 
+<h3><a name="tabWidthFAQ"></a>Why shall I use an indentation level of 4 with a displayed tab width of 8?</h3>
+The reason for this is compatibility with:</p>
+<ul>
+  <li>... Notepad, the default editor of Microsoft Windows.</li>
+  <li>... Unix command line tools like cat, less, tail, ...</li>
+  <li>... viewcvs, the CVS browser that SourceForge uses.</li>
+  <li>... Emacs in Java mode which replaces 8 blank spaces to 1 tab if possible (other settings are possible but that's the default).</li>
+</ul>
+
+An open source IDE that supports these settings is <a href="#setupEclipse">Eclipse</a><br>
+Text editors that also support it are e.g. <a href="http://www.jedit.org/">jEdit</a> and
+<a href="http://scintilla.sourceforge.net/SciTE.html">SciTE</a> which are both open source and availabe for Linux, Mac OS X and Windows like Eclipse.
+
 <h3><a name="setupEclipse"></a>How to set up <a href="http://www.eclipse.org/">Eclipse</a> for JSynthLib?</h3>
 
 Here is the setting I'm using for Eclipse 3.0.
 <ol>
-<li> <kbd>Preferences->Java->Editor->Displayed tab width</kbd> must be
-set to '8'.
+<li> <kbd>Preferences->Java->Editor->Displayed tab width</kbd> set to '8'.
 
 <li> On <kbd>Project->Java Build Path->Source</kbd> tab, select
 <kbd>Excluded...</kbd>, and click <kbd>Edit...</kbd>.  Add
