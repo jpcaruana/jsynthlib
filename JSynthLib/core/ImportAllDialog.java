@@ -143,9 +143,7 @@ public class ImportAllDialog extends JDialog
                 }
                 if (buffer.length>16)
                 {
-                    IPatch p = new Patch (buffer);
-                    // NEW CODE
-                    IPatch[] patarray=p.dissect ();
+                    IPatch[] patarray = Patch.valueOf(buffer);
 
                     for (int k=0;k<patarray.length;k++) // Loop over all found sub-patches
                     {

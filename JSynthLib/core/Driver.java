@@ -439,12 +439,86 @@ public class Driver implements ISingleDriver {
     /**
      * Create a new Patch.
      */
-    protected Patch createNewPatch() {
+    protected Patch createNewPatch() { // overridden by subclass
 	return null;
     }
 
     public IPatch createPatch() {
 	return (IPatch) createNewPatch();
+    }
+
+    public IPatch[] createPatch(byte[] sysex) { // Converter overrides this
+        return new IPatch[] {new Patch(sysex, this)};
+    }
+
+    public IPatch[] createPatch(SysexMessage[] msgs) {
+        // convert to one byte array.
+        int sysexSize = 0;
+        for (int i = 0; i < msgs.length; i++)
+            sysexSize += msgs[i].getLength();
+        byte[] patchSysex = new byte[sysexSize];
+        for (int size, ofst = 0, i = 0; i < msgs.length; ofst += size, i++) {
+            size = msgs[i].getLength();
+            byte[] d = msgs[i].getMessage();
+            System.arraycopy(d, 0, patchSysex, ofst, size);
+        }
+
+        // if Conveter for the patch exist, convert the patch.
+        IPatch[] patarray = createPatch(patchSysex);
+
+        // Maybe you don't get the expected patch!
+        // Check all devices/drivers again!
+        // XXX Why don't we simply cause error? Hiroo
+        for (int k = 0; k < patarray.length; k++) {
+            IPatch pk = patarray[k];
+            String patchString = pk.getPatchHeader();
+            if (!(pk.getDriver().supportsPatch(patchString, pk.getByteArray()))) {
+                fixPatch(pk, patchString);
+                patarray[k] = fixPatch(pk, patchString);
+            }
+        }
+        return patarray;
+    }
+
+    /**
+     * Look for a proper driver and trim the patch
+     */
+    private IPatch fixPatch(IPatch pk, String patchString) {
+        for (int i = 0; i < AppConfig.deviceCount(); i++) {
+            // first check the requested device.
+            // then starting index '1'. (index 0 is 'generic driver')
+            // XXX pk.getDevice() -> getDevice()?
+            Device device = (i == 0) ? pk.getDevice() : AppConfig.getDevice(i);
+            for (int j = 0; j < device.driverCount(); j++) {
+                IDriver d = device.getDriver(j);
+                if (d instanceof Driver
+                        && d.supportsPatch(patchString, pk.getByteArray())) {
+                    // driver found
+                    Driver driver = (Driver) d;
+                    pk.setDriver(driver);
+                    driver.trimSysex(pk);
+                    JOptionPane
+                            .showMessageDialog(null, "You requested a "
+                                    + driver.toString() + " patch!"
+                                    + "\nBut you got a "
+                                    + pk.getDriver().toString() + " patch.",
+                                    "Warning", JOptionPane.WARNING_MESSAGE);
+                    return pk;
+                }
+            } // end of driver (j) loop
+        } // end of device (i) loop
+
+        // driver not found
+        pk.setDriver(null); //reset
+        pk.setComment("Probably a "
+                + LookupManufacturer.get(pk.getByteArray()[1], pk
+                        .getByteArray()[2], pk.getByteArray()[3])
+                + " Patch, Size: " + pk.getByteArray().length);
+        JOptionPane.showMessageDialog(null, "You requested a "
+                + this.toString() + " patch!"
+                + "\nBut you got a not supported patch!\n" + pk.getComment(),
+                "Warning", JOptionPane.WARNING_MESSAGE);
+        return pk;
     }
 
     protected int trimSysex(Patch p) { // no driver overrides this now.
@@ -542,9 +616,19 @@ public class Driver implements ISingleDriver {
 	choosePatch(p, 0, 0);
     }
 
-    protected boolean supportsPatch(String patchString, Patch p) {
+    /**
+     * Compares the header & size of a Patch to this driver to see if
+     * this driver is the correct one to support the patch.
+     *
+     * @param patchString the result of <code>p.getPatchHeader()</code>.
+     * @param p a <code>Patch</code> value
+     * @return <code>true</code> if this driver supports the Patch.
+     * @see #patchSize
+     * @see #sysexID
+     */
+    public boolean supportsPatch(String patchString, byte[] sysex) {
   	// check the length of Patch
-        if ((patchSize != p.sysex.length) && (patchSize != 0))
+        if ((patchSize != sysex.length) && (patchSize != 0))
 	    return false;
 
         if (sysexID == null || patchString.length() < sysexID.length())
@@ -831,20 +915,6 @@ public class Driver implements ISingleDriver {
     }
     
     /**
-     * Compares the header & size of a Patch to this driver to see if
-     * this driver is the correct one to support the patch.
-     *
-     * @param patchString the result of <code>p.getPatchHeader()</code>.
-     * @param p a <code>Patch</code> value
-     * @return <code>true</code> if this driver supports the Patch.
-     * @see #patchSize
-     * @see #sysexID
-     */
-    public boolean supportsPatch(String patchString, IPatch p) {
-        return supportsPatch(patchString, (Patch) p);
-    }
-
-    /**
      * This method trims a patch, containing more than one real
      * patch to a correct size. Useful for files containg more than one
      * bank for example. Some drivers are incompatible with this method
@@ -854,8 +924,5 @@ public class Driver implements ISingleDriver {
      */
     public void trimSysex(IPatch patch) {
         trimSysex((Patch) patch);
-    }
-    public IPatch createPatch(byte[] sysex) {
-        return new Patch(sysex, this);
     }
 }

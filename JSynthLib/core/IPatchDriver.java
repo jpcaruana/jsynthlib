@@ -1,6 +1,7 @@
 package core;
 
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.SysexMessage;
 
 /**
  * This includes methods shared by ISingleDriver and IBankDriver which are used
@@ -41,12 +42,12 @@ public interface IPatchDriver extends IDriver {
     public abstract IPatch createPatch();
 
     /**
-     * Create a patch from a byte array for the driver.
+     * Create an array of patch from a byte array for the driver.
      * @param sysex Byte array of sysex data.
-     * @return <code>IPatch</code> value.
+     * @return an array of <code>IPatch</code> value.
      */
-    public abstract IPatch createPatch(byte[] sysex);
-    //public abstract IPatch createPatch(SysexMessage[] msgs);
+    // for SysexGetDialog.pasterInfoSelectedFrame()
+    IPatch[] createPatch(SysexMessage[] msgs);
 
     /**
      * Returns true if a Patch Editor is implemented.
@@ -109,13 +110,4 @@ public interface IPatchDriver extends IDriver {
      */
     public abstract void storePatch(IPatch myPatch, int bankNum, int patchNum);
 
-    /**
-     * This method trims a patch. Useful for files containg more than one bank for example.
-     * 
-     * @param patch
-     *            the patch, which should be trimmed.
-     * 
-     * XXX: I think we can remove this once we have a propper patch factory.
-     */
-    public abstract void trimSysex(IPatch patch);
 }

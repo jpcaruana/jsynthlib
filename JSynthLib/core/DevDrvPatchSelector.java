@@ -83,7 +83,7 @@ public class DevDrvPatchSelector extends JDialog {
             for (int j=0, m=0; j<device.driverCount();j++) {
 	        IDriver driver = device.getDriver(j);
 	        if (driver instanceof IPatchDriver
-	                && (driver.supportsPatch(patchString, p))) {
+	                && (driver.supportsPatch(patchString, p.getByteArray()))) {
 	            if (newDevice) {	// only one entry for each supporting device
 	    		deviceComboBox.addItem(device);
 	    		newDevice = false;
@@ -181,7 +181,7 @@ public class DevDrvPatchSelector extends JDialog {
             for (int i = 0; i < device.driverCount(); i++) {
 	        IDriver driver = device.getDriver(i);
                 if (driver instanceof IPatchDriver
-	                && driver.supportsPatch(patchString, p)) {
+	                && driver.supportsPatch(patchString, p.getByteArray())) {
                     driverComboBox.addItem (driver);
                     nDriver++;
 	        }

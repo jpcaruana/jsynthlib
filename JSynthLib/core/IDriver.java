@@ -23,15 +23,22 @@ public interface IDriver {
      * @param patchString
      *            the result of
      *            {@link IPatch#getPatchHeader() IPatch.getPatchHeader()}.
-     * @param patch
-     *            a <code>Patch</code> value
+     * @param sysex
+     *            a byte array of sysex message
      * @return <code>true</code> if this driver supports the Patch.
      */
-    public abstract boolean supportsPatch(String patchString, IPatch patch);
+    public abstract boolean supportsPatch(String patchString, byte[] sysex);
 
     /** Set <code>Device</code> with which this driver go. */
     public abstract void setDevice(Device device);
 
     /** Return <code>Device</code> with which this driver go.. */
     public abstract Device getDevice();
+
+    /**
+     * Create a patch from a byte array for the driver.
+     * @param sysex Byte array of sysex data.
+     * @return <code>IPatch</code> value.
+     */
+    public abstract IPatch[] createPatch(byte[] sysex);
 }

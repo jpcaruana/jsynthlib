@@ -307,36 +307,25 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     // begin PatchBasket methods
-    public void importPatch(File file) throws IOException, FileNotFoundException {
+    public void importPatch(File file) throws IOException,
+            FileNotFoundException {
         if (ImportMidiFile.doImport(file)) {
-	    return;
-	}
+            return;
+        }
         FileInputStream fileIn = new FileInputStream(file);
-        byte [] buffer = new byte [(int) file.length()];
+        byte[] buffer = new byte[(int) file.length()];
         fileIn.read(buffer);
         fileIn.close();
 
-        int offset = 0;
-        while (offset < buffer.length - 1) {
-            // There is still something unprocessed in the file
-            Patch firstpat = new Patch(buffer, offset);
-            offset += firstpat.sysex.length;
-            //ErrorMsg.reportStatus("Buffer length:" + buffer.length + " Patch Lenght: " + firstpat.sysex.length);
-	    IPatch[] patarray = firstpat.dissect();
-
-	    if (patarray.length > 0) {
-		// Conversion was sucessfull, we have at least one converted patch
-		for (int j = 0; j < patarray.length; j++) {
-		    myModel.list.add(patarray[j]); // add all converted patches
-		}
-	    } else {
-		// No conversion. Try just the original patch....
-		if  (table.getSelectedRowCount() == 0)
-		    myModel.list.add(firstpat);
-		else
-		    myModel.list.add(table.getSelectedRow(), firstpat);
-	    }
+        //ErrorMsg.reportStatus("Buffer length:" + buffer.length);
+        IPatch[] patarray = Patch.valueOf(buffer);
+        for (int j = 0; j < patarray.length; j++) {
+            if (table.getSelectedRowCount() == 0)
+                myModel.list.add(patarray[j]);
+            else
+                myModel.list.add(table.getSelectedRow(), patarray[j]);
         }
+
         myModel.fireTableDataChanged();
         changed = true;
         //statusBar.setText(myModel.getRowCount() + " Patches");
@@ -496,18 +485,15 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
         statusBar.setText(myModel.getRowCount() + " Patches");
     }
 
-    /**
-     * FIXME This needs to not use Patch.  Maybe IPatch should extend Comparable.
-     */
     void deleteDuplicates() {
 	Collections.sort(myModel.list, new SysexSort());
 	int numDeleted = 0;
-	Patch p, q;
+	IPatch p, q;
 	Iterator it = myModel.list.iterator();
-	p = (Patch) it.next();
+	p = (IPatch) it.next();
 	while (it.hasNext()) {
-	    q = (Patch) it.next();
-	    if (Arrays.equals(p.sysex, q.sysex)) {
+	    q = (IPatch) it.next();
+	    if (Arrays.equals(p.getByteArray(), q.getByteArray())) {
 		it.remove();
 		numDeleted++;
 	    } else
@@ -525,8 +511,8 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
     //dups must be next to each other
     private static class SysexSort implements Comparator {
         public int compare(Object a1, Object a2) {
-	    String s1 = new String(((Patch) (a1)).sysex);
-	    String s2 = new String(((Patch) (a2)).sysex);
+	    String s1 = new String(((IPatch) (a1)).getByteArray());
+	    String s2 = new String(((IPatch) (a2)).getByteArray());
 	    return s1.compareTo(s2);
         }
     }

@@ -147,83 +147,31 @@ public class SysexGetDialog extends JDialog {
 //--------------------------------------------------------------------------
 
   protected void pasteIntoSelectedFrame() {
-//     ErrorMsg.reportStatus("SysexGetDialog->pasteIntoSelectedFrame: " + sysexSize);
-    if (sysexSize < 20)
-      return;
+//        ErrorMsg.reportStatus("SysexGetDialog->pasteIntoSelectedFrame: " +
+// sysexSize);
+        if (sysexSize < 20)
+            return;
 
-    byte[] patchSysex = new byte[sysexSize];
-    ListIterator it = queue.listIterator();
-    for (int size, i = 0; it.hasNext(); i += size) {
-      SysexMessage msg = (SysexMessage) it.next();
-      size = msg.getLength();
-      byte[] d = msg.getMessage();
-      System.arraycopy(d, 0, patchSysex, i, size);
+        IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
+        IPatch[] patarray = driver.createPatch((SysexMessage[]) queue
+                .toArray(new SysexMessage[0]));
+
+        for (int k = 0; k < patarray.length; k++) {
+            // paste the patch.
+            try {
+                ((PatchBasket) JSLDesktop.getSelectedFrame())
+                .pastePatch(patarray[k]);
+            } catch (Exception ex) {
+                JOptionPane
+                .showMessageDialog(
+                        null,
+                        "Library to Receive into must be the focused Window.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            if (patarray[k].getDriver() == null) {
+            }
+        } // end of k loop
     }
-
-    // create Patch
-    IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
-    IPatch p = driver.createPatch(patchSysex);
-    // if Conveter for the patch exist, convert the patch.
-    IPatch[] patarray = (IPatch[])p.dissect();
-
-    for (int k = 0; k < patarray.length; k++) {
-      IPatch pk = patarray[k];
-      String patchString = pk.getPatchHeader();
-
-      // Maybe you don't get the expected patch!
-      // Check all devices/drivers again!
-      if (!(pk.getDriver().supportsPatch(patchString,pk)))
-      {
-      testforDriver:
-	{
-	  for (int i = 0; i < AppConfig.deviceCount(); i++)
-	  {
-	    // first check the requested device.
-	    // then starting index '1'. (index 0 is 'generic driver')
-	    Device device = (i == 0) ? pk.getDevice() : AppConfig.getDevice(i);
-	    for (int j=0;j<device.driverCount();j++)
-	    {
-	      IDriver d = device.getDriver(j);
-	      if (d instanceof IPatchDriver
-		  && d.supportsPatch(patchString, pk)) {
-		// driver found
-		driver = (IPatchDriver)d;
-		pk.setDriver(driver);
-		driver.trimSysex(pk);
-		JOptionPane.showMessageDialog
-		  (null,
-		   "You requested a "+driver.toString()+" patch!"+
-		   "\nBut you got a "+pk.getDriver().toString()+" patch.",
-		   "Warning", JOptionPane.WARNING_MESSAGE);
-		break testforDriver;
-	      }
-	    } // end of driver (j) loop
-	  } // end of device (i) loop
-
-	  // driver not found
-	  pk.setDriver(null); //reset
-	  pk.setComment("Probably a "
-			+ LookupManufacturer.get(pk.getByteArray()[1],
-						 pk.getByteArray()[2],
-						 pk.getByteArray()[3])
-			+ " Patch, Size: " + pk.getByteArray().length);
-	  JOptionPane.showMessageDialog
-	    (null,
-	     "You requested a "+driver.toString()+" patch!"+
-	     "\nBut you got a not supported patch!\n"+pk.getComment(),
-	     "Warning", JOptionPane.WARNING_MESSAGE);
-	} // testforDriver
-      } // !(pk.getDriver().supportsPatch(patchString,pk))
-
-      // paste the patch.
-      try {
-	((PatchBasket) JSLDesktop.getSelectedFrame()).pastePatch(pk);
-      } catch (Exception ex) {
-	JOptionPane.showMessageDialog (null, "Library to Receive into must be the focused Window.",
-				       "Error", JOptionPane.ERROR_MESSAGE);
-      }
-    } // end of k loop
-  }
 
 //--------------------------------------------------------------------------
 // InnerClass: DoneActionListener

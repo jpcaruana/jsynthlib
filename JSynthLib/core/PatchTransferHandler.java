@@ -74,18 +74,15 @@ public abstract class PatchTransferHandler extends TransferHandler {
 		  }
 	      }
 	    while (b!=-1 && i<65535);
-	    byte []sysex = new byte[i];
+	    in.close();
+	    byte[] sysex = new byte[i];
 	    System.arraycopy(buff,0,sysex,0,i);
-	in.close();
-		// XXX: Factory
-	    IPatch p = new Patch(sysex);
-	    return p;
-
-	}catch (MalformedURLException e) {ErrorMsg.reportStatus("Malformed URL");}
-	catch (IOException ioe) {ErrorMsg.reportStatus("Network I/O Error");}
-
-
-
+	    return (Patch.valueOf(sysex))[0];
+	} catch (MalformedURLException e) {
+	    ErrorMsg.reportStatus("Malformed URL");
+	} catch (IOException ioe) {
+	    ErrorMsg.reportStatus("Network I/O Error");
+	}
 	return null;
     }
 

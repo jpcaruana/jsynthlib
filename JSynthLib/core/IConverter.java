@@ -13,9 +13,5 @@ package core;
  * @version $Id$
  */
 public interface IConverter extends IDriver {
-    /**
-     * Convert a Patch into an array of Patches.
-     * @see IPatch#dissect() 
-     */
-    IPatch[] extractPatch(IPatch p);
+    // no methods
 }

@@ -55,7 +55,7 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      */
     // called by ImportAllDialog, ImportMidiFile, SysexGetDialog,
     // LibraryFrame, and SceneFrame.
-    IPatch[] dissect();
+    //IPatch[] dissect();
 
     /**
      * Return a hexadecimal string for
@@ -89,12 +89,6 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      * Sends a patch to a set location on a synth.
      */
     void store(int bankNum, int patchNum);
-
-    /**
-     * This method trims a patch. Useful for files containg more than one bank for example.
-     * XXX: I think we can remove this once we have a propper patch factory.
-     */
-    void trimSysex();
 
     // only for Single Patch (Do we need ISinglePatch?)
     /** Play note. */

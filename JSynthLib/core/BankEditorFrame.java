@@ -185,7 +185,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         byte [] buffer = new byte [(int) file.length()];
         fileIn.read(buffer);
         fileIn.close();
-        IPatch p = new Patch(buffer); // FIXME Factory
+        IPatch p = (Patch.valueOf(buffer))[0];
         bankDriver.checkAndPutPatch(bankData, p, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }

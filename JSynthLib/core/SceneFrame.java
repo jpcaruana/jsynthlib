@@ -319,26 +319,20 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     // begin PatchBasket methods
-    public void importPatch(File file) throws IOException, FileNotFoundException {
+    public void importPatch(File file) throws IOException,
+            FileNotFoundException {
         FileInputStream fileIn = new FileInputStream(file);
-        byte [] buffer = new byte [(int) file.length()];
+        byte[] buffer = new byte[(int) file.length()];
         fileIn.read(buffer);
         fileIn.close();
 
-        int offset = 0;
-        while (offset < buffer.length - 1) {
-            // There is still something unprocessed in the file
-            Patch firstpat = new Patch(buffer, offset);
-            offset += firstpat.sysex.length;
-            //ErrorMsg.reportStatus("Buffer length:" + buffer.length + " Patch Lenght: " + firstpat.sysex.length);
-            IPatch[] patarray = firstpat.dissect();
-
-            for (int j = 0; j < patarray.length; j++) {
-                if (table.getSelectedRowCount() == 0)
-                    myModel.addPatch(patarray[j]);
-                else
-                    myModel.setPatchAt(patarray[j], table.getSelectedRow());
-            }
+        //ErrorMsg.reportStatus("Buffer length:" + buffer.length);
+        IPatch[] patarray = Patch.valueOf(buffer);
+        for (int j = 0; j < patarray.length; j++) {
+            if (table.getSelectedRowCount() == 0)
+                myModel.addPatch(patarray[j]);
+            else
+                myModel.setPatchAt(patarray[j], table.getSelectedRow());
         }
 
         myModel.fireTableDataChanged();

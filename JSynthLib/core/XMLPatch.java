@@ -66,10 +66,10 @@ public class XMLPatch implements IPatch {
         this.driver = driver;
     }
 
-    public IPatch[] dissect() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    public IPatch[] dissect() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     public String getPatchHeader() {
         StringBuffer patchstring = new StringBuffer("F0");
@@ -107,10 +107,6 @@ public class XMLPatch implements IPatch {
 
     public void store(int bankNum, int patchNum) {
         driver.storePatch(this, bankNum, patchNum);
-    }
-
-    public void trimSysex() {
-        driver.trimSysex(this);
     }
 
     // only for single patch
