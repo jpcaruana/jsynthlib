@@ -351,7 +351,7 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 		return verticalBox;
 	}
 
-	public void changeVoiceMode(final int index) {
+	private void changeVoiceMode(final int index) {
 		boolean enable = (0 == index)? false: true;
 		oTabs.setEnabledAt(2, enable);
 		element2Panel.setEnabled(enable);
