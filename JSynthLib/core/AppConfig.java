@@ -172,6 +172,7 @@ public class AppConfig implements Storable {
 	public Device getDevice(int i) { return (Device)this.deviceList.get(i); };
 	/** Indexed setter for deviceList elements */
 	public Device setDevice(int i, Device dev) {
+		reassignDeviceDriverNums(i, dev);
 		return (Device)this.deviceList.set(i, dev);
 	};
 	/** Getter for deviceList */
@@ -183,23 +184,52 @@ public class AppConfig implements Storable {
 		ArrayList newList = new ArrayList();
 		newList.addAll(Arrays.asList(devices));
 		this.deviceList = newList;
+		reassignDeviceDriverNums();
 	}
 
 	/** Adder for deviceList elements */
-	public boolean addDevice(Device device) { return this.deviceList.add(device); };
-	/** Remover for deviceList elements */
+	public boolean addDevice(Device device) {
+	    reassignDeviceDriverNums(deviceList.size(), device);
+	    return this.deviceList.add(device);
+	}
+	/**
+	 * Remover for deviceList elements.
+	 * The caller must call reassignDeviceDriverNums and revalidateLibraries.
+	 * @return <code>Device</code> object removed.
+	 */
 	public Device removeDevice(int i) { return (Device)this.deviceList.remove(i); };
 	/** Size query for deviceList */
 	public int deviceCount() { return this.deviceList.size(); };
 
+	// Moved from SynthConfigDialog.java
+	/** Revalidate deviceNum element of drivers of each device */
+        public void reassignDeviceDriverNums() {
+	    for (int i = 0; i < deviceList.size(); i++) {
+		Device dev = (Device) deviceList.get(i);
+		reassignDeviceDriverNums(i, dev);
+	    }
+	}
+
+	/** Revalidate deviceNum element of drivers of a device */
+	// Only for backward compatibility.  Remove this when no
+	// driver uses deviceNum and driverNum.
+        private void reassignDeviceDriverNums(int i, Device dev) {
+	    for (int j = 0; j < dev.driverList.size(); j++) {
+		Driver drv = (Driver) dev.driverList.get(j);
+		drv.setDeviceNum(i);
+		drv.setDriverNum(j);
+	    }
+	}
+
 	/** Getter for the index of <code>device</code>. */
     	int getDeviceIndex(Device device) {
-	    Iterator it = deviceList.iterator();
-	    for (int i = 0; it.hasNext(); i++) {
-		if ((Device) it.next() == device)
-		    return i;
-	    }
-	    return -1;		// throw error !!!FIXIT!!!
+ 	    return deviceList.indexOf(device);
+// 	    Iterator it = deviceList.iterator();
+// 	    for (int i = 0; it.hasNext(); i++) {
+// 		if ((Device) it.next() == device)
+// 		    return i;
+// 	    }
+// 	    return -1;		// throw error !!!FIXIT!!!
 	}
 
 	// Returns the "os.name" system property - emenaker 2003.03.13
@@ -244,5 +274,6 @@ public class AppConfig implements Storable {
 	 */
 	public void afterRestore() {
 		// do nothing - we don't need any special code to execute after restore
+// 		ErrorMsg.reportStatus("AppConfig: " + deviceList);
 	}
 }

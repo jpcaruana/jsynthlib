@@ -159,7 +159,7 @@ public class SynthConfigDialog extends JDialog
 	try
         {
             PatchEdit.appConfig.removeDevice(table2.getSelectedRow ());
-            reassignDeviceDriverNums();
+            PatchEdit.appConfig.reassignDeviceDriverNums();
             revalidateLibraries();
 	  ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
             table2.repaint ();
@@ -179,7 +179,7 @@ public class SynthConfigDialog extends JDialog
         table=table2;
 	DeviceAddDialog dad= new DeviceAddDialog (null);
         dad.show ();
-        reassignDeviceDriverNums();
+//	PatchEdit.appConfig.reassignDeviceDriverNums();
         revalidateLibraries();
 	((SynthTableModel)table.getModel ()).fireTableDataChanged ();
 
@@ -202,6 +202,8 @@ public class SynthConfigDialog extends JDialog
     }
 
     /** Revalidate deviceNum element of drivers of each device */
+    // moved to AppConfig.
+    /*
     public void reassignDeviceDriverNums()
     {
       Device dev;
@@ -219,7 +221,7 @@ public class SynthConfigDialog extends JDialog
         }
       }
     }
-
+    */
 
     // METHOD ADDED BY GERRIT GEHNEN
 
@@ -240,7 +242,7 @@ public class SynthConfigDialog extends JDialog
         midiScan=new MidiScan ((SynthTableModel)table.getModel (),pm,this);
 
         midiScan.start ();
-        reassignDeviceDriverNums();
+// 	PatchEdit.appConfig.reassignDeviceDriverNums();
         revalidateLibraries();
         ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
     }
