@@ -24,6 +24,7 @@ public class EnsoniqVFXMultiDriver extends Driver
 		model = "VFX";
 		patchType = "Multi";
 		id = "VFX";
+		authors="Denis Queffeulou";
 		sysexID = "F00F0500**0B";
 		patchSize = SIZE+7;
 		deviceIDoffset = 4;

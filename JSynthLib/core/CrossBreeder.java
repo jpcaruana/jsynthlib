@@ -15,7 +15,7 @@ public class CrossBreeder
      p=new Patch(sysex);
      p.comment=new StringBuffer(); // Clear the wrong "Invalid Manufacturer" comment!
      for (int i=0;i<father.sysex.length;i++)
-       {do {source=getRandomPatch(); } while ((source.driverNum!=father.driverNum)||(source.sysex.length<i));
+       {do {source=getRandomPatch(); } while ((source.driverNum!=father.driverNum)||(source.sysex.length<i) || source.deviceNum!=father.deviceNum);
          p.sysex[i]=source.sysex[i];
        }
      p.driverNum=father.driverNum;

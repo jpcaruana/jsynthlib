@@ -35,6 +35,7 @@ public class EnsoniqVFXSingleDriver extends Driver
 		model = "VFX";
 		patchType = "Single";
 		id = "VFX";
+		authors="Denis Queffeulou";
 		sysexID = "F00F0500**02";
 //   inquiryID="F07E**06020F0200*************F7";
 		patchSize = PATCH_AND_HEADER_SIZE;

@@ -32,6 +32,10 @@ public class EnsoniqVFXDevice extends Device
 		addDriver(new EnsoniqVFXBankDriver());
 		addDriver(new EnsoniqVFXSingleDriver());
 		addDriver(new EnsoniqVFXMultiDriver());
+        infoText="JSynthLib supports librarian functions on VFX single/bank/multi patches.\n"+	       
+	         "This driver has been tested with VFX 2.10 version,  "+
+	         "older versions could not work if different sysex length are used.\n"+
+		 "The patch store send the patch in the edit buffer.";
 	}
 
 }

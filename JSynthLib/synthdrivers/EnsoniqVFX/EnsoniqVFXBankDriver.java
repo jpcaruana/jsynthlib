@@ -24,6 +24,7 @@ public class EnsoniqVFXBankDriver extends BankDriver
 		model = "VFX";
 		patchType = "Bank";
 		id = "VFX";
+		authors="Denis Queffeulou";
 		sysexID = "F00F0500**03";
 //   inquiryID="F07E**06020F0200*************F7";
 		deviceIDoffset = 4;
