@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EtchedBorder;
@@ -32,7 +33,6 @@ import javax.swing.border.TitledBorder;
 import core.CheckBoxWidget;
 import core.EnvelopeWidget;
 import core.IPatchDriver;
-import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
 import core.ScrollBarLookupWidget;
@@ -58,19 +58,173 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     
     public CasioCZ1000SingleEditor(Patch patch) {
         super("Casio CZ-101/1000 Patch Editor", patch);
+
+		gbc.gridx=0;
+		gbc.gridy=0;
+        if(false) {
+	        scrollPane.add(getWideGUI(patch),gbc);
+        }
+        else {
+	        scrollPane.add(getStackedGUI(patch),gbc);
+        }
+    }
+
+    /**
+     * Control which envelope GUI we're going to use.
+     */
+    protected JPanel getEnvelopeGUI(Patch patch, int firstOffset) {
+        //env widg is broke
+        return getEnvelopeGUI1(patch,firstOffset);
+    }
+    
+    /**
+     * Small window, everything is stacked with tabs.
+     * @param patch Patch to edit.
+     * @return Complete GUI component.
+     */
+    public JComponent getStackedGUI(Patch patch) {
+        
+        JComponent paramgui = getParamGUI(patch);
+
+		JTabbedPane osc1Pane=new JTabbedPane();
+		osc1Pane.addTab("Waveform", getWaveformGUI(patch,CZModel.MFW));
+		osc1Pane.addTab("Pitch",    getDco1Panel(patch));
+		osc1Pane.addTab("Wave",     getDcw1Panel(patch));
+		osc1Pane.addTab("Amp",      getDca1Panel(patch));
+
+		JTabbedPane osc2Pane=new JTabbedPane();
+		osc2Pane.addTab("Waveform", getWaveformGUI(patch,CZModel.SFW));
+		osc2Pane.addTab("Pitch",    getDco2Panel(patch));
+		osc2Pane.addTab("Wave",     getDcw2Panel(patch));
+		osc2Pane.addTab("Amp",      getDca2Panel(patch));
+
+        JTabbedPane mainTabs = new JTabbedPane();
+        mainTabs.addTab("Parameters",   paramgui);
+        mainTabs.addTab("Oscillator 1", osc1Pane);
+        mainTabs.addTab("Oscillator 2", osc2Pane);
+        
+        return mainTabs;
+    }
+
+    /**
+     * Params pulled out and visible at all times.
+     * @param patch Patch to edit.
+     * @return Complete GUI component.
+     */
+    public JComponent getWideGUI(Patch patch) {
+        JComponent paramgui = getParamGUI(patch);
+        paramgui.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Parameters",TitledBorder.LEFT,TitledBorder.CENTER));
+
+		JTabbedPane oscPane=new JTabbedPane();
+		oscPane.addTab("1 WF",    getWaveformGUI(patch,CZModel.MFW));
+		oscPane.addTab("1 Pitch", getDco1Panel(patch));
+		oscPane.addTab("1 Wave",  getDcw1Panel(patch));
+		oscPane.addTab("1 Amp",   getDca1Panel(patch));
+		oscPane.addTab("2 WF",    getWaveformGUI(patch,CZModel.SFW));
+		oscPane.addTab("2 Pitch", getDco2Panel(patch));
+		oscPane.addTab("2 Wave",  getDcw2Panel(patch));
+		oscPane.addTab("2 Amp",   getDca2Panel(patch));
+
+		JPanel mainPane = new JPanel();
+		mainPane.setLayout(new GridBagLayout());
+		gbc.gridy=0;
+		gbc.gridx=gbc.RELATIVE;
+        //gbc.weightx = 1;
+        mainPane.add(paramgui,gbc);
+        //gbc.weightx = 1;
+        mainPane.add(oscPane,gbc);
+        
+        return mainPane;
+    }
+
+    
+    protected JPanel getDca2Panel(Patch patch) {
+        JPanel dca2Panel = new JPanel();
+		dca2Panel.setLayout(new GridBagLayout());
+		if(HACK_MODE)
+		    addWidget(dca2Panel,new ScrollBarWidget("Key Follow",patch,0,0xFFFF,0,new WordFieldModel(patch,CZModel.SAMD,0xFFFF),null),0,0,7,1,0);
+		else
+		    addWidget(dca2Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowAModel(patch,CZModel.SAMD),null),0,0,7,1,0);
+		add(dca2Panel,getEnvelopeGUI(patch,CZModel.PSAL),0,1,1,1);
+        return dca2Panel;
+    }
+
+    protected JPanel getDcw2Panel(Patch patch) {
+        JPanel dcw2Panel = new JPanel();
+		dcw2Panel.setLayout(new GridBagLayout());
+		if(HACK_MODE)
+		    addWidget(dcw2Panel,new ScrollBarWidget("Key Follow",patch,0,0xFFFF,0,new WordFieldModel(patch,CZModel.SWMD,0xFFFF),null),0,0,7,1,0);
+		else
+		    addWidget(dcw2Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowWModel(patch,CZModel.SWMD),null),0,0,7,1,0);
+		add(dcw2Panel,getEnvelopeGUI(patch,CZModel.PSWL),0,1,1,1);
+        return dcw2Panel;
+    }
+
+    protected JPanel getDco2Panel(Patch patch) {
+        JPanel dco2Panel = new JPanel();
+		dco2Panel.setLayout(new GridBagLayout());
+		add(dco2Panel,getEnvelopeGUI(patch,CZModel.PSPL),0,0,1,1);
+        return dco2Panel;
+    }
+
+    protected JPanel getDco1Panel(Patch patch) {
+        JPanel dco1Panel = new JPanel();
+		dco1Panel.setLayout(new GridBagLayout());
+		add(dco1Panel,getEnvelopeGUI(patch,CZModel.PMPL),0,0,1,1);
+        return dco1Panel;
+    }
+
+    protected JPanel getDca1Panel(Patch patch) {
+        JPanel dca1Panel = new JPanel();
+		dca1Panel.setLayout(new GridBagLayout());
+		if(HACK_MODE)
+		    // direct access to computed value
+		    addWidget(dca1Panel,new ScrollBarWidget("Key Follow",patch,0,0xFF,0,new CZModel(patch,TONE_DATA+CZModel.MAMV),null),0,0,7,1,0);
+		else
+		    // 10 steps only
+		    addWidget(dca1Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowAModel(patch,CZModel.MAMD),null),0,0,7,1,0);
+		add(dca1Panel,getEnvelopeGUI(patch,CZModel.PMAL),0,1,1,1);
+        return dca1Panel;
+    }
+
+    protected JPanel getDcw1Panel(Patch patch) {
+        JPanel dcw1Panel = new JPanel();
+		dcw1Panel.setLayout(new GridBagLayout());
+		if(HACK_MODE)
+		    // direct access to computed value
+		    addWidget(dcw1Panel,new ScrollBarWidget("Key Follow",patch,0,0xFF,0,new CZModel(patch,TONE_DATA+CZModel.MWMV),null),0,0,7,1,0);
+		else
+		    // 10 steps only
+		    addWidget(dcw1Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowWModel(patch,CZModel.MWMD),null),0,0,7,1,0);
+		add(dcw1Panel,getEnvelopeGUI(patch,CZModel.PMWL),0,1,1,1);
+        return dcw1Panel;
+    }
+
+    public JComponent getParamGUI(Patch patch) {
 		gbc.weightx=1;
         
         JPanel miscPane=new JPanel();
         miscPane.setLayout(new GridBagLayout());
-        miscPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Parameters",TitledBorder.LEFT,TitledBorder.CENTER));
 
         int row=-1;
-        addWidget(miscPane,new ScrollBarLookupWidget("Line Select",patch,0,3,80,new LineModel(patch),null, new String[] {"1","2","1+1'","1+2'"}),0,++row,7,1,0);
+        addWidget(miscPane,new ScrollBarLookupWidget("Line Select",patch,0,3,80,
+                new LineModel(patch),null, 
+                new String[] {"1","2","1+1'","1+2'"}),
+                0,++row,7,1,0);
 
-		addWidget(miscPane,new CheckBoxWidget("Ring",  patch,new BitModel(patch,30,5),null),0,++row,1,1,0);
-        addWidget(miscPane,new CheckBoxWidget("Noise1",patch,new BitModel(patch,30,4),null),1,row,1,1,0);
-        addWidget(miscPane,new CheckBoxWidget("Noise2",patch,new BitModel(patch,30,3),null),2,row,1,1,0);
-	    //TODO non-hack-mode == switch both or neither together
+		if(HACK_MODE) {
+			addWidget(miscPane,new CheckBoxWidget("Ring",  patch,new BitModel(patch,CZModel.MFW+2,5),null),0,++row,1,1,0);
+		    addWidget(miscPane,new CheckBoxWidget("Noise1",patch,new BitModel(patch,CZModel.MFW+2,4),null),1,row,1,1,0);
+		    addWidget(miscPane,new CheckBoxWidget("Noise2",patch,new BitModel(patch,CZModel.MFW+2,3),null),2,row,1,1,0);
+		    // undocumented bit, seems to mute first voice
+			addWidget(miscPane,new CheckBoxWidget("Mute1", patch,new BitModel(patch,CZModel.MFW+2,2),null),3,row,1,1,0);
+		}
+		else {
+	        addWidget(miscPane,new ScrollBarLookupWidget("Modulation",patch,0,3,80,
+	                new ModModel(patch),null, 
+	                new String[] {"OFF", "Ring", "Noise"}),
+	                0,++row,7,1,0);
+		}
 
 		if(HACK_MODE)
 		    addWidget(miscPane,new ScrollBarWidget("Detune Step",patch,-127,127,0,80,new DetuneStepModel(patch),null),0,++row,7,1,0);
@@ -82,66 +236,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         addWidget(miscPane,new ScrollBarWidget("Octave",patch,-1,1,0,80,new OctaveModel(patch),null),0,++row,7,1,0);
         add(miscPane, getVibratoGUI(patch),0,++row,7,4);
 
-        // Note if either wf is >5, the other must be <=5.
-
-		JPanel dco1Panel = new JPanel();
-		dco1Panel.setLayout(new GridBagLayout());
-		add(dco1Panel,getEnvelopeGUI(patch,108),0,0,1,1);
-
-		JPanel dcw1Panel = new JPanel();
-		dcw1Panel.setLayout(new GridBagLayout());
-		if(HACK_MODE)
-		    addWidget(dcw1Panel,new ScrollBarWidget("Key Follow",patch,0,0xFFFF,0,new WordFieldModel(patch,36,0xFFFF),null),0,0,7,1,0);
-		else
-		    addWidget(dcw1Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowWModel(patch,36),null),0,0,7,1,0);
-		add(dcw1Panel,getEnvelopeGUI(patch,74),0,1,1,1);
-		
-		JPanel dca1Panel = new JPanel();
-		dca1Panel.setLayout(new GridBagLayout());
-		if(HACK_MODE)
-		    addWidget(dca1Panel,new ScrollBarWidget("Key Follow",patch,0,0xFFFF,0,new WordFieldModel(patch,32,0xFFFF),null),0,0,7,1,0);
-		else
-		    addWidget(dca1Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowAModel(patch,32),null),0,0,7,1,0);
-		add(dca1Panel,getEnvelopeGUI(patch,40),0,1,1,1);
-
-		
-		JPanel dco2Panel = new JPanel();
-		dco2Panel.setLayout(new GridBagLayout());
-		add(dco2Panel,getEnvelopeGUI(patch,222),0,0,1,1);
-
-		JPanel dcw2Panel = new JPanel();
-		dcw2Panel.setLayout(new GridBagLayout());
-		if(HACK_MODE)
-		    addWidget(dcw2Panel,new ScrollBarWidget("Key Follow",patch,0,0xFFFF,0,new WordFieldModel(patch,150,0xFFFF),null),0,0,7,1,0);
-		else
-		    addWidget(dcw2Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowWModel(patch,150),null),0,0,7,1,0);
-		add(dcw2Panel,getEnvelopeGUI(patch,188),0,1,1,1);
-		
-		JPanel dca2Panel = new JPanel();
-		dca2Panel.setLayout(new GridBagLayout());
-		if(HACK_MODE)
-		    addWidget(dca2Panel,new ScrollBarWidget("Key Follow",patch,0,0xFFFF,0,new WordFieldModel(patch,146,0xFFFF),null),0,0,7,1,0);
-		else
-		    addWidget(dca2Panel,new ScrollBarWidget("Key Follow",patch,0,9,0,new KeyFollowAModel(patch,146),null),0,0,7,1,0);
-		add(dca2Panel,getEnvelopeGUI(patch,154),0,1,1,1);
-
-		
-		JTabbedPane oscPane=new JTabbedPane();
-		oscPane.addTab("1 WF", getWaveformGUI(patch,28));
-		oscPane.addTab("1 Pitch",dco1Panel);
-		oscPane.addTab("1 Wave",dcw1Panel);
-		oscPane.addTab("1 Amp",dca1Panel);
-		oscPane.addTab("2 WF", getWaveformGUI(patch,142));
-		oscPane.addTab("2 Pitch",dco2Panel);
-		oscPane.addTab("2 Wave",dcw2Panel);
-		oscPane.addTab("2 Amp",dca2Panel);
-
-		gbc.gridy=0;
-		gbc.gridx=gbc.RELATIVE;
-        gbc.weightx = 1;
-        scrollPane.add(miscPane,gbc);
-        gbc.weightx = 1;
-        scrollPane.add(oscPane,gbc);
+        return miscPane;
     }
     
     
@@ -213,10 +308,12 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
                 // last two are also spike
         };
         // Labeled sliders
-        addWidget(panel,new ScrollBarLookupWidget("Waveform 1",patch,0,wfLabels.length-1,80,new WordFieldModel(patch,TONE_DATA+offset,0xE000),
-                null,wfLabels),0,++row,7,1,0);
-        addWidget(panel,new ScrollBarLookupWidget("Waveform 2",patch,0,wfLabels.length-1,80,new WordFieldModel(patch,TONE_DATA+offset,0x1C00),
-                null,wfLabels),0,++row,7,1,0);
+        addWidget(panel,new ScrollBarLookupWidget("Waveform 1",patch,0,wfLabels.length-1,80,
+                new WordFieldModel(patch,TONE_DATA+offset,0xE000),null,wfLabels),
+                0,++row,7,1,0);
+        addWidget(panel,new ScrollBarLookupWidget("Waveform 2",patch,0,wfLabels.length-1,80,
+                new WordFieldModel(patch,TONE_DATA+offset,0x1C00),null,wfLabels),
+                0,++row,7,1,0);
 		addWidget(panel,new CheckBoxWidget("Enable WF 2",patch,new BitModel(patch,offset,1),null),0,++row,1,1,0);
         addWidget(panel,new ScrollBarLookupWidget("Window",patch,0,resLabels.length-1,80,new WordFieldModel(patch,TONE_DATA+offset,0x01C0),
                 null,resLabels),0,++row,7,1,0);
@@ -224,19 +321,18 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     }
 
     /**
-     * "Hack mode": sliders and boxes give access to full parameter range.
-     * 
      * @param patch work area
      * @param firstOffset offset to "final stage" param
      * @return
      */
-    protected JPanel getEnvelopeGUI(Patch patch, int firstOffset) {
+    protected JPanel getEnvelopeGUI1(Patch patch, int firstOffset) {
         //TODO non-hack-mode == only one stage can be sustain
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Envelope",TitledBorder.LEFT,TitledBorder.CENTER));
         EnvelopeModel model = new EnvelopeModel(patch, firstOffset);
         int row=-1, width=40, maxval;
+        // models are sensitive to hack mode too
         if(HACK_MODE)
             maxval = 127;
         else
@@ -279,33 +375,46 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
      */
     protected JPanel getEnvelopeGUI2(Patch patch, int firstOffset) {
         JPanel panel = new JPanel();
+        int maxval, row=0;
         panel.setLayout(new GridBagLayout());
-//        panel.setMinimumSize(new Dimension(100,100));
         EnvelopeModel model = new EnvelopeModel(patch, firstOffset);
+        // models are sensitive to hack mode too
+        if(HACK_MODE)
+            maxval = 127;
+        else
+            maxval = 99;
         // CZ can have 1-8 stages, any can be sustain.
         EnvelopeWidget.Node[] nodes = new EnvelopeWidget.Node[] {
                 new EnvelopeWidget.Node(0, 0, null, 0, 0, null, 0, false, null, null, null, null),
-                new EnvelopeWidget.Node(0, 127, model.getRateModel(0), 0, 127, model.getLevelModel(0), 0, false, new NullSender(), new NullSender(), "1 Rate", "   Level"),
-                new EnvelopeWidget.Node(0, 127, model.getRateModel(1), 0, 127, model.getLevelModel(1), 0, false, new NullSender(), new NullSender(), "2 Rate", "   Level"),
-                new EnvelopeWidget.Node(0, 127, model.getRateModel(2), 0, 127, model.getLevelModel(2), 0, false, new NullSender(), new NullSender(), "3 Rate", "   Level"),
-                new EnvelopeWidget.Node(0, 127, model.getRateModel(3), 0, 127, model.getLevelModel(3), 0, false, new NullSender(), new NullSender(), "4 Rate", "   Level"),
-                new EnvelopeWidget.Node(0, 127, model.getRateModel(4), 0, 127, model.getLevelModel(4), 0, false, new NullSender(), new NullSender(), "5 Rate", "   Level"),
-                new EnvelopeWidget.Node(0, 127, model.getRateModel(5), 0, 127, model.getLevelModel(5), 0, false, new NullSender(), new NullSender(), "6 Rate", "   Level"),
-                new EnvelopeWidget.Node(0, 127, model.getRateModel(6), 0, 127, model.getLevelModel(6), 0, false, new NullSender(), new NullSender(), "7 Rate", "   Level"),
-                new EnvelopeWidget.Node(0, 127, model.getRateModel(7), 0, 127, model.getLevelModel(7), 0, false, new NullSender(), new NullSender(), "8 Rate", "   Level"),
+                new EnvelopeWidget.Node(0, maxval, model.getRateModel(0), 0, maxval, model.getLevelModel(0), 0, false, new NullSender(), new NullSender(), "1 Rate", "   Level"),
+                new EnvelopeWidget.Node(0, maxval, model.getRateModel(1), 0, maxval, model.getLevelModel(1), 0, false, new NullSender(), new NullSender(), "2 Rate", "   Level"),
+                new EnvelopeWidget.Node(0, maxval, model.getRateModel(2), 0, maxval, model.getLevelModel(2), 0, false, new NullSender(), new NullSender(), "3 Rate", "   Level"),
+                new EnvelopeWidget.Node(0, maxval, model.getRateModel(3), 0, maxval, model.getLevelModel(3), 0, false, new NullSender(), new NullSender(), "4 Rate", "   Level"),
+                new EnvelopeWidget.Node(0, maxval, model.getRateModel(4), 0, maxval, model.getLevelModel(4), 0, false, new NullSender(), new NullSender(), "5 Rate", "   Level"),
+                new EnvelopeWidget.Node(0, maxval, model.getRateModel(5), 0, maxval, model.getLevelModel(5), 0, false, new NullSender(), new NullSender(), "6 Rate", "   Level"),
+                new EnvelopeWidget.Node(0, maxval, model.getRateModel(6), 0, maxval, model.getLevelModel(6), 0, false, new NullSender(), new NullSender(), "7 Rate", "   Level"),
+                new EnvelopeWidget.Node(0, maxval, model.getRateModel(7), 0, maxval, model.getLevelModel(7), 0, false, new NullSender(), new NullSender(), "8 Rate", "   Level"),
         };
         SysexWidget wid = new EnvelopeWidget("Envelope", patch, nodes);
 //        wid.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Envelope",TitledBorder.LEFT,TitledBorder.CENTER));
 //        wid.setMinimumSize(new Dimension(600,300));
-        addWidget(panel, wid, 1, 1, 7, 5, 0);
-//        addWidget(panel, new ScrollBarWidget("Sustain Stage", patch, 0, 7, 1, model.getSustainModel(), null), 0, 6, 3, 1, 0);
+        addWidget(panel, wid, 0, row, 1, 1, 0);
+        //addWidget(panel, new ScrollBarWidget("Sustain Stage", patch, -1, 7, 1, 70, model.getSustainModel(),  null), 0, ++row, 1, 1, 0);
+        addWidget(panel, new ScrollBarLookupWidget("Sustain Stage", patch, -1, 7, 70, 
+                model.getSustainModel(),  null,
+                new String[] {"OFF", "1", "2", "3", "4", "5", "6", "7", "8"}),
+                0, ++row, 1, 1, 0);
+        addWidget(panel, new ScrollBarWidget("Final Stage",   patch,  0, 7, 1, 70, model.getEndStageModel(), null), 0, ++row, 1, 1, 0);
         return panel;
     }
     
     
     
     
-    
+
+    /**
+     * Dummy model for those widgets that won't take null for an answer.
+     */
     class NullModel implements SysexWidget.IParamModel {
         int currValue;
         /** Constructs a NullModel.*/
@@ -316,51 +425,6 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         public int get() {return currValue;}
     }
 
-    /** 
-     * Unmangle CZ data.  Nybbles in a byte are swapped, and bytes in a word 
-     * are *sometimes* swapped, then each nybble is stored in its own byte.  
-     * So 0xABCD is stored as 0D 0C 0B 0A.
-     */
-    class CZModel extends ParamModel {
-        public CZModel(Patch p, int offset) {
-            super(p,offset);
-        }
-        public int getByte(int offset) {
-            int b = patch.sysex[offset] + (patch.sysex[offset+1]<<4);
-            return b;
-        }
-        public void setByte(int offset, int value) {
-            patch.sysex[offset]   = (byte)((value)&0x0F);
-            patch.sysex[offset+1] = (byte)((value>>4)&0x0F);
-        }
-        /** LSB comes first */
-        public int getWordL(int offset) {
-            int w = patch.sysex[offset] + (patch.sysex[offset+1]<<4)
-                  + (patch.sysex[offset+2]<<8) + (patch.sysex[offset+3]<<12);
-            return w;
-        }
-        /** LSB comes first */
-        public void setWordL(int offset, int value) {
-            patch.sysex[offset]   = (byte)((value)&0x0F);
-            patch.sysex[offset+1] = (byte)((value>>4)&0x0F);
-            patch.sysex[offset+2] = (byte)((value>>8)&0x0F);
-            patch.sysex[offset+3] = (byte)((value>>12)&0x0F);
-        }
-        /** MSB comes first */
-        public int getWordH(int offset) {
-            int w = patch.sysex[offset+2] + (patch.sysex[offset+3]<<4)
-                  + (patch.sysex[offset]<<8) + (patch.sysex[offset+1]<<12);
-            return w;
-        }
-        /** MSB comes first */
-        public void setWordH(int offset, int value) {
-            patch.sysex[offset+2] = (byte)((value)&0x0F);
-            patch.sysex[offset+3] = (byte)((value>>4)&0x0F);
-            patch.sysex[offset]   = (byte)((value>>8)&0x0F);
-            patch.sysex[offset+1] = (byte)((value>>12)&0x0F);
-        }
-    }
-    
     /** generic .. offset = sysex offset */
     class WordFieldModel extends CZModel {
         int mask, shift;
@@ -385,7 +449,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
 
     class LineModel extends CZModel {
         public LineModel(Patch p) {
-            super(p,TONE_DATA+0);
+            super(p,TONE_DATA+CZModel.PFLAG);
         }
         public void set(int i) {
             setByte(ofs, (getByte(ofs) & 0xFC) | (i & 3));
@@ -395,9 +459,36 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         }
     }
 
+    class ModModel extends CZModel {
+        final int   MASK = 0x38;
+        final int[] VALS = { 0, 0x20, 0x18 };
+        
+        public ModModel(Patch p) {
+            super(p,TONE_DATA+CZModel.MFW+2);
+        }
+        public void set(int value) {
+            value &= 0x3;
+            setByte(ofs, (getByte(ofs) & ~MASK) | VALS[value]);
+        }
+        public int get() {
+            int value = getByte(ofs) & MASK;
+            switch(value){
+            	case 0x00:
+            	    value = 0;
+            	    break;
+        	    case 0x20:
+        	        value = 1;
+        	        break;
+    	        default:
+    	            value = 2;
+            }
+            return value;
+        }
+    }
+
     class OctaveModel extends CZModel {
         public OctaveModel(Patch p) {
-            super(p, TONE_DATA);
+            super(p, TONE_DATA+CZModel.PFLAG);
         }
         public void set(int i) {
             if(i==-1) i=2;
@@ -412,7 +503,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     
     class DetuneStepModel extends CZModel {
         public DetuneStepModel(Patch p) {
-            super(p, TONE_DATA+2);
+            super(p, TONE_DATA+CZModel.PDS);
         }
         public void set(int value) {
             setByte(ofs, (value<0 ? 1 : 0));
@@ -428,7 +519,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     
     class DetuneFineModel extends CZModel {
         public DetuneFineModel(Patch p) {
-            super(p, TONE_DATA+4);
+            super(p, TONE_DATA+CZModel.PDL);
         }
         public void set(int value) {
             setByte(ofs, value<<2);
@@ -441,7 +532,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     class VibratoWaveModel extends CZModel {
         final int[] VALS = { 0, 0x08, 0x04, 0x20, 0x02 }; 
         public VibratoWaveModel(Patch p) {
-            super(p, TONE_DATA+8);
+            super(p, TONE_DATA+CZModel.PVK);
         }
         public void set(int value) {
             setByte(ofs, VALS[value]);
@@ -490,7 +581,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         int[] MULTYS = {    1,    2,    4,      8,    16,    32 };
         int[] BIASES = {    0,   33,   67,    135,   271,   543 };
         public VibratoDelayModel(Patch p) {
-            super(p, 10);
+            super(p, CZModel.PVDLD);
             stages = STAGES;
             multys = MULTYS;
             biases = BIASES;
@@ -502,7 +593,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         int[] MULTYS = {   32,      64,     128,      256,      512,     1024 };
         int[] BIASES = {    0,   0x460,   0x8E0,   0x11E0,   0x23E0,   0x47E0 };
         public VibratoRateModel(Patch p) {
-            super(p, 16);
+            super(p, CZModel.PVSD);
             stages = STAGES;
             multys = MULTYS;
             biases = BIASES;
@@ -514,7 +605,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         int[] MULTYS = {    1,      2,      4,      8,      16,      32,      64 };
         int[] BIASES = {    1,   0x23,   0x47,   0x8F,   0x11F,   0x23F,   0x300 };
         public VibratoDepthModel(Patch p) {
-            super(p, 22);
+            super(p, CZModel.PVDD);
             stages = STAGES;
             multys = MULTYS;
             biases = BIASES;
@@ -529,21 +620,19 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         public void set(int value) {
             if(value<0) value=0;
             if(value>9) value=9;
-            value = map[value];
-            setWordH(ofs, value);
+            setByte(ofs, value);
+            setByte(ofs+2, map[value]);
         }
         public int get() {
-            int value = getWordH(ofs);
-            for(int i=0; i<map.length-1; i++) {
-                if(value >= map[i] && value < map[i+1])
-                    return i;
-            }
-            return map.length-1;
+            return getByte(ofs);
         }
     }
 
     class KeyFollowAModel extends KeyFollowModel {
-        int[] MAP = { 0, 0x108, 0x211, 0x31A, 0x424, 0x52F, 0x63A, 0x745, 0x852, 0x95F };
+        int[] MAP = { 
+                0x00, 0x08, 0x11, 0x1A, 0x24,
+                0x2F, 0x3A, 0x45, 0x52, 0x5F 
+        };
         public KeyFollowAModel(Patch p, int offset) {
             super(p,offset);
             map = MAP;
@@ -551,7 +640,10 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     }
     
     class KeyFollowWModel extends KeyFollowModel {
-        int[] MAP = { 0, 0x11F, 0x22C, 0x339, 0x446, 0x553, 0x660, 0x76E, 0x892, 0x9FF };
+        int[] MAP = { 
+                0x00, 0x1F, 0x2C, 0x39, 0x46, 
+                0x53, 0x60, 0x6E, 0x92, 0xFF 
+        };
         public KeyFollowWModel(Patch p, int offset) {
             super(p,offset);
             map = MAP;
@@ -574,16 +666,18 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         }
         /**
          * Mark one stage as sustain.
-         * @param stage 0..7
+         * @param stage 0..7, or -1 for no sustain.
          */
         public void setSustainStage(int stage) {
-            if(stage<0 || stage>7)  throw new IllegalArgumentException("stage="+stage+"; must be 0..7");
+            if(stage<-1 || stage>7)  throw new IllegalArgumentException("stage="+stage+"; must be -1 or 0..7");
             for(int i=0; i<8; i++) {
                 int o = ofs+4+4*i;                
                 setByte(o, getByte(o) & 0x7F);
             }
-            int o = ofs+4+4*stage;                
-            setByte(o, getByte(o) | 0x80);
+            if(stage >= 0) {
+	            int o = ofs+4+4*stage;                
+	            setByte(o, getByte(o) | 0x80);
+            }
         }
         public int getSustainStage() {
             for (int i = 0; i < 8; i++) {
@@ -591,8 +685,8 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
                 if ((getByte(o) & 0x80) != 0)
                     return i;
             }
-            // default to last stage
-            return 7;
+            // no sustain
+            return -1;
         }
         /**
          * Mark a stage as sustain.
@@ -646,6 +740,9 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
             return value;
         }
         
+        /**
+         * Only one stage can be sustain.
+         */
         public SysexWidget.IParamModel getSustainModel() {
             return new SysexWidget.IParamModel() {
                 public void set(int value) {
@@ -656,6 +753,9 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
                 }
             };
         }
+        /**
+         * Lets user freely flip sustain bits for all 8 stages.
+         */
         public SysexWidget.IParamModel getSustainModel2(final int stage) {
             return new SysexWidget.IParamModel() {
                 public void set(int value) {
@@ -750,48 +850,10 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         }
     }
     
+    /**
+     * Dummy sender for those widgets that won't take null for an answer.
+     */
     class NullSender implements SysexWidget.ISender {
         public void send(IPatchDriver driver, int value) { }
     }
-
 }
-
-/*
-Rough structure of patch dump from synth.
-Header is 6 bytes from synth, 7 bytes to synth.
-1st column is offset from start of "tone data" area.
-
-sysex:  f0 44 00 00 70 30
-00 PFLAG   00 00 
-02 PDS     00 00 
-04 PDL,PDH 00 00 00 00
-08 PVK     08 00
-10 PVDLD,V 00 00 00 00 00 00 
-16 PVSD,V  00 00 00 02 00 00 
-22 PVDD,V  00 00 01 00 00 00 
-28 MFW     00 00 00 00 
-32 MAMD,V  00 00 00 00 
-36 MWMD,V  00 00 00 00 
-40 PMAL    07 00
-42 PMA     07 07 0f 0f 0c 0b 00 00 0c 03 00 00 0c 03 00 00
-58         0c 03 00 00 0c 03 00 00 0c 03 00 00 0c 0b 00 00
-74 PMWL    07 00 
-76 PMW     0f 07 0f 0f 04 0c 00 00 04 04 00 00 04 04 00 00 
-92         04 04 00 00 04 04 00 00 04 04 00 00 04 0c 00 00 
-108 PMPL    07 00 
-110 PMP     00 04 00 08 00 04 00 00 00 04 00 00 00 04 00 00 
-126         00 04 00 00 00 04 00 00 00 04 00 00 00 0c 00 00 
-142 SFW     00 00 00 00
-146 SAMD,V  00 00 00 00 
-150 SWMD,V  00 00 00 00 
-154 PSAL    07 00
-156 PSA     07 07 0f 0f 0c 0b 00 00 0c 03 00 00 0c 03 00 00 
-172         0c 03 00 00 0c 03 00 00 0c 03 00 00 0c 0b 00 00
-188 PSWL    07 00 
-190 PSW     0f 07 0f 0f 04 0c 00 00 04 04 00 00 04 04 00 00
-206         04 04 00 00 04 04 00 00 04 04 00 00 04 0c 00 00
-222 PSPL    07 00 
-224 PSP     00 04 00 08 00 04 00 00 00 04 00 00 00 04 00 00
-240         00 04 00 00 00 04 00 00 00 04 00 00 00 0c 00 00
-258 end     f7
-*/
