@@ -31,32 +31,32 @@ import java.util.prefs.Preferences;
  * @version $Id$
  */
 public class QuasimidiQuasarDevice extends Device {
-	private static final String INFO_TEXT
+    private static final String INFO_TEXT
     = "Currently only supporting the librarian features for single perfomances and performance banks.";
 
     /**
     * Constructor for DeviceListWriter.
     */
     public QuasimidiQuasarDevice() {
-    	super(	"Quasimidi",
-    			"Quasar",
-        		"F07E**06023F20**************F7",
-        		INFO_TEXT,
-        		"Joachim Backhaus");
+        super(  "Quasimidi",
+                "Quasar",
+                "F07E**06023F20**************F7",
+                INFO_TEXT,
+                "Joachim Backhaus");
     }
 
 
     /**
     * Constructor for the actual work.
     *
-    * @param prefs	The Preferences for this device
+    * @param prefs  The Preferences for this device
     */
     public QuasimidiQuasarDevice(Preferences prefs) {
-    	this();
+        this();
 
-    	this.prefs = prefs;
+        this.prefs = prefs;
 
-		addDriver(new QuasimidiQuasarTemporaryConverter());
+        addDriver(new QuasimidiQuasarTemporaryConverter());
         addDriver(new QuasimidiQuasarSingleDriver());
         addDriver(new QuasimidiQuasarBankDriver());
     }

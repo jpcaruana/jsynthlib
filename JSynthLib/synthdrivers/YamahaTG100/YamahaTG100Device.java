@@ -38,34 +38,34 @@ import java.util.prefs.Preferences;
  */
 public class YamahaTG100Device extends Device {
 
-	private static final String INFO_TEXT
+    private static final String INFO_TEXT
     = "Currently only supporting the librarian features.";
     
     /**
     * Constructor for DeviceListWriter.
     */
     public YamahaTG100Device() {
-    	super(	"Yamaha",
-    			"TG100",
-        		"F07E**06020001050000040001002100F7",
-        		INFO_TEXT,
-        		"Joachim Backhaus");
-        		
-    	// Got the following from "auto-scan"
-    	// f0 7e 7f 06 02 00 01 05 00 00 04 00 01 00 21 00 f7
+        super(  "Yamaha",
+                "TG100",
+                "F07E**06020001050000040001002100F7",
+                INFO_TEXT,
+                "Joachim Backhaus");
+                
+        // Got the following from "auto-scan"
+        // f0 7e 7f 06 02 00 01 05 00 00 04 00 01 00 21 00 f7
     }
 
 
     /**
     * Constructor for the actual work.
     *
-    * @param prefs	The Preferences for this device
+    * @param prefs  The Preferences for this device
     */
     public YamahaTG100Device(Preferences prefs) {
-    	this();
+        this();
 
-    	this.prefs = prefs;
+        this.prefs = prefs;
 
-		addDriver (new YamahaTG100SingleDriver ());
+        addDriver (new YamahaTG100SingleDriver ());
     }   
 }

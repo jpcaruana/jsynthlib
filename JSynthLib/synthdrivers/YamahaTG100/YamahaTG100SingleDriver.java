@@ -34,121 +34,125 @@ import java.io.*;
  */
 public class YamahaTG100SingleDriver extends Driver {
 
-	/*
-	* Sends only "all" dumps of size 8266 in Bytes
-	*/
-	public YamahaTG100SingleDriver() {
-		super("Voice", "Joachim Backhaus");
+    /*
+    * Sends only "all" dumps of size 8266 in Bytes
+    */
+    public YamahaTG100SingleDriver() {
+        super("Voice", "Joachim Backhaus");
 
-		this.sysexID = "F043**27";
-		/*
-		this.sysexRequestDump = new SysexHandler(
-			"F0 43 10 7A 4C 4D 20 20 30 30 36 38 52 51 30 *adressOffset2*"
-			+ " *adressOffset3* *byteCount1* *byteCount2* *byteCount3* 00 00 00 00 00 00 00 00 00 *checksum* F7" );
-			*/		
+        this.sysexID = "F043**27";
 
-		this.patchNameStart = TG100Constants.PATCH_NAME_START;
-		this.patchNameSize = TG100Constants.PATCH_NAME_SIZE;
+        this.sysexRequestDump = new SysexHandler(
+            "F0 43 10 27 30 *adressOffset2* *adressOffset3* 00 *checksum* F7" );
+/*
+        this.sysexRequestDump = new SysexHandler(
+            "F0 43 10 7A 4C 4D 20 20 30 30 36 38 52 51 30 *adressOffset2* *adressOffset3*"
+            + " *byteCount1* *byteCount2* *byteCount3* 00 00 00 00 00 00 00 00 00 *checksum* F7" );
+            */
 
-		// Use always 0x10 as Device ID, else it doesn't work
-		//this.deviceIDoffset = 2;
-		this.deviceIDoffset = 0;
+        this.patchNameStart = TG100Constants.PATCH_NAME_START;
+        this.patchNameSize = TG100Constants.PATCH_NAME_SIZE;
 
-		this.checksumStart = TG100Constants.CHECKSUM_START;
-		this.checksumEnd = TG100Constants.CHECKSUM_END;
-		this.checksumOffset = TG100Constants.CHECKSUM_OFFSET;
+        // Use always 0x10 as Device ID, else it doesn't work
+        //this.deviceIDoffset = 2;
+        this.deviceIDoffset = 0;
 
-		this.bankNumbers = new String[] { "Internal voice bank" }; // Bank is ignored since there is only one bank for internal voices
+        this.checksumStart = TG100Constants.CHECKSUM_START;
+        this.checksumEnd = TG100Constants.CHECKSUM_END;
+        this.checksumOffset = TG100Constants.CHECKSUM_OFFSET;
 
-		this.patchNumbers = Driver.generateNumbers(1, 64, "#");	
+        this.bankNumbers = new String[] { "Internal voice bank" }; // Bank is ignored since there is only one bank for internal voices
 
-		this.patchSize = TG100Constants.PATCH_SIZE;
+        this.patchNumbers = Driver.generateNumbers(1, 64, "#");
+
+        this.patchSize = TG100Constants.PATCH_SIZE;
     }
 
     // For internal use only!!!
     private void storePatch(Patch p, int patchNum) {
-		int iTemp = TG100Constants.SYSEX_VOICE_START_ADDRESS3
-					+ (patchNum * TG100Constants.SYSEX_SINGLE_VOICE_SIZE);
+        int iTemp = TG100Constants.SYSEX_VOICE_START_ADDRESS3
+                    + (patchNum * TG100Constants.SYSEX_SINGLE_VOICE_SIZE);
 
-		p.sysex[5] = (byte) ((iTemp / 128) + TG100Constants.SYSEX_VOICE_START_ADDRESS2 );
-		p.sysex[6] = (byte) (iTemp % 128);
+        p.sysex[5] = (byte) ((iTemp / 128) + TG100Constants.SYSEX_VOICE_START_ADDRESS2 );
+        p.sysex[6] = (byte) (iTemp % 128);
 
-		calculateChecksum(p);
-		sendPatchWorker(p);
+        calculateChecksum(p);
+        sendPatchWorker(p);
     }
 
     /**
     * Saves the Patch to Voice 1 as there is no Edit Buffer
     */
     public void sendPatch(Patch p) {
-    	setPatchNum(0);
-    	storePatch(p, 0);
+        setPatchNum(0);
+        storePatch(p, 0);
     }
 
-	/**
-	* Stores the Patch in the internal memory
-	*
-	* @param p			The Voice data
-	* @param bankNum	Ignored
-	* @param patchNum	The number of the internal voice memory
-	*/
+    /**
+    * Stores the Patch in the internal memory
+    *
+    * @param p          The Voice data
+    * @param bankNum    Ignored
+    * @param patchNum   The number of the internal voice memory
+    */
     public void storePatch (Patch p, int bankNum, int patchNum) {
-    	//setBankNum(64);
-		setPatchNum(patchNum);
+        //setBankNum(64);
+        setPatchNum(patchNum);
         storePatch(p, patchNum);
     }
 
     /**
-	* Request the dump of a single Voice
-	*
-	* @param bankNum	Ignored
-	* @param patchNum	The number of the Voice which is requested
-	*/
+    * Request the dump of a single Voice
+    *
+    * @param bankNum    Ignored
+    * @param patchNum   The number of the Voice which is requested
+    */
     public void requestPatchDump(int bankNum, int patchNum) {
 
-		if (sysexRequestDump == null) {
-			JOptionPane.showMessageDialog
-				(PatchEdit.getInstance(),
-				 "The " + toString()
-				 + " driver does not support patch getting.\n\n"
-				 + "Please start the patch dump manually...",
-				 "Get Patch", JOptionPane.WARNING_MESSAGE);
-		}
-		else {
-			int iTemp = TG100Constants.SYSEX_VOICE_START_ADDRESS3
-						+ (patchNum * TG100Constants.SYSEX_SINGLE_VOICE_SIZE);
-			int startAddress2 = (int) ((iTemp / 128) + TG100Constants.SYSEX_VOICE_START_ADDRESS2);
-			int startAddress3 = (int) (iTemp % 128);
+        if (sysexRequestDump == null) {
+            JOptionPane.showMessageDialog
+                (PatchEdit.getInstance(),
+                 "The " + toString()
+                 + " driver does not support patch getting.\n\n"
+                 + "Please start the patch dump manually...",
+                 "Get Patch", JOptionPane.WARNING_MESSAGE);
+        }
+        else {
+            int iTemp = TG100Constants.SYSEX_VOICE_START_ADDRESS3
+                        + (patchNum * TG100Constants.SYSEX_SINGLE_VOICE_SIZE);
+            int startAddress2 = (int) ((iTemp / 128) + TG100Constants.SYSEX_VOICE_START_ADDRESS2);
+            int startAddress3 = (int) (iTemp % 128);
 
-			int sum = 0;
-			int checksum = 0;
+            int sum = 0;
+            int checksum = 0;
 
-			/*sum = 0x4C + 0x4D + 0x20 + 0x20 + 0x30 + 0x30 + 0x36 + 0x38 + 0x52 + 0x51
-					+ 0x30 + startAddress2 + startAddress3 + TG100Constants.SYSEX_SINGLE_VOICE_SIZE;*/
-			//sum = 0x30 + startAddress2 + startAddress3 + TG100Constants.SYSEX_SINGLE_VOICE_SIZE;
-			sum = 0x30 + startAddress2 + startAddress3;						
+            /*sum = 0x4C + 0x4D + 0x20 + 0x20 + 0x30 + 0x30 + 0x36 + 0x38 + 0x52 + 0x51
+                    + 0x30 + startAddress2 + startAddress3 + TG100Constants.SYSEX_SINGLE_VOICE_SIZE;*/
+            //sum = 0x30 + startAddress2 + startAddress3 + TG100Constants.SYSEX_SINGLE_VOICE_SIZE;
+            sum = 0x30 + startAddress2 + startAddress3;
 
-			checksum = (byte) (-sum & 0x7f);			
+            checksum = (byte) (-sum & 0x7f);
+            //checksum = (byte) 0x00;
 
-			NameValue[] nameValues = {
-				new NameValue("adressOffset2", startAddress2 ),
-				new NameValue("adressOffset3", startAddress3 ),
-				new NameValue("byteCount1", 0),
-				new NameValue("byteCount2", 0),
-				new NameValue("byteCount3", TG100Constants.SYSEX_SINGLE_VOICE_SIZE),				
-				new NameValue("checksum", checksum)
-			};
+            NameValue[] nameValues = {
+                new NameValue("adressOffset2", startAddress2 ),
+                new NameValue("adressOffset3", startAddress3 ),
+                new NameValue("byteCount1", 0),
+                new NameValue("byteCount2", 0),
+                new NameValue("byteCount3", TG100Constants.SYSEX_SINGLE_VOICE_SIZE),
+                new NameValue("checksum", checksum)
+            };
 
-			send(sysexRequestDump.toSysexMessage(getDeviceID(), nameValues) );
+            send(sysexRequestDump.toSysexMessage(getDeviceID(), nameValues) );
 
-		}
-	}
+        }
+    }
 
     public Patch createNewPatch() {
 
         byte [] sysex = new byte[TG100Constants.PATCH_SIZE];
-        
-    	// Create new patch on internal voice 1
+
+        // Create new patch on internal voice 1
         sysex[0]=(byte) 0xF0;
         sysex[1]=(byte) 0x43;
         sysex[2]=(byte) 0x10; // Device number
