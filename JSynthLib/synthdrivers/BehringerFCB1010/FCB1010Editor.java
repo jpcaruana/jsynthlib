@@ -132,8 +132,10 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         */
     private byte[] localScrap = null;
     
-    /** Constructs a FCB1010Editor for the selected patch.
-    */
+    /** Constructs a FCB1010Editor for the selected patch. Note that since the
+        * FCB1010 does not recognize any real-time messages, all of the sysexWidgets
+        * in this editor have their ISender parameter set to null.
+        */
     FCB1010Editor(Patch patch) {
         super("FCB1010 Patch Editor", patch);
         
