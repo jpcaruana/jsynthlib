@@ -31,22 +31,15 @@ import javax.swing.UIManager;
 public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
     protected ISinglePatch p;
-    /** Note that calling addWidget() method may change the value of this. */
-    protected GridBagConstraints gbc;
     /** Scroll Pane for the editor frame. */
     protected JPanel scrollPane;
-    /**
-     * A list of slider added by addWidget method.  This was defined
-     * for old Java bug.  Now this is not used any more.
-     * @deprecated This is not used any more.
-     */
-    // Used by PatchEdit.EditAction.Worker.  For what is this?!!!FIXIT!!!
-    protected ArrayList sliderList = new ArrayList(); //workaround for Java Swing Bug
+    /** Note that calling addWidget() method may change the value of this. */
+    protected GridBagConstraints gbc;
     /** A list of widget added by addWidget method. */
     protected ArrayList widgetList = new ArrayList();
 
     /** For Alignment, a size to scrollbar labels, zero disables*/
-    protected int forceLabelWidth=0;
+    protected int forceLabelWidth=0; // will be removed with setLongestLabel()
 
     /**
      * Information about BankEditorFrame which created this
@@ -122,35 +115,13 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
                 public void JSLFrameActivated(JSLFrameEvent e) {
                     frameActivated();
-                    gotFocus();
-
-                    Actions.setEnabled(false,
-                                         Actions.EN_GET
-                                         | Actions.EN_PASTE);
-
-                    Actions.setEnabled(true,
-                                         Actions.EN_COPY
-                                         | Actions.EN_EXPORT
-                                         | Actions.EN_PLAY
-                                         | Actions.EN_REASSIGN
-                                         | Actions.EN_SEND
-                                         | Actions.EN_SEND_TO
-                                         | Actions.EN_STORE);
                 }
 
                 public void JSLFrameClosed(JSLFrameEvent e) {
                 }
 
                 public void JSLFrameDeactivated(JSLFrameEvent e) {
-                    Actions.setEnabled(false,
-                                         Actions.EN_COPY
-                                         | Actions.EN_EXPORT
-                                         | Actions.EN_PLAY
-                                         | Actions.EN_REASSIGN
-                                         | Actions.EN_SEND
-                                         | Actions.EN_SEND_TO
-                                         | Actions.EN_STORE);
-                    lostFocus();
+                    frameDeactivated();
                 }
 
                 public void JSLFrameDeiconified(JSLFrameEvent e) {
@@ -161,58 +132,68 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
             });
     }
 	
-	/** 
-		Called when the frame is closed. Default ask for keep changes.
-		May be redefined in sub-classes. 
-	*/
-	protected void frameClosing()
-	{
-		String[] choices = new String[] {"Keep Changes",
-										"Revert to Original",
-										"Place Changed Version on Clipboard"
-		};
-		int choice;
-		do {
-			choice = JOptionPane.showOptionDialog
-					((Component) null,
-                             "What do you wish to do with the changed copy of the Patch?",
-                             "Save Changes?",
-                             JOptionPane.OK_OPTION, JOptionPane.QUESTION_MESSAGE,
-                             null, choices, choices[0]);
-		} while (choice == JOptionPane.CLOSED_OPTION);
-		if (choice == 0) { // "Keep Changes"
-			if (bankFrame != null)
-				bankFrame.myModel.setPatchAt(p, patchRow, patchCol);
-		} else {
-			if (choice == 2) // "Place Changed Version on Clipboard"
-						//put on clipboard but don't 'return' just yet
-				copySelectedPatch();
-			//restore backup
-			p.useSysexFromPatch(originalPatch);
-			// XXX Why don't we simply do as follows?
-			// p = originalPatch;
-		}
-	}
+    /**
+     * Called when the frame is closed. Default ask for keep changes. May be
+     * redefined in sub-classes.
+     */
+    protected void frameClosing() {
+        String[] choices = new String[] {
+                "Keep Changes",
+                "Revert to Original",
+                "Place Changed Version on Clipboard"
+        };
+        int choice;
+        do {
+            choice = JOptionPane
+                    .showOptionDialog(
+                            (Component) null,
+                            "What do you wish to do with the changed copy of the Patch?",
+                            "Save Changes?", JOptionPane.OK_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, choices,
+                            choices[0]);
+        } while (choice == JOptionPane.CLOSED_OPTION);
+        if (choice == 0) { // "Keep Changes"
+            if (bankFrame != null)
+                bankFrame.setPatchAt(p, patchRow, patchCol);
+        } else {
+            if (choice == 2) // "Place Changed Version on Clipboard"
+                //put on clipboard but don't 'return' just yet
+                copySelectedPatch();
+            //restore backup
+            p.useSysexFromPatch(originalPatch);
+            // XXX Why don't we simply do as follows?
+            // p = originalPatch;
+        }
+    }
+
+    /**
+     * Called when the frame is opened. May be redefined
+     * in sub-classes.
+     */
+    protected void frameOpened() {
+        p.send();
+    }
+
+    /**
+     * Called when the frame is activated. May be redefined in sub-classes.
+     */
+    protected void frameActivated() {
+        Actions.setEnabled(false, Actions.EN_ALL);
+
+        Actions.setEnabled(true,
+                             Actions.EN_COPY
+                             | Actions.EN_PLAY
+                             | Actions.EN_SEND
+                             // Does send_to and reassgin make sense?
+                             | Actions.EN_SEND_TO
+                             | Actions.EN_REASSIGN);
+    }
 	
-	/** 
-		Called when the frame is opened. Default does nothing.
-		May be redefined in sub-classes. 
-	*/
-	protected void frameOpened()
-	{
-	}
-	
-	/** 
-		Called when the frame is activated. Default send the patch.
-		May be redefined in sub-classes. 
-	*/
-	protected void frameActivated()
-	{
-	    // XXX: Do we really want to send the patch every
-	    //      time the editor gets focus?
-            p.send();
-	}
-	
+    /**
+     * Called when the frame is deactivated. May be redefined in sub-classes.
+     */
+    protected void frameDeactivated() {
+    }
 
     // PatchBasket methods
 
@@ -562,14 +543,6 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
             }
             return;
         }
-    }
-
-    /** A hook called when the frame is activated. */
-    protected void gotFocus() {
-    }
-
-    /** A hook called when the frame is deactivated. */
-    protected void lostFocus() {
     }
 
     /**

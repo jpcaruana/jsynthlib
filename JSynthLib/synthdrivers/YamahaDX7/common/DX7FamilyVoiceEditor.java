@@ -496,8 +496,9 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 	};
 
 
-	public void gotFocus()
+	protected void frameActivated()
 	{
+		super.frameActivated();
 		SendOpState();
 	}
 

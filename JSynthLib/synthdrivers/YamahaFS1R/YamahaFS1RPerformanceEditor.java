@@ -107,7 +107,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		super.frameOpened();
 		// send performance FIRST
 		//p.calculateChecksum();
-		p.send();
+		//p.send();
 		
 		for (int oPart = 0; oPart < 4; oPart++) 
 		{
@@ -131,6 +131,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	
 	protected void frameActivated()
 	{
+		super.frameActivated();
 		// no sysex send here because if I send a performance, it will use the FS1R voices, 
 		// not the one in the jsynthlib bank
 	}
