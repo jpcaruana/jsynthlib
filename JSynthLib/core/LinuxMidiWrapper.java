@@ -144,7 +144,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 			if (BUFSIZE == 0) {
 				outStream[port].write(sysex,0,length);
 				outStream[port].flush ();
-				logMidi(port, false, sysex, length);
+				MidiUtil.logOut(port, sysex, length);
 			} else {
 				byte[] tmpArray = new byte[BUFSIZE+1];
 
@@ -154,7 +154,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 					System.arraycopy(sysex, i, tmpArray, 0, s);
 					outStream[port].write(tmpArray,0,s);
 					outStream[port].flush ();
-					logMidi(port, false, tmpArray, s);
+					MidiUtil.logOut(port, tmpArray, s);
 				}
 			}
 		}
@@ -218,7 +218,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 				sysex[i++]=midiBuffer[readPos++];
 				readPos%=bufferSize;
 				sysEx=false;
-				logMidi(port,true,sysex,i);
+				MidiUtil.logOut(port,sysex,i);
 				return i;
 			}
 			logMidi(port,true,sysex,i);
@@ -261,7 +261,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 
 		// pop the oldest message
 		MidiMessage msg = (MidiMessage) list.remove(0);
-		logMidi(port, true, msg);
+		MidiUtil.logIn(port, msg);
 		return msg;
 	}
 
