@@ -1,52 +1,73 @@
-/*
- * @version $Id$
- */
 package synthdrivers.KawaiK4;
 import core.*;
 
+/**
+ * Convert a bulk patch into an array of single bank, multi bank,
+ * drumset, and effect bank patches.
+ * @version $Id$
+ */
 public class KawaiK4BulkConverter extends Converter {
+    /** Header Size */
+    private static final int HSIZE = 8;
+    /** Single Bank size */
+    private static final int SSIZE = 131 * 64;
+    /** Multi Bank size */
+    private static final int MSIZE = 77 * 64;
+    /** Drum Set size */
+    private static final int DSIZE = 682;
+    /** Effect Bank size */
+    private static final int ESIZE = 35 * 32;
+
     public KawaiK4BulkConverter() {
         super("Bulk Dump Converter", "Brian Klock & Gerrit Gehnen");
         sysexID = "F040**220004**00";
     }
 
+    /**
+     * Convert a bulk patch into an array of single bank, multi bank,
+     * drumset, and effect bank patches.
+     */
     public Patch[] extractPatch(Patch p) {
         // System.out.println("Length p: "+p.sysex.length);
-        byte[] sx = new byte[9 + 131 * 64]; // Single Bank
-        byte[] mx = new byte[9 + 77 * 64];  // Multi Bank
-        byte[] ex = new byte[9 + 32 * 35];  // Effect Bank
-        byte[] dx = new byte[9 + 682];      // Drumset
+        byte[] sx = new byte[HSIZE + SSIZE + 1]; // Single Bank
+        byte[] mx = new byte[HSIZE + MSIZE + 1]; // Multi Bank
+        byte[] dx = new byte[HSIZE + DSIZE + 1]; // Drumset
+        byte[] ex = new byte[HSIZE + ESIZE + 1]; // Effect Bank
 
 	// Copy the data into the Single Bank
-        System.arraycopy(p.sysex, 0, sx, 0, 8392);
+        System.arraycopy(p.sysex, 0, sx, 0, HSIZE + SSIZE);
 	// Copy the data into the Multi Bank
-        System.arraycopy(p.sysex, 0, mx, 0, 8);
-        System.arraycopy(p.sysex, 8392, mx, 8, 77 * 64);
+        System.arraycopy(p.sysex, 0, mx, 0, HSIZE);
+        System.arraycopy(p.sysex, HSIZE + SSIZE,
+			 mx, HSIZE, MSIZE);
         // Copy the data into the  drumset
-        System.arraycopy(p.sysex, 0, dx, 0, 8);
-        System.arraycopy(p.sysex, 8392 + (77 * 64), dx, 8, 682);
+        System.arraycopy(p.sysex, 0, dx, 0, HSIZE);
+        System.arraycopy(p.sysex, HSIZE + SSIZE + MSIZE,
+			 dx, HSIZE, DSIZE);
 	// Copy the data into the Effect Bank
-        System.arraycopy(p.sysex, 0, ex, 0, 8);
-        System.arraycopy(p.sysex, 8392 + (77 * 64) + 682, ex, 8, 32 * 35);
+        System.arraycopy(p.sysex, 0, ex, 0, HSIZE);
+        System.arraycopy(p.sysex, HSIZE + SSIZE + MSIZE + DSIZE,
+			 ex, HSIZE, ESIZE);
 
-        sx[8392] = (byte) 0xF7;
+        sx[HSIZE + SSIZE] = (byte) 0xF7;
         sx[3] = 0x21;
         sx[7] = 0x00;
 
-        mx[77 * 64 + 8] = (byte) 0xF7;
+        mx[HSIZE + MSIZE] = (byte) 0xF7;
         mx[3] = 0x21;
         mx[7] = 0x40;
 
-        ex[32 * 35 + 8] = (byte) 0xf7;
-        ex[3] = 0x21;
-        ex[6] = 1;
-
-        dx[8 + 682] = (byte) 0xf7;
+        dx[HSIZE + DSIZE] = (byte) 0xf7;
         dx[3] = 0x21;
         dx[6] = 1;
         dx[7] = 0x20;
 
+        ex[HSIZE + ESIZE] = (byte) 0xf7;
+        ex[3] = 0x21;
+        ex[6] = 1;
+
         Patch[] pf = new Patch[4];
+	// use Patch(byte[], Driver) instead of Patch(byte[]). !!!FIXIT!!!
         pf[0] = new Patch(sx);
         pf[1] = new Patch(mx);
         pf[2] = new Patch(ex);

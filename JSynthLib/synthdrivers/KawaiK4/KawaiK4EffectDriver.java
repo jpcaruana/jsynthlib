@@ -6,32 +6,41 @@ import core.Patch;
 import core.SysexHandler;
 
 /**
- * Driver for Kawai K4 Effects
+ * Single Effect Patch Driver for Kawai K4.
  *
  * @author Gerrit Gehnen
  * @version $Id$
  */
 
 public class KawaiK4EffectDriver extends Driver {
+    /** Header Size */
+    private static final int HSIZE = 8;
+    /** Single Patch size */
+    private static final int SSIZE = 35;
+
     private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 00 00 04 01 *patchNum* F7");
 
     public KawaiK4EffectDriver() {
 	super("Effect", "Gerrit Gehnen");
         sysexID = "F040**2*0004";
 
-        patchSize = 44;
-        patchNameStart = 0;
-        patchNameSize = 0;
-        deviceIDoffset =  2;
-        checksumStart = 8;
-        checksumEnd = 41;
-        checksumOffset = 42;
+	patchSize	= HSIZE + SSIZE + 1;
+        patchNameStart	= 0;
+        patchNameSize	= 0;
+        deviceIDoffset	= 2;
+        checksumStart	= HSIZE;
+	checksumEnd	= HSIZE + SSIZE - 2;
+	checksumOffset	= HSIZE + SSIZE - 1;
         bankNumbers = new String[] {
 	    "0-Internal", "1-External"
 	};
+	// Is this correct? BulkConverter has 32 patches.
+	/*
         patchNumbers = new String[31];
         for (int i = 0; i < 31; i++)
             patchNumbers[i] = String.valueOf(i + 1);
+	*/
+        patchNumbers = generateNumbers(1, 31, "00");
     }
 
     public void storePatch(Patch p, int bankNum, int patchNum) {
@@ -59,10 +68,8 @@ public class KawaiK4EffectDriver extends Driver {
     }
 
     public void calculateChecksum(Patch p, int start, int end, int ofs) {
-        int i;
         int sum = 0;
-
-        for (i = start; i <= end; i++) {
+        for (int i = start; i <= end; i++) {
             sum  += p.sysex[i];
         }
         sum += 0xA5;
@@ -70,7 +77,7 @@ public class KawaiK4EffectDriver extends Driver {
     }
 
     public Patch createNewPatch() {
-        byte[] sysex = new byte[44];
+        byte[] sysex = new byte[HSIZE + SSIZE + 1];
         sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x23; sysex[4] = (byte) 0x00;
         sysex[5] = (byte) 0x04; sysex[6] = (byte) 0x01;
@@ -84,7 +91,7 @@ public class KawaiK4EffectDriver extends Driver {
         sysex[36] = 0x07;
         sysex[39] = 0x07;
 
-        sysex[43] = (byte) 0xF7;
+        sysex[HSIZE + SSIZE] = (byte) 0xF7;
         Patch p = new Patch(sysex, this);
         //setPatchName(p,"New Effect");
         calculateChecksum(p);
@@ -96,7 +103,7 @@ public class KawaiK4EffectDriver extends Driver {
     }
 
     public String getPatchName(Patch p) {
-        String s  = "Effect Type "  + (p.sysex[8] + 1);
+        String s  = "Effect Type "  + (p.sysex[HSIZE] + 1);
         return s;
     }
 

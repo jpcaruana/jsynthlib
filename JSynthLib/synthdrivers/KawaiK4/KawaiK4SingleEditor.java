@@ -1,4 +1,5 @@
-/*
+/**
+ * Single Editor for Kawai K4/K4r.
  * @version $Id$
  */
 package synthdrivers.KawaiK4;
