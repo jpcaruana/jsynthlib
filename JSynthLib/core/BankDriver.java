@@ -174,20 +174,13 @@ abstract public class BankDriver extends Driver implements IPatchDriver {
      * Get the name of the patch at the given number <code>patchNum</code>.
      * @see Patch#getName(int)
      */
-    // XXX should be 'abstract', but some subclasses don't implement this.
-    protected String getPatchName(Patch bank, int patchNum) {
-        return "-";
-    }
+    abstract protected String getPatchName(Patch bank, int patchNum);
 
     /**
      * Set the name of the patch at the given number <code>patchNum</code>.
-     * Need to be overriden.
      * @see Patch#setName(int, String)
      */
-    // XXX should be 'abstract', but some subclasses don't implement this.
-    protected void setPatchName(Patch bank, int patchNum, String name) {
-        // do nothing by default
-    }
+    abstract protected void setPatchName(Patch bank, int patchNum, String name);
     // end of IBankDriver methods
 
     //

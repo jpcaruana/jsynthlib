@@ -133,5 +133,12 @@ public class CasioCZ1000BankDriver extends BankDriver
     public void setBankNum(int bankNum)
     {
     }
+ 
+    protected String getPatchName(Patch bank, int patchNum) {
+        return "-";
+    }
 
+    protected void setPatchName(Patch bank, int patchNum, String name) {
+        // do nothing
+    }
 }

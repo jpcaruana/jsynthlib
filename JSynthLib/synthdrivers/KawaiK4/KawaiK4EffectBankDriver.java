@@ -50,6 +50,9 @@ public class KawaiK4EffectBankDriver extends BankDriver {
 	String s = "Effect Type " + (((Patch)p).sysex[nameStart] + 1);
 	return s;
     }
+    protected void setPatchName(Patch bank, int patchNum, String name) {
+        // do nothing
+    }
 
     protected static void calculateChecksum(Patch p, int start, int end, int ofs) {
         int sum = 0;

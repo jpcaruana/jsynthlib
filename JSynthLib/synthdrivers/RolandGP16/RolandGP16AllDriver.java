@@ -1,5 +1,6 @@
 package synthdrivers.RolandGP16;
 import core.*;
+
 import java.io.*;
 import javax.swing.*;
 
@@ -54,6 +55,9 @@ public class RolandGP16AllDriver extends BankDriver {
                return s.toString();
              } catch (UnsupportedEncodingException ex) {return "-";}   
   }
+   protected void setPatchName(Patch bank, int patchNum, String name) {
+       // do nothing
+   }
     
 /** Calculate the checksum for all patches in the memory. */
   public void calculateChecksum (Patch p)

@@ -235,4 +235,11 @@ public class DX7FamilyAdditionalVoiceBankDriver extends BankDriver
 		return p;
 	}
 
+	protected String getPatchName(Patch bank, int patchNum) {
+	    return "-";
+	}
+
+	protected void setPatchName(Patch bank, int patchNum, String name) {
+	    // do nothing
+	}
 }

@@ -294,6 +294,9 @@ public class MKS50ToneBankDriver extends BankDriver
       }
       return new String(patchName);
   }
+  protected void setPatchName(Patch bank, int patchNum, String name) {
+      // do nothing
+  }
 
   public int getPatchStart(int PatchNum)
   {
