@@ -480,8 +480,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		}
 		libFrame.save();
 	    } else if (oFrame instanceof SceneFrame) {
-		// use oFrame !!!FIXIT!!!
-		SceneFrame sceneFrame = (SceneFrame) desktop.getSelectedFrame();
+		SceneFrame sceneFrame = (SceneFrame) oFrame;
 		if (sceneFrame.getTitle().startsWith("Unsaved ")) {
 		    saveFrameAs();
 		    return;
@@ -905,7 +904,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
 
     public class TransferSceneAction extends AbstractAction {
-        public TransferSceneAction(Map mnemonics){
+        public TransferSceneAction(Map mnemonics) {
             super("Transfer Scene", null); // show a dialog frame???
             // mnemonics.put(this, new Integer('S'));
             setEnabled(false);
@@ -1231,9 +1230,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 			//it so let's just handle them here.
 			if (appConfig.getMasterController() > -1
 			    && appConfig.getMasterController() < MidiIn.getNumInputDevices()) {
-			    // '&' should be '&&' ? Hiroo !!!
 			    if ((appConfig.getFaderEnable())
-				& (PatchEdit.MidiIn.messagesWaiting(appConfig.getMasterController()) > 0)) {
+				&& (PatchEdit.MidiIn.messagesWaiting(appConfig.getMasterController()) > 0)) {
 				for (int i = 0; i < 33; i++)
 				    newFaderValue[i] = 255;
 				while (PatchEdit.MidiIn.messagesWaiting(appConfig.getMasterController()) > 0) {
@@ -1243,18 +1241,16 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 				    p = PatchEdit.Clipboard;
 				    if ((desktop.getSelectedFrame() instanceof PatchBasket)
 					&& (!(desktop.getSelectedFrame() instanceof PatchEditorFrame))) {
-					//!!!
 					if ((desktop.getSelectedFrame() instanceof LibraryFrame)
-					    & ((LibraryFrame) ((desktop.getSelectedFrame()))).table.getSelectedRowCount() == 0)
+					    && ((LibraryFrame) ((desktop.getSelectedFrame()))).table.getSelectedRowCount() == 0)
 					    break;
 					((PatchBasket) desktop.getSelectedFrame()).CopySelectedPatch();
 				    } else
 					Clipboard = ((PatchEditorFrame) desktop.getSelectedFrame()).p;
 				    //port = (PatchEdit.deviceList.get(Clipboard.deviceNum)).
 				    port = appConfig.getDevice(Clipboard.deviceNum).getPort();
-				    //!!!
 				    if ((appConfig.getFaderEnable())
-					& (desktop.getSelectedFrame() instanceof PatchEditorFrame)
+					&& (desktop.getSelectedFrame() instanceof PatchEditorFrame)
 					&& (buffer[0] & 0xF0) == 0xB0)
 					sendFaderMessage(buffer[0], buffer[1], buffer[2]);
 				    else
@@ -1282,11 +1278,10 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         byte channel = (byte) (status & 0x0F);
         byte i = 0;
         while (i < 33) {
-	    // & ??? !!!!
 	    if ((appConfig.getFaderController(i) == controller)
-		& (appConfig.getFaderChannel(i) == channel)) {
+		&& (appConfig.getFaderChannel(i) == channel)) {
 		((PatchEditorFrame) desktop.getSelectedFrame()).faderMoved(i, value);
-		break;
+		break;		// don't increment `i'
 	    }
 	    i++;
 	}
