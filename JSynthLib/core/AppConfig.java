@@ -40,6 +40,7 @@ public class AppConfig implements Storable {
    	private int masterController     = 0;
    	private int lookAndFeel          = 0;
 	private int guiStyle		 = MacUtils.isMac() ? 1 : 0;
+   	private boolean midiEnable	 = false;
    	private int midiPlatform	 = 0;
    	private boolean masterInEnable   = false;
    	private int faderPort            = 0;
@@ -93,8 +94,10 @@ public class AppConfig implements Storable {
 		} catch (FileNotFoundException e) {
 		    // When JSynthLib.properties does not exist (the very
 		    // first invoke), setMidiPlafform is not called.
-		    if (midiWrapper == null) // probably 'true'
+		    if (midiWrapper == null) {// should be 'true'
+			setMidiEnable(false);
 			setMidiPlatform(0); // DoNothingMidiWrapper
+		    }
 		    return false;
 		} catch (Exception e) {
 		    ErrorMsg.reportStatus("loadPrefs: " + e);
@@ -266,12 +269,14 @@ public class AppConfig implements Storable {
 		    ("Error",
 		     "There was an error initializing the MIDI Wrapper!", e);
 		//e.printStackTrace ();
+		setMidiEnable(false);
 		setMidiPlatform(0); // DoNothingMidiWrapper
 	    } catch (Exception e) {
 		core.ErrorMsg.reportError
 		    ("Error",
 		     "There was an unspecified problem while initializing the driver!", e);
 		e.printStackTrace ();
+		setMidiEnable(false);
 		setMidiPlatform(0); // DoNothingMidiWrapper
 	    }
 	}
@@ -286,6 +291,14 @@ public class AppConfig implements Storable {
 	public static MidiWrapper getMidiWrapper() {
 		return(midiWrapper);
 	}
+
+	/** Getter for masterInEnable */
+	public boolean getMidiEnable() { return this.midiEnable; };
+	/** Setter for midiinEnable */
+	public void setMidiEnable(boolean midiEnable) {
+	    this.midiEnable = midiEnable;
+	    ErrorMsg.reportStatus("setMidiEnable: " + midiEnable);
+	};
 
 	/** Getter for masterInEnable */
 	public boolean getMasterInEnable() { return this.masterInEnable; };
@@ -332,7 +345,7 @@ public class AppConfig implements Storable {
 	public Device getDevice(int i) { return (Device)this.deviceList.get(i); };
 	/** Indexed setter for deviceList elements */
 	public Device setDevice(int i, Device dev) {
-		reassignDeviceDriverNums(i, dev);
+		//reassignDeviceDriverNums(i, dev);
 		return (Device)this.deviceList.set(i, dev);
 	};
 	/** Getter for deviceList */
@@ -344,12 +357,12 @@ public class AppConfig implements Storable {
 		ArrayList newList = new ArrayList();
 		newList.addAll(Arrays.asList(devices));
 		this.deviceList = newList;
-		reassignDeviceDriverNums();
+		//reassignDeviceDriverNums();
 	}
 
 	/** Adder for deviceList elements */
 	public boolean addDevice(Device device) {
-	    reassignDeviceDriverNums(deviceList.size(), device);
+	    //reassignDeviceDriverNums(deviceList.size(), device);
 	    return this.deviceList.add(device);
 	}
 	/**
@@ -363,16 +376,18 @@ public class AppConfig implements Storable {
 
 	// Moved from SynthConfigDialog.java
 	/** Revalidate deviceNum element of drivers of each device */
+	/*
         public void reassignDeviceDriverNums() {
 	    for (int i = 0; i < deviceList.size(); i++) {
 		Device dev = (Device) deviceList.get(i);
 		reassignDeviceDriverNums(i, dev);
 	    }
 	}
-
+	*/
 	/** Revalidate deviceNum element of drivers of a device */
 	// Only for backward compatibility.  Remove this when no
 	// driver uses deviceNum and driverNum.
+	/*
         private void reassignDeviceDriverNums(int i, Device dev) {
 	    for (int j = 0; j < dev.driverList.size(); j++) {
 		Driver drv = (Driver) dev.driverList.get(j);
@@ -380,7 +395,7 @@ public class AppConfig implements Storable {
 		drv.setDriverNum(j);
 	    }
 	}
-
+	*/
 	/** Getter for the index of <code>device</code>. */
     	int getDeviceIndex(Device device) {
  	    return deviceList.indexOf(device);
@@ -423,21 +438,11 @@ public class AppConfig implements Storable {
 		"velocity", "delay", "lookAndFeel", "guiStyle",
 		"repositoryURL","repositoryUser","repositoryPass",
 		"faderEnable", "faderController","faderChannel",
-		"masterInEnable",
+		"midiEnable", "masterInEnable",
 		"initPortIn", "initPortOut", "masterController", "faderPort",
 		// must be restored after initPortIn and initPortOut
 		"midiPlatform", "device",
-	};
-	private static final String[] storedPropertyNamesNew = {
-		"libPath", "sysexPath", "note",
-		"velocity", "delay", "lookAndFeel", "guiStyle",
-		"faderEnable", "faderController","faderChannel",
-		"masterInEnable",
-		// for backward compatibility.
-		"initPortIn", "initPortOut", "masterController", "faderPort",
-		"midiPlatform", "device",
-		// for javax.sound
-		"midiIn", "midiOut", "midiMasterIn", "midiFaderIn",
+		//"midiIn", "midiOut", "midiMasterIn", "midiFaderIn",
 	};
 
 	/**
@@ -447,10 +452,7 @@ public class AppConfig implements Storable {
 	public Set storedProperties() {
 		// TreeSet reserves the restore order
 		TreeSet set = new TreeSet();
-		if (PatchEdit.newMidiAPI)
-		    set.addAll(Arrays.asList(storedPropertyNamesNew));
-		else
-		    set.addAll(Arrays.asList(storedPropertyNames));
+		set.addAll(Arrays.asList(storedPropertyNames));
 		return set;
 	}
 
