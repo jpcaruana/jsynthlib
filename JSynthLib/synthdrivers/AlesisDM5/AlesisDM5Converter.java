@@ -71,10 +71,13 @@ public class AlesisDM5Converter extends Converter{
         }
     }
     
-    /**
-    
+    /** Part of the logic for the overridden supportsPatch method. Checks the
+    * the sysex record against the defined headers for each of the DM5 patch
+    * types and returns true if there is a match. This is a more thorough check
+    * than the isDM5Patch method, in that it checks the whole header, including
+    * the opcode byte.
     */
-    public boolean thisSupportsPatch(byte[] sysex) {
+    private boolean thisSupportsPatch(byte[] sysex) {
         if (isDM5Patch(sysex,0)) {
             if (((sysex[6] == Constants.SYS_INFO_DUMP_HDR_BYTES[6])
                  && (sysex.length == Constants.HDR_SIZE + Constants.SYS_INFO_SIZE + 1))
@@ -106,7 +109,6 @@ public class AlesisDM5Converter extends Converter{
         if (sysex[6] == (byte)0x00) {  // Is this a system info patch?
             newPatchArray[0] = new Patch(sysex, new AlesisDM5SysInfoDriver());
         } else if (sysex[6] == (byte)0x01) {  // Is this an edit buffer patch?
-//            newPatchArray[0] = new Patch(sysex, new AlesisDM5SgSetDriver()); // Convert to a AlesisDM5SgSetDriver
             newPatchArray[0] = new Patch(sysex, new AlesisDM5EdBufDriver()); // Convert to a AlesisDM5SgSetDriver
         } else if (sysex[6] == (byte)0x03) {  // Is this a program change table patch?
             newPatchArray[0] = new Patch(sysex, new AlesisDM5PrChgDriver());
@@ -167,7 +169,8 @@ public class AlesisDM5Converter extends Converter{
     }
     
     /**Checks the first 6 bytes of the patch header and returns true if the 
-    * patch is any of the five DM5 patch types.
+    * patch is any of the five DM5 patch types. This is a generic check that
+    * does not include the opcode byte.
     */
     private boolean isDM5Patch(byte[] patchBytes, int offset) {
         boolean isDM5Sysex = true;

@@ -30,6 +30,8 @@ import core.*;
 * are volume, panning, output, group, drum bank, drum number, fine tune and
 * coarse tune. A single PacketModel can be used to edit one parameter for all 60
 * notes in the sysex record. The current note being edited is given by packetIndex.
+*
+* @author Jeff Weber
 */
 class PacketModel extends BitModel {
     private final static int PACKET_SIZE = 5;

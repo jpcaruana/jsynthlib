@@ -28,6 +28,8 @@ import javax.sound.midi.InvalidMidiDataException;
 /** The NRPNSender class is used to send NRPNs to the DM5. The parameters
 * handled by the NRPNSender are specifically related to single drumsets--i.e. all
 * the parameters represented by a single set sysex record. 
+*
+* @author Jeff Weber
 */
 class NRPNSender implements SysexWidget.ISender {
     

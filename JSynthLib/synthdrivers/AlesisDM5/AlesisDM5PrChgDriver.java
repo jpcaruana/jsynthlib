@@ -22,17 +22,19 @@
 package synthdrivers.AlesisDM5;
 import core.*;
 
-/** Line6 Single Driver. Used for Line6 program patch.
+/** Alesis DM5 Program Change Table Driver.
+*
 * @author Jeff Weber
 */
 public class AlesisDM5PrChgDriver extends Driver {
     
-    /** Single Program Dump Request
+    /** DM5 Program Change Table Dump Request
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.PROG_CHNG_DUMP_REQ_ID); //System Info Dump Request
     
-    /** Sysex program dump byte array representing a new program change table patch*/
-    static final byte NEW_SYSEX[] =
+    /** Sysex program dump byte array representing a new program change table patch
+    */
+    private static final byte NEW_SYSEX[] =
     {
         (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x13, (byte)0x00, (byte)0x03, (byte)0x00,
         (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x04, (byte)0x05, (byte)0x06, (byte)0x07, (byte)0x08,
@@ -62,8 +64,6 @@ public class AlesisDM5PrChgDriver extends Driver {
         sysexID = Constants.PROG_CHNG_SYSEX_MATCH_ID;
         
         patchSize = Constants.HDR_SIZE + Constants.PROG_CHNG_SIZE + 1;
-        //        patchNameStart = Constants.PATCH_NAME_START; // includes the sysex header
-        //        patchNameSize = Constants.PATCH_NAME_SIZE;
         deviceIDoffset = Constants.DEVICE_ID_OFFSET;
         bankNumbers = Constants.PROG_CHNG_BANK_LIST;
         patchNumbers = Constants.PROG_CHNG_PATCH_LIST;
@@ -72,7 +72,7 @@ public class AlesisDM5PrChgDriver extends Driver {
         checksumOffset = checksumEnd + 1;
     }
     
-    /** Constructs a AlesisDM5PrChgDriver. Called by AlesisDM5EdBufDriver
+    /** Constructs a AlesisDM5PrChgDriver.
         */
     public AlesisDM5PrChgDriver(String patchType, String authors)
     {
@@ -94,26 +94,23 @@ public class AlesisDM5PrChgDriver extends Driver {
     }
     
     /** Calculates the checksum for the DM5 by calling 
-        calculateChecksum(Patch patch, int start, int end, int offset). This 
-        needs to be included to override the version in the Driver class.
+        * calculateChecksum(Patch patch, int start, int end, int offset). This 
+        * needs to be included to override the version in the Driver class.
         */
     protected void calculateChecksum(Patch p) {
         calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
     }
     
     /** Calculates the checksum for the DM5. Equal to the mod 128 of the sum of
-        all the bytes from offset header+1 to offset total patchlength-3.
+        * all the bytes from offset header+1 to offset total patchlength-3.
         */
     protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
         int sum = 0;
-        ErrorMsg.reportStatus("Checksum was " + patch.sysex[offset]);
-        
+
         for (int i = start; i <= end; i++) {
             sum += patch.sysex[i];
         }
         patch.sysex[offset] = (byte)(sum % 128);
-        
-        ErrorMsg.reportStatus("Checksum now is " + patch.sysex[offset]);
     }
     
     /** Requests a dump of the system info message.

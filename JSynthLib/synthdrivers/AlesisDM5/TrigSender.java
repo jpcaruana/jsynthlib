@@ -27,6 +27,8 @@ import javax.sound.midi.InvalidMidiDataException;
 /** The TrigSender class is used to send NRPNs to the DM5. The parameters
 * handled by the TrigSender are specifically related to trigger setups--i.e. all
 * the parameters represented by a trigger setup sysex record. 
+*
+* @author Jeff Weber
 */
 class TrigSender extends NRPNSender implements SysexWidget.ISender {
     final static int TR_V_CURVE        = 1;
@@ -46,7 +48,7 @@ class TrigSender extends NRPNSender implements SysexWidget.ISender {
     private int trigNum;
     
     /** Constructs a TrigSender given the trigger number, the parameter, which
-        represents the mask, and the maximum value.
+        * represents the mask, and the maximum value.
         */
     TrigSender(int trigNum, int param, int max) {
         super(param, max);

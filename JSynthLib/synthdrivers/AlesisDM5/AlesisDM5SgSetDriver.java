@@ -22,7 +22,7 @@
 package synthdrivers.AlesisDM5;
 import core.*;
 
-/** Line6 Single Driver. Used for Line6 program patch.
+/** Alesis DM5 Single Set Driver
 * @author Jeff Weber
 */
 public class AlesisDM5SgSetDriver extends Driver {
@@ -32,7 +32,7 @@ public class AlesisDM5SgSetDriver extends Driver {
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.SINGL_SET_DUMP_REQ_ID); //System Info Dump Request
     
     /** Sysex program dump byte array representing a new drumset patch*/
-    static final byte NEW_SYSEX[] =
+    private static final byte NEW_SYSEX[] =
     {
         (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x13, (byte)0x00, (byte)0x01, (byte)0x54,
         (byte)0x65, (byte)0x73, (byte)0x74, (byte)0x20, (byte)0x50, (byte)0x61, (byte)0x74, (byte)0x63,
@@ -106,7 +106,9 @@ public class AlesisDM5SgSetDriver extends Driver {
     
     /** Sends a single drumset patch to a set location on the DM5.<p>
         * Overrides the Driver.storePatch method to embed the program number
-        * in the patch. Location numbers are given as binary 0010 0000 through
+        * in the patch. The input bankNum parameter is not used. The input
+        * patch number specifies the location (0 thru 20). Location numbers
+        * in the DM5 are are represented as binary 0010 0000 through
         * 0011 0100 (32 plus patch number 0-20).
         */
     protected void storePatch(Patch p, int bankNum, int patchNum) {
@@ -118,7 +120,7 @@ public class AlesisDM5SgSetDriver extends Driver {
     /** Send Program Change MIDI message. The Alesis Single Set driver does
         * not utilize the program change the same way other devices do. Instead
         * it embeds the program number in the patch. This is done by the overridden
-        * storePatch method.
+        * storePatch method. This method is overridden by a null method.
         */
     protected void setPatchNum(int patchNum) {
     }
@@ -141,26 +143,23 @@ public class AlesisDM5SgSetDriver extends Driver {
     }
 
     /** Calculates the checksum for the DM5 by calling 
-        this.calculateChecksum(Patch patch, int start, int end, int offset). This 
-        needs to be included to override the version in the Driver class.
+        * this.calculateChecksum(Patch patch, int start, int end, int offset). This 
+        * needs to be included to override the version in the Driver class.
         */
     protected void calculateChecksum(Patch p) {
         calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
     }
     
     /** Calculates the checksum for the DM5. Equal to the mod 128 of the sum of
-        all the bytes from offset header+1 to offset total patchlength-3.
+        * all the bytes from offset header+1 to offset total patchlength-3.
         */
     protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
         int sum = 0;
-        ErrorMsg.reportStatus(2, "Checksum was " + patch.sysex[offset]);
         
         for (int i = start; i <= end; i++) {
             sum += patch.sysex[i];
         }
         patch.sysex[offset] = (byte)(sum % 128);
-        
-        ErrorMsg.reportStatus(2, "Checksum now is " + patch.sysex[offset]);
     }
     
     /** Requests a dump of the system info message.
@@ -190,4 +189,5 @@ public class AlesisDM5SgSetDriver extends Driver {
     protected JSLFrame editPatch(Patch p)
     {
         return new AlesisDM5SgSetEditor((Patch)p);
-    }}
+    }
+}

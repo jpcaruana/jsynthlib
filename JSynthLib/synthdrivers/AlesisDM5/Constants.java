@@ -42,10 +42,6 @@ final class Constants {
     
     /** Dump Header Size */
     static final int HDR_SIZE = 7;
-//    /** Edit Buffer Dump Header Size */
-//    static final int EDMP_HDR_SIZE = 8;
-//    /** Bank Dump Header Size */
-//    static final int BDMP_HDR_SIZE = 8;
     /** System Info Patch size (not including header and stop byte)*/
     static final int SYS_INFO_SIZE = 3;
     /** Edit Buffer Patch size (not including header and stop byte)*/
@@ -57,8 +53,6 @@ final class Constants {
     /** Single Set Patch size (not including header and stop byte)*/
     static final int SINGL_SET_SIZE = 335;
     
-//    /** the number of single patches in an actual bank patch. */
-//    static final int PATCHES_PER_BANK = 36;
     /** Offset of the patch name in the sysex record (includes the sysex header).*/
     static final int PATCH_NAME_START = 7;
     /** Patch Name--Size in bytes*/
@@ -174,9 +168,4 @@ final class Constants {
     static final byte[] SINGL_SET_DUMP_HDR_BYTES = {
         (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x13, (byte)0x01, (byte)0x0A, (byte)0x00, (byte)0x01 
     };
-    
-//    /** Delay of pauses in milliseconds between each patch when sending a whole bank of patches.
-//        Delay is needed so DM5 can keep up.*/
-//    static final int PATCH_SEND_INTERVAL = 500;
-    
 }

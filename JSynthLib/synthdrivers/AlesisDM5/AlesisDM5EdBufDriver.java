@@ -22,12 +22,17 @@
 package synthdrivers.AlesisDM5;
 import core.*;
 
-/** Line6 Single Driver. Used for Line6 program patch.
+/** Alesis DM5 Edit Buffer Driver. This driver subclasses AlesisDM5SgSetDriver
+* because the edit buffer patch is the same format as a single set patch. Once
+* an edit buffer patch is read in, it is treated like a single set patch. The
+* only purpose for the driver is so that a choice for the edit buffer patch
+* shows up in dialogs.
+*
 * @author Jeff Weber
 */
 public class AlesisDM5EdBufDriver extends AlesisDM5SgSetDriver {
     
-    /** Single Program Dump Request
+    /** Edit Buffer Dump Request
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.EDIT_BUFF_DUMP_REQ_ID); //System Info Dump Request
     

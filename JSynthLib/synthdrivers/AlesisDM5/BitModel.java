@@ -27,6 +27,8 @@ import core.*;
 * of the patch.sysex record. This is used when a single byte of the sysex record
 * contains more than one parameter. Masks are provided for each of the parameters
 * of the DM5 to define which bits are used for a given parameter.
+*
+* @author Jeff Weber
 */
 class BitModel extends ParamModel {
     static final byte ROOT_NOTE_MASK = (byte)0x7F;  //0111 1111

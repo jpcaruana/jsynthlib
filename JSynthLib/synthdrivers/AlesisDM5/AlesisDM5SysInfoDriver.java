@@ -22,17 +22,19 @@
 package synthdrivers.AlesisDM5;
 import core.*;
 
-/** Line6 Single Driver. Used for Line6 program patch.
+/** Alesis DM5 System Info Driver.
+*
 * @author Jeff Weber
 */
 public class AlesisDM5SysInfoDriver extends Driver {
     
-    /** Single Program Dump Request
+    /** DM5 System Info Dump Request
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.SYS_INFO_DUMP_REQ_ID); //System Info Dump Request
     
-    /** Sysex program dump byte array representing a new system info patch*/
-    static final byte NEW_SYSEX[] =
+    /** Sysex program dump byte array representing a new system info patch
+    */
+    private static final byte NEW_SYSEX[] =
     {
         (byte)0xF0, (byte)0x00, (byte)0x00, (byte)0x0E, (byte)0x13, (byte)0x00, (byte)0x00, (byte)0x4C,
         (byte)0x00, (byte)0x00, (byte)0xF7
