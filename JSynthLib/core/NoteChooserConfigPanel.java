@@ -1,7 +1,12 @@
 package core;
 
-import javax.swing.event.*;
+import java.io.File;
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * ConfigPanel for play note.  Gives the user a way to change the note
@@ -15,6 +20,17 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 	nameSpace = "playnote";
     }
 
+    /* enable MIDI sequencer for test purpose?  */
+    private static final boolean 	useSequencer = false;
+
+    private JCheckBox			enabledSequencer;
+    private JPanel 			sequencePanel;
+    private final 			JTextField t0 = new JTextField(null, 20);
+    
+    private boolean sequencerEnable;
+    private String  sequencePath;
+
+    /* note chooser parts */
     private static final int DEFAULT_NOTE = 60;
     private static final int DEFAULT_VELOCITY = 100;
     private static final int DEFAULT_DELAY = 500;
@@ -22,6 +38,7 @@ public class NoteChooserConfigPanel extends ConfigPanel {
     private int velocity;
     private int delay;
 
+    private JPanel notePanel;
     private final JTextField t1 = new JTextField("0", 5);
     private final JTextField t2 = new JTextField("0", 5);
     private final JTextField t3 = new JTextField("0", 5);
@@ -38,7 +55,69 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 
     NoteChooserConfigPanel(PrefsDialog parent, AppConfig appConfig) {
 	super(parent, appConfig);
-	setLayout(new ColumnLayout());
+
+	setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+	gbc.fill = GridBagConstraints.BOTH; gbc.ipadx = 1; gbc.anchor = GridBagConstraints.WEST;
+
+	// display sequencer parts only if 'useSequencer=true"
+	if (useSequencer==true) {
+	    /*
+	     * Checkbox which method should be used
+	     */
+	    enabledSequencer = new JCheckBox("Playing MIDI files?");
+	    enabledSequencer.setToolTipText("if enabled a MIDI file is played for hearing a patch. Otherwise a single tone is played.");
+	    gbc.gridx = 1; gbc.gridy = 0; gbc.gridheight = 1; gbc.gridwidth = 2;
+            add(enabledSequencer, gbc);
+	    enabledSequencer.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    setContainerEnabled(sequencePanel, enabledSequencer.isSelected());
+		    setContainerEnabled(notePanel, !enabledSequencer.isSelected());
+		    setModified(true);
+		}
+	    });
+	
+	    /*
+	     * create own sequence panel for file chooser
+	     */
+	    sequencePanel = new JPanel(new ColumnLayout());
+	    t0.setEditable(false);
+
+	    JLabel l0 = new JLabel("MIDI file to play: ");
+            JPanel p0 = new JPanel();
+	    JButton b0 = new JButton("Browse");
+	    b0.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent e) {
+		    CompatibleFileDialog fc = new CompatibleFileDialog();
+		    fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		    if (t0.getText() != null)
+		        fc.setSelectedFile(new File(t0.getText()));
+		    fc.showDialog(PatchEdit.getInstance(),
+		        "Choose MIDI file");
+		    if (fc.getSelectedFile() != null) {
+		        t0.setText(fc.getSelectedFile().getPath());
+		        setModified(true);
+		    }
+	        }
+	    });
+
+	    p0.add(l0);
+            p0.add(t0);
+	    p0.add(b0);
+	    sequencePanel.add(p0);
+
+	    gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth = 2;
+	    add(sequencePanel, gbc);
+	}
+
+	// add a little distance between both panels
+	gbc.gridx = 1; gbc.gridy = 3; gbc.gridheight = 1; gbc.gridwidth = 2;
+	add(new JLabel(" "),gbc);
+	
+	/*
+	 * create own note chooser panel
+	 */
+	notePanel = new JPanel(new ColumnLayout());
 
 	JPanel p1 = new JPanel();
 	JLabel l1 = new JLabel("MIDI Note : ");
@@ -79,9 +158,12 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 	p1.add(l1); p1.add(s1); p1.add(t1);
 	p2.add(l2); p2.add(s2); p2.add(t2);
 	p3.add(l3); p3.add(s3); p3.add(t3); p3.add(l4);
-	add(p1);
-	add(p2);
-	add(p3);
+	notePanel.add(p1);
+	notePanel.add(p2);
+	notePanel.add(p3);
+
+	gbc.gridx = 1; gbc.gridy = 4; gbc.gridheight = 6; gbc.gridwidth = 2;
+	add(notePanel, gbc);
     }
 
     void init() {
@@ -102,9 +184,24 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 	s2.setValue(velocity);
 	s3.setValue(delay);
 	refreshTextFields();
+
+	if (useSequencer==true) {
+	    /* Sequencer related parts */
+            enabledSequencer.setSelected(appConfig.getSequencerEnable());
+	    t0.setText(appConfig.getSequencePath());
+	    
+	    setContainerEnabled(sequencePanel, enabledSequencer.isSelected());
+            setContainerEnabled(notePanel, !enabledSequencer.isSelected());
+	}
     }
 
     void commitSettings() {
+	if (useSequencer==true) {
+	    /* Sequencer related parts */
+	    appConfig.setSequencerEnable(enabledSequencer.isSelected());
+	    appConfig.setSequencePath(t0.getText());
+	}
+
 	appConfig.setNote(note);
 	appConfig.setVelocity(velocity);
 	appConfig.setDelay(delay);

@@ -120,6 +120,17 @@ final public class AppConfig {
         prefs.put("sysexPath", sysexPath);
     }
 
+
+    /** Getter for sequencerEnable */
+    public boolean getSequencerEnable() { return prefs.getBoolean("sequencerEnable",false); }
+    /** Setter for sequencerEnable */
+    public void setSequencerEnable(boolean sequencerEnable) { prefs.putBoolean("sequencerEnable", sequencerEnable); }
+    
+    /** Getter for midi file (Sequence) to play */
+    public String getSequencePath() { return prefs.get("sequencePath", ""); }
+    /** Setter for midi file (Sequence) to play */
+    public void setSequencePath(String sequencePath) { prefs.put("sequencePath", sequencePath); }
+    
     /** Getter for note */
     public int getNote() { return  prefs.getInt("note", 0); }
     /** Setter for note */
