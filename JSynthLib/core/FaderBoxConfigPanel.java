@@ -42,7 +42,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 		gbc.gridx=6;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
 		add (enabledBox,gbc);
 
-		String n[]=new String[37];
+		String n[]=new String[33];
 	 	n[0]="Active Slider";
 		for (int i=0;i<16;i++) n[i+1]=("Slider #"+(i+1));
 		for (int i=0;i<12;i++) n[i+17]=("Button #"+(i+1));
