@@ -103,7 +103,7 @@ final class Constants {
     static final String SIGL_SYSEX_MATCH_ID = "F000010C010100****";
     /** Single Dump Header Bytes--Bytes in a single dump header*/
     static final byte[] SIGL_DUMP_HDR_BYTES = {
-        (byte)0xF0, (byte)0x00, (byte)0x01, (byte)0x0C, (byte)0x01, (byte)0x01, (byte)0x00, (byte)0x00, (byte)0x01 
+        (byte)0xF0, (byte)0x00, (byte)0x01, (byte)0x0C, (byte)0x01, (byte)0x01, (byte)0x00, (byte)0x00, (byte)0x00 
     };
     /** First 7 bytes of Edit Patch Header--Used by Line6Pod20SingleDriver to decide if a patch
         is an edit buffer patch and then convert it to a program patch.*/
@@ -117,7 +117,7 @@ final class Constants {
     static final String EDIT_SYSEX_MATCH_ID = "F000010C010101**";
     /** Edit Buffer Dump Header Bytes--Bytes in an edit buffer dump header*/
     static final byte[] EDIT_DUMP_HDR_BYTES = {
-        (byte)0xF0, (byte)0x00, (byte)0x01, (byte)0x0C, (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x01 
+        (byte)0xF0, (byte)0x00, (byte)0x01, (byte)0x0C, (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x00 
     };
     
     /** Bank Dump Request ID--Sent to POD for bank dump request.*/
@@ -128,7 +128,7 @@ final class Constants {
     static final String BANK_SYSEX_MATCH_ID = "F000010C010102**";
     /** Bank Dump Header Bytes--Bytes in an edit buffer dump header*/
     static final byte[] BANK_DUMP_HDR_BYTES = {
-        (byte)0xF0, (byte)0x00, (byte)0x01, (byte)0x0C, (byte)0x01, (byte)0x01, (byte)0x02, (byte)0x01 
+        (byte)0xF0, (byte)0x00, (byte)0x01, (byte)0x0C, (byte)0x01, (byte)0x01, (byte)0x02, (byte)0x00 
     };
         
     /** Message displayed when the Play command is invoked*/
