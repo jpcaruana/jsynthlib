@@ -20,12 +20,14 @@ public class YamahaFS1RDevice extends Device
 		modelName = "FS1R";
 		synthName = "FS1R";
 //		inquiryID = "F07E**06020F050000000000020AF7";
+		addDriver(new YamahaFS1RBankConverter());    
 		addDriver(new YamahaFS1RBankDriver());
 		addDriver(new YamahaFS1RVoiceDriver());
 		addDriver(new YamahaFS1RPerformanceDriver());
 		addDriver(new YamahaFS1RSystemDriver());
 		addDriver(new YamahaFS1RFseqDriver());
-        infoText="JSynthLib supports librarian functions on voices/performances patches.\n";
+        infoText="JSynthLib supports librarian and edit functions on voices/performances patches.\n"+
+			"Ensure to edit patches from a bank, not from a library.";
 	}
 
 }
