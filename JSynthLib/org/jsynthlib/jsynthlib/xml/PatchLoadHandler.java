@@ -71,9 +71,9 @@ public class PatchLoadHandler extends AdvDefaultHandler {
         public void setChecksum(Checksum checksum) {
             this.checksum = checksum;
         }
-        public void setDecoder(Decoder decoder) {
-            this.decoder = decoder;
-            curdec = decoder;
+        public void setDecoder(Decoder decoder) throws CloneNotSupportedException {
+            this.decoder = (Decoder) decoder.clone();
+            curdec = this.decoder;
         }
         public void setHeader(String header) {
             this.header = Pattern.compile(header, Pattern.CASE_INSENSITIVE);
