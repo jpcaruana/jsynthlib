@@ -62,6 +62,7 @@ public class PatchEdit extends JFrame
     SearchDialog searchDialog;
     DocumentationWindow documentationWindow; 
    public static PatchEdit instance;                        // phil@muqus.com
+   
 
     // Initialize Application:                                  *
     public PatchEdit ()
@@ -596,7 +597,7 @@ public class PatchEdit extends JFrame
 /* Now we start with the various action classes. Each of these preforms one of the menu commands and are called either from
    the menubar, popup menu or toolbar.*/
     
-     class ReassignAction extends AbstractAction
+     public class ReassignAction extends AbstractAction
      {
          public ReassignAction ()
          {super ("Reassign",null);
@@ -613,7 +614,7 @@ public class PatchEdit extends JFrame
          }
      }
     
-    class PlayAction extends AbstractAction
+    public class PlayAction extends AbstractAction
     {
         public PlayAction ()
         {super ("Play",null);
@@ -630,7 +631,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class StoreAction extends AbstractAction
+    public class StoreAction extends AbstractAction
     {
         public StoreAction ()
         {
@@ -648,7 +649,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class SendAction extends AbstractAction
+    public class SendAction extends AbstractAction
     {
         public SendAction ()
         {
@@ -666,7 +667,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-     class SendToAction extends AbstractAction
+     public class SendToAction extends AbstractAction
      {
          public SendToAction ()
          {
@@ -684,7 +685,7 @@ public class PatchEdit extends JFrame
          }
      }
      
-    class DeleteAction extends AbstractAction
+    public class DeleteAction extends AbstractAction
     {
         public DeleteAction ()
         {
@@ -703,7 +704,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class CopyAction extends AbstractAction
+    public class CopyAction extends AbstractAction
     {
         public CopyAction ()
         {
@@ -721,7 +722,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class CutAction extends AbstractAction
+    public class CutAction extends AbstractAction
     {
         public CutAction ()
         {
@@ -740,7 +741,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class PasteAction extends AbstractAction
+    public class PasteAction extends AbstractAction
     {
         public PasteAction ()
         {
@@ -758,7 +759,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class EditAction extends AbstractAction
+    public class EditAction extends AbstractAction
     {
         public EditAction ()
         {
@@ -795,7 +796,7 @@ public class PatchEdit extends JFrame
     }
     
     
-    class ExportAction extends AbstractAction
+    public class ExportAction extends AbstractAction
     {
         public ExportAction ()
         {super ("Export",null);
@@ -830,7 +831,7 @@ public class PatchEdit extends JFrame
 // Sub Class: GetAction
 //======================================================================================================================
 
-  class GetAction extends AbstractAction {
+  public class GetAction extends AbstractAction {
 
 //----------------------------------------------------------------------------------------------------------------------
 // Constructor: GetAction
@@ -856,7 +857,9 @@ public class PatchEdit extends JFrame
   } // End SubClass: GetAction
 //------ End phil@muqus.com
 
-    class ImportAction extends AbstractAction
+// denis: mis en public toutes les classes Action
+
+    public class ImportAction extends AbstractAction
     {
         public ImportAction ()
         {super ("Import",null);
@@ -891,7 +894,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class NewAction extends AbstractAction
+    public class NewAction extends AbstractAction
     {
         public NewAction ()
         {super ("New",null);
@@ -902,7 +905,7 @@ public class PatchEdit extends JFrame
 
     }
 
-    class NewSceneAction extends AbstractAction
+    public class NewSceneAction extends AbstractAction
     {
         public NewSceneAction ()
         {
@@ -916,7 +919,7 @@ public class PatchEdit extends JFrame
     }
     
 
-   class TransferSceneAction extends AbstractAction
+   public class TransferSceneAction extends AbstractAction
     {
         public TransferSceneAction ()
         {
@@ -933,7 +936,7 @@ public class PatchEdit extends JFrame
             {ErrorMsg.reportError ("Error","Scene Library must be the selected window.",ex);};
         }
     }
-    class OpenAction extends AbstractAction
+    public class OpenAction extends AbstractAction
     {
         public OpenAction ()
         {super ("Open",null);
@@ -954,7 +957,7 @@ public class PatchEdit extends JFrame
             }
         }
     }
-    class SaveAction extends AbstractAction
+    public class SaveAction extends AbstractAction
     {
         public SaveAction ()
         {super ("Save",null);
@@ -967,7 +970,7 @@ public class PatchEdit extends JFrame
             saveFrame ();
         }
     }
-    class ExitAction extends AbstractAction
+    public class ExitAction extends AbstractAction
     {
         public ExitAction ()
         {super ("Exit",null);
@@ -980,7 +983,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class ExtractAction extends AbstractAction
+    public class ExtractAction extends AbstractAction
     {
         public ExtractAction ()
         {super ("Extract",null);
@@ -997,7 +1000,7 @@ public class PatchEdit extends JFrame
             {ErrorMsg.reportError ("Error","Can not Extract (Maybe its not a bank?)",ex);};
         }
     }
-    class SortAction extends AbstractAction
+    public class SortAction extends AbstractAction
     {
         public SortAction ()
         {super ("Sort",null);
@@ -1016,7 +1019,7 @@ public class PatchEdit extends JFrame
         }
     }
     
-    class SearchAction extends AbstractAction
+    public class SearchAction extends AbstractAction
     {
         public SearchAction ()
         {super ("Search",null);
@@ -1036,7 +1039,7 @@ public class PatchEdit extends JFrame
     }
     
     
-    class ImportAllAction extends AbstractAction
+    public class ImportAllAction extends AbstractAction
     {
         public ImportAllAction ()
         {
@@ -1066,7 +1069,7 @@ public class PatchEdit extends JFrame
             {ErrorMsg.reportError ("Error","Unable to Import Patches",ex);};
         }
     }
-    class DeleteDuplicatesAction extends AbstractAction
+    public class DeleteDuplicatesAction extends AbstractAction
     {
         public DeleteDuplicatesAction ()
         {super ("Delete Dups",null);
@@ -1103,7 +1106,7 @@ public class PatchEdit extends JFrame
     }
     
     
-    class NewPatchAction extends AbstractAction
+    public class NewPatchAction extends AbstractAction
     {
         public NewPatchAction ()
         {
@@ -1126,7 +1129,7 @@ public class PatchEdit extends JFrame
     }
     
     
-    class PrefsAction extends AbstractAction
+    public class PrefsAction extends AbstractAction
     {
         public PrefsAction ()
         {
@@ -1139,7 +1142,7 @@ public class PatchEdit extends JFrame
             prefsDialog.show ();
         }
     }
-    class NoteChooserAction extends AbstractAction
+    public class NoteChooserAction extends AbstractAction
     {
         public NoteChooserAction ()
         {
@@ -1163,7 +1166,7 @@ public class PatchEdit extends JFrame
           return s1.compareTo (s2);
         }
     }
-    class CrossBreedAction extends AbstractAction
+    public class CrossBreedAction extends AbstractAction
     {
         public CrossBreedAction ()
         {super ("Cross Breed",null);
@@ -1180,7 +1183,7 @@ public class PatchEdit extends JFrame
             {ErrorMsg.reportError ("Error", "Unable to perform Crossbreed. (No Library selected?)",ex);};
         }
     }
-    class NextFaderAction extends AbstractAction
+    public class NextFaderAction extends AbstractAction
     {
         public NextFaderAction ()
         {super ("Go to Next Fader Bank",null);
@@ -1193,7 +1196,7 @@ public class PatchEdit extends JFrame
             pf.faderBank=(pf.faderBank+1)% pf.numFaderBanks; pf.faderHighlight ();return;
         }
     }
-    class DocsAction extends AbstractAction
+    public class DocsAction extends AbstractAction
     {
         public DocsAction ()
         {super ("Documentation",null);
@@ -1210,7 +1213,7 @@ public class PatchEdit extends JFrame
             {ErrorMsg.reportError ("Error", "Unable to show Documentation)",ex);};
         }
     }
-    class MonitorAction extends AbstractAction
+    public class MonitorAction extends AbstractAction
     {
         public MonitorAction ()
         {super ("MIDI Monitor",null);
@@ -1250,7 +1253,8 @@ public class PatchEdit extends JFrame
         }
         return (ImageIcon)icon;
     }
-    // This function sets up a Timer event to echo Midi Input to Midi Output
+
+	
     protected void beginEcho ()
     {
         echoTimer = new javax.swing.Timer (5, new ActionListener ()
@@ -1281,7 +1285,15 @@ public class PatchEdit extends JFrame
                             ((PatchBasket)desktop.getSelectedFrame ()).CopySelectedPatch ();
                         }
                         else 
+						if (desktop.getSelectedFrame() instanceof PatchEditorFrame)
+						{
                             Clipboard=((PatchEditorFrame)desktop.getSelectedFrame ()).p;
+						}
+						else 
+						if (desktop.getSelectedFrame() instanceof PatchContainer)
+						{
+                            Clipboard=((PatchContainer)desktop.getSelectedFrame ()).getPatch();
+						}
                         //   port=(PatchEdit.deviceList.get (Clipboard.deviceNum)).
                         port=appConfig.getDevice(Clipboard.deviceNum).getPort();
                         if ((appConfig.getFaderEnable())&(desktop.getSelectedFrame () instanceof PatchEditorFrame) && (buffer[0]&0xF0) == 0xB0)
@@ -1307,7 +1319,7 @@ public class PatchEdit extends JFrame
             }
         }
         );
-        echoTimer.start ();
+        echoTimer.start (); 
     }
     
     void sendFaderMessage (byte status, byte controller, byte value)
