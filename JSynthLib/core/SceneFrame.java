@@ -84,30 +84,36 @@ class SceneFrame extends AbstractLibraryFrame {
     }
 
     void frameActivated() {
-        Actions.setEnabled(true, Actions.EN_GET | Actions.EN_IMPORT
+        Actions.setEnabled(false, Actions.EN_ALL);
+
+        // always enabled
+        Actions.setEnabled(true,
+                Actions.EN_GET | Actions.EN_IMPORT
                 | Actions.EN_IMPORT_ALL | Actions.EN_NEW_PATCH);
-        // not implemented !!!
-        Actions.setEnabled(false, Actions.EN_DELETE_DUPLICATES
-                | Actions.EN_SORT);
         enableActions();
     }
 
     /** change state of Actions based on the state of the table. */
     void enableActions() {
-        Actions.setEnabled(table.getRowCount() > 0, Actions.EN_SAVE
+        // one or more patches are included.
+        Actions.setEnabled(table.getRowCount() > 0,
+                Actions.EN_SAVE
                 | Actions.EN_SAVE_AS | Actions.EN_SEARCH
                 | Actions.EN_TRANSFER_SCENE);
 
-        Actions.setEnabled(table.getRowCount() > 1, Actions.EN_CROSSBREED);
+        // one or more patches are selected
+        Actions.setEnabled(table.getSelectedRowCount() > 0,
+                Actions.EN_DELETE);
 
-        Actions.setEnabled(table.getSelectedRowCount() > 0, Actions.EN_COPY
-                | Actions.EN_CUT | Actions.EN_DELETE | Actions.EN_EXPORT
-                | Actions.EN_EXTRACT | Actions.EN_PLAY | Actions.EN_REASSIGN
-                | Actions.EN_SEND | Actions.EN_SEND_TO | Actions.EN_STORE
-                | Actions.EN_UPLOAD);
+        Actions.setEnabled(table.getSelectedRowCount() == 1,
+                Actions.EN_COPY
+                | Actions.EN_CUT | Actions.EN_EXPORT | Actions.EN_REASSIGN
+                | Actions.EN_STORE | Actions.EN_UPLOAD);
 
-        Actions.setEnabled(table.getSelectedRowCount() > 0
-                && myModel.getPatchAt(table.getSelectedRow()).hasEditor(), Actions.EN_EDIT);
+        // one signle patch is selected
+        Actions.setEnabled(table.getSelectedRowCount() == 1
+                && myModel.getPatchAt(table.getSelectedRow()).isSinglePatch(),
+                Actions.EN_SEND | Actions.EN_SEND_TO | Actions.EN_PLAY);
     }
 
     // begin PatchBasket methods
@@ -117,7 +123,6 @@ class SceneFrame extends AbstractLibraryFrame {
             ar.add(myModel.getPatchAt(i));
         return ar;
     }
-
     // end of PatchBasket methods
 
     /**
@@ -127,10 +132,7 @@ class SceneFrame extends AbstractLibraryFrame {
         //     ErrorMsg.reportStatus("Transfering Scene");
         for (int i = 0; i < myModel.getRowCount(); i++) {
             Scene scene = ((SceneListModel) myModel).getSceneAt(i);
-            int bankNum = scene.getBankNumber();
-            int patchNum = scene.getPatchNumber();
-            IPatch myPatch = scene.getPatch();
-            myPatch.send(bankNum, patchNum);
+            scene.getPatch().send(scene.getBankNumber(), scene.getPatchNumber());
         }
     }
 
@@ -239,14 +241,13 @@ class SceneFrame extends AbstractLibraryFrame {
         }
 
         // begin PatchTableModel interface methods
+        // It is caller's responsibility to update Table.
         void addPatch(IPatch p) {
             list.add(new Scene(p));
-            this.fireTableDataChanged();
         }
 
         void setPatchAt(IPatch p, int row) {
             list.set(row, new Scene(p));
-            fireTableRowsUpdated(row, row);
         }
 
         IPatch getPatchAt(int row) {
@@ -259,7 +260,6 @@ class SceneFrame extends AbstractLibraryFrame {
 
         void removeAt(int row) {
             this.list.remove(row);
-            this.fireTableDataChanged();
         }
 
         ArrayList getList() {
@@ -268,13 +268,11 @@ class SceneFrame extends AbstractLibraryFrame {
 
         void setList(ArrayList newList) {
             this.list = newList;
-            this.fireTableDataChanged();
         }
         // end PatchTableModel interface methods
 
-        void setSceneAt(Scene p, int row) {
+        void setSceneAt(Scene p, int row) { // not used now
             list.set(row, p);
-            fireTableRowsUpdated(row, row);
         }
 
         Scene getSceneAt(int row) {
@@ -283,12 +281,10 @@ class SceneFrame extends AbstractLibraryFrame {
 
         void addScene(Scene s) {
             list.add(s);
-            this.fireTableDataChanged();
         }
 
-        void addPatch(IPatch p, int row) {
+        void addPatch(IPatch p, int row) { // not used now
             list.add(row, new Scene(p));
-            this.fireTableDataChanged();
         }
     }
 

@@ -21,7 +21,7 @@ public class DevDrvPatchSelector extends JDialog {
     //===== Instance variables
     /** The last index in driver Combo Box. */
     private int driverNum;
-    protected int patchNum;
+    private int patchNum;
     protected IPatch p;
     private byte[] sysex;
     private String patchString;
@@ -38,26 +38,35 @@ public class DevDrvPatchSelector extends JDialog {
      * @param wintitle String which appears as window title
      * @param action   String which describe the used menu item
      */
+    // for SendToDialog and reassignDialog
     public DevDrvPatchSelector (IPatch patch, String wintitle, String action) {
-        this(patch,-1,wintitle,action);
+        super(PatchEdit.getInstance(), wintitle, true);
+
+        p            = patch;
+        sysex        = patch.getByteArray();
+        patchString  = patch.getPatchHeader();
+        initDialog(action, false);
     }
 
     /**
      * Constructor with Bank/Patch ComboBox
      * @param patch The Patch to store
-     * @param patchnum The default patchNumber
+     * @param patchnum The default patchNumber selected in the patch Combobox.
      * @param wintitle String which appears as window title
      * @param action   String which describe the used menu item
      */
+    // for SysexStoreDialog
     public DevDrvPatchSelector (IPatch patch, int patchnum, String wintitle, String action) {
         super(PatchEdit.getInstance(), wintitle, true);
 
-        // initialising some variables
         p            = patch;
         sysex        = patch.getByteArray();
-        patchNum     = patchnum;
-        patchString  = p.getPatchHeader();
+        patchString  = patch.getPatchHeader();
+        this.patchNum = patchnum;
+        initDialog(action, true);
+    }
 
+    private void initDialog(String action, boolean hasBPComboBox) {
         // now the panel
         JPanel dialogPanel = new JPanel(new BorderLayout(5, 5));
 
@@ -69,7 +78,7 @@ public class DevDrvPatchSelector extends JDialog {
         deviceComboBox = new JComboBox();
         deviceComboBox.addActionListener(new DeviceActionListener());
         driverComboBox = new JComboBox();
-        if (patchNum >= 0) {
+        if (hasBPComboBox) {
             driverComboBox.addActionListener(new DriverActionListener());
             bankComboBox = new JComboBox();
             patchNumComboBox = new JComboBox();
@@ -77,8 +86,6 @@ public class DevDrvPatchSelector extends JDialog {
 
         //----- Populate the combo boxes only with devices, which supports the patch
         int nDriver = 0;
-
-
         for (int i=0; i < AppConfig.deviceCount(); i++) {
             Device device = AppConfig.getDevice(i);
             boolean newDevice = true;
@@ -105,7 +112,7 @@ public class DevDrvPatchSelector extends JDialog {
         JPanel labelPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         labelPanel.add(new JLabel("Device:", JLabel.LEFT));
         labelPanel.add(new JLabel("Driver:", JLabel.LEFT));
-        if (patchNum >= 0) {
+        if (hasBPComboBox) {
     	    labelPanel.add(new JLabel("Bank:", JLabel.LEFT));
     	    labelPanel.add(new JLabel("Patch:", JLabel.LEFT));
         }
@@ -114,7 +121,7 @@ public class DevDrvPatchSelector extends JDialog {
         JPanel fieldPanel = new JPanel(new GridLayout(0, 1));
         fieldPanel.add(deviceComboBox);
         fieldPanel.add(driverComboBox);
-        if (patchNum >= 0) {
+        if (hasBPComboBox) {
     	    fieldPanel.add(bankComboBox);
     	    fieldPanel.add(patchNumComboBox);
         }
@@ -206,6 +213,7 @@ public class DevDrvPatchSelector extends JDialog {
             patchNumComboBox.removeAllItems();
 
             if (driver != null) {
+                // populate bank combo box
 		String[] bankNumbers = driver.getBankNumbers();
                 if (bankNumbers != null && bankNumbers.length > 1) {
                     for (int i = 0 ; i < bankNumbers.length ; i++) {
@@ -213,6 +221,7 @@ public class DevDrvPatchSelector extends JDialog {
                     }
                 }
                 if (driver.isSingleDriver()) {
+                    // populate patch number combo box
                     String[] patchNumbers = getPatchNumbers(driver);
                     if (patchNumbers.length > 1) {
                         for (int i = 0; i < patchNumbers.length; i++) {
@@ -223,12 +232,9 @@ public class DevDrvPatchSelector extends JDialog {
                     }
                 }
             }
-
             bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
             // N.B. Do not enable patch selection for banks
-            patchNumComboBox.setEnabled(driver != null 
-                    && driver.isSingleDriver()
-                    && patchNumComboBox.getItemCount() > 1);
+            patchNumComboBox.setEnabled(patchNumComboBox.getItemCount() > 1);
         }
     }
 

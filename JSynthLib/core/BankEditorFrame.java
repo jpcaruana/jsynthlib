@@ -30,32 +30,29 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
     protected IBankPatch bankData;
     /** This BankEditorFrame instance. */
-    protected final BankEditorFrame instance; // accessed by YamahaFS1RBankEditor
-    /** A table model. */
-    protected PatchGridModel myModel;
-    // These refer a same JTable object.  For what table2 is?
-    protected JTable table;
-    protected JTable table2;
-
+    protected final BankEditorFrame instance;
     protected Dimension preferredScrollableViewportSize = new Dimension(500, 70);
     protected int autoResizeMode = JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS;
     protected int preferredColumnWidth = 75;
 
-    protected static PatchTransferHandler pth = new PatchGridTransferHandler();
+    private JTable table;
+    private PatchGridModel myModel;
+    private static PatchTransferHandler pth = new PatchGridTransferHandler();
 
     /**
      * Creates a new <code>BankEditorFrame</code> instance.
-     *
-     * @param p a <code>Patch</code> value
+     * 
+     * @param p
+     *            a <code>Patch</code> value
      */
     protected BankEditorFrame(IBankPatch p) {
         super(p.getDevice().getModelName() + " " + p.getType() + " Window",
-	      true, //resizable
-	      true, //closable
-	      true, //maximizable
-	      true); // iconifiable
+                true, //resizable
+                true, //closable
+                true, //maximizable
+                true); // iconifiable
         instance = this;
-	bankData = p;
+        bankData = p;
         initBankEditorFrame();
     }
 
@@ -64,110 +61,132 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         //...Create the GUI and put it in the window...
         myModel = new PatchGridModel(bankData);
         table = new JTable(myModel);
-        table2 = table;
-	table.setTransferHandler(pth);
-	table.setDragEnabled(true);
-	// Only one patch can be handled.
-	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	// Select index (0, 0) to ensure a patch is selected.
-	table.changeSelection(0, 0, false, false);
-	table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
+        table.setTransferHandler(pth);
+        table.setDragEnabled(true);
+        // Only one patch can be handled.
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // Select index (0, 0) to ensure a patch is selected.
+        table.changeSelection(0, 0, false, false);
+        table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
         //table.setRowSelectionAllowed(true);
         //table.setColumnSelectionAllowed(true);
-	table.setCellSelectionEnabled(true);
-	table.setAutoResizeMode(autoResizeMode);
-	ListSelectionListener lsl = new ListSelectionListener() {
-		public void valueChanged(ListSelectionEvent e) {
-		    enableActions();
-		}
-	    };
-	table.getSelectionModel().addListSelectionListener(lsl);
-	table.getColumnModel().getSelectionModel().addListSelectionListener(lsl);
+        table.setCellSelectionEnabled(true);
+        table.setAutoResizeMode(autoResizeMode);
+        ListSelectionListener lsl = new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                enableActions();
+            }
+        };
+        table.getSelectionModel().addListSelectionListener(lsl);
+        table.getColumnModel().getSelectionModel()
+                .addListSelectionListener(lsl);
 
         table.addMouseListener(new MouseAdapter() {
-		public void mousePressed(MouseEvent e) {
-		    if (e.isPopupTrigger())
-			Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
-		}
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger())
+                    Actions.showMenuPatchPopup(table, e.getX(), e.getY());
+            }
 
-		public void mouseReleased(MouseEvent e) {
-		    if (e.isPopupTrigger())
-			Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
-		}
-		public void mouseClicked(MouseEvent e) {
-		    if (e.getClickCount() == 2)
-			playSelectedPatch();
-		}
-	    });
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger())
+                    Actions.showMenuPatchPopup(table, e.getX(), e.getY());
+            }
+
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2)
+                    playSelectedPatch();
+            }
+        });
 
         this.addJSLFrameListener(new JSLFrameListener() {
-		public void JSLFrameOpened(JSLFrameEvent e) {
-		}
-		public void JSLFrameClosed(JSLFrameEvent e) {
-		}
-		public void JSLFrameDeiconified(JSLFrameEvent e) {
-		}
-		public void JSLFrameIconified(JSLFrameEvent e) {
-		}
-		public void JSLFrameActivated(JSLFrameEvent e) {
-		    Actions.setEnabled(false,
-				       Actions.EN_GET
-				       | Actions.EN_EXTRACT
-				       // not available yet!
-				       | Actions.EN_SEND_TO
-				       | Actions.EN_REASSIGN);
-		    Actions.setEnabled(true,
-				       Actions.EN_IMPORT
-				       | Actions.EN_IMPORT_ALL
-				       | Actions.EN_NEW_PATCH);
-		    enableActions();
-		}
-		public void JSLFrameClosing(JSLFrameEvent e) {
-		    JSLFrame[] jList = JSLDesktop.getAllFrames();
-		    for (int j = 0; j < jList.length; j++)
-			if (jList[j] instanceof PatchEditorFrame) {
-			    if (((PatchEditorFrame) (jList[j])).bankFrame == instance) {
-				jList[j].moveToFront();
-				try {
-				    jList[j].setSelected(true);
-				    jList[j].setClosed(true);
-				} catch (Exception e1) {
-				}
-			    }
-			}
-		}
+            public void JSLFrameOpened(JSLFrameEvent e) {
+            }
 
-		public void JSLFrameDeactivated(JSLFrameEvent e) {
-		    Actions.setEnabled(false, Actions.EN_ALL);
-		}
-	    });
+            public void JSLFrameClosed(JSLFrameEvent e) {
+            }
+
+            public void JSLFrameDeiconified(JSLFrameEvent e) {
+            }
+
+            public void JSLFrameIconified(JSLFrameEvent e) {
+            }
+
+            public void JSLFrameActivated(JSLFrameEvent e) {
+                frameActivated();
+            }
+
+            public void JSLFrameClosing(JSLFrameEvent e) {
+                JSLFrame[] jList = JSLDesktop.getAllFrames();
+                for (int j = 0; j < jList.length; j++)
+                    if (jList[j] instanceof PatchEditorFrame) {
+                        if (((PatchEditorFrame) (jList[j])).bankFrame == instance) {
+                            jList[j].moveToFront();
+                            try {
+                                jList[j].setSelected(true);
+                                jList[j].setClosed(true);
+                            } catch (Exception e1) {
+                            }
+                        }
+                    }
+            }
+
+            public void JSLFrameDeactivated(JSLFrameEvent e) {
+            }
+        });
 
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
-	scrollPane.getViewport()
-	    .setTransferHandler(new ProxyImportHandler(table, pth));
+        scrollPane.getViewport().setTransferHandler(
+                new ProxyImportHandler(table, pth));
 
         //Add the scroll pane to this window.
         getContentPane().add(scrollPane, BorderLayout.CENTER);
 
-	for (int col = 0; col < table.getColumnCount(); col++) {
-	    TableColumn column = table.getColumnModel().getColumn(col);
-	    column.setPreferredWidth(preferredColumnWidth);
-	}
+        for (int col = 0; col < table.getColumnCount(); col++) {
+            TableColumn column = table.getColumnModel().getColumn(col);
+            column.setPreferredWidth(preferredColumnWidth);
+        }
 
         //...Then set the window size or call pack...
         setSize(600, 300);
 
         //Set the window's location.
-	moveToDefaultLocation();
+        moveToDefaultLocation();
     }
 
-    private boolean checkSelected() { // should return true always
-        if ((table.getSelectedRowCount() == 0) || (table.getSelectedColumnCount() == 0)) {
-	    ErrorMsg.reportError("Error", "No patch is selected");
-	    return false;
-	}
-        return true;
+    private void frameActivated() {
+        Actions.setEnabled(false, Actions.EN_ALL);
+
+        // always enabled
+        Actions.setEnabled(true,
+                Actions.EN_IMPORT
+                | Actions.EN_IMPORT_ALL | Actions.EN_NEW_PATCH);
+
+        enableActions();
+    }
+
+    /** change state of Actions based on the state of the table. */
+    private void enableActions() {
+        // one or more patches are included.
+        Actions.setEnabled(table.getRowCount() > 0, Actions.EN_SAVE
+                | Actions.EN_SAVE_AS | Actions.EN_SEARCH);
+
+        // more than one patches are included.
+        Actions.setEnabled(table.getRowCount() > 1, Actions.EN_SORT);
+
+        // only one valid patch is selected.
+        boolean selectedOne = (table.getSelectedRowCount() == 1
+                && table.getSelectedColumnCount() == 1
+                && getSelectedPatch() != null);
+
+        Actions.setEnabled(selectedOne,
+                Actions.EN_COPY | Actions.EN_CUT | Actions.EN_DELETE
+                        | Actions.EN_EXPORT | Actions.EN_PLAY | Actions.EN_SEND
+                        | Actions.EN_STORE);
+
+        // All entries are of the same type, so we can check the first one....
+        Actions.setEnabled(selectedOne && myModel.getPatchAt(0, 0).hasEditor(),
+                Actions.EN_EDIT);
     }
 
     private int getPatchNum(int row, int col) {
@@ -181,38 +200,38 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     // PatchBasket methods
 
     // This needs to use some sort of factory so correct IPatch can be created.
-    public void importPatch(File file) throws IOException, FileNotFoundException {
-        if (!checkSelected()) return;
+    public void importPatch(File file) throws IOException,
+            FileNotFoundException {
         FileInputStream fileIn = new FileInputStream(file);
-        byte [] buffer = new byte [(int) file.length()];
+        byte[] buffer = new byte[(int) file.length()];
         fileIn.read(buffer);
         fileIn.close();
+
         IPatch p = (DriverUtil.createPatch(buffer));
         bankData.put(p, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
 
-    public void exportPatch(File file) throws IOException, FileNotFoundException {
-    	/* Almost the same thing occurs in LibraryFrame and SceneFrame also.
-    	 * Maybe we should have something like
-    	 * static final writePatch(OutputStream, IPatch) in Patch.
-    	 */
-        if (!checkSelected()) return;
+    public void exportPatch(File file) throws IOException,
+            FileNotFoundException {
+        /*
+         * Almost the same thing occurs in LibraryFrame and SceneFrame also.
+         * Maybe we should have something like static final
+         * writePatch(OutputStream, IPatch) in Patch.
+         */
         FileOutputStream fileOut = new FileOutputStream(file);
         fileOut.write(getSelectedPatch().export());
         fileOut.close();
     }
 
-    public void deleteSelectedPatch() {
-        if (!checkSelected()) return;
+    public void deleteSelectedPatch() { // XXX Do we really need this?
         bankData.delete(getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
 
     public void copySelectedPatch() {
-	pth.exportToClipboard(table,
-			      Toolkit.getDefaultToolkit().getSystemClipboard(),
-			      TransferHandler.COPY);
+        pth.exportToClipboard(table, Toolkit.getDefaultToolkit()
+                .getSystemClipboard(), TransferHandler.COPY);
     }
 
     public IPatch getSelectedPatch() {
@@ -220,14 +239,8 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void sendSelectedPatch() {
-        if (!checkSelected()) return;
-	// A Bank Patch consists from Single Patches. 
-        ISinglePatch p = (ISinglePatch) getSelectedPatch();
-        if (p == null) {
-	    ErrorMsg.reportError("Error", "That patch is blank.");
-	    return;
-	}
-        p.send();
+        // A Bank Patch consists from Single Patches.
+        ((ISinglePatch) getSelectedPatch()).send();
     }
 
     public void sendToSelectedPatch() {
@@ -237,52 +250,45 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void playSelectedPatch() {
-        if (!checkSelected()) return;
-	// A Bank Patch consists from Single Patches. 
+        // A Bank Patch consists from Single Patches.
         ISinglePatch p = (ISinglePatch) getSelectedPatch();
-        if (p == null) {
-	    ErrorMsg.reportError("Error", "That patch is blank.");
-	    return;
-	}
         p.send();
         p.play();
     }
 
     public void storeSelectedPatch() {
-        if (!checkSelected()) return;
-        IPatch p = getSelectedPatch();
-        if (p == null) {
-	    ErrorMsg.reportError("Error", "That patch is blank.");
-	    return;
-	}
-        new SysexStoreDialog(p, getSelectedPatchNum());
+        new SysexStoreDialog(getSelectedPatch(), getSelectedPatchNum());
     }
 
     public JSLFrame editSelectedPatch() {
-        if (!checkSelected()) return null;
-        IPatch p = getSelectedPatch();
-        if (p == null) {
-	    ErrorMsg.reportError("Error", "That patch is blank.");
-	    return null;
-	}
-        PatchEditorFrame pf = (PatchEditorFrame) p.edit();
-        pf.setBankEditorInformation(this, table.getSelectedRow(), table.getSelectedColumn());
+        PatchEditorFrame pf = (PatchEditorFrame) getSelectedPatch().edit();
+        pf.setBankEditorInformation(this,
+                table.getSelectedRow(),
+                table.getSelectedColumn());
         return pf;
     }
 
     public void pastePatch() {
-	if (!pth.importData(table, Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)))
-	    Actions.setEnabled(false, Actions.EN_PASTE);
+        if (!pth.importData(table, Toolkit.getDefaultToolkit()
+                .getSystemClipboard().getContents(this)))
+            Actions.setEnabled(false, Actions.EN_PASTE);
     }
+
     public void pastePatch(IPatch p) {
-	pth.importData(table, p);
+        myModel.setPatchAt(p, table.getSelectedRow(), table.getSelectedColumn());
     }
 
     public ArrayList getPatchCollection() {
-        return null;   //for now bank doesn't support this feature. Need to extract single and place in collection.
+        return null; //for now bank doesn't support this feature. Need to
+                     // extract single and place in collection.
     }
 
     // end of PatchBasket methods
+
+    // for PatchEditorFrame
+    void setPatchAt(IPatch p, int row, int col) {
+        myModel.setPatchAt(p, row, col);
+    }
 
     void revalidateDriver() {
         bankData.setDriver();
@@ -292,51 +298,27 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
             } catch (PropertyVetoException e) {
                 ErrorMsg.reportStatus(e);
             }
-	}
+        }
     }
 
-    /** change state of Actions based on the state of the table. */
-    private void enableActions() {
-	Actions.setEnabled(table.getRowCount() > 0,
-			   Actions.EN_SAVE
-			   | Actions.EN_SAVE_AS
-			   | Actions.EN_SEARCH);
-	Actions.setEnabled(table.getRowCount() > 1,
-			   Actions.EN_SORT
-			   | Actions.EN_DELETE_DUPLICATES);
-
-	Actions.setEnabled(table.getSelectedRowCount() > 0, // should be true
-			   Actions.EN_COPY
-			   | Actions.EN_CUT
-			   | Actions.EN_DELETE
-			   | Actions.EN_EXPORT
-			   | Actions.EN_PLAY
-			   | Actions.EN_SEND
-			   | Actions.EN_STORE);
-
-	// All entries are of the same type, so we can check the first one....
-	IPatch myPatch = myModel.getPatchAt(0, 0);
-	Actions.setEnabled(table.getSelectedRowCount() > 0
-                && myPatch.hasEditor(), Actions.EN_EDIT);
-    }
-
-    // Enable pasting
+    // JSLFrame method
     public boolean canImport(DataFlavor[] flavors) {
-	// changed by Hiroo July 5th, 2004
-// 	return checkSelected() && pth.canImport(table, flavors);
-	return (table.getSelectedRowCount() != 0
-		&& table.getSelectedColumnCount() != 0
-		&& pth.canImport(table, flavors));
+        // changed by Hiroo July 5th, 2004
+        // XXX Do we still need this check? Hiroo
+        return (table.getSelectedRowCount() != 0
+                && table.getSelectedColumnCount() != 0 
+                && pth.canImport(table, flavors));
     }
 
     private static class PatchGridTransferHandler extends PatchTransferHandler {
-	protected Transferable createTransferable(JComponent c) {
-	    JTable t = (JTable)c;
-	    PatchGridModel m = (PatchGridModel) t.getModel();
-	    return (Transferable) m.getPatchAt(t.getSelectedRow(), t.getSelectedColumn());
-	}
+        protected Transferable createTransferable(JComponent c) {
+            JTable t = (JTable) c;
+            PatchGridModel m = (PatchGridModel) t.getModel();
+            return (Transferable) m.getPatchAt(t.getSelectedRow(), t
+                    .getSelectedColumn());
+        }
 
-	protected boolean storePatch(IPatch p, JComponent c) {
+        protected boolean storePatch(IPatch p, JComponent c) {
             JTable t = (JTable) c;
             PatchGridModel m = (PatchGridModel) t.getModel();
             m.setPatchAt(p, t.getSelectedRow(), t.getSelectedColumn());
@@ -344,61 +326,58 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         }
     }
 
-    class PatchGridModel extends AbstractTableModel {
+    private class PatchGridModel extends AbstractTableModel {
         private IBankPatch bankData;
 
-	PatchGridModel(IBankPatch p) {
-	    super();
-	    ErrorMsg.reportStatus("PatchGridModel");
-	    bankData = p;
-	}
+        PatchGridModel(IBankPatch p) {
+            super();
+            ErrorMsg.reportStatus("PatchGridModel");
+            bankData = p;
+        }
 
-	public int getColumnCount () {
-	    return bankData.getNumColumns();
-	}
+        public int getColumnCount() {
+            return bankData.getNumColumns();
+        }
 
-	public int getRowCount () {
-	    return bankData.getNumPatches()/bankData.getNumColumns();
-	}
+        public int getRowCount() {
+            return bankData.getNumPatches() / bankData.getNumColumns();
+        }
 
-	public String getColumnName (int col) {
-	    return "";
-	}
+        public String getColumnName(int col) {
+            return "";
+        }
 
-	public Object getValueAt (int row, int col) {
-	    String[] patchNumbers = bankData.getDriver().getPatchNumbers();
-	    int i = getPatchNum(row, col);
-	    return (patchNumbers[i] + " " + bankData.getName(i));
-	}
+        public Object getValueAt(int row, int col) {
+            String[] patchNumbers = bankData.getDriver().getPatchNumbers();
+            int i = getPatchNum(row, col);
+            return (patchNumbers[i] + " " + bankData.getName(i));
+        }
 
-	public Class getColumnClass (int c) {
-	    return String.class;
-	}
+        public Class getColumnClass(int c) {
+            return String.class;
+        }
 
-	public boolean isCellEditable (int row, int col) {
-	    //----- Start phil@muqus.com (allow patch name editing from a bank edit window)
-	    //return false;
-	    return true;
-	    //----- End phil@muqus.com
-	}
+        public boolean isCellEditable(int row, int col) {
+            //----- Start phil@muqus.com (allow patch name editing from a bank
+            // edit window)
+            //return false;
+            return true;
+            //----- End phil@muqus.com
+        }
 
-	public void setValueAt (Object value, int row, int col) {
-	    int patchNum = getPatchNum(row, col);
-	    String[] patchNumbers = bankData.getDriver().getPatchNumbers();
-	    bankData.setName(patchNum,
-	            ((String) value).substring((patchNumbers[patchNum] + " ").length()));
-	    //----- End phil@muqus.com
-	    fireTableCellUpdated (row, col);
-	}
+        public void setValueAt(Object value, int row, int col) { // not used
+            int patchNum = getPatchNum(row, col);
+            String[] patchNumbers = bankData.getDriver().getPatchNumbers();
+            bankData.setName(patchNum,
+                    ((String) value).substring((patchNumbers[patchNum] + " ").length()));
+        }
 
-	IPatch getPatchAt(int row, int col) {
-	    return bankData.get(getPatchNum(row, col));
-	}
+        IPatch getPatchAt(int row, int col) {
+            return bankData.get(getPatchNum(row, col));
+        }
 
-	void setPatchAt(IPatch p, int row, int col) {
-	    bankData.put(p, getPatchNum(row, col));
-	    fireTableCellUpdated (row, col);
-	}
-
+        void setPatchAt(IPatch p, int row, int col) {
+            bankData.put(p, getPatchNum(row, col));
+        }
     }
 }

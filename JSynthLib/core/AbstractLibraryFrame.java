@@ -34,20 +34,20 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Abstract interface for unified handling of Library and Scene frames.
+ * Abstract class for unified handling of Library and Scene frames.
  * 
  * @author Gerrit.Gehnen
  * @version $Id$
  */
 abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
-    protected PatchTableModel myModel;
     protected JTable table;
-    protected JLabel statusBar;
-    protected boolean changed = false;  //has the library been altered since it was last saved?
-
+    protected PatchTableModel myModel;
     protected static String UNSAVED_MSG;
     protected static PatchTransferHandler pth;
 
+    /** Has the library been altered since it was last saved? */
+    private boolean changed = false;
+    private JLabel statusBar;
     private File filename;
 
     AbstractLibraryFrame(String s, boolean resizable, boolean closable,
@@ -71,7 +71,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
             }
 
             public void mouseReleased(MouseEvent e) {
-                myModel.fireTableDataChanged();
+                myModel.fireTableDataChanged(); // XXX ???
             }
         });
 
@@ -205,7 +205,6 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         }
 
         public void JSLFrameDeactivated(JSLFrameEvent e) {
-            Actions.setEnabled(false, Actions.EN_ALL);
         }
 
         public void JSLFrameDeiconified(JSLFrameEvent e) {
@@ -235,9 +234,12 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
                 myModel.setPatchAt(patarray[j], table.getSelectedRow());
         }
 
+        changed();
+    }
+
+    protected void changed() {
         myModel.fireTableDataChanged();
         changed = true;
-        //statusBar.setText(myModel.getRowCount() + " Patches");
     }
 
     public void exportPatch(File file) throws IOException,
@@ -252,13 +254,16 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     }
 
     public void deleteSelectedPatch() {
-        if (table.getSelectedRowCount() == 0) {
-            ErrorMsg.reportError("Error", "No Patch Selected.");
-            return;
+        ErrorMsg.reportStatus("delete patch : " + table.getSelectedRowCount());
+        int[] ia = table.getSelectedRows();
+        // Without this we cannot delete the patch at the bottom.
+        table.clearSelection();
+        // delete from bottom not to change indices to be removed
+        for (int i = ia.length; i > 0; i--) {
+            ErrorMsg.reportStatus("i = " + ia[i - 1]);
+            myModel.removeAt(ia[i - 1]);
         }
-        myModel.removeAt(table.getSelectedRow());
-        myModel.fireTableDataChanged();
-        //statusBar.setText(myModel.getRowCount() + " Patches");
+        changed();
     }
 
     public void copySelectedPatch() {
@@ -267,64 +272,49 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     }
 
     public void pastePatch() {
-        if (!pth.importData(table, Toolkit.getDefaultToolkit()
-                .getSystemClipboard().getContents(this)))
+        if (pth.importData(table, Toolkit.getDefaultToolkit()
+                .getSystemClipboard().getContents(this))) {
+            changed();
+        } else {
             Actions.setEnabled(false, Actions.EN_PASTE);
+        }
     }
 
     public void pastePatch(IPatch p) {
-        pth.importData(table, p);
+        myModel.addPatch(p);
+        changed();
     }
 
     public IPatch getSelectedPatch() {
-        try {
-            return myModel.getPatchAt(table.getSelectedRow());
-        } catch (Exception e) {
-            ErrorMsg.reportStatus(e);
-            return null;
-        }
+        return myModel.getPatchAt(table.getSelectedRow());
     }
 
     public void sendSelectedPatch() {
-        ISinglePatch myPatch = (ISinglePatch) myModel.getPatchAt(table.getSelectedRow());
-        if (myPatch.isSinglePatch()) {
-            myPatch.send();
-        }
+        ((ISinglePatch) getSelectedPatch()).send();
     }
 
     public void sendToSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        new SysexSendToDialog(myPatch);
+        new SysexSendToDialog(getSelectedPatch());
     }
 
     public void reassignSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        new ReassignPatchDialog(myPatch);
-        myModel.fireTableDataChanged();
+        new ReassignPatchDialog(getSelectedPatch());
+        changed();
     }
 
     public void playSelectedPatch() {
-        ISinglePatch myPatch = (ISinglePatch) myModel.getPatchAt(table.getSelectedRow());
-        if (myPatch.isSinglePatch()) {
-            myPatch.send();
-            myPatch.play();
-        }
+        ISinglePatch myPatch = (ISinglePatch) getSelectedPatch();
+        myPatch.send();
+        myPatch.play();
     }
 
     public void storeSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        new SysexStoreDialog(myPatch);
+        new SysexStoreDialog(getSelectedPatch(), 0);
     }
 
     public JSLFrame editSelectedPatch() {
-        if (table.getSelectedRowCount() == 0) {
-            ErrorMsg.reportError("Error",
-                    "No Patch Selected. EditAction must be disabled.");
-            return null;
-        }
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         changed = true;
-        return myPatch.edit();
+        return getSelectedPatch().edit();
     }
 
     public ArrayList getPatchCollection() {
@@ -352,15 +342,13 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return;
         }
-        IBankPatch myPatch = (IBankPatch) myModel.getPatchAt(table.getSelectedRow());
+        IBankPatch myPatch = (IBankPatch) getSelectedPatch();
         for (int i = 0; i < myPatch.getNumPatches(); i++){
             ISinglePatch p = myPatch.get(i);
             if (p != null)
                 myModel.addPatch(p);
         }
-        myModel.fireTableDataChanged();
-        changed = true;
-        //statusBar.setText(myModel.getRowCount() + " Patches");
+        changed();
     }
 
     // for open/save/save-as actions
@@ -380,6 +368,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         filename = file;
         setTitle(file.getName());
         save();
+        changed = false;
     }
 
     void open(File file) throws IOException, ClassNotFoundException {
@@ -392,8 +381,9 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         s.close();
         f.close();
         revalidateDrivers();
+        myModel.fireTableDataChanged();
+        changed = false;
         PatchEdit.hideWaitDialog();
-        statusBar.setText(myModel.getRowCount() + " Patches");
     }
 
     /**
@@ -436,18 +426,20 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
          * @param p The patch to add
          */
         abstract void addPatch(IPatch p);
+
         /**
          * Set (and replace) the patch at the specified row of the list.
          * @param p The patch to set
          * @param row The row of the table.
          */
-        abstract void setPatchAt (IPatch p,int row);
+        abstract void setPatchAt(IPatch p,int row);
+
         /**
          * Get the patch at the specified row.
          * @param row The row specified
          * @return The patch
          */
-        abstract IPatch getPatchAt (int row);
+        abstract IPatch getPatchAt(int row);
 
         /**
          * Get the comment at the specified row.

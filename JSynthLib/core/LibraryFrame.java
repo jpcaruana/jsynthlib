@@ -67,27 +67,48 @@ class LibraryFrame extends AbstractLibraryFrame {
     }
 
     void frameActivated() {
-        Actions.setEnabled(true, Actions.EN_GET | Actions.EN_IMPORT
+        Actions.setEnabled(false, Actions.EN_ALL);
+        // always enabled
+        Actions.setEnabled(true, 
+                Actions.EN_GET | Actions.EN_IMPORT
                 | Actions.EN_IMPORT_ALL | Actions.EN_NEW_PATCH);
         enableActions();
     }
 
     /** change state of Actions based on the state of the table. */
     void enableActions() {
-        Actions.setEnabled(table.getRowCount() > 0, Actions.EN_SAVE
+        // one or more patches are included.
+        Actions.setEnabled(table.getRowCount() > 0, 
+                Actions.EN_SAVE
                 | Actions.EN_SAVE_AS | Actions.EN_SEARCH);
-        // 			   | Actions.EN_TRANSFER_SCENE);
 
-        Actions.setEnabled(table.getRowCount() > 1, Actions.EN_CROSSBREED
+        // more than one patches are included.
+        Actions.setEnabled(table.getRowCount() > 1, 
+                Actions.EN_CROSSBREED
                 | Actions.EN_DELETE_DUPLICATES | Actions.EN_SORT);
 
-        Actions.setEnabled(table.getSelectedRowCount() > 0, Actions.EN_COPY
-                | Actions.EN_CUT | Actions.EN_DELETE | Actions.EN_EXPORT
-                | Actions.EN_EXTRACT | Actions.EN_PLAY | Actions.EN_REASSIGN
-                | Actions.EN_SEND | Actions.EN_SEND_TO | Actions.EN_STORE
-                | Actions.EN_UPLOAD);
+        // one or more patches are selected
+        Actions.setEnabled(table.getSelectedRowCount() > 0,
+                Actions.EN_DELETE);
 
-        Actions.setEnabled(table.getSelectedRowCount() > 0
+        // one patch is selected
+        Actions.setEnabled(table.getSelectedRowCount() == 1,
+                Actions.EN_COPY
+                | Actions.EN_CUT | Actions.EN_EXPORT | Actions.EN_REASSIGN
+                | Actions.EN_STORE | Actions.EN_UPLOAD);
+
+        // one signle patch is selected
+        Actions.setEnabled(table.getSelectedRowCount() == 1
+                && myModel.getPatchAt(table.getSelectedRow()).isSinglePatch(),
+                Actions.EN_SEND | Actions.EN_SEND_TO | Actions.EN_PLAY);
+
+        // one bank patch is selected
+        Actions.setEnabled(table.getSelectedRowCount() == 1
+                && myModel.getPatchAt(table.getSelectedRow()).isBankPatch(),
+                Actions.EN_EXTRACT);
+
+        // one patch is selected and it implements patch
+        Actions.setEnabled(table.getSelectedRowCount() == 1
                 && myModel.getPatchAt(table.getSelectedRow()).hasEditor(),
                 Actions.EN_EDIT);
     }
@@ -108,8 +129,7 @@ class LibraryFrame extends AbstractLibraryFrame {
         JOptionPane.showMessageDialog(null, numDeleted
                 + " Patches were Deleted", "Delete Duplicates",
                 JOptionPane.INFORMATION_MESSAGE);
-        myModel.fireTableDataChanged();
-        statusBar.setText(myModel.getRowCount() + " Patches");
+        changed();
     }
 
     //This is a comparator class used by the delete duplicated action
@@ -127,7 +147,7 @@ class LibraryFrame extends AbstractLibraryFrame {
     // for SortDialog
     void sortPatch(Comparator c) {
         Collections.sort(myModel.getList(), c);
-        myModel.fireTableDataChanged();
+        changed();
     }
 
     /**
@@ -232,17 +252,15 @@ class LibraryFrame extends AbstractLibraryFrame {
         }
 
         // begin PatchTableModel interface methods
+        // It is caller's responsibility to update Table.
         void addPatch(IPatch p) {
             ErrorMsg.reportStatus("LibraryFrame.addPatch: Patch=" + (Patch) p);
             list.add(p);
-            //  fireTableRowsUpdated(getRowCount(),getRowCount());
-            this.fireTableDataChanged();
         }
 
         void setPatchAt(IPatch p, int row) {
             ErrorMsg.reportStatus("LibraryFrame.setPatchAt: row=" + row + ", Patch=" + (Patch) p);
             list.set(row, p);
-            fireTableRowsUpdated(row, row);
         }
 
         IPatch getPatchAt(int row) {
@@ -255,7 +273,6 @@ class LibraryFrame extends AbstractLibraryFrame {
 
         void removeAt(int row) {
             this.list.remove(row);
-            this.fireTableDataChanged();
         }
 
         ArrayList getList() {
@@ -264,7 +281,6 @@ class LibraryFrame extends AbstractLibraryFrame {
 
         void setList(ArrayList newList) {
             this.list = newList;
-            this.fireTableDataChanged();
         }
         // end PatchTableModel interface methods
     }
