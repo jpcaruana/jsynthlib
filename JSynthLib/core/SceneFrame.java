@@ -440,19 +440,11 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
                 return;
             }
             Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
-            byte [] mySysex = new byte[myPatch.sysex.length];
-            System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
-            PatchEdit.Clipboard=new Patch(mySysex,
-					  myPatch.deviceNum,
-					  myPatch.driverNum,
-					  myPatch.date.toString(),
-					  myPatch.author.toString(),
-					  myPatch.comment.toString());
+	    PatchEdit.Clipboard = (Patch) myPatch.clone();
         }catch (Exception e)
         {};
     }
 
-    /** */
     public void SendSelectedPatch() {
         Patch myPatch=((Scene)myModel.sceneList.get(table.getSelectedRow())).getPatch();
         myPatch.getDriver().calculateChecksum(myPatch);
@@ -501,24 +493,11 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
     public void PastePatch() {
         Patch myPatch=PatchEdit.Clipboard;
         if (myPatch!=null) {
-            byte [] mySysex = new byte[myPatch.sysex.length];
-            System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
-            if (table.getSelectedRowCount()==0)
-                myModel.sceneList.add(new Scene(new Patch(mySysex,
-							  myPatch.deviceNum,
-							  myPatch.driverNum,
-							  myPatch.date.toString(),
-							  myPatch.author.toString(),
-							  myPatch.comment.toString())));
-            else
-                myModel.sceneList.add(table.getSelectedRow(),
-				      new Scene(new Patch(mySysex,
-							  myPatch.deviceNum,
-							  myPatch.driverNum,
-							  myPatch.date.toString(),
-							  myPatch.author.toString(),
-							  myPatch.comment.toString())));
-
+	    if (table.getSelectedRowCount()==0)
+ 		myModel.sceneList.add(new Scene((Patch) myPatch.clone()));
+	    else
+		myModel.sceneList.add(table.getSelectedRow(),
+ 				      new Scene((Patch) myPatch.clone()));
             changed=true;
             myModel.fireTableDataChanged();
         }

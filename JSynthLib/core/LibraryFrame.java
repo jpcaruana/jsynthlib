@@ -423,22 +423,20 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
             Patch firstpat=new Patch(buffer,offset);
             offset+=firstpat.sysex.length;
             System.out.println("Buffer length:"+ buffer.length+" Patch Lenght: "+firstpat.sysex.length);
-        Patch[] patarray=firstpat.dissect();
+	    Patch[] patarray=firstpat.dissect();
 
-        if (patarray.length>1)
-        { // Conversion was sucessfull, we have at least one converted patch
-            for (int j=0;j<patarray.length;j++)
-            {
-                myModel.PatchList.add(patarray[j]); // add all converted patches
-            }
-        }
-        else
-        { // No conversion. Try just the original patch....
-            if  (table.getSelectedRowCount()==0)
-                myModel.PatchList.add(firstpat);
-            else
-                myModel.PatchList.add(table.getSelectedRow(),firstpat);
-        }
+	    if (patarray.length>1) {
+		// Conversion was sucessfull, we have at least one converted patch
+		for (int j=0;j<patarray.length;j++) {
+		    myModel.PatchList.add(patarray[j]); // add all converted patches
+		}
+	    } else {
+		// No conversion. Try just the original patch....
+		if  (table.getSelectedRowCount()==0)
+		    myModel.PatchList.add(firstpat);
+		else
+		    myModel.PatchList.add(table.getSelectedRow(),firstpat);
+	    }
         }
         myModel.fireTableDataChanged();
         changed=true;
@@ -479,14 +477,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
 		    return;
 	    }
             Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
-            byte [] mySysex = new byte[myPatch.sysex.length];
-            System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
-            PatchEdit.Clipboard=new Patch(mySysex,
-					  myPatch.deviceNum,
-					  myPatch.driverNum,
-					  myPatch.date.toString(),
-					  myPatch.author.toString(),
-					  myPatch.comment.toString());
+	    PatchEdit.Clipboard = (Patch) myPatch.clone();
         }catch (Exception e)
         {};
     }
@@ -546,23 +537,11 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
 	//System.out.println("Paste "+myPatch);
         if (myPatch!=null)
         {
-            byte [] mySysex = new byte[myPatch.sysex.length];
-            System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
-            if (table.getSelectedRowCount()==0)
-                myModel.PatchList.add(new Patch(mySysex,
-						myPatch.deviceNum,
-						myPatch.driverNum,
-						myPatch.date.toString(),
-						myPatch.author.toString(),
-						myPatch.comment.toString()));
-            else
-                myModel.PatchList.add(table.getSelectedRow(),
-				      new Patch(mySysex,
-						myPatch.deviceNum,
-						myPatch.driverNum,
-						myPatch.date.toString(),
-						myPatch.author.toString(),
-						myPatch.comment.toString()));
+	    if (table.getSelectedRowCount()==0)
+ 		myModel.PatchList.add((Patch) myPatch.clone());
+	    else
+		myModel.PatchList.add(table.getSelectedRow(),
+				      (Patch) myPatch.clone());
 
             changed=true;
             myModel.fireTableDataChanged();

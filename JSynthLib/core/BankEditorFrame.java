@@ -258,12 +258,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        byte [] mySysex = new byte[p.sysex.length];
-        System.arraycopy(p.sysex, 0, mySysex, 0, p.sysex.length);
-        PatchEdit.Clipboard = new Patch(mySysex,
-					(p.date.toString()),
-					(p.author.toString()),
-					(p.comment.toString()));
+        PatchEdit.Clipboard = (Patch) p.clone();
     }
 
     public void SendSelectedPatch() {
