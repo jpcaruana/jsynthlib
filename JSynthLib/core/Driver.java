@@ -1,4 +1,4 @@
-/* $ID$ */
+/* $Id$ */
 
 package core;
 import java.io.*;
@@ -353,7 +353,21 @@ public void choosePatch (Patch p, int patchNum)
      return getManufacturerName() + " " + getModelName() + " " + getPatchType() + " " ;
    }
 
+    /** This method trims a patch, containing more than one real
+     * patch to a correct size. Useful for files containg more than one
+     * bank for example. Some drivers are incompatible with this method
+     * so it reqires explicit activation with the trimSize variable.
+     * @param p the patch, which should be trimmed to the right size
+     * @return the size of the (modified) patch
+     */    
  public int trimSysex(Patch p) {
+        if (trimSize>0) {
+            if ((p.sysex.length>trimSize)&&(p.sysex[trimSize-1]== (byte)0xf7)){
+                byte [] sysex = new byte[trimSize];
+                System.arraycopy(p.sysex,0,sysex,0,trimSize);
+                p.sysex=sysex;
+            }
+        }
      return p.sysex.length;
  }
      
