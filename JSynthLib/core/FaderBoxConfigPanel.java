@@ -18,6 +18,7 @@ import javax.sound.midi.MidiDevice;
  */
 
 public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChangeListener {
+    private JPanel faderPanel;
     private JComboBox cb4 = new JComboBox();
     private JCheckBox enabledBox;
     private JList lb1;
@@ -42,23 +43,20 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	add (enabledBox, gbc);
 	enabledBox.addActionListener(new ActionListener() {
                 public void actionPerformed (ActionEvent e) {
-			JCheckBox chb = (JCheckBox)e.getSource();
-	    		cb4.setEnabled(enabledBox.isSelected());
+			setContainerEnabled(faderPanel, enabledBox.isSelected());
 		}
 	});
 	
+	// create own Fader/Slider Panel
+	faderPanel = new JPanel(new BorderLayout(5,5));
+	// upper side
 	cb4 = new JComboBox ();
 	resetComboBoxes();
-	gbc.gridx = 1; gbc.gridy = 3; gbc.gridheight = 1; gbc.gridwidth=gbc.REMAINDER; // gbc.gridwidth = 3;
-	add (cb4, gbc);
-
-	// make a space
-	gbc.gridx=0; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=1;
-	JLabel l3=new JLabel ("        ");
-	add (l3, gbc);
+	//gbc.gridx = 1; gbc.gridy = 3; gbc.gridheight = 1; gbc.gridwidth=gbc.REMAINDER; // gbc.gridwidth = 3;
+	faderPanel.add (cb4, BorderLayout.NORTH);
 
 	// Fader Slider settings
-	// left side
+	// Init Slider JList and JComboBoxes
 	String[] n = new String[Constants.NUM_FADERS];
 	n[0] = "Active Slider";
 	for (int i = 0; i < 16; i++)
@@ -92,9 +90,10 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	    });
 	lb1.setSelectedIndex (0);
 	lb1.setSelectionMode (0);
-	gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.gridheight = 3;
+
+	// left side
 	JScrollPane scroll = new JScrollPane (lb1);
-	add (scroll, gbc);
+	faderPanel.add(scroll,BorderLayout.WEST);
 	// right side
 	JPanel dataPanel = new JPanel ();
 	dataPanel.setLayout (new GridBagLayout ());
@@ -110,11 +109,17 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	gbc.gridx = 2; gbc.gridy = 5; gbc.gridwidth = 5; gbc.gridheight = 3;
 	gbc.fill = GridBagConstraints.BOTH;
 	dataPanel.setBorder (new EtchedBorder (EtchedBorder.RAISED));
-	add (dataPanel, gbc);
-	// lower preset  Buttons
+	faderPanel.add(dataPanel,BorderLayout.CENTER);
+	// lower side
 	JPanel buttonPanel = new JPanel ();
+	JButton b0 = new JButton ("Reset");
 	JButton b1 = new JButton ("Peavey PC1600x Preset");
 	JButton b2 = new JButton ("Kawai K5000 Knobs Preset");
+	b0.addActionListener (new ActionListener () {
+		public void actionPerformed (ActionEvent e) {
+		    resetSliders ();
+		}
+	    });
 	b1.addActionListener (new ActionListener () {
 		public void actionPerformed (ActionEvent e) {
 		    presetPC1600x ();
@@ -126,10 +131,14 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 		}
 	    });
 
-	buttonPanel.add (b1); buttonPanel.add (b2);
+	buttonPanel.add (b0);
+	buttonPanel.add (b1);
+	buttonPanel.add (b2);
+	
+	faderPanel.add(buttonPanel,BorderLayout.SOUTH);
+	
 	gbc.gridx = 0; gbc.gridy = 8; gbc.gridwidth = 7; gbc.gridheight = 1;
-	gbc.fill = GridBagConstraints.BOTH;
-	add (buttonPanel, gbc);
+	add (faderPanel, gbc);
     }
 
     /**
@@ -190,8 +199,27 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	appConfig.setFaderEnable(enabledBox.isSelected());
     }
 
+    /**
+     * Resets the Fader Midi Port ComboBox after changing midi driver
+     * (Is it really needed?)
+     */
     public void midiDriverChanged(MidiWrapper driver) {
 	resetComboBoxes();
+    }
+
+    /**
+     * Recursively enables or disables all components in a container - emenaker 2003.03.08
+     * @param container
+     * @param enabled
+     */
+    private void setContainerEnabled(Container container, boolean enabled) {
+	Component[] components = container.getComponents();
+	for(int i=0; i<components.length; i++) {
+	    components[i].setEnabled(enabled);
+	    if(components[i] instanceof Container) {
+		setContainerEnabled((Container)components[i], enabled);
+	    }
+	}
     }
 
     
@@ -213,7 +241,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	} catch (Exception e) {
 	}
 	enabledBox.setEnabled(currentDriver.isReady());
-	cb4.setEnabled(enabledBox.isEnabled() && enabledBox.isSelected());
+	setContainerEnabled(faderPanel,enabledBox.isEnabled() && enabledBox.isSelected());
     }
 
     /**
@@ -252,6 +280,15 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	appConfig.setFaderChannel(currentFader, channel);
     }
 
+    private void resetSliders() {
+	for (int i=0; i < Constants.NUM_FADERS; i++) {
+	    appConfig.setFaderController(i,0);
+	    appConfig.setFaderChannel(i,0);
+	}
+	cbController.setSelectedIndex(appConfig.getFaderController(lb1.getSelectedIndex()));
+	cbChannel.setSelectedIndex(appConfig.getFaderChannel(lb1.getSelectedIndex()));
+    }
+    
     private void presetPC1600x () {
 	appConfig.setFaderController(0, 128);
 	appConfig.setFaderChannel(0, 16);
