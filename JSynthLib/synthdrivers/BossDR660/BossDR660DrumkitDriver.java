@@ -104,7 +104,7 @@ public class BossDR660DrumkitDriver extends Driver
 public Patch createNewPatch()
   { 
   try {
-    FileInputStream fileIn= new FileInputStream (new File("synthdrivers/BossDR660/BossDR660Drumkit.new"));
+    InputStream fileIn= getClass().getResourceAsStream("BossDR660Drumkit.new");
     byte [] buffer =new byte [1387];
     fileIn.read(buffer);
     fileIn.close();

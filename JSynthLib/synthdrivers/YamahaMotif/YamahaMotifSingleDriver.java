@@ -105,17 +105,17 @@ public abstract class YamahaMotifSingleDriver extends Driver
         
     SysexHandler.send(getPort(), sysex);
   }
-  // Stolen from the KawaiK5000ADDSingleDriver
+  // Stolen from the YamahaFS1RVoiceEditor
   // I probably should use some other method to do this, but I'm lazy.
   public Patch createNewPatch() { 
     try {
-      FileInputStream fileIn= new FileInputStream (new File("synthdrivers/YamahaMotif/"+defaults_filename));
+      InputStream fileIn= getClass().getResourceAsStream(defaults_filename);
       byte [] buffer =new byte [patchSize];
       fileIn.read(buffer);
       fileIn.close();
       Patch p=new Patch(buffer, this);
       return p;
-    }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
+    }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find " + defaults_filename,e);return null;}
   }
 
 }

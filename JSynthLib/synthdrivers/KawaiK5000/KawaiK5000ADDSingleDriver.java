@@ -124,7 +124,7 @@ public JSLFrame editPatch(Patch p)
 public Patch createNewPatch()
   { 
   try {
-    FileInputStream fileIn= new FileInputStream (new File("synthdrivers/KawaiK5000/k5k.syx"));
+    InputStream fileIn= getClass().getResourceAsStream("k5k.syx");
     byte [] buffer =new byte [2768];
     fileIn.read(buffer);
     fileIn.close();

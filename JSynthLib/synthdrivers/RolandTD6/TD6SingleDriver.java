@@ -41,7 +41,7 @@ public final class TD6SingleDriver extends Driver {
     private static final int NAME_SIZE = 8;
 
     /** patch file name for createNewPatch() */
-    private static final String patchFileName = "synthdrivers/RolandTD6/newpatch.syx";
+    private static final String patchFileName = "newpatch.syx";
     /**
      * Patch must be sent in 13 packets.  data packet for the 1st
      * packet is 37 byte, and one for others is 55 byte.
@@ -202,7 +202,7 @@ public final class TD6SingleDriver extends Driver {
     // This can be defined in Driver.java. !!!FIXIT!!!
     public Patch createNewPatch() { // Borrowed from DR660 driver
 	try {
-	    FileInputStream fileIn = new FileInputStream(new File(patchFileName));
+	    InputStream fileIn = getClass().getResourceAsStream(patchFileName);
 	    byte[] buffer = new byte [SINGLE_SIZE];
 	    fileIn.read(buffer);
 	    fileIn.close();
