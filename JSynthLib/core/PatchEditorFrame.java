@@ -73,9 +73,12 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
     /**
      * Creates a new <code>PatchEditorFrame</code> instance.
-     *
-     * @param name a name to display in the title bar.
-     * @param patch a <code>Patch</code> value
+     * 
+     * @param name
+     *            a name to display in the title bar.
+     * @param patch
+     *            a reference to <code>ISinglePatch</code> object stored in a
+     *            patch library or a bank patch.
      */
     protected PatchEditorFrame(String name, ISinglePatch patch) {
         // create a resizable, closable, maximizable, and iconifiable frame.
@@ -84,7 +87,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
         nFrame++;
         p = patch;
         // make a backup copy
-        originalPatch = (IPatch)p.clone();
+        originalPatch = (IPatch) p.clone();
 
         gbc = new GridBagConstraints();
         scrollPane = new JPanel();
@@ -149,7 +152,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
             // resize if the frame size is bigger than the screen size 
             Dimension screenSize = PatchEdit.getDesktop().getSize();
             Dimension frameSize = this.getSize();
-            ErrorMsg.reportStatus("PatchEditorFrame.show(): scrollPane size = " + scrollPane.getSize() + ", frame size = " + frameSize);
+            ErrorMsg.reportStatus("PatchEditorFrame.setVisible(): scrollPane size = " + scrollPane.getSize() + ", frame size = " + frameSize);
             
             if (frameSize.height > screenSize.height) {
                 // Add necessary place for the vertical Scrollbar
@@ -204,8 +207,6 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                 copySelectedPatch();
             //restore backup
             p.useSysexFromPatch(originalPatch);
-            // XXX Why don't we simply do as follows?
-            // p = originalPatch;
         }
     }
 

@@ -321,9 +321,8 @@ abstract public class Driver implements IPatchDriver {
     private IPatch fixPatch(Patch pk, String patchString) {
         byte[] sysex = pk.getByteArray();
         for (int i = 0; i < AppConfig.deviceCount(); i++) {
-            // first check the requested device.
+            // first check the device for the patch requested.
             // then starting index '1'. (index 0 is 'generic driver')
-            // XXX pk.getDevice() -> getDevice()?
             Device device = (i == 0) ? pk.getDevice() : AppConfig.getDevice(i);
             for (int j = 0; j < device.driverCount(); j++) {
                 IDriver d = device.getDriver(j);
