@@ -305,26 +305,31 @@ public class EnvelopeWidget extends SysexWidget {
             private int dragNodeIdx;
 	    private EnvelopeNode dragNode;
 
+            private int oldx;
+	    private int oldy;
+
 	    // set dragNode
             public void mousePressed(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
 		// select the first close node.
-		// If none was selected, the last node is selected.
                 for (int i = 0; i < nodes.length; i++)
                     if (((Math.abs(x - nodeX[i])) < DELTA)
 			&& ((Math.abs(y - nodeY[i]) < DELTA))) {
 			dragNodeIdx = i;
 			dragNode = nodes[i];
-			break;	// hiroo
+			oldx = nodeX[i];
+			oldy = nodeY[i];
+			repaint();
+			return;
 		    }
-                repaint();
+		// not found
+		dragNode = null;
             }
 
-            private int oldx;
-	    private int oldy;
-
             public void mouseDragged(MouseEvent e) {
+		if (dragNode == null)
+		    return;
                 int x = e.getX();
                 int y = e.getY();
                 if ((x == oldx) && (y == oldy))
@@ -332,7 +337,8 @@ public class EnvelopeWidget extends SysexWidget {
 		// move the selected node one dot by one dot. (Why? Hiroo)
                 if (x - oldx > 0) { // X+
 		    while ((x - nodeX[dragNodeIdx] > DELTA)
-			   && (getX(dragNodeIdx) < dragNode.maxX)) {
+			   && (getX(dragNodeIdx) < dragNode.maxX)
+			   && (dragNode.ofsX != null)) {
 			if (dragNode.invertX)
 			    dragNode.ofsX.set(dragNode.ofsX.get() - 1);
 			else
@@ -341,7 +347,8 @@ public class EnvelopeWidget extends SysexWidget {
 		    }
 		} else if (x - oldx < 0) {	// X-
 		    while ((x - nodeX[dragNodeIdx] < -DELTA)
-			   && (getX(dragNodeIdx) > dragNode.minX)) {
+			   && (getX(dragNodeIdx) > dragNode.minX)
+			   && (dragNode.ofsX != null)) {
 			if (dragNode.invertX)
 			    dragNode.ofsX.set(dragNode.ofsX.get() + 1);
 			else
@@ -351,13 +358,15 @@ public class EnvelopeWidget extends SysexWidget {
 		}
                 if (y - oldy < 0) { // Y-
 		    while ((y - nodeY[dragNodeIdx] < -DELTA)
-			   && (getY(dragNodeIdx) < dragNode.maxY + dragNode.baseY)) {
+			   && (getY(dragNodeIdx) < dragNode.maxY + dragNode.baseY)
+			   && (dragNode.ofsY != null)) {
 			dragNode.ofsY.set(dragNode.ofsY.get() + 1);
 			paintComponent(null);
 		    }
 		} else if (y - oldy > 0) { // Y+
 		    while ((y - nodeY[dragNodeIdx] > DELTA)
-			   && (getY(dragNodeIdx) > dragNode.minY + dragNode.baseY)) {
+			   && (getY(dragNodeIdx) > dragNode.minY + dragNode.baseY)
+			   && (dragNode.ofsY != null)) {
 			dragNode.ofsY.set(dragNode.ofsY.get() - 1);
 			paintComponent(null);
 		    }
@@ -389,6 +398,8 @@ public class EnvelopeWidget extends SysexWidget {
 	    }
 
             public void mouseReleased(MouseEvent e) {
+		if (dragNode == null)
+		    return;
 		// Send System Exclusive message
 		if (dragNode.ofsX != null)
 		    sendSysex(dragNode.senderX, dragNode.ofsX.get());
