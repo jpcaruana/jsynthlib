@@ -28,10 +28,10 @@ import javax.swing.JPanel;
  */
 public class Device /*implements Serializable, Storable*/ {
 
-	/** Preferences node for storing configuration options */
-	protected Preferences prefs = null;
-	
-	/** The company which made the Synthesizer. */
+    /** Preferences node for storing configuration options */
+    protected Preferences prefs = null;
+
+    /** The company which made the Synthesizer. */
     private String manufacturerName;
     /**
      * The fixed name of the model supported by this driver, as stated
@@ -60,10 +60,14 @@ public class Device /*implements Serializable, Storable*/ {
 
     /** The MIDI output port number. */
     private int port = -1;
+    /** set to true when initialization of MIDI output is done. */
+    private boolean initPort = false;
     /** MIDI output Receiver */
     private Receiver rcvr;
     /** The MIDI input port number. */
     private int inPort = -1;
+    /** set to true when initialization of MIDI input is done. */
+    private boolean initInPort = false;
     /** The input MIDI Device. */
     //private JSLMidiDevice midiIn;
     /** The output MIDI Device. */
@@ -191,7 +195,7 @@ public class Device /*implements Serializable, Storable*/ {
     public void setSynthName (String synthName) { // public for storable
         this.synthName = synthName;
         if (prefs != null)
-        		prefs.put("synthName", synthName);
+	    prefs.put("synthName", synthName);
     }
 
     /**
@@ -265,19 +269,17 @@ public class Device /*implements Serializable, Storable*/ {
      * @param port New value of property port.
      */
     public void setPort (int port) { // public for storable
-    		_setPort(port, true);
-    }
-    private void _setPort(int port, boolean changePrefs) {
     	if (PatchEdit.newMidiAPI) {
-	    if (this.port != port) {
+	    if (!initPort || this.port != port) {
 		if (rcvr != null)
 		    rcvr.close();
 		rcvr = MidiUtil.getReceiver(port);
 	    }
 	}
         this.port = port;
-        if (prefs != null && changePrefs)
-        		prefs.putInt("port", port);
+        if (prefs != null)
+	    prefs.putInt("port", port);
+	initPort = true;
     }
 
     /** send MidiMessage to MIDI output. Called by Driver.send(). */
@@ -306,14 +308,13 @@ public class Device /*implements Serializable, Storable*/ {
      * @param inPort New value of property inPort.
      */
     public void setInPort (int inPort) { // public for storable
-    		_setInPort(inPort, true);
-    }
-    	private void _setInPort(int inPort, boolean changePrefs) {	
-    	this.inPort = inPort;
 	if (PatchEdit.newMidiAPI)
-	    MidiUtil.setSysexInputQueue(inPort);
-		if (prefs != null && changePrefs)
-			prefs.putInt("inPort", inPort);
+	    if (!initInPort || this.inPort != inPort)
+		MidiUtil.setSysexInputQueue(inPort);
+	if (prefs != null)
+	    prefs.putInt("inPort", inPort);
+    	this.inPort = inPort;
+	initInPort = true;
     }
 
     // Getters/Setters, etc for Drivers
@@ -414,15 +415,16 @@ public class Device /*implements Serializable, Storable*/ {
     }
     */
 
-    	public void setPreferences(Preferences p) {
-    		prefs = p;
-    		_setInPort(prefs.getInt("inPort",inPort), false);
-    		synthName = prefs.get("synthName", synthName);
-    		_setPort(prefs.getInt("port", port), false);
-    		channel = prefs.getInt("channel", channel);
-    		deviceID = prefs.getInt("deviceID", deviceID);
-    	}
-    
+    public void setPreferences(Preferences p) {
+	prefs = p;
+	setInPort(prefs.getInt("inPort", 0));
+	setPort(prefs.getInt("port", 0));
+	// do we still need the following fields?
+	synthName = prefs.get("synthName", synthName);
+	channel = prefs.getInt("channel", channel);
+	deviceID = prefs.getInt("deviceID", deviceID);
+    }
+
     /**
      * Getter for DeviceName.
      * @return String of Device Name with inPort and Channel.
