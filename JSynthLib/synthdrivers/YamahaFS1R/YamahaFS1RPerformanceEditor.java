@@ -67,8 +67,8 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	"voicesprd.txt", "voicespre.txt", "voicesprf.txt", "voicesprg.txt", "voicesprh.txt",
 	"voicespri.txt", "voicesprj.txt", "voicesprk.txt"};
 
-	static final int HGAP = 3;
-	static final int VGAP = 0;
+	static final int HGAP = 20;
+	static final int VGAP = 5;
 
 	protected int sysexSize = 0;
 	protected int mPartToEdit;
@@ -363,20 +363,36 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		oEffectsPane.add(new KnobWidget("Reverb", p, 0, 127, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x13, aPart), new YamahaFS1RPerformanceDriver.Sender(0x13, aPart)));
 		// TODO gerer le rnd pour 0
 		oEffectsPane.add(new KnobWidget("Pan", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x0E, aPart), new YamahaFS1RPerformanceDriver.Sender(0x0E, aPart)));
+		oEffectsPane.add(new ComboBoxWidget("", p, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x05, aPart), new YamahaFS1RPerformanceDriver.Sender(0x05, aPart), new String[] {"Mono", "Poly"}));
 		oPanel.add(oEffectsPane);
 
-		JPanel oFreqPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel oFreqPane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, VGAP));
 		oFreqPane.add(new KnobWidget("Note shift", p, 0, 48, -24, new YamahaFS1RPerformanceDriver.Model((Patch)p, 8, aPart), new YamahaFS1RPerformanceDriver.Sender(8, aPart)));
 		oFreqPane.add(new KnobWidget("Detune", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 9, aPart), new YamahaFS1RPerformanceDriver.Sender(9, aPart)));
+		oFreqPane.add(new KnobWidget("Attack time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x1A, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1A, aPart)));
+		oFreqPane.add(new KnobWidget("Decay time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x1B, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1B, aPart)));
+		oFreqPane.add(new KnobWidget("Release time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x1C, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1C, aPart)));
+		oFreqPane.add(new KnobWidget("Vel Sens depth", p, 0, 127, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x0C, aPart), new YamahaFS1RPerformanceDriver.Sender(0x0C, aPart)));
+		oFreqPane.add(new KnobWidget("Vel Sens offset", p, 0, 127, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x0D, aPart), new YamahaFS1RPerformanceDriver.Sender(0x0D, aPart)));
 		oPanel.add(oFreqPane);
 
+		JPanel oFilETPitch = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JPanel oOthersPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		oOthersPane.add(new CheckBoxWidget("Filter", p, new YamahaFS1RPerformanceDriver.Model((Patch)p, 7, aPart), new YamahaFS1RPerformanceDriver.Sender(7, aPart)));
 		oOthersPane.add(new KnobWidget("Cutoff", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x18, aPart), new YamahaFS1RPerformanceDriver.Sender(0x18, aPart)));
 		oOthersPane.add(new KnobWidget("Res", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x19, aPart), new YamahaFS1RPerformanceDriver.Sender(0x19, aPart)));
 		oOthersPane.add(new KnobWidget("EG depth", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x1F, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1F, aPart)));
 		oOthersPane.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Filter", TitledBorder.LEFT, TitledBorder.CENTER));
-		oPanel.add(oOthersPane);
+		oFilETPitch.add(oOthersPane);
+
+		JPanel oEGPane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, VGAP));
+		oEGPane.add(new KnobWidget("Init level", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x20, aPart), new YamahaFS1RPerformanceDriver.Sender(0x20, aPart)));
+		oEGPane.add(new KnobWidget("Attack time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x21, aPart), new YamahaFS1RPerformanceDriver.Sender(0x21, aPart)));
+		oEGPane.add(new KnobWidget("Rel level", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x22, aPart), new YamahaFS1RPerformanceDriver.Sender(0x22, aPart)));
+		oEGPane.add(new KnobWidget("Rel time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x23, aPart), new YamahaFS1RPerformanceDriver.Sender(0x23, aPart)));
+		oEGPane.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Pitch EG", TitledBorder.LEFT, TitledBorder.CENTER));
+		oFilETPitch.add(oEGPane);
+		oPanel.add(oFilETPitch);
 
 		oTabs.addTab("Main", oPanel);
 		oTabs.addTab("Details", new PartDetailsWindow((Patch)p, aPart));
@@ -404,14 +420,13 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			JPanel oPanel = this;
 
 			JPanel oPartPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			oPartPane.add(new ComboBoxWidget("", p, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x05, aPart), new YamahaFS1RPerformanceDriver.Sender(0x05, aPart), new String[] {"Mono", "Poly"}));
 			oPartPane.add(new ComboBoxWidget("Priority", p, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x06, aPart), new YamahaFS1RPerformanceDriver.Sender(0x06, aPart), new String[] {"Last", "Top", "Bottom", "First"}));
 			oPartPane.add(new SpinnerWidget("Note res", p, 0, 32, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0, aPart), new YamahaFS1RPerformanceDriver.Sender(0, aPart)));
 			oPartPane.add(new ComboBoxWidget("Note limit low", p, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x0F, aPart), new YamahaFS1RPerformanceDriver.Sender(0x0F, aPart), mNotes));
 			oPartPane.add(new ComboBoxWidget("Note limit high", p, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x10, aPart), new YamahaFS1RPerformanceDriver.Sender(0x10, aPart), mNotes));
 			oPanel.add(oPartPane);
 
-			JPanel oEffectsPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			JPanel oEffectsPane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, VGAP));
 			oEffectsPane.add(new KnobWidget("Pan scaling", p, 0, 100, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x28, aPart), new YamahaFS1RPerformanceDriver.Sender(0x28, aPart)));
 			oEffectsPane.add(new KnobWidget("Pan LFO depth", p, 0, 99, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x29, aPart), new YamahaFS1RPerformanceDriver.Sender(0x29, aPart)));
 			oEffectsPane.add(new KnobWidget("Formant", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x1D, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1D, aPart)));
@@ -427,7 +442,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			oFreqPane.add(new SpinnerWidget("Pitch Bend high", p, 0x10, 0x58, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x26, aPart), new YamahaFS1RPerformanceDriver.Sender(0x26, aPart)));
 			oPanel.add(oFreqPane);
 
-			JPanel oTonePane = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			JPanel oTonePane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, VGAP));
 			oTonePane.add(new KnobWidget("LFO1 speed", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x15, aPart), new YamahaFS1RPerformanceDriver.Sender(0x15, aPart)));
 			oTonePane.add(new KnobWidget("LFO1 pitch mod", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x16, aPart), new YamahaFS1RPerformanceDriver.Sender(0x16, aPart)));
 			oTonePane.add(new KnobWidget("LFO1 delay", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x17, aPart), new YamahaFS1RPerformanceDriver.Sender(0x17, aPart)));
@@ -435,19 +450,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			oTonePane.add(new KnobWidget("LFO2 Filter mod", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x2F, aPart), new YamahaFS1RPerformanceDriver.Sender(0x2F, aPart)));
 			oPanel.add(oTonePane);
 
-			JPanel oEGPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			oEGPane.add(new KnobWidget("Attack time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x1A, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1A, aPart)));
-			oEGPane.add(new KnobWidget("Decay time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x1B, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1B, aPart)));
-			oEGPane.add(new KnobWidget("Release time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x1C, aPart), new YamahaFS1RPerformanceDriver.Sender(0x1C, aPart)));
-			oEGPane.add(new KnobWidget("PEG init level", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x20, aPart), new YamahaFS1RPerformanceDriver.Sender(0x20, aPart)));
-			oEGPane.add(new KnobWidget("PEG attack time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x21, aPart), new YamahaFS1RPerformanceDriver.Sender(0x21, aPart)));
-			oEGPane.add(new KnobWidget("PEG rel level", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x22, aPart), new YamahaFS1RPerformanceDriver.Sender(0x22, aPart)));
-			oEGPane.add(new KnobWidget("PEG rel time", p, 0, 127, -64, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x23, aPart), new YamahaFS1RPerformanceDriver.Sender(0x23, aPart)));
-			oPanel.add(oEGPane);
-
-			JPanel oOthersPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			oOthersPane.add(new KnobWidget("Vel Sens depth", p, 0, 127, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x0C, aPart), new YamahaFS1RPerformanceDriver.Sender(0x0C, aPart)));
-			oOthersPane.add(new KnobWidget("Vel Sens offset", p, 0, 127, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x0D, aPart), new YamahaFS1RPerformanceDriver.Sender(0x0D, aPart)));
+			JPanel oOthersPane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, VGAP));
 			oOthersPane.add(new KnobWidget("Vel limit low", p, 1, 127, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x2A, aPart), new YamahaFS1RPerformanceDriver.Sender(0x2A, aPart)));
 			oOthersPane.add(new KnobWidget("Vel limit high", p, 1, 127, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x2B, aPart), new YamahaFS1RPerformanceDriver.Sender(0x2B, aPart)));
 			oOthersPane.add(new KnobWidget("Expr low limit", p, 0, 127, 0, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x2C, aPart), new YamahaFS1RPerformanceDriver.Sender(0x2C, aPart)));
