@@ -20,6 +20,11 @@ import synthdrivers.YamahaDX7.*;
 import synthdrivers.KorgWavestation.*;
 import synthdrivers.AlesisQS.*;
 import synthdrivers.RolandMKS50.*;
+import synthdrivers.EnsoniqVFX.*;
+import synthdrivers.SCIProphet600.*;        // KLM
+import synthdrivers.NordLead.*;        // KLM
+import synthdrivers.AccessVirus.*;        // KLM
+import synthdrivers.AlesisA6.*;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JFrame;
@@ -38,21 +43,26 @@ import java.io.*;
 public class DeviceAddDialog extends JDialog {
     
     String [] availibleDevices = {
+	"Access Virus Driver",
+	"Alesis A6 Andromeda Driver",
         "Alesis QS Series Driver",
         "Boss DR660 Driver",
         "Casio CZ-1000 Driver",
         "Emu Proteus MPS Driver",
         "Ensoniq ESQ1/ESQm",
+        "Ensoniq VFX",
         "Kawai K4/K4r Driver",
         "Kawai K5000 Driver",
         "Korg ER1 Driver",
         "Korg Wavestation Driver",
+	"Nord Lead Driver",
         "Novation Nova 1 Driver",
         "Oberheim Matrix 1000 Driver",
         "Oberheim Matrix 6/6R Driver",
         "Peavey PC1600 Driver", // phil@muqus.com
         "Roland MKS-50 Driver", //KLM
         "Roland XV5080 Driver", // phil@muqus.com
+	"Sequential Prophet-600 Driver",
         "Yamaha DX21 / DX27 / DX100 Driver",
         "Yamaha DX7 / TX7 Driver",
         "Yamaha TG33 Driver",
@@ -149,6 +159,10 @@ public class DeviceAddDialog extends JDialog {
             PatchEdit.deviceList.add(new EnsoniqESQ1Device());
             return;
         }
+	if (s.equals("Ensoniq VFX")) {
+            PatchEdit.deviceList.add(new EnsoniqVFXDevice());
+            return;
+        }
         if (s.equals("Yamaha DX21 / DX27 / DX100 Driver")) {
             PatchEdit.deviceList.add(new YamahaDX100Device());
             return;
@@ -189,6 +203,19 @@ public class DeviceAddDialog extends JDialog {
             PatchEdit.deviceList.add(new RolandMKS50Device());
             return;
         }
+	if (s.equals("Alesis A6 Andromeda Driver"))                  // KLM
+	    {PatchEdit.deviceList.add(new AlesisA6Device());
+	    return;}
+	if (s.equals("Sequential Prophet-600 Driver"))                  // KLM
+	    {PatchEdit.deviceList.add(new SCIProphet600Device());
+	    return;}
+	if (s.equals("Nord Lead Driver"))                  // KLM
+	    {PatchEdit.deviceList.add(new NordLeadDevice());
+	    return;}
+	if (s.equals("Access Virus Driver"))                  // KLM
+	    {PatchEdit.deviceList.add(new AccessVirusDevice());
+	    return;}
+
 
     }
     

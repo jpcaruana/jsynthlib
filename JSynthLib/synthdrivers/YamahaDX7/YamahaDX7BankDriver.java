@@ -1,9 +1,10 @@
 /*
- * JSynthlib-BankDriver for Yamaha DX7 Mark-I (with Firmware IG114690)
+ * JSynthlib-BankDriver for Yamaha DX7 Mark-I
+ * (with system ROM V 1.8 from October 24th 1985 - article no. IG114690)
  * =====================================================================
  * @author  Torsten Tittmann
  * file:    YamahaDX7BankDriver.java
- * date:    20.05.2002
+ * date:    23.08.2002
  * @version 0.1
  *
  * Copyright (C) 2002  Torsten.Tittmann@t-online.de
@@ -30,7 +31,6 @@ import javax.swing.*;
 
 public class YamahaDX7BankDriver extends BankDriver
 {
-
   public YamahaDX7BankDriver()
   {
     manufacturer="Yamaha";
@@ -39,51 +39,116 @@ public class YamahaDX7BankDriver extends BankDriver
     id="DX7";
     authors="Torsten Tittmann";
     sysexID="F0430*092000";
+    sysexRequestDump=new SysexHandler("F0 43 @@ 09 F7"); // Dump Request Sysex of TX7 to request a bank dump!
     deviceIDoffset=2;
-    bankNumbers =new String[] {"0-Internal"};
-    patchNumbers=new String[] {"I01","I02","I03","I04","I05","I06","I07","I08",
-                               "I09","I10","I11","I12","I13","I14","I15","I16",
-                               "I17","I18","I19","I20","I21","I22","I23","I24",
-                               "I25","I26","I27","I28","I29","I30","I31","I32"};
+    bankNumbers =new String[] {"Internal"};
+    patchNumbers=new String[] {"01","02","03","04","05","06","07","08",
+                               "09","10","11","12","13","14","15","16",
+                               "17","18","19","20","21","22","23","24",
+                               "25","26","27","28","29","30","31","32"};
     numPatches=patchNumbers.length;
     numColumns=4;
-    singleSize=163;
     singleSysexID="F0430*00011B";
+    singleSize=163;
     checksumOffset=4102;
     checksumStart=6;
     checksumEnd=4101;
+    numSysexMsgs=1;
+    trimSize=4104;
   }
 
 
   public void storePatch (Patch p, int bankNum,int patchNum)
-  { 
-    sendPatchWorker(p);
+  {
+    if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("DX7")==0 )
+    { 
+      if ( ((YamahaDX7Device)(device)).sPBPval==1 )  // DX7 Remote Control
+      {
+        // make Sys Info available
+        ((YamahaDX7Device)(device)).mkDX7SysInfoAvail(port, (byte)(channel+0x10));
+        // switch off memory protection of internal voices
+        ((YamahaDX7Device)(device)).swOffDX7MemProt(port, (byte)(channel+0x10), (byte)0x21, (byte)0x25);
+
+        sendPatchWorker(p);
+      }
+      else // DX7 manually control
+      {
+        if ( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+          // Informations about DX7 patch receiving
+          JOptionPane.showMessageDialog(PatchEdit.instance,
+                                        getDriverName()+"Driver:"+((YamahaDX7Device)(device)).dx7ReceiveString,
+                                        getDriverName()+"Driver",
+                                        JOptionPane.INFORMATION_MESSAGE);
+
+        sendPatchWorker(p);
+      }
+    }
+    else if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("TX7")==0 )
+    {
+      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // TX7 Remote Control
+      {
+        // switch off TX7 memory protection
+        ((YamahaDX7Device)(device)).swOffTX7MemProt.send(port, (byte)(channel+0x10)); // TX7 function parameter change
+
+        sendPatchWorker(p);
+      }
+      else // TX7 manually control
+      {
+        if( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+            // Informations about TX7 patch receiving
+            JOptionPane.showMessageDialog(PatchEdit.instance,
+                                          getDriverName()+"Driver:"+((YamahaDX7Device)(device)).tx7ReceiveString,
+                                          getDriverName()+"Driver",
+                                          JOptionPane.INFORMATION_MESSAGE);
+
+        sendPatchWorker(p);
+      }
+    }
   };
 
 
   public void requestPatchDump(int bankNum, int patchNum)
   {
-      JOptionPane.showMessageDialog(PatchEdit.instance,
-        "The " + getDriverName() + " driver does not support patch getting.\n\nPlease start the patch dump manually, when you have prepared\nyour DX7 to send a patch!\n(Memory Protect Off & Sys Info Available)",
-        "Get "+getDriverName()+" Patch",
-        JOptionPane.WARNING_MESSAGE
-      );
+    if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("DX7")==0 )
+    { 
+      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // DX7 Remote Control
+      {
+        // make Sys Info available
+        ((YamahaDX7Device)(device)).mkDX7SysInfoAvail(port, (byte)(channel+0x10));
+        // let the DX7 transmit the bank dump
+        ((YamahaDX7Device)(device)).xmitDX7BankDump(port, (byte)(channel+0x10));
+      }
+      else // DX7 manually control
+      {
+        if ( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+          // Information about requesting a patch
+          JOptionPane.showMessageDialog(PatchEdit.instance,
+                                        getDriverName()+"Driver:"+((YamahaDX7Device)(device)).dx7RequestVoiceString,
+                                        "Get "+getDriverName()+"Patch",
+                                        JOptionPane.WARNING_MESSAGE);
 
-      byte buffer[] = new byte[256*1024];
-      try {
-            while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
-              PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
-          } catch (Exception ex)
-            {
-              ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
-            }
+        byte buffer[] = new byte[256*1024];
+        try {
+              while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
+                PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
+            } catch (Exception ex)
+              {
+                ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
+              }
+      }
+    }
+    else if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("TX7")==0 )
+    {
+      sysexRequestDump.send(port, (byte)(channel+0x20) );
+    } 
+
   }
 
 
   public int getPatchStart(int patchNum)
   {
-    int start=(128*patchNum);                                                        // single-patch-size in bulked-dump-packed-format
-    start+=6;                                                                        //sysex header
+    int start=(128*patchNum); // single-patch-size in bulked-dump-packed-format
+    start+=6;                 //sysex header
 
     return start;
   }
@@ -92,7 +157,7 @@ public class YamahaDX7BankDriver extends BankDriver
   public String getPatchName(Patch p,int patchNum)
   {
     int nameStart=getPatchStart(patchNum);
-    nameStart+=118;                                                                  //offset of name in patch data
+    nameStart+=118;                        //offset of name in patch data
 
     try
     {
@@ -120,7 +185,7 @@ public class YamahaDX7BankDriver extends BankDriver
   }
 
 
-  public void putPatch(Patch bank,Patch p,int patchNum)                                //puts a patch into the bank, converting it as needed
+  public void putPatch(Patch bank,Patch p,int patchNum) //puts a patch into the bank, converting it as needed
   {
     if (!canHoldPatch(p))
     {
@@ -276,7 +341,7 @@ public class YamahaDX7BankDriver extends BankDriver
   }
 
 
-  public Patch getPatch(Patch bank, int patchNum)                                      //Gets a patch from the bank, converting it as needed
+  public Patch getPatch(Patch bank, int patchNum) //Gets a patch from the bank, converting it as needed
   {
     try
     {
@@ -470,7 +535,7 @@ public class YamahaDX7BankDriver extends BankDriver
   }
 
 
-  public Patch createNewPatch()                        // create a bank with 32 "init voice"-patches
+  public Patch createNewPatch() // create a bank with 32 "init voice"-patches
   {
     byte [] init_voice = {
     -16,67,0,0,1,27,99,99,99,99,99,99,99,0,0,0,0,0,0,0,
