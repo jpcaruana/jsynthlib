@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-
+<! $Id$ >
 <html>
 <head>
 	<title>JSynthLib Documentation</title>
@@ -334,7 +334,12 @@ currently opened. The add button pops up a list of all the synthesizers supporte
 from the list in order to install it and then configure it as explained above. When you choose a synthesizer, all the drivers 
 associated with that synthesizer will be installed. There is also a button to remove, or uninstall a synthesizer driver, for 
 example if you no longer own a particular synth. The third button closes the Synth dialog.</p>
-<p>As of version 0.15, there is an additional button called "Auto-Scan". Currently this feature only works when you are running JSynthLib under Windows and using the WireProvider MIDI drivers. When you chose this option, JSynthLib will attempt to scan your MIDI ports for supported Synthesizers and correctly add and configure them for you. It is not able to detect certain synths (such as Yamaha and Roland) and you should doublecheck the settings it determines for accuracy, but it can still be more conventient then having to add and configure them all by hand.</p>
+<p>As of version 0.15, there is an additional button called "Auto-Scan".
+Currently this feature does not work with the JavaMidi-drivers.
+When you chose this option, JSynthLib will attempt to scan your MIDI ports for supported
+Synthesizers and correctly add and configure them for you. It is not able to detect certain synths
+(such as Yamaha and Roland) and you should doublecheck the settings it determines for accuracy,
+but it can still be more conventient then having to add and configure them all by hand.</p>
 <p><b>Preferences</b>--
 This dialog is used to configure various settings that determine how JSynthLib functions.
 There are three sets of parameters, each with its own tab. The four sets are "General","Directories", "Midi", and "Fader Box"
@@ -344,7 +349,9 @@ you are running JSynthLib. Note that there are two different options for MS-Wind
 two different methods to communicate with MIDI devices under Windows. I recommend using the WireProvider option.
 It seems to work well and can transfer large sysex messages. The JavaMIDI option is included in case WireProvider does not work on your set up. If this is the case, you should e-mail in a bug report, and use JavaMIDI for now.
 <p>In the directorys tab, you can set the default directory from which JSynthLib will attempt to load and save files. The library path determines where the .patchlib files are loaded and saved. The sysex path is used by the import and export commands.
-<p>The second tab holds MIDI settings. The parameter called "Run Initialization on midi ports" only needs to be played with if JSynthLib tells you to on startup or if you want to free the ports for another program. Basically, it needs to grab a couple of midi ports on your system when it starts up to initialize itself. Normally it just grabs the first ones it sees and thats fine. On some systems though, the first MIDI ports will be in use by some other program, or you'll want them left alone for some other program to use. Most MIDI port drivers allow more than one program to use the port, but not all. These parameters just give you the most control possible.
+<p>The second tab holds MIDI settings. 
+The parameter called "Run Initialization on midi ports" only needs to be played with if JSynthLib
+tells you to on startup or if you want to free the ports for another program. Basically, it needs to grab a couple of midi ports on your system when it starts up to initialize itself. Normally it just grabs the first ones it sees and thats fine. On some systems though, the first MIDI ports will be in use by some other program, or you'll want them left alone for some other program to use. Most MIDI port drivers allow more than one program to use the port, but not all. These parameters just give you the most control possible.
 <p>The master controller port determines which MIDI port JSynthlib will watch for Notes being played. If notes are played (for example from a midi keyboard) on this port, JSynthLib will echo them to whatever Synthesizer you are currently working with. (Either by having an editor open in the foreground or having a library open in the foreground and having a patch selected). This allows you more controlling auditioning patches than just using the "play" command. If you have no master controller or don't want to use one, just set this to the same value as your "Run Initialization on" MIDI IN port.
 <p>The fader tab allows you to configure your fader box if you want to use one. A fader box can be useful when editing patches, see the section of this documentation on editing patches for details of what they do. If you want to enable faders, you just check the enable box and set the fader port to the port on which you want to receive faders. Note that due to a bug in the MIDI routines used, JSynthLib will also receive faders on the master controller port.
 <p>JSynthLib recognizes up to 16 Sliders/Knobs and up to 16 Buttons. You can configure which midi controller number and channel will recognized as each button and slider. You can either do this by hand, or use one of the preset buttons. THe Kawai K5000 is set to respond to the 16 knobs on your Kawai as the 16 sliders and ignore the buttons. The Peavey PC1600 preset simply responds to controller 24 on channels 1-16 as sliders 1 through 16 and controllers 25 on channels 1-16 as buttons 1-16. Its up to you to configure your PC1600 to send these values (its very easy).
@@ -437,7 +444,7 @@ librarian support. I've spent anywhere between 3 or 4 hours (working on the DR66
 		    Sometimes they are also availible on the internet if you look around enough. <br>
 	 2. You probably also need the synthesizer you wish to add support for (for testing). While it 
 	    might be possible to do it without the synthesizer, it would be pretty tough.<br>
-	 3. You'll need a copy of the Java 1.3 (or higher) JDK. This is availible for free from java.sun.com
+	 3. You'll need a copy of the Java 1.3 (or higher) JDK. This is availiable for free from java.sun.com
             This contains the various tools used to compile JSynthLib<br>
 	 4. You'll need a text editor in order to edit code. Anything will work. I wrote a significant
 	    part of the JSynthLib core code using EDIT.COM which comes with Windows. More recently,
@@ -461,16 +468,25 @@ you want with it.<br>
 	This section is simply designed towards setting up a working environment (under Windows) for
 doing work on JSynthLib. If you have a different way of setting up your working environment, feel free
 to use it, but this works for me.<br>
-	First, decompress JSynthLib.zip to the directory you are going to work in (such as C:\JSynthLib)
+	First, decompress JSynthLib.zip to the directory you are going to work in (such as
+C:\JSynthLib).
 Next, open up a DOS prompt set to 50 row display and set it to that directory. This is used to run
 JSynthLib for testing (the 50 row display helps keep error messages from scolling off the screen too fast). Make sure that the java.exe and javac.exe executables are in your path for easy access. Next, open up your trusty editor to the correct directory.<br>
 	<br>
 <br>
 <b>Section 3: The Layout of JSynthLib<br></b>
 <br>
-	If you look at the JSynthLib directory, you'll see a number of files and directories. Since you are only adding support for a synthesizer, and not working on the core program, you don't have to worry about most of these. For you, the most important areas are the SynthDrivers directory where code pertaining to various synthesizers are kept, and the JSynthLib.jar file, which holds most of the code.<br>
+If you look at the JSynthLib directory, you'll see a number of files and directories.
+Since you are only adding support for a synthesizer, and not working on the core program, 
+you don't have to worry about most of these. For you, the most important areas are the
+SynthDrivers directory where code pertaining to various synthesizers are kept, and the JSynthLib.jar file, which holds most of the code.<br>
 <br>
-Though 99% of your work will go in the SynthDrivers directory, you need to tell the core JSynthLib program about the existance of your new code. To do so, you must make a small change to the core program itself. All of the core code is kept bundled up inside the JSynthLib.jar file. To extract it, run<br>
+Though 99% of your work will go in the SynthDrivers directory,
+you need to tell the core JSynthLib program about the existance of your new code.
+To do so, you must only make entries into the file "syntdrivers.properties", located
+in the main directory.
+<br>
+All of the core code is kept bundled up inside the JSynthLib.jar file. To extract it, run<br>
 jar -xvf JSynthLib.jar<br>
 <br>
 This will extract all of the files inside the .jar into the directory. You will now see more files and
@@ -514,13 +530,23 @@ as a starting point because its the most simple driver.<br>
 <br>
        <i> Step 2: Tell the core program about your driver.<br></i>
 <br>
-Edit the file called \synthdrivers.properties. This is the only file in the core JSynthLib program that you will have to edit. Add an entry with your synthesizer's name and class to the properties file
-Just write it exactly like the ones for the other drivers. The entry will look like this:<br>
+Edit the file called \synthdrivers.properties. This is the only file in the core
+JSynthLib program that you will have to edit. Add an entry with your synthesizer's
+name and class to the properties file. Just write it exactly like the ones for
+the other drivers. 
+You need three or four entries for each supported device:
+The manufacturer, the plain text name of the device, the class including the
+entire path for the device-class and optionally the string for the response to
+the universal inquiry message, if your device supports it and you want, that the
+device is recognized by the autoscanner. <BR>
+The entry will look like this:<br>
 <pre>
+manufacturer.OberheimMatrix1000=Oberheim
 deviceName.OberheimMatrix1000=Oberheim Matrix 1000 Driver
 deviceClass.OberheimMatrix1000=synthdrivers.OberheimMatrix.OberheimMatrix1000Device
+inquriyID.OberheimMatrix1000=F07E**06021006000200********F7
 </pre>
-Save this file.  If all goes well, JSynthLib now knows<br>
+Save this file.  If all goes well, JSynthLib now knows
 about your driver. Now you just have to write it :)<br>
 <br>
 	<i>Step 3: Write the damn thing<br></i>
@@ -532,11 +558,21 @@ used by the functions in driver.java to manipulate the data. If your syntheizer 
 quirks and features that are impossible to decribe using just data. Therefore you will probably have
 to override some of the functions in driver.java to perform for your synth. <br>
 <br>
-Looking at your driver code (which you stole from the KawaiK4 code like I told you to)
+Looking at your driver code (which you stole from the KawaiK4 code like I told you
+to).
 You'll see that we had to implement functions to Store and Send patches to the synth. This is common, since usually, slightly different sysex messages are used to send a patch to the editing buffer (and not overwrite a patch) or to a specific patch (and overwrite). Change these functions to match your synth. If your synth has no edit buffer, you'll need to write the send method to treat a specific patch location on the synth as the edit buffer and overwrite it (see the EmuProteusMPS Driver for an example of this).<br>
 <br>
-You'll also see that for the KawaiK4, I had to override the computeChecksum method in drivers.java because the K4 uses a different algorithem than the default.  You'll find that the checksum computation is the most common method which needs to be overriden, either because of multiple checksums or because your synth uses a different method to compute its checksum (by default JSynthLib adds all of the data bytes, takes the lowest 7 bits, xors them with 127 and adds one to get the checksum). All of this is in core\drivers.java. Take a look. Computing the checksum properly is the hardest part of <br>
-writing the driver. Trial and error. If your synth uses the default checksum method, you can erase this method from your source file. Otherwise implement it. Note that in the K4 version, two lines are commented out. This is bad programming, I should have erased them. Sorry.<br>
+You'll also see that for the KawaiK4, I had to override the computeChecksum 
+method in drivers.java because the K4 uses a different algorithem than the default.
+You'll find that the checksum computation is the most common method which needs
+to be overriden, either because of multiple checksums or because your synth uses
+a different method to compute its checksum (by default JSynthLib adds all of the
+data bytes, takes the lowest 7 bits, xors them with 127 and adds one to get the checksum).
+All of this is in core\drivers.java. Take a look. Computing the checksum properly
+is the hardest part of writing the driver. Trial and error.
+If your synth uses the default checksum method, you can erase this method from your source file.
+Otherwise implement it. Note that in the K4 version, two lines are commented out.
+This is bad programming, I should have erased them. Sorry.<br>
 <br>
 There are two functions that will always need to be overridden if you wish to provide that functionality becuase there is no default version in core\driver.java. T%hese are both easy to implement. One of these is the function which returns a new (blank) patch. The other opens an editing window for the patch and must be included if you plan to write a Single Editor for your synth. You should be able to figure out how to write these by looking at the code for the K4.<br>
 <br>
@@ -546,7 +582,9 @@ Once your driver is working, JSynthLib now has Librarian support for your synth.
 <br>
 <b>Section 6: Writing a Bank Driver for your Synthesizer<br></b>
 <br>
-If you've decided to write a bank driver for your synth, make sure you told JSynthLib that back in Section 5 Step 2 of this document. Basically, write this the same way you did the single driver. Copy the BankDriver from the KawaiK4 or one of the other synths and edit it to fit your needs. Change all the data in the constructor to fit you synth. The bank driver subclasses core\BankDriver.java. I recommend you look at that file (its commented nicely) and figure out which functions you need to override.<br>
+If you've decided to write a bank driver for your synth, make sure you told
+JSynthLib that back in Section 5 Step 2 of this document.
+Basically, write this the same way you did the single driver. Copy the BankDriver from the KawaiK4 or one of the other synths and edit it to fit your needs. Change all the data in the constructor to fit you synth. The bank driver subclasses core\BankDriver.java. I recommend you look at that file (its commented nicely) and figure out which functions you need to override.<br>
 <br>
 <b>Section 7: Writing a Single Editor for your Synthesizer.<br></b>
 <br>
@@ -775,7 +813,20 @@ Java/Swing provides a construct known as an action listener which allows you to 
 
 <p>Note: I never write an editor but here are some suggestions:
 
-<p>- Usually, modifications done in the editor are sent in real-time to your synth. However, the editor must also make the same modification in the single patch that is edited. To test that it works correctly, you should made some modification in the editor and save the patch (do not send that patch to the edit buffer of your synth). Now, on your synth, the same patch should be in the edit buffer since all single edit will have send sysex for every parameter changed. Do a dump from your synth to PC and compare it to the patch JSynthLib just created. They should be identical. Normally, you should try each fader or knob in the editor to be sure they are controlling the correct parameter. Just move each one at random when creating the patch. If you do that some time (random edit, saving and comparing the file), chance are the editor behave correctly. Note: I suggest to move each fader at random because putting all of them to 0 or max is not a good idea since your editor may send knob info to the wrong place and you will not be able to detect it by comparing the .syx file!
+<p>- Usually, modifications done in the editor are sent in real-time to your synth.
+However, the editor must also make the same modification in the single patch that
+is edited. To test that it works correctly, you should made some modification in
+the editor and save the patch (do not send that patch to the edit buffer of your synth).
+Now, on your synth, the same patch should be in the edit buffer since all single
+edit will have send sysex for every parameter changed. 
+Do a dump from your synth to PC and compare it to the patch JSynthLib just created.
+They should be identical. Normally, you should try each fader or knob in the editor
+to be sure they are controlling the correct parameter. Just move each one at random
+when creating the patch. If you do that some time (random edit, saving and comparing
+the file), chance are the editor behave correctly. Note: I suggest to move each
+fader at random because putting all of them to 0 or max is not a good idea since
+your editor may send knob info to the wrong place and you will not be able to
+detect it by comparing the .syx file!
 
 
 <p>Last step, send your new driver for integration in the next release of JSynthLib!
