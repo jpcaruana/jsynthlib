@@ -10,8 +10,12 @@ package core;
  * @version $Id$
  */
 public class Converter extends Driver {
+    public Converter(String patchType, String authors) {
+	super(patchType, authors);
+    }
+
     public Converter() {
-	super("Converter", "JSynthLib"); // Who is the auther?
+	this("Converter", "JSynthLib"); // Who is the auther?
     }
 
     protected boolean supportsPatch (StringBuffer patchString,Patch p) {
