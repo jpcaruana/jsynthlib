@@ -394,13 +394,17 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
     public void ImportPatch(File file) throws IOException,FileNotFoundException
     {
         int i;
+        int offset=0;
         FileInputStream fileIn= new FileInputStream(file);
         byte [] buffer =new byte [(int)file.length()];
 
         fileIn.read(buffer);
         fileIn.close();
-
-        Patch firstpat=new Patch(buffer);
+        while (offset<buffer.length-1) {
+            // There is still something unprocessed in the file
+            Patch firstpat=new Patch(buffer,offset);
+            offset+=firstpat.sysex.length;
+            System.out.println("Buffer length:"+ buffer.length+" Patch Lenght: "+firstpat.sysex.length);
         Patch[] patarray=firstpat.dissect();
 
         if (patarray.length>1)
@@ -417,7 +421,7 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
             else
                 myModel.PatchList.add(table.getSelectedRow(),firstpat);
         }
-
+        }
         myModel.fireTableDataChanged();
         changed=true;
         statusBar.setText(myModel.PatchList.size()+" Patches");
