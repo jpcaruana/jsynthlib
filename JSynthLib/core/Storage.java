@@ -213,7 +213,7 @@ public class Storage {
 				catch (Exception e) {
 					ErrorMsg.reportError("Config Restore Error",
 							     "Error restoring class '" + className
-							     +"'", e);
+							     +"', " + prefix + propName + ", " + e, e);
 				}
 			};
 		}
