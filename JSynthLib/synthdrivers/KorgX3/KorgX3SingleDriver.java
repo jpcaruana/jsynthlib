@@ -62,6 +62,22 @@ public class KorgX3SingleDriver extends Driver
 
   }
 
+  private byte[] programMode = {
+          (byte) 0xF0, (byte) 0x42,
+          0, (byte) 0x35,
+          (byte) 0x4E, (byte) 0x02, (byte) 0x00, (byte) 0xF7
+  };
+  private byte[] programEditMode = {
+          (byte) 0xF0, (byte) 0x42,
+          0, (byte) 0x35,
+          (byte) 0x4E, (byte) 0x03, (byte) 0x00, (byte) 0xF7
+  };
+  private byte[] programWriteRequest = {
+          (byte) 0xF0, (byte) 0x42,
+          0, (byte) 0x35, 
+          (byte) 0x11, 0, 0, (byte) 0xF7
+  };
+
   /**
    * Overrided setPatchNum. Sets the appropriate active patchnumber 
    *
@@ -71,19 +87,15 @@ public class KorgX3SingleDriver extends Driver
   {
     try
       {
-	byte[] programMode = {(byte)0x4E, (byte)0x02, (byte)0x00, (byte)0xF7};
-	byte[] programEditMode = {(byte)0x4E, (byte)0x03, (byte)0x00, (byte)0xF7};
 	// go to PROGRAM mode
-	send(0xF0, 0x42);
-	send(0x30+(getChannel()-1), 0x35);
+	programMode[2] = (byte) (0x30 + (getChannel() - 1));
 	send(programMode);
 	try {Thread.sleep(100); } catch (Exception e){}   
 	// set patch
+	programEditMode[2] = (byte) (0x30 + (getChannel() - 1));
 	send(0xC0+(getChannel()-1), patchNum, 0xF7);
 	try {Thread.sleep(100); } catch (Exception e){}   
 	// go to PROGRAM EDIT mode
-	send(0xF0, 0x42);
-	send(0x30+(getChannel()-1), 0x35);
 	send(programEditMode);
 	try {Thread.sleep(100); } catch (Exception e){}   
       } catch (Exception e) {};
@@ -98,9 +110,7 @@ public class KorgX3SingleDriver extends Driver
   {
     try
       {
-	byte[] programMode = {(byte)0x4E, (byte)0x02, (byte)0x00, (byte)0xF7};
-	send(0xF0, 0x42);
-	send(0x30+(getChannel()-1), 0x35);
+	programMode[2] = (byte) (0x30 + (getChannel() - 1));
 	send(programMode);
 	
 	// change bank
@@ -127,10 +137,10 @@ public class KorgX3SingleDriver extends Driver
     sendPatchWorker(p);
     try {Thread.sleep(100); } catch (Exception e){}   
 
-    byte[] programWriteRequest = {(byte)0x11, (byte)bankNum, (byte)patchNum, (byte)0xF7};
     try {
-      send(0xF0, 0x42);
-      send(0x30+(getChannel()-1), 0x35);
+      programWriteRequest[2] = (byte) (0x30 + (getChannel() - 1));
+      programWriteRequest[5] = (byte) bankNum;
+      programWriteRequest[6] = (byte) patchNum;
       send(programWriteRequest);
     } catch (Exception e) {
       ErrorMsg.reportError("Error", "Error with patch storing",e);
