@@ -215,6 +215,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * Called when the frame is deactivated. May be redefined in sub-classes.
      */
     protected void frameDeactivated() {
+        Actions.setEnabled(false, Actions.EN_ALL);
     }
 
     // PatchBasket methods

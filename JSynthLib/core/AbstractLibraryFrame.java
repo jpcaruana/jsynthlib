@@ -214,6 +214,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
         }
 
         public void JSLFrameDeactivated(JSLFrameEvent e) {
+            Actions.setEnabled(false, Actions.EN_ALL);
         }
 
         public void JSLFrameDeiconified(JSLFrameEvent e) {
