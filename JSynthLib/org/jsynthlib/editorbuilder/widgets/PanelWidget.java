@@ -5,7 +5,7 @@ import org.jsynthlib.utils.AutoSpringLayout;
 import org.jsynthlib.utils.XMLWriter;
 import org.xml.sax.SAXException;
 
-public class PanelWidget extends AnchoredWidget {
+public class PanelWidget extends ContainerWidget {
 	private boolean asRoot;
 	
 	public PanelWidget() {
@@ -18,9 +18,9 @@ public class PanelWidget extends AnchoredWidget {
 		setText(title);
 	}
 	public void setText(String title) {
-		super.setText(title);
 		if (!asRoot)
 			setBorder(BorderFactory.createTitledBorder(title));
+		super.setText(title);
 	}
 	
 	public void setRoot(boolean asRoot) {

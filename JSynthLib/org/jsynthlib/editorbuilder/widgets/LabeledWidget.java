@@ -19,6 +19,7 @@ public class LabeledWidget extends Widget {
 	}
 	public void setText( String text) {
 		label = text;
+		validateParents();
 	}
 	protected void startElement(XMLWriter xml) throws SAXException {
 		super.startElement(xml);

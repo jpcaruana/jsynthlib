@@ -18,7 +18,7 @@ public class LabelWidget extends AnchoredWidget {
 	}
 	
 	public void setText(String text) {
-		super.setText(text);
 		label.setText(text);
+		super.setText(text);
 	}
 }

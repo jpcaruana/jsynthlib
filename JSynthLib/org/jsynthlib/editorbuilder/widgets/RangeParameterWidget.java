@@ -35,7 +35,6 @@ public class RangeParameterWidget extends ParameterWidget {
 		setType(getType());
 	}
 	public void setType(String type) {
-		super.setType(type);
 		if (widget != null)
 			remove(widget);
 		if (type.equals("H. ScrollBar"))
@@ -50,11 +49,12 @@ public class RangeParameterWidget extends ParameterWidget {
 		add(widget);
 		if (getText() != null)
 			widget.setLabel(getText());
+		super.setType(type);
 	}
 
 	public void setText( String t ) {
-		super.setText(t);
 		widget.setLabel(t);
+		super.setText(t);
 	}
 	public String[] getTypes() { return types; }
 	public String construct() {

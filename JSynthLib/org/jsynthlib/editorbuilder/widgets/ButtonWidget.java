@@ -21,8 +21,8 @@ public class ButtonWidget extends AnchoredWidget {
 	public void setClassName( String _c ) { classname = _c; }
 	
 	public void setText(String t) {
-		super.setText(t);
 		button.setText(t);
+		super.setText(t);
 	}
 	
 }

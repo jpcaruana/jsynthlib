@@ -8,7 +8,6 @@ public class StringParameterWidget extends ParameterWidget {
 	
 	protected Parameter param;
 	protected PatchNameWidget widget;
-	protected String label;
 	
 	private static final String types[] = new String[] {"Patch Name"};
 	
@@ -25,8 +24,8 @@ public class StringParameterWidget extends ParameterWidget {
 	public String[] getTypes() { return new String[] {"Patch Name"}; }
 
 	public void setText( String t ) {
+		widget.setLabel(t);
 		super.setText(t);
-		widget.setLabel(label);
 	}
 	
 	public Parameter getParam() {
@@ -39,8 +38,9 @@ public class StringParameterWidget extends ParameterWidget {
 			remove(widget);
 		widget = new PatchNameWidget(Parameter.nullPatch(), p);
 		add(widget);
-		if (label != null)
-			widget.setLabel(label);
+		if (getText() != null)
+			widget.setLabel(getText());
+		validateParents();
 	}
 	protected void startElement(XMLWriter xml) throws SAXException {
 		super.startElement(xml);

@@ -31,14 +31,14 @@ public class LookupParameterWidget extends ParameterWidget {
     public void setParam(Parameter p) {
     	param = p;
     	setType(getType());
+    	validateParents();
     }
     public void setText( String t ) {
-    	super.setText(t);
     	widget.setLabel(t);
+    	super.setText(t);
     }
     public String[] getTypes() { return types; }
     public void setType(String type) {
-    	super.setType(type);
     	if (widget != null)
     		remove(widget);
     	if (type.equals("Combo Box"))
@@ -51,6 +51,7 @@ public class LookupParameterWidget extends ParameterWidget {
     	add(widget);
     	if (getText() != null)
     		widget.setLabel(getText());
+        super.setType(type);
     }
     protected void startElement(XMLWriter xml) throws SAXException {
     	super.startElement(xml);

@@ -61,11 +61,6 @@ public class DesignerFrame extends JFrame implements ContainerListener {
 		glass.addWidget(strut);
 		c.add(strut);
 		layout.addLayoutComponent(strut, strut.getConstraints());
-		
-		strut = new Strut(0,0,6,6);
-		glass.addWidget(strut);
-		c.add(strut);
-		layout.addLayoutComponent(strut, strut.getConstraints());
 	}
 	
 	public JScrollPane getScrollPane() { return sp; }

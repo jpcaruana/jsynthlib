@@ -25,8 +25,8 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JComponent;
@@ -34,11 +34,10 @@ import javax.swing.JPanel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 
 import org.jsynthlib.editorbuilder.widgets.AnchoredWidget;
 import org.jsynthlib.editorbuilder.widgets.ButtonWidget;
+import org.jsynthlib.editorbuilder.widgets.ContainerWidget;
 import org.jsynthlib.editorbuilder.widgets.LabelWidget;
 import org.jsynthlib.editorbuilder.widgets.LookupParameterWidget;
 import org.jsynthlib.editorbuilder.widgets.PanelWidget;
@@ -59,13 +58,15 @@ public class GlassPane extends JPanel implements DropTargetListener,
     protected static HashMap wids = null;
 
     // static for WidgetComboBoxModel
-    protected static Set containers = new HashSet();
+    //protected static Set containers = new HashSet();
 
     protected static Set widgets = new HashSet();
 
     protected Set mywidgets = null;
 
     protected Set mycontainers = null;
+    private static WeakHashMap wListeners = new WeakHashMap();
+    
 
     public GlassPane() {
         setOpaque(false);
@@ -81,7 +82,7 @@ public class GlassPane extends JPanel implements DropTargetListener,
         this();
         designer = _designer;
         mywidgets = widgets;
-        mycontainers = containers;
+        //mycontainers = containers;
     }
 
     public int getDefaultPadding() {
@@ -122,7 +123,7 @@ public class GlassPane extends JPanel implements DropTargetListener,
     }
 
     protected boolean addComponent(String id, Point p) {
-        Container c = getContainer(p);
+        ContainerWidget c = getContainer(p);
         if (!c.contains(p))
             return false;
         Widget component = null;
@@ -135,23 +136,20 @@ public class GlassPane extends JPanel implements DropTargetListener,
         else if (id.startsWith("Label"))
             component = new LabelWidget();
         else if (id.startsWith("Panel")) {
-            component = new PanelWidget();
+            ContainerWidget cw = new PanelWidget();
+            component = cw;
             //containers.add(component);
             Strut s = new Strut(92, 0, 8, 100);
             addWidget(s);
-            component.add(s);
+            cw.addWidget(s);
             ((SpringLayout) component.getLayout()).addLayoutComponent(s, s
                     .getConstraints());
             s = new Strut(0, 92, 100, 8);
             addWidget(s);
-            component.add(s);
+            cw.addWidget(s);
             ((SpringLayout) component.getLayout()).addLayoutComponent(s, s
                     .getConstraints());
-            s = new Strut(0, 0, default_padding, default_padding);
-            addWidget(s);
-            component.add(s);
-            ((SpringLayout) component.getLayout()).addLayoutComponent(s, s
-                    .getConstraints());
+                    
         } else {
             Parameter pm = ParameterFrame.getParameter(id);
             switch (pm.getType()) {
@@ -170,16 +168,11 @@ public class GlassPane extends JPanel implements DropTargetListener,
 
         }
 
-        c.add(component);
+        c.addWidget(component);
         if (component instanceof AnchoredWidget)
             setConstraints(component, p, c);
         addWidget(component);
-        for (;;) {
-            c.validate();
-            if (c == designer.getRootWidget())
-                break;
-            c = c.getParent();
-        }
+        component.validateParents();
         //component.validate();
         designer.validate();
         //component.repaint();
@@ -325,16 +318,16 @@ public class GlassPane extends JPanel implements DropTargetListener,
         }
     }
 
-    protected Container getContainer(Point p) {
-        Container c = designer.getRootWidget();
+    protected ContainerWidget getContainer(Point p) {
+        ContainerWidget c = designer.getRootWidget();
         Point new_point = SwingUtilities.convertPoint(this, p, c);
         Component new_container = c.getComponentAt(new_point);
         // find correct container and update p to new coordinates.
         while (new_container != null && new_container != c
-                && containers.contains(new_container)) {
+                && new_container instanceof ContainerWidget) {
             new_point = SwingUtilities
                     .convertPoint(c, new_point, new_container);
-            c = (Container) new_container;
+            c = (ContainerWidget) new_container;
             new_container = c.getComponentAt(new_point);
         }
         p.x = new_point.x;
@@ -407,13 +400,14 @@ public class GlassPane extends JPanel implements DropTargetListener,
         } else if (args.length == 1 && args[0] instanceof KeyEvent) {
             KeyEvent e = (KeyEvent) args[0];
             try {
-                Component selected = (Component) designer.getSelectedWidget();
+                Widget selected = designer.getSelectedWidget();
                 if (selected != null
                         && (e.getKeyCode() == KeyEvent.VK_DELETE || e
                                 .getKeyCode() == KeyEvent.VK_BACK_SPACE)) {
-                    selected.getParent().remove(selected);
-                    removeWidget((Widget) selected);
+                    selected.poof();
+                    removeWidget(selected);
                     designer.setSelectedWidget(null);
+                    designer.validate();
                     repaint();
                 }
             } catch (Exception ex) {
@@ -445,22 +439,29 @@ public class GlassPane extends JPanel implements DropTargetListener,
 
     public void addWidget(Widget w) {
         widgets.add(w);
-        if (w instanceof PanelWidget)
-            containers.add(w);
-        WidgetComboBoxModel.update();
+        //if (w instanceof PanelWidget)
+        //    containers.add(w);
+        updateWidgetLists();
     }
 
     public void removeWidget(Widget w) {
         widgets.remove(w);
-        WidgetComboBoxModel.update();
+        if (w instanceof ContainerWidget)
+            widgets.removeAll(((ContainerWidget)w).getAllWidgets());
+        updateWidgetLists();
     }
 
     public ComboBoxModel newWidgetComboBoxModel() {
-        return new WidgetComboBoxModel(this);
+        return new WidgetComboBoxModel(getCommonWidgets());
     }
 
     public static void updateWidgetLists() {
-        WidgetComboBoxModel.update();
+        Iterator it = wListeners.keySet().iterator();
+        while (it.hasNext()) {
+            WidgetListListener l = (WidgetListListener)it.next();
+            if (l != null)
+                l.listChanged();
+        }
     }
 
     // Nothing but WidgetComboBoxModel should call this
@@ -489,102 +490,7 @@ public class GlassPane extends JPanel implements DropTargetListener,
     public static String getPatchIdentifier() {
         return "p";
     }
-
-    /*  public Set getWidgets() { return mywidgets; }
-     public void setWidgets(Set set) {
-     mywidgets = widgets = set;
-     WidgetComboBoxModel.update();
-     }
-     public Set getContainers() { return mycontainers; }
-     public void setContainers(Set set) {
-     mycontainers = containers = set;
-     WidgetComboBoxModel.update();
-     }*/
-    public static boolean isWidgetModelNotifying() {
-        return WidgetComboBoxModel.isNotifying();
-    }
-}
-// should be protected inner class of the object holder
-
-class WidgetComboBoxModel implements ComboBoxModel {
-    protected static Set widgets = GlassPane.getCommonWidgets();
-
-    protected static String[] ids = null;
-
-    protected int selection = 0;
-
-    protected static java.util.List listeners = new LinkedList();
-
-    protected static boolean notifying = false;
-
-    WidgetComboBoxModel(GlassPane gp) {
-        if (ids == null)
-            update();
-    }
-
-    public static void update() {
-        int oldsize = (ids == null) ? 0 : ids.length;
-        ids = new String[widgets.size()];
-        Iterator it = widgets.iterator();
-        int i = 0;
-        while (it.hasNext())
-            ids[i++] = ((Widget) it.next()).getId();
-
-        QuickSort.sort(ids);
-        notifyListeners(Math.max(oldsize, ids.length));
-    }
-
-    protected static void notifyListeners(int index) {
-        if (notifying)
-            return;
-        notifying = true;
-        try {
-            Iterator it = listeners.iterator();
-            while (it.hasNext()) {
-                try {
-                    ListDataListener l = (ListDataListener) it.next();
-                    l.contentsChanged(new ListDataEvent(EditorBuilder
-                            .getDesignerFrame(),
-                            ListDataEvent.CONTENTS_CHANGED, 0, index));
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
-        } finally {
-            notifying = false;
-        }
-    }
-
-    public void addListDataListener(ListDataListener l) {
-        listeners.add(l);
-    }
-
-    public void removeListDataListener(ListDataListener l) {
-        listeners.remove(l);
-    }
-
-    public int getSize() {
-        return ids.length;
-    }
-
-    public Object getElementAt(int index) {
-        return ids[index];
-    }
-
-    public Object getSelectedItem() {
-        if (selection < ids.length)
-            return ids[selection];
-        return null;
-    }
-
-    public void setSelectedItem(Object anItem) {
-        for (int i = 0; i < ids.length; i++) {
-            if (ids[i].equals(anItem))
-                selection = i;
-        }
-    }
-
-    public static boolean isNotifying() {
-        return notifying;
+    public static void addWidgetListener(WidgetListListener l) {
+        wListeners.put(l, null);
     }
 }
