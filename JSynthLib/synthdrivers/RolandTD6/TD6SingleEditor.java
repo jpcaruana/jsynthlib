@@ -1,5 +1,5 @@
 /*
- * Copyright 2003, 2004 Hiroo Hayashi
+ * Copyright 2003, 2004, 2005 Hiroo Hayashi
  *
  * This file is part of JSynthLib.
  *
@@ -559,16 +559,14 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	 * Generates a byte array for system exclusive message.
 	 *
 	 * @param value an <code>int</code> value
-	 * @return a <code>byte[]</code> value
 	 */
-	public byte [] generate(int value) {
+	protected void setValue(int value) {
 	    //ErrorMsg.reportStatus("TD6PadSender : value : " + value);
-	    byte [] s = super.generate(0x01000000 + ((99 - 1) << 16)
-				       + padList[pad].offset
-				       + (isRim ? 0x13 : 0) + param,
-				       value);
-	    //ErrorMsg.reportStatus("TD6PadSender.generate 1: " + this);
-	    return s;
+	    super.setValue(0x01000000 + ((99 - 1) << 16)
+	            + padList[pad].offset
+	            + (isRim ? 0x13 : 0) + param,
+	            value);
+	    //ErrorMsg.reportStatus("TD6PadSender.setValue: " + this);
 	}
     }
 
@@ -714,10 +712,9 @@ class TD6KitSender extends RolandDT1Sender { // extended by TD6PadSender
      * Generates a byte array for system exclusive message.
      *
      * @param value an <code>int</code> value
-     * @return a <code>byte[]</code> value
      */
-    public byte [] generate(int value) {
-	return super.generate(conv(value));
+    protected void setValue(int value) {
+	super.setValue(conv(value));
     }
 
     /**
@@ -725,10 +722,9 @@ class TD6KitSender extends RolandDT1Sender { // extended by TD6PadSender
      *
      * @param param offset address in kit paramters.
      * @param value an <code>int</code> value
-     * @return a <code>byte[]</code> value
      */
-    public byte [] generate(int param, int value) {
-	return super.generate(param, conv(value));
+    protected void setValue(int param, int value) {
+        super.setValue(param, conv(value));
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 Hiroo Hayashi
+ * Copyright 2003, 2004, 2005 Hiroo Hayashi
  *
  * This file is part of JSynthLib.
  *
@@ -20,24 +20,30 @@
  */
 
 package synthdrivers.RolandTD6;
+//If other devices use this, package `synthdrivers.Roland' should be created.
 //package synthdrivers.Roland;
 
-import core.SysexSender;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
+
+import core.IPatchDriver;
 import core.ErrorMsg;
+import core.SysexWidget;
+import core.Utility;
 
 /**
  * RolandDT1Sender.java
  *
- * Generic SysexSender class for Roland DT1 (Data Transfer) system
- * exclusive message.  If other devices use this, package
- * `synthdrivers.Roland' should be created.
+ * Generic SysexWidget.ISender class for Roland DT1 (Data Transfer) system
+ * exclusive message.
  *
  * Created: Wed Jun 25 22:57:37 2003
  *
  * @author <a href="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
  */
-public class RolandDT1Sender extends SysexSender {
+public class RolandDT1Sender implements SysexWidget.ISender {
     /** System Exclusive Data Stream */
     private byte [] b;
     /** address size : 3 or 4 byte */
@@ -48,8 +54,8 @@ public class RolandDT1Sender extends SysexSender {
     private int dataSize;
     /** data byte offset */
     private int dataOfst;
-    /** Device ID (channel) offset */
-    private int chnlOfst;
+    /** Device ID offset */
+    private int devIdOfst;
     /** offset from which check sum is calculated. */
     private int chkSumOfst;
 
@@ -70,14 +76,14 @@ public class RolandDT1Sender extends SysexSender {
     public RolandDT1Sender(int manufacturesId, int modelId,
 			   int addrSize, int addr, int dataSize)
 	throws IllegalArgumentException {
-	this.addrSize = addrSize;	// save for generic()
-	this.dataSize = dataSize;	// save for generic()
+	this.addrSize = addrSize;	// save for setValue()
+	this.dataSize = dataSize;	// save for setValue()
 
 	// Setup all data except channel, data and check-sum here for efficiency.
 	b = new byte [5 + (manufacturesId > 255 ? 3 : 1) + (modelId > 255 ? 2 : 1)
 		      + addrSize + dataSize];
 	int i = 0;
-	b[i++] = (byte) 0xF0;     // SOX : Start of System Exclusive Status
+	b[i++] = (byte) SysexMessage.SYSTEM_EXCLUSIVE;
 	if (manufacturesId < 256) {
 	    b[i++] = (byte) manufacturesId;
 	} else {
@@ -85,10 +91,8 @@ public class RolandDT1Sender extends SysexSender {
 	    b[i++] = (byte) ((manufacturesId >>  8) & 0x7f);
 	    b[i++] = (byte) ((manufacturesId >> 16) & 0x7f);
 	}
-	// "channel" is not set yet here.
-	// "channel" is set by constructor of SysexWidget() which is
-	// usually called after this constructor is called.
-	chnlOfst = i++;
+	// device ID is not set yet here and set by send() method.
+	devIdOfst = i++;
 
 	if (modelId < 256) {
 	    b[i++] = (byte) modelId;
@@ -112,11 +116,15 @@ public class RolandDT1Sender extends SysexSender {
 	    throw new IllegalArgumentException();
 	}
 	dataOfst = i;
-	b[b.length - 1] = (byte) 0xF7;
+	b[b.length - 1] = (byte) ShortMessage.END_OF_EXCLUSIVE;
     }
 
-    /** Constructor without address offset.  The address offset must be
-	specified by generic() method */
+    /**
+     * Constructor without address offset. The address offset must be specified
+     * by using setValue(int, int) method in an overridden setValue(int) method.
+     * This is useful for a Sender whose parameter offset address changes
+     * dynamically.
+     */
     public RolandDT1Sender(int manufacturesId, int modelId,
 			   int addrSize, int dataSize)
 	throws IllegalArgumentException {
@@ -124,35 +132,16 @@ public class RolandDT1Sender extends SysexSender {
     }
 
     /**
-     * Creates a new <code>RolandDT1Sender</code> instance.
-     *
-     * @param modelId an <code>int</code> value
-     * @param addrSize an <code>int</code> value
-     * @param addr an <code>int</code> value
-     * @param dataSize an <code>int</code> value
-     */
-    /*
-      public RolandDT1Sender(int modelId, int addrSize, int addr, int dataSize) {
-      // 0x41: Roland
-      this(0x41, modelId, addrSize, addr, dataSize);
-      }
-    */
-    /**
      * Generate SysEX byte sequence.  Called by SysexWidgets.
      *
      * @param addr Address
      * @param value Data
-     * @return an array of SysEX byte data.
      * @exception IllegalArgumentException if an error occurs
      */
-    public byte [] generate(int addr, int value)
-	throws IllegalArgumentException {
+    protected void setValue(int addr, int value) throws IllegalArgumentException {
 	ErrorMsg.reportStatus("RolandDT1Sender: addr 0x"
 			      + Integer.toHexString(addr)
 			      + ", data 0x" + Integer.toHexString(value));
-	ErrorMsg.reportStatus("DT1Sender.channel = " + channel);
-	b[chnlOfst] = (byte) (channel - 1); // Device ID
-
 	if (addr >= 0) {
 	    if (addrSize == 3) {
 		b[addrOfst + 0] = (byte) ((addr >> 16) & 0x7f);
@@ -176,17 +165,10 @@ public class RolandDT1Sender extends SysexSender {
 	    b[dataOfst + 0] = (byte) ((value >> 24) & 0x7f);
 	    b[dataOfst + 1] = (byte) ((value >> 16) & 0x7f);
 	    b[dataOfst + 2] = (byte) ((value >>  8) & 0x7f);
-	    b[dataOfst + 3] = (byte) ( value	      & 0x7f);
+	    b[dataOfst + 3] = (byte) ( value	    & 0x7f);
 	} else {
 	    throw new IllegalArgumentException();
 	}
-	// calculate check sum
-	int sum = 0;
-	for (int i = chkSumOfst; i <= b.length - 3; i++)
-	    sum += b[i];
-	b[b.length - 2] = (byte) (-sum & 0x7f);
-	ErrorMsg.reportStatus(toString());
-	return b;
     }
 
     /**
@@ -194,12 +176,33 @@ public class RolandDT1Sender extends SysexSender {
      * by constructor.
      *
      * @param value Data
-     * @return an array of SysEX byte data.
      * @exception IllegalArgumentException if an error occurs
      */
-    public byte [] generate(int value)
-	throws IllegalArgumentException {
-	return generate(-1, value);
+    protected void setValue(int value) throws IllegalArgumentException {
+	setValue(-1, value);
+    }
+
+    // SysexWidget.ISender method
+    public void send(IPatchDriver driver, int value) {
+        // set data (and address optionally).
+        setValue(value);
+
+	// set Device ID
+	b[devIdOfst] = (byte) (driver.getDevice().getDeviceID() - 1);
+	// calculate check sum
+	int sum = 0;
+	for (int i = chkSumOfst; i <= b.length - 3; i++)
+	    sum += b[i];
+	b[b.length - 2] = (byte) (-sum & 0x7f);
+	ErrorMsg.reportStatus(toString());
+	// create and send MIDI message
+	SysexMessage m = new SysexMessage();
+        try {
+            m.setMessage(b, b.length);
+            driver.send(m);
+        } catch (InvalidMidiDataException e) {
+            ErrorMsg.reportStatus(e);
+        }
     }
 
     /**
@@ -208,12 +211,6 @@ public class RolandDT1Sender extends SysexSender {
      * @return string like "f0 a3 00 "
      */
     public String toString() {
-	StringBuffer buf = new StringBuffer();
-	//buf.append("[length: " + b.length + "] ");
-	for (int i = 0; i < b.length; i++) {
-	    String s = Integer.toHexString((int) b[i] & 0xff);
-	    buf.append((s.length() == 1 ? "0" : "") + s + " ");
-	}
-	return buf.toString();
+	return Utility.hexDump(b, 0, b.length, 0);
     }
 } // RolandDT1Sender
