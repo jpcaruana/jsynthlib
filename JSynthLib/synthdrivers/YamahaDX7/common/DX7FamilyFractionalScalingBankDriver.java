@@ -58,7 +58,8 @@ public class DX7FamilyFractionalScalingBankDriver extends BankDriver
 		//checksumStart=6;
 		//checksumEnd=16162;
 		numSysexMsgs=1;
-		trimSize=16165;
+		patchSize=16165;
+		trimSize=patchSize;
 	}
 
 

@@ -58,7 +58,8 @@ public class DX7FamilyVoiceBankDriver extends BankDriver
 		checksumStart=6;
 		checksumEnd=4101;
 		numSysexMsgs=1;
-		trimSize=4104;
+		patchSize=4104;
+		trimSize=patchSize;
 	}
 
 

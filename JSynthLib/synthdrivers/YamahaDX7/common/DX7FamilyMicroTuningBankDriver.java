@@ -58,7 +58,8 @@ public class DX7FamilyMicroTuningBankDriver extends BankDriver
 		//checksumStart=6;
 		//checksumEnd=16949;
 		numSysexMsgs=1;
-		trimSize=16952;
+		patchSize=16952;
+		trimSize=patchSize;
 	}
 
 	

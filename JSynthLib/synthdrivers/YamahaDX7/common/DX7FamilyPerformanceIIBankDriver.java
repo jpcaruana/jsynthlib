@@ -61,7 +61,8 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 		checksumStart=6;
 		checksumEnd=1647;
 		numSysexMsgs=1;
-		trimSize=1650;
+		patchSize=1650;
+		trimSize=patchSize;
 	}
 
 
