@@ -96,8 +96,12 @@ public final class PatchEdit  {
 	prefsDialog.setVisible(true);
     }
 
+    /**
+     * Returns the current active JFrame. Used for the <code>owner</code>
+     * parameter for <code>JDialog</code> constructor.
+     */
     public static JFrame getInstance() {
-	return desktop.getSelectedWindow();
+	return desktop == null ? null : desktop.getSelectedWindow();
     }
     public static JSLDesktop getDesktop() {
         return desktop;
