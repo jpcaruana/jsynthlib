@@ -4,7 +4,7 @@
   <manufacturer>Yamaha</manufacturer>
   <inquiryid>F07E7F06024300417[CDE]040000007FF7</inquiryid><!-- regex -->
   <infotext>...</infotext>
-  <authors>...</authors>
+  <authors>Rib Rdb &lt;ribrdb@gmail.com&gt;</authors>
 
   <driver> <!-- should this have another name? -->
     <name>Normal Voice</name>
@@ -31,6 +31,8 @@
     </checksum>
 
     <patch file="normal_voice.xml" />
+
+    <class>normal_voice.groovy</class>
 
   </driver>
   <!-- drum voices, banks, performances, masters, mixes, plg voices, etc -->

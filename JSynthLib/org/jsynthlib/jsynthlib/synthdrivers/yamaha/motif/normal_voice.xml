@@ -1,10 +1,94 @@
 <patch>
   <name>Yamaha Motif Normal Voice</name>
   <group>
+    <name>Header</name>
+    <sysex>
+      <name>Bulk Header</name>
+      <header>F0430.6B00000E0[8F]</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+    </sysex>
+  </group>
+  <group>
     <name>Common</name>
     <sysex>
       <name>Extra</name>
       <header>F0430.6B0042407000</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <string>
         <name>Voice Name</name>
 	<id>name</id>
@@ -341,10 +425,51 @@
         <name>reserved</name>
         <default>0</default>
       </constant>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex>
       <name>Common 1</name>
       <header>F0430.6B000F400000</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <constant>
         <name>reserved</name>
         <default>0x03</default>
@@ -473,10 +598,51 @@
         <name>reserved</name>
         <default>0x7F</default>
       </constant>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex>
       <name>Common 2</name>
       <header>F0430.6B0004400040</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <lookup>
         <name>Insertion Connect Type</name>
         <min>0</min>
@@ -499,10 +665,51 @@
         <name>reserved</name>
         <default>0x00</default>
       </constant>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex>
       <name>Reverb</name>
       <header>F0430.6B0018400100</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <range>
         <name>Reverb Type</name>
         <size>2</size>
@@ -580,10 +787,51 @@
         <min>1</min>
         <max>127</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex>
       <name>Chorus</name>
       <header>F0430.6B0019400200</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <range>
         <name>Chorus Type</name>
         <size>2</size>
@@ -666,10 +914,51 @@
         <min>0</min>
         <max>127</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex>
       <name>Insertion 1 (S)</name>
       <header>F0430.6B0016400300</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <range>
         <name>Insertion-1 Type</name>
         <size>2</size>
@@ -736,10 +1025,51 @@
         <min>0</min>
         <max>16383</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex>
       <name>Insertion 2 (L)</name>
       <header>F0430.6B0022400400</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <range>
         <name>Insertion-2 Type</name>
         <size>2</size>
@@ -842,10 +1172,51 @@
         <min>0</min>
         <max>16383</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex>
       <name>Controller</name>
       <header>F0430.6B001E400500</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <lookup>
         <name>Controller Set1 Source</name>
         <min>0</min>
@@ -1039,10 +1410,51 @@
         <min>0</min>
         <max>15</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex>
-      <header>F0430.6B0025400600</header>
       <name>LFO</name>
+      <header>F0430.6B0025400600</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <lookup>
         <name>LFO Phase</name>
         <min>0</min>
@@ -1310,13 +1722,54 @@
         <min>0</min>
         <max>127</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
   </group>
   <group>
     <name>Element 1</name>
     <sysex id="oscil">
       <name>Oscillator</name>
-      <header>F0430.6B001C420000</header>
+      <header>F0430.6B001C410000</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <lookup>
         <name>ELEMENT ASSIGN</name>
         <min>0</min>
@@ -1452,10 +1905,51 @@
         <min>0</min>
         <max>0</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex id="amp">
       <name>Amplitude</name>
       <header>F0430.6B001E410020</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <range>
         <name>Element Level</name>
         <min>0</min>
@@ -1602,10 +2096,51 @@
         <min>0</min>
         <max>127</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex id="pitch">
       <name>Pitch</name>
       <header>F0430.6B001D420000</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <range>
         <name>Coarse Tune</name>
         <min>16</min>
@@ -1748,10 +2283,51 @@
         <min>0</min>
         <max>127</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex id="filter">
       <name>Filter</name>
       <header>F0430.6B0032430000</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <lookup>
         <name>Filter Type</name>
         <min>0</min>
@@ -1994,10 +2570,51 @@
         <min>0</min>
         <max>127</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex id="eq">
       <name>EQ</name>
       <header>F0430.6B0008440000</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <lookup>
         <name>EQ Type</name>
         <min>0</min>
@@ -2038,10 +2655,51 @@
         <min>32</min>
         <max>96</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
     <sysex id="lfo">
       <name>LFO</name>
       <header>F0430.6B0007440040</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
       <lookup>
         <name>LFO Wave</name>
         <min>0</min>
@@ -2086,12 +2744,17 @@
         <min>0</min>
         <max>127</max>
       </range>
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
     </sysex>
   </group>
   <group>
     <name>Element 2</name>
     <sysex id="oscil">
-      <header>F0430.6B001C420100</header>
+      <header>F0430.6B001C410100</header>
     </sysex>
     <sysex id="amp">
       <header>F0430.6B001E410120</header>
@@ -2112,7 +2775,7 @@
   <group>
     <name>Element 3</name>
     <sysex id="oscil">
-      <header>F0430.6B001C420200</header>
+      <header>F0430.6B001C410200</header>
     </sysex>
     <sysex id="amp">
       <header>F0430.6B001E410220</header>
@@ -2133,7 +2796,7 @@
   <group>
     <name>Element 4</name>
     <sysex id="oscil">
-      <header>F0430.6B001C420300</header>
+      <header>F0430.6B001C410300</header>
     </sysex>
     <sysex id="amp">
       <header>F0430.6B001E410320</header>
@@ -2151,4 +2814,51 @@
       <header>F0430.6B0007440340</header>
     </sysex>
   </group>
-</patch>
+  <group>
+    <name>Footer</name>
+    <sysex>
+      <name>Bulk Footer</name>
+      <header>F0430.6B00000F0[8F]</header>
+      <!-- Sysex header -->
+      <constant>
+	<name>YAMAHA ID</name>
+	<default>0x43</default>
+      </constant>
+      <range>
+	<name>device Number</name>
+	<min>0</min>
+	<max>0x0F</max>
+      </range>
+      <constant>
+	<name>Model ID</name>
+	<default>0x6B</default>
+      </constant>
+      <range>
+	<name>Byte Count</name>
+	<min>0</min>
+	<max>0x3ff</max>
+	<size>2</size>
+      </range>
+      <range>
+	<name>Address High</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Mid</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <range>
+	<name>Address Low</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+      <!-- End header -->
+      <range>
+	<name>Check-sum</name>
+	<min>0</min>
+	<max>0x7f</max>
+      </range>
+    </sysex>
+  </group></patch>
