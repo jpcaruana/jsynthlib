@@ -1041,7 +1041,7 @@ final class Actions {
 
         public void actionPerformed(ActionEvent e) {
             try {
-		((AbstractLibraryFrame) JSLDesktop.getSelectedFrame()).ExtractSelectedPatch();
+		((AbstractLibraryFrame) JSLDesktop.getSelectedFrame()).extractSelectedPatch();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Can not Extract (Maybe its not a bank?)", ex);
 	    }

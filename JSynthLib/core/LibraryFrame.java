@@ -1,221 +1,54 @@
 package core;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 /**
  * @version $Id$
  */
-
-class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
+class LibraryFrame extends AbstractLibraryFrame {
     private static int openFrameCount = 0;
     // column indices
     private static final int SYNTH      = 0;
     private static final int TYPE       = 1;
     private static final int PATCH_NAME = 2;
-    //!!!
     private static final int FIELD1     = 3;
     private static final int FIELD2     = 4;
     private static final int COMMENT    = 5;
 
-    private PatchListModel myModel; // !!!
-    private JTable table;
-    private JTable table2;
-    private JLabel statusBar;
-    private File filename;
-    private boolean changed = false;  //has the library been altered since it was last saved?
-    // This transferhandler could be shared with scene's too.
-    private static PatchTransferHandler pth = new PatchListTransferHandler();
+    {
+        UNSAVED_MSG = "This Library may contain unsaved data.\nSave before closing?";
+    }
 
-    public LibraryFrame(File file) {
-        super(file.getName(), true, //resizable
+    LibraryFrame(File file) {
+        super(file.getName(),
+                true, //resizable
                 true, //closable
                 true, //maximizable
                 true); //iconifiable
-        initLibraryFrame();
     }
 
-    public LibraryFrame() {
-        super("Unsaved Library #" + (++openFrameCount), true, //resizable
+    LibraryFrame() {
+        super("Unsaved Library #" + (++openFrameCount),
+                true, //resizable
                 true, //closable
                 true, //maximizable
                 true); //iconifiable
-        initLibraryFrame();
     }
 
-    protected void initLibraryFrame() {
-        //...Create the GUI and put it in the window...
-        addJSLFrameListener(new MyFrameListener());
-
-        // create Table
-        table = createTable();
-
-        //Create the scroll pane and add the table to it.
-        final JScrollPane scrollPane = new JScrollPane(table);
-        // Enable drop on scrollpane
-        scrollPane.getViewport().setTransferHandler(
-                new ProxyImportHandler(table, pth));
-        scrollPane.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                myModel.fireTableDataChanged();
-            }
-        });
-
-        //Add the scroll pane to this window.
-        JPanel statusPanel = new JPanel();
-        statusBar = new JLabel(myModel.getRowCount() + " Patches");
-        statusPanel.add(statusBar);
-
-        getContentPane().add(scrollPane, BorderLayout.CENTER);
-        getContentPane().add(statusPanel, BorderLayout.SOUTH);
-
-        //...Then set the window size or call pack...
-        setSize(600, 300);
-
-        //Set the window's location.
-        moveToDefaultLocation();
+    PatchTableModel createTableModel() {
+        return new PatchListModel(false);
     }
 
-    private class MyFrameListener implements JSLFrameListener {
-        public void JSLFrameClosing(JSLFrameEvent e) {
-            if (!changed)
-                return;
-
-            // close Patch/Bank Editor editing a patch in this frame.
-            JSLFrame[] jList = JSLDesktop.getAllFrames();
-            for (int j = 0; j < jList.length; j++) {
-                if (jList[j] instanceof BankEditorFrame) {
-                    for (int i = 0; i < myModel.getRowCount(); i++)
-                        if (((BankEditorFrame) (jList[j])).bankData == myModel
-                                .getPatchAt(i)) {
-                            jList[j].moveToFront();
-                            try {
-                                jList[j].setSelected(true);
-                                jList[j].setClosed(true);
-                            } catch (Exception e1) {
-                                ErrorMsg.reportStatus(e1);
-                            }
-                            break;
-                        }
-                }
-                if (jList[j] instanceof PatchEditorFrame) {
-                    for (int i = 0; i < myModel.getRowCount(); i++)
-                        if (((PatchEditorFrame) (jList[j])).p == myModel
-                                .getPatchAt(i)) {
-                            jList[j].moveToFront();
-                            try {
-                                jList[j].setSelected(true);
-                                jList[j].setClosed(true);
-                            } catch (Exception e1) {
-                                ErrorMsg.reportStatus(e1);
-                            }
-                            break;
-                        }
-                }
-            }
-
-            if (JOptionPane
-                    .showConfirmDialog(
-                            null,
-                            "This Library may contain unsaved data.\nSave before closing?", // !!!
-                            "Unsaved Data", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
-                return;
-
-            moveToFront();
-            Actions.saveFrame();
-        }
-
-        public void JSLFrameOpened(JSLFrameEvent e) {
-        }
-
-        public void JSLFrameActivated(JSLFrameEvent e) {
-            Actions.setEnabled(true, Actions.EN_GET | Actions.EN_IMPORT
-                    | Actions.EN_IMPORT_ALL | Actions.EN_NEW_PATCH);
-            enableActions();
-        }
-
-        public void JSLFrameClosed(JSLFrameEvent e) {
-        }
-
-        public void JSLFrameDeactivated(JSLFrameEvent e) {
-            Actions.setEnabled(false, Actions.EN_ALL);
-        }
-
-        public void JSLFrameDeiconified(JSLFrameEvent e) {
-        }
-
-        public void JSLFrameIconified(JSLFrameEvent e) {
-        }
-    }
-
-    private JTable createTable() {
-        myModel = new PatchListModel(changed); // !!!
-        final JTable table = new JTable(myModel);
-        table2 = table; // What's this?
-
-        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        table.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
-                    table2.setRowSelectionInterval(
-                            table2.rowAtPoint(new Point(e.getX(), e.getY())),
-                            table2.rowAtPoint(new Point(e.getX(), e.getY())));
-                }
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    Actions.showMenuPatchPopup(table2, e.getX(), e.getY());
-                    table2.setRowSelectionInterval(
-                            table2.rowAtPoint(new Point(e.getX(), e.getY())),
-                            table2.rowAtPoint(new Point(e.getX(), e.getY())));
-                }
-            }
-
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    playSelectedPatch();
-                }
-            }
-        });
-
-        //table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setTransferHandler(pth);
-        table.setDragEnabled(true);
-
+    void setupColumns(final JTable table) {
         TableColumn column = null;
         column = table.getColumnModel().getColumn(SYNTH);
         column.setPreferredWidth(50);
@@ -229,25 +62,16 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
         column.setPreferredWidth(50);
         column = table.getColumnModel().getColumn(COMMENT);
         column.setPreferredWidth(200);
+    }
 
-        table.getModel().addTableModelListener(new TableModelListener() {
-            public void tableChanged(TableModelEvent e) {
-                statusBar.setText(myModel.getRowCount() + " Patches");
-                enableActions();
-            }
-        });
-
-        table.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent e) {
-                        enableActions();
-                    }
-                });
-        return table;
+    void frameActivated() {
+        Actions.setEnabled(true, Actions.EN_GET | Actions.EN_IMPORT
+                | Actions.EN_IMPORT_ALL | Actions.EN_NEW_PATCH);
+        enableActions();
     }
 
     /** change state of Actions based on the state of the table. */
-    private void enableActions() {
+    void enableActions() {
         Actions.setEnabled(table.getRowCount() > 0, Actions.EN_SAVE
                 | Actions.EN_SAVE_AS | Actions.EN_SEARCH);
         // 			   | Actions.EN_TRANSFER_SCENE);
@@ -266,193 +90,11 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
                         .hasEditor(), Actions.EN_EDIT);
     }
 
-    // begin PatchBasket methods
-    public void importPatch(File file) throws IOException,
-            FileNotFoundException {
-        if (ImportMidiFile.doImport(file)) {
-            return;
-        }
-        FileInputStream fileIn = new FileInputStream(file);
-        byte[] buffer = new byte[(int) file.length()];
-        fileIn.read(buffer);
-        fileIn.close();
-
-        //ErrorMsg.reportStatus("Buffer length:" + buffer.length);
-        IPatch[] patarray = DriverUtil.createPatch(buffer);
-        for (int j = 0; j < patarray.length; j++) {
-            if (table.getSelectedRowCount() == 0)
-                myModel.list.add(patarray[j]);
-            else
-                myModel.list.add(table.getSelectedRow(), patarray[j]);
-        }
-
-        myModel.fireTableDataChanged();
-        changed = true;
-        //statusBar.setText(myModel.getRowCount() + " Patches");
-    }
-
-    public void exportPatch(File file) throws IOException,
-            FileNotFoundException {
-        if (table.getSelectedRowCount() == 0) {
-            ErrorMsg.reportError("Error", "No Patch Selected.");
-            return;
-        }
-        FileOutputStream fileOut = new FileOutputStream(file);
-        fileOut.write(getSelectedPatch().getByteArray());
-        fileOut.close();
-    }
-
-    public void deleteSelectedPatch() {
-        if (table.getSelectedRowCount() == 0) {
-            ErrorMsg.reportError("Error", "No Patch Selected.");
-            return;
-        }
-        myModel.list.remove(table.getSelectedRow());
-        myModel.fireTableDataChanged();
-        //statusBar.setText(myModel.getRowCount() + " Patches");
-    }
-
-    public void copySelectedPatch() {
-        pth.exportToClipboard(table, Toolkit.getDefaultToolkit()
-                .getSystemClipboard(), PatchTransferHandler.COPY);
-    }
-
-    public void pastePatch() {
-        if (!pth.importData(table, Toolkit.getDefaultToolkit()
-                .getSystemClipboard().getContents(this)))
-            Actions.setEnabled(false, Actions.EN_PASTE);
-    }
-
-    public void pastePatch(IPatch p) {
-        pth.importData(table, p);
-    }
-
-    public IPatch getSelectedPatch() {
-        try {
-            return myModel.getPatchAt(table.getSelectedRow());
-        } catch (Exception e) {
-            ErrorMsg.reportStatus(e);
-            return null;
-        }
-    }
-
-    public void sendSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        if (myPatch.getDriver() instanceof ISingleDriver) {
-            myPatch.calculateChecksum();
-            myPatch.send();
-        }
-    }
-
-    public void sendToSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.calculateChecksum();
-        new SysexSendToDialog(myPatch);
-    }
-
-    public void reassignSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.calculateChecksum();
-        new ReassignPatchDialog(myPatch);
-        myModel.fireTableDataChanged();
-    }
-
-    public void playSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        if (myPatch.getDriver() instanceof ISingleDriver) {
-            myPatch.calculateChecksum();
-            myPatch.send();
-            myPatch.play();
-        }
-    }
-
-    public void storeSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.calculateChecksum();
-        new SysexStoreDialog(myPatch);
-    }
-
-    public JSLFrame editSelectedPatch() {
-        if (table.getSelectedRowCount() == 0) {
-            ErrorMsg.reportError("Error",
-                    "No Patch Selected. EditAction must be disabled.");
-            return null;
-        }
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        changed = true;
-        return myPatch.edit();
-    }
-
-    public ArrayList getPatchCollection() {
-        return myModel.list;
-    }
-
-    // end of PatchBasket methods
-
-    // begin AbstarctLibraryFrame methods
-    public AbstractPatchListModel getAbstractPatchListModel() {
-        return myModel;
-    }
-
-    public JTable getTable() { // for SearchDialog
-        return table;
-    }
-
-    public void ExtractSelectedPatch() {
-        if (table.getSelectedRowCount() == 0) {
-            ErrorMsg.reportError("Error", "No Patch Selected.");
-            return;
-        }
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        IBankDriver myDriver = (IBankDriver) myPatch.getDriver();
-        for (int i = 0; i < myDriver.getNumPatches(); i++)
-            if (myDriver.getPatch(myPatch, i) != null)
-                myModel.addPatch(myDriver.getPatch(myPatch, i));
-        myModel.fireTableDataChanged();
-        changed = true;
-        //statusBar.setText(myModel.getRowCount() + " Patches");
-    }
-
-    // end AbstarctLibraryFrame methods
-
-    // for open/save/save-as actions
-    public void save() throws Exception {
-        PatchEdit.showWaitDialog();
-        FileOutputStream f = new FileOutputStream(filename);
-        ObjectOutputStream s = new ObjectOutputStream(f);
-        s.writeObject(myModel.list);
-        s.flush();
-        s.close();
-        f.close();
-        PatchEdit.hideWaitDialog();
-        changed = false;
-    }
-
-    public void save(File file) throws Exception {
-        filename = file;
-        setTitle(file.getName());
-        save();
-    }
-
-    public void open(File file) throws Exception {
-        PatchEdit.showWaitDialog();
-        setTitle(file.getName());
-        filename = file;
-        FileInputStream f = new FileInputStream(file);
-        ObjectInputStream s = new ObjectInputStream(f);
-        myModel.list = (ArrayList) s.readObject();
-        s.close();
-        f.close();
-        revalidateDrivers();
-        PatchEdit.hideWaitDialog();
-        statusBar.setText(myModel.getRowCount() + " Patches");
-    }
-
     void deleteDuplicates() {
-        Collections.sort(myModel.list, new SysexSort());
+        Collections.sort(myModel.getList(), new SysexSort());
         int numDeleted = 0;
         IPatch p, q;
-        Iterator it = myModel.list.iterator();
+        Iterator it = myModel.getList().iterator();
         p = (IPatch) it.next();
         while (it.hasNext()) {
             q = (IPatch) it.next();
@@ -483,40 +125,8 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 
     // for SortDialog
     void sortPatch(Comparator c) {
-        Collections.sort(myModel.list, c);
+        Collections.sort(myModel.getList(), c);
         myModel.fireTableDataChanged();
-    }
-
-    /**
-     * Re-assigns drivers to all patches in libraryframe. Called after new
-     * drivers are added or or removed
-     */
-    protected void revalidateDrivers() {
-        for (int i = 0; i < myModel.getRowCount(); i++)
-            chooseDriver(myModel.getPatchAt(i));
-        myModel.fireTableDataChanged();
-    }
-
-    private void chooseDriver(IPatch patch) {
-        byte[] sysex = patch.getByteArray();
-        IPatchDriver driver = (IPatchDriver) DriverUtil.chooseDriver(sysex);
-        patch.setDriver(driver);
-        if (driver == null) {
-            // Unkown patch, try to guess at least the manufacturer
-            patch.setComment("Probably a "
-                    + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
-                    + " Patch, Size: " + sysex.length);
-        }
-    }
-
-    // not used?
-    public boolean canImport(DataFlavor[] flavors) {
-        return pth.canImport(table, flavors);
-    }
-
-    // not used?
-    public int getSelectedRowCount() {
-        return table.getSelectedRowCount();
     }
 
     /**
@@ -524,8 +134,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
      * 
      * @author Gerrit Gehnen
      */
-    private class PatchListModel extends AbstractTableModel implements
-            AbstractPatchListModel {
+    private class PatchListModel extends PatchTableModel {
         private final String[] columnNames = { "Synth", "Type", "Patch Name",
                 "Field 1", "Field 2", "Comment" };
 
@@ -533,9 +142,13 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 
         private ArrayList list = new ArrayList();
 
-        public PatchListModel(boolean c) {
+        PatchListModel(boolean c) {
             super();
             changed = c;
+        }
+
+        public int getRowCount() {
+            return list.size();
         }
 
         public int getColumnCount() {
@@ -616,29 +229,39 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
             fireTableCellUpdated(row, col);
         }
 
-        // begin AbstractPatchListModel interface methods
-        public void addPatch(IPatch p) {
+        // begin PatchTableModel interface methods
+        void addPatch(IPatch p) {
             list.add(p);
             //  fireTableRowsUpdated(getRowCount(),getRowCount());
             this.fireTableDataChanged();
         }
 
-        public void setPatchAt(IPatch p, int row) {
+        void setPatchAt(IPatch p, int row) {
             list.set(row, p);
             fireTableRowsUpdated(row, row);
         }
 
-        public IPatch getPatchAt(int row) {
+        IPatch getPatchAt(int row) {
             return (IPatch) list.get(row);
         }
 
-        public String getCommentAt(int row) {
+        String getCommentAt(int row) {
             return getPatchAt(row).getComment();
         }
 
-        public int getRowCount() {
-            return list.size();
+        void removeAt(int row) {
+            this.list.remove(row);
+            this.fireTableDataChanged();
         }
-        // end AbstractPatchListModel interface methods
+
+        ArrayList getList() {
+            return this.list;
+        }
+
+        void setList(ArrayList newList) {
+            this.list = newList;
+            this.fireTableDataChanged();
+        }
+        // end PatchTableModel interface methods
     }
 }

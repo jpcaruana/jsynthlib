@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import core.AbstractLibraryFrame.PatchTableModel;
+
 public class SearchDialog extends JDialog {
     private JRadioButton button2;
     private JRadioButton button3;
@@ -132,7 +134,8 @@ public class SearchDialog extends JDialog {
 	}
 
 	AbstractLibraryFrame lf = ((AbstractLibraryFrame) JSLDesktop.getSelectedFrame());
-	if (lf.getAbstractPatchListModel().getRowCount() == 0)
+	PatchTableModel tm = lf.getPatchTableModel();
+	if (tm.getRowCount() == 0)
 	    return;
 	int searchFrom;
 	if (restart || lf.getTable().getSelectedRow() == -1)
@@ -151,8 +154,8 @@ public class SearchDialog extends JDialog {
 	String s;
 	int i;
 	boolean match = false;
-	for (i = searchFrom; i < lf.getAbstractPatchListModel().getRowCount(); i++) {
-		p =  lf.getAbstractPatchListModel().getPatchAt(i);
+	for (i = searchFrom; i < tm.getRowCount(); i++) {
+		p =  tm.getPatchAt(i);
 
 		match = false;
 		if (field == 0 || field == 4) {
@@ -171,8 +174,7 @@ public class SearchDialog extends JDialog {
 		    if (match) break;
 		}
 		if (field == 3 || field == 4) {
-		    s = lf.getAbstractPatchListModel().getCommentAt(i).toString().toLowerCase();
-		    //s=p.comment.toString().toLowerCase();
+		    s = tm.getCommentAt(i).toLowerCase();
 		    match = (s.indexOf(text) != -1);
 		    if (match) break;
 		}
