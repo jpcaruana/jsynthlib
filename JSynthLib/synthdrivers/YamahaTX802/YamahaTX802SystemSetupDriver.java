@@ -44,7 +44,7 @@ public class YamahaTX802SystemSetupDriver extends DX7FamilySystemSetupIIIDriver
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

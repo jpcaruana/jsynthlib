@@ -224,7 +224,7 @@ public class KorgX3SingleDriver extends Driver
    * @param p Patch to be edited
    * @return Editor window
    */
-  public JInternalFrame editPatch(Patch p)
+  public JSLFrame editPatch(Patch p)
   {
     return new KorgX3SingleEditor(p);
   }

@@ -63,7 +63,7 @@ public class DX7FamilyPerformanceIIISingleDriver extends Driver
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new DX7FamilyPerformanceIIIEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor" ,p);
 	}

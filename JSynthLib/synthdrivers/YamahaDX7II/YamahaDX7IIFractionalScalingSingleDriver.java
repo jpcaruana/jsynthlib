@@ -44,7 +44,7 @@ public class YamahaDX7IIFractionalScalingSingleDriver extends DX7FamilyFractiona
 	}
 
 	
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

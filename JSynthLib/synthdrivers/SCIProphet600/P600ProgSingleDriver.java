@@ -99,7 +99,7 @@ public class P600ProgSingleDriver extends Driver {
     return p;
   }
 
-  public JInternalFrame editPatch(Patch p) {
+  public JSLFrame editPatch(Patch p) {
      return new P600ProgSingleEditor(p);
   }
 }

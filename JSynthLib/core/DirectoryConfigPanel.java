@@ -32,7 +32,7 @@ public class DirectoryConfigPanel extends ConfigPanel {
 			  fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
 			  if (getLibPath() != null)
 			    fc.setSelectedFile(new File(getLibPath())); 
-			  fc.showDialog(PatchEdit.instance, 
+			  fc.showDialog(PatchEdit.getInstance(), 
 					"Choose Default Directory"); 
 			  if (fc.getSelectedFile() != null) { 
 			    setLibPath(fc.getSelectedFile().getPath()); 
@@ -47,7 +47,7 @@ public class DirectoryConfigPanel extends ConfigPanel {
 			  fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			  if (getSysexPath() != null)
 			    fc.setSelectedFile(new File(getSysexPath()));
-			  fc.showDialog(PatchEdit.instance, 
+			  fc.showDialog(PatchEdit.getInstance(), 
 					"Choose Default Directory");
 			  if (fc.getSelectedFile() != null) {
 			    setSysexPath(fc.getSelectedFile().getPath());

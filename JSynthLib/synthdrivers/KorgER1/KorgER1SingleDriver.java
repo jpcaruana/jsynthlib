@@ -136,7 +136,7 @@ public class KorgER1SingleDriver extends Driver
     }
     
     
-    //public JInternalFrame editPatch(Patch p)
+    //public JSLFrame editPatch(Patch p)
     // {
     //     return new KorgER1SingleEditor(p);
     // }

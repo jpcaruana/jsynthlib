@@ -123,7 +123,7 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 ) {
 			// switch off memory protection of internal/cartridge voices

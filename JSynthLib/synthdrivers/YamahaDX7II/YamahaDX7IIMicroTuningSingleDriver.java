@@ -44,7 +44,7 @@ public class YamahaDX7IIMicroTuningSingleDriver extends DX7FamilyMicroTuningSing
 	}
 
 	
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

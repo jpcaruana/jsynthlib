@@ -2,7 +2,6 @@ package synthdrivers.YamahaFS1R;
 
 import core.*;
 import java.io.*;
-import javax.swing.JInternalFrame;
 
 /**
  *  System parameters driver for Yamaha FS1R.
@@ -95,7 +94,7 @@ public class YamahaFS1RSystemDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new YamahaFS1RSystemEditor(p);
 	}

@@ -44,7 +44,7 @@ public class YamahaDX7IIPerformanceSingleDriver extends DX7FamilyPerformanceIISi
 	}
 		
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

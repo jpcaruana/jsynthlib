@@ -107,7 +107,7 @@ public class NovationNova1SingleDriver extends Driver
         return p;
     }
 
-    //public JInternalFrame editPatch(Patch p)
+    //public JSLFrame editPatch(Patch p)
     // {
     //     
     // }

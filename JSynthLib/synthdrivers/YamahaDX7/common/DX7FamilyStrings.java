@@ -29,7 +29,7 @@ public class DX7FamilyStrings
 {
 	public final static void dxShowInformation(String driver, String string)
 	{
-		 JOptionPane.showMessageDialog(PatchEdit.instance,
+		 JOptionPane.showMessageDialog(PatchEdit.getInstance(),
 			 driver+"Driver:"+ string,
 			 driver+"Driver",
 			 JOptionPane.INFORMATION_MESSAGE);

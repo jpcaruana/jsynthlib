@@ -81,7 +81,7 @@ public class AlesisQSEffectsDriver extends Driver
     return p;
   }
 
-  //public JInternalFrame editPatch(Patch p)
+  //public JSLFrame editPatch(Patch p)
   // {
   //     return new AlesisQSEffectsEditor(p);
   // }

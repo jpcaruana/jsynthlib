@@ -15,7 +15,7 @@ import java.io.*;
 import java.awt.dnd.*;
 import java.awt.datatransfer.*;
 
-public class BankEditorFrame extends JInternalFrame implements PatchBasket {
+public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
     protected Patch bankData;
     /** bank driver. */
@@ -105,16 +105,16 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 		}
 	    });
 
-        this.addInternalFrameListener(new InternalFrameListener() {
-		public void internalFrameOpened(InternalFrameEvent e) {
+        this.addJSLFrameListener(new JSLFrameListener() {
+		public void JSLFrameOpened(JSLFrameEvent e) {
 		}
-		public void internalFrameClosed(InternalFrameEvent e) {
+		public void JSLFrameClosed(JSLFrameEvent e) {
 		}
-		public void internalFrameDeiconified(InternalFrameEvent e) {
+		public void JSLFrameDeiconified(JSLFrameEvent e) {
 		}
-		public void internalFrameIconified(InternalFrameEvent e) {
+		public void JSLFrameIconified(JSLFrameEvent e) {
 		}
-		public void internalFrameActivated(InternalFrameEvent e) {
+		public void JSLFrameActivated(JSLFrameEvent e) {
 		    PatchEdit.receiveAction.setEnabled(false);
 		    PatchEdit.pasteAction.setEnabled(true);
 		    PatchEdit.importAction.setEnabled(true);
@@ -154,8 +154,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 		    }
 		    //System.out.println("Frame activated"+table.getSelectedRowCount());
 		}
-		public void internalFrameClosing(InternalFrameEvent e) {
-		    JInternalFrame[] jList = PatchEdit.desktop.getAllFrames();
+		public void JSLFrameClosing(JSLFrameEvent e) {
+		    JSLFrame[] jList = PatchEdit.desktop.getAllFrames();
 		    for (int j = 0; j < jList.length; j++)
 			if (jList[j] instanceof PatchEditorFrame) {
 			    if (((PatchEditorFrame) (jList[j])).bankFrame == instance) {
@@ -169,7 +169,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 			}
 		}
 
-		public void internalFrameDeactivated(InternalFrameEvent e) {
+		public void JSLFrameDeactivated(JSLFrameEvent e) {
 		    //PatchEdit.receiveAction.setEnabled(false);
 		    PatchEdit.extractAction.setEnabled(false);
 		    PatchEdit.sendAction.setEnabled(false);
@@ -306,7 +306,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 			     + table.getSelectedRow());
     }
 
-    public JInternalFrame EditSelectedPatch() {
+    public JSLFrame EditSelectedPatch() {
         if (!checkSelected()) return null;
         Patch p = getSelectedPatch();
         if (p == null) {

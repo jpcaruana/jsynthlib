@@ -51,7 +51,7 @@ public class VirusProgBankDriver extends BankDriver {
 
   public void storePatch (Patch p, int bankNum, int patchNum) {
     if (bankNum > 1) {
-      JOptionPane.showMessageDialog(PatchEdit.instance,
+      JOptionPane.showMessageDialog(PatchEdit.getInstance(),
         "Cannot send to a preset bank",
         "Store Patch",
         JOptionPane.WARNING_MESSAGE

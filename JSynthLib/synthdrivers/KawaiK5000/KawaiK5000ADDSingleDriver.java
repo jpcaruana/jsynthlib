@@ -117,7 +117,7 @@ public void calculateChecksum(Patch p)
 //----- End phil@muqus.com
 
 
-public JInternalFrame editPatch(Patch p)
+public JSLFrame editPatch(Patch p)
  {
      return new KawaiK5000ADDSingleEditor(p);
  }

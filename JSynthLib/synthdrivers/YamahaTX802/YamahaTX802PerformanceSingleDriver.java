@@ -44,7 +44,7 @@ public class YamahaTX802PerformanceSingleDriver extends DX7FamilyPerformanceIIIS
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

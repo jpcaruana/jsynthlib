@@ -32,7 +32,7 @@ public class ReassignPatchDialog extends JDialog {
   * @param patch The Patch to reassign
   */
   public ReassignPatchDialog (Patch patch) {
-    super(PatchEdit.instance, "Reassign Patch to another Device/Driver", true);
+    super(PatchEdit.getInstance(), "Reassign Patch to another Device/Driver", true);
 
     p           = patch;
     patchString = p.getPatchHeader();

@@ -44,7 +44,7 @@ public class YamahaTX802AdditionalVoiceSingleDriver extends DX7FamilyAdditionalV
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

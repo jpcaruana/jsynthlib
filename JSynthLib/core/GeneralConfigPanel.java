@@ -12,18 +12,29 @@ import javax.swing.*;
 public class GeneralConfigPanel extends ConfigPanel {
 	UIManager.LookAndFeelInfo [] installedLF;
 	JComboBox cb5;
+	JComboBox cb6;
 
 	public GeneralConfigPanel(core.AppConfig appConfig) {
 		super(appConfig);
 		setLayout (new core.ColumnLayout ());
 
+		JPanel p = new JPanel();
 		JLabel l0=new JLabel ("Application Look and Feel:");
-		add (l0);
+		p.add (l0);
 		installedLF =  UIManager.getInstalledLookAndFeels ();
 		cb5 = new JComboBox ();
 		for (int j=0; j< installedLF.length;j++)
 			cb5.addItem (installedLF[j].getName ());
-		add (cb5);
+		p.add (cb5);
+		add(p);
+
+		l0 = new JLabel("GUI Style:");
+		cb6 = new JComboBox(new String[] {"MDI (Single Window)",
+						  "SDI (Many Windows)",});
+		p = new JPanel();
+		p.add(l0);
+		p.add(cb6);
+		add(p);
 	}
 
 	/**
@@ -39,6 +50,7 @@ public class GeneralConfigPanel extends ConfigPanel {
 			UIManager.setLookAndFeel (installedLF[appConfig.getLookAndFeel()].getClassName ());
 		}catch (Exception e) {};
 		cb5.setSelectedIndex (appConfig.getLookAndFeel());
+		cb6.setSelectedIndex (appConfig.getGuiStyle());
 	}
 	
 	/**
@@ -47,9 +59,11 @@ public class GeneralConfigPanel extends ConfigPanel {
 	* save those settings in to the preference-saving system, if any
 	*/
 	public void commitSettings() {
-		if (appConfig.getLookAndFeel()!=cb5.getSelectedIndex ())
+		if (appConfig.getLookAndFeel()!=cb5.getSelectedIndex () ||
+		    appConfig.getGuiStyle() != cb6.getSelectedIndex())
 			JOptionPane.showMessageDialog (null, "You must exit and restart the program for your changes to take effect","Changing L&F / Platform", JOptionPane.INFORMATION_MESSAGE);
 		appConfig.setLookAndFeel(cb5.getSelectedIndex());
+		appConfig.setGuiStyle(cb6.getSelectedIndex());
 	}
 	
 	/**

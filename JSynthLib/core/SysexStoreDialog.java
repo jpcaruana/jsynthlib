@@ -46,7 +46,7 @@ public class SysexStoreDialog extends JDialog {
   * @param patchnum The default patchNumber
   */
   public SysexStoreDialog (Patch patch, int patchnum) {
-    super(PatchEdit.instance, "Store Sysex Data", true);
+    super(PatchEdit.getInstance(), "Store Sysex Data", true);
 
     // initialising some variables
     p           = patch;

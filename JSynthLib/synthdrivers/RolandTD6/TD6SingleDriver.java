@@ -233,9 +233,9 @@ public final class TD6SingleDriver extends Driver {
      * Invoke Single Editor.
      *
      * @param p a <code>Patch</code> value
-     * @return a <code>JInternalFrame</code> value
+     * @return a <code>JSLFrame</code> value
      */
-    public JInternalFrame editPatch(Patch p) {
+    public JSLFrame editPatch(Patch p) {
 // 	ErrorMsg.reportStatus("editPatch: " + device);
 	return new TD6SingleEditor(p);
     }

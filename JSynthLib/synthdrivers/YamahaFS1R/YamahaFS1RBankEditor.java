@@ -98,17 +98,17 @@ public class YamahaFS1RBankEditor extends BankEditorFrame implements PatchBasket
             
         });
         
-        this.addInternalFrameListener (new InternalFrameListener ()
+        this.addJSLFrameListener (new JSLFrameListener ()
         {
-            public void internalFrameOpened (InternalFrameEvent e)
+            public void JSLFrameOpened (JSLFrameEvent e)
             {}
-            public void internalFrameClosed (InternalFrameEvent e)
+            public void JSLFrameClosed (JSLFrameEvent e)
             {}
-            public void internalFrameDeiconified (InternalFrameEvent e)
+            public void JSLFrameDeiconified (JSLFrameEvent e)
             {}
-            public void internalFrameIconified (InternalFrameEvent e)
+            public void JSLFrameIconified (JSLFrameEvent e)
             {}
-            public void internalFrameActivated (InternalFrameEvent e)
+            public void JSLFrameActivated (JSLFrameEvent e)
             {
                 PatchEdit.receiveAction.setEnabled (false);
                 PatchEdit.pasteAction.setEnabled (true);
@@ -152,9 +152,9 @@ public class YamahaFS1RBankEditor extends BankEditorFrame implements PatchBasket
                 
                 //System.out.println ("Frame activated"+table.getSelectedRowCount ());
             }
-            public void internalFrameClosing (InternalFrameEvent e)
+            public void JSLFrameClosing (JSLFrameEvent e)
             {
-              JInternalFrame[] jList =PatchEdit.desktop.getAllFrames ();
+              JSLFrame[] jList =PatchEdit.desktop.getAllFrames ();
 	       for (int j=0;j<jList.length;j++)
 		    if (jList[j] instanceof PatchEditorFrame) 
 		     {
@@ -166,7 +166,7 @@ public class YamahaFS1RBankEditor extends BankEditorFrame implements PatchBasket
 		     }
             }
             
-            public void internalFrameDeactivated (InternalFrameEvent e)
+            public void JSLFrameDeactivated (JSLFrameEvent e)
             {
                 //PatchEdit.receiveAction.setEnabled (false);
                 PatchEdit.extractAction.setEnabled (false);
@@ -219,7 +219,7 @@ public class YamahaFS1RBankEditor extends BankEditorFrame implements PatchBasket
 		a patch from the bank.
 		@param aPart performance part number 1..4
 	*/
-    public JInternalFrame EditPatch (int aNumPatch, int aPart)
+    public JSLFrame EditPatch (int aNumPatch, int aPart)
     {
         Patch p = bankDriver.getPatch (bankData, aNumPatch);
         if (p==null) {

@@ -111,7 +111,7 @@ public class AlesisQSMixDriver extends Driver
     return p;
   }
 
-  //public JInternalFrame editPatch(Patch p)
+  //public JSLFrame editPatch(Patch p)
   // {
   //     return new AlesisQSMixEditor(p);
   // }

@@ -28,9 +28,9 @@ public class ErrorMsg {
      * @param errorMSG error message.
      */
     public static void reportError(String errorTitle, String errorMSG) {
-// 	JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+// 	JOptionPane.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 // 				      errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
-	ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+	ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.ERROR_MESSAGE);
 	if (debug > 1)
@@ -48,9 +48,9 @@ public class ErrorMsg {
      */
     public static void reportError(String errorTitle, String errorMSG,
 				   Exception e) {
-// 	JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+// 	JOptionPane.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 // 				      errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
-	ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+	ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.ERROR_MESSAGE, e);
 	if (debug > 1)
@@ -70,9 +70,9 @@ public class ErrorMsg {
      * @param errorMSG warning message.
      */
     public static void reportWarning(String errorTitle, String errorMSG) {
-// 	JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+// 	JOptionPane.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 // 				      errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
-        ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+        ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.WARNING_MESSAGE);
 	if (debug > 1)
@@ -90,9 +90,9 @@ public class ErrorMsg {
      */
     public static void reportWarning(String errorTitle, String errorMSG,
 				     Exception e) {
-// 	JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+// 	JOptionPane.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 // 				      errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
-        ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/,
+        ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.WARNING_MESSAGE);
 	if (debug > 1)

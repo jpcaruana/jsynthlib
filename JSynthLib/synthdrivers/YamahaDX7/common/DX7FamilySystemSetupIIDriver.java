@@ -62,7 +62,7 @@ public class DX7FamilySystemSetupIIDriver extends Driver
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSpinnerEditorFlag() & 0x01) == 1 ) {
 			if ( (float)(Float.parseFloat(java.lang.System.getProperty("java.specification.version"))) >= (float)(1.4)  ) {

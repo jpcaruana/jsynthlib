@@ -173,7 +173,7 @@ public class SynthConfigDialog extends JDialog {
     }
 
     private void revalidateLibraries() {
-	JInternalFrame[] jList = PatchEdit.desktop.getAllFrames ();
+	JSLFrame[] jList = PatchEdit.desktop.getAllFrames ();
 	if (jList.length > 0) {
 	    PatchEdit.waitDialog.show();
 	    for (int i = 0; i < jList.length; i++) {

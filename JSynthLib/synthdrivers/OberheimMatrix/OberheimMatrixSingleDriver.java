@@ -122,7 +122,7 @@ public Patch createNewPatch()
 	 calculateChecksum(p);	 
 	 return p;
  }
-public JInternalFrame editPatch(Patch p)
+public JSLFrame editPatch(Patch p)
  {
      return new OberheimMatrixSingleEditor(p);
  }

@@ -19,15 +19,14 @@ import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 
 //TODO import /*TODO org.jsynthlib.*/midi.*;
-public class PatchEdit extends JFrame implements MidiDriverChangeListener {
-    public static PatchEdit instance;
+public class PatchEdit implements MidiDriverChangeListener {
     public static MidiWrapper MidiOut;
     public static MidiWrapper MidiIn;
     public static AppConfig appConfig;
     // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
     public static WaitDialog waitDialog; // define showWaitDialog() and hideWaitDialog()
 
-    static JDesktopPane desktop;
+    static JSLDesktop desktop;
     static Patch Clipboard;
     static JPopupMenu menuPatchPopup; // define showMenuPatchPopup()
     static javax.swing.Timer echoTimer;
@@ -59,13 +58,13 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     static MonitorAction monitorAction;
     static NewSceneAction newSceneAction;
     static TransferSceneAction transferSceneAction;
+    static SynthAction synthAction;
+    static PrefsAction prefsAction;
 
     private static NextFaderAction nextFaderAction;
     private static NewAction newAction;
     private static OpenAction openAction;
     private static ExitAction exitAction;
-    private static PrefsAction prefsAction;
-    private static SynthAction synthAction;
     private static AboutAction aboutAction;
 
     private static MidiMonitor midiMonitor;
@@ -81,9 +80,9 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	/*
 	 * Initialize JFrame
 	 */
-        super("JSynthLib");
+        //super("JSynthLib");
 	// phil@muqus.com (so can pop-up windows with PatchEdit as the
-        instance = this;
+        //instance = this;
 
 	/*
 	 * Load config file (JSynthLib.properties).
@@ -91,10 +90,19 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	appConfig = new AppConfig();
         boolean loadPrefsSuccessfull = appConfig.loadPrefs();
 
+	// Set up the GUI.
+	createActions();
+
+	desktop = new JSLDesktop();
+	desktop.setupInitialMenuBar(createToolBar());
+	if (MacUtils.isMac())
+	    initForMac(exitAction, prefsAction, aboutAction);
+
+
 	/*
 	 * Setup preference dialog window.
 	 */
-        prefsDialog = new PrefsDialog(this);
+        prefsDialog = new PrefsDialog(desktop.getSelectedWindow());
 	// Add the configuration panels to the prefsDialog
         prefsDialog.addPanel(new GeneralConfigPanel(appConfig));
 
@@ -117,43 +125,6 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	// panel.
 	prefsDialog.init();
 
-        /*
-	 * Now lets set up how the pretty application should look.
-	 */
-        int inset = 100;
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(inset, inset,
-		  screenSize.width  - inset * 2,
-		  screenSize.height - inset * 2);
-
-        //Quit this app when the big window closes.
-        addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		    appConfig.savePrefs();
-		    // We shouldn't need to unload the midi driver if
-		    // the whole JVM is going away.
-		    // unloadMidiDriver();
-		    System.exit(0);
-		}
-	    });
-
-	createActions();
-
-        //Set up the GUI.
-        Container c = getContentPane();
-        setJMenuBar(createMenuBar());
-	JToolBar tb = createToolBar();
-        c.add(tb, BorderLayout.NORTH);
-        tb.setVisible(true);	//necessary as of kestrel
-	if (MacUtils.isMac())
-	    initForMac(exitAction, prefsAction, aboutAction);
-
-        desktop = new JDesktopPane();
-        desktop.setOpaque(false);
-        desktop.putClientProperty("JDesktopPane.dragMode", "outline");
-        c.add(desktop, BorderLayout.CENTER);
-
-        setVisible(true);
 
 	// popup menu for Library window, etc.
 	menuPatchPopup = createPopupMenu();
@@ -168,12 +139,14 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
         //Set up a silly little dialog we can pop up for the user to
         //gawk at while we do time consuming work later on.
-        waitDialog = new WaitDialog(this);
+        waitDialog = new WaitDialog(desktop.getSelectedWindow());
 
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music
         beginEcho();
     }
+
+    public static JFrame getInstance() {return JSLDesktop.getSelectedWindow();}
 
     private void createActions() {
         HashMap mnemonics = new HashMap();
@@ -222,9 +195,8 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	    setMnemonics(mnemonics);
     }
 
-    /** This sets up the Menubar as well as the main right-click Popup
-	menu and the toolbar */
-    private JMenuBar createMenuBar() {
+    /** This sets up the Menubar. Called from JSLDesktop. */
+    static JMenuBar createMenuBar() {
 	JMenuItem mi;
         HashMap mnemonics = new HashMap();
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -297,12 +269,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         menuBar.add(menuPatch);
 
 	// create "Window" menu
-	JMenu menuWindow = new JMenu("Window");
-	mnemonics.put(menuWindow, new Integer(KeyEvent.VK_W));
-	menuWindow.add(synthAction);
-	if (!MacUtils.isMac())
-	    menuWindow.add(prefsAction);
-	menuWindow.add(monitorAction);
+	JMenu menuWindow = desktop.createWindowMenu();
 	menuBar.add(menuWindow);
 
 	// create "Help" menu
@@ -322,7 +289,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     }
 
     /** This sets up the mnemonics */
-    private void setMnemonics(Map mnemonics) {
+    private static void setMnemonics(Map mnemonics) {
 	Iterator it = mnemonics.keySet().iterator();
 	Object key, value;
 	while (it.hasNext()) {
@@ -553,7 +520,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         fc2.addChoosableFileFilter(type1);
         fc2.setFileFilter(type1);
         fc2.setCurrentDirectory(new File (appConfig.getLibPath()));
-        if (fc2.showSaveDialog(PatchEdit.this) != JFileChooser.APPROVE_OPTION)
+        if (fc2.showSaveDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
             return;
         File file = fc2.getSelectedFile();
 	try {
@@ -587,7 +554,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     // just yet.
     public static void main(String[] args) {
         PatchEdit frame = new PatchEdit();
-        frame.setVisible(true);
+        //frame.setVisible(true);
     }
 
     /**
@@ -790,7 +757,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	class Worker extends Thread {
 	    public void run() {
 		try {
-		    JInternalFrame frm =
+		    JSLFrame frm =
 			((PatchBasket) desktop.getSelectedFrame()).EditSelectedPatch();
 		    if (frm != null) {
 			frm.setVisible(true);
@@ -828,7 +795,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
             fc3.addChoosableFileFilter(type1);
             fc3.setFileFilter(type1);
             fc3.setCurrentDirectory(new File (appConfig.getSysexPath()));
-            if (fc3.showSaveDialog(PatchEdit.this) != JFileChooser.APPROVE_OPTION)
+            if (fc3.showSaveDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
 		return;
 	    File file = fc3.getSelectedFile();
 	    try {
@@ -869,7 +836,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 	//-----------------------------------------------------------------
 	public void actionPerformed(ActionEvent e) {
 	    echoTimer.stop();
-	    SysexGetDialog myDialog = new SysexGetDialog(PatchEdit.instance);
+	    SysexGetDialog myDialog = new SysexGetDialog(PatchEdit.getInstance());
 	    myDialog.show();
 	    echoTimer.start();
 	}
@@ -893,7 +860,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
             fc2.addChoosableFileFilter(type2);
             fc2.setFileFilter(type1);
             fc2.setCurrentDirectory(new File(appConfig.getSysexPath()));
-            if (fc2.showOpenDialog(PatchEdit.this) != JFileChooser.APPROVE_OPTION)
+            if (fc2.showOpenDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
 		return;
 	    File file = fc2.getSelectedFile();
 	    try {
@@ -955,7 +922,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
             fc.addChoosableFileFilter(type1);
             fc.setFileFilter(type1);
             fc.setCurrentDirectory(new File(appConfig.getLibPath()));
-            if (fc.showOpenDialog(PatchEdit.this) != JFileChooser.APPROVE_OPTION)
+            if (fc.showOpenDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
 		return;
 	    File file = fc.getSelectedFile();
 	    openFrame(file);
@@ -1023,7 +990,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 
         public void actionPerformed(ActionEvent e) {
             try {
-		SortDialog sd = new SortDialog(PatchEdit.this);
+		SortDialog sd = new SortDialog(PatchEdit.getInstance());
 		sd.show();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Library to Sort must be Focused", ex);
@@ -1041,7 +1008,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         public void actionPerformed(ActionEvent e) {
             try {
 		if (searchDialog == null)
-		    searchDialog = new SearchDialog(PatchEdit.this);
+		    searchDialog = new SearchDialog(PatchEdit.getInstance());
 		searchDialog.show();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Library to Sort must be Focused", ex);
@@ -1062,11 +1029,11 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		if (appConfig.getLibPath() != null)
 		    fc.setSelectedFile(new File(appConfig.getLibPath()));
-		if (fc.showDialog(PatchEdit.this, "Choose Import All Directory") != JFileChooser.APPROVE_OPTION)
+		if (fc.showDialog(PatchEdit.getInstance(), "Choose Import All Directory") != JFileChooser.APPROVE_OPTION)
 		    return;
 		File file = fc.getSelectedFile();
 
-		ImportAllDialog sd = new ImportAllDialog(PatchEdit.this, file);
+		ImportAllDialog sd = new ImportAllDialog(PatchEdit.getInstance(), file);
 		sd.show();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to Import Patches", ex);
@@ -1135,7 +1102,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         public void actionPerformed(ActionEvent e) {
             try {
 		Patch p = Clipboard;
-		NewPatchDialog np = new NewPatchDialog(PatchEdit.this);
+		NewPatchDialog np = new NewPatchDialog(PatchEdit.getInstance());
 		np.show();
 		((PatchBasket) desktop.getSelectedFrame()).PastePatch();
 		Clipboard = p;
@@ -1163,7 +1130,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
 
         public void actionPerformed(ActionEvent e) {
-	    SynthConfigDialog scd = new SynthConfigDialog(PatchEdit.this);
+	    SynthConfigDialog scd = new SynthConfigDialog(PatchEdit.getInstance());
 	    scd.show();
         }
     }
@@ -1195,7 +1162,7 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
         public void actionPerformed(ActionEvent e) {
             try {
-		CrossBreedDialog cbd = new CrossBreedDialog(PatchEdit.this);
+		CrossBreedDialog cbd = new CrossBreedDialog(PatchEdit.getInstance());
 		cbd.show();
 	    } catch (Exception ex) {
 		ErrorMsg.reportError("Error", "Unable to perform Crossbreed. (No Library selected?)", ex);

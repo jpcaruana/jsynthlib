@@ -179,7 +179,7 @@ public class BankDriver extends Driver {
     }
 
     /** Creates an editor window to edit this bank. */
-    protected JInternalFrame editPatch(Patch p) {
+    protected JSLFrame editPatch(Patch p) {
 	return new BankEditorFrame(p);
     }
 

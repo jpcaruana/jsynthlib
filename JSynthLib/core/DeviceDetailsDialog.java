@@ -25,7 +25,7 @@ public class DeviceDetailsDialog extends JDialog
     Device device;
     public DeviceDetailsDialog (Device d)
     {
-        super(PatchEdit.instance,"Device Details",true);
+        super(PatchEdit.getInstance(),"Device Details",true);
         device=d;
 	
 	JPanel container= new JPanel ();
@@ -152,7 +152,7 @@ public class DeviceDetailsDialog extends JDialog
     }
     void revalidateLibraries()
     {
-	JInternalFrame[] jList =PatchEdit.desktop.getAllFrames ();
+	JSLFrame[] jList =PatchEdit.desktop.getAllFrames ();
 	if (jList.length >0)
 	{
 	  PatchEdit.waitDialog.show();

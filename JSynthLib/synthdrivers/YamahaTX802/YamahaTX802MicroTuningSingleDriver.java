@@ -44,7 +44,7 @@ public class YamahaTX802MicroTuningSingleDriver extends DX7FamilyMicroTuningSing
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

@@ -29,6 +29,6 @@ public class JSynthLib
 	  ErrorMsg.debug=Integer.parseInt(args[0]);
 	} catch (NumberFormatException e) {}
 	PatchEdit frame = new PatchEdit();
-        frame.setVisible(true);
+        //frame.setVisible(true);
    }
 }

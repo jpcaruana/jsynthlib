@@ -73,12 +73,12 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			oTabs.add(buildPartWindow(i), "Part "+i);
 		}
 		
-		InternalFrameListener oList[] = getInternalFrameListeners();
-		removeInternalFrameListener(oList[0]);
-		addInternalFrameListener(new InternalFrameListener() {
-            public void internalFrameClosing(InternalFrameEvent e) {}
-			public void internalFrameOpened(InternalFrameEvent e) {}
-            public void internalFrameActivated(InternalFrameEvent e) {
+		JSLFrameListener oList[] = getJSLFrameListeners();
+		removeJSLFrameListener(oList[0]);
+		addJSLFrameListener(new JSLFrameListener() {
+            public void JSLFrameClosing(JSLFrameEvent e) {}
+			public void JSLFrameOpened(JSLFrameEvent e) {}
+            public void JSLFrameActivated(JSLFrameEvent e) {
 				// send part voice if bank is int
 				for (int oPart = 0; oPart < 4; oPart++) {
 					if (mBankSelector[oPart].getValue() == 1)// && mPartChannel[oPart].getValue() != 17) 
@@ -96,12 +96,12 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 					}
 				}
 			}
-			public void internalFrameClosed(InternalFrameEvent e) {}
-			public void internalFrameDeactivated(InternalFrameEvent e) {}
-			public void internalFrameDeiconified(InternalFrameEvent e) {}
-			public void internalFrameIconified(InternalFrameEvent e) {}
+			public void JSLFrameClosed(JSLFrameEvent e) {}
+			public void JSLFrameDeactivated(JSLFrameEvent e) {}
+			public void JSLFrameDeiconified(JSLFrameEvent e) {}
+			public void JSLFrameIconified(JSLFrameEvent e) {}
 		});
-		addInternalFrameListener(oList[0]);
+		addJSLFrameListener(oList[0]);
 
 		setSize(800, 600);
 
@@ -301,16 +301,16 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 					int oIndex = 128+mVoiceSelector[aPart-1].getValue();
 					PatchEditorFrame oEdit = (PatchEditorFrame)((YamahaFS1RBankEditor)bankFrame).EditPatch(oIndex, aPart);
 					mVoicesInEdit[aPart-1] = (YamahaFS1RVoiceEditor)oEdit;
-					oEdit.addInternalFrameListener(new InternalFrameListener() {
-						public void internalFrameClosing(InternalFrameEvent e) {
+					oEdit.addJSLFrameListener(new JSLFrameListener() {
+						public void JSLFrameClosing(JSLFrameEvent e) {
 							mVoicesInEdit[aPart-1] = null;
 						}
-						public void internalFrameOpened(InternalFrameEvent e) {}
-						public void internalFrameActivated(InternalFrameEvent e) {}
-						public void internalFrameClosed(InternalFrameEvent e) {}
-						public void internalFrameDeactivated(InternalFrameEvent e) {}
-						public void internalFrameDeiconified(InternalFrameEvent e) {}
-						public void internalFrameIconified(InternalFrameEvent e) {}
+						public void JSLFrameOpened(JSLFrameEvent e) {}
+						public void JSLFrameActivated(JSLFrameEvent e) {}
+						public void JSLFrameClosed(JSLFrameEvent e) {}
+						public void JSLFrameDeactivated(JSLFrameEvent e) {}
+						public void JSLFrameDeiconified(JSLFrameEvent e) {}
+						public void JSLFrameIconified(JSLFrameEvent e) {}
 					});
 
 					getDesktopPane().add(oEdit);

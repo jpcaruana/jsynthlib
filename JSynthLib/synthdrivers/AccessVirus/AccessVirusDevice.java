@@ -40,7 +40,7 @@ public class AccessVirusDevice extends Device implements ItemListener {
         infoText = DRIVER_INFO;
         //avConfig = new AccessVirusConfig();
         Driver drv;
-        JOptionPane.showMessageDialog(PatchEdit.instance,
+        JOptionPane.showMessageDialog(PatchEdit.getInstance(),
         DRIVER_INFO, "Access Virus Driver Release Notes",
         JOptionPane.WARNING_MESSAGE
         );

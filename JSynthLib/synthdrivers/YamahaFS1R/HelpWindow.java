@@ -11,7 +11,7 @@ import java.net.*;
 import java.io.*;
 
 
-class HelpWindow extends JInternalFrame
+class HelpWindow extends JSLFrame
 {
 	HelpWindow() {
 		super("Yamaha FS1R Editor Help",true,true,true,true);

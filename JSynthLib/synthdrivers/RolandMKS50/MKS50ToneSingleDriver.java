@@ -109,7 +109,7 @@ public class MKS50ToneSingleDriver extends Driver
     return p;
   }
 
-  public JInternalFrame editPatch(Patch p)
+  public JSLFrame editPatch(Patch p)
   {
      return new MKS50ToneSingleEditor(p);
   }

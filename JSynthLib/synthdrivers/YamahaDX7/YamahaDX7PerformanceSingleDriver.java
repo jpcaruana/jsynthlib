@@ -62,7 +62,7 @@ public class YamahaDX7PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	}
 
 	
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
 			// make Sys Info available

@@ -43,7 +43,7 @@ public class NLPerfBankDriver extends BankDriver {
 
   public void storePatch (Patch p, int bankNum, int patchNum) {
     if (bankNum == 0) {
-      JOptionPane.showMessageDialog(PatchEdit.instance,
+      JOptionPane.showMessageDialog(PatchEdit.getInstance(),
         "Cannot send to ROM bank",
         "Store Patch",
         JOptionPane.WARNING_MESSAGE

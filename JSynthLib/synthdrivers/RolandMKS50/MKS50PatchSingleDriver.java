@@ -95,7 +95,7 @@ public class MKS50PatchSingleDriver extends Driver
     return p;
   }
 
-  public JInternalFrame editPatch(Patch p)
+  public JSLFrame editPatch(Patch p)
   {
      return new MKS50PatchSingleEditor(p);
   }

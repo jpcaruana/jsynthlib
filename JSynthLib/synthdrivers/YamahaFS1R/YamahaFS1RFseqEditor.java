@@ -65,7 +65,7 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		JButton oGraphButton = new JButton("Edit graph");
 		oGraphButton.addActionListener(new ActionListener() {
                     public void actionPerformed (ActionEvent e) {
-                        JInternalFrame oWin = new FSeqGraphWindow();
+                        JSLFrame oWin = new FSeqGraphWindow();
 						getDesktopPane().add(oWin);
                         oWin.setVisible(true);
 						oWin.moveToFront();
@@ -77,7 +77,7 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		return oPanel;
 	}
 	
-	class FSeqGraphWindow extends JInternalFrame
+	class FSeqGraphWindow extends JSLFrame
 	{
 		FSeqGraphWindow() {
 			super("Formant sequence graphic editor", true, true, true, true);

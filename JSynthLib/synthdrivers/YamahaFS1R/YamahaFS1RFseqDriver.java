@@ -101,7 +101,7 @@ public class YamahaFS1RFseqDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new YamahaFS1RFseqEditor(p);
 	}

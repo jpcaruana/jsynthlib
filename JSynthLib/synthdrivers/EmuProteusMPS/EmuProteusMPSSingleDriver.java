@@ -123,7 +123,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
 	 calculateChecksum(p);	 
 	 return p;
  }
-public JInternalFrame editPatch(Patch p)
+public JSLFrame editPatch(Patch p)
  {
      return new EmuProteusMPSSingleEditor(p);
  }

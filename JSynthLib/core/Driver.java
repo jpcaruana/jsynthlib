@@ -435,7 +435,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Returns an Editor Window for this Patch. Overwrite this to
      * invoke your Patch Editor if made it.
      */
-    protected JInternalFrame editPatch(Patch p) {
+    protected JSLFrame editPatch(Patch p) {
 	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
 	return null;
     }
@@ -622,7 +622,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	}
 	if (sysexRequestDump == null) {
 	    JOptionPane.showMessageDialog
-		(PatchEdit.instance,
+		(PatchEdit.getInstance(),
 		 "The " + toString()
 		 + " driver does not support patch getting.\n\n"
 		 + "Please start the patch dump manually...",

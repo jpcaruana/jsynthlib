@@ -2,7 +2,6 @@ package synthdrivers.YamahaFS1R;
 
 import core.*;
 import java.io.*;
-import javax.swing.JInternalFrame;
 
 /**
  *  Multi driver for FS1R. Multi are named Performance on FS1R.
@@ -231,7 +230,7 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	 *@param  p  data of the performance
 	 *@return    Description of the Return Value
 	 */
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		// set the address to "current performance" so when patch is sent
 		// the FS1R display show this "in edit" performance whenever it comes from.

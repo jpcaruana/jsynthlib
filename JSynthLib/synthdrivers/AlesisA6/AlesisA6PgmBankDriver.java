@@ -42,7 +42,7 @@ public class AlesisA6PgmBankDriver extends BankDriver
   public void storePatch (Patch p, int bankNum, int patchNum)
   {
     if (bankNum == 1 || bankNum == 2)
-      JOptionPane.showMessageDialog(PatchEdit.instance,
+      JOptionPane.showMessageDialog(PatchEdit.getInstance(),
         "Cannot send to a preset bank",
         "Store Patch",
         JOptionPane.WARNING_MESSAGE

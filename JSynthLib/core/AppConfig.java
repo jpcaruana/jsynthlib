@@ -37,6 +37,7 @@ public class AppConfig implements Storable {
    	private int delay                = 0;
    	private int masterController     = 0;
    	private int lookAndFeel          = 0;
+	private int guiStyle		 = MacUtils.isMac() ? 1 : 0;
    	private int midiPlatform         = 0;
    	private int faderPort            = 0;
    	private boolean faderEnable      = false;
@@ -175,6 +176,11 @@ public class AppConfig implements Storable {
 	/** Setter for lookAndFeel */
 	public void setLookAndFeel(int lookAndFeel) { this.lookAndFeel = lookAndFeel; };
 
+	/** Getter for guiStyle */
+	public int getGuiStyle() { return this.guiStyle; };
+	/** Setter for guiStyle */
+	public void setGuiStyle(int guiStyle) { this.guiStyle = guiStyle; };
+
 	/** Getter for midiPlatform */
 	public int getMidiPlatform() { return this.midiPlatform; };
 	/** Setter for midiPlatform */
@@ -299,9 +305,9 @@ public class AppConfig implements Storable {
 
 	private static final String[] storedPropertyNames = {
 		"libPath", "sysexPath", "initPortIn", "initPortOut", "note",
-		"velocity", "delay", "masterController", "lookAndFeel", "midiPlatform",
-		"faderPort", "faderEnable", "faderController","faderChannel",
-		"device",
+		"velocity", "delay", "masterController", "lookAndFeel",
+		"guiStyle", "midiPlatform", "faderPort", "faderEnable",
+		"faderController","faderChannel"
 	};
 
 	/**

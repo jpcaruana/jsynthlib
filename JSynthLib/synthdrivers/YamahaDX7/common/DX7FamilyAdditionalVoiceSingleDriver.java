@@ -62,7 +62,7 @@ public class DX7FamilyAdditionalVoiceSingleDriver extends Driver
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new DX7FamilyAdditionalVoiceEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", p);
 	}

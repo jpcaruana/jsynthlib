@@ -24,7 +24,7 @@ import javax.swing.table.TableColumn;
  * @version $Id$
  */
 
-public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
+public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
 {
     private static int openFrameCount = 0;
     private static final int xOffset = 30, yOffset = 30;
@@ -58,14 +58,14 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
     protected void InitLibraryFrame()
     {
         //...Create the GUI and put it in the window...
-        addInternalFrameListener(new InternalFrameListener()
+        addJSLFrameListener(new JSLFrameListener()
         {
-            public void internalFrameClosing(InternalFrameEvent e)
+            public void JSLFrameClosing(JSLFrameEvent e)
             {
                 if (!changed) return;
 
                 int i;
-                JInternalFrame[] jList =PatchEdit.desktop.getAllFrames();
+                JSLFrame[] jList =PatchEdit.desktop.getAllFrames();
 
                 for (int j=0;j<jList.length;j++)
                 {
@@ -137,10 +137,10 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 {};
             }
 
-            public void internalFrameOpened(InternalFrameEvent e)
+            public void JSLFrameOpened(JSLFrameEvent e)
             {}
 
-            public void internalFrameActivated(InternalFrameEvent e)
+            public void JSLFrameActivated(JSLFrameEvent e)
             {
                 PatchEdit.receiveAction.setEnabled(true);
                 PatchEdit.pasteAction.setEnabled(true);
@@ -201,10 +201,10 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
 
             }
 
-            public void internalFrameClosed(InternalFrameEvent e)
+            public void JSLFrameClosed(JSLFrameEvent e)
             {}
 
-            public void internalFrameDeactivated(InternalFrameEvent e)
+            public void JSLFrameDeactivated(JSLFrameEvent e)
             {
                 PatchEdit.receiveAction.setEnabled(false);
                 PatchEdit.extractAction.setEnabled(false);
@@ -231,10 +231,10 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
                 //                System.out.println ("Frame deactivated");
             }
 
-            public void internalFrameDeiconified(InternalFrameEvent e)
+            public void JSLFrameDeiconified(JSLFrameEvent e)
             {}
 
-            public void internalFrameIconified(InternalFrameEvent e)
+            public void JSLFrameIconified(JSLFrameEvent e)
             {}
 
         });
@@ -527,7 +527,7 @@ public class LibraryFrame extends JInternalFrame implements AbstractLibraryFrame
  	new SysexStoreDialog(myPatch);
     }
 
-    public JInternalFrame EditSelectedPatch()
+    public JSLFrame EditSelectedPatch()
     {
         if (table.getSelectedRowCount()==0)
         {

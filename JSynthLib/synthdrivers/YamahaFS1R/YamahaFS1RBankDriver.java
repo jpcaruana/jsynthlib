@@ -181,7 +181,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	}
 
 	/**Creates an editor window to edit this bank*/
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new YamahaFS1RBankEditor(p);
 	}	

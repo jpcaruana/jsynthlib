@@ -110,7 +110,7 @@ public class VirusProgSingleDriver extends Driver {
   // Sends a patch to a set location in the user bank
   public void storePatch(Patch p, int bankNum, int patchNum) {
     if (bankNum > 1) {
-      JOptionPane.showMessageDialog(PatchEdit.instance,
+      JOptionPane.showMessageDialog(PatchEdit.getInstance(),
         "Cannot send to a preset bank",
         "Store Patch",
         JOptionPane.WARNING_MESSAGE

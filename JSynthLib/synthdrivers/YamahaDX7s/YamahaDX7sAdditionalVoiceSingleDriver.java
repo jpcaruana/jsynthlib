@@ -44,7 +44,7 @@ public class YamahaDX7sAdditionalVoiceSingleDriver extends DX7FamilyAdditionalVo
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

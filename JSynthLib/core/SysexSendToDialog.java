@@ -31,7 +31,7 @@ public class SysexSendToDialog extends JDialog {
   * @param patch The Patch to 'send to...'
   */
   public SysexSendToDialog (Patch patch) {
-    super(PatchEdit.instance, "Send Sysex Data into Edit Buffer of a specified device", true);
+    super(PatchEdit.getInstance(), "Send Sysex Data into Edit Buffer of a specified device", true);
 
     p           = patch;
     patchString = p.getPatchHeader();

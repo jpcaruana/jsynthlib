@@ -248,7 +248,7 @@ public class YamahaFS1RVoiceDriver extends Driver
 	 *@param  p  Description of the Parameter
 	 *@return    Description of the Return Value
 	 */
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return new YamahaFS1RVoiceEditor(p);
 	}
@@ -256,7 +256,7 @@ public class YamahaFS1RVoiceDriver extends Driver
 	/**
 		@param aPart part number in performance
 	*/
-	public JInternalFrame editPatch(Patch p, int aPart, int aBankNumber)
+	public JSLFrame editPatch(Patch p, int aPart, int aBankNumber)
 	{
 		return new YamahaFS1RVoiceEditor(p, aPart, aBankNumber);
 	}

@@ -88,7 +88,7 @@ public void sendPatch (Patch p)
 	 return p;
  }
  
-public JInternalFrame editPatch(Patch p)
+public JSLFrame editPatch(Patch p)
  {
      return new KawaiK4MultiEditor(p);
  }

@@ -12,7 +12,7 @@ public class DocumentationWindow extends JDialog
 {
   DocumentationWindow()
    {
-     super(PatchEdit.instance,"JSynthLib Documentation Viewer",false);
+     super(PatchEdit.getInstance(),"JSynthLib Documentation Viewer",false);
         JPanel container= new JPanel();
         container.setLayout (new BorderLayout());
 	final MyEditorPane jt = new MyEditorPane(); 

@@ -45,7 +45,7 @@ public class YamahaDX7IISystemSetupDriver extends DX7FamilySystemSetupIIDriver
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		return super.editPatch(p);
 	}

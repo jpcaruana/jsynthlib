@@ -97,7 +97,7 @@ public class KawaiK4EffectDriver extends Driver
         calculateChecksum (p);
         return p;
     }
-    public JInternalFrame editPatch (Patch p)
+    public JSLFrame editPatch (Patch p)
     {
         return new KawaiK4EffectEditor (p);
     }

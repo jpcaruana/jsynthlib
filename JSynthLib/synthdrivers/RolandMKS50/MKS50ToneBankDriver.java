@@ -52,7 +52,7 @@ public class MKS50ToneBankDriver extends BankDriver
 
   public void choosePatch (Patch p)
   {
-    JOptionPane.showMessageDialog(PatchEdit.instance,
+    JOptionPane.showMessageDialog(PatchEdit.getInstance(),
       "To send a Tone bank:\n"
       +"1. turn Memory Protect off\n"
       +"2. make sure the MKS-50's midi channel matches JSynthLib\n"

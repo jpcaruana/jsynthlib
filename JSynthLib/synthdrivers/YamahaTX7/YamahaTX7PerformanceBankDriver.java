@@ -66,7 +66,7 @@ public class YamahaTX7PerformanceBankDriver extends DX7FamilyPerformanceBankDriv
 	}
 
 
-	public JInternalFrame editPatch(Patch p)
+	public JSLFrame editPatch(Patch p)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 ) {
 			// show Information 

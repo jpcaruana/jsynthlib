@@ -113,7 +113,7 @@ public Patch createNewPatch()
     return p;
   }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
   }
-public JInternalFrame editPatch(Patch p)
+public JSLFrame editPatch(Patch p)
  {
      return new BossDR660DrumkitEditor(p);
  }

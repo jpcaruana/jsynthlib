@@ -134,7 +134,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		JButton oHelp = new JButton("Help");
 		oHelp.addActionListener(new ActionListener() {
 			public void actionPerformed (ActionEvent e) {
-				JInternalFrame oHelpWin = new HelpWindow();
+				JSLFrame oHelpWin = new HelpWindow();
 				getDesktopPane().add(oHelpWin);
 				oHelpWin.setVisible(true);
 			}}

@@ -3,7 +3,6 @@ package core;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,7 +17,7 @@ import javax.swing.table.TableColumn;
  * @version $Id$
  */
 
-public class SceneFrame extends JInternalFrame implements AbstractLibraryFrame {
+public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
     private static int openFrameCount = 0;
     private static final int xOffset = 30, yOffset = 30;
     private SceneListModel myModel;
@@ -52,12 +51,12 @@ public class SceneFrame extends JInternalFrame implements AbstractLibraryFrame {
 
     protected void InitLibraryFrame() {
         //...Create the GUI and put it in the window...
-        addInternalFrameListener(new InternalFrameListener() {
-            public void internalFrameClosing(InternalFrameEvent e) {
+        addJSLFrameListener(new JSLFrameListener() {
+            public void JSLFrameClosing(JSLFrameEvent e) {
                 if (!changed) return;
 
                 int i;
-                JInternalFrame[] jList =PatchEdit.desktop.getAllFrames();
+                JSLFrame[] jList =PatchEdit.desktop.getAllFrames();
 
                 for (int j=0;j<jList.length;j++) {
                     if (jList[j] instanceof BankEditorFrame) {
@@ -122,10 +121,10 @@ public class SceneFrame extends JInternalFrame implements AbstractLibraryFrame {
                 {};
             }
 
-            public void internalFrameOpened(InternalFrameEvent e)
+            public void JSLFrameOpened(JSLFrameEvent e)
             {}
 
-            public void internalFrameActivated(InternalFrameEvent e) {
+            public void JSLFrameActivated(JSLFrameEvent e) {
                 PatchEdit.receiveAction.setEnabled(true);
                 PatchEdit.pasteAction.setEnabled(true);
                 PatchEdit.importAction.setEnabled(true);
@@ -181,10 +180,10 @@ public class SceneFrame extends JInternalFrame implements AbstractLibraryFrame {
 
             }
 
-            public void internalFrameClosed(InternalFrameEvent e)
+            public void JSLFrameClosed(JSLFrameEvent e)
             {}
 
-            public void internalFrameDeactivated(InternalFrameEvent e) {
+            public void JSLFrameDeactivated(JSLFrameEvent e) {
                 PatchEdit.receiveAction.setEnabled(false);
                 PatchEdit.extractAction.setEnabled(false);
                 PatchEdit.sendAction.setEnabled(false);
@@ -211,10 +210,10 @@ public class SceneFrame extends JInternalFrame implements AbstractLibraryFrame {
 
             }
 
-            public void internalFrameDeiconified(InternalFrameEvent e)
+            public void JSLFrameDeiconified(JSLFrameEvent e)
             {}
 
-            public void internalFrameIconified(InternalFrameEvent e)
+            public void JSLFrameIconified(JSLFrameEvent e)
             {}
 
         });
@@ -489,7 +488,7 @@ public class SceneFrame extends JInternalFrame implements AbstractLibraryFrame {
     /**
      * @return
      */
-    public JInternalFrame EditSelectedPatch() {
+    public JSLFrame EditSelectedPatch() {
         if (table.getSelectedRowCount()==0) {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return null;

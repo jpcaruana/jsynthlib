@@ -1,6 +1,5 @@
 package synthdrivers.YamahaMotif;
 import core.*;
-import javax.swing.JInternalFrame;
 
 /** Driver for Yamaha Motif Normal Voices */
 public class YamahaMotifNormalVoiceDriver extends YamahaMotifSingleDriver
@@ -20,7 +19,7 @@ public class YamahaMotifNormalVoiceDriver extends YamahaMotifSingleDriver
      numSysexMsgs = 35;
      yamaha_init();
    }
-  public JInternalFrame editPatch(Patch p) {
+  public JSLFrame editPatch(Patch p) {
     return new YamahaMotifNormalVoiceEditor(p);
   }
   public Patch createNewPatch() { return super.createNewPatch(); }

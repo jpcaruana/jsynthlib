@@ -58,7 +58,7 @@ public abstract class YamahaMotifBankDriver extends YamahaMotifSingleDriver {
 
 
          /**Creates an editor window to edit this bank
-  public JInternalFrame editPatch(Patch p)
+  public JSLFrame editPatch(Patch p)
  {
      BankEditorFrame frm = new BankEditorFrame(p);
      return frm;

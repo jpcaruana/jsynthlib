@@ -13,7 +13,7 @@ import javax.swing.border.*;
  * @author ???
  * @version $Id$
  */
-public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
+public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
     public Patch p;	    // accessed by YamahaFS1RPerformanceEditor
     /** Note that calling addWidget() method may change the value of this. */
@@ -86,8 +86,8 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
                     repaint();
                 }
 	    });
-	addInternalFrameListener(new InternalFrameListener() {
-		public void internalFrameClosing(InternalFrameEvent e) {
+	addJSLFrameListener(new JSLFrameListener() {
+		public void JSLFrameClosing(JSLFrameEvent e) {
 		    String[] choices = new String[] {"Keep Changes",
 						     "Revert to Original",
 						     "Place Changed Version on Clipboard"
@@ -112,10 +112,10 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		    System.arraycopy(originalPatch, 0, p.sysex, 0, p.sysex.length);
 		}
 
-		public void internalFrameOpened(InternalFrameEvent e) {
+		public void JSLFrameOpened(JSLFrameEvent e) {
 		}
 
-		public void internalFrameActivated(InternalFrameEvent e) {
+		public void JSLFrameActivated(JSLFrameEvent e) {
 		    p.getDriver().calculateChecksum(p);
 		    p.getDriver().sendPatch(p);
 		    gotFocus();
@@ -130,10 +130,10 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		    PatchEdit.exportAction.setEnabled(true);
 		}
 
-		public void internalFrameClosed(InternalFrameEvent e) {
+		public void JSLFrameClosed(JSLFrameEvent e) {
 		}
 
-		public void internalFrameDeactivated(InternalFrameEvent e) {
+		public void JSLFrameDeactivated(JSLFrameEvent e) {
 		    PatchEdit.sendAction.setEnabled(false);
 		    PatchEdit.playAction.setEnabled(false);
 		    PatchEdit.storeAction.setEnabled(false);
@@ -144,10 +144,10 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		    lostFocus();
 		}
 
-		public void internalFrameDeiconified(InternalFrameEvent e) {
+		public void JSLFrameDeiconified(JSLFrameEvent e) {
 		}
 
-		public void internalFrameIconified(InternalFrameEvent e) {
+		public void JSLFrameIconified(JSLFrameEvent e) {
 		}
 	    });
     }
@@ -198,7 +198,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
     public void StoreSelectedPatch() {
     }
 
-    public JInternalFrame EditSelectedPatch() {
+    public JSLFrame EditSelectedPatch() {
 	return null;
     }
 
@@ -356,7 +356,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
      * When showing the dialog, also check how many components there
      * are to determine the number of widget banks needed.
      */
-    public void show() {	// override a method of JInternalFrame
+    public void show() {	// override a method of JSLFrame
 	int high = 0;
 	for (int i = 0; i < widgetList.size(); i++) {
 	    SysexWidget w = (SysexWidget) widgetList.get(i);

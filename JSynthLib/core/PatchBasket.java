@@ -1,5 +1,4 @@
 package core;
-import javax.swing.JInternalFrame;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
@@ -33,7 +32,7 @@ public interface PatchBasket {
     /** Reassign the selected patch. */
     void ReassignSelectedPatch();
     /** Invoke an editor for the selected patch. */
-    JInternalFrame EditSelectedPatch();
+    JSLFrame EditSelectedPatch();
     /** Paste a patch. */
     void PastePatch();
     /** Return collection of all patches in basket. */

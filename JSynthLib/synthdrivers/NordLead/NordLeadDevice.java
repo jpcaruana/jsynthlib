@@ -46,7 +46,7 @@ public class NordLeadDevice extends Device implements ItemListener {
     infoText = DRIVER_INFO;
     Driver drv;
     
-    JOptionPane.showMessageDialog(PatchEdit.instance,
+    JOptionPane.showMessageDialog(PatchEdit.getInstance(),
       DRIVER_INFO, "Nord Lead Driver Release Notes",
       JOptionPane.WARNING_MESSAGE
     );
