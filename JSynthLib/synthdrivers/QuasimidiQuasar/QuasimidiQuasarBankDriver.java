@@ -129,7 +129,7 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
     */
     public Patch getPatch(Patch bank, int patchNum) {
         try{
-            byte [] sysex = new byte[QuasarConstants.PATCH_SIZE];
+            byte [] sysex = new byte[this.singleSize];
 
             System.arraycopy(   bank.sysex,
                                 getPatchStart(patchNum),
@@ -160,7 +160,23 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
         } catch (UnsupportedEncodingException ex) {
             return "-";
         }
+    }
 
+    /** Set the name of the patch at the given number <code>patchNum</code>. */
+    public void setPatchName(Patch p, int patchNum, String name) {
+        int tempPatchNameStart = this.patchNameStart + this.getPatchStart(patchNum);
+
+        while (name.length() < patchNameSize)
+		    name = name + " ";
+
+        byte[] namebytes = new byte[patchNameSize];
+        try {
+	        namebytes = name.getBytes("US-ASCII");
+	        for (int i = 0; i < patchNameSize; i++)
+		        p.sysex[tempPatchNameStart + i] = namebytes[i];
+	    } catch (UnsupportedEncodingException ex) {
+	        return;
+	    }
     }
 
     /**
@@ -212,8 +228,8 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
             System.arraycopy(   tempPatch.sysex,
                                 0,
                                 sysex,
-                                (patchNo * QuasarConstants.PATCH_SIZE ),
-                                QuasarConstants.PATCH_SIZE );
+                                (patchNo * singleSize ),
+                                singleSize );
         }
 
         Patch p = new Patch(sysex);
