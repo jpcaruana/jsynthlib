@@ -311,21 +311,21 @@ final class Actions {
 
     /** This sets up the mnemonics */
     private static void setMnemonics(Map mnemonics) {
-	Iterator it = mnemonics.keySet().iterator();
-	Object key, value;
-	while (it.hasNext()) {
-	    key = it.next();
-	    value = mnemonics.get(key);
-	    if (key instanceof JMenuItem)
-		((JMenuItem) key).setMnemonic(((Integer) value).intValue());
-	    else if (key instanceof Action)
-		((Action) key).putValue(Action.MNEMONIC_KEY, value);
-	}
+    	Iterator it = mnemonics.keySet().iterator();
+    	Object key, value;
+    	while (it.hasNext()) {
+    	    key = it.next();
+    	    value = mnemonics.get(key);
+    	    if (key instanceof JMenuItem)
+    		    ((JMenuItem) key).setMnemonic(((Integer) value).intValue());
+    	    else if (key instanceof Action)
+    		    ((Action) key).putValue(Action.MNEMONIC_KEY, value);
+    	}
     }
 
     static void createPopupMenu() {
-	// crate popup menu
-        JPopupMenu menuPatchPopup = new JPopupMenu();
+	    // create popup menu
+        menuPatchPopup = new JPopupMenu();
         menuPatchPopup.add(playAction);
         menuPatchPopup.add(editAction);
         menuPatchPopup.addSeparator();
@@ -339,24 +339,28 @@ final class Actions {
         menuPatchPopup.add(cutAction);
         menuPatchPopup.add(copyAction);
         menuPatchPopup.add(pasteAction);
-	menuPatchPopup.addSeparator();
-	menuPatchPopup.add(uploadAction);
+	    menuPatchPopup.addSeparator();
+	    menuPatchPopup.add(uploadAction);
     }
 
     /** show popup menu for patch. */
     static void showMenuPatchPopup(JTable tbl, int x, int y) {
-	menuPatchPopup.show(tbl, x, y);
+        if(menuPatchPopup == null) {
+            createPopupMenu();
+        }
+
+	    menuPatchPopup.show(tbl, x, y);
     }
 
     static JToolBar createToolBar() {
-	// create tool bar
+	    // create tool bar
         JToolBar toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(500, 35));
         toolBar.setFloatable(true);
 
         toolBar.add(createToolBarButton(newAction, "New", "New Library"));
         toolBar.add(createToolBarButton(openAction, "Open", "Open Library"));
-	toolBar.add(createToolBarButton(saveAction, "Save", "Save Library"));
+	    toolBar.add(createToolBarButton(saveAction, "Save", "Save Library"));
 
         toolBar.addSeparator();
 
