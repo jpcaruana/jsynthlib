@@ -947,11 +947,8 @@ public final class MidiUtil {
 	    sequencer = MidiSystem.getSequencer();
 	    
 	    seqTrans = sequencer.getTransmitter();
-	    System.out.println("core.MidiUtil.startSequencer: seqTrans = "+ seqTrans.toString());
 	    outPort  = getOutputMidiDevice(myport);
-	    System.out.println("core.MidiUtil.startSequencer: output MidiDevice = "+ outPort.toString());
 	    outRcvr  = outPort.getReceiver();
-	    System.out.println("core.MidiUtil.startSequencer: outRcvr = "+ outRcvr.toString());
 	    seqTrans.setReceiver(outRcvr);
 	    
 	    sequencer.open();

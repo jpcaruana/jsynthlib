@@ -94,7 +94,6 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 
 	public void setPatchName(Patch p,int patchNum, String name)
 	{
-		System.out.println("PatchNum: "+patchNum+"; PatchName: "+name);
 		int nameStart=getPatchNameStart(patchNum);
 
 		while (name.length()<dxPatchNameSize)
