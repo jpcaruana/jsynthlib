@@ -326,8 +326,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @see IConverter
      */
     protected void addDriver(IDriver driver) {
-        if (driver instanceof IPatchDriver)
-            ((IPatchDriver)driver).setDevice(this);
+        driver.setDevice(this);
         driverList.add(driver);
     }
 
@@ -338,7 +337,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param driver Driver to be added.
      * @deprecated Call <code>addDriver(Driver)</code> in order.
      */
-    protected void addDriver(int index, IPatchDriver driver) {
+    protected void addDriver(int index, IDriver driver) {
 	driver.setDevice(this);
         driverList.add(index, driver);
     }

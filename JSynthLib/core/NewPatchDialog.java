@@ -46,7 +46,7 @@ public class NewPatchDialog extends JDialog
 	    Device device = (Device) AppConfig.getDevice(i);
 	    for (int j=0; j < device.driverCount(); j++) {
 		IDriver driver = device.getDriver(j);
-		if (driver instanceof IPatchDriver) { // Skipping a converter
+		if (!(driver instanceof IConverter)) { // Skipping a converter
 		    if (((IPatchDriver)driver).canCreatePatch())
 			deviceComboBox.addItem(device);
 		}
@@ -132,7 +132,7 @@ public class NewPatchDialog extends JDialog
 	    Device device = (Device) deviceComboBox.getSelectedItem();
 	    for (int i = 0; i < device.driverCount(); i++) {
 		IDriver driver = device.getDriver(i);
-		if (driver instanceof IPatchDriver) {
+		if (!(driver instanceof IConverter)) {
 		    try {
 			// If the actual driver doesn't override the
 			// method "createNewPatch" this command will
