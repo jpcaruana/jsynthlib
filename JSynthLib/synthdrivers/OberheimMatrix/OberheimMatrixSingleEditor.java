@@ -418,151 +418,105 @@ MtxModel(patch,104),new ModSender(patch,0),source);
 
 }
 
+    class ModTableModel extends AbstractTableModel {
+	final String[] columnNames;
+	final int rowcount;
+	final Object[][] tableValues;
 
- class Mod1TableModel extends AbstractTableModel {
-        final String[] columnNames = {"Modulation Source", 
-                                      "Modulation Destination",
-                                      "Enabled?"};
+	ModTableModel(String[] cols, int rows, Object[][] values) {
+	    columnNames = cols;
+	    rowcount = rows;
+	    tableValues = values;
+	}
+	public int getColumnCount() { return columnNames.length; }
+	public String getColumnName(int col) { return columnNames[col]; }
+	public int getRowCount() { return rowcount; }
+	public Class getColumnClass(int c) {
+	    return getValueAt(0, c).getClass();
+	}
+	public Object getValueAt(int row, int col) {
+	    try {
+		return tableValues[col][row];
+	    } catch (IndexOutOfBoundsException ex) {
+		return new Integer(0);
+	    }
+	}
+	public boolean isCellEditable(int row, int col) {
+	    if (col < 2)
+		return false;
+	    return true;
+	}
+	public void setValueAt(Object value, int row, int col) {
+	    fireTableCellUpdated(row, col);
+	}
+    }
+    class Mod1TableModel extends ModTableModel {
+	Mod1TableModel() {
+	    super(new String[] {"Modulation Source", "Modulation Destination",
+				"Enabled?"},
+		  11, new String[][] {
+		    {
+			"Midi Lever 1","Vibrato","Portamento","Midi Lever 1",
+			"Vibrato","Portamento","Keyboard Note No.",
+			"Midi Lever 1","Vibrato","Portamento","Keyboard."
+		    },
+		    {
+			"DCO1 Frequency","DCO1 Frequency","DCO1 Frequency",
+			"DC02 Frequency","DC02 Frequency","DC02 Frequency",
+			"DC02 Frequency",
+			"VCF Cutoff Frequency","VCF Cutoff Frequency",
+			"VCF Cutoff Frequency","VCF Cutoff Frequency"
+		    }
+		});
+	}
+	public void setValueAt(Object value, int row, int col) {}
+    }
+    class Mod2TableModel extends ModTableModel {
+	Mod2TableModel() {
+	    super( new String[] {"Modulation Source", "Modulation Destination",
+				 "Strength"},
+		   18,
+		   new String[][] {
+		       { "LFO 1","LFO 2","LFO 1","LFO 2","Envelope 1",
+			 "Aftertouch","Velocity","Envelope 2","Velocity",
+			 "Velocity","Velocity","Ramp 1","Ramp 2","Velocity",
+			 "Envelope 3","Aftertouch","Aftertouch","Keyboard",
+		       },
+		       {
+			   "DCO 1 Frequency","DCO 1 Pulse Width",
+			   "DCO 2 Frequency","DCO 2 Pulse Width",
+			   "VCF Cutoff Frequency","VCF Cutoff Frequency",
+			   "VCA 1 Level","VCA 2 Level","Envelope 1 Amplitude",
+			   "Envelope 2 Amplitude","Envelope 3 Amplitude",
+			   "LFO 1 Amplitude","LFO 2 Amplitude","Portamento Rate",
+			   "VCF FM Mod Level","VCF FM Mod Level","LFO 1 Speed",
+			   "LFO 2 Speed.",
+		       }
+		   });
+	}
+    }
 
-            Mod1TableModel() {
-            }
-            public int getColumnCount() {return columnNames.length;}       
-            public String getColumnName(int col) { return columnNames[col];}
-            public int getRowCount() { return 11;}
-            public Class getColumnClass(int c) {return getValueAt(0, c).getClass();}
-            public Object getValueAt(int row, int col)
-            {
-              if (col==0)
-  	       switch (row) {
-		 case 0: return "Midi Lever 1";
-		 case 1: return "Vibrato";
-		 case 2: return "Portamento";
-		 case 3: return "Midi Lever 1";
-		 case 4: return "Vibrato";
-		 case 5: return "Portamento";
-		 case 6: return "Keyboard Note No.";
-		 case 7: return "Midi Lever 1";
-		 case 8: return "Vibrato";
-		 case 9: return "Portamento";
-                 case 10: return "Keyboard.";
-		}
-              if (col==1)
-	       switch (row) {
-		 case 0: case 1: case 2: return "DCO1 Frequency";
-		 case 3: case 4: case 5: case 6: return "DC02 Frequency";
-		 case 7: case 8: case 9: case 10: return "VCF Cutoff Frequency";
-	       }
-		      
-	       return new Integer(0);             
-            
-             }
-        public boolean isCellEditable(int row, int col) {
-            if (col<2) return false; else return true;
-        }
+    class Mod3TableModel extends ModTableModel {
+	Mod3TableModel() {
+	    super( new String[] {"Modulation Source", "Modulation Destination",
+				 "Strength"},
+		   10,
+		   null );
+	}
 
- }
- class Mod2TableModel extends AbstractTableModel {
-        final String[] columnNames = {"Modulation Source", 
-                                      "Modulation Destination",
-                                      "Strength"};
-
-            Mod2TableModel() {
-            }
-            public int getColumnCount() {return columnNames.length;}       
-            public String getColumnName(int col) { return columnNames[col];}
-            public int getRowCount() { return 18;}
-            public Class getColumnClass(int c) {return getValueAt(0, c).getClass();}
-            public Object getValueAt(int row, int col)
-            {
-              if (col==0)
-  	       switch (row) {
-		 case 0: return "LFO 1";
-		 case 1: return "LFO 2";
-		 case 2: return "LFO 1";
-		 case 3: return "LFO 2";
-	         case 4: return "Envelope 1";
-		 case 5: return "Aftertouch";
-		 case 6: return "Velocity";
-		 case 7: return "Envelope 2";
-		 case 8: return "Velocity";
-		 case 9: return "Velocity";
-                 case 10: return "Velocity";
-                 case 11: return "Ramp 1";
-                 case 12: return "Ramp 2";
-                 case 13: return "Velocity";
-                 case 14: return "Envelope 3";
-                 case 15: return "Aftertouch";
-                 case 16: return "Aftertouch";
-                 case 17: return "Keyboard";
-		}
-              if (col==1)
-	       switch (row) {
-		 case 0: return "DCO 1 Frequency";
-		 case 1: return "DCO 1 Pulse Width";
-		 case 2: return "DCO 2 Frequency";
-		 case 3: return "DCO 2 Pulse Width";
-	         case 4: return "VCF Cutoff Frequency";
-		 case 5: return "VCF Cutoff Frequency";
-		 case 6: return "VCA 1 Level";
-		 case 7: return "VCA 2 Level";
-		 case 8: return "Envelope 1 Amplitude";
-		 case 9: return "Envelope 2 Amplitude";
-                 case 10: return "Envelope 3 Amplitude";
-                 case 11: return "LFO 1 Amplitude";
-                 case 12: return "LFO 2 Amplitude";
-                 case 13: return "Portamento Rate";
-                 case 14: return "VCF FM Mod Level";
-                 case 15: return "VCF FM Mod Level";
-                 case 16: return "LFO 1 Speed";
-                 case 17: return "LFO 2 Speed.";
-		 
-	       }
-		      
-	       return new Integer(0);             
-            
-             }
-
-	   
-        public boolean isCellEditable(int row, int col) {
-            if (col<2) return false; else return true;
-        }
-        public void setValueAt(Object value, int row, int col) {
-                   //(Driver)PatchEdit.DriverList.get(row+1)).channel=((Integer)value).intValue();
-                  fireTableCellUpdated(row, col);
-                                                                                                                
-        }
- }
-
- class Mod3TableModel extends AbstractTableModel {
-        final String[] columnNames = {"Modulation Source", 
-                                      "Modulation Destination",
-                                      "Strength"};
-            Mod3TableModel() {
-            }
-            public int getColumnCount() {return columnNames.length;}       
-            public String getColumnName(int col) { return columnNames[col];}
-            public int getRowCount() { return 10;}
-            public Class getColumnClass(int c) {return getValueAt(0, c).getClass();}
-            public Object getValueAt(int row, int col)
-            {
-              if (col==0) return source[table3Source[row].getValue()];  	      
-              if (col==1) return dest[table3Dest[row].getValue()];
-	       return new Integer(0);             
-            
-             }
-
-	   
+	public Object getValueAt(int row, int col)
+	{
+	    if (col==0)
+		return source[table3Source[row].getValue()];  	      
+	    if (col==1)
+		return dest[table3Dest[row].getValue()];
+	    return new Integer(0);             
+	}
+	
         public boolean isCellEditable(int row, int col) {
              return true;
         }
-        public void setValueAt(Object value, int row, int col) {
-                   //(Driver)PatchEdit.DriverList.get(row+1)).channel=((Integer)value).intValue();
-                  fireTableCellUpdated(row, col);
-                                                                                                                
-        }
- }
-
-
+    }
 
  class SliderCellRenderer  implements TableCellRenderer {
   int tablenum;

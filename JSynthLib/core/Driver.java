@@ -2,6 +2,7 @@ package core;
 import java.io.*;
 import javax.swing.*;
 import javax.sound.midi.ShortMessage;
+import java.text.*;
 // import java.util.Set;
 // import java.util.HashSet;
 // import java.util.Arrays;
@@ -699,5 +700,17 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     public String toString() {
 	return getManufacturerName() + " " + getModelName() + " "
 	    + getPatchType();
+    }
+
+    /*
+     * Generates arrays of formatted numbers
+     */
+    protected static String[] generateNumbers(int min, int max, String format){
+        String retval[] = new String[max - min + 1];
+        DecimalFormat df = (DecimalFormat)NumberFormat.getInstance().clone();
+        df.applyPattern(format);
+        while (max >= min)
+            retval[max - min] = df.format(max--);
+        return retval;
     }
 }
