@@ -72,7 +72,7 @@ public class DX7FamilyFractionalScalingSingleDriver extends Driver
 			} else {
 				if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 					// show Information
-					DX7FamilyStrings.dxShowInformation(getDriverName(), DX7FamilyStrings.JDK14_NEEDED_STRING);
+					DX7FamilyStrings.dxShowInformation(toString(), DX7FamilyStrings.JDK14_NEEDED_STRING);
 
 				return new DX7FamilyFractionalScalingEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", p);
 			}

@@ -113,7 +113,7 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 	public void putPatch(Patch bank,Patch p,int patchNum)	//puts a patch into the bank, converting it as needed
 	{
 		if (!canHoldPatch(p)) {
-			DX7FamilyStrings.dxShowError(getDriverName(), "This type of patch does not fit in to this type of bank.");
+			DX7FamilyStrings.dxShowError(toString(), "This type of patch does not fit in to this type of bank.");
 			return;
 		}
 
@@ -159,7 +159,7 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 			
 			return p;
 		} catch (Exception e) {
-			ErrorMsg.reportError(getManufacturerName()+" "+getModelName(),"Error in "+getDriverName(),e);return null;
+			ErrorMsg.reportError(getManufacturerName()+" "+getModelName(),"Error in "+toString(),e);return null;
 		}
 	}
 

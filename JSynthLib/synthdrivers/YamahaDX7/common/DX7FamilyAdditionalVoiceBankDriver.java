@@ -72,7 +72,7 @@ public class DX7FamilyAdditionalVoiceBankDriver extends BankDriver
 	{
 		if (!canHoldPatch(p))
 		{
-			DX7FamilyStrings.dxShowError(getDriverName(), "This type of patch does not fit in to this type of bank.");
+			DX7FamilyStrings.dxShowError(toString(), "This type of patch does not fit in to this type of bank.");
 			return;
 		}
 
@@ -205,7 +205,7 @@ public class DX7FamilyAdditionalVoiceBankDriver extends BankDriver
 
 			return p;
 		} catch (Exception e) {
-			ErrorMsg.reportError(getManufacturerName()+" "+getModelName(),"Error in "+getDriverName(),e);return null;
+			ErrorMsg.reportError(getManufacturerName()+" "+getModelName(),"Error in "+toString(),e);return null;
 		}
 	}
 

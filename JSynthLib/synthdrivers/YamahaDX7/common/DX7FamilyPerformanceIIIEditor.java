@@ -48,7 +48,7 @@ public class DX7FamilyPerformanceIIIEditor extends PatchEditorFrame
 	};
 
 	static final String [] VoiceNoName = new String [] {
-		"Internal  0" ,"Internal  1","Internal	2","Internal  3","Internal  4","Internal  5","Internal	6","Internal  7" ,
+		"Internal  0" ,"Internal  1","Internal  2","Internal  3","Internal  4","Internal  5","Internal  6","Internal  7" ,
 		"Internal  8" ,"Internal  9","Internal 10","Internal 11","Internal 12","Internal 13","Internal 14","Internal 15",
 		"Internal 16" ,"Internal 17","Internal 18","Internal 19","Internal 20","Internal 21","Internal 22","Internal 23",
 		"Internal 24" ,"Internal 25","Internal 26","Internal 27","Internal 28","Internal 29","Internal 30","Internal 31",
@@ -56,7 +56,7 @@ public class DX7FamilyPerformanceIIIEditor extends PatchEditorFrame
 		"Internal 40" ,"Internal 41","Internal 42","Internal 43","Internal 44","Internal 45","Internal 46","Internal 47",
 		"Internal 48" ,"Internal 49","Internal 50","Internal 51","Internal 52","Internal 53","Internal 54","Internal 55",
 		"Internal 56" ,"Internal 57","Internal 58","Internal 59","Internal 60","Internal 61","Internal 62","Internal 63",
-		"Cartridge  0","Cartridge  1","Cartridge  2","Cartridge  3","Cartridge	4","Cartridge  5","Cartridge  6","Cartridge  7" ,
+		"Cartridge  0","Cartridge  1","Cartridge  2","Cartridge  3","Cartridge  4","Cartridge  5","Cartridge  6","Cartridge  7" ,
 		"Cartridge  8","Cartridge  9","Cartridge 10","Cartridge 11","Cartridge 12","Cartridge 13","Cartridge 14","Cartridge 15",
 		"Cartridge 16","Cartridge 17","Cartridge 18","Cartridge 19","Cartridge 20","Cartridge 21","Cartridge 22","Cartridge 23",
 		"Cartridge 24","Cartridge 25","Cartridge 26","Cartridge 27","Cartridge 28","Cartridge 29","Cartridge 30","Cartridge 31",
