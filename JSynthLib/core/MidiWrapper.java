@@ -337,6 +337,18 @@ public abstract class MidiWrapper {
 	 */
 	public static Vector getSuitableWrappers() {
 		Vector wrappervec = new Vector();
+		if (PatchEdit.newMidiAPI) {
+		    try {
+			wrappervec.add(new JavasoundMidiWrapper());
+		    } catch (Exception e) {
+			core.ErrorMsg.reportError
+			    ("Error!",
+			     "There was a problem starting the JavasoundMidiWrapper.\n" +
+			     "The description of the problem is given as:\n" +
+			     "\"" + e + "\"", e);
+		    }
+		    return(wrappervec);
+		}
 		// TODO: Read this list from a file or discover them in a directory, etc. - emenaker 2003.03.13
 		String drivers[] = {
 //			"org.jsynthlib.midi.JavaMidiWrapper",
