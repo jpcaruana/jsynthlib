@@ -113,9 +113,6 @@ class JSLWindowMenuItem extends JRadioButtonMenuItem implements ButtonModel {
 	super(frame.getTitle());
 	f = new WeakReference(frame);
     }
-    public boolean equals(Object o) {
-	return f.get().equals(o);
-    }
     public void setGroup(ButtonGroup g) {}
     public void setRollover(boolean b) { roll = b;}
     public void setPressed(boolean b) {press = b;}
