@@ -385,8 +385,7 @@ public final class MidiUtil {
 		for (j = i + 1; (int) (d[j] & 0xff) != ShortMessage.END_OF_EXCLUSIVE; j++)
 		    ;
 		// here d[j] is EOX.
-		j++;
-		int l = j - i;
+		int l = j - i + 1;
 		byte[] b = new byte[l];
 		System.arraycopy(d, i, b, 0, l);
 		SysexMessage m = new SysexMessage();
