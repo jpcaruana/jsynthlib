@@ -293,7 +293,7 @@ public class SysexGetDialog extends JDialog {
       bankComboBox.removeAllItems();
       patchNumComboBox.removeAllItems();
 
-      if (driver.bankNumbers.length > 1) {
+      if (driver.bankNumbers != null && driver.bankNumbers.length > 1) {
 	for (int i = 0 ; i < driver.bankNumbers.length ; i++) {
 	  bankComboBox.addItem(driver.bankNumbers[i]);
 	}

@@ -214,15 +214,16 @@ public class DevDrvPatchSelector extends JDialog {
             patchNumComboBox.removeAllItems();
 
             if (driver != null) {
-                if (driver.bankNumbers.length > 1) {
+                if (driver.bankNumbers != null && driver.bankNumbers.length > 1) {
                     for (int i = 0 ; i < driver.bankNumbers.length ; i++) {
             	        bankComboBox.addItem(driver.bankNumbers[i]);
                     }
                 }
 
-                if (driver.patchNumbers.length > 1) {
-                    for (int i = 0 ; i < driver.patchNumbers.length ; i++) {
-                        patchNumComboBox.addItem(driver.patchNumbers[i]);
+                String patchNumbers[] = getPatchNumbers(driver);
+                if (patchNumbers.length > 1) {
+                    for (int i = 0 ; i < patchNumbers.length ; i++) {
+                        patchNumComboBox.addItem(patchNumbers[i]);
                     }
                     patchNumComboBox.setSelectedIndex(Math.min(patchNum, patchNumComboBox.getItemCount() - 1));
                 }
@@ -232,5 +233,15 @@ public class DevDrvPatchSelector extends JDialog {
             // N.B. Do not enable patch selection for banks
             patchNumComboBox.setEnabled(!(driver instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
         }
+    }
+    
+    /**
+     * This method returns the list of patch numbers, which may change according
+     * to the dialog type (some have patch locations to which you can send but
+     * not store)
+     */
+    protected String[] getPatchNumbers(Driver driver)
+    {
+        return driver.patchNumbers;
     }
 }

@@ -19,6 +19,10 @@ public class EnvelopeWidget extends SysexWidget {
     private int numValues;
     /** EnvelopeCanvas instance */
     private EnvelopeCanvas envelopeCanvas;
+    /** x axis padding used for insets */
+    private int xpadding;
+    /** y axis padding used for insets */
+    private int ypadding;
 
     /**
      * Creates a new <code>SysexWidget</code> instance.
@@ -30,8 +34,14 @@ public class EnvelopeWidget extends SysexWidget {
      * @see EnvelopeNode
      */
     public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n) {
+	this(l,p,n,0,0);
+    }
+
+    public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n, int xpad, int ypad) {
 	super(l, p);
 	nodes = n;
+	xpadding=xpad;
+	ypadding=ypad;
 	setup();
     }
 
@@ -82,6 +92,10 @@ public class EnvelopeWidget extends SysexWidget {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = gbc.BOTH;
         gbc.anchor = gbc.EAST;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.insets = new Insets(ypadding, xpadding, ypadding, xpadding);
+
         for (j = 0; j < numValues; j++) {
 	    // name of he X/Y axis paramters
 	    gbc.gridx = 0;

@@ -63,4 +63,12 @@ public class ScrollBarLookupWidget extends SysexWidget {
     public void setEnabled(boolean e) {
         slider.setEnabled(e);
     }
+
+    public void changeOptions(String [] o) {
+	if (o != options) {
+	    options = o;
+	    text.setText(options[getValue()]);
+	}
+    }
+
 }

@@ -36,6 +36,15 @@ public class SysexStoreDialog extends DevDrvPatchSelector {
     }
 
     /**
+     * getPatchNumbers is overridden for SystexStoreDialog.
+     * Only storable patches are displayed.
+     */
+    protected String[] getPatchNumbers(Driver driver)
+    {
+        return driver.getPatchNumbersForStore();
+    }
+
+    /**
      * Makes the actual work after pressing the 'Store' button
      */
     protected void doit() {

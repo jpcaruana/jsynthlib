@@ -780,6 +780,19 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     /*
+     * Returns String[] list of patch numbers for writable patches.
+     * This can be overridden if some patch locations are read only.
+     * e.g. the Waldorf Pulse has 100 patches, but only 0 to 39 are writable.
+     * Currently writable patches are assumed to start at patch location 0
+     * (This has nothing to with the "Storable" class in JSynthLib)
+     */
+    public String[] getPatchNumbersForStore()
+    {
+        // All patches assumed to be writable by default
+        return patchNumbers;
+    }
+
+    /*
      * Generates arrays of formatted numbers
      */
     protected static String[] generateNumbers(int min, int max, String format){
