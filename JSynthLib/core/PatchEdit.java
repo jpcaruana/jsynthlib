@@ -830,7 +830,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		    }
 		} catch (Exception ex) {
 		    // For which Exception is this message for? !!!FIXIT!!!
-		    ErrorMsg.reportError("Error", "Library holding Patch to Edit must be the focused Window.", ex);
+		    //ErrorMsg.reportError("Error", "Library holding Patch to Edit must be the focused Window.", ex);
+		    ErrorMsg.reportError("Error",
+					 "Error in PatchEditor.", ex);
 		}
 	    }
 	}
@@ -1343,7 +1345,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		//|| status == SysexMessage.SYSTEM_EXCLUSIVE)
 		ErrorMsg.reportStatus("MasterReceiver: " + message);
 		this.rcvr.send(message, timeStamp);
-		MidiUtil.logIn(trns, message);
+		MidiUtil.log("RECV: ", message);
 	}
     }
 

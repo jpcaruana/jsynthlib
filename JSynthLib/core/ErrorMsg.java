@@ -22,14 +22,12 @@ public class ErrorMsg {
     public static int debug;
 
     /**
-     * Report an error.
+     * Show a message in an error dialog window.
      *
      * @param errorTitle title for error dialog.
      * @param errorMSG error message.
      */
     public static void reportError(String errorTitle, String errorMSG) {
-// 	JOptionPane.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
-// 				      errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
 	ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.ERROR_MESSAGE);
@@ -40,7 +38,8 @@ public class ErrorMsg {
     }
 
     /**
-     * Report an error.
+     * Show a message in an error dialog window with an
+     * <code>Exception</code> information.
      *
      * @param errorTitle title for error dialog.
      * @param errorMSG error message.
@@ -48,8 +47,6 @@ public class ErrorMsg {
      */
     public static void reportError(String errorTitle, String errorMSG,
 				   Exception e) {
-// 	JOptionPane.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
-// 				      errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
 	ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.ERROR_MESSAGE, e);
@@ -64,14 +61,12 @@ public class ErrorMsg {
     }
 
     /**
-     * Report a warning.
+     * Show a message in a warning dialog window.
      *
      * @param errorTitle title for warning dialog.
      * @param errorMSG warning message.
      */
     public static void reportWarning(String errorTitle, String errorMSG) {
-// 	JOptionPane.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
-// 				      errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
         ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.WARNING_MESSAGE);
@@ -82,7 +77,8 @@ public class ErrorMsg {
     }
 
     /**
-     * Report a warning.
+     * Show a message in a warning dialog window with an
+     * <code>Exception</code> information.
      *
      * @param errorTitle title for warning dialog.
      * @param errorMSG warning message.
@@ -90,8 +86,6 @@ public class ErrorMsg {
      */
     public static void reportWarning(String errorTitle, String errorMSG,
 				     Exception e) {
-// 	JOptionPane.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
-// 				      errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
         ErrorDialog.showMessageDialog(PatchEdit.getInstance()/*phil@muqus.com*/,
 				      errorMSG, errorTitle,
 				      JOptionPane.WARNING_MESSAGE);
@@ -106,7 +100,7 @@ public class ErrorMsg {
     }
 
     /**
-     * Report a debug message.
+     * Report a debug message when <code>debug &gt 1</code>.
      *
      * @param msg a <code>String</code> value
      */
@@ -116,7 +110,8 @@ public class ErrorMsg {
     }
 
     /**
-     * Report a debug message.
+     * Report an <code>Exception</code> information and the stack
+     * trace when <code>debug &gt 0</code>.
      *
      * @param e an <code>Exception</code> value
      */
@@ -130,7 +125,8 @@ public class ErrorMsg {
     //----- Start phil@muqus.com
 
     /**
-     * Output byte array as a pretty printed hex dump.
+     * Output byte array as a pretty printed hex dump when <code>debug
+     * &gt 1</code>.
      *
      * @param data a <code>byte</code> array.
      */
@@ -140,7 +136,7 @@ public class ErrorMsg {
 
     /**
      * Output a debug message and byte array as a pretty printed hex
-     * dump.
+     * dump when <code>debug &gt 1</code>.
      *
      * @param sMsg a debug message.
      * @param data a <code>byte</code> array.
@@ -152,21 +148,12 @@ public class ErrorMsg {
 	if (sMsg != null)
 	    reportStatus(sMsg);
 
-	//===== Output Hex dump
-	for (int i = 0; i < data.length; i++) {
-	    String sHex = Integer.toHexString((int) (data[i] & 0xFF));
-	    System.out.print(((sHex.length() == 1) ? "0" : "") + sHex);
-	    if (i % 20 == 19)
-		System.out.println();
-	    else
-		System.out.print((i % 10 == 9) ? "   " : " ");
-	}
-	System.out.println();
+	Utility.hexDump(data, 0, data.length, 20);
     }
 
     /**
      * Output a debug message and byte array as a pretty printed hex
-     * dump.
+     * dump when <code>debug &gt 1</code>.
      *
      * @param sMsg a debug message.
      * @param data a <code>byte</code> array.
@@ -176,9 +163,7 @@ public class ErrorMsg {
      */
     public static void reportStatus(String sMsg,
 				    byte[] data, int offset, int len) {
-	byte[] subData = new byte[len];
-	System.arraycopy(data, offset, subData, 0, len);
-	reportStatus(sMsg, subData);
+	Utility.hexDump(data, offset, len, 20);
     }
     //----- End phil@muqus.com
 }

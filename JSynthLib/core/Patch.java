@@ -467,7 +467,7 @@ public class Patch extends Object
     public String toString() {
 	StringBuffer buf = new StringBuffer();
 	buf.append("[" + deviceNum + "," + driverNum + "] "
-		   + MidiUtil.hexDumpOneLine(sysex, 0, -1, 20));
+		   + Utility.hexDumpOneLine(sysex, 0, -1, 20));
 	return buf.toString();
     }
 }

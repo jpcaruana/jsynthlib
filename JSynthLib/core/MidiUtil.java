@@ -344,7 +344,7 @@ public final class MidiUtil {
 
 	if (BUFSIZE == 0 || size <= BUFSIZE) {
 	    rcv.send(msg, -1);
-	    logOut(rcv, msg);
+	    log("XMIT: ", msg);
 	} else {
 	    // divide large System Exclusive Message into multiple
 	    // small messages.
@@ -362,7 +362,7 @@ public final class MidiUtil {
 		    ((SysexMessage) msg).setMessage(tmpArray, ++s);
 		}
 		rcv.send(msg, -1);
-		logOut(rcv, msg);
+		log("XMIT: ", msg);
 	    }
 	}
     }
@@ -383,7 +383,7 @@ public final class MidiUtil {
 	public void send(MidiMessage msg, long timeStamp) {
 	    ErrorMsg.reportStatus("InputQueue: " + msg);
 	    list.add(msg);
-	    logOut(this, msg); // !!!FIXIT!!!
+	    log("XMIT: ", msg);
 	}
 
 	void clearQueue() {
@@ -400,7 +400,7 @@ public final class MidiUtil {
 	    MidiMessage msg = (MidiMessage) list.remove(0);
 	    // for java 1.4.2 bug
 	    msg = (MidiMessage) MidiUtil.fixShortMessage(msg);
-	    logOut(this, msg); // !!!FIXIT!!!
+	    log("RECV: ", msg);
 	    return msg;
 	}
     }
@@ -497,78 +497,6 @@ public final class MidiUtil {
 	}
     }
 
-    //
-    // convert MidiMessage or byte array into String
-    //
-    private static String hex(int c) {
-	String s = Integer.toHexString(c);
-	return s.length() == 1 ? "0" + s : s;
-    }
-
-    /**
-     * convert a byte array into a hexa-dump string.
-     *
-     * @param d a <code>byte[]</code> array to be converted.
-     * @param offset array index from which dump starts.
-     * @param len number of bytes to be dumped.  If -1, dumps to the
-     * end of the array.
-     * @param bytes number of bytes per line.  If equal or less than
-     * 0, no newlines are inserted.
-     * @return hexa-dump string.
-     */
-    public static String hexDump(byte[] d, int offset, int len, int bytes) {
-	StringBuffer buf = new StringBuffer();
-	if (len == -1 || offset + len > d.length)
-	    len = d.length - offset;
-	for (int i = 0; i < len; i++) {
-	    int c = (int) (d[offset + i] & 0xff);
-	    if (c < 0x10)
-		buf.append("0");
-	    buf.append(Integer.toHexString(c));
-	    if (bytes > 0
-		&& (i % bytes == bytes - 1 && i != len - 1))
-		buf.append("\n  ");
-	    else if (i != len - 1)
-		buf.append(" ");
-	}
-	return buf.toString();
-    }
-
-    /**
-     * convert a byte array into a one-line hexa-dump string.
-     *
-     * @param d a <code>byte[]</code> array to be converted.
-     * @param offset array index from which dump starts.
-     * @param len number of bytes to be dumped.  If -1, dumps to the
-     * end of the array.
-     * @param bytes number of columns (bytes) per line.
-     * @return hexa-dump string.
-     */
-    public static String hexDumpOneLine(byte[] d, int offset, int len, int bytes) {
-	if (len == -1 || len > d.length - offset)
-	    len = d.length - offset;
-
-	if (len <= bytes || len < 8)
-	    return hexDump(d, offset, len, 0);
-
-	StringBuffer buf = new StringBuffer();
-	for (int i = 0; i < bytes - 4; i++) {
-	    int c = (int) (d[offset + i] & 0xff);
-	    if (c < 0x10)
-		buf.append("0");
-	    buf.append(Integer.toHexString(c) + " ");
-	}
-	buf.append("..");
-	for (int i = len - 3; i < len; i++) {
-	    int c = (int) (d[offset + i] & 0xff);
-	    buf.append(" ");
-	    if (c < 0x10)
-		buf.append("0");
-	    buf.append(Integer.toHexString(c));
-	}
-	return buf.toString();
-    }
-
     /**
      * Convert <code>SysexMessage</code> into a hexa-dump string.
      *
@@ -579,7 +507,7 @@ public final class MidiUtil {
      */
     public static String sysexMessageToString(SysexMessage m, int bytes) {
 	byte[] d = m.getMessage();
-	return hexDump(d, 0, -1, bytes);
+	return Utility.hexDump(d, 0, -1, bytes);
     }
 
     /**
@@ -594,7 +522,12 @@ public final class MidiUtil {
     public static String sysexMessageToString(SysexMessage m)
 	throws InvalidMidiDataException {
 	byte[] d = m.getMessage();
-	return hexDumpOneLine(d, 0, -1, 16);
+	return Utility.hexDumpOneLine(d, 0, -1, 16);
+    }
+
+    private static String hex(int c) {
+	String s = Integer.toHexString(c);
+	return s.length() == 1 ? "0" + s : s;
     }
 
     /**
@@ -700,6 +633,14 @@ public final class MidiUtil {
 	PatchEdit.midiMonitorLog(s);
     }
 
+    public static void log(String str, MidiMessage msg) {
+	try {
+	    log(str + midiMessageToString(msg) + "\n");
+	} catch	(InvalidMidiDataException e) {
+	    log("InvalidMidiDataException: " + msg + "\n");
+	}
+    }
+
     /**
      * Dump output MidiMessage <code>msg</code> on the MIDI Monitor
      * Window with port number information.
@@ -732,14 +673,6 @@ public final class MidiUtil {
 	log(rcv.toString() + " XMIT ", msg);
     }
 
-    private static void log(String str, MidiMessage msg) {
-	try {
-	    log(str + midiMessageToString(msg) + "\n");
-	} catch	(InvalidMidiDataException e) {
-	    log("InvalidMidiDataException: " + msg + "\n");
-	}
-    }
-
     /**
      * Dump input MIDI <code>sysex</code> byte array one the MIDI
      * Monitor Window with port number information.
@@ -767,10 +700,10 @@ public final class MidiUtil {
     private static void log(int port, String dir, byte[] sysex, int length) {
 	if (CSMstate) {
 	    log("Port: " + port + dir + length + " bytes :\n  "
-	        + hexDump(sysex, 0, length, 16) + "\n");
+	        + Utility.hexDump(sysex, 0, length, 16) + "\n");
 	} else {
             log("Port: " + port + dir + length + " bytes :\n  "
-		+ hexDumpOneLine(sysex, 0, length, 16) + "\n");
+		+ Utility.hexDumpOneLine(sysex, 0, length, 16) + "\n");
 	}
     }
 
@@ -821,9 +754,9 @@ public final class MidiUtil {
 	for (int i = 0; i < id.length; i++)
 	    bd[i] = (byte) id[i];
 
-	System.out.println(hexDump(bd, 0, -1, 16));
+	System.out.println(Utility.hexDump(bd, 0, -1, 16));
 	System.out.println("------------");
-	System.out.println(hexDump(bd, 5, 12, 4));
+	System.out.println(Utility.hexDump(bd, 5, 12, 4));
 	System.out.println("------------");
 
 	SysexMessage sysex = new SysexMessage();

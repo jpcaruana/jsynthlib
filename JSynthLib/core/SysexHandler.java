@@ -193,8 +193,8 @@ public class SysexHandler /*implements Serializable*/ {
      * @return a <code>SysexMessage</code> value
      * @see NameValue
      */
-    public SysexMessage toSysexMessage(int deviceID, NameValue nameValue1) {
-	NameValue[] nameValues = new NameValue[] {nameValue1};
+    public SysexMessage toSysexMessage(int deviceID, NameValue nameValue) {
+	NameValue[] nameValues = new NameValue[] {nameValue};
 	return toSysexMessage(deviceID, nameValues);
     }
 

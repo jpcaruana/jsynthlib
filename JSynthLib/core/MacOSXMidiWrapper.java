@@ -459,7 +459,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 			if (status == SysexMessage.SYSTEM_EXCLUSIVE || inSysex) {
 				byte[] d = new byte[len];
 				oData.copyToArray(0, d, 0, len);
-				ErrorMsg.reportStatus("Sysex: " + MidiUtil.hexDump(d, 0, -1, 16));
+				ErrorMsg.reportStatus("Sysex: " + Utility.hexDump(d, 0, -1, 16));
 				SysexMessage msg = new SysexMessage();
 				try {
 					if (status == SysexMessage.SYSTEM_EXCLUSIVE) {
@@ -478,7 +478,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 				// for debugging
 				byte[] d = new byte[len];
 				oData.copyToArray(0, d, 0, len);
-				ErrorMsg.reportStatus("Short: " + MidiUtil.hexDump(d, 0, -1, 16));
+				ErrorMsg.reportStatus("Short: " + Utility.hexDump(d, 0, -1, 16));
 				// Single Messages
 				for (int i = 0; i < len; i++) {
 					status = (int) (oData.getByteAt(i) & 0xff);
