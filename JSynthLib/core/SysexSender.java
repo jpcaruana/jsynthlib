@@ -18,11 +18,13 @@ public class SysexSender implements SysexWidget.ISender {
 
     /**
      * Creates a new <code>SysexSender</code> instance. A subclass which uses
-     * this constructor does not use sysex field. It means that the subclass
-     * does not have to extend this class and can simply implement
-     * SysexWidget.ISender.
+     * this constructor does not use sysex field. The subclass has to override
+     * <code>generate</code> method.
+     * 
+     * It implies that the subclass does not have to extend this class and can
+     * simply implement SysexWidget.ISender.
      */
-    public SysexSender() { // XXX can be @deprecated
+    public SysexSender() {
     }
 
     /**
@@ -48,8 +50,12 @@ public class SysexSender implements SysexWidget.ISender {
 
     /**
      * Return a Sysex data for <code>value</code>.
-     *
-     * @param value an <code>int</code> value
+     * 
+     * Subclass which uses <code>SysexSender()</code> constructor instead of
+     * <code>SysexSender(String)</code> has to override this method.
+     * 
+     * @param value
+     *            an <code>int</code> value
      * @return a <code>byte[]</code> value
      */
     protected byte[] generate(int value) {
