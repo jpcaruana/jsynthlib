@@ -53,7 +53,7 @@ public class YamahaTX7PerformanceBankDriver extends DX7FamilyPerformanceBankDriv
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information 
-				YamahaTX7Strings.dxShowInformation(getDriverName(), YamahaTX7Strings.MEMORY_PROTECTION_STRING);
+				YamahaTX7Strings.dxShowInformation(toString(), YamahaTX7Strings.MEMORY_PROTECTION_STRING);
 		}
 
 		sendPatchWorker(p);
@@ -70,7 +70,7 @@ public class YamahaTX7PerformanceBankDriver extends DX7FamilyPerformanceBankDriv
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 ) {
 			// show Information 
-			YamahaTX7Strings.dxShowInformation(getDriverName(), YamahaTX7Strings.EDIT_BANK_PERFORMANCE_STRING);
+			YamahaTX7Strings.dxShowInformation(toString(), YamahaTX7Strings.EDIT_BANK_PERFORMANCE_STRING);
 		}
 
 		return super.editPatch(p);

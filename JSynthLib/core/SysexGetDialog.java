@@ -211,8 +211,8 @@ public class SysexGetDialog extends JDialog {
 		driver.trimSysex(pk);
 		JOptionPane.showMessageDialog
 		  (null,
-		   "You requested a "+driver.getDriverName()+"patch!"+
-		   "\nBut you got a "+pk.getDriver().getDriverName()+"patch.",
+		   "You requested a "+driver.toString()+" patch!"+
+		   "\nBut you got a "+pk.getDriver().toString()+" patch.",
 		   "Warning", JOptionPane.WARNING_MESSAGE);
 		break testforDriver;
 	      }
@@ -228,7 +228,7 @@ public class SysexGetDialog extends JDialog {
 			+ " Patch, Size: " + pk.sysex.length);
 	  JOptionPane.showMessageDialog
 	    (null,
-	     "You requested a "+driver.getDriverName()+"patch!"+
+	     "You requested a "+driver.toString()+" patch!"+
 	     "\nBut you got a not supported patch!\n"+pk.getComment(),
 	     "Warning", JOptionPane.WARNING_MESSAGE);
 	} // testforDriver

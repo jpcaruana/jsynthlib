@@ -54,7 +54,7 @@ public class YamahaTX7PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 			// show Information 
-			YamahaTX7Strings.dxShowInformation(getDriverName(), YamahaTX7Strings.STORE_SINGLE_PERFORMANCE_STRING);
+			YamahaTX7Strings.dxShowInformation(toString(), YamahaTX7Strings.STORE_SINGLE_PERFORMANCE_STRING);
 
 		sendPatchWorker (p);
 	}

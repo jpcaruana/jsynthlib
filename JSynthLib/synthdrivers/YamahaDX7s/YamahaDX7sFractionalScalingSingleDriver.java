@@ -54,7 +54,7 @@ public class YamahaDX7sFractionalScalingSingleDriver extends DX7FamilyFractional
 	{
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information
-			YamahaDX7sStrings.dxShowInformation(getDriverName(), YamahaDX7sStrings.STORE_SINGLE_FRACTIONAL_SCALING_STRING);
+			YamahaDX7sStrings.dxShowInformation(toString(), YamahaDX7sStrings.STORE_SINGLE_FRACTIONAL_SCALING_STRING);
 
 		sendPatchWorker (p);
 	}
@@ -64,7 +64,7 @@ public class YamahaDX7sFractionalScalingSingleDriver extends DX7FamilyFractional
 	{
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information
-			YamahaDX7sStrings.dxShowInformation(getDriverName(), YamahaDX7sStrings.FRACTIONAL_SCALING_CARTRIDGE_STRING);
+			YamahaDX7sStrings.dxShowInformation(toString(), YamahaDX7sStrings.FRACTIONAL_SCALING_CARTRIDGE_STRING);
 
 		// keyswitch to voice mode
 		YamahaDX7sSysexHelpers.chVoiceMode(getPort(), (byte)(getChannel()+0x10));

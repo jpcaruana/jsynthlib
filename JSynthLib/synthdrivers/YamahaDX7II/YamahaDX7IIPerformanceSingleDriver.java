@@ -56,6 +56,6 @@ public class YamahaDX7IIPerformanceSingleDriver extends DX7FamilyPerformanceIISi
 
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information
-			YamahaDX7IIStrings.dxShowInformation(getDriverName(), YamahaDX7IIStrings.STORE_SINGLE_PERFORMANCE_STRING);
+			YamahaDX7IIStrings.dxShowInformation(toString(), YamahaDX7IIStrings.STORE_SINGLE_PERFORMANCE_STRING);
 	}
 }

@@ -55,7 +55,7 @@ public class YamahaTX802VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information
-			YamahaTX802Strings.dxShowInformation(getDriverName(), YamahaTX802Strings.STORE_SINGLE_VOICE_STRING);
+			YamahaTX802Strings.dxShowInformation(toString(), YamahaTX802Strings.STORE_SINGLE_VOICE_STRING);
 	}
 
 

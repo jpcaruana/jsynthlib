@@ -106,14 +106,14 @@ public class SysexMatcher extends Object {
       return "";
 
     if (size != 0 && size != sysex.length) {
-      return("Matches sysexID for driver: " + driver.getDriverName() + "\n" +
+      return("Matches sysexID for driver: " + driver.toString() + "\n" +
         "   But patch size: " + sysex.length +
         " does not equal required size: " + size + "\n"
       );
     }
 
     if (numSysexMsgs != 0 && numSysexMsgs != this.numSysexMsgs) {
-      return("Matches sysexID for driver: " + driver.getDriverName() + "\n" +
+      return("Matches sysexID for driver: " + driver.toString() + "\n" +
         "   But number of sysex messages in patch: " + this.numSysexMsgs +
         " does not equal required number: " + numSysexMsgs + "\n"
       );

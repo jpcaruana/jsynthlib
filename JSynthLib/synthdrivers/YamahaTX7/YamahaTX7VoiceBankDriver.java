@@ -54,7 +54,7 @@ public class YamahaTX7VoiceBankDriver extends DX7FamilyVoiceBankDriver
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
-				YamahaTX7Strings.dxShowInformation(getDriverName(), YamahaTX7Strings.MEMORY_PROTECTION_STRING);
+				YamahaTX7Strings.dxShowInformation(toString(), YamahaTX7Strings.MEMORY_PROTECTION_STRING);
 		}
 
 		sendPatchWorker(p);

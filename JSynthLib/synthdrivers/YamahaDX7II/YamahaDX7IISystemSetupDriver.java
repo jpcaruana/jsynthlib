@@ -59,7 +59,7 @@ public class YamahaDX7IISystemSetupDriver extends DX7FamilySystemSetupIIDriver
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information
-				YamahaDX7IIStrings.dxShowInformation(getDriverName(), YamahaDX7IIStrings.MEMORY_PROTECTION_STRING);
+				YamahaDX7IIStrings.dxShowInformation(toString(), YamahaDX7IIStrings.MEMORY_PROTECTION_STRING);
 		}
 
 		sendPatchWorker (p);

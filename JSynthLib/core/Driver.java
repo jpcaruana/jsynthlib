@@ -525,7 +525,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 		compareString.append(sysexID.charAt(i));
             }
         }
-// 	System.out.println(getDriverName());
+// 	System.out.println(toString());
 // 	System.out.println("Comp.String: " + compareString);
 // 	System.out.println("DriverString:" + driverString);
 // 	System.out.println("PatchString: " + patchString);
@@ -613,7 +613,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	if (sysexRequestDump == null) {
 	    JOptionPane.showMessageDialog
 		(PatchEdit.instance,
-		 "The " + getDriverName()
+		 "The " + toString()
 		 + " driver does not support patch getting.\n\n"
 		 + "Please start the patch dump manually...",
 		 "Get Patch", JOptionPane.WARNING_MESSAGE);
@@ -692,11 +692,6 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * Returns String .. full name for referring to this Driver for
      * debugging purposes
      */
-    protected String getDriverName() { // called by DX7* drivers
-	return getManufacturerName() + " " + getModelName() + " "
-	    + getPatchType() + " "; // why tailing space?
-    }
-
     public String toString() {
 	return getManufacturerName() + " " + getModelName() + " "
 	    + getPatchType();

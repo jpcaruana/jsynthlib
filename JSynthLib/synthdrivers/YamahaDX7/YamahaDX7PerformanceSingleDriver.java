@@ -48,7 +48,7 @@ public class YamahaDX7PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 			// show Information 
-			YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.STORE_SINGLE_PERFORMANCE_STRING);
+			YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.STORE_SINGLE_PERFORMANCE_STRING);
 
 		sendPatchWorker (p);
 	}
@@ -58,7 +58,7 @@ public class YamahaDX7PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 			// show Information 
-			YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.PERFORMANCE_STRING);
+			YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.PERFORMANCE_STRING);
 	}
 
 	
@@ -70,7 +70,7 @@ public class YamahaDX7PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information 
-				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.PERFORMANCE_EDITOR_STRING);
+				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.PERFORMANCE_EDITOR_STRING);
 		}
 
 		return super.editPatch(p);

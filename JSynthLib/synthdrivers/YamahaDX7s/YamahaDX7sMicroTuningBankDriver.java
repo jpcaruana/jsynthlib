@@ -49,7 +49,7 @@ public class YamahaDX7sMicroTuningBankDriver extends DX7FamilyMicroTuningBankDri
 	{
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information 
-			YamahaDX7sStrings.dxShowInformation(getDriverName(), YamahaDX7sStrings.MICRO_TUNING_CARTRIDGE_STRING);
+			YamahaDX7sStrings.dxShowInformation(toString(), YamahaDX7sStrings.MICRO_TUNING_CARTRIDGE_STRING);
       
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection (internal+cartridge!)
@@ -57,7 +57,7 @@ public class YamahaDX7sMicroTuningBankDriver extends DX7FamilyMicroTuningBankDri
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information
-				YamahaDX7sStrings.dxShowInformation(getDriverName(), YamahaDX7sStrings.MEMORY_PROTECTION_STRING);
+				YamahaDX7sStrings.dxShowInformation(toString(), YamahaDX7sStrings.MEMORY_PROTECTION_STRING);
 		}
 		
 		sendPatchWorker(p);
@@ -68,7 +68,7 @@ public class YamahaDX7sMicroTuningBankDriver extends DX7FamilyMicroTuningBankDri
 	{
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information
-			YamahaDX7sStrings.dxShowInformation(getDriverName(), YamahaDX7sStrings.MICRO_TUNING_CARTRIDGE_STRING);
+			YamahaDX7sStrings.dxShowInformation(toString(), YamahaDX7sStrings.MICRO_TUNING_CARTRIDGE_STRING);
       
 		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
 	}

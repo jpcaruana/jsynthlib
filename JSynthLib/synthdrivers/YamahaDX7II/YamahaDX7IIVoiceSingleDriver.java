@@ -55,7 +55,7 @@ public class YamahaDX7IIVoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 			// show Information
-			YamahaDX7IIStrings.dxShowInformation(getDriverName(), YamahaDX7IIStrings.STORE_SINGLE_VOICE_STRING);
+			YamahaDX7IIStrings.dxShowInformation(toString(), YamahaDX7IIStrings.STORE_SINGLE_VOICE_STRING);
 	}
 
 

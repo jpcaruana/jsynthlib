@@ -53,7 +53,7 @@ public class YamahaDX7sAdditionalVoiceBankDriver extends DX7FamilyAdditionalVoic
 		} else {
 			if( ( ((YamahaDX7sDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information 
-				YamahaDX7sStrings.dxShowInformation(getDriverName(), YamahaDX7sStrings.MEMORY_PROTECTION_STRING);
+				YamahaDX7sStrings.dxShowInformation(toString(), YamahaDX7sStrings.MEMORY_PROTECTION_STRING);
 		}
 
 		// choose the desired MIDI Receive block (internal (1-32), internal (33-64))

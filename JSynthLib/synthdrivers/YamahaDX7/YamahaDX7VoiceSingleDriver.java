@@ -68,7 +68,7 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
-				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.MEMORY_PROTECTION_STRING);
+				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.MEMORY_PROTECTION_STRING);
 		}
 
 		
@@ -89,13 +89,13 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
-				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.RECEIVE_STRING);
+				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.RECEIVE_STRING);
 
 			sendPatchWorker(p);
 
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
-				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.STORE_SINGLE_VOICE_STRING);
+				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.STORE_SINGLE_VOICE_STRING);
 		}
 	}
 
@@ -112,7 +112,7 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
-				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.REQUEST_VOICE_STRING);
+				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.REQUEST_VOICE_STRING);
 
 			byte buffer[] = new byte[256*1024];
 			try {
@@ -133,7 +133,7 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
-				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.MEMORY_PROTECTION_STRING);
+				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.MEMORY_PROTECTION_STRING);
 		}
 
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
@@ -142,7 +142,7 @@ public class YamahaDX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
-				YamahaDX7Strings.dxShowInformation(getDriverName(), YamahaDX7Strings.RECEIVE_STRING);
+				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.RECEIVE_STRING);
 		}
 
 		return super.editPatch(p);
