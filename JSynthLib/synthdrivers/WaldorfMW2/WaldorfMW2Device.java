@@ -32,12 +32,11 @@ import core.Device;
  * @version $Id$
  */
 public class WaldorfMW2Device extends Device {
-    private static final String INFO_TEXT
-    = "Microwave 2 / XT / XTK";
-
+    private static final String INFO_TEXT = "Microwave 2 / XT / XTK librarian.";
+    
     /**
-    * Constructor for DeviceListWriter.
-    */
+     * Constructor for DeviceListWriter.
+     */
     public WaldorfMW2Device() {
         super(  "Waldorf",
                 "Microwave 2/XT/XTK",
@@ -45,17 +44,18 @@ public class WaldorfMW2Device extends Device {
                 INFO_TEXT,
                 "Joachim Backhaus");
     }
-
-
+    
+    
     /**
-    * Constructor for the actual work.
-    *
-    * @param prefs  The Preferences for this device
-    */
+     * Constructor for the actual work.
+     *
+     * @param prefs  The Preferences for this device
+     */
     public WaldorfMW2Device(Preferences prefs) {
         this();
         this.prefs = prefs;
-
+        
         addDriver(new WaldorfMW2SingleDriver());
+        addDriver(new WaldorfMW2BankDriver());
     }
 }

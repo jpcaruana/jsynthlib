@@ -21,6 +21,7 @@
 
 package synthdrivers.WaldorfMW2;
 
+
 /**
  * Constants for the Microwave 2 / XT / XTK synthdriver
  *
@@ -28,20 +29,27 @@ package synthdrivers.WaldorfMW2;
  * @version $Id$
  */
 public class MW2Constants {
-	public static final byte SYSEX_START_BYTE			= (byte) 0xF0;
-	public static final byte SYSEX_END_BYTE				= (byte) 0xF7;
-	public static final int  SYSEX_HEADER_OFFSET		= 8;
+    public static final byte SYSEX_START_BYTE           = (byte) 0xF0;
+    public static final byte SYSEX_END_BYTE             = (byte) 0xF7;
+    public static final int  SYSEX_HEADER_OFFSET        = 7;
+    public static final int  SYSEX_FOOTER_SIZE          = 2;
 
-	public static final int PATCH_SIZE			= 265;
-	public static final int PATCH_NAME_SIZE		= 16;
-	public static final int PATCH_NAME_START	= 247; // 240 + 7
+    public static final int PATCH_SIZE          = 265;
+    public static final int PURE_PATCH_SIZE     = PATCH_SIZE - SYSEX_HEADER_OFFSET - SYSEX_FOOTER_SIZE;
+    public static final int PATCH_NAME_SIZE     = 16;    
+    public static final int PATCH_NAME_START    = 247; // 240 + 7
+    public static final int PATCH_NUMBERS       = 128;
+    
+    public static final String[] BANK_NAMES = new String[] { "A", "B" };
+    
+    public static final int ALL_SOUNDS_SIZE     = (BANK_NAMES.length * PATCH_NUMBERS * PURE_PATCH_SIZE) + SYSEX_HEADER_OFFSET + SYSEX_FOOTER_SIZE;
 
-	public static final int DEVICE_ID_OFFSET	= 3;
+    public static final int DEVICE_ID_OFFSET    = 3;
 
-	// Sound Mode Edit Buffer: 20 00
+    // Sound Mode Edit Buffer: 20 00
 
-	// Sysex ID: F0 3E 0E .. 00 .. .. XSUM F7
-	public static final String SYSEX_ID = "F03E0E**";
-	
-	public static final String DEFAULT_SYSEX_FILENAME = "mw2_default.syx";
+    // Sysex ID: F0 3E 0E .. 00 .. .. XSUM F7
+    public static final String SYSEX_ID = "F03E0E**";
+
+    public static final String DEFAULT_SYSEX_FILENAME = "mw2_default.syx";
 }

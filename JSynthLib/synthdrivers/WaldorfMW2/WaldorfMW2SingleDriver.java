@@ -52,9 +52,9 @@ public class WaldorfMW2SingleDriver extends Driver {
         this.patchNameSize = MW2Constants.PATCH_NAME_SIZE;
         this.deviceIDoffset = MW2Constants.DEVICE_ID_OFFSET;
         
-        checksumStart = 7;  // Fuck it! The SysEx documentation said 5 but that's wrong!
-        checksumEnd = 262;
-        checksumOffset = 263;
+        this.checksumStart = MW2Constants.SYSEX_HEADER_OFFSET;  // Fuck it! The SysEx documentation said 5 but that's wrong!
+        this.checksumOffset = this.checksumStart + MW2Constants.PURE_PATCH_SIZE;
+        this.checksumEnd = this.checksumOffset - 1;        
         
         this.bankNumbers = new String[] { "A", "B" };
         
@@ -64,19 +64,20 @@ public class WaldorfMW2SingleDriver extends Driver {
         this.patchSize = MW2Constants.PATCH_SIZE;
     }
     
+    protected static void calculateChecksum(Patch p, int start, int end, int ofs)  {        
+        int sum = 0;        
+        for (int i = start; i <= end; i++)
+            sum += p.sysex[i];        
+        p.sysex[ofs] =  (byte) (sum & 0x7F); 
+    }
+    
     /**
      * Calculate check sum of a <code>Patch</code>.<p>
      *
-     * Need to be overridden if a patch is consist from multiple SysEX
-     * messages.
-     *
      * @param p a <code>Patch</code> value
      */
-    protected void calculateChecksum(Patch p) {
-        int sum = 0;
-        for (int i = this.checksumStart; i <= this.checksumEnd; i++)
-            sum += p.sysex[i];
-        p.sysex[this.checksumOffset] = (byte) (sum & 0x7F);
+    protected void calculateChecksum(Patch p) {        
+        calculateChecksum(p, this.checksumStart, this.checksumEnd, this.checksumOffset);        
     }
     
     /**
@@ -123,7 +124,27 @@ public class WaldorfMW2SingleDriver extends Driver {
         calculateChecksum(p);
         
         sendPatchWorker(p);
+    }       
+    
+    public static void createPatchHeader(Patch tempPatch) {
+        if (tempPatch.sysex.length > 8) {
+            tempPatch.sysex[0] = MW2Constants.SYSEX_START_BYTE;
+            tempPatch.sysex[1] = (byte) 0x3E; // Waldorf Electronics GmbH ID
+            tempPatch.sysex[2] = (byte) 0x0E; // Microwave 2 ID
+            tempPatch.sysex[3] = (byte) tempPatch.getDevice().getDeviceID(); // Device ID
+            tempPatch.sysex[4] = (byte) 0x10; // Sound Dump
+            tempPatch.sysex[5] = (byte) 0x20; // Location (use Edit Buffer)
+            tempPatch.sysex[6] = (byte) 0x00; // Location (use Edit Buffer)
+            tempPatch.sysex[7] = (byte) 0x01; // Sound format (has to be 1, as 0 doesn't work!)
+        }
     }
+    
+    public static void createPatchFooter(Patch tempPatch) {
+        if (264 <= tempPatch.sysex.length) {
+            //tempPatch.sysex[263] = (byte) 0x00; // Checksum
+            tempPatch.sysex[264] = MW2Constants.SYSEX_END_BYTE;
+        }
+    }   
     
     /**
      * @see core.Driver#createNewPatch()
@@ -140,19 +161,10 @@ public class WaldorfMW2SingleDriver extends Driver {
             
         } catch (Exception e) {
             System.err.println("Unable to find " + MW2Constants.DEFAULT_SYSEX_FILENAME + " using hardcoded default.");
-            
-            sysex[0] = MW2Constants.SYSEX_START_BYTE;
-            sysex[1] = (byte) 0x3E; // Waldorf Electronics GmbH ID
-            sysex[2] = (byte) 0x0E; // Microwave 2 ID
-            sysex[3] = (byte) 0x00; // Device ID
-            sysex[4] = (byte) 0x10; // Sound Dump
-            sysex[5] = (byte) 0x20; // Location (use Edit Buffer)
-            sysex[6] = (byte) 0x00; // Location (use Edit Buffer)
-            
-            //sysex[263] = (byte) 0x00; // Checksum
-            sysex[264] = MW2Constants.SYSEX_END_BYTE;
-            
+                       
             p = new Patch(sysex, this);
+            createPatchHeader(p);
+            createPatchFooter(p);                       
             setPatchName(p, "New program");
             calculateChecksum(p);
         }
@@ -184,13 +196,6 @@ public class WaldorfMW2SingleDriver extends Driver {
             };
             
             send(sysexRequestDump.toSysexMessage(getDeviceID(), nameValues) );
-            
-            try {
-                // Wait a little bit so that everything is in the correct sequence
-                Thread.sleep(50);
-            } catch (Exception ex) {
-                // Ignore these exceptions
-            }
         }
     }
 }
