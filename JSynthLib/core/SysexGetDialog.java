@@ -146,9 +146,7 @@ public class SysexGetDialog extends JDialog {
 // SysexGetDialog->pasteIntoSelectedFrame
 //--------------------------------------------------------------------------
 
-  protected void pasteIntoSelectedFrame() {
-//        ErrorMsg.reportStatus("SysexGetDialog->pasteIntoSelectedFrame: " +
-// sysexSize);
+    protected void pasteIntoSelectedFrame() {
         if (sysexSize < 20)
             return;
 
@@ -156,21 +154,16 @@ public class SysexGetDialog extends JDialog {
         IPatch[] patarray = driver.createPatch((SysexMessage[]) queue
                 .toArray(new SysexMessage[0]));
 
-        for (int k = 0; k < patarray.length; k++) {
-            // paste the patch.
-            try {
-                ((PatchBasket) JSLDesktop.getSelectedFrame())
-                .pastePatch(patarray[k]);
-            } catch (Exception ex) {
-                JOptionPane
-                .showMessageDialog(
-                        null,
-                        "Library to Receive into must be the focused Window.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
+        try {
+            PatchBasket frame = (PatchBasket) JSLDesktop.getSelectedFrame();
+            for (int i = 0; i < patarray.length; i++) {
+                frame.pastePatch(patarray[i]);
             }
-            if (patarray[k].getDriver() == null) {
-            }
-        } // end of k loop
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,
+                    "Library to Receive into must be the focused Window.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
 //--------------------------------------------------------------------------
@@ -261,7 +254,7 @@ public class SysexGetDialog extends JDialog {
       IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
       int bankNum  = bankNumComboBox.getSelectedIndex();
       int patchNum = patchNumComboBox.getSelectedIndex();
-      inPort = driver.getInPort();
+      inPort = driver.getDevice().getInPort();
       ErrorMsg.reportStatus("SysexGetDialog | port: " + inPort
 			    + " | bankNum: " + bankNum + " | patchNum: " + patchNum);
 

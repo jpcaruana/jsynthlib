@@ -1,26 +1,29 @@
 package core;
-import java.io.*;
-import javax.swing.*;
+
+import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;import javax.swing.JOptionPane;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.InvalidMidiDataException;
-import java.text.*;
+
 
 /**
- * This is the base class for synth drivers which use <code>Patch<IPatch>.<p>
+ * This is an implementation of ISingleDriver and the base class for single
+ * drivers which use <code>Patch<IPatch>.<p>
  *
  * Compatibility Note: The following fields are now
  * <code>private</code>.  Use setter/getter method to access them.
  * <pre>
- *	device, patchType, authors
+ *   	device, patchType, authors
  * </pre>
  * Compatibility Note: The following fields are now obsoleted.  Use a
  * getter method to access them.  The getter method queries parent
  * Device object.
  * <pre>
- *	deviceNum, driverNum,
- *	channel, port, inPort, manufacturer, model, inquiryID, id
+ *   	deviceNum, driverNum,
+ *   	channel, port, inPort, manufacturer, model, inquiryID, id
  * </pre>
  * Compatibility Note:
  *	SysexHandler.send(getPort(), sysex);
@@ -33,18 +36,12 @@ import java.text.*;
  * @version $Id$
  * @see Patch
  */
+//XXX change to abstract class
 public class Driver implements ISingleDriver {
     /**
      * Which device does this driver go with?
      */
     private Device device;
-
-    // deviceNum and driverNum are set by
-    // PatchEdit.appConfig.reassignDeviceDriverNums method.
-    /** Which deviceNum does the device of this driver goes with? */
-    //private int deviceNum;
-    /** Which driverNum does the device of this driver goes with? */
-    //private int driverNum;
 
     /**
      * The patch type. eg. "Single", "Bank", "Drumkit", etc.
@@ -159,42 +156,6 @@ public class Driver implements ISingleDriver {
     /** Number of sysex messages in patch dump.  Not used now. */
     protected int numSysexMsgs;
 
-    /*
-     * The following fields are obsoleted when the Device class was
-     * introduced.  Use getter functions to access them.
-     */
-    /**
-     * The channel the user assigns to this driver.
-     */
-    //private int channel = 1;
-
-    /**
-     * The MIDI Out port the user assigns to this driver.
-     */
-    //private int port;
-    /**
-     * The MIDI In port the user assigns to this driver.
-     */
-    //private int inPort;	// phil@muqus.com
-    /**
-     * The company which made the Synthesizer
-     */
-    //private String manufacturer;
-    /**
-     * The models supported by this driver eg TG33/SY22
-     */
-    //private String model;
-    /**
-     * The response to the Universal Inquiry Message.  It can have
-     * wildcards (*). It can be up to 16 bytes
-     */
-    // ADDED BY GERRIT GEHNEN
-    //private String inquiryID;
-    /**
-     * A Shorthand alias for the Synth this driver supports (eg TG33,K5k)
-     */
-    //private String id;
-
     /**
      * Creates a new <code>Driver</code> instance.
      *
@@ -215,218 +176,114 @@ public class Driver implements ISingleDriver {
     public Driver() {
     }
     */
-    //
-    // Setters and Getters
-    //
-    /** Setter for property <code>device</code>. */
-    public void setDevice(Device d) {
-	device = d;
-    }
-    /** Getter for property <code>device</code>. */
-    public Device getDevice() {
-	return device;
-    }
-    /**
-     * Setter for property <code>deviceNum</code>.
-     * Don't use this. Only for backward compatibility.
-     */
-    /*
-    void setDeviceNum(int deviceNum) {
-	this.deviceNum = deviceNum;
-    }
-    */
-    /**
-     * Getter for property <code>deviceNum</code>.<p>
-     * This method will be deprecated.
-     * Use <code>getDevice()</code> instead of
-     * <code>PatchEdit.appConfig.getDevice(getDeviceNum())</code>.
-     * Use <code>new Patch(sysex, getDevice())</code> instead of
-     * <code>new Patch(getDeviceNum(), sysex)</code>.
-     */
-    int getDeviceNum() {
-// 	return this.deviceNum;
-	return device.getDeviceNum();
-    }
-    /**
-     * Setter for property <code>driverNum</code>.
-     * Don't use this. Only for backward compatibility.
-     */
-    /*
-    void setDriverNum(int driverNum) {
-	this.driverNum = driverNum;
-    }
-    */
-    /**
-     * Getter for property <code>driverNum</code>.<p>
-     * This method will be deprecated.
-     * Use <code>new Patch(sysex, this)</code> instead of
-     * <code>new Patch(sysex, getDeviceNum(), getDriverNum())</code>.
-     */
-    int getDriverNum() {
- 	return device.getDriverNum(this);
-    }
-    /** Getter for property <code>patchType</code>. */
-    public String getPatchType() {
+
+    // IDriver interface methods
+    public final String getPatchType() {
 	return patchType;
     }
-    /** Getter for property <code>patchSize</code>. */
+
+    public final String getAuthors() {
+	return authors;
+    }
+
+    public final void setDevice(Device d) {
+	device = d;
+    }
+    public final Device getDevice() {
+	return device;
+    }
+
+    /**
+     * Compares the header & size of a Patch to this driver to see if
+     * this driver is the correct one to support the patch.
+     *
+     * @param patchString the result of <code>p.getPatchHeader()</code>.
+     * @param sysex a byte array of sysex message
+     * @return <code>true</code> if this driver supports the Patch.
+     * @see #patchSize
+     * @see #sysexID
+     */
+    public boolean supportsPatch(String patchString, byte[] sysex) {
+  	// check the length of Patch
+        if ((patchSize != sysex.length) && (patchSize != 0))
+	    return false;
+
+        if (sysexID == null || patchString.length() < sysexID.length())
+	    return false;
+
+        StringBuffer compareString = new StringBuffer();
+        for (int i = 0; i < sysexID.length(); i++) {
+	    switch (sysexID.charAt(i)) {
+	    case '*':
+		compareString.append(patchString.charAt(i));
+		break;
+	    default:
+		compareString.append(sysexID.charAt(i));
+            }
+        }
+// 	ErrorMsg.reportStatus(toString());
+// 	ErrorMsg.reportStatus("Comp.String: " + compareString);
+// 	ErrorMsg.reportStatus("DriverString:" + driverString);
+// 	ErrorMsg.reportStatus("PatchString: " + patchString);
+        return (compareString.toString().equalsIgnoreCase
+		(patchString.substring(0, sysexID.length())));
+    }
+
+    public IPatch[] createPatch(byte[] sysex) {
+        return new IPatch[] {new Patch(sysex, this)};
+    }
+    // end of IDriver interface methods
+
+    // IPatchDriver interface methods
     public int getPatchSize() {
 	return patchSize;
     }
-    /** Getter for property <code>getAuthors</code>. */
-    public String getAuthors() {
-	return authors;
-    }
-    /** Setter for property <code>port</code>. */
-    // remove when 'port' becomes 'private'.
-    /*
-    public void setPort(int port) { // 'public' for storable interface
-        this.port = port;
-	//device.setPort(port);
-    }
-    */
-    /** Getter for property <code>port</code>. */
-    protected int getPort() {	// called by bank driver
-	return device.getPort();
-    }
-    /** Setter for property <code>inPort</code>. */
-    // remove this method when 'inPort' becomes 'private'.
-    /*
-    public void setInPort(int inPort) { // 'public' for storable interface
-        this.inPort = inPort;
-	//device.setInPort(inPort);
-    }
-    */
-    /** Getter for property <code>inPort</code>. */
-    public int getInPort() {
-	return device.getInPort();
-    }
-    /** Getter for property <code>device.manufacturerName</code>. */
-    public String getManufacturerName() {
-	return device.getManufacturerName();
-    }
-    /** Getter for property <code>device.modelName</code>. */
-    public String getModelName() {
-	return device.getModelName();
-    }
-    /** Getter for property <code>device.synthName</code>. */
-    protected String getSynthName() {
-	return device.getSynthName();
-    }
-    /** Getter for property <code>device.channel</code>. */
-    public int getChannel() { // called by bank driver
-        return device.getChannel();
-    }
-    /** Setter for property <code>device.channel</code>. */
-    // remove this method when 'channel' becomes 'private'.
-    /*
-    public void setChannel(int channel) { // called by Device and for storable interface
-        this.channel = channel;
-    }
-    */
-    /** Getter for property <code>device.deviceID</code>. */
-    protected int getDeviceID() {
-	return device.getDeviceID();
-    }
-//     protected void setSynthName(String s) {
-//  	id = s;
-//     }
 
-    /**
-     * Gets the name of the patch from the sysex. If the patch uses
-     * some weird format or encoding, this needs to be overidden in
-     * the particular driver.
-     */
-    protected String getPatchName(Patch p) { // called by bank driver
-        if (patchNameSize == 0)
-	    return ("-");
-        try {
- 	    return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
-	} catch (UnsupportedEncodingException ex) {
-	    return "-";
-	}
+    public String[] getPatchNumbers() {
+        return patchNumbers;
+    }
+
+    public String[] getPatchNumbersForStore() {
+        // All patches assumed to be writable by default
+        return patchNumbers;
+    }
+
+    public String[] getBankNumbers() {
+        return bankNumbers;
     }
 
     /**
-     * Set the name of the patch in the sysex. If the patch uses some
-     * weird format or encoding, this needs to be overidden in the
-     * particular driver.
-     */
-    protected void setPatchName(Patch p, String name) { // called by bank driver
-        if (patchNameSize == 0) {
-	    ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Name Editing.");
-	    return;
-	}
-
-	while (name.length() < patchNameSize)
-		name = name + " ";
-
-        byte[] namebytes = new byte[patchNameSize];
-        try {
-	    namebytes = name.getBytes("US-ASCII");
-	    for (int i = 0; i < patchNameSize; i++)
-		((Patch)p).sysex[patchNameStart + i] = namebytes[i];
-	} catch (UnsupportedEncodingException ex) {
-	    return;
-	}
-        calculateChecksum(p);	// Is this required here?
-    }
-
-    public int getPatchNameSize() {
-        return patchNameSize;
-    }
-    /**
-     * Caluculate check sum of a <code>Patch</code>.
-     * <p>
-     * 
-     * This method is called by calculateChecksum(Patch). The checksum
-     * calculation method of this method is used by Roland, YAMAHA, etc.
-     * Override this for different checksum calculation method.
-     * <p>
-     * 
-     * Compatibility Note: This method became 'static' method.
-     * 
-     * @param patch
-     *            a <code>Patch</code> value
-     * @param start
-     *            start offset
-     * @param end
-     *            end offset
-     * @param ofs
-     *            offset of the checksum data
-     * @see #calculateChecksum(IPatch)
-     */
-    protected static void calculateChecksum(Patch patch, int start, int end, int ofs) {
-        int sum = 0;
-        for (int i = start; i <= end; i++)
-            sum += patch.sysex[i];
-	patch.sysex[ofs] = (byte) (-sum & 0x7f);
-	/*
-	Equivalent with above.
-	p.sysex[ofs] = (byte) (sum & 0x7f);
-	p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0x7f);
-	p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
-	p.sysex[ofs] = (byte) (p.sysex[ofs] & 0x7f);
-	*/	
-    }
-
-    /**
-     * Caluculate check sum of a <code>Patch</code>.<p>
+     * A utility method to generates an array of formatted numbers.
+     * For example,
+     * <pre>
+     *   patchNumbers = generateNumbers(1, 10, "Patch 00");
+     * </pre>
+     * setups the following array,
+     * <pre>
+     *   {
+     *     "Patch 01", "Patch 02", "Patch 03", "Patch 04", "Patch 05"
+     *     "Patch 06", "Patch 07", "Patch 08", "Patch 09", "Patch 10"
+     *   }
+     * </pre>
      *
-     * This method is called by main program.  Need to be overridden
-     * if a patch is consist from multiple SysEX messages.
-     *
-     * @param p a <code>Patch</code> value
+     * @param min minumux value
+     * @param max maximum value
+     * @param format pattern String for java.text.DecimalFormat
+     * @return an array of formatted numbers.
+     * @see java.text.DecimalFormat
+     * @see IPatchDriver#getPatchNumbers
+     * @see IPatchDriver#getPatchNumbersForStore
+     * @see IPatchDriver#getBankNumbers
      */
-    protected void calculateChecksum(Patch p) {
-	calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
+    protected static String[] generateNumbers(int min, int max, String format){
+        String retval[] = new String[max - min + 1];
+        DecimalFormat df = (DecimalFormat)NumberFormat.getInstance().clone();
+        df.applyPattern(format);
+        while (max >= min)
+            retval[max - min] = df.format(max--);
+        return retval;
     }
 
-    /**
-     * Check if this driver supports creating a new patch.
-     * By default it uses reflection to test if the method createNewPatch
-     * is declared in the subclass of Driver.
-     */
     public boolean canCreatePatch() {
         try {
             getClass().getDeclaredMethod("createNewPatch", null);
@@ -435,20 +292,16 @@ public class Driver implements ISingleDriver {
             return false;
         }
     }
-    
+
+    public final IPatch createPatch() {
+	return (IPatch) createNewPatch();
+    }
+
     /**
      * Create a new Patch.
      */
     protected Patch createNewPatch() { // overridden by subclass
 	return null;
-    }
-
-    public IPatch createPatch() {
-	return (IPatch) createNewPatch();
-    }
-
-    public IPatch[] createPatch(byte[] sysex) { // Converter overrides this
-        return new IPatch[] {new Patch(sysex, this)};
     }
 
     public IPatch[] createPatch(SysexMessage[] msgs) {
@@ -473,8 +326,7 @@ public class Driver implements ISingleDriver {
             IPatch pk = patarray[k];
             String patchString = pk.getPatchHeader();
             if (!(pk.getDriver().supportsPatch(patchString, pk.getByteArray()))) {
-                fixPatch(pk, patchString);
-                patarray[k] = fixPatch(pk, patchString);
+                patarray[k] = fixPatch((Patch) pk, patchString);
             }
         }
         return patarray;
@@ -483,7 +335,7 @@ public class Driver implements ISingleDriver {
     /**
      * Look for a proper driver and trim the patch
      */
-    private IPatch fixPatch(IPatch pk, String patchString) {
+    private IPatch fixPatch(Patch pk, String patchString) {
         for (int i = 0; i < AppConfig.deviceCount(); i++) {
             // first check the requested device.
             // then starting index '1'. (index 0 is 'generic driver')
@@ -521,25 +373,140 @@ public class Driver implements ISingleDriver {
         return pk;
     }
 
-    protected int trimSysex(Patch p) { // no driver overrides this now.
-           if (trimSize > 0 && p.sysex.length > trimSize
-	    && p.sysex[trimSize - 1] == (byte) 0xf7) {
+    /**
+     * This method trims a patch, containing more than one real
+     * patch to a correct size. Useful for files containg more than one
+     * bank for example. Some drivers are incompatible with this method
+     * so it reqires explicit activation with the trimSize variable.
+     * @param patch the patch, which should be trimmed to the right size
+     * @return the size of the (modified) patch
+     */
+    protected int trimSysex(Patch patch) { // no driver overrides this now.
+           if (trimSize > 0 && patch.sysex.length > trimSize
+	    && patch.sysex[trimSize - 1] == (byte) 0xf7) {
 	    byte[] sysex = new byte[trimSize];
-	    System.arraycopy(p.sysex, 0, sysex, 0, trimSize);
-	    p.sysex = sysex;
+	    System.arraycopy(patch.sysex, 0, sysex, 0, trimSize);
+	    patch.sysex = sysex;
         }
-	return p.sysex.length;	// == trimSize
+	return patch.sysex.length;	// == trimSize
     }
 
-    protected JSLFrame editPatch(Patch p) {
-	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
-	return null;
+    public final void calculateChecksum(IPatch myPatch) {
+        calculateChecksum((Patch) myPatch);
     }
 
     /**
-     * Returns true if an Editor is implemented.
-     * @see #editPatch
+     * Caluculate check sum of a <code>Patch</code>.<p>
+     *
+     * Need to be overridden if a patch is consist from multiple SysEX
+     * messages.
+     *
+     * @param p a <code>Patch</code> value
      */
+    protected void calculateChecksum(Patch p) {
+	calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
+    }
+
+    /**
+     * Caluculate check sum of a <code>Patch</code>.
+     * <p>
+     *
+     * This method is called by calculateChecksum(Patch). The checksum
+     * calculation method of this method is used by Roland, YAMAHA, etc.
+     * Override this for different checksum calculation method.
+     * <p>
+     *
+     * Compatibility Note: This method became 'static' method.
+     *
+     * @param patch
+     *            a <code>Patch</code> value
+     * @param start
+     *            start offset
+     * @param end
+     *            end offset
+     * @param ofs
+     *            offset of the checksum data
+     * @see #calculateChecksum(IPatch)
+     */
+    protected static void calculateChecksum(Patch patch, int start, int end, int ofs) {
+        int sum = 0;
+        for (int i = start; i <= end; i++)
+            sum += patch.sysex[i];
+	patch.sysex[ofs] = (byte) (-sum & 0x7f);
+	/*
+	Equivalent with above.
+	p.sysex[ofs] = (byte) (sum & 0x7f);
+	p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0x7f);
+	p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
+	p.sysex[ofs] = (byte) (p.sysex[ofs] & 0x7f);
+	*/
+    }
+
+    public final void send(IPatch myPatch, int bankNum, int patchNum) {
+        storePatch((Patch) myPatch, bankNum, patchNum);
+    }
+
+    /**
+     * Sends a patch to a set location on a synth.<p>
+     * Override this if required.
+     */
+    protected void storePatch(Patch p, int bankNum, int patchNum) {
+        setBankNum(bankNum);
+        setPatchNum(patchNum);
+        sendPatch(p);
+    }
+
+    /**
+     * Request the synth to send a patch dump. If <code>sysexRequestDump</code>
+     * is not <code>null</code>, a request dump message is sent. Otherwise a
+     * dialog window will prompt users.
+     *
+     * @see SysexHandler
+     */
+    public void requestPatchDump(int bankNum, int patchNum) {
+	//clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
+	setBankNum(bankNum);
+	setPatchNum(patchNum);
+	if (sysexRequestDump == null) {
+	    JOptionPane.showMessageDialog
+		(PatchEdit.getInstance(),
+		 "The " + toString()
+		 + " driver does not support patch getting.\n\n"
+		 + "Please start the patch dump manually...",
+		 "Get Patch", JOptionPane.WARNING_MESSAGE);
+	} else
+	    send(sysexRequestDump.toSysexMessage(getDeviceID(),
+						 new NameValue("bankNum", bankNum),
+						 new NameValue("patchNum", patchNum)));
+    }
+
+    /** Send Program Change MIDI message. */
+    protected void setPatchNum(int patchNum) {
+        try {
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, getChannel() - 1,
+			   patchNum, 0); // Program Number
+	    send(msg);
+	} catch (Exception e) {
+	}
+    }
+
+    /** Send Control Change (Bank Select) MIDI message. */
+    protected void setBankNum(int bankNum) {
+        try {
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
+			   0x00, //  Bank Select (MSB)
+			   bankNum / 128); // Bank Number (MSB)
+	    send(msg);
+	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
+			   0x20, //  Bank Select (LSB)
+			   bankNum % 128); // Bank Number (MSB)
+	    send(msg);
+	} catch (Exception e) {
+	}
+    }
+
     public boolean hasEditor() {
 	if (this instanceof IBankDriver)
 	    return true;
@@ -554,6 +521,299 @@ public class Driver implements ISingleDriver {
 		return false;
 	    }
 	}
+    }
+
+    public final JSLFrame edit(IPatch p) {
+        return editPatch((Patch) p);
+    }
+
+    /**
+     * Override this if your driver implement Patch Editor.  Don't
+     * override this otherwise.
+     */
+    protected JSLFrame editPatch(Patch p) {
+	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
+	return null;
+    }
+
+    // MIDI in/out mothods to encapsulate lower MIDI layer
+    /** Send MidiMessage to MIDI outport. */
+    public final void send(MidiMessage msg) {
+	device.send(msg);
+    }
+
+    /** Send Sysex byte array data to MIDI outport. */
+    // Called from SysexWidget
+    public final void send(byte[] sysex) {
+	try {
+	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
+	    for (int i = 0; i < a.length; i++)
+		device.send(a[i]);
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+    }
+
+    /** Send ShortMessage to MIDI outport. */
+    public final void send(int status, int d1, int d2) {
+	ShortMessage msg = new ShortMessage();
+	try {
+	    msg.setMessage(status, d1, d2);
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+	send(msg);
+    }
+
+    /** Send ShortMessage to MIDI outport. */
+    public final void send(int status, int d1) {
+	send(status, d1, 0);
+    }
+
+    public void sendParameter(IPatch patch, Parameter param) {
+        // Subclasses of Driver should use SysexSenders, no this.
+    }
+
+    public String toString() {
+	return getManufacturerName() + " " + getModelName() + " "
+	    + getPatchType();
+    }
+    // end of IPatchDriver methods
+
+    // ISingleDriver methods
+    public final void play(IPatch p) {
+        playPatch((Patch) p);
+    }
+
+    protected void playPatch(Patch p) {
+	playPatch();
+    }
+
+    /**
+     * Play note.
+     * plays a MIDI file or a single note depending which preference is set.
+     * Currently the MIDI sequencer support isn't implemented!
+     */
+    protected void playPatch() {
+	if (AppConfig.getSequencerEnable())
+            playSequence();
+        else
+            playNote();
+    }
+
+    private void playNote() {
+        try {
+// 	    sendPatch(p);
+	    Thread.sleep(100);
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
+			   AppConfig.getNote(),
+			   AppConfig.getVelocity());
+	    send(msg);
+
+	    Thread.sleep(AppConfig.getDelay());
+
+	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
+			   AppConfig.getNote(),
+			   0);	// expecting running status
+	    send(msg);
+	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	}
+    }
+
+    private void playSequence() {
+	MidiUtil.startSequencer(getDevice().getPort());
+    }
+
+    public final void send(IPatch p) {
+        sendPatch((Patch) p);
+    }
+
+    protected void sendPatch(Patch p) {
+	sendPatchWorker(p);
+    }
+
+    /**
+     * Set Device ID and send the sysex data to MIDI output.
+     */
+    protected final void sendPatchWorker(Patch p) {
+        if (deviceIDoffset > 0)
+	    ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
+        try {
+	    send(((Patch)p).sysex);
+	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	}
+    }
+    // end of ISingleDriver methods
+
+    /** Return the name of manufacturer of synth. */
+    protected final String getManufacturerName() {
+	return device.getManufacturerName();
+    }
+
+    /** Return the name of model of synth. */
+    protected final String getModelName() {
+	return device.getModelName();
+    }
+
+    /**
+     *  Return the personal name of the synth.
+     * 
+     * @see Device#setSynthName(String)
+     */
+    protected final String getSynthName() {
+	return device.getSynthName();
+    }
+
+    /** Return MIDI devide ID. */
+    public final int getDeviceID() {
+	return device.getDeviceID();
+    }
+
+    /** Return MIDI channel number. */
+    public final int getChannel() {
+        return device.getChannel();
+    }
+
+    /**
+     * Gets the name of the patch from the sysex. If the patch uses
+     * some weird format or encoding, this needs to be overidden in
+     * the particular driver.
+     * @see Patch#getName
+     */
+    protected String getPatchName(Patch p) { // called by bank driver
+        if (patchNameSize == 0)
+	    return ("-");
+        try {
+ 	    return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
+	} catch (UnsupportedEncodingException ex) {
+	    return "-";
+	}
+    }
+
+    /**
+     * Set the name of the patch in the sysex. If the patch uses some
+     * weird format or encoding, this needs to be overidden in the
+     * particular driver.
+     * @see Patch#setName
+     */
+    protected void setPatchName(Patch p, String name) { // called by bank driver
+        if (patchNameSize == 0) {
+	    ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Name Editing.");
+	    return;
+	}
+
+	while (name.length() < patchNameSize)
+		name = name + " ";
+
+        byte[] namebytes = new byte[patchNameSize];
+        try {
+	    namebytes = name.getBytes("US-ASCII");
+	    for (int i = 0; i < patchNameSize; i++)
+		((Patch)p).sysex[patchNameStart + i] = namebytes[i];
+	} catch (UnsupportedEncodingException ex) {
+	    return;
+	}
+        calculateChecksum(p);	// Is this required here?
+    }
+
+    /** Getter of patchNameSize. */
+    public int getPatchNameSize() {
+        return patchNameSize;
+    }
+
+    //
+    // For debugging.
+    //
+    /**
+     * Returns String .. full name for referring to this patch for
+     * debugging purposes.
+     */
+    protected String getFullPatchName(Patch p) {
+	return getManufacturerName() + " | " + getModelName() + " | "
+	    + getPatchType() + " | " + getSynthName() + " | " + getPatchName(p);
+    }
+
+    //
+    // Remove the following lines after 0.20 is released.
+    //
+    // deviceNum and driverNum are set by
+    // PatchEdit.appConfig.reassignDeviceDriverNums method.
+    /** Which deviceNum does the device of this driver goes with? */
+    //private int deviceNum;
+    /** Which driverNum does the device of this driver goes with? */
+    //private int driverNum;
+
+    /*
+     * The following fields are obsoleted when the Device class was
+     * introduced.  Use getter functions to access them.
+     */
+    /**
+     * The channel the user assigns to this driver.
+     */
+    //private int channel = 1;
+
+    /**
+     * The MIDI Out port the user assigns to this driver.
+     */
+    //private int port;
+    /**
+     * The MIDI In port the user assigns to this driver.
+     */
+    //private int inPort;	// phil@muqus.com
+    /**
+     * The company which made the Synthesizer
+     */
+    //private String manufacturer;
+    /**
+     * The models supported by this driver eg TG33/SY22
+     */
+    //private String model;
+    /**
+     * The response to the Universal Inquiry Message.  It can have
+     * wildcards (*). It can be up to 16 bytes
+     */
+    // ADDED BY GERRIT GEHNEN
+    //private String inquiryID;
+    /**
+     * A Shorthand alias for the Synth this driver supports (eg TG33,K5k)
+     */
+    //private String id;
+
+    /**
+     * Getter for property <code>deviceNum</code>.<p>
+     * This method will be deprecated.
+     * Use <code>getDevice()</code> instead of
+     * <code>PatchEdit.appConfig.getDevice(getDeviceNum())</code>.
+     * Use <code>new Patch(sysex, getDevice())</code> instead of
+     * <code>new Patch(getDeviceNum(), sysex)</code>.
+     * @deprecated Don't use this.
+     */
+    final int getDeviceNum() {
+        return device.getDeviceNum();
+    }
+
+    /**
+     * Getter for property <code>driverNum</code>.<p>
+     * This method will be deprecated.
+     * Use <code>new Patch(sysex, this)</code> instead of
+     * <code>new Patch(sysex, getDeviceNum(), getDriverNum())</code>.
+     * @deprecated Don't use this.
+     */
+    final int getDriverNum() {
+        return device.getDriverNum(this);
+    }
+
+    /** @deprecated use getDevice().getPort() */
+    protected final int getPort() { // called by bank driver
+        return device.getPort();
+    }
+
+    /** @deprecated use getDevice().getInPort() */
+    public final int getInPort() {
+	return device.getInPort();
     }
 
     /**
@@ -616,317 +876,31 @@ public class Driver implements ISingleDriver {
 	choosePatch(p, 0, 0);
     }
 
-    /**
-     * Compares the header & size of a Patch to this driver to see if
-     * this driver is the correct one to support the patch.
-     *
-     * @param patchString the result of <code>p.getPatchHeader()</code>.
-     * @param p a <code>Patch</code> value
-     * @return <code>true</code> if this driver supports the Patch.
-     * @see #patchSize
-     * @see #sysexID
-     */
-    public boolean supportsPatch(String patchString, byte[] sysex) {
-  	// check the length of Patch
-        if ((patchSize != sysex.length) && (patchSize != 0))
-	    return false;
-
-        if (sysexID == null || patchString.length() < sysexID.length())
-	    return false;
-
-        StringBuffer compareString = new StringBuffer();
-        for (int i = 0; i < sysexID.length(); i++) {
-	    switch (sysexID.charAt(i)) {
-	    case '*':
-		compareString.append(patchString.charAt(i));
-		break;
-	    default:
-		compareString.append(sysexID.charAt(i));
-            }
-        }
-// 	ErrorMsg.reportStatus(toString());
-// 	ErrorMsg.reportStatus("Comp.String: " + compareString);
-// 	ErrorMsg.reportStatus("DriverString:" + driverString);
-// 	ErrorMsg.reportStatus("PatchString: " + patchString);
-        return (compareString.toString().equalsIgnoreCase
-		(patchString.substring(0, sysexID.length())));
-    }
-
-    //
-    // MIDI methods
-    //
-    /** Send Program Change MIDI message. */
-    protected void setPatchNum(int patchNum) {
-        try {
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, getChannel() - 1,
-			   patchNum, 0); // Program Number
-	    send(msg);
-	} catch (Exception e) {
-	}
-    }
-
-    /** Send Control Change (Bank Select) MIDI message. */
-    protected void setBankNum(int bankNum) {
-        try {
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
-			   0x00, //  Bank Select (MSB)
-			   bankNum / 128); // Bank Number (MSB)
-	    send(msg);
-	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
-			   0x20, //  Bank Select (LSB)
-			   bankNum % 128); // Bank Number (MSB)
-	    send(msg);
-	} catch (Exception e) {
-	}
-    }
-
-    // sendPatch(Patch) may be better name.
-    protected void storePatch(Patch p, int bankNum, int patchNum) {
-        setBankNum(bankNum);
-        setPatchNum(patchNum);
-        sendPatch(p);
-    }
-
-    protected void sendPatch(Patch p) {
-	sendPatchWorker(p);
-    }
-
-    /**
-     * Set Device ID and send the sysex data to MIDI output.
-     */
-    protected final void sendPatchWorker(Patch p) {
-        if (deviceIDoffset > 0)
-	    ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
-        try {
-	    send(((Patch)p).sysex);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
-    }
-
-    //----- Start phil@muqus.com
-    public void requestPatchDump(int bankNum, int patchNum) {
-	//clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
-	setBankNum(bankNum);
-	setPatchNum(patchNum);
-	if (sysexRequestDump == null) {
-	    JOptionPane.showMessageDialog
-		(PatchEdit.getInstance(),
-		 "The " + toString()
-		 + " driver does not support patch getting.\n\n"
-		 + "Please start the patch dump manually...",
-		 "Get Patch", JOptionPane.WARNING_MESSAGE);
-	} else
-	    send(sysexRequestDump.toSysexMessage(getDeviceID(),
-						 new NameValue("bankNum", bankNum),
-						 new NameValue("patchNum", patchNum)));
-    }
-    //----- End phil@muqus.com
-
-    protected void playPatch(Patch p) {
-	playPatch();
-    }
-    
-    /** Play note.
-     * plays a MIDI file or a single note depending which preference is set.
-     * Currently the MIDI sequencer support isn't implemented!
-     */
-    protected void playPatch() {
-	if (AppConfig.getSequencerEnable()) playSequence();
-	else playNote();
-    }
-
-    private void playNote() {
-        try {
-// 	    sendPatch(p);
-	    Thread.sleep(100);
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
-			   AppConfig.getNote(),
-			   AppConfig.getVelocity());
-	    send(msg);
-
-	    Thread.sleep(AppConfig.getDelay());
-
-	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
-			   AppConfig.getNote(),
-			   0);	// expecting running status
-	    send(msg);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
-    }
-
-    private void playSequence() {
-	MidiUtil.startSequencer(getPort());
-    }
-
-    // MIDI in/out mothods to encapsulate lower MIDI layer
-    /** Send MidiMessage to MIDI outport. */
-    public final void send(MidiMessage msg) {
-	device.send(msg);
-    }
-
-    /** Send Sysex byte array data to MIDI outport. */
-    // Called from SysexWidget
-    public final void send(byte[] sysex) {
-	try {
-	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
-	    for (int i = 0; i < a.length; i++)
-		device.send(a[i]);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	}
-    }
-
-    /** Send ShortMessage to MIDI outport. */
-    public final void send(int status, int d1, int d2) {
-	ShortMessage msg = new ShortMessage();
-	try {
-	    msg.setMessage(status, d1, d2);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	}
-	send(msg);
-    }
-
-    /** Send ShortMessage to MIDI outport. */
-    public final void send(int status, int d1) {
-	send(status, d1, 0);
-    }
-
-    //
-    // For debugging.
-    //
     /*
-     * Returns String .. full name for referring to this patch for
-     * debugging purposes
-     */
-    protected String getFullPatchName(Patch p) {
-	return getManufacturerName() + " | " + getModelName() + " | "
-	    + getPatchType() + " | " + getSynthName() + " | " + getPatchName(p);
+    void setDeviceNum(int deviceNum) {
+	this.deviceNum = deviceNum;
     }
 
-    /**
-     * Returns full name for referring to this Driver.  Use for the label for comboBox.
-     */
-    public String toString() {
-	return getManufacturerName() + " " + getModelName() + " "
-	    + getPatchType();
+    void setDriverNum(int driverNum) {
+	this.driverNum = driverNum;
     }
 
-    /**
-     * Returns String[] returns full list of patchNumbers
-     */
-    public String[] getPatchNumbers()
-    {
-        return patchNumbers;
+    public void setPort(int port) { // 'public' for storable interface
+	this.port = port;
+	//device.setPort(port);
     }
 
-    /**
-     * Returns String[] list of patch numbers for writable patches.
-     * This can be overridden if some patch locations are read only.
-     * e.g. the Waldorf Pulse has 100 patches, but only 0 to 39 are writable.
-     * Currently writable patches are assumed to start at patch location 0.
-     * (This has nothing to with the "Storable" class in JSynthLib.)
-     */
-    public String[] getPatchNumbersForStore()
-    {
-        // All patches assumed to be writable by default
-        return patchNumbers;
+    public void setInPort(int inPort) { // 'public' for storable interface
+	this.inPort = inPort;
+	//device.setInPort(inPort);
     }
 
-    /**
-     * Returns String[] returns full list of bankNumbers
-     */
-    public String[] getBankNumbers()
-    {
-        return bankNumbers;
+    public void setChannel(int channel) { // called by Device and for storable interface
+	this.channel = channel;
     }
 
-    /**
-     * A utility method to generates an array of formatted numbers.
-     * For example,
-     * <pre>
-     *   patchNumbers = generateNumbers(1, 10, "Patch 00");
-     * </pre>
-     * setups an array,
-     * <pre>
-     *   {
-     *     "Patch 01", "Patch 02", "Patch 03", "Patch 04", "Patch 05"
-     *     "Patch 06", "Patch 07", "Patch 08", "Patch 09", "Patch 10"
-     *   }
-     * </pre>
-     *
-     * @param min minumux value
-     * @param max maximum value
-     * @param format pattern String for java.text.DecimalFormat
-     * @return an array of formatted numbers.
-     * @see java.text.DecimalFormat
-     * @see #patchNumbers
-     * @see #bankNumbers
-     */
-    protected static String[] generateNumbers(int min, int max, String format){
-        String retval[] = new String[max - min + 1];
-        DecimalFormat df = (DecimalFormat)NumberFormat.getInstance().clone();
-        df.applyPattern(format);
-        while (max >= min)
-            retval[max - min] = df.format(max--);
-        return retval;
+    protected void setSynthName(String s) {
+	id = s;
     }
-
-    // stub methods to convert IPatch -> Patch.
-
-    public void calculateChecksum(IPatch myPatch) {
-        calculateChecksum((Patch) myPatch);
-    }
-
-    public JSLFrame editPatch(IPatch p) {
-         return editPatch((Patch) p);
-    }
-
-    /** Play note. 
-     * @param p a <code>Patch</code> value, which isn't used! !!!FIXIT!!!
-     * @Xdeprecated Use playPatch().
-     */
-    public void playPatch(IPatch p) {
-        playPatch((Patch) p);
-    }
-
-    /**
-     * Sends a patch to the synth's edit buffer.<p>
-     *
-     * Override this in the subclass if parameters or warnings need to
-     * be sent to the user (aka if the particular synth does not have
-     * a edit buffer or it is not MIDI accessable.
-     */
-    public void sendPatch(IPatch p) {
-        sendPatch((Patch) p);
-    }
-
-    /**
-     * Sends a patch to a set location on a synth.<p>
-     * Override this if required.
-     */
-    public void storePatch(IPatch myPatch, int bankNum, int patchNum) {
-        storePatch((Patch) myPatch, bankNum, patchNum);
-    }
-    
-    /**
-     * This method trims a patch, containing more than one real
-     * patch to a correct size. Useful for files containg more than one
-     * bank for example. Some drivers are incompatible with this method
-     * so it reqires explicit activation with the trimSize variable.
-     * @param patch the patch, which should be trimmed to the right size
-     * @return the size of the (modified) patch
-     */
-    public void trimSysex(IPatch patch) {
-        trimSysex((Patch) patch);
-    }
-
-    public void sendParameter(IPatch patch, Parameter param) {
-        // Subclasses of Driver should use SysexSenders, no this.
-    }
+    */
 }

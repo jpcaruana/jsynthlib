@@ -32,7 +32,6 @@ import core.Patch;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.SpinnerWidget;
-import core.ISingleDriver;
 
 /**
 	Editor for performance, ie group of 4 parts, each part holds a voice.
@@ -108,9 +107,8 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	{
 		super.frameOpened();
 		// send performance FIRST
-		ISingleDriver d = (ISingleDriver)p.getDriver();
-		d.calculateChecksum(p);
-		d.sendPatch(p);
+		p.calculateChecksum();
+		p.send();
 		
 		for (int oPart = 0; oPart < 4; oPart++) 
 		{

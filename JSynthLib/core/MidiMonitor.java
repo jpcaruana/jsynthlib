@@ -1,14 +1,8 @@
-package core; //TODO org.jsynthlib.midi;
+package core;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-// import javax.swing.text.*;
-// import javax.swing.text.html.*;
-// import javax.swing.event.*;
-// import java.util.*;
-// import java.io.*;
-// import java.net.*;
-// import core.*; //FIXME  core.* will go away eventually - emenaker 3/12/2003
+
 public class MidiMonitor extends JDialog
 {
     private final MyEditorPane jt;

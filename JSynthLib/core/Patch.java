@@ -120,8 +120,9 @@ public class Patch implements IPatch {
      *            The MIDI SysEx message.
      * @param offset
      *            offset address in <code>gsysex</code>.
+     * @deprecated Don't use this.
      */
-    // called by LibraryFrame and SceneFrame
+    // nobody uses this.
     Patch(byte[] sysex, int offset) {
         date = new StringBuffer();
         author = new StringBuffer();
@@ -372,11 +373,11 @@ public class Patch implements IPatch {
 
     // only for single patch
     public void play() {
-        ((ISingleDriver) driver).playPatch(this);
+        ((ISingleDriver) driver).play(this);
     }
 
     public void send() {
-        ((ISingleDriver) driver).sendPatch(this);
+        ((ISingleDriver) driver).send(this);
     }
 
     // only for bank patch

@@ -2,33 +2,34 @@ package core;
 
 /**
  * This includes methods only for Bank Drivers.
- * 
+ *
  * @author ribrdb
+ * @version $Id$
+ * @see IDriver
+ * @see IPatchDriver
  */
 public interface IBankDriver extends IPatchDriver {
-    /** returns the number of patches the bank holds.. */
-    public abstract int getNumPatches();
+    /** returns the number of patches the bank holds. */
+    int getNumPatches();
 
     /** returns number of columns in bank editor frame. */
-    public abstract int getNumColumns();
-
-    /**
-     * Check a patch if it is for the bank patch and put it into the
-     * bank.
-     */
-    public abstract void checkAndPutPatch(IPatch bankData, IPatch p,
-            int patchNum);
-
-    /** Delete a patch. */
-    public abstract void deletePatch(IPatch bankData, int patchNum);
-
-    /** Gets a patch from the bank, converting it as needed. */
-    public abstract IPatch getPatch(IPatch bankData, int patchNum);
+    int getNumColumns();
 
     /** Get the name of the patch at the given number <code>patchNum</code>. */
-    public abstract String getPatchName(IPatch bankData, int patchNum);
+    String getPatchName(IPatch bankData, int patchNum);
 
     /** Set the name of the patch at the given number <code>patchNum</code>. */
-    public abstract void setPatchName(IPatch bankData, int patchNum,
-            String string);
+    void setPatchName(IPatch bankData, int patchNum, String string);
+
+    /** Gets a patch from the bank, converting it as needed. */
+    IPatch getPatch(IPatch bankData, int patchNum);
+
+    /**
+     * Check a single patch into the bank patch. If the single patch is not for
+     * the bank patch, do nothing.
+     */
+    void checkAndPutPatch(IPatch bankData, IPatch patch, int patchNum);
+
+    /** Delete a patch in the bank. */
+    void deletePatch(IPatch bankData, int patchNum);
 }

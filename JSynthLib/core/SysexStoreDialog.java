@@ -47,7 +47,7 @@ public class SysexStoreDialog extends DevDrvPatchSelector {
         IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
         int bankNum  = bankComboBox.getSelectedIndex();
         int patchNum = patchNumComboBox.getSelectedIndex();
-        driver.storePatch(p, bankNum, patchNum);
+        driver.send(p, bankNum, patchNum);
 
         setVisible(false);
         dispose();

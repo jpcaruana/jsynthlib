@@ -398,8 +398,8 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 
     public void playSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.calculateChecksum();
         if (myPatch.getDriver() instanceof ISingleDriver) {
+            myPatch.calculateChecksum();
             myPatch.send();
             myPatch.play();
         }

@@ -24,14 +24,14 @@ public class XMLDevice extends Device {
     public void setPreferences(Preferences p) {
         prefs = p;
     }
-    public void addDriver(IDriver driver) {
-        super.addDriver(driver);
-    }
+//    public void addDriver(IDriver driver) {
+//        super.addDriver(driver);
+//    }
     
     /* Make public */
-    public void send(MidiMessage message) {
-        super.send(message);
-    }
+//    public void send(MidiMessage message) {
+//        super.send(message);
+//    }
     // Show as xml device by default
     public String getSynthName() {
         return prefs.get("synthName", getModelName() + " (XML)");

@@ -76,7 +76,7 @@ public class XMLDriver implements ISingleDriver {
         np.setMessages(msgs);
         return null;
     }
-    public JSLFrame editPatch(IPatch p) {
+    public JSLFrame edit(IPatch p) {
         return null;
     }
 
@@ -139,7 +139,7 @@ public class XMLDriver implements ISingleDriver {
     public boolean hasEditor() {
         return false;
     }
-    public void playPatch(IPatch patch) {
+    public void play(IPatch patch) {
         imp.playPatch((XMLPatch)patch);
     }
 
@@ -157,7 +157,7 @@ public class XMLDriver implements ISingleDriver {
     
     }
 
-    public void sendPatch(IPatch patch) {
+    public void send(IPatch patch) {
         imp.sendPatch((XMLPatch)patch);
     }
 
@@ -172,7 +172,7 @@ public class XMLDriver implements ISingleDriver {
         base_patch.setDevice(this.device);
         base_patch.setDriver(this);
     }
-    public void storePatch(IPatch myPatch, int bankNum, int patchNum) {
+    public void send(IPatch myPatch, int bankNum, int patchNum) {
         imp.storePatch((XMLPatch)myPatch, bankNum, patchNum);    
     }
 

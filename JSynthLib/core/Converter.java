@@ -1,11 +1,7 @@
 package core;
 
 /**
- * This is a special subclass of Driver which simply converts any
- * patches it's associated with to another format. The Driver
- * supporting the new Driver format must come later in the Driver
- * Chain.
- * @see Device#addDriver(IDriver)
+ * An implementation of IConverter interface for Patch class.
  * @author ???
  * @version $Id$
  */
@@ -18,6 +14,11 @@ abstract public class Converter extends Driver implements IConverter {
         this("Converter", "JSynthLib"); // Who is the auther?
     }
 
+    // If extractPatch returns an array of Patches whose drivers are set
+    // properly, override this by;
+    //    public IPatch[] createPatch(byte[] sysex) {
+    //        return extractPatch(new Patch(sysex, this));
+    //    }
     public IPatch[] createPatch(byte[] sysex) {
         Patch patch = new Patch(sysex, this);
         Patch[] patarray = extractPatch(patch);
@@ -37,5 +38,8 @@ abstract public class Converter extends Driver implements IConverter {
         return patarray;
     }
 
+    /**
+     * Convert a bulk patch into an array of single and/or bank patches.
+     */
     abstract public Patch[] extractPatch(Patch p);
 }

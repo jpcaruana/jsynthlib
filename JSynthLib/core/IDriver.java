@@ -1,25 +1,36 @@
 package core;
 
 /**
- * This is an interface for Device.driverList. ÊAll of drivers (single driver,
- * bank driver, converter) implement this.
+ * This is an interface for Device.driverList. All of drivers (single driver,
+ * bank driver, and converter) implement this.
  * 
  * @author ribrdb
+ * @version $Id$
+ * @see IPatchDriver
+ * @see ISingleDriver
+ * @see IBankDriver
+ * @see IConverter
  */
 public interface IDriver {
     /**
      * return type of patch which the driver handles. eg. "Single", "Bank",
      * "Drumkit", etc.
      */
-    public abstract String getPatchType();
+    String getPatchType();
 
     /** return the names of the authors of this driver. */
-    public abstract String getAuthors();
+    String getAuthors();
+
+    /** Set <code>Device</code> with which this driver go. */
+    void setDevice(Device device);
+
+    /** Return <code>Device</code> with which this driver go.. */
+    Device getDevice();
 
     /**
      * Compares the header & size of a Patch to this driver to see if this
      * driver is the correct one to support the patch.
-     * 
+     *
      * @param patchString
      *            the result of
      *            {@link IPatch#getPatchHeader() IPatch.getPatchHeader()}.
@@ -27,18 +38,14 @@ public interface IDriver {
      *            a byte array of sysex message
      * @return <code>true</code> if this driver supports the Patch.
      */
-    public abstract boolean supportsPatch(String patchString, byte[] sysex);
-
-    /** Set <code>Device</code> with which this driver go. */
-    public abstract void setDevice(Device device);
-
-    /** Return <code>Device</code> with which this driver go.. */
-    public abstract Device getDevice();
+    boolean supportsPatch(String patchString, byte[] sysex);
 
     /**
      * Create a patch from a byte array for the driver.
-     * @param sysex Byte array of sysex data.
-     * @return <code>IPatch</code> value.
+     * @param sysex a byte array of sysex data.
+     * @return a array of <code>IPatch</code> object.
+     * @see Patch#valueOf(byte[])
      */
-    public abstract IPatch[] createPatch(byte[] sysex);
+    // called by Patch.valueOf and CrossBreeder.generateNewPatch
+    IPatch[] createPatch(byte[] sysex);
 }

@@ -3,13 +3,16 @@ package core;
 /**
  * This includes methods only for Single Drivers.
  * @author ribrdb
+ * @version $Id$
+ * @see IDriver
+ * @see IPatchDriver
  */
 public interface ISingleDriver extends IPatchDriver {
-    /** Play note. 
-     * @param patch a <code>Patch</code> value, which isn't used! !!!FIXIT!!!
-     * @Xdeprecated Use playPatch().
+    /** 
+     * Play a note.
+     * @param patch a <code>Patch</code>
      */
-    void playPatch(IPatch patch);
+    void play(IPatch patch);
 
     /**
      * Sends a patch to the synth's edit buffer.<p>
@@ -18,5 +21,5 @@ public interface ISingleDriver extends IPatchDriver {
      * be sent to the user (aka if the particular synth does not have
      * a edit buffer or it is not MIDI accessable).
      */
-    void sendPatch(IPatch patch);
+    void send(IPatch patch);
 }

@@ -133,20 +133,20 @@ public class XMLPatch implements IPatch {
     }
 
     public JSLFrame edit() {
-        return driver.editPatch(this);
+        return driver.edit(this);
     }
 
     public void store(int bankNum, int patchNum) {
-        driver.storePatch(this, bankNum, patchNum);
+        driver.send(this, bankNum, patchNum);
     }
 
     // only for single patch
     public void play() {
-        ((ISingleDriver) driver).playPatch(this);
+        ((ISingleDriver) driver).play(this);
     }
 
     public void send() {
-        ((ISingleDriver) driver).sendPatch(this);
+        ((ISingleDriver) driver).send(this);
     }
 
     // only for bank patch

@@ -4,7 +4,7 @@
  * To change this generated comment go to 
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-package core; //TODO org.jsynthlib;
+package core;
 
 /**
  * @author emenaker - 2003.03.18
@@ -22,25 +22,27 @@ package core; //TODO org.jsynthlib;
  * 
  */
 public class NotifyingException extends Exception {
-	private boolean userNotified = false;
+    private boolean userNotified = false;
 
-	public NotifyingException(String message) {
-		super(message);
-	}
-	
-	/**
-	 * Set whether or not the user has been notified of the cause of this exception.
-	 * @param userNotified
-	 */
-	public void setNotified(boolean userNotified) {
-		this.userNotified = userNotified;
-	}
+    public NotifyingException(String message) {
+        super(message);
+    }
 
-	/**
-	 * 
-	 * @return Whether or not the user has already been notified
-	 */
-	public boolean isNotified() {
-		return(userNotified);
-	}
+    /**
+     * Set whether or not the user has been notified of the cause of this
+     * exception.
+     * 
+     * @param userNotified
+     */
+    public void setNotified(boolean userNotified) {
+        this.userNotified = userNotified;
+    }
+
+    /**
+     * 
+     * @return Whether or not the user has already been notified
+     */
+    public boolean isNotified() {
+        return (userNotified);
+    }
 }

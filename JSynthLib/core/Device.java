@@ -132,7 +132,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
 	setPort(prefs.getInt("port", AppConfig.getInitPortOut()));
     }
 
-    public Preferences getPreferences() {
+    public final Preferences getPreferences() {
 	return prefs;
     }
 
@@ -150,7 +150,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property getManufacturerName.
      * @return Value of property getManufacturerName.
      */
-    public String getManufacturerName () {
+    public final String getManufacturerName () {
         return manufacturerName;
     }
 
@@ -158,7 +158,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property modelName.
      * @return Value of property modelName.
      */
-    public String getModelName () {
+    public final String getModelName () {
         return modelName;
     }
 
@@ -166,7 +166,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property inquiryID.
      * @return Value of property inquiryID.
      */
-    public String getInquiryID() {
+    public final String getInquiryID() {
 	return inquiryID;
     }
 
@@ -174,7 +174,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property infoText.
      * @return Value of property infoText.
      */
-    public String getInfoText() {
+    public final String getInfoText() {
 	return infoText;
     }
 
@@ -182,7 +182,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property authors.
      * @return Value of property authors.
      */
-    public String getAuthors() {
+    public final String getAuthors() {
 	return authors;
     }
 
@@ -190,7 +190,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property synthName.
      * @return Value of property synthName.
      */
-    public String getSynthName () {
+    public /*final*/ String getSynthName () { // overridden by XMLDevice
 	return prefs.get("synthName", modelName);
     }
 
@@ -201,7 +201,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * default value. A synth driver should not use this.
      * @param synthName New value of property synthName.
      */
-    protected void setSynthName (String synthName) {
+    protected final void setSynthName (String synthName) {
 	prefs.put("synthName", synthName);
     }
 
@@ -209,7 +209,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property channel.
      * @return Value of property channel.
      */
-    public int getChannel () {
+    public final int getChannel () {
 	return prefs.getInt("channel", 1);
     }
 
@@ -222,7 +222,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param channel The value must be 1 or greater than 1, and 16 or
      * less than 16.
      */
-    protected void setChannel (int channel) {
+    protected final void setChannel (int channel) {
 	prefs.putInt("channel", channel);
     }
 
@@ -230,7 +230,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property deviceID.
      * @return Value of property deviceID.
      */
-    public int getDeviceID() {
+    public final int getDeviceID() {
 	// For backward compatibility if this has the initial value
 	// (-1), The value of <code>channel</code> is used as device
 	// ID.
@@ -247,7 +247,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param deviceID The value must be 1 or greater than 1, and 256
      * or less than 256.
      */
-    protected void setDeviceID(int deviceID) {
+    protected final void setDeviceID(int deviceID) {
 	prefs.putInt("deviceID", deviceID);
     }
 
@@ -255,7 +255,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property port (MIDI output port).
      * @return Value of property port.
      */
-    public int getPort () {
+    public final int getPort () {
 	return prefs.getInt("port", AppConfig.getInitPortOut());
     }
 
@@ -265,7 +265,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * should not use this.
      * @param port New value of property port.
      */
-    protected void setPort (int port) {
+    protected final void setPort (int port) {
 	if (!MidiUtil.isOutputAvailable())
 	    return;
 
@@ -283,7 +283,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
     }
 
     /** send MidiMessage to MIDI output. Called by Driver.send(). */
-    protected void send(MidiMessage message) {
+    public final void send(MidiMessage message) {
 	try {
 	    MidiUtil.send(rcvr, message);
 	} catch (MidiUnavailableException e) {
@@ -297,7 +297,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for property inPort.
      * @return Value of property inPort.
      */
-    public int getInPort () {
+    public final int getInPort () {
 	return prefs.getInt("inPort", AppConfig.getInitPortIn());
     }
 
@@ -307,7 +307,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * should not use this.
      * @param inPort New value of property inPort.
      */
-    protected void setInPort (int inPort) {
+    protected final void setInPort (int inPort) {
 	if (!MidiUtil.isInputAvailable())
 	    return;
 
@@ -325,7 +325,7 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param driver IDriver to be added.
      * @see IConverter
      */
-    protected void addDriver(IDriver driver) {
+    public final void addDriver(IDriver driver) {
         driver.setDevice(this);
         driverList.add(driver);
     }
@@ -337,33 +337,33 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * @param driver Driver to be added.
      * @deprecated Call <code>addDriver(Driver)</code> in order.
      */
-    protected void addDriver(int index, IDriver driver) {
+    protected final void addDriver(int index, IDriver driver) {
 	driver.setDevice(this);
         driverList.add(index, driver);
     }
 
     /** Size query for driverList. */
-    int driverCount() {
+    final int driverCount() {
 	return this.driverList.size();
     }
 
     /** Indexed getter for driverList elements. */
-    protected IDriver getDriver(int i) {
+    protected final IDriver getDriver(int i) {
 	return (IDriver) this.driverList.get(i);
     }
 
     /** Returns the index of a Driver */
-    int getDriverNum(IDriver drv) {
+    final int getDriverNum(IDriver drv) {
  	return driverList.indexOf(drv);
     }
 
     /** Remover for driverList elements. */
-    IDriver removeDriver(int i) {
+    final IDriver removeDriver(int i) {
 	return (IDriver) this.driverList.remove(i);
     }
 
     /** getter for device number. */
-    int getDeviceNum() {
+    final int getDeviceNum() {
 	return AppConfig.getDeviceIndex(this);
     }
 

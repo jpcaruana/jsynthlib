@@ -1208,7 +1208,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
             ShortMessage msg = new ShortMessage();
             try {
                 msg.setMessage(ShortMessage.CONTROL_CHANGE,
-                        driver.getChannel() - 1, param, value * mult);
+                        driver.getDevice().getChannel() - 1, param, value * mult);
                 driver.send(msg);
             } catch (InvalidMidiDataException e) {
                 ErrorMsg.reportStatus(e);

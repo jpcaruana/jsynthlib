@@ -46,9 +46,9 @@ public class UploadPatchDialog extends JDialog {
 	t2.setText(q.getName());
 	t1.setEditable(false);
 
-	patchType= q.getDriver().getManufacturerName();
+	patchType= q.getDriver().getDevice().getManufacturerName();
 	patchType+=" ";
-	patchType+=q.getDriver().getModelName();
+	patchType+=q.getDriver().getDevice().getModelName();
 	t1.setText(patchType);
 
 	JLabel l4 = new JLabel("Repository:");

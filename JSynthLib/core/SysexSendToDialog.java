@@ -27,7 +27,7 @@ public class SysexSendToDialog extends DevDrvPatchSelector {
      */
     protected void doit () {
         ISingleDriver driver = (ISingleDriver)driverComboBox.getSelectedItem();
-        driver.sendPatch(p);
+        driver.send(p);
 
         setVisible(false);
         dispose();

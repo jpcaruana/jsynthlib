@@ -493,7 +493,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 	{
 		sendSelectedPatch();		// send Patch to Synth
 		SendOpState();			// transmit OperatorState to Synth
-		((Driver)p.getDriver()).playPatch(p);	// and now play the patch, Sam! (only NoteOn-NoteOff!)
+		p.play();	// and now play the patch, Sam! (only NoteOn-NoteOff!)
 	};
 
 

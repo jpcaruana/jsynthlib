@@ -117,9 +117,6 @@ public final class TD6SingleDriver extends Driver {
      * @param patchNum the patch number.
      */
     void storePatch (byte[] sysex, int offset, int patchNum) {
-	int deviceID = getDeviceID();
-	int port = getPort();
-
 	int size;
 	for (int i = 0; i < NUM_PKT; i++, offset += size) {
 	    // create a Patch data for each packet
@@ -128,7 +125,7 @@ public final class TD6SingleDriver extends Driver {
 	    System.arraycopy(sysex, offset, tmpSysex, 0, size);
 	    Patch p = new Patch(tmpSysex, (Driver) null);
 
-	    p.sysex[2] = (byte) (deviceID - 1);
+	    p.sysex[2] = (byte) (getDeviceID() - 1);
 	    // Drum kit : kk,  address 41 kk ii 00
 	    p.sysex[6] = (byte) 0x41;
 	    p.sysex[7] = (byte) patchNum;

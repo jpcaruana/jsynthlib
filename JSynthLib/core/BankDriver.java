@@ -1,11 +1,11 @@
 package core;
 import javax.swing.JOptionPane;
 
-/** This is the base class for all Bank / Bulk Drivers. */
-public class BankDriver extends Driver implements IBankDriver {
-/*XXX: I'm leaving this for now, until regular XML drivers work.  But
- *     I wonder if we should change this to use an IBankPatch instead.
+/**
+ * This is an implementation of IBankDriver and the base class for bank
+ * drivers which use <code>Patch<IPatch>.<p>
  */
+abstract public class BankDriver extends Driver implements IBankDriver {
      /**
      * The Number of Patches the Bank holds.
      */
@@ -58,48 +58,66 @@ public class BankDriver extends Driver implements IBankDriver {
 	super();
     }
     */
-    /** Getter for property <code>numPatches</code>. */
-    public int getNumPatches() {
+    // for IPatchDriver methods
+    /**
+     * Store the bank to a given bank on the synth. Ignores the
+     * patchNum parameter. Should probably be overridden in most
+     * drivers
+     */
+    protected void storePatch(Patch bank, int bankNum, int patchNum) {
+	setBankNum(bankNum);
+	super.sendPatch(bank);
+    }
+
+    /** Creates a default bank editor window to edit this bank. */
+    protected JSLFrame editPatch(Patch bank) {
+	return new BankEditorFrame(bank);
+    }
+
+    //
+    // IBankDriver interface methods
+    //
+    public final int getNumPatches() {
 	return numPatches;
     }
-    /** Getter for property <code>numColumns</code>. */
-    public int getNumColumns() {
+
+    public final int getNumColumns() {
 	return numColumns;
     }
 
-    /** Set name of the bank. */
-    public void setPatchName(Patch p, String name) {
-	// Most Banks have no name.
-    }
-
-    /** Get name of the bank. */
-    public String getPatchName(Patch ip) {
-	// Most Banks have no name.
-	return "-";
-    }
-
-    /** Set the name of the patch at the given number <code>patchNum</code>. */
-    protected void setPatchName(Patch p, int patchNum, String name) {
-	// override this.
-    }
-
-    /** Get the name of the patch at the given number <code>patchNum</code>. */
-    protected String getPatchName(Patch p, int patchNum) {
-	// override this.
-	return "-";
-    }
-
-    /** Delete a patch. */
-    protected void deletePatch(Patch p, int patchNum) {
-	setPatchName(p, patchNum, "          ");
+    public final String getPatchName(IPatch bankData, int patchNum) {
+        return getPatchName((Patch) bankData, patchNum);
     }
 
     /**
-     * Puts a patch into the bank, converting it as
-     * needed. <code>p</code> is already checked by
-     * <code>canHoldPatch</code>, although it was not.
+     * Get the name of the patch at the given number <code>patchNum</code>.
      */
-    protected void putPatch(Patch bank, Patch p, int patchNum) {
+    // XXX should be 'abstract', but some subclasses don't implement this.
+    protected String getPatchName(Patch bank, int patchNum) {
+        return "-";
+    }
+
+    public final void setPatchName(IPatch bankData, int patchNum, String string) {
+        setPatchName((Patch) bankData, patchNum, string);
+    }
+    /**
+     * Set the name of the patch at the given number <code>patchNum</code>.
+     * Need to be overriden.
+     */
+    // XXX should be 'abstract', but some subclasses don't implement this.
+    protected void setPatchName(Patch bank, int patchNum, String name) {
+        // do nothing by default
+    }
+
+    public final IPatch getPatch(IPatch bankData, int selectedPatchNum) {
+	return (IPatch) getPatch((Patch) bankData, selectedPatchNum);
+    }
+
+    /** Gets a patch from the bank, converting it as needed. */
+    abstract protected Patch getPatch(Patch bank, int patchNum);
+
+    public final void checkAndPutPatch(IPatch bankData, IPatch p, int selectedPatchNum) {
+        checkAndPutPatch((Patch) bankData, (Patch) p, selectedPatchNum);
     }
 
     /**
@@ -108,9 +126,9 @@ public class BankDriver extends Driver implements IBankDriver {
      * @see #putPatch
      * @see #canHoldPatch
      */
-    private void checkAndPutPatch(Patch bank, Patch p, int patchNum) {
-	if (canHoldPatch(p)) {
-	    putPatch(bank, p, patchNum);
+    protected void checkAndPutPatch(Patch bank, Patch single, int patchNum) {
+	if (canHoldPatch(single)) {
+	    putPatch(bank, single, patchNum);
 	} else {
 	    JOptionPane.showMessageDialog
 		(null,
@@ -120,35 +138,81 @@ public class BankDriver extends Driver implements IBankDriver {
 	}
     }
 
-    /** Gets a patch from the bank, converting it as needed. */
-    protected Patch getPatch(Patch bank, int patchNum) { // called by YamahaFS1RBankEditor
-	return null;
+    /**
+     * Compares the header & size of a Single Patch to this driver to
+     * see if this bank can hold the patch.
+     * @see Driver#supportsPatch
+     */
+    protected boolean canHoldPatch(Patch p) {
+        if ((singleSize != p.sysex.length) && (singleSize != 0))
+	    return false;
+
+        String patchString = p.getPatchHeader().toString();
+        StringBuffer driverString = new StringBuffer(singleSysexID);
+	for (int j = 0; j < driverString.length(); j++)
+	    if (driverString.charAt(j) == '*')
+		driverString.setCharAt(j, patchString.charAt(j));
+	return (driverString.toString().equalsIgnoreCase
+		(patchString.substring(0, driverString.length())));
     }
 
     /**
-     * Store the bank to a given bank on the synth. Ignores the
-     * patchNum parameter. Should probably be overridden in most
-     * drivers
+     * Puts a patch into the bank, converting it as
+     * needed. <code>single</code> is already checked by
+     * <code>canHoldPatch</code>, although it was not.
      */
-    protected void storePatch(Patch p, int bankNum, int patchNum) {
-	setBankNum(bankNum);
-	super.sendPatch(p);
+    abstract protected void putPatch(Patch bank, Patch single, int patchNum);
+
+    public final void deletePatch(IPatch bankData, int selectedPatchNum) {
+        deletePatch((Patch) bankData, selectedPatchNum);
     }
 
-    /** Show an error dialog. */
-    // Cannot we disable the menu for this?
-    protected void sendPatch(Patch p) {
+    /** Delete a patch. */
+    protected void deletePatch(Patch single, int patchNum) {
+	setPatchName(single, patchNum, "          ");
+    }
+    // end of IBankDriver methods
+
+    /** Get name of the bank. */
+    public String getPatchName(Patch bank) {
+	// Most Banks have no name.
+	return "-";
+    }
+
+    /** Set name of the bank. */
+    public void setPatchName(Patch bank, String name) {
+	// Most Banks have no name.
+    }
+
+    //
+    // remove the following lines after 0.20 is released.
+    //
+    /**
+     * Show an error dialog.
+     * @deprecated Don't use this.
+     */
+    protected void sendPatch(Patch bank) {  // not used
 	JOptionPane.showMessageDialog
 	    (null, "You can not send bank data (use store).",
 	     "Error", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
+     * Banks cannot play.
+     * @deprecated Don't use this.
+     */
+    protected void playPatch(Patch bank) { // not used
+	JOptionPane.showMessageDialog
+	    (null, "Can not Play Banks, only individual patches.",
+	     "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
      * Chooses which bank to put the patch into and stores the patch
      * in it .
-     * @deprecated Nobody uses this method now.
+     * @deprecated Don't use this.
      */
-    protected void choosePatch(Patch p) {
+    protected void choosePatch(Patch p) { // not used
 	int bank = 0;
 	if (bankNumbers.length > 1) {
 	    try {
@@ -170,55 +234,4 @@ public class BankDriver extends Driver implements IBankDriver {
 	storePatch(p, bank, 0);
     }
 
-    /** Banks cannot play. */
-    // Cannot we disable the menu for this?
-    protected void playPatch(Patch p) {
-	JOptionPane.showMessageDialog
-	    (null, "Can not Play Banks, only individual patches.",
-	     "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    /** Creates an editor window to edit this bank. */
-    protected JSLFrame editPatch(Patch p) {
-	return new BankEditorFrame(p);
-    }
-
-    /**
-     * Compares the header & size of a Single Patch to this driver to
-     * see if this bank can hold the patch.
-     */
-    // cf. Driver.supportsPatch
-    protected boolean canHoldPatch(Patch p) {
-        if ((singleSize != p.sysex.length) && (singleSize != 0))
-	    return false;
-
-        String patchString = p.getPatchHeader().toString();
-        StringBuffer driverString = new StringBuffer(singleSysexID);
-	for (int j = 0; j < driverString.length(); j++)
-	    if (driverString.charAt(j) == '*')
-		driverString.setCharAt(j, patchString.charAt(j));
-	return (driverString.toString().equalsIgnoreCase
-		(patchString.substring(0, driverString.length())));
-    }
-
-    // stub methods to convert IPatch -> Patch.
-    public void checkAndPutPatch(IPatch bankData, IPatch p, int selectedPatchNum) {
-        checkAndPutPatch((Patch) bankData, (Patch) p, selectedPatchNum);
-    }
-
-    public void deletePatch(IPatch bankData, int selectedPatchNum) {
-        deletePatch((Patch) bankData, selectedPatchNum);
-    }
-
-    public IPatch getPatch(IPatch bankData, int selectedPatchNum) {
-	return (IPatch) getPatch((Patch) bankData, selectedPatchNum);
-    }
-
-    public String getPatchName(IPatch bankData, int i) {
-        return getPatchName((Patch) bankData, i);
-    }
-
-    public void setPatchName(IPatch bankData, int patchNum, String string) {
-        setPatchName((Patch) bankData, patchNum, string);
-    }
 }

@@ -36,7 +36,7 @@ abstract class ConfigPanel extends JPanel {
      * settings without any other classes needing to know the details
      * about what it's saving.
 
-     * @param appConfig The application's configuration setting storage
+     * @param parent parent dialog.
      */
     ConfigPanel(PrefsDialog parent) {
 	this.parent = parent;
