@@ -126,15 +126,7 @@ public class MacOSXMidiWrapper extends MidiWrapper
 //				MIDIData oData = MIDIData.newMIDIPacketData(length);
 			MIDIData oData = MIDIData.newMIDIRawData(length);
 
-/* la fonction a l'air de marcher mais l'objet cree ne doit pas etre correct
-			oData.copyFromArray(4, mSysex, 0, mLength);
-*/
-			int oTab[] = new int[length];
-			for (int i = 0; i < length; i++)
-			{
-				oTab[i] = (int) (sysex[i] & 0xFF);
-			}
-			oData.addRawData(oTab);
+			oData.addRawData(sysex, 0, length);
 			MIDISysexSendRequest oSysex = new MIDISysexSendRequest(oOut, oData);
 			oSysex.send(MacOSXMidiWrapper.this);
 		}
