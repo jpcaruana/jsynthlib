@@ -42,6 +42,7 @@ public class AdvDefaultHandler extends DefaultHandler {
     private AdvDefaultHandler delegate;
     private int depth = 0;
     protected File base_path;
+	protected boolean ignoreExtraDefaults = false;
     
     /**
      * Constructor with no delegate handler.
@@ -103,7 +104,7 @@ public class AdvDefaultHandler extends DefaultHandler {
             passToDelegate(fn);
         } else if (fn != null) {
             throw new SAXParseException("Only " + delegate_tag 
-                    + " mayy be in a separate file", locator);
+                    + " may be in a separate file", locator);
         }
         Generator o = (Generator)generators.get(el);
         if (o != null) {
@@ -176,6 +177,9 @@ public class AdvDefaultHandler extends DefaultHandler {
             String el = (String)entry.getKey();
             DefaultEntry de = (DefaultEntry)entry.getValue();
             if (de.depth > curdepth && !de.used) {
+                if (ignoreExtraDefaults) {
+                	return;
+                }
                 String msg= "Unrecognized element " + el.toLowerCase()
                     + " closed at line " + de.line + ", column " + de.col;
                 throw new SAXException(msg);
