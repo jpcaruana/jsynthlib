@@ -20,13 +20,13 @@ import java.awt.datatransfer.*;
 public class BankEditorFrame extends JInternalFrame implements PatchBasket
 
 {
-    static final int xOffset = 30, yOffset = 30;
-    PatchGridModel myModel;
-    DNDPatchTable table;
-    DNDPatchTable table2;
-    Patch  bankData;
-    BankDriver bankDriver;
-    final BankEditorFrame instance;
+    protected static final int xOffset = 30, yOffset = 30;
+    protected PatchGridModel myModel;
+    protected DNDPatchTable table;
+    protected DNDPatchTable table2;
+    protected Patch  bankData;
+    protected BankDriver bankDriver;
+    protected final BankEditorFrame instance;
  
     public BankEditorFrame (Patch p)
     {
@@ -318,7 +318,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         pf.setBankEditorInformation (this,table.getSelectedRow (),table.getSelectedColumn ());
         return pf;
     }
-
+	
     public void PastePatch ()
     {
         if (!checkSelected ()) return ;
@@ -335,5 +335,6 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
   {
   bankData.ChooseDriver();
   if (bankData.deviceNum==0) {try{setClosed(true);}catch (Exception e){}; return;}
-  bankDriver=(BankDriver)PatchEdit.getDriver(bankData.deviceNum,bankData.driverNum);}    
+  bankDriver=(BankDriver)PatchEdit.getDriver(bankData.deviceNum,bankData.driverNum);}
+  
 }
