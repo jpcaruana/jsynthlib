@@ -28,29 +28,31 @@ public class DirectoryConfigPanel extends ConfigPanel {
 		JButton b1=new JButton ("Browse");
 		b1.addActionListener (new ActionListener () {
 			public void actionPerformed (ActionEvent e) {
-  			        FolderDialog fc =
-				  new FolderDialog(PatchEdit.instance,
-						   "Choose Default Directory");
-				fc.setDirectory (getLibPath());
-				fc.show();
-				if (fc.getDirectory() != null) {
-					setLibPath(fc.getDirectory());
-					t1.setText (getLibPath());
-				}
+                          CompatibleFileDialog fc = new CompatibleFileDialog();
+			  fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+			  if (getLibPath() != null)
+			    fc.setSelectedFile(new File(getLibPath())); 
+			  fc.showDialog(PatchEdit.instance, 
+					"Choose Default Directory"); 
+			  if (fc.getSelectedFile() != null) { 
+			    setLibPath(fc.getSelectedFile().getPath()); 
+			    t1.setText (getLibPath());
+			  }
 			}
 		});
 		JButton b2=new JButton ("Browse");
 		b2.addActionListener (new ActionListener () {
 			public void actionPerformed (ActionEvent e) {
-  			        FolderDialog fc =
-				  new FolderDialog(PatchEdit.instance,
-						   "Choose Default Directory");
-				fc.setDirectory (getSysexPath());
-				fc.show();
-				if (fc.getDirectory() != null) {
-					setSysexPath(fc.getDirectory());
-					t2.setText (getSysexPath());
-				}
+			  CompatibleFileDialog fc = new CompatibleFileDialog();
+			  fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			  if (getSysexPath() != null)
+			    fc.setSelectedFile(new File(getSysexPath()));
+			  fc.showDialog(PatchEdit.instance, 
+					"Choose Default Directory");
+			  if (fc.getSelectedFile() != null) {
+			    setSysexPath(fc.getSelectedFile().getPath());
+			    t2.setText (getSysexPath());
+			  }
 			}
 		});
 		p1.add (l1);
