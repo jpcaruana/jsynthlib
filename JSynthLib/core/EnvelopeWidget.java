@@ -76,13 +76,13 @@ public class EnvelopeWidget extends SysexWidget {
 	    // that axis and has no related parameter.
 	    if (nodes[i].minX != nodes[i].maxX) {
 		valueLabels[j] = new JLabel(nodes[i].nameX);
-		values[j] = new JTextField(new Integer(nodes[i].ofsX.get()).toString(), 4);
+		values[j] = new JTextField(new Integer(nodes[i].pmodelX.get()).toString(), 4);
 		values[j].setEditable(false);
 		j++;
             }
 	    if (nodes[i].minY != nodes[i].maxY) {
 		valueLabels[j] = new JLabel(nodes[i].nameY);
-		values[j] = new JTextField(new Integer(nodes[i].ofsY.get()).toString(), 4);
+		values[j] = new JTextField(new Integer(nodes[i].pmodelY.get()).toString(), 4);
 		values[j].setEditable(false);
 		j++;
             }
@@ -162,7 +162,7 @@ public class EnvelopeWidget extends SysexWidget {
 		    value = (int) (nodes[i].minX
 				   + ((float) (value) / 127 * (nodes[i].maxX - nodes[i].minX)));
 		    // set paramModel and show the value.
-		    nodes[i].ofsX.set(value);
+		    nodes[i].pmodelX.set(value);
 		    values[j].setText(new Integer(value).toString());
 		    // send System Exclusive Message
 		    sendSysex(nodes[i].senderX, value);
@@ -175,7 +175,7 @@ public class EnvelopeWidget extends SysexWidget {
 		    value = (int) (nodes[i].minY
 				   + ((float) (value) / 127 * (nodes[i].maxY - nodes[i].minY)));
 		    // set paramModel and show the value.
-		    nodes[i].ofsY.set(value);
+		    nodes[i].pmodelY.set(value);
 		    values[j].setText(new Integer(value).toString());
 		    // send System Exclusive Message
 		    sendSysex(nodes[i].senderY, value);
@@ -277,13 +277,13 @@ public class EnvelopeWidget extends SysexWidget {
 	    if (nodes[i].minX == nodes[i].maxX)
 		return nodes[i].minX;
 	    if (nodes[i].invertX)
-		return (nodes[i].maxX - nodes[i].ofsX.get());
-	    return (nodes[i].ofsX.get());
+		return (nodes[i].maxX - nodes[i].pmodelX.get());
+	    return (nodes[i].pmodelX.get());
 	    // I think the following is the correct code. We need to
 	    // consider min==max && invertX case, don't we?  Hiroo.
 	    /*
 	    int v = (nodes[i].minX == nodes[i].maxX
-		     ? nodes[i].minX : nodes[i].ofsX.get());
+		     ? nodes[i].minX : nodes[i].pmodelX.get());
 	    return nodes[i].invertX ? nodes[i].maxX - v : v;
 	    */
         }
@@ -299,7 +299,7 @@ public class EnvelopeWidget extends SysexWidget {
 		return getY(i - 1);
 	    if (nodes[i].minY == nodes[i].maxY)
 		return nodes[i].minY + nodes[i].baseY;
-	    return (nodes[i].ofsY.get() + nodes[i].baseY);
+	    return (nodes[i].pmodelY.get() + nodes[i].baseY);
         }
 
         private class MyListener extends MouseInputAdapter {
@@ -342,36 +342,36 @@ public class EnvelopeWidget extends SysexWidget {
                 if (x - oldx > 0) { // X+
 		    while ((x - nodeX[dragNodeIdx] > DELTA)
 			   && (getX(dragNodeIdx) < dragNode.maxX)
-			   && (dragNode.ofsX != null)) {
+			   && (dragNode.pmodelX != null)) {
 			if (dragNode.invertX)
-			    dragNode.ofsX.set(dragNode.ofsX.get() - 1);
+			    dragNode.pmodelX.set(dragNode.pmodelX.get() - 1);
 			else
-			    dragNode.ofsX.set(dragNode.ofsX.get() + 1);
+			    dragNode.pmodelX.set(dragNode.pmodelX.get() + 1);
 			paintComponent(null);
 		    }
 		} else if (x - oldx < 0) {	// X-
 		    while ((x - nodeX[dragNodeIdx] < -DELTA)
 			   && (getX(dragNodeIdx) > dragNode.minX)
-			   && (dragNode.ofsX != null)) {
+			   && (dragNode.pmodelX != null)) {
 			if (dragNode.invertX)
-			    dragNode.ofsX.set(dragNode.ofsX.get() + 1);
+			    dragNode.pmodelX.set(dragNode.pmodelX.get() + 1);
 			else
-			    dragNode.ofsX.set(dragNode.ofsX.get() - 1);
+			    dragNode.pmodelX.set(dragNode.pmodelX.get() - 1);
 			paintComponent(null);
 		    }
 		}
                 if (y - oldy < 0) { // Y-
 		    while ((y - nodeY[dragNodeIdx] < -DELTA)
 			   && (getY(dragNodeIdx) < dragNode.maxY + dragNode.baseY)
-			   && (dragNode.ofsY != null)) {
-			dragNode.ofsY.set(dragNode.ofsY.get() + 1);
+			   && (dragNode.pmodelY != null)) {
+			dragNode.pmodelY.set(dragNode.pmodelY.get() + 1);
 			paintComponent(null);
 		    }
 		} else if (y - oldy > 0) { // Y+
 		    while ((y - nodeY[dragNodeIdx] > DELTA)
 			   && (getY(dragNodeIdx) > dragNode.minY + dragNode.baseY)
-			   && (dragNode.ofsY != null)) {
-			dragNode.ofsY.set(dragNode.ofsY.get() - 1);
+			   && (dragNode.pmodelY != null)) {
+			dragNode.pmodelY.set(dragNode.pmodelY.get() - 1);
 			paintComponent(null);
 		    }
 		}
@@ -383,7 +383,7 @@ public class EnvelopeWidget extends SysexWidget {
                 for (int i = 0; i < nodes.length; i++) {
 		    if (nodes[i].minX != nodes[i].maxX) {
 			if (i == dragNodeIdx) {
-			    values[j].setText(new Integer(nodes[i].ofsX.get()).toString());
+			    values[j].setText(new Integer(nodes[i].pmodelX.get()).toString());
 			    //break; // added by hiroo
 			    //bk: this break here is wrong, code below might
 			    //improperly not execute.
@@ -392,7 +392,7 @@ public class EnvelopeWidget extends SysexWidget {
 		    }
 		    if (nodes[i].minY != nodes[i].maxY) {
 			if (i == dragNodeIdx) {
-			    values[j].setText(new Integer(nodes[i].ofsY.get()).toString());
+			    values[j].setText(new Integer(nodes[i].pmodelY.get()).toString());
 			    break; // added by hiroo
 			}
 			j++;
@@ -405,10 +405,10 @@ public class EnvelopeWidget extends SysexWidget {
 		if (dragNode == null)
 		    return;
 		// Send System Exclusive message
-		if (dragNode.ofsX != null)
-		    sendSysex(dragNode.senderX, dragNode.ofsX.get());
-		if (dragNode.ofsY != null)
-		    sendSysex(dragNode.senderY, dragNode.ofsY.get());
+		if (dragNode.pmodelX != null)
+		    sendSysex(dragNode.senderX, dragNode.pmodelX.get());
+		if (dragNode.pmodelY != null)
+		    sendSysex(dragNode.senderY, dragNode.pmodelY.get());
 	    }
 	}
     }
@@ -435,8 +435,8 @@ public class EnvelopeWidget extends SysexWidget {
 	private int minY;
 	private int maxX;
 	private int maxY;
-	private IParamModel ofsX;
-	private IParamModel ofsY;
+	private IParamModel pmodelX;
+	private IParamModel pmodelY;
 	private ISender senderX;
 	private ISender senderY;
 	private boolean invertX;
@@ -502,8 +502,8 @@ public class EnvelopeWidget extends SysexWidget {
 	    maxX = maxx;
 	    minY = miny;
 	    maxY = miny == SAME ? miny : maxy;
-	    ofsX = pmodelx;
-	    ofsY = pmodely;
+	    pmodelX = pmodelx;
+	    pmodelY = pmodely;
 	    senderX = senderx;
 	    senderY = sendery;
 	    nameX = namex;
