@@ -33,6 +33,13 @@ public class Line6BassPodSingleDriver extends Driver {
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.SIGL_DUMP_REQ_ID); //Program Patch Dump Request
     
+    /** Size of the sysex header for a single patch dump
+    */
+    private static int hdrSize = Constants.PDMP_HDR_SIZE;
+    
+    /** Offset of the patch name in the sysex record, not including the sysex header.*/
+    private static int nameStart = Constants.PATCH_NAME_START;
+    
     /** Constructs a Line6BassPodSingleDriver.
     */
     public Line6BassPodSingleDriver()
@@ -41,7 +48,7 @@ public class Line6BassPodSingleDriver extends Driver {
         sysexID = Constants.SIGL_SYSEX_MATCH_ID;
         
         patchSize = Constants.PDMP_HDR_SIZE + Constants.SIGL_SIZE + 1;
-        patchNameStart = Constants.PATCH_NAME_START; // does NOT include sysex header
+        patchNameStart = Constants.PDMP_HDR_SIZE + Constants.PATCH_NAME_START; // DOES include sysex header
         patchNameSize = Constants.PATCH_NAME_SIZE;
         deviceIDoffset = Constants.DEVICE_ID_OFFSET;
         bankNumbers = Constants.PRGM_BANK_LIST;
@@ -75,7 +82,7 @@ public class Line6BassPodSingleDriver extends Driver {
     protected String getPatchName(Patch p) {
         char c[] = new char[patchNameSize];
         for (int i = 0; i < patchNameSize; i++) {
-            c[i] = (char)PatchBytes.getSysexByte(p.sysex, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart);
+            c[i] = (char)PatchBytes.getSysexByte(p.sysex, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + nameStart);
         }
         return new String(c);
     }
@@ -90,7 +97,7 @@ public class Line6BassPodSingleDriver extends Driver {
         try {
             nameBytes = name.getBytes("US-ASCII");
             for (int i = 0; i < patchNameSize; i++) {
-                PatchBytes.setSysexByte(p, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + patchNameStart, nameBytes[i]);
+                PatchBytes.setSysexByte(p, Constants.PDMP_HDR_SIZE, Constants.PDMP_HDR_SIZE + i + nameStart, nameBytes[i]);
             }
         } catch (UnsupportedEncodingException ex) {return;}
     }

@@ -37,6 +37,13 @@ public class Line6Pod20BankDriver extends BankDriver
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.BANK_DUMP_REQ_ID); //Program Bank Dump Request
     
+    /** Size of the sysex header for a bank dump
+    */
+    private static int hdrSize = Constants.BDMP_HDR_SIZE;
+    
+    /** Offset of the patch name in the sysex record, not including the sysex header.*/
+    private static int nameStart = Constants.PATCH_NAME_START;
+    
     /** Constructs a Line6Pod20BankDriver
     */
     public Line6Pod20BankDriver()
@@ -52,6 +59,7 @@ public class Line6Pod20BankDriver extends BankDriver
         singleSysexID = Constants.SIGL_SYSEX_MATCH_ID;
         singleSize = Constants.SIGL_SIZE + Constants.PDMP_HDR_SIZE + 1;
         patchSize = Constants.PATCHES_PER_BANK * Constants.SIGL_SIZE + Constants.BDMP_HDR_SIZE + 1;
+        patchNameStart = Constants.BDMP_HDR_SIZE + Constants.PATCH_NAME_START; // DOES include sysex header
         patchNameSize = Constants.PATCH_NAME_SIZE;
     }
     
@@ -72,11 +80,11 @@ public class Line6Pod20BankDriver extends BankDriver
         * single patch within the bank, designated by a number between 0 and 35.
         */
     protected String getPatchName(Patch p,int patchNum) {
-        int nameStart=getUnNibblizedPatchStart(patchNum);
-        nameStart+=Constants.PATCH_NAME_START; //offset of name in patch data
+        int nameOfs=getUnNibblizedPatchStart(patchNum);
+        nameOfs+=nameStart; //offset of name in patch data
         char c[] = new char[patchNameSize];
         for (int i = 0; i < patchNameSize; i++) {
-            c[i] = (char)PatchBytes.getSysexByte(p.sysex, Constants.BDMP_HDR_SIZE, i + nameStart);
+            c[i] = (char)PatchBytes.getSysexByte(p.sysex, Constants.BDMP_HDR_SIZE, i + nameOfs);
         }
         
         return new String(c);
@@ -89,14 +97,14 @@ public class Line6Pod20BankDriver extends BankDriver
         */
     protected void setPatchName(Patch p,int patchNum, String name)
     {
-        patchNameStart=getUnNibblizedPatchStart(patchNum);
-        patchNameStart+=Constants.PATCH_NAME_START; //offset of name in patch data
+        int nameOfs=getUnNibblizedPatchStart(patchNum);
+        nameOfs+=nameStart; //offset of name in patch data
         if (name.length()<patchNameSize) name = name + "                ";
         byte [] namebytes = new byte [patchNameSize];
         try {
             namebytes = name.getBytes("US-ASCII");
             for (int i = 0; i < patchNameSize; i++) {
-                PatchBytes.setSysexByte(p, Constants.BDMP_HDR_SIZE, i + patchNameStart, namebytes[i]);
+                PatchBytes.setSysexByte(p, Constants.BDMP_HDR_SIZE, i + nameOfs, namebytes[i]);
             }
         } catch (UnsupportedEncodingException ex) {return;}
     }
@@ -137,7 +145,7 @@ public class Line6Pod20BankDriver extends BankDriver
             Patch p = new Patch(sysex, getDevice());
             return p;
         }catch (Exception e) {
-            ErrorMsg.reportError("Error","Error in Bass Pod Bank Driver",e);
+            ErrorMsg.reportError("Error","Error in Pod 2.0 Bank Driver",e);
             return null;
         }
     }
