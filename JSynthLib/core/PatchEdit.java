@@ -659,7 +659,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     static class ReassignAction extends AbstractAction {
 	public ReassignAction(Map mnemonics) {
-	    super("Reassign", null); // show a dialog frame???
+	    super("Reassign...", null); // show a dialog frame???
 	    // mnemonics.put(this, new Integer('R'));
 	    setEnabled(false);
 	}
