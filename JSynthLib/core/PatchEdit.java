@@ -118,8 +118,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music
 	if (newMidiAPI) {
-	    if (appConfig.getMasterInEnable())
-		enableMasterIn();
+	    masterInEnable(appConfig.getMasterInEnable());
 	} else {
 	    beginEcho();
 	}
@@ -1343,47 +1342,49 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
 	//Receiver interface
 	public void close() {
-	    if (rcvr != null)
-		rcvr.close();
+	    // don't close a shared Receiver
+	    //if (rcvr != null) rcvr.close();
 	}
 
 	public void send(MidiMessage message, long timeStamp) {
 	    int status = message.getStatus();
-	    if ((0x80 <= status) && (status < 0xF0))  // MIDI channel Voice Message
+	    if ((0x80 <= status) && (status < 0xF0)) {  // MIDI channel Voice Message
 		// I believe Sysex message must be ignored.
 		//|| status == SysexMessage.SYSTEM_EXCLUSIVE)
 		ErrorMsg.reportStatus("MasterReceiver: " + message);
 		this.rcvr.send(message, timeStamp);
 		MidiUtil.log("RECV: ", message);
+	    }
 	}
     }
 
     private static Transmitter trns;
     private static Receiver rcvr1;
 
-    static void enableMasterIn() {
-	disableMasterIn();
-	// get transmitter
-	trns = appConfig.getMasterInTrns();
-	// create output receiver
-	try {
-	    Receiver rcvr = MidiUtil.getReceiver(appConfig.getInitPortOut());
-	    rcvr1 = new MasterReceiver(rcvr);
-	    trns.setReceiver(rcvr1);
-	} catch (MidiUnavailableException e) {
-	    ErrorMsg.reportStatus(e);
+    static void masterInEnable(boolean enable) {
+	if (enable) {
+	    // disable previous master in port if enabled.
+	    masterInEnable(false);
+	    // get transmitter
+	    trns = MidiUtil.getTransmitter(appConfig.getMasterController());
+	    // create output receiver
+	    try {
+		Receiver rcvr = MidiUtil.getReceiver(appConfig.getInitPortOut());
+		rcvr1 = new MasterReceiver(rcvr);
+		trns.setReceiver(rcvr1);
+	    } catch (MidiUnavailableException e) {
+		ErrorMsg.reportStatus(e);
+	    }
+	} else {
+	    if (trns != null)
+		trns.close();
+	    if (rcvr1 != null)
+		rcvr1.close();
 	}
     }
 
-    static void disableMasterIn() {
-	if (trns != null)
-	    trns.close();
-	if (rcvr1 != null)
-	    rcvr1.close();
-    }
-
     protected void finalize() {	// ???
-	disableMasterIn();
+	masterInEnable(false);
     }
 
     ////////////////////////////////////////////////////////////////////////

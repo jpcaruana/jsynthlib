@@ -96,8 +96,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	moveToDefaultLocation();
 
 	if (PatchEdit.newMidiAPI) {
-	    if (PatchEdit.appConfig.getFaderEnable())
-		enableFaderIn();
+	    faderInEnable(PatchEdit.appConfig.getFaderEnable());
 	}
 
 	scroller.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
@@ -323,22 +322,23 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
     private Transmitter trns;
     private Receiver rcvr;
-    void enableFaderIn() {
-	// get transmitter
-	trns = PatchEdit.appConfig.getFaderInTrns();
-	rcvr = new FaderReceiver();
-	trns.setReceiver(rcvr);
-    }
 
-    void disableFaderIn() {
-	if (trns != null)
-	    trns.close();
-	if (rcvr != null)
-	    rcvr.close();
+    private void faderInEnable(boolean enable) {
+	if (enable) {
+	    // get transmitter
+	    trns = MidiUtil.getTransmitter(PatchEdit.appConfig.getFaderPort());
+	    rcvr = new FaderReceiver();
+	    trns.setReceiver(rcvr);
+	} else {
+	    if (trns != null)
+		trns.close();
+	    if (rcvr != null)
+		rcvr.close();
+	}
     }
 
     protected void finalize() {	// ???
-	disableFaderIn();
+	faderInEnable(false);
     }
 
     private class FaderReceiver implements Receiver {

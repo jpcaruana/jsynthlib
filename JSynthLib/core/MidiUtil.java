@@ -237,7 +237,8 @@ public final class MidiUtil {
 	MidiDevice dev = MidiSystem.getMidiDevice(outputMidiDeviceInfo[port]);
 	if (!dev.isOpen()) {
 	    ErrorMsg.reportStatus("open outport: "
-				  + dev.getDeviceInfo().getName());
+				  + dev.getDeviceInfo().getName()
+				  + ", port: " + port);
 	    dev.open();
 	}
 	return dev;
@@ -287,7 +288,8 @@ public final class MidiUtil {
 	    dev = MidiSystem.getMidiDevice(inputMidiDeviceInfo[port]);
 	    if (!dev.isOpen()) {
 		ErrorMsg.reportStatus("open inport: "
-				      + dev.getDeviceInfo().getName());
+				      + dev.getDeviceInfo().getName()
+				      + ", port: " + port);
 		dev.open();
 	    }
 	} catch (MidiUnavailableException e) {
