@@ -8,15 +8,6 @@ import javax.sound.midi.SysexMessage;
 // Is Transferable necessary?
 public interface IPatch extends Cloneable, Transferable, Serializable {
 
-    /**
-     * Guess and set Driver for the patch by using
-     * {@link IDriver#supportsPatch IDriver.supportsPatch}method.
-     * 
-     * @return <code>true</code> if a driver is found, <code>false</code>
-     *         otherwise.
-     */
-    boolean chooseDriver();
-
     /** Getter for date. */
     String getDate();
 

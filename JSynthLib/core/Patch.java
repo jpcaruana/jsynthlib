@@ -74,6 +74,8 @@ public class Patch implements IPatch {
         comment = new StringBuffer();
         sysex = gsysex;
         setDriver(driver);
+        // commented out to keep backward compatibility
+        //driver.trimSysex(this);
     }
 
     /**
@@ -90,7 +92,8 @@ public class Patch implements IPatch {
         author = new StringBuffer();
         comment = new StringBuffer();
         sysex = gsysex;
-        chooseDriver(device);
+        setDriver((Driver) chooseDriver(sysex, device));
+        driver.trimSysex(this);
     }
 
     /**
@@ -110,7 +113,8 @@ public class Patch implements IPatch {
         author = new StringBuffer();
         comment = new StringBuffer();
         sysex = gsysex;
-        chooseDriver();
+        setDriver((Driver) chooseDriver(sysex));
+        driver.trimSysex(this);
     }
 
     /**
@@ -129,70 +133,11 @@ public class Patch implements IPatch {
         comment = new StringBuffer();
         this.sysex = new byte[sysex.length - offset];
         System.arraycopy(sysex, offset, this.sysex, 0, sysex.length - offset);
-        chooseDriver();
+        setDriver((Driver) chooseDriver(sysex));
+        driver.trimSysex(this);
     }
 
-    /**
-     * Set <code>driverNum</code> by guessing from <code>sysex</code> by
-     * using <code>Driver.suportsPatch</code> method.
-     * 
-     * @param dev
-     *            The known device
-     * @see Driver#supportsPatch
-     */
-    private boolean chooseDriver(Device dev) {
-        String patchString = getPatchHeader();
-
-        for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-            // iterating over all Drivers of the given device
-            IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
-            if (drv.supportsPatch(patchString, this.sysex)
-                    && (drv instanceof Driver)) {
-                ((Driver) drv).trimSysex(this);
-                setDriver(drv);
-                return true;
-            }
-        }
-        // Unkown patch, try to guess at least the manufacturer
-        comment = new StringBuffer("Probably a "
-                + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
-                + " Patch, Size: " + sysex.length);
-        setDriver(AppConfig.getNullDriver());
-        return false;
-    }
-
-    public boolean chooseDriver() {
-        Driver driver = (Driver) chooseDriver(sysex);
-        if (driver != null) {
-            driver.trimSysex(this);
-            setDriver(driver);
-            return true;
-        } else {
-            // Unkown patch, try to guess at least the manufacturer
-            comment = new StringBuffer("Probably a "
-                    + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
-                    + " Patch, Size: " + sysex.length);
-            setDriver(AppConfig.getNullDriver());
-            return false;
-        }
-    }
-
-    static IDriver chooseDriver(byte[] sysex) {
-        String patchString = getPatchHeader(sysex);
-
-        for (int idev = 0; idev < AppConfig.deviceCount(); idev++) {
-            // Outer Loop, iterating over all installed devices
-            Device dev = AppConfig.getDevice(idev);
-            for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-                IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
-                // Inner Loop, iterating over all Drivers of a device
-                if (drv.supportsPatch(patchString, sysex))
-                    return drv;
-            }
-        }
-        return null;
-    }
-
+    // IPatch interface methods
     public String getDate() {
         return date.toString();
     }
@@ -315,17 +260,12 @@ public class Patch implements IPatch {
         return patarray;
     }
 */
-    /**
-     * Return a hexadecimal string for Driver.supportsPatch at most 16 byte
-     * sysex data.
-     * 
-     * @see Driver#supportsPatch
-     */
+
     public String getPatchHeader() {
         return getPatchHeader(sysex);
     }
 
-    public static String getPatchHeader(byte[] sysex) {
+    private static String getPatchHeader(byte[] sysex) {
         StringBuffer patchstring = new StringBuffer("F0");
 
         // Some Sysex Messages are shorter than 16 Bytes!
@@ -337,6 +277,46 @@ public class Patch implements IPatch {
             patchstring.append(Integer.toHexString((int) (sysex[i] & 0xff)));
         }
         return patchstring.toString();
+    }
+
+    /**
+     * choose proper driver for sysex byte array.
+     * @param sysex System Exclusive data byte array.
+     * @return Driver object chosen
+     * @see IDriver#supportsPatch
+     */
+    static IDriver chooseDriver(byte[] sysex) { // Driver or DriverUtil class?
+        String patchString = getPatchHeader(sysex);
+
+        for (int idev = 0; idev < AppConfig.deviceCount(); idev++) {
+            // Outer Loop, iterating over all installed devices
+            Device dev = AppConfig.getDevice(idev);
+            for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
+                IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
+                // Inner Loop, iterating over all Drivers of a device
+                if (drv.supportsPatch(patchString, sysex))
+                    return drv;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * choose proper driver in a given device for sysex byte array.
+     * @param sysex System Exclusive data byte array.
+     * @param dev Device
+     * @return Driver object chosen
+     * @see IDriver#supportsPatch
+     */
+    static IDriver chooseDriver(byte[] sysex, Device dev) { // Driver or DriverUtil class?
+        String patchString = getPatchHeader(sysex);
+        for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
+            IPatchDriver drv = (IPatchDriver) dev.getDriver(idrv);
+            // Inner Loop, iterating over all Drivers of a device
+            if (drv.supportsPatch(patchString, sysex))
+                return drv;
+        }
+        return null;
     }
 
     /**

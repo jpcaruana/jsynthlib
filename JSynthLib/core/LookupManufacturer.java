@@ -10,7 +10,7 @@ package core;
  * @author  Gerrit Gehnen <Gerrit.Gehnen@gmx.de>
  * @version $Id$
  */
-public class LookupManufacturer extends Object {
+public class LookupManufacturer {
     private static String normal[]=
     {"Sequential Circuits", //0x01
      "IDP",
@@ -338,6 +338,10 @@ public class LookupManufacturer extends Object {
     /** Creates new LookupManufacturer */
     private LookupManufacturer() {
     }
+
+    /**
+     * Returns Manufacturer name.
+     */
     public static String get(byte number1,byte number2, byte number3) {
         if ((number1>normal.length)||(number1<0))
             return "Invalid Manufacturer";
@@ -363,5 +367,13 @@ public class LookupManufacturer extends Object {
         }
 
         return "Invalid Manufacturer";
+    }
+    
+    /**
+     * Returns Manufacturer name for patch.
+     */
+    public static String get(IPatch patch) {
+        byte[] sysex = patch.getByteArray();
+        return get(sysex[1], sysex[2], sysex[3]);
     }
 }

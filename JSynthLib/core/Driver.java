@@ -316,8 +316,9 @@ public class Driver implements ISingleDriver {
             System.arraycopy(d, 0, patchSysex, ofst, size);
         }
 
-        // if Conveter for the patch exist, convert the patch.
-        IPatch[] patarray = createPatch(patchSysex);
+        // if Conveter for the patch exist, use it.
+        IDriver drv = Patch.chooseDriver(patchSysex, getDevice());
+        IPatch[] patarray = drv.createPatch(patchSysex);
 
         // Maybe you don't get the expected patch!
         // Check all devices/drivers again!

@@ -157,8 +157,7 @@ public class Line6BassPodBankDriver extends BankDriver
         byte [] sysex = new byte[Constants.BDMP_HDR_SIZE + (Constants.SIGL_SIZE * Constants.PATCHES_PER_BANK) + 1];
         System.arraycopy(Constants.BANK_DUMP_HDR_BYTES, 0, sysex, 0, Constants.BDMP_HDR_SIZE);
         sysex[Constants.BDMP_HDR_SIZE + (Constants.SIGL_SIZE * Constants.PATCHES_PER_BANK)]=(byte)0xF7;
-        Patch p = new Patch(sysex);
-        boolean isValidDriver = p.chooseDriver();
+        Patch p = new Patch(sysex, this);
         for (int i=0;i<Constants.PATCHES_PER_BANK;i++) {
             System.arraycopy(Constants.NEW_SYSEX, Constants.PDMP_HDR_SIZE, p.sysex, getSysexStart(i), Constants.SIGL_SIZE);
             setPatchName(p,i,"New Patch");

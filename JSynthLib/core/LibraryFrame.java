@@ -477,10 +477,9 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
         FileInputStream f = new FileInputStream(file);
         ObjectInputStream s = new ObjectInputStream(f);
         myModel.list = (ArrayList) s.readObject();
-        for (int i = 0; i < myModel.getRowCount(); i++)
-            myModel.getPatchAt(i).chooseDriver();
         s.close();
         f.close();
+        revalidateDrivers();
         PatchEdit.hideWaitDialog();
         statusBar.setText(myModel.getRowCount() + " Patches");
     }
@@ -529,8 +528,20 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
      */
     protected void revalidateDrivers() {
         for (int i = 0; i < myModel.getRowCount(); i++)
-            myModel.getPatchAt(i).chooseDriver();
+            chooseDriver(myModel.getPatchAt(i));
         myModel.fireTableDataChanged();
+    }
+
+    private void chooseDriver(IPatch patch) {
+        byte[] sysex = patch.getByteArray();
+        IPatchDriver driver = (IPatchDriver) Patch.chooseDriver(sysex);
+  	patch.setDriver(driver);
+        if (driver == null) {
+            // Unkown patch, try to guess at least the manufacturer
+            patch.setComment("Probably a "
+                    + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
+                    + " Patch, Size: " + sysex.length);
+        }
     }
 
     // not used?

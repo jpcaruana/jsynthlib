@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -555,10 +556,14 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     void revalidateDriver() {
-        if (!p.chooseDriver()) {
+        ISingleDriver driver = (ISingleDriver) Patch.chooseDriver(p.getByteArray());
+        if (driver != null) {
+            p.setDriver(driver);
+        } else {
             try {
                 setClosed(true);
-            } catch (Exception e) {
+            } catch (PropertyVetoException e) {
+                ErrorMsg.reportStatus(e);
             }
             return;
         }

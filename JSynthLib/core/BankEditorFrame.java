@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -286,14 +287,16 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     // end of PatchBasket methods
 
     void revalidateDriver() {
-	if (!bankData.chooseDriver()) {
-	    try {
-		setClosed(true);
-	    } catch (Exception e) {
-	    }
-	    return;
+        bankDriver = (IBankDriver) Patch.chooseDriver(bankData.getByteArray());
+        if (bankDriver != null) {
+            bankData.setDriver(bankDriver);
+        } else {
+            try {
+                setClosed(true);
+            } catch (PropertyVetoException e) {
+                ErrorMsg.reportStatus(e);
+            }
 	}
-	bankDriver = (IBankDriver) bankData.getDriver();
     }
 
     /** change state of Actions based on the state of the table. */
@@ -347,7 +350,8 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
 	protected boolean storePatch(IPatch p, JComponent c) {
 	    try {
-		p.chooseDriver();
+	        // commented out by Hiroo Sep.10, 2004
+		//p.chooseDriver();
 		JTable t = (JTable)c;
 		PatchGridModel m =
 		    (PatchGridModel)t.getModel();
