@@ -173,6 +173,24 @@ abstract public class Device implements Serializable, Storable
             ((Driver)iter.next ()).setChannel (channel);            
         }
     }
+
+     /** Getter for Devic eName.
+      * @return String of Device Name with inPort and Channel
+      */
+    public String getDeviceName()
+    {
+      try
+      {
+        return getManufacturerName() + " " + getModelName() + " <" + getSynthName() +
+ 		 ">  -  MIDI In Port: " + PatchEdit.MidiOut.getInputDeviceName(getInPort()) + "  -  MIDI Channel: " + getChannel() ;
+      }
+      catch (Exception e)
+      {
+        return getManufacturerName() + " " + getModelName() + ": " + getSynthName();
+      }
+    }
+ 
+
    public void showDetails()
    {
         DeviceDetailsDialog ddd = new DeviceDetailsDialog(this);

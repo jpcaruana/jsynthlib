@@ -70,11 +70,8 @@ public class BankDriver extends Driver
         if ((singleSize!=p.sysex.length) && (singleSize!=0)) return false;
 
       Integer intg=new Integer(0);
-      StringBuffer patchString= new StringBuffer("F0");
-      for (int i=1;i<16;i++){
-         if (p.sysex[i]<16) patchString.append("0");
-         patchString.append(intg.toHexString(p.sysex[i]));
-      }
+        StringBuffer patchString= p.getPatchHeader();
+
         StringBuffer driverString=new StringBuffer(singleSysexID);
           for (int j=0;j<driverString.length();j++)
            if (driverString.charAt(j)=='*') driverString.setCharAt(j,patchString.charAt(j));

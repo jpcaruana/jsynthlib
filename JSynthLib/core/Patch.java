@@ -62,15 +62,8 @@ public class Patch extends Object implements Serializable,Transferable
         driverNum=0;
         deviceNum=0;
         Integer intg=new Integer (0);
-        StringBuffer patchString= new StringBuffer ("F0");
-        for (int i=1;i<16;i++)
-        {
-            if (sysex.length>i) {
-                if (sysex[i]<16) 
-                    patchString.append ("0");
-               patchString.append (intg.toHexString (sysex[i]&0xff));
-            }
-        }
+        StringBuffer patchString=this.getPatchHeader();
+        
         StringBuffer driverString=new StringBuffer ();
         for ( int i2 =0;i2<PatchEdit.appConfig.deviceCount (); i2++)
         {
@@ -127,12 +120,7 @@ public class Patch extends Object implements Serializable,Transferable
         Device dev;
         int looplength;
         Patch[] patarray=null;
-        StringBuffer patchString= new StringBuffer ("F0");
-        for (int k=1;k<16;k++)
-        {
-            if (sysex[k]<16) patchString.append ("0");
-            patchString.append (Integer.toHexString (sysex[k]));
-        }
+        StringBuffer patchString=this.getPatchHeader();
         
         for (int k=0;k<PatchEdit.appConfig.deviceCount ();k++)
         { // Do it for all converters. They should be at the beginning of the driver list!
@@ -167,5 +155,20 @@ public class Patch extends Object implements Serializable,Transferable
     }
 public Driver getDriver()
  {return PatchEdit.getDriver(deviceNum,driverNum);}    
+ 
+ 
+   public StringBuffer getPatchHeader()
+   {
+     StringBuffer patchstring = new StringBuffer ("F0");
+ 
+     for (int i=1; (sysex.length<16) ? i<sysex.length : i<16; i++)		// Some Sysex Messages are shorter than 16 Bytes!
+     {
+       if (sysex[i]<16) patchstring.append ("0");
+       patchstring.append (Integer.toHexString (sysex[i]&0xff));
+     }
+ 
+     return patchstring;
+   }
+
 }
 
