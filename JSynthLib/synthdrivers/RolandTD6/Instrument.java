@@ -20,7 +20,7 @@
  */
 
 package synthdrivers.RolandTD6;
-import core.TreeNodes;
+import core.TreeWidget;
 
 /**
  * Instrument.java
@@ -33,7 +33,7 @@ import core.TreeNodes;
  * @version $Id$
  * @see TreeNodes, TD6SingleEditor
  */
-final class Instrument implements TreeNodes {
+final class Instrument implements TreeWidget.Nodes {
     private static final Object[] ROOT = {
 	"Instrument",
 	new Object[] {
@@ -331,7 +331,7 @@ final class Instrument implements TreeNodes {
     /** Number of Instrument */
     //private static final int N_INSTRUMENT = 1024;
 
-    // cannot use 'static' here, since core.TreeNodes.getRoot() is not static.
+    // cannot use 'static' here, since core.TreeWidget.Nodes.getRoot() is not static.
     public Object[] getRoot() {
 	return ROOT;
     }
