@@ -50,8 +50,6 @@ public class LinuxCharDevMidiDevice implements MidiDevice {
 	}
 	
 	public void open() {
-		inThread.start(); /* start listening on the OS midi device to get MidiMessages */
-			
 		File file = new java.io.File(devicePath);
 		try {
 			/* TODO(if possible)! check if device file isn't occupied by an other process */
@@ -62,6 +60,8 @@ public class LinuxCharDevMidiDevice implements MidiDevice {
 			System.out.println("LinuxCharDevMidiDevice.open(): Exception: "+e);
 			e.printStackTrace();
 		}
+			
+		inThread.start(); /* start listening on the OS midi device to get MidiMessages */
 	}
 	public void close() {
 		try {
