@@ -46,6 +46,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableColumn;
 
+import java.io.InputStream;
+
 import core.Patch;
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
@@ -202,19 +204,19 @@ class MIDIboxFMPatchEditor extends PatchEditorFrame
 	super ("MIDIbox FM Patch Editor",patch);
 	gbc.weightx=0; gbc.weighty=0;
 
-        wsIcon[0]=new ImageIcon("synthdrivers/MIDIboxFM/images/ws_0.gif");
-        wsIcon[1]=new ImageIcon("synthdrivers/MIDIboxFM/images/ws_1.gif");
-        wsIcon[2]=new ImageIcon("synthdrivers/MIDIboxFM/images/ws_2.gif");
-        wsIcon[3]=new ImageIcon("synthdrivers/MIDIboxFM/images/ws_3.gif");
-        wsIcon[4]=new ImageIcon("synthdrivers/MIDIboxFM/images/ws_4.gif");
-        wsIcon[5]=new ImageIcon("synthdrivers/MIDIboxFM/images/ws_5.gif");
-        wsIcon[6]=new ImageIcon("synthdrivers/MIDIboxFM/images/ws_6.gif");
-        wsIcon[7]=new ImageIcon("synthdrivers/MIDIboxFM/images/ws_7.gif");
+        wsIcon[0]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/ws_0.gif"));
+        wsIcon[1]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/ws_1.gif"));
+        wsIcon[2]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/ws_2.gif"));
+        wsIcon[3]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/ws_3.gif"));
+        wsIcon[4]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/ws_4.gif"));
+        wsIcon[5]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/ws_5.gif"));
+        wsIcon[6]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/ws_6.gif"));
+        wsIcon[7]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/ws_7.gif"));
 
-        algIcon[0]=new ImageIcon("synthdrivers/MIDIboxFM/images/alg_0.gif");
-        algIcon[1]=new ImageIcon("synthdrivers/MIDIboxFM/images/alg_1.gif");
-        algIcon[2]=new ImageIcon("synthdrivers/MIDIboxFM/images/alg_2.gif");
-        algIcon[3]=new ImageIcon("synthdrivers/MIDIboxFM/images/alg_3.gif");
+        algIcon[0]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/alg_0.gif"));
+        algIcon[1]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/alg_1.gif"));
+        algIcon[2]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/alg_2.gif"));
+        algIcon[3]=new ImageIcon(MIDIboxFMDevice.class.getResource("images/alg_3.gif"));
 
 
 ///////////////////////////////////////////////////////////////////////////////
