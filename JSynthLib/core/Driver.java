@@ -476,8 +476,8 @@ public class Driver implements ISingleDriver {
 		 "Get Patch", JOptionPane.WARNING_MESSAGE);
 	} else
 	    send(sysexRequestDump.toSysexMessage(getDeviceID(),
-						 new NameValue("bankNum", bankNum),
-						 new NameValue("patchNum", patchNum)));
+						 new SysexHandler.NameValue("bankNum", bankNum),
+						 new SysexHandler.NameValue("patchNum", patchNum)));
     }
 
     /** Send Program Change MIDI message. */

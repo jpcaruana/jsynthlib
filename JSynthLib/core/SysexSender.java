@@ -17,9 +17,12 @@ public class SysexSender implements SysexWidget.ISender {
     private String sysex;
 
     /**
-     * Creates a new <code>SysexSender</code> instance.
+     * Creates a new <code>SysexSender</code> instance. A subclass which uses
+     * this constructor does not use sysex field. It means that the subclass
+     * does not have to extend this class and can simply implement
+     * SysexWidget.ISender.
      */
-    public SysexSender() {
+    public SysexSender() { // XXX can be @deprecated
     }
 
     /**
