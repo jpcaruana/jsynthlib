@@ -388,6 +388,15 @@ class YamahaDX7SingleEditor extends PatchEditorFrame
     show();
   }
 
+
+  public void PlaySelectedPatch()
+  {
+    lostFocus();
+    SendSelectedPatch();
+    gotFocus();
+    ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).playPatch(p);
+  };
+
   public void gotFocus()
   {
     p.sysex[6+155] = (byte) OperatorStatus;  // restore Operatorstatus to patch of activated PatchEditorFrame
@@ -543,4 +552,6 @@ class DX7OpModel extends ParamModel
     return ((patch.sysex[6+155]&bitmask)/mult);
   }
 }
+
+
 
