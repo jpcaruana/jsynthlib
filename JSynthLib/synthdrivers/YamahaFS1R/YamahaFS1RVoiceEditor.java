@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JDialog;
+import javax.swing.JCheckBox;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.CellEditorListener;
@@ -35,6 +37,7 @@ import core.KnobLookupWidget;
 import core.KnobWidget;
 import core.ParamModel;
 import core.Patch;
+import core.IPatch;
 import core.PatchEditorFrame;
 import core.PatchNameWidget;
 import core.SpinnerWidget;
@@ -101,6 +104,8 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 	protected int mPart = 1;
 
 	protected int mBankNumber;
+	
+	protected IPatch mPatchCopy;
 
 	/**
 		Default edit the part 1 of current performance.
@@ -121,6 +126,11 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		mPart = aPart;
 		mBankNumber = aBankNumber;
 		setupUI();
+	}
+
+	protected void frameActivated()
+	{
+		// no sysex send here because the performance send it when edit starts
 	}
 
 	/** send patch to current performance part */
@@ -160,7 +170,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		Common controls
 	*/
 	private Container buildCommonWindow() {
-		Patch patch = (Patch)p;
+		Patch patch = (Patch)getPatch();
 		Box oCommonOthersPane = Box.createVerticalBox();
 		//JPanel oCommonOthersPane = new JPanel(new GridLayout(10, 1));
 
@@ -178,10 +188,34 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oMenu.add(new JLabel("Performance part "+mPart+" - bank number "+mBankNumber));
 		oCommonOthersPane.add(oMenu);
 
+		// fonctions de copie d'operateurs
+		JPanel oCopyPane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, 0));
+		JButton oCopyAll = new JButton("Copy patch");
+		oCopyAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// make a copy
+				mPatchCopy = (IPatch)p.clone();
+			}
+		});
+		oCopyPane.add(oCopyAll);
+		JButton oPaste = new JButton("Paste...");
+		oPaste.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed (ActionEvent e) 
+			{
+				if (mPatchCopy != null)
+				{
+					JDialog oDialog = new PasteDialog(mPatchCopy, getPatch());
+				}
+			}
+		});
+		oCopyPane.add(oPaste);
+		oCopyPane.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Copy & Paste", TitledBorder.LEFT, TitledBorder.CENTER));
+		oMenu.add(oCopyPane);
+		
 		// Common Pane (common-others)
 		JPanel oCommonPane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, 0));
 		oCommonPane.add(new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()));
-		oCommonPane.add(new SpinnerWidget("Note shift", patch, 0, 48, -24, new FS1RModel(patch, 0x1E), new FS1RSender(0x1E)));
 		oCommonPane.add(new ComboBoxWidget("Category", patch, new FS1RModel(patch, 0x0E), new FS1RSender(0x0E), mCategories));
 		oCommonPane.add(new KnobWidget("Algorithm", patch, 0, 87, 1, new FS1RModel(patch, 0x2C), new FS1RSender(0x2C), mAlgoImages));
 		oCommonPane.add(new SpinnerWidget("Feedback", patch, 0, 7, 0, new FS1RModel(patch, 0x3D), new FS1RSender(0x3D)));
@@ -341,18 +375,18 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oPanel3.add(new ComboBoxWidget("Freq scale Breakpoint",p,new FS1RModel((Patch)p,0x5C),new FS1RSender(0x5C), KbdBreakPointName));
 		oFilterPane.add(oPanel3);
 
-		JPanel oPanel4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		EnvelopeWidget oEnv = new EnvelopeWidget("Envelope Generator",p,new EnvelopeWidget.Node []
-		{
-        new EnvelopeWidget.Node(0,0,null, 50, 50,null,0,false,null,null,null,null),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x69), 0, 100,new FS1RModel((Patch)p, 0x66), 0,false,new FS1RSender(0x69), new FS1RSender(0x66),"R1","L1"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x6A), 0, 100,new FS1RModel((Patch)p, 0x67), 0,false,new FS1RSender(0x6A), new FS1RSender(0x67),"R2","L2"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x6B), 0, 100,new FS1RModel((Patch)p, 0x68), 0,false,new FS1RSender(0x6B), new FS1RSender(0x68),"R3","L3"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x6C), 0, 100,new FS1RModel((Patch)p, 0x65), 0,false,new FS1RSender(0x6C), new FS1RSender(0x65),"R4","L4")
-		});
-		oEnv.setPreferredSize(new Dimension(ENV_WIDTH, ENV_HEIGHT));
-		oPanel4.add(oEnv);
-		oFilterPane.add(oPanel4);
+
+		JPanel oPanel5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		oPanel5.add(new KnobWidget("L1", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x66), new FS1RSender(0x66)));
+		oPanel5.add(new KnobWidget("R1", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x69), new FS1RSender(0x69)));
+		oPanel5.add(new KnobWidget("L2", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x67), new FS1RSender(0x67)));
+		oPanel5.add(new KnobWidget("R2", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x6A), new FS1RSender(0x6A)));
+		oPanel5.add(new KnobWidget("L3", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x68), new FS1RSender(0x68)));
+		oPanel5.add(new KnobWidget("R3", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x6B), new FS1RSender(0x6B)));
+		oPanel5.add(new KnobWidget("L4", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x65), new FS1RSender(0x65)));
+		oPanel5.add(new KnobWidget("R4", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x6C), new FS1RSender(0x6C)));
+		oPanel5.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Filter Envelope Generator", TitledBorder.LEFT, TitledBorder.CENTER));
+		oFilterPane.add(oPanel5);
 
 		return oFilterPane;
 	}
@@ -368,21 +402,22 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oP1.add(new KnobWidget("Time scaling", p, 0, 7, 0, new FS1RModel((Patch)p, 0x3C), new FS1RSender(0x3C)));
 		oP1.add(new ComboBoxWidget("Range", p, new FS1RModel((Patch)p, 0x3B), new FS1RSender(0x3B), new String []{"8 octaves", "2 octaves", "1 octave", "1/2 octave"}));
 		oP1.add(new KnobWidget("Vel sens", p, 0, 7, 0, new FS1RModel((Patch)p, 0x27), new FS1RSender(0x27)));
+		oP1.add(new SpinnerWidget("Note shift", p, 0, 48, -24, new FS1RModel((Patch)p, 0x1E), new FS1RSender(0x1E)));
 
-		JPanel oPanel4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		EnvelopeWidget oEnv = new EnvelopeWidget("Envelope Generator",p,new EnvelopeWidget.Node []
-		{
-        new EnvelopeWidget.Node(0,0,null, 50, 50,null,0,false,null,null,null,null),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x23), 0, 100,new FS1RModel((Patch)p, 0x1F), 0,false,new FS1RSender(0x23), new FS1RSender(0x1F),"R1","L1"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x24), 0, 100,new FS1RModel((Patch)p, 0x20), 0,false,new FS1RSender(0x24), new FS1RSender(0x20),"R2","L2"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x25), 0, 100,new FS1RModel((Patch)p, 0x21), 0,false,new FS1RSender(0x25), new FS1RSender(0x21),"R3","L3"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x26), 0, 100,new FS1RModel((Patch)p, 0x22), 0,false,new FS1RSender(0x26), new FS1RSender(0x22),"R4","L4")
-		});
-		oEnv.setPreferredSize(new Dimension(ENV_WIDTH, ENV_HEIGHT));
-		oPanel4.add(oEnv);
+		JPanel oPanel5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		oPanel5.add(new KnobWidget("L1", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x1F), new FS1RSender(0x1F)));
+		oPanel5.add(new KnobWidget("R1", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x23), new FS1RSender(0x23)));
+		oPanel5.add(new KnobWidget("L2", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x20), new FS1RSender(0x20)));
+		oPanel5.add(new KnobWidget("R2", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x24), new FS1RSender(0x24)));
+		oPanel5.add(new KnobWidget("L3", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x21), new FS1RSender(0x21)));
+		oPanel5.add(new KnobWidget("R3", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x25), new FS1RSender(0x25)));
+		oPanel5.add(new KnobWidget("L4", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x22), new FS1RSender(0x22)));
+		oPanel5.add(new KnobWidget("R4", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x26), new FS1RSender(0x26)));
+		oPanel5.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Envelope Generator", TitledBorder.LEFT, TitledBorder.CENTER));
+
 		Box oPane = Box.createVerticalBox();
 		oPane.add(oP1);
-		oPane.add(oPanel4);
+		oPane.add(oPanel5);
 		return oPane;
 	}
 
@@ -450,34 +485,28 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oPanel4.add(new KnobWidget("Output level", p, 0, 99, 0, new FS1RModel((Patch)p, 0x16, aOp), new FS1RSender(0x16, aOp)));
 		oPane.add(oPanel4);
 
-//		JPanel oPanel5 = new JPanel();
-//		oPanel5.setLayout(new FlowLayout(FlowLayout.LEFT));
-		Box oPanel5 = Box.createHorizontalBox();
-		EnvelopeWidget oEnv = new EnvelopeWidget("Amplitude Envelope Generator",p,new EnvelopeWidget.Node []
-		{
-        new EnvelopeWidget.Node(0,0,null, 0, 0,null,0,false,null,null,null,null),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x14, aOp), 0, 0, null, 0, false, new FS1RSender(0x14), null, "Hold", null),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x10, aOp), 0, 99,new FS1RModel((Patch)p, 0x0C, aOp), 0,false,new FS1RSender(0x10, aOp), new FS1RSender(0x0C, aOp),"R1","L1"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x11, aOp), 0, 99,new FS1RModel((Patch)p, 0x0D, aOp), 0,false,new FS1RSender(0x11, aOp), new FS1RSender(0x0D, aOp),"R2","L2"),
-			new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x12, aOp), 0, 99,new FS1RModel((Patch)p, 0x0E, aOp), 0,false,new FS1RSender(0x12, aOp), new FS1RSender(0x0E, aOp),"R3","L3"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x13, aOp), 0, 99,new FS1RModel((Patch)p, 0x0F, aOp), 0,false,new FS1RSender(0x13, aOp), new FS1RSender(0x0F, aOp),"R4","L4")
-		});
-		//oEnv.setPreferredSize(new Dimension(ENV_WIDTH, ENV_HEIGHT));
-		oPanel5.add(oEnv);
-		oPanel5.add(Box.createHorizontalStrut(5));
-
-		oEnv = new EnvelopeWidget("Frequency Envelope Generator",p,new EnvelopeWidget.Node []
-		{
-//        new EnvelopeNode(50, 50, null, 0, 0, null,0,false,null,null,null,null),
-        new EnvelopeWidget.Node(0, 0, null, 0, 0x64, new FS1RModel((Patch)p, 8, aOp), 0, false, null, new FS1RSender(8, aOp), null, "Initial level"),
-        new EnvelopeWidget.Node(0, 0x63, new FS1RModel((Patch)p, 0x0A, aOp), 0, 0x64, new FS1RModel((Patch)p, 9, aOp), 0, false, new FS1RSender(0x14, aOp), new FS1RSender(9, aOp), "Attack time", "Attack level"),
-        new EnvelopeWidget.Node(0, 0x63, new FS1RModel((Patch)p, 0x0B, aOp), 0, 0, null, 0, false, new FS1RSender(0x0B, aOp), null, "Decay", null)
-		});
-		//oEnv.setPreferredSize(new Dimension(ENV_WIDTH, ENV_HEIGHT));
-		oPanel5.add(oEnv);
+		JPanel oPanel5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		oPanel5.add(new KnobWidget("Hold", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x14, aOp), new FS1RSender(0x14, aOp)));
+		oPanel5.add(new KnobWidget("L1", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0xC, aOp), new FS1RSender(0xC, aOp)));
+		oPanel5.add(new KnobWidget("R1", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x10, aOp), new FS1RSender(0x10, aOp)));
+		oPanel5.add(new KnobWidget("L2", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0xD, aOp), new FS1RSender(0xD, aOp)));
+		oPanel5.add(new KnobWidget("R2", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x11, aOp), new FS1RSender(0x11, aOp)));
+		oPanel5.add(new KnobWidget("L3", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0xE, aOp), new FS1RSender(0xE, aOp)));
+		oPanel5.add(new KnobWidget("R3", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x12, aOp), new FS1RSender(0x12, aOp)));
+		oPanel5.add(new KnobWidget("L4", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0xF, aOp), new FS1RSender(0xF, aOp)));
+		oPanel5.add(new KnobWidget("R4", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x13, aOp), new FS1RSender(0x13, aOp)));
+		oPanel5.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Amplitude Envelope Generator", TitledBorder.LEFT, TitledBorder.CENTER));
 		oPane.add(oPanel5);
 
-		JPanel oSensPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel oPitchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+		oPitchPanel.add(new KnobWidget("Initial level", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 8, aOp), new FS1RSender(8, aOp)));
+		oPitchPanel.add(new KnobWidget("Attack level", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 9, aOp), new FS1RSender(9, aOp)));
+		oPitchPanel.add(new KnobWidget("Attack time", p, 0, 0x63, 0, new FS1RModel((Patch)p, 10, aOp), new FS1RSender(10, aOp)));
+		oPitchPanel.add(new KnobWidget("Decay time", p, 0, 0x63, 0, new FS1RModel((Patch)p, 11, aOp), new FS1RSender(11, aOp)));
+		oPitchPanel.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Frequency Envelope Generator", TitledBorder.LEFT, TitledBorder.CENTER));
+		oPane.add(oPitchPanel);
+		
+		JPanel oSensPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
 		oSensPanel.add(new KnobWidget("Amp velocity", p, 0, 14, -7, new BitModel((Patch)p, 0x21, aOp, 0x0F, 0), new BitSender((Patch)p, 0x21, aOp)));
 		oSensPanel.add(new KnobWidget("Freq velocity", p, 0, 14, -7, new BitModel((Patch)p, 0x20, aOp, 0x0F, 0), new BitSender((Patch)p, 0x20, aOp)));
 		oSensPanel.add(new KnobWidget("Amp EG bias", p, 0, 14, -7, new FS1RModel((Patch)p, 0x22, aOp), new FS1RSender(0x22, aOp)));
@@ -533,35 +562,29 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oPanel2.add(new KnobWidget("Level scaling", p, 0, 14, -7, new FS1RModel((Patch)p, 0x2F, aOp), new FS1RSender(0x2F, aOp)));
 		oPane.add(oPanel2);
 
-//		JPanel oPanel5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		Box oPanel5 = Box.createHorizontalBox();
-//		JPanel oPanel5 = new JPanel(new GridLayout(1, 2));
-		EnvelopeWidget oEnvAmp = new EnvelopeWidget("Amplitude Envelope Generator",p,new EnvelopeWidget.Node []
-		{
-        new EnvelopeWidget.Node(0,0,null, 0, 0,null,0,false,null,null,null,null),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x38, aOp), 0, 0, null, 0, false, new FS1RSender(0x38), null, "Hold", null),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x34, aOp), 0, 99,new FS1RModel((Patch)p, 0x30, aOp), 0,false,new FS1RSender(0x34, aOp), new FS1RSender(0x30, aOp),"R1","L1"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x35, aOp), 0, 99,new FS1RModel((Patch)p, 0x31, aOp), 0,false,new FS1RSender(0x35, aOp), new FS1RSender(0x31, aOp),"R2","L2"),
-		new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x36, aOp), 0, 99,new FS1RModel((Patch)p, 0x32, aOp), 0,false,new FS1RSender(0x36, aOp), new FS1RSender(0x32, aOp),"R3","L3"),
-        new EnvelopeWidget.Node(0, 99, new FS1RModel((Patch)p, 0x37, aOp), 0, 99,new FS1RModel((Patch)p, 0x33, aOp), 0,false,new FS1RSender(0x37, aOp), new FS1RSender(0x33, aOp),"R4","L4")
-		});
-		//oEnvAmp.setPreferredSize(new Dimension(ENV_WIDTH, ENV_HEIGHT));
-		oPanel5.add(oEnvAmp);
-
-		oPanel5.add(Box.createHorizontalStrut(5));
-
-		EnvelopeWidget oEnvFreq = new EnvelopeWidget("Frequency Envelope Generator",p,new EnvelopeWidget.Node []
-		{
-        new EnvelopeWidget.Node(0, 0, null, 0, 0x64, new FS1RModel((Patch)p, 0x2A, aOp), 0, false, null, new FS1RSender(0x2A, aOp), null, "Initial level"),
-        new EnvelopeWidget.Node(0, 0x63, new FS1RModel((Patch)p, 0x2C, aOp), 0, 0x64, new FS1RModel((Patch)p, 0x2B, aOp), 0, false, new FS1RSender(0x2C, aOp), new FS1RSender(0x2B, aOp), "Attack time", "Attack level"),
-        new EnvelopeWidget.Node(0, 0x63, new FS1RModel((Patch)p, 0x2D, aOp), 0, 0, null, 0, false, new FS1RSender(0x2D, aOp), null, "Decay", null)
-		});
-		//oEnvFreq.setPreferredSize(new Dimension(ENV_WIDTH, ENV_HEIGHT));
-		oPanel5.add(oEnvFreq);
-		//oPanel5.setPreferredSize(new Dimension(500, 300));
+		JPanel oPanel5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		oPanel5.add(new KnobWidget("Hold", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x38, aOp), new FS1RSender(0x38, aOp)));
+		oPanel5.add(new KnobWidget("L1", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x30, aOp), new FS1RSender(0x30, aOp)));
+		oPanel5.add(new KnobWidget("R1", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x34, aOp), new FS1RSender(0x34, aOp)));
+		oPanel5.add(new KnobWidget("L2", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x31, aOp), new FS1RSender(0x31, aOp)));
+		oPanel5.add(new KnobWidget("R2", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x35, aOp), new FS1RSender(0x35, aOp)));
+		oPanel5.add(new KnobWidget("L3", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x32, aOp), new FS1RSender(0x32, aOp)));
+		oPanel5.add(new KnobWidget("R3", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x36, aOp), new FS1RSender(0x36, aOp)));
+		oPanel5.add(new KnobWidget("L4", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x33, aOp), new FS1RSender(0x33, aOp)));
+		oPanel5.add(new KnobWidget("R4", p, 0, 0x63, 0, new FS1RModel((Patch)p, 0x37, aOp), new FS1RSender(0x37, aOp)));
+		oPanel5.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Amplitude Envelope Generator", TitledBorder.LEFT, TitledBorder.CENTER));
 		oPane.add(oPanel5);
+		
 
-		JPanel oSensPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel oFreqEnv = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+		oFreqEnv.add(new KnobWidget("Initial level", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x2A, aOp), new FS1RSender(0x2A, aOp)));
+		oFreqEnv.add(new KnobWidget("Attack level", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x2B, aOp), new FS1RSender(0x2B, aOp)));
+		oFreqEnv.add(new KnobWidget("Attack time", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x2C, aOp), new FS1RSender(0x2C, aOp)));
+		oFreqEnv.add(new KnobWidget("Decay time", p, 0, 0x64, -0x32, new FS1RModel((Patch)p, 0x2D, aOp), new FS1RSender(0x2D, aOp)));
+		oFreqEnv.setBorder(new TitledBorder(LineBorder.createGrayLineBorder(), "Frequency Envelope Generator", TitledBorder.LEFT, TitledBorder.CENTER));
+		oPane.add(oFreqEnv);
+
+		JPanel oSensPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
 		oSensPanel.add(new KnobWidget("Amp velocity", p, 0, 14, -7, new BitModel((Patch)p, 0x3C, aOp, 0x0F, 0), new BitSender((Patch)p, 0x3C, aOp)));
 		oSensPanel.add(new KnobWidget("Freq velocity", p, 0, 14, -7, new BitModel((Patch)p, 0x3B, aOp, 0x0F, 0), new BitSender((Patch)p, 0x3B, aOp)));
 		oSensPanel.add(new KnobWidget("Amp EG bias", p, 0, 14, -7, new FS1RModel((Patch)p, 0x3D, aOp), new FS1RSender(0x3D, aOp)));
@@ -573,8 +596,8 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 
 		return oPane;
 	}
-
-
+	
+	
 	/**
 		@return performance part number 1..4
 	*/
