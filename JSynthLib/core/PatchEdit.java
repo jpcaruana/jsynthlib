@@ -24,7 +24,7 @@ import com.apple.eawt.ApplicationEvent;
 //TODO import /*TODO org.jsynthlib.*/midi.*;
 public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     // This field will be removed when new MIDI API become stable.
-    static boolean newMidiAPI = false;
+    static boolean newMidiAPI = true;
     static MidiWrapper MidiOut;
     static MidiWrapper MidiIn;
     static javax.swing.Timer echoTimer;
