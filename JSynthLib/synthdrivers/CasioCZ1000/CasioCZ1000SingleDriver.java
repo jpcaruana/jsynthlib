@@ -8,21 +8,30 @@
 package synthdrivers.CasioCZ1000;
 import core.Driver;
 import core.ErrorMsg;
+import core.IPatch;
 import core.Patch;
 
-// Note : on the casio, if you initiate a dump (from the PC or the Casio itself), you will get a patch
-// of 263 bytes. you CAN'T send that patch back to the Casio... The patch must be 264 bytes long.
-// Anyway, since JSynthLib didn't support receiving dump from synth, this is not a problem for now
-// Just keep that in mind however if you try to open a sysex file done by a dump request
-//
 
-
+/**
+ * Single patch driver for Casio CZ-101 and CZ-1000.
+ * Note : on the casio, if you initiate a dump (from the PC or the Casio itself), 
+ * you will get a patch of 263 bytes. you CAN'T send that patch back to the Casio... 
+ * The patch must be 264 bytes long.  supportsPatch and createPatch fix up short
+ * patches.
+ * 
+ * @author Yves Lefebvre
+ * @author Bill Zwicky
+ */
 public class CasioCZ1000SingleDriver extends Driver
 {
+    // mis-ordered to make Internal the default
+    private String[] BANK_NAMES = {"Internal", "Cartridge", "Preset"};
+    private int[]    BANK_NUMS  = { 0x20, 0x40, 0x00 };
+    private int curBank = 0, curPatch = 0;
 
     public CasioCZ1000SingleDriver()
     {
-	super ("Single","Yves Lefebvre");
+		super ("Single", "Yves Lefebvre, Bill Zwicky");
         sysexID="F04400007*";
         patchSize=264;
         patchNameStart=0;
@@ -31,12 +40,16 @@ public class CasioCZ1000SingleDriver extends Driver
         checksumStart=0;
         checksumEnd=0;
         checksumOffset=0;
-        bankNumbers =new String[] {"Internal"};
+        bankNumbers = BANK_NAMES;
         patchNumbers=new String[] {"01-","02-","03-","04-","05-","06-","07-",
                                    "08-","09-","10-","11-","12-","13-","14-","15-",
                                    "16-"};
     }
 
+    private int computeSlot(int bankNum, int patchNum) {
+        return BANK_NUMS[bankNum]+patchNum;
+    }
+    
     public void storePatch (Patch p, int bankNum,int patchNum)
     {
         byte [] newsysex = new byte[264];
@@ -44,12 +57,11 @@ public class CasioCZ1000SingleDriver extends Driver
         newsysex[4] = (byte)(0x70 + getChannel() -1); // must do it ourselve since sendPatchWorker didn't support
                                                  // adding midi channel info in half a byte
         newsysex[5] = (byte)(0x20); // 20 is to send data to the Casio
-        newsysex[6] = (byte)(0x20+patchNum); //0x20 is the offset to internal memory location
-        Patch patchtowrite = new Patch(newsysex, this);
+        newsysex[6] = (byte)computeSlot(bankNum,patchNum);
         // need to convert to a "patch dump and write" format
         try {Thread.sleep(100); } catch (Exception e){}
         try {
-            send(patchtowrite.sysex);
+            send(newsysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
         try {Thread.sleep(100); } catch (Exception e){}
         setBankNum(bankNum);
@@ -64,10 +76,28 @@ public class CasioCZ1000SingleDriver extends Driver
                                                  // adding midi channel info in half a byte
         newsysex[5] = (byte)(0x20); // 0x20 is to send data to the Casio
         newsysex[6] = (byte)(0x60); // 0x60 is edit buffer location
-        Patch patchtowrite = new Patch(newsysex, this);
         try {
             send(newsysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
+    }
+
+    public void requestPatchDump(int bankNum, int patchNum) {
+        // Assembled by hand due to channel being sent twice.
+        // Also, according to Casio docs, messages to and from
+        // keyboard are interleaved; however, we can just shoot
+        // the entire packet over, and JSL will catch everything
+        // that comes back.
+        byte chan = (byte)(0x70+getChannel()-1);
+        byte slot = (byte)computeSlot(bankNum,patchNum);
+        byte sysex[] = {
+                (byte)0xF0, 0x44, 0, 0, chan, 0x10, slot,
+                // Casio sends short sysex header here
+                // F0 44 00 00 chan 30
+                chan, 0x31,
+                // Casio sends 'tone data' here
+                (byte)0xF7
+        };
+        send(sysex);
     }
 
     protected void calculateChecksum(Patch p,int start,int end,int ofs)
@@ -75,38 +105,71 @@ public class CasioCZ1000SingleDriver extends Driver
         // no checksum
     }
 
+    /**
+     * Whether createNewPatch works.
+     */
+    public boolean canCreatePatch() {
+        return true;
+    }
+
     public Patch createNewPatch()
     {
         byte [] sysex = new byte[264];
-        //System.arraycopy(CasioCZ1000InitPatch.initpatch,0,sysex,0,264);
         sysex[0]=(byte)0xF0;
         sysex[1]=(byte)0x44;
         sysex[2]=(byte)0x00;
         sysex[3]=(byte)0x00;
         sysex[4]=(byte)(0x70+getChannel()-1);
         sysex[5]=(byte)0x20;
-        sysex[6]=(byte)0x60; // default to send for edit buffer
+        sysex[6]=(byte)0x60;  // default is edit buffer
         sysex[263]=(byte)0xF7;
         Patch p = new Patch(sysex, this);
         calculateChecksum(p);
         return p;
     }
 
-    //public JSLFrame editPatch(Patch p)
-    // {
-    //
-    // }
-
     public void setBankNum(int bankNum)
     {
+        this.curBank = bankNum;
+        try {
+            send(0xC0 + (getChannel()-1), computeSlot(curBank,curPatch));
+        } catch (Exception e) {};
     }
 
     public void setPatchNum(int patchNum)
     {
-        // we only support internal memory now (add 0x20 to patchnum) since we can't write on preset or cartridge
+        this.curPatch = patchNum;
         try {
-            send(0xC0 + (getChannel()-1), 0x20 + patchNum);
+            send(0xC0 + (getChannel()-1), computeSlot(curBank,curPatch));
         } catch (Exception e) {};
     }
-}
 
+ 
+    public boolean supportsPatch(String patchString, byte[] sysex) {
+        // Gross cheat .. patches coming from the synth are 263 bytes;
+        // all other cases are 264 bytes.  I hope we're not threaded..
+        if(sysex.length == 263)
+            patchSize = 263;
+        boolean supported = super.supportsPatch(patchString, sysex);
+        patchSize = 264;
+        return supported;
+    }
+    
+    public IPatch createPatch(byte[] sysex) {
+        // Casio returns a 263 byte patch, but everyone expects 264,
+        // because the sysex sent to the Casio contains the bank number,
+        // while the sysex sent back does not.
+        if(sysex.length == 263) {
+            byte[] sysex2 = new byte[264];
+            System.arraycopy(sysex, 0, sysex2, 0, 6);
+            sysex2[6] = 0x60;  //default to edit buffer
+            System.arraycopy(sysex, 6, sysex2, 7, sysex.length-6);
+            sysex = sysex2;
+        }
+        return new Patch(sysex, this);
+    }
+    
+//    public JSLFrame editPatch(Patch p) {
+//        return new CasioCZ1000SingleEditor(p);
+//    }
+}
