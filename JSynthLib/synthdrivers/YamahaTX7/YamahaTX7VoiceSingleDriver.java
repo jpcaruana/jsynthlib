@@ -1,12 +1,10 @@
 /*
  * JSynthlib - "Voice" Single Driver for Yamaha TX7
  * ================================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    YamahaTX7VoiceSingleDriver.java
- * date:    25.02.2003
- * @version 0.1
  *
- * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2004 Torsten.Tittmann@gmx.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,74 +20,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- *
- * history:
- *         25.02.2003 v0.1: first published release
- *
  */
-
 package synthdrivers.YamahaTX7;
+import	synthdrivers.YamahaDX7.common.DX7FamilyDevice;
+import	synthdrivers.YamahaDX7.common.DX7FamilyVoiceSingleDriver;
 import core.*;
 import javax.swing.*;
 
-public class YamahaTX7VoiceSingleDriver extends Driver
+public class YamahaTX7VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 {
-  public YamahaTX7VoiceSingleDriver()
-  {
-    manufacturer="Yamaha";
-    model="TX7";
-    patchType="Voice Single";
-    id="TX7";
-    sysexID= "F0430*00011B";
-    // inquiryID= NONE ;
-    patchNameStart=151;
-    patchNameSize=10;
-    deviceIDoffset=2;
-    checksumOffset=161;
-    checksumStart=6;
-    checksumEnd=160;
-    patchNumbers = TX7Constants.PATCH_NUMBERS_VOICE;
-    bankNumbers  = TX7Constants.BANK_NUMBERS_SINGLE_VOICE;
-    patchSize=163;
-    trimSize=163;
-    numSysexMsgs=1;         
-    sysexRequestDump=new SysexHandler("F0 43 @@ 00 F7");
-    authors="Torsten Tittmann";
+	public YamahaTX7VoiceSingleDriver()
+	{
+		super (	YamahaTX7VoiceConstants.INIT_VOICE,
+			YamahaTX7VoiceConstants.SINGLE_VOICE_PATCH_NUMBERS,
+			YamahaTX7VoiceConstants.SINGLE_VOICE_BANK_NUMBERS
+		);
+	}
 
-  }
+	
+	public Patch createNewPatch()
+	{
+		return super.createNewPatch();
+	}
 
 
-  public void storePatch (Patch p, int bankNum,int patchNum)
-  {
-    sendPatchWorker(p);
-
-    if( ((YamahaTX7Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getTipsMsgFlag()==1 )
-          // Information
-          JOptionPane.showMessageDialog(PatchEdit.instance,
-                                        getDriverName()+"Driver:"+ TX7Strings.STORE_SINGLE_VOICE_STRING,
-                                        getDriverName()+"Driver",
-                                        JOptionPane.INFORMATION_MESSAGE);
-  }
+	public JInternalFrame editPatch(Patch p)
+	{
+		return super.editPatch(p);
+	}
 
 
-  public void requestPatchDump(int bankNum, int patchNum)
-  {
-    setPatchNum (patchNum);
+	public void storePatch (Patch p, int bankNum,int patchNum)
+	{
+		sendPatchWorker(p);
 
-    sysexRequestDump.send(port, (byte)(channel+0x20) );
-  }
-
-
-  public Patch createNewPatch()
-  {
-    Patch p = new Patch(TX7Constants.INIT_VOICE,getDeviceNum(),getDriverNum());
-
-    return p;
-  }
+		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
+			// show Information
+			YamahaTX7Strings.dxShowInformation(getDriverName(), YamahaTX7Strings.MEMORY_PROTECTION_STRING);
+	}
 
 
-  public JInternalFrame editPatch(Patch p)
-  {
-    return new YamahaTX7VoiceEditor(p);
-  }
+	public void requestPatchDump(int bankNum, int patchNum)
+	{
+		setPatchNum (patchNum);
+
+		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+	}
 }
