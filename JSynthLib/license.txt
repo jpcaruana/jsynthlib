@@ -1,17 +1,10 @@
-JSynthLib is copyright 2000-2004 by Brian Klock and Gerrit Gehnen and is
-released under the GPL License. This covers all the code included in this
-distribution with the following exceptions:
+JSynthLib is copyright 2000-2004 by Brian Klock, Gerrit Gehnen, and
+other developers and is released under the GPL.
 
 ******************************************************************************
-
-WireProvider is copyright by Gerrit Gehnen and released under the LGPL
-License (in the \midiprovider\wireprovider directory as well as
-WireNative.dll in the main directory).
-
-******************************************************************************
-
-All Synthesizer Drivers (located in the \synthdrivers directory) are released
-under the terms of the GPL.  They were written by many developers.
+All Synthesizer Drivers (located in the 'synthdrivers' directory) are
+also released under the terms of the GPL.  They were written by many
+developers.
 
 ******************************************************************************
 
