@@ -113,7 +113,7 @@ public class MIDIboxFMDrumDriver extends MIDIboxFMSingleDriver
 	sysex[10+0x31] = 0x00; // BD_C_WS
 	sysex[10+0x32] = 0x00; // HH_O_WS
 	sysex[10+0x33] = 0x00; // HH_C_WS
-	sysex[10+0x34] = 0x03; // SD_WS
+	sysex[10+0x34] = 0x00; // SD_WS
 	sysex[10+0x35] = 0x00; // TOM_WS
 	sysex[10+0x36] = 0x00; // CYM_WS
 

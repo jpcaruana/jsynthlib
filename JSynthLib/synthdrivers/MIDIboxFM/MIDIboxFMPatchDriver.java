@@ -148,7 +148,7 @@ public class MIDIboxFMPatchDriver extends MIDIboxFMSingleDriver
 	sysex[10+0x6e] = 0x40; // EG5 LFO1 depth
 	sysex[10+0x6f] = 0x40; // EG5 AOUT depth
 
-	sysex[10+0x70] = 0x00; // CTRL1_L
+	sysex[10+0x70] = 0x02; // CTRL1_L
 	sysex[10+0x71] = 0x00; // CTRL1_H
 	sysex[10+0x72] = 0x00; // CTRL2_L
 	sysex[10+0x73] = 0x00; // CTRL2_H
@@ -156,8 +156,8 @@ public class MIDIboxFMPatchDriver extends MIDIboxFMSingleDriver
 	sysex[10+0x75] = 0x02; // pitchrange
 	sysex[10+0x76] = 0x00; // portamento rate
 	sysex[10+0x77] = 0x00; // wavetable rate
-	sysex[10+0x78] = 0x14; // wt parameter #1
-	sysex[10+0x79] = 0x16; // wt parameter #1
+	sysex[10+0x78] = 0x15; // wt parameter #1
+	sysex[10+0x79] = 0x17; // wt parameter #1
 	sysex[10+0x7a] = 0x52; // wt parameter #1
 
 	sysex[10+0x7c] = 0x00; // Modwheel Assign
