@@ -47,9 +47,9 @@ class PatchListModel extends AbstractTableModel implements AbstractPatchListMode
          if (col==0) return myPatch.getDevice().getSynthName();
          if (col==1) return myPatch.getDriver().getPatchType();
          if (col==2) return myPatch.getDriver().getPatchName(myPatch);
-         if (col==3) return myPatch.date;
-         if (col==4) return myPatch.author;
-         return myPatch.comment;
+         if (col==3) return myPatch.getDate();
+         if (col==4) return myPatch.getAuthor();
+         return myPatch.getComment();
 
      }
 
@@ -88,13 +88,13 @@ class PatchListModel extends AbstractTableModel implements AbstractPatchListMode
          */
      public void setValueAt (Object value, int row, int col)
      {
-         changed=true;
-         Patch myPatch=(Patch)PatchList.get(row);
-         if (col==2) myPatch.getDriver().setPatchName(myPatch,(String)value);
-         if (col==3) myPatch.date=(StringBuffer)value;
-         if (col==4) myPatch.author=(StringBuffer)value;
-         if (col==5) myPatch.comment=(StringBuffer)value;
-         fireTableCellUpdated (row, col);
+         changed = true;
+         Patch myPatch = (Patch) PatchList.get(row);
+         if (col==2) myPatch.getDriver().setPatchName(myPatch, (String) value);
+         if (col==3) myPatch.setDate((String) value);
+         if (col==4) myPatch.setAuthor((String) value);
+         if (col==5) myPatch.setComment((String) value);
+         fireTableCellUpdated(row, col);
      }
 
      public Patch getPatchAt (int row)
@@ -115,8 +115,7 @@ class PatchListModel extends AbstractTableModel implements AbstractPatchListMode
          this.fireTableDataChanged();
      }
 
-     public StringBuffer getCommentAt(int row) {
-         return ((Patch)PatchList.get(row)).comment;
+     public String getCommentAt(int row) {
+         return ((Patch) PatchList.get(row)).getComment();
      }
-
 }

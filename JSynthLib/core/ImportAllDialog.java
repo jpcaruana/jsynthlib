@@ -160,27 +160,28 @@ public class ImportAllDialog extends JDialog
 
                     for (int k=0;k<patarray.length;k++) // Loop over all found sub-patches
                     {
-                        if (putName==1) patarray[k].date.append (files[i].getName ());
-                        if (putName==2) patarray[k].author.append (files[i].getName ());
-                        if (myModel.includeDevice[patarray[k].deviceNum].booleanValue ())
+			Patch pk = patarray[k];
+                        if (putName==1) pk.setDate(pk.getDate() + files[i].getName());
+                        if (putName==2) pk.setAuthor(pk.getAuthor() + files[i].getName());
+                        if (myModel.includeDevice[pk.deviceNum].booleanValue ())
                         {
-                            if (extract && (patarray[k].getDriver() instanceof BankDriver))
+                            if (extract && (pk.getDriver() instanceof BankDriver))
                             {
-                                BankDriver myDriver=((BankDriver) patarray[k].getDriver());
+                                BankDriver myDriver=((BankDriver) pk.getDriver());
                                 for (int j=0;j<myDriver.getNumPatches();j++)
                                 {
-                                    Patch q=(myDriver.getPatch (patarray[k],j));
+                                    Patch q=(myDriver.getPatch (pk,j));
                                     if (putName==1)
-                                        q.date.append (files[i].getName ()+" "+myDriver.patchNumbers[j]);
+                                        q.setDate(q.getDate() + files[i].getName() + " " + myDriver.patchNumbers[j]);
                                     if (putName==2)
-                                        q.author.append (files[i].getName ()+" "+myDriver.patchNumbers[j]);
+                                        q.setAuthor(q.getAuthor() + files[i].getName() + " " + myDriver.patchNumbers[j]);
                                     PatchEdit.Clipboard=q;
                                     ((LibraryFrame)PatchEdit.desktop.getSelectedFrame ()).PastePatch ();
                                 }
                             }
                             else
                             {
-                                PatchEdit.Clipboard=patarray[k];
+                                PatchEdit.Clipboard=pk;
                                 ((LibraryFrame)PatchEdit.desktop.getSelectedFrame ()).PastePatch ();
                             }
                         }
@@ -213,13 +214,13 @@ public class ImportAllDialog extends JDialog
             }
             else if (field==1)
             {
-                s1=((Patch) a1).date.toString().toLowerCase();
-                s2=((Patch) a2).date.toString().toLowerCase();
+                s1=((Patch) a1).getDate().toLowerCase();
+                s2=((Patch) a2).getDate().toLowerCase();
             }
             else if (field==2)
             {
-                s1=((Patch) a1).author.toString().toLowerCase();
-                s2=((Patch) a2).author.toString().toLowerCase();
+                s1=((Patch) a1).getAuthor().toLowerCase();
+                s2=((Patch) a2).getAuthor().toLowerCase();
             }
             else if (field==3)
             {

@@ -58,13 +58,13 @@ public class Patch extends Object
      */
     public byte[] sysex ;
 
-    // change to 'pravate String' and define setter/getter!!!FIXIT!!!
-    /** a comment. */
-    StringBuffer date;
-    /** another comment. */
-    StringBuffer author;
-    /** a last comment. */
-    StringBuffer comment;
+    // 'StringBuffer' to keep compatibility with serialized files
+    /** "Field 1" comment. */
+    private StringBuffer date;
+    /** "Field 2" comment. */
+    private StringBuffer author;
+    /** "Comment" comment. */
+    private StringBuffer comment;
 
     // not used.  What's this?
     static final long serialVersionUID = 2220769917598497681L;
@@ -111,9 +111,9 @@ public class Patch extends Object
     // @deprecated Use <code>Patch(byte[], Driver)</code> or
     // <code>Patch(byte[], Device)</code>.
     public Patch(byte[] gsysex) {
+        date    = new StringBuffer();
+        author  = new StringBuffer();
         comment = new StringBuffer();
-        date = new StringBuffer();
-        author = new StringBuffer();
         sysex = gsysex;
         ChooseDriver();
     }
@@ -128,9 +128,9 @@ public class Patch extends Object
     // The signature Patch(byte[], int) is conflict with Patch(byte[]
     // gsysex, int offset).  A kind of ugry...
     public Patch(int deviceNum, byte[] gsysex) {
-	comment = new StringBuffer();
-	date = new StringBuffer();
-	author = new StringBuffer();
+        date    = new StringBuffer();
+        author  = new StringBuffer();
+        comment = new StringBuffer();
 	sysex = gsysex;
  	this.deviceNum = deviceNum;
         ChooseDriver(deviceNum);
@@ -145,9 +145,9 @@ public class Patch extends Object
      */
     // @deprecated Use <code>Patch(byte[], Driver)</code>.
     public Patch(byte[] gsysex, int deviceNum, int driverNum) {
-	comment = new StringBuffer();
-	date = new StringBuffer();
-	author = new StringBuffer();
+        date    = new StringBuffer();
+        author  = new StringBuffer();
+        comment = new StringBuffer();
 	sysex = gsysex;
  	this.deviceNum = deviceNum;
  	this.driverNum = driverNum;
@@ -160,9 +160,9 @@ public class Patch extends Object
      */
     // called by LibraryFrame and SceneFrame
     Patch(byte[] gsysex, int offset) {
-	comment = new StringBuffer();
-        date = new StringBuffer();
-        author = new StringBuffer();
+        date    = new StringBuffer();
+        author  = new StringBuffer();
+        comment = new StringBuffer();
         sysex = new byte[gsysex.length - offset];
         System.arraycopy(gsysex, offset, sysex, 0, gsysex.length - offset);
         ChooseDriver();
@@ -279,6 +279,36 @@ public class Patch extends Object
         comment = new StringBuffer("Probably a "
 				   + LookupManufacturer.get(sysex[1], sysex[2], sysex[3])
 				   + " Patch, Size: " + sysex.length);
+    }
+
+    /** Getter for property date. */
+    String getDate() {
+	return date.toString();
+    }
+
+    /** Setter for property date. */
+    void setDate(String date) {
+	this.date = new StringBuffer(date);
+    }
+
+    /** Getter for property author. */
+    String getAuthor() {
+	return author.toString();
+    }
+
+    /** Setter for property author. */
+    void setAuthor(String author) {
+	this.author = new StringBuffer(author);
+    }
+
+    /** Getter for property comment. */
+    String getComment() {
+	return comment.toString();
+    }
+
+    /** Setter for property comment. */
+    void setComment(String comment) {
+	this.comment = new StringBuffer(comment);
     }
 
     /** Return Device for this patch. */

@@ -249,11 +249,14 @@ public class SysexGetDialog extends JDialog {
 	{
 	  PatchEdit.Clipboard.deviceNum=0;	//reset
 	  PatchEdit.Clipboard.driverNum=0;	//reset
-	  PatchEdit.Clipboard.comment=new StringBuffer("Probably a "+LookupManufacturer.get(PatchEdit.Clipboard.sysex[1],PatchEdit.Clipboard.sysex[2],PatchEdit.Clipboard.sysex[3])+" Patch, Size: "+PatchEdit.Clipboard.sysex.length);
-
+	  PatchEdit.Clipboard.setComment("Probably a "
+					 + LookupManufacturer.get(PatchEdit.Clipboard.sysex[1],
+								  PatchEdit.Clipboard.sysex[2],
+								  PatchEdit.Clipboard.sysex[3])
+					 + " Patch, Size: " + PatchEdit.Clipboard.sysex.length);
 	  JOptionPane.showMessageDialog (null,
 		"You requested a "+((Driver)PatchEdit.getDriver(deviceNum,driverNum)).getDriverName()+"patch!"+
-		"\nBut you got a not supported patch!\n"+PatchEdit.Clipboard.comment,
+		"\nBut you got a not supported patch!\n"+PatchEdit.Clipboard.getComment(),
 		"Warning", JOptionPane.WARNING_MESSAGE);
 	}
       }

@@ -178,13 +178,13 @@ void findString(String text, String command, boolean restart)
          }
         if ((field==1 || field==4) && (lf instanceof LibraryFrame))
          {
-          s=p.date.toString().toLowerCase();
+          s = p.getDate().toLowerCase();
           match=(s.indexOf(text)!=-1);
           if (match) break;
          }
         if ((field==2 || field==4) && (lf instanceof LibraryFrame))
          {
-          s=p.author.toString().toLowerCase();
+          s = p.getAuthor().toLowerCase();
           match=(s.indexOf(text)!=-1);
           if (match) break;
          }

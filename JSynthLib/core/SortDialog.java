@@ -128,13 +128,13 @@ public class SortDialog extends JDialog
             }
             else if (field==1)
             {
-                s1=((Patch) a1).date.toString().toLowerCase();
-                s2=((Patch) a2).date.toString().toLowerCase();
+                s1=((Patch) a1).getDate().toLowerCase();
+                s2=((Patch) a2).getDate().toLowerCase();
             }
             else if (field==2)
             {
-                s1=((Patch) a1).author.toString().toLowerCase();
-                s2=((Patch) a2).author.toString().toLowerCase();
+                s1=((Patch) a1).getAuthor().toLowerCase();
+                s2=((Patch) a2).getAuthor().toLowerCase();
             }
             else if (field==3)
             {

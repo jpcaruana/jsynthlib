@@ -81,14 +81,14 @@ class SceneListModel extends javax.swing.table.AbstractTableModel implements Abs
              // don't allow to change the Patch Name
          }
          if (col==3) {
-             myScene.setBankNumber(((Integer)value).intValue());
+             myScene.setBankNumber(((Integer) value).intValue());
          }
          if (col==4) {
              myScene.setPatchNumber(((Integer) value).intValue());
          }
          if (col==5) {
              /* Comment */
-             myScene.setComment(new StringBuffer((String)value));
+             myScene.setComment((String) value);
          }
          sceneList.set(row,myScene);
      }
@@ -119,8 +119,8 @@ class SceneListModel extends javax.swing.table.AbstractTableModel implements Abs
          this.fireTableDataChanged();
      }
 
-     public StringBuffer getCommentAt(int row) {
-         return ((Scene)sceneList.get(row)).getComment();
+     public String getCommentAt(int row) {
+         return ((Scene) sceneList.get(row)).getComment();
      }
 
 }
