@@ -111,6 +111,7 @@ void play()
  {
   Patch p=crossBreeder.getCurrentPatch();
   if (p==null) return;
+  PatchEdit.getDriver(p.deviceNum,p.driverNum).sendPatch(p);  
   PatchEdit.getDriver(p.deviceNum,p.driverNum).playPatch(p);
  }
 

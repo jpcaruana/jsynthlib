@@ -262,7 +262,7 @@ public void choosePatch (Patch p, int patchNum)
     {
         try
         {
-            sendPatch (p);
+         //   sendPatch (p);
             Thread.sleep (100);
         
             PatchEdit.MidiOut.writeShortMessage (port,

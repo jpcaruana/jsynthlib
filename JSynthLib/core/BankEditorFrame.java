@@ -283,7 +283,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         Patch p=getSelectedPatch ();
         if (p==null)
         {ErrorMsg.reportError ("Error","That patch is blank.");return;}
-        PatchEdit.getDriver (p.deviceNum,p.driverNum).playPatch (p);
+        PatchEdit.getDriver (p.deviceNum,p.driverNum).sendPatch (p);        
+	PatchEdit.getDriver (p.deviceNum,p.driverNum).playPatch (p);
     }
 
     public void StoreSelectedPatch ()

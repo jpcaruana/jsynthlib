@@ -434,9 +434,9 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
     {
         if (table.getSelectedRowCount()==0)
         {
-ErrorMsg.reportError("Error", "No Patch Selected.");
-return;
-}
+           ErrorMsg.reportError("Error", "No Patch Selected.");
+           return;
+	}	
         FileOutputStream fileOut= new FileOutputStream(file);
         fileOut.write(((Patch)myModel.PatchList.get(table.getSelectedRow())).sysex);
         fileOut.close();
@@ -460,9 +460,9 @@ return;
         {
             if (table.getSelectedRowCount()==0)
             {
-ErrorMsg.reportError("Error", "No Patch Selected.");
-return;
-}
+		    ErrorMsg.reportError("Error", "No Patch Selected.");
+		    return;
+	    }
             Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
             byte [] mySysex = new byte[myPatch.sysex.length];
             System.arraycopy(myPatch.sysex,0,mySysex,0,myPatch.sysex.length);
@@ -485,7 +485,8 @@ return;
     {
         Patch myPatch=((Patch)myModel.PatchList.get(table.getSelectedRow()));
         PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).calculateChecksum(myPatch);
-        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).playPatch(myPatch);
+        PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).sendPatch(myPatch);
+	PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum).playPatch(myPatch);
     }
     
     public void StoreSelectedPatch()
