@@ -92,7 +92,7 @@ public class EnvelopeWidget extends SysexWidget {
             }
         }
 
-	envelopeCanvas = new EnvelopeCanvas(nodes, params);
+	envelopeCanvas = new EnvelopeCanvas();
     }
 
     protected void layoutWidgets() {
@@ -182,11 +182,8 @@ public class EnvelopeWidget extends SysexWidget {
 	envelopeCanvas.setEnabled(e);
     }
 
-    /** Actual canvas for the envelop lines. */
+    /** Actual canvas for the envelope lines. */
     private final class EnvelopeCanvas extends JPanel {
-        private Node[] nodes;
-        private Param[] params;
-
         private float scaleX;
 	private float scaleY;
 	private int xorigin;
@@ -195,10 +192,8 @@ public class EnvelopeWidget extends SysexWidget {
 	private boolean enabled = true;  // for setEnabled()
 	private static final int DELTA = 6;
 
-        private EnvelopeCanvas(Node[] n, Param[] p) {
+        private EnvelopeCanvas() {
 	    super();
-	    nodes = n;
-	    params = p;
 
 	    MyListener myListener = new MyListener();
 	    addMouseListener(myListener);
@@ -318,25 +313,45 @@ public class EnvelopeWidget extends SysexWidget {
         private class MyListener extends MouseInputAdapter {
 	    /** dragging node number */
             private int dragNodeIdx = -1;
+            private boolean toggle = false;
 
             public void mousePressed(MouseEvent e) {
-                dragNodeIdx = -1;
-                if (!enabled) return;
+                if (!enabled) {
+                    dragNodeIdx = -1;
+                    return;
+                }
 
                 int x = e.getX();
                 int y = e.getY();
-		// select the first close node.
-                for (int i = 0; i < nodes.length; i++) {
-                    Node node = nodes[i];
-                    // ignore static node
-                    if ((node.variableX || node.variableY)
-                            && (Math.abs(x - node.posX) < DELTA)
-                            && (Math.abs(y - node.posY) < DELTA)) {
-                        dragNodeIdx = i;
-			return;
-		    }
+		// Select the first close node.
+                // Change search order every time for the case when
+                // multiple nodes overlap each other.
+                if (toggle) {
+                    toggle = false;
+                    for (int i = 0; i < nodes.length; i++) {
+                        if (isClose(nodes[i], x, y)) {
+                            dragNodeIdx = i;
+                            return;
+                        }
+                    }
+                } else {
+                    toggle = true;
+                    for (int i = nodes.length - 1; i >= 0; i--) {
+                        if (isClose(nodes[i], x, y)) {
+                            dragNodeIdx = i;
+                            return;
+                        }
+                    }
                 }
 		// not found
+                dragNodeIdx = -1;
+            }
+
+            private boolean isClose(Node node, int x, int y) {
+                // ignore static node
+                return ((node.variableX || node.variableY)
+                        && (Math.abs(x - node.posX) < DELTA)
+                        && (Math.abs(y - node.posY) < DELTA));
             }
 
             /** last mouse position clocked or dragged. */
