@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.EnsoniqESQ1;
 import core.*;
 import java.io.*;
@@ -8,13 +11,8 @@ public class EnsoniqESQ1BankDriver extends BankDriver
    public EnsoniqESQ1BankDriver()
 
    {
-
-   manufacturer="Ensoniq";
-   model="ESQ-1";
-   patchType="Bank";
-   id="ESQ1";
+   super ("Bank","Brian Klock",40,4);
    sysexID="F00F02**02";
-//   inquiryID="F07E**06020F0200*************F7";
    deviceIDoffset=3;
    
    singleSysexID="F00F02**01";
@@ -26,8 +24,6 @@ public class EnsoniqESQ1BankDriver extends BankDriver
                               "25","26","27","28","29","30","31","32",   
                               "33","34","35","36","37","38","39","40"};
 
-   numPatches=40;
-   numColumns=4;
   }
 
   public int getPatchStart(int patchNum)
@@ -105,9 +101,8 @@ public class EnsoniqESQ1BankDriver extends BankDriver
      sysex[03]=(byte)0x00;sysex[04]=(byte)0x01;
      sysex[209]=(byte)0xF7;     
      System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,5,204);
-     Patch p = new Patch(sysex);
-     p.ChooseDriver();
-     PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);   
+     Patch p = new Patch(sysex, getDevice());
+     p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in ESQ1 Bank Driver",e);return null;}
    }
@@ -116,8 +111,7 @@ public Patch createNewPatch()
 	 byte [] sysex = new byte[15123];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x21;sysex[4]=(byte)0x00;
 	  sysex[5]=(byte)0x04; sysex[6]=(byte)0x0;sysex[15122]=(byte)0xF7;
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	 for (int i=0;i<64;i++)
            setPatchName(p,i,"NEWSND");
 	 calculateChecksum(p);	 

@@ -8,6 +8,7 @@ import javax.swing.border.*;
 
 /**
  * @author Gerrit Gehnen
+ * @version $Id$
  */
 class KawaiK4EffectEditor extends PatchEditorFrame
 {    
@@ -103,14 +104,22 @@ class KawaiK4EffectEditor extends PatchEditorFrame
         final JLabel parameter1=new JLabel (effectParam1[0]);
         final JLabel parameter2=new JLabel (effectParam2[0]);
         final JLabel parameter3=new JLabel (effectParam3[0]);
-        final ScrollBarWidget scroll1=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,12),new K4Sender (88,0),0);
-        final ScrollBarWidget scroll2=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,15),new K4Sender (88,1),0);
-        final ScrollBarWidget scroll3=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,18),new K4Sender (88,2),0);
-        final ScrollBarWidget scroll4=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,21),new K4Sender (88,3),0);
-        final ScrollBarWidget scroll5=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,24),new K4Sender (88,4),0);
-        final ScrollBarWidget scroll6=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,27),new K4Sender (88,5),0);
-        final ScrollBarWidget scroll7=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,30),new K4Sender (88,6),0);
-        final ScrollBarWidget scroll8=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,33),new K4Sender (88,7),0);
+        final ScrollBarWidget scroll1=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,12),new K4Sender (88,0));
+	scroll1.setValue(0);
+        final ScrollBarWidget scroll2=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,15),new K4Sender (88,1));
+	scroll2.setValue(0);
+        final ScrollBarWidget scroll3=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,18),new K4Sender (88,2));
+	scroll3.setValue(0);
+        final ScrollBarWidget scroll4=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,21),new K4Sender (88,3));
+	scroll4.setValue(0);
+        final ScrollBarWidget scroll5=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,24),new K4Sender (88,4));
+	scroll5.setValue(0);
+        final ScrollBarWidget scroll6=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,27),new K4Sender (88,5));
+	scroll6.setValue(0);
+        final ScrollBarWidget scroll7=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,30),new K4Sender (88,6));
+	scroll7.setValue(0);
+        final ScrollBarWidget scroll8=new ScrollBarWidget ("Send2",patch,0,100,0,new K4Model (patch,33),new K4Sender (88,7));
+	scroll8.setValue(0);
         
         // final JLabel picture=new JLabel ();
         final EffectAlgoPanel picturePanel=new EffectAlgoPanel();

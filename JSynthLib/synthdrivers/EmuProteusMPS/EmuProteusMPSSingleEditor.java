@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.EmuProteusMPS;
 import core.*;
 import javax.swing.*;
@@ -162,7 +165,7 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
   gbc.weightx=5;
   JPanel cmnPane=new JPanel();
   cmnPane.setLayout(new GridBagLayout());	 gbc.weightx=0;   							         
-   addWidget(cmnPane,new PatchNameWidget(patch," Name  "),0,0,4,1,0);
+   addWidget(cmnPane,new PatchNameWidget(" Name  ",patch),0,0,4,1,0);
 // gbc.weightx=1;
    addWidget(cmnPane,new ScrollBarLookupWidget("Pitch Bend Range",patch,0,13,new MPSModel(patch,0x7B),new MPSSender(123),new String[]{
       "None","+/-1","+/-2","+/-3","+/-4","+/-5","+/-6","+/-7","+/-8","+/-9","+/-10","+/-11","+/-12","Global"}),0,1,5,1,1);
@@ -382,10 +385,10 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
               {
     	        try {
 			int fxa=fxTypeBox.cb.getSelectedIndex();
-			effectASliders[i].jlabel.setText(effectAParams[fxa][i]);
+			effectASliders[i].setLabel(effectAParams[fxa][i]);
 	 	        effectASliders[i].setMinMax(effectARanges[fxa][i][0],effectARanges[fxa][i][1]);
 		    }
-		catch (Exception e1){effectASliders[i].jlabel.setText("Unused");}			
+		catch (Exception e1){effectASliders[i].setLabel("Unused");}			
               }     
                 }});
      addWidget(aPane,new ScrollBarWidget("Effect Amount (%)",patch,0,100,0,new MPSModel(patch,0x83),new MPSSender(131)),0,1,1,1,50);
@@ -396,8 +399,8 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
 	  addWidget(aPane,effectASliders[i],0,i+2,1,1,51+i);
 	  try {
             effectASliders[i].setMinMax(effectARanges[effectA][i][0],effectARanges[effectA][i][1]); 
-	    effectASliders[i].jlabel.setText(effectAParams[effectA][i]);}
-	   catch (Exception e){effectASliders[i].jlabel.setText("Unused");}
+	    effectASliders[i].setLabel(effectAParams[effectA][i]);}
+	   catch (Exception e){effectASliders[i].setLabel("Unused");}
 			
        }     
      gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=10;gbc.gridheight=5;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.EAST;
@@ -416,10 +419,10 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
               {
     	        try {
 			int fxb=fxbTypeBox.cb.getSelectedIndex();
-			effectBSliders[i].jlabel.setText(effectBParams[fxb][i]);
+			effectBSliders[i].setLabel(effectBParams[fxb][i]);
 	 	        effectBSliders[i].setMinMax(effectBRanges[fxb][i][0],effectBRanges[fxb][i][1]);
 		    }
-		catch (Exception e1){effectBSliders[i].jlabel.setText("Unused");}			
+		catch (Exception e1){effectBSliders[i].setLabel("Unused");}			
               }     
                 }});
      addWidget(bPane,new ScrollBarWidget("Effect Amount (%)",patch,0,100,0,new MPSModel(patch,0x8B),new MPSSender(143)),0,1,1,1,58);
@@ -429,9 +432,9 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
           effectBSliders[i]=new ScrollBarWidget("Unused",patch,0,100,0,new MPSModel(patch,0x90+i),new MPSSender(144+i));
 	  addWidget(bPane,effectBSliders[i],0,i+2,1,1,59+i);
 	  try {
-            effectBSliders[i].jlabel.setText(effectBParams[effectB][i]);
+            effectBSliders[i].setLabel(effectBParams[effectB][i]);
  	    effectBSliders[i].setMinMax(effectBRanges[effectA][i][0],effectBRanges[effectA][i][1]); }
- 	 catch (Exception e){effectBSliders[i].jlabel.setText("Unused");}
+ 	 catch (Exception e){effectBSliders[i].setLabel("Unused");}
 			
        }     
      gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=10;gbc.gridheight=5;gbc.fill=GridBagConstraints.BOTH;gbc.anchor=GridBagConstraints.EAST;

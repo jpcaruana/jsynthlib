@@ -6,8 +6,9 @@ import javax.swing.*;
 /**
  *  Bank driver for Ensoniq VFX
  *
- *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
- *@created    17 septembre 2002
+ * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @created    17 septembre 2002
+ * @version $Id$
  */
 public class EnsoniqVFXBankDriver extends BankDriver
 {
@@ -19,14 +20,8 @@ public class EnsoniqVFXBankDriver extends BankDriver
 	 */
 	public EnsoniqVFXBankDriver()
 	{
-
-		manufacturer = "Ensoniq";
-		model = "VFX";
-		patchType = "Bank";
-		id = "VFX";
-		authors="Denis Queffeulou";
+		super ("Bank","Denis Queffeulou",BANK_NB_PATCHES,4);
 		sysexID = "F00F0500**03";
-//   inquiryID="F07E**06020F0200*************F7";
 		deviceIDoffset = 4;
 
 		singleSysexID = "F00F0500**02";
@@ -40,9 +35,6 @@ public class EnsoniqVFXBankDriver extends BankDriver
 				"41", "42", "43", "44", "45", "46", "47", "48", "49", "50",
 				"51", "52", "53", "54", "55", "56", "57", "58", "59", "60"};
 
-		numPatches = BANK_NB_PATCHES;
-		numColumns = 4;
-		
 		// request the internal bank
 		sysexRequestDump=new SysexHandler("F0 0F 05 00 00 00 00 09 F7");
 		patchSize = BANK_AND_HEADER_SIZE;
@@ -157,8 +149,7 @@ public class EnsoniqVFXBankDriver extends BankDriver
 		sysex[4] = (byte) 0x00;
 		sysex[5] = (byte) 0x03;
 		sysex[BANK_AND_HEADER_SIZE-1] = (byte) 0xF7;
-		Patch p = new Patch(sysex);
-		p.ChooseDriver();
+		Patch p = new Patch(sysex, this);
 		for (int i = 0; i < BANK_NB_PATCHES; i++)
 		{
 			setPatchName(p, i, "NEWSND");

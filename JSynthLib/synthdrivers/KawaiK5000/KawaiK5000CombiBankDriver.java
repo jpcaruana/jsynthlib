@@ -1,6 +1,7 @@
 //======================================================================================================================
 // Summary: KawaiK5000CombiBankDriver.java
 // Author: phil@muqus.com - 07/2001
+// @version $Id$
 // Notes: Combi (Multi) Bank driver for K5000 (only tested on K5000s)
 //======================================================================================================================
 
@@ -23,13 +24,8 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public KawaiK5000CombiBankDriver() {
-    manufacturer = "Kawai";
-    model = "K5000";
-    patchType = "CombiBank";
-    id = "K5k";
+    super ("CombiBank","Phil Shepherd",KawaiK5000CombiDriver.PATCH_NUMBERS.length,4);
     sysexID = "F040**21000A20";
-//    inquiryID = "F07E**06024000000A***********F7";
-   authors="Phil Shepherd";
    sysexRequestDump = SYSEX_REQUEST_DUMP;
 
     patchSize = 0;
@@ -38,13 +34,11 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
 //    patchNameSize =
     deviceIDoffset = 2;
 
-    numColumns = 4;
     singleSysexID = "F040**20000A20";
     singleSize = 0;
 
     bankNumbers = KawaiK5000CombiDriver.BANK_NUMBERS;
     patchNumbers = KawaiK5000CombiDriver.PATCH_NUMBERS;
-    numPatches = patchNumbers.length;
   }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -54,9 +48,9 @@ public class KawaiK5000CombiBankDriver extends BankDriver {
   public void setBankNum(int bankNum) {
     try {
       // BnH 00H mmH  n=MIDI channel number, mm=65H
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x00, (byte)0x65);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x00, (byte)0x65);
       // BnH 00H llH  n=MIDI channel number, ll=00H
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x20, (byte)0);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x20, (byte)0);
     } catch (Exception e) {};
   }
 

@@ -16,13 +16,8 @@ public class KawaiK4MultiDriver extends Driver
 
     public KawaiK4MultiDriver ()
    {
-   manufacturer="Kawai";
-   model="K4/K4r";
-   patchType="Multi";
-   id="K4";
+   super ("Multi","Gerrit Gehnen");
    sysexID="F040**2*0004";
- //  inquiryID="F07E**06024000000400000000000f7";
-       authors="Gerrit Gehnen";
 
    patchSize=77+9;
    patchNameStart=8;
@@ -81,8 +76,7 @@ public void sendPatch (Patch p)
              sysex[12+6+8+ i*8]=24;
          sysex[12+7+8+ i*8]=50;
          }
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	 setPatchName(p,"New Patch");
 	 calculateChecksum(p);	 
 	 return p;
@@ -97,9 +91,9 @@ public JSLFrame editPatch(Patch p)
         NameValue nv[]=new NameValue[2];
         nv[0]=new NameValue("bankNum",bankNum<<1);
         nv[1]=new NameValue("patchNum",patchNum+0x40);
-        byte[] sysex = internalMultiSysexRequestDump.toByteArray((byte)channel,nv);
+        byte[] sysex = internalMultiSysexRequestDump.toByteArray((byte)getChannel(),nv);
    
-    SysexHandler.send(port, sysex);
+    SysexHandler.send(getPort(), sysex);
   }
 
 }

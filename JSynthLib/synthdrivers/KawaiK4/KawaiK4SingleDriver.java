@@ -5,19 +5,15 @@ import java.io.*;
 
 /** Driver for Kawai K4 Singles's
  *
- * @version $Id§
+ * @version $Id$
  */
 public class KawaiK4SingleDriver extends Driver
 {
 
    public KawaiK4SingleDriver()
    {
-   manufacturer="Kawai";
-   model="K4/K4r";
-   patchType="Single";
-   id="K4";
+   super ("Single","Brian Klock");
    sysexID="F040**2*0004";
-  // inquiryID="F07E**06024000000400000000000f7";
   sysexRequestDump=new SysexHandler("F0 40 @@ 00 00 04 *bankNum* *patchNum* F7");
 
    patchSize=140;
@@ -76,8 +72,7 @@ public void sendPatch (Patch p)
 	 byte [] sysex = new byte[140];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x23;sysex[4]=(byte)0x00;
 	  sysex[5]=(byte)0x04; sysex[6]=(byte)0x0;sysex[139]=(byte)0xF7;
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	 setPatchName(p,"New Patch");
 	 calculateChecksum(p);	 
 	 return p;
@@ -91,9 +86,9 @@ public JSLFrame editPatch(Patch p)
         NameValue nv[]=new NameValue[2];
         nv[0]=new NameValue("bankNum",bankNum<<1);
         nv[1]=new NameValue("patchNum",patchNum);
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(),nv);
         
-        SysexHandler.send(port, sysex);
+        SysexHandler.send(getPort(), sysex);
     }
 
 }

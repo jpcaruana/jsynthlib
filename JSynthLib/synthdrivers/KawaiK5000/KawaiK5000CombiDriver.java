@@ -1,6 +1,7 @@
 //======================================================================================================================
 // Summary: KawaiK5000CombiDriver.java
 // Author: phil@muqus.com - 07/2001
+// @version $Id$
 // Notes: Combi (Multi) driver for K5000 (only tested on K5000s)
 //======================================================================================================================
 
@@ -41,13 +42,8 @@ public class KawaiK5000CombiDriver extends Driver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public KawaiK5000CombiDriver() {
-    manufacturer = "Kawai";
-    model = "K5000";
-    patchType = "Combi";
-    id = "K5k";
+    super ("Combi","Phil Shepherd");
     sysexID = "F040**20000A20";
-    authors="Phil Shepherd";
-    //    inquiryID = "F07E**06024000000A***********F7";
     sysexRequestDump = SYSEX_REQUEST_DUMP;
 
     patchSize = 0;
@@ -96,9 +92,9 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
   public void setBankNum(int bankNum) {
     try {
       // BnH 00H mmH  n=MIDI channel number, mm=65H
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x00, (byte)0x65);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x00, (byte)0x65);
       // BnH 00H llH  n=MIDI channel number, ll=00H
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x20, (byte)0);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x20, (byte)0);
     } catch (Exception e) {};
   }
 
@@ -134,14 +130,13 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
 // static KawaiK5000CombIDriver->createPatchFromData
 //----------------------------------------------------------------------------------------------------------------------
 
-  static public Patch createPatchFromData(byte[] data, int dataOffset, int dataLength) {
+    static public Patch createPatchFromData(byte[] data, int dataOffset, int dataLength) {
 	  byte[] sysex = new byte[dataLength + BSYSEX_HEADER.length + 1];
     System.arraycopy(BSYSEX_HEADER, 0, sysex, 0, BSYSEX_HEADER.length);
     System.arraycopy(data, dataOffset, sysex, BSYSEX_HEADER.length, dataLength);
     sysex[sysex.length-1] = (byte)0xF7;
 
     Patch p = new Patch(sysex);
-    p.ChooseDriver();
     p.getDriver().calculateChecksum(p);
 
     return p;

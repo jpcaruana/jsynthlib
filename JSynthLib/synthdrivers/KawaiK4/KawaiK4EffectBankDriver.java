@@ -2,7 +2,7 @@
  * nothing special, only the required adaptions
  *
  * @author Gerrit Gehnen
- * @version $Id§
+ * @version $Id$
  */
 
 package synthdrivers.KawaiK4;
@@ -15,14 +15,9 @@ public class KawaiK4EffectBankDriver extends BankDriver
     
     public KawaiK4EffectBankDriver ()
     {
-        manufacturer="Kawai";
-        model="K4/K4r";
-        patchType="EffectBank";
-        id="K4";
+	super ("EffectBank","Gerrit Gehnen",32,2);
         sysexID="F040**2100040100";
-//        inquiryID="F07E**06024000000400000000000f7";
    	sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
-               authors="Gerrit Gehnen";
 
         deviceIDoffset=2;
         bankNumbers =new String[]
@@ -33,8 +28,6 @@ public class KawaiK4EffectBankDriver extends BankDriver
          "17","18","19","20","21","22","23","24",
          "25","26","27","28","29","30","31","32"};
                  
-         numPatches=patchNumbers.length;
-         numColumns=2;
          singleSysexID="F040**2*0004";
          singleSize=35+9;
          patchSize=32*35+9; // To distinguish from the Effect bank, which has the same sysexID
@@ -116,9 +109,8 @@ public class KawaiK4EffectBankDriver extends BankDriver
             sysex[06]=(byte)0x01;sysex[07]=(byte)(patchNum);
             sysex[35+8]=(byte)0xF7;
             System.arraycopy (bank.sysex,getPatchStart (patchNum),sysex,8,35);
-            Patch p = new Patch (sysex);
-            p.ChooseDriver ();
-            PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum (p);
+            Patch p = new Patch (sysex, getDevice());
+            p.getDriver().calculateChecksum (p);
             return p;
         }catch (Exception e)
         {ErrorMsg.reportError ("Error","Error in K4 EffectBank Driver",e);return null;}
@@ -147,8 +139,7 @@ public class KawaiK4EffectBankDriver extends BankDriver
         }
         
         sysex[35*32+8]=(byte)0xF7;
-        Patch p = new Patch (sysex);
-        p.ChooseDriver ();
+        Patch p = new Patch (sysex, this);
         
         calculateChecksum (p);
         return p;
@@ -158,9 +149,9 @@ public class KawaiK4EffectBankDriver extends BankDriver
         NameValue nv[]=new NameValue[1];
         nv[0]=new NameValue("bankNum",(bankNum<<1)+1);
                 
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(),nv);
         
-        SysexHandler.send(port, sysex);
+        SysexHandler.send(getPort(), sysex);
     }
   
        public void storePatch (Patch p, int bankNum,int patchNum)

@@ -18,25 +18,24 @@ import core.*;
  */
 public class EnsoniqVFXDevice extends Device
 {
+        private static final String infoText="JSynthLib supports librarian functions on VFX single/bank/multi patches.\n"+	       
+	         "This driver has been tested with VFX 2.10 version,  "+
+	         "older versions could not work if different sysex length are used.\n"+
+		 "The patch store send the patch in the edit buffer.";
 
 	/**
 	 *  Creates new EnsoniqVFXDevice
 	 */
 	public EnsoniqVFXDevice()
 	{
-		manufacturerName = "Ensoniq";
-		modelName = "VFX";
-		synthName = "VFX";
+		// inquiryID:
 		// i fix the required major version to 2
 		// i let the minor version number empty
-		inquiryID = "F07E**06020F05000000000002**F7";
+		super ("Ensoniq","VFX","F07E**06020F05000000000002**F7",infoText,"Denis Queffeulou");
+		setSynthName("VFX");
 		addDriver(new EnsoniqVFXBankDriver());
 		addDriver(new EnsoniqVFXSingleDriver());
 		addDriver(new EnsoniqVFXMultiDriver());
-        infoText="JSynthLib supports librarian functions on VFX single/bank/multi patches.\n"+	       
-	         "This driver has been tested with VFX 2.10 version,  "+
-	         "older versions could not work if different sysex length are used.\n"+
-		 "The patch store send the patch in the edit buffer.";
 	}
 
 }

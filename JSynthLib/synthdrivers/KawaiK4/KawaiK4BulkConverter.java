@@ -1,13 +1,13 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.KawaiK4;
 import core.*;
 
 public class KawaiK4BulkConverter extends Converter {
     public KawaiK4BulkConverter () {
-        
-        manufacturer="Kawai";
-        model="K4/K4r";
-        patchType="Bulk Dump Converter";
-        authors="Brian Klock & Gerrit Gehnen";
+	
+        super ("Bulk Dump Converter","Brian Klock & Gerrit Gehnen");
         sysexID="F040**220004**00";
     }
     

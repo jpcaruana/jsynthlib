@@ -14,14 +14,9 @@ public class KawaiK4MultiBankDriver extends BankDriver
     
     public KawaiK4MultiBankDriver ()
     {
-        manufacturer="Kawai";
-        model="K4/K4r";
-        patchType="MultiBank";
-        id="K4";
+	super ("MultiBank","Gerrit Gehnen",64,4);
         sysexID="F040**210004**40";
-//        inquiryID="F07E**06024000000400000000000f7";
        sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 40 F7");
-       authors="Gerrit Gehnen";
 
         deviceIDoffset=2;
         bankNumbers =new String[]
@@ -36,8 +31,6 @@ public class KawaiK4MultiBankDriver extends BankDriver
          "D-1","D-2","D-3","D-4","D-5","D-6","D-7","D-8",
          "D-9","D-10","D-11","D-12","D-13","D-14","D-15","D-16"};
          
-         numPatches=patchNumbers.length;
-         numColumns=4;
          singleSysexID="F040**2*0004";
          singleSize=77+9;
          
@@ -119,9 +112,8 @@ public class KawaiK4MultiBankDriver extends BankDriver
             sysex[06]=(byte)0x00;sysex[07]=(byte)(0x40+patchNum);
             sysex[77+8]=(byte)0xF7;
             System.arraycopy (bank.sysex,getPatchStart (patchNum),sysex,8,77);
-            Patch p = new Patch (sysex);
-            p.ChooseDriver ();
-            PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum (p);
+            Patch p = new Patch (sysex, getDevice());
+            p.getDriver().calculateChecksum (p);
             return p;
         }catch (Exception e)
         {ErrorMsg.reportError ("Error","Error in K4 MultiBank Driver",e);return null;}
@@ -131,8 +123,7 @@ public class KawaiK4MultiBankDriver extends BankDriver
         byte [] sysex = new byte[77*64+9];
         sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x21;sysex[4]=(byte)0x00;
         sysex[5]=(byte)0x04; sysex[6]=(byte)0x0;sysex[7]=0x40;sysex[77*64+8]=(byte)0xF7;
-        Patch p = new Patch (sysex);
-        p.ChooseDriver ();
+        Patch p = new Patch (sysex, this);
         for (int i=0;i<64;i++)
             setPatchName (p,i,"New Patch");
         calculateChecksum (p);
@@ -143,9 +134,9 @@ public class KawaiK4MultiBankDriver extends BankDriver
         NameValue nv[]=new NameValue[1];
         nv[0]=new NameValue("bankNum",bankNum<<1);
         
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(),nv);
         
-        SysexHandler.send(port, sysex);
+        SysexHandler.send(getPort(), sysex);
     }
   
      public void storePatch (Patch p, int bankNum,int patchNum)

@@ -9,6 +9,7 @@ import java.io.*;
  * also changed. 
  *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
  *@created    17 septembre 2002
+ *@version    $Id$
  */
 public class EnsoniqVFXMultiDriver extends Driver
 {
@@ -20,11 +21,7 @@ public class EnsoniqVFXMultiDriver extends Driver
 	 */
 	public EnsoniqVFXMultiDriver()
 	{
-		manufacturer = "Ensoniq";
-		model = "VFX";
-		patchType = "Multi";
-		id = "VFX";
-		authors="Denis Queffeulou";
+		super ("Multi","Denis Queffeulou");
 		sysexID = "F00F0500**0B";
 		patchSize = SIZE+7;
 		deviceIDoffset = 4;
@@ -96,8 +93,7 @@ public class EnsoniqVFXMultiDriver extends Driver
 		sysex[4] = (byte) 0x00;
 		sysex[5] = (byte) 0x0B;	
 		sysex[SIZE+6] = (byte) 0xF7;
-		Patch p = new Patch(sysex);
-		p.ChooseDriver();
+		Patch p = new Patch(sysex, this);
 		return p;
 	}
 

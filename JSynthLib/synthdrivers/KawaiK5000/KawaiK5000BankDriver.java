@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.KawaiK5000;
 import core.*;
 import java.io.*;
@@ -14,12 +17,8 @@ public class KawaiK5000BankDriver extends BankDriver
    public Patch indexedPatch;
    public KawaiK5000BankDriver()
    {
-   manufacturer="Kawai";
-   model="K5000";
-   patchType="Bank";
-   id="K5k";
+   super ("Bank","Brian Klock",128,4);
    sysexID="F040**21000A000*";
-   //inquiryID="F07E**06024000000A***********F7";
    deviceIDoffset=2;
    patchSize=0;
    numSysexMsgs = 1;                                        // phil@muqus.com
@@ -41,8 +40,6 @@ public class KawaiK5000BankDriver extends BankDriver
                               "112-","113-","114-","115-","116-","117-","118-","119-",
                               "120-","121-","122-","123-","124-","125-","126-","127-","128-" };
 
-   numPatches=patchNumbers.length;
-   numColumns=4;
    singleSysexID="F040**20000A000*";
    singleSize=0;
   }
@@ -216,9 +213,8 @@ public class KawaiK5000BankDriver extends BankDriver
      sysex[06]=(byte)0x00;sysex[07]=(byte)0x00;sysex[8]=(byte)0x00;
      sysex[patchSize-1]=(byte)0xF7;
      System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,9,patchSize-10);
-     Patch p = new Patch(sysex);
-     p.ChooseDriver();
-     ((Driver) (PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
+     Patch p = new Patch(sysex, getDevice());
+     p.getDriver().calculateChecksum(p);
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in K5000 Bank Driver",e);return null;}
    }
@@ -227,8 +223,7 @@ public Patch createNewPatch()
          byte [] sysex = new byte[28];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x21;sysex[4]=(byte)0x00;
           sysex[5]=(byte)0x0a; sysex[6]=(byte)0x00;sysex[27]=(byte)0xF7;
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	 return p;
  }
 
@@ -291,9 +286,9 @@ public Patch createNewPatch()
 
   public void requestPatchDump(int bankNum, int patchNum) {
     if (bankNum == 0)
-      SYSEX_REQUEST_A_DUMP.send(port, (byte)channel);
+      SYSEX_REQUEST_A_DUMP.send(getPort(), (byte)getChannel());
     else
-      SYSEX_REQUEST_D_DUMP.send(port, (byte)channel);
+      SYSEX_REQUEST_D_DUMP.send(getPort(), (byte)getChannel());
   }
 
 //----- End phil@muqus.com

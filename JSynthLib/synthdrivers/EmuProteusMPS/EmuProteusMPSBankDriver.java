@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.EmuProteusMPS;
 import core.*;
 import java.io.*;
@@ -7,12 +10,8 @@ public class EmuProteusMPSBankDriver extends BankDriver
 
    public EmuProteusMPSBankDriver()
    {
-   manufacturer="Emu";
-   model="Proteus MPS";
-   patchType="Bank";
-   id="MPS";
+   super ("Bank","Brian Klock",100,5);
    sysexID= "F01808**01";
-   //inquiryID="F07E**06021804040800*********F7";
    singleSysexID= "F01808**01";
    singleSize=319;
    patchSize=31900;
@@ -32,8 +31,6 @@ public class EmuProteusMPSBankDriver extends BankDriver
                               "88-","89-","90-","91-","92-","93-","94-","95-",
                               "96-","97-","98-","99-"};
 
-   numPatches=patchNumbers.length;
-   numColumns=5;
    deviceIDoffset=3;
   }
 
@@ -104,9 +101,8 @@ public class EmuProteusMPSBankDriver extends BankDriver
   try{
      byte [] sysex=new byte[319];
      System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,0,319);
-     Patch p = new Patch(sysex);
-     p.ChooseDriver();
-     PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);   
+     Patch p = new Patch(sysex, getDevice());
+     p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in Proteus MPS Bank Driver",e);return null;}
    }
@@ -127,8 +123,7 @@ public Patch createNewPatch()
 	 sysex[i*319+0]=(byte)0xF0; sysex[i*319+1]=(byte)0x18;sysex[i*319+2]=(byte)0x08;
 	 sysex[i*319+3]=(byte)0x00;sysex[i*319+4]=(byte)0x01;
 	 sysex[i*319+318]=(byte)0xF7;}
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	 for (int i=0;i<100;i++) 	 
 	   setPatchName(p,i,"New Patch");
 	 calculateChecksum(p);	 

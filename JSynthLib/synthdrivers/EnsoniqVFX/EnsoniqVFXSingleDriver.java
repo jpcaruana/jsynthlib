@@ -6,8 +6,9 @@ import java.io.*;
 /**
  *  Single driver for VFX. Nybble Hi 4 bytes are transmitted first.
  *
- *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
- *@created    17 septembre 2002
+ * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
+ * @created    17 septembre 2002
+ * @version $Id$
  */
 public class EnsoniqVFXSingleDriver extends Driver
 {
@@ -31,13 +32,8 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 */
 	public EnsoniqVFXSingleDriver()
 	{
-		manufacturer = "Ensoniq";
-		model = "VFX";
-		patchType = "Single";
-		id = "VFX";
-		authors="Denis Queffeulou";
+		super ("Single","Denis Queffeulou");
 		sysexID = "F00F0500**02";
-//   inquiryID="F07E**06020F0200*************F7";
 		patchSize = PATCH_AND_HEADER_SIZE;
 		patchNameStart = PATCHNAME_OFFSET;	
 		patchNameSize = PATCHNAME_SIZE;
@@ -190,8 +186,8 @@ public class EnsoniqVFXSingleDriver extends Driver
 		sysex[4] = (byte) 0x00;
 		sysex[5] = (byte) 0x02;	// single patch sysex
 		sysex[PATCH_AND_HEADER_SIZE-1] = (byte) 0xF7;
+		//Patch oPatch = new Patch(sysex, this);
 		Patch oPatch = new Patch(sysex);
-		oPatch.ChooseDriver();
 		setPatchName(oPatch.sysex, "NEWSND", HEADER_SIZE-1);
 		return oPatch;
 	}

@@ -14,18 +14,16 @@ import core.*;
  */
 public class EnsoniqESQ1Device extends Device
 {
+    private static final String infoText="Whenever JSynthLib sends a Patch to the ESQ, the synthesizer will go to a screen where you must hit "+
+	          "'exit' on the front panel before you can send another patch. This is kind of annoying, so if anyone "+
+		  "knows a way around this let me know. The other ESQ librarians I checked out had the same problem, so "+
+		   "it may be impossible";
     
     /** Creates new EnsoniqESQ1Device */
     public EnsoniqESQ1Device ()
     {
-        manufacturerName="Ensoniq";
-        modelName="ESQ-1";
-        synthName="ESQ1";
-        infoText="Whenever JSynthLib sends a Patch to the ESQ, the synthesizer will go to a screen where you must hit "+
-	          "'exit' on the front panel before you can send another patch. This is kind of annoying, so if anyone "+
-		  "knows a way around this let me know. The other ESQ librarians I checked out had the same problem, so "+
-		   "it may be impossible";
-     inquiryID="F07E**06020F0200************F7";
+	super ("Ensoniq","ESQ-1","F07E**06020F0200************F7",infoText,"Brian Klock");
+        setSynthName("ESQ1");
         addDriver (new EnsoniqESQ1BankDriver ());
         addDriver (new EnsoniqESQ1SingleDriver ());
     }

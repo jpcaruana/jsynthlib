@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.KawaiK4;
 import core.*;
 import javax.swing.*;
@@ -117,13 +120,11 @@ class KawaiK4DrumsetEditor extends PatchEditorFrame
                 for (int i=0; i<widgetList.size ();i++)
                 {
                     w= ((SysexWidget)widgetList.get (i));
-                    if (w.paramModel!=null)
-                    {w.setValue (p);
+                    w.setValue ();
                      if (w instanceof ScrollBarWidget) ((ScrollBarWidget)w).slider.setValue (w.getValue ());
                      if (w instanceof ScrollBarLookupWidget) ((ScrollBarLookupWidget)w).slider.setValue (w.getValue ());
                      if (w instanceof ComboBoxWidget) ((ComboBoxWidget)w).cb.setSelectedIndex (w.getValue ());
                      if (w instanceof CheckBoxWidget) ((CheckBoxWidget)w).cb.setSelected ((w.getValue ()>0));
-                    }
                 }
             }
         }

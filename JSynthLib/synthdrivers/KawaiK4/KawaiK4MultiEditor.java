@@ -13,6 +13,7 @@ import javax.swing.border.*;
  * single patches loaded in the instrument, it shows only
  * the patch numbers.
  * @author Gerrit Gehnen <Gerrit.Gehnen@gmx.de>
+ * @version $Id$
  */
 class KawaiK4MultiEditor extends PatchEditorFrame
 {
@@ -73,7 +74,7 @@ class KawaiK4MultiEditor extends PatchEditorFrame
             cmnPane.setLayout (new GridBagLayout ());
             cmnPane.setBorder (new TitledBorder (new EtchedBorder (EtchedBorder.RAISED),"Common",TitledBorder.CENTER,TitledBorder.CENTER));
             gbc.weightx=0;
-            addWidget (cmnPane,new PatchNameWidget (patch," Name  "),0,0,4,1,0);
+            addWidget (cmnPane,new PatchNameWidget (" Name  ",patch),0,0,4,1,0);
             addWidget (cmnPane,new ScrollBarWidget ("Volume",patch,0,100,0,new K4Model (patch,10),null),4,0,3,1,1);
             addWidget (cmnPane,new ScrollBarWidget ("Effect",patch,0,31,1,new K4Model (patch,11),null),8,0,5,1,2);
             // gbc.weightx=1;

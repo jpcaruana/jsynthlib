@@ -12,12 +12,8 @@ public class KawaiK4BankDriver extends BankDriver
 
    public KawaiK4BankDriver()
    {
-   manufacturer="Kawai";
-   model="K4/K4r";
-   patchType="Bank";
-   id="K4";
+   super ("Bank","Brian Klock",64,4);
    sysexID="F040**210004**00";
-//   inquiryID="F07E**06024000000400000000000f7";
 sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
 
    deviceIDoffset=2;
@@ -32,8 +28,6 @@ sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
                               "D-1","D-2","D-3","D-4","D-5","D-6","D-7","D-8",
                               "D-9","D-10","D-11","D-12","D-13","D-14","D-15","D-16"};  
    
-   numPatches=patchNumbers.length;
-   numColumns=4;
    singleSysexID="F040**2*0004";
    singleSize=140;
     patchSize=64*131+9; // To distinguish from the Effect bank, which has the same sysexID
@@ -111,9 +105,8 @@ sysexRequestDump=new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
      sysex[06]=(byte)0x00;sysex[07]=/*(byte)0x00+*/(byte)patchNum;
      sysex[139]=(byte)0xF7;    
      System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,8,131);
-     Patch p = new Patch(sysex);
-     p.ChooseDriver();
-     PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);   
+     Patch p = new Patch(sysex, getDevice());
+     p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in K4 Bank Driver",e);return null;}
    }
@@ -124,8 +117,7 @@ public Patch createNewPatch()
      	 byte [] sysex = new byte[64*131+9];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x40;sysex[2]=(byte)0x00;sysex[3]=(byte)0x21;sysex[4]=(byte)0x00;
 	  sysex[5]=(byte)0x04; sysex[6]=(byte)0x0;sysex[7]=0;sysex[64*131+8]=(byte)0xF7;
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	 for (int i=0;i<64;i++)
 	   setPatchName(p,i,"New Patch");
 	 calculateChecksum(p);	 
@@ -136,9 +128,9 @@ public Patch createNewPatch()
         NameValue nv[]=new NameValue[1];
         nv[0]=new NameValue("bankNum",bankNum<<1);
         
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(),nv);
         
-        SysexHandler.send(port, sysex);
+        SysexHandler.send(getPort(), sysex);
     }
 
          public void storePatch (Patch p, int bankNum,int patchNum)

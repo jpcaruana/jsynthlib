@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.EmuProteusMPS;
 import core.*;
 
@@ -10,10 +13,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
 
   public EmuProteusMPSSingleDriver()
    {
-   manufacturer="Emu";
-   model="Proteus MPS";
-   patchType="Single";
-   id="MPS";
+   super ("Single","Brian Klock");
    sysexID= "F01808**01";
    //inquiryID="F07E**06021804040800*********F7";
    patchSize=319;
@@ -117,8 +117,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
 	 byte [] sysex = new byte[319];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x18;sysex[2]=(byte)0x08;sysex[3]=(byte)0x00;sysex[4]=(byte)0x01;
 	 sysex[318]=(byte)0xF7;
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	 setPatchName(p,"New Patch");
 	 calculateChecksum(p);	 
 	 return p;
@@ -129,7 +128,7 @@ public JSLFrame editPatch(Patch p)
  }
   public void requestPatchDump(int bankNum, int patchNum) {
    SysexRequestDump.send(
-        port, (byte)channel,
+        getPort(), (byte)getChannel(),
         new NameValue("bankNum", (bankNum*100+patchNum)%128),
         new NameValue("patchNum", (bankNum*100+patchNum)/128)
       );

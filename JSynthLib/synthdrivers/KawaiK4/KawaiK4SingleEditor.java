@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.KawaiK4;
 import core.*;
 import javax.swing.*;
@@ -90,7 +93,7 @@ class KawaiK4SingleEditor extends PatchEditorFrame
   gbc.weightx=5;
   JPanel cmnPane=new JPanel();
   cmnPane.setLayout(new GridBagLayout());	 gbc.weightx=0;   							         
-   addWidget(cmnPane,new PatchNameWidget(patch," Name  "),0,0,2,1,0);
+   addWidget(cmnPane,new PatchNameWidget(" Name  ",patch),0,0,2,1,0);
 // gbc.weightx=1;
    addWidget(cmnPane,new ScrollBarWidget("Volume",patch,0,100,0,new K4Model(patch,10),new K4Sender(10)),0,1,5,1,1);
    addWidget(cmnPane,new ScrollBarWidget("Effect",patch,0,31,1,new K4Model(patch,11),new K4Sender(11)),0,2,5,1,2);

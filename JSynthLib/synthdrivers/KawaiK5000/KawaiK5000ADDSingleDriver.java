@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.KawaiK5000;
 import java.io.*;
 import javax.swing.*;
@@ -9,12 +12,8 @@ public class KawaiK5000ADDSingleDriver extends Driver
 
    public KawaiK5000ADDSingleDriver()
    {
-   manufacturer="Kawai";
-   model="K5000";
-   patchType="Add Single";
-   id="K5k";
+   super ("Add Single","Brian Klock");
    sysexID="F040**20000A000*";
-  // inquiryID="F07E**06024000000A***********F7";
    patchSize=0;
    numSysexMsgs = 1;                                        // phil@muqus.com
    patchNameStart=49;
@@ -109,9 +108,9 @@ public void calculateChecksum(Patch p)
 
   public void requestPatchDump(int bankNum, int patchNum) {
       if (bankNum == 0)
-      SYSEX_REQUEST_A_DUMP.send(port, (byte)channel, patchNum);
+      SYSEX_REQUEST_A_DUMP.send(getPort(), (byte)getChannel(), patchNum);
     else
-      SYSEX_REQUEST_D_DUMP.send(port, (byte)channel, patchNum);
+      SYSEX_REQUEST_D_DUMP.send(getPort(), (byte)getChannel(), patchNum);
   }
 
 //----- End phil@muqus.com
@@ -129,8 +128,7 @@ public Patch createNewPatch()
     byte [] buffer =new byte [2768];
     fileIn.read(buffer);
     fileIn.close();
-    Patch p=new Patch(buffer);
-    p.ChooseDriver();
+    Patch p=new Patch(buffer, this);
     return p;
   }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
   }

@@ -6,21 +6,16 @@ import java.io.*;
 /** Driver for Kawai K4 Effects
  *
  * @author Gerrit Gehnen
- * @version $Id§
+ * @version $Id$
  */
 
 public class KawaiK4EffectDriver extends Driver
 {    
     public KawaiK4EffectDriver ()
     {
-        manufacturer="Kawai";
-        model="K4/K4r";
-        patchType="Effect";
-        id="K4";
+	super ("Effect","Gerrit Gehnen");
         sysexID="F040**2*0004";
-             authors="Gerrit Gehnen";
   
-        inquiryID="F07E**06024000000400000000000f7";
 	sysexRequestDump=new SysexHandler("F0 40 @@ 00 00 04 01 *patchNum* F7");
         patchSize=44;
         patchNameStart=0;
@@ -91,8 +86,7 @@ public class KawaiK4EffectDriver extends Driver
         sysex[39]=0x07;
         
         sysex[43]=(byte)0xF7;
-        Patch p = new Patch (sysex);
-        p.ChooseDriver ();
+        Patch p = new Patch (sysex, this);
         //setPatchName(p,"New Effect");
         calculateChecksum (p);
         return p;
@@ -113,9 +107,9 @@ public class KawaiK4EffectDriver extends Driver
         nv[0]=new NameValue("bankNum",(bankNum<<1)+1);
         nv[1]=new NameValue("patchNum",patchNum);
         
-        byte[] sysex = sysexRequestDump.toByteArray((byte)channel,nv);
+        byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(),nv);
         
-        SysexHandler.send(port, sysex);
+        SysexHandler.send(getPort(), sysex);
     }
     
 }

@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.EnsoniqESQ1;
 import core.*;
 import javax.swing.*;
@@ -8,12 +11,8 @@ public class EnsoniqESQ1SingleDriver extends Driver
 
    public EnsoniqESQ1SingleDriver()
    {
-   manufacturer="Ensoniq";
-   model="ESQ1";
-   patchType="Single";
-   id="ESQ1";
+   super ("Single","Brian Klock");
    sysexID="F00F02**01";
-//   inquiryID="F07E**06020F0200*************F7";
    patchSize=0;
    patchNameStart=0;
    patchNameSize=10;
@@ -90,8 +89,7 @@ public Patch createNewPatch()
          byte [] sysex = new byte[210];
          sysex[0]=(byte)0xF0; sysex[1]=(byte)0x0F;sysex[2]=(byte)0x02;sysex[3]=(byte)0x00;
          sysex[4]=(byte)0x01; sysex[209]=(byte)0xF7;
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
          setPatchName(p,"NEWSND");
 	 calculateChecksum(p);	 
 	 return p;
