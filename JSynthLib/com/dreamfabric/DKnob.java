@@ -245,6 +245,8 @@ public class DKnob extends JComponent
 		Paint the DKnob
 	*/
     public void paint(Graphics g) {
+		if (isEnabled()) 
+		{
 		// denis: i set the size because I can't deal with layout and resize consequences
 		int width = mWidth;//getWidth();
 		int height = mHeight;//getHeight();
@@ -317,6 +319,7 @@ public class DKnob extends JComponent
 		if (mValueAsString != null) {
 			g.setColor(Color.white);
 			g.drawString(mValueAsString, oSizeDiv2-5, height-10);
+		}
 		}
     }
 
