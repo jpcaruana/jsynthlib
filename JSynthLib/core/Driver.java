@@ -679,9 +679,24 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
     //----- End phil@muqus.com
 
-    /** Play note. */
-    // the argument 'p' is not used.!!!FIXIT!!!
+    /** Play note. 
+     * @param p a <code>IPatch</code> value, which isn't used! !!!FIXIT!!!
+     * @deprecated Use playPatch().
+     */
     public void playPatch(IPatch p) { // called by core and some Editors
+	playPatch();
+    }
+    
+    /** Play note.
+     * plays a MIDI file or a single note depending which preference is set.
+     * Currently the MIDI sequencer support isn't implemented!
+     */
+    public void playPatch() { // called by core and some Editors
+	if (PatchEdit.appConfig.getSequencerEnable()) playSequence();
+	else playNote();
+    }
+
+    private void playNote() {
         try {
 // 	    sendPatch(p);
 	    Thread.sleep(100);
@@ -700,6 +715,10 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
 	}
+    }
+
+    private void playSequence() {
+	MidiUtil.startSequencer(getPort());
     }
 
     // MIDI in/out mothods to encapsulate lower MIDI layer

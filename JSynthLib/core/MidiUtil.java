@@ -21,6 +21,7 @@
 
 package core;
 
+import java.io.File;
 import javax.sound.midi.*;
 import java.util.*;
 
@@ -916,4 +917,41 @@ public final class MidiUtil {
 	return isInputAvailable;
     }
 
+    /* 
+     * Maybe these methods should be in an own class, but currently I put them here. ttittmann 01.Aug.2004
+     */
+    public static void startSequencer(int myport) {
+	Sequencer 	sequencer;
+	MidiDevice 	outPort;
+	Transmitter 	seqTrans;
+	Receiver	outRcvr;
+	
+	try {
+	    sequencer = MidiSystem.getSequencer();
+	    
+	    seqTrans = sequencer.getTransmitter();
+	    System.out.println("core.MidiUtil.startSequencer: seqTrans = "+ seqTrans.toString());
+	    outPort  = getOutputMidiDevice(myport);
+	    System.out.println("core.MidiUtil.startSequencer: output MidiDevice = "+ outPort.toString());
+	    outRcvr  = outPort.getReceiver();
+	    System.out.println("core.MidiUtil.startSequencer: outRcvr = "+ outRcvr.toString());
+	    seqTrans.setReceiver(outRcvr);
+	    
+	    sequencer.open();
+	} catch (MidiUnavailableException me) {
+	    ErrorMsg.reportWarning("MidiSystem Error","Can't access sequencer properly",me);
+	    return;
+	}
+
+	try {
+	    File myMidiFile = new File(PatchEdit.appConfig.getSequencePath());
+	    Sequence mySeq = MidiSystem.getSequence(myMidiFile);
+	    sequencer.setSequence(mySeq);
+	} catch (Exception e) {
+	    ErrorMsg.reportWarning("MidiSystem Error","Can't access MIDI file for sequencer",e);
+	    return;
+	}
+	
+	sequencer.start();
+    }
 } // MidiUtil
