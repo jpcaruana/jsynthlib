@@ -10,10 +10,12 @@ import java.awt.datatransfer.DataFlavor;
 
 // addJSLFrameListener should probably be implemented in JSLFrame
 // for dynamic switching of type
+// TODO: Lines marked with XXX are JSynthLib dependent code. They must be removed to
+// make this class a generic class.
 public class JSLFrame {
     protected JSLFrameProxy proxy;
     private static boolean useIFrames =
-	(AppConfig.getGuiStyle() == 0);
+	(AppConfig.getGuiStyle() == 0); // XXX
 
     // for JSLJFrame
     private static JFrame lastselection = null;
@@ -72,6 +74,12 @@ public class JSLFrame {
     public int getY() { return proxy.getY(); }
     public void reshape(int a, int b, int c, int d) { proxy.reshape(a,b,c,d); }
     public boolean isSelected() { return proxy.isSelected(); }
+    /** Checks if this Window is showing on screen. */
+    public boolean isShowing() { return proxy.isShowing(); }
+    /** Returns whether this Window is iconified. */
+    public boolean isIcon() { return proxy.isIcon(); }
+    /** Returns whether this Window is closing. */
+    public boolean isClosing() { return proxy.isClosing(); }
     // This is probably naughty.
     public JSLDesktop getDesktopPane() { return JSLDesktop.getInstance(); }
     public JSLFrameListener[] getJSLFrameListeners() {
@@ -145,6 +153,9 @@ public class JSLFrame {
 	public void removeJSLFrameListener(JSLFrameListener l);
 	public void setPreferredSize(Dimension d);
 	public boolean isSelected();
+	public boolean isShowing();
+	public boolean isIcon();
+	public boolean isClosing();
 	//public void moveToDefaultLocation();
     }
 
@@ -162,7 +173,7 @@ public class JSLFrame {
 	    parent = new WeakReference(p);
 	    addInternalFrameListener(this);
 	}
-	public JSLIFrame(JSLFrame p, String s, boolean resizable, boolean			 closable, boolean maximizable, boolean iconifiable) {
+	public JSLIFrame(JSLFrame p, String s, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
 	    super(s, resizable, closable, maximizable, iconifiable);
 	    parent = new WeakReference(p);
 	    addInternalFrameListener(this);
@@ -246,11 +257,16 @@ public class JSLFrame {
 	public void removeJSLFrameListener(JSLFrameListener l) {
 	    listeners.remove(l);
 	}
+	public boolean isClosing() {
+	    return false;
+	}
+
     }
     class JSLJFrame extends JFrame implements JSLFrameProxy,
 						      WindowListener {
 	private WeakReference parent;
 	protected ArrayList listeners = new ArrayList();
+	private boolean closing = false;
 
 	public JSLJFrame(JSLFrame p) {
 	    super();
@@ -293,30 +309,34 @@ public class JSLFrame {
 	    }
 	    super.setVisible(b);
 	}
+	private void showState(String s) {
+	    ErrorMsg.reportStatus(ErrorMsg.FRAME, "\"" + this.getTitle() 
+	            + "\" " + s + " (" + this.getExtendedState() + ")");
+	}
 	public void windowActivated(WindowEvent e) {
-	    ErrorMsg.reportStatus(ErrorMsg.FRAME,
-	            "\""
-                    + ((JFrame) e.getWindow()).getTitle() + "\" activated.");
-
-	    JSLFrameEvent fe =
-		new JSLFrameEvent(getJSLFrame(),
-				  JSLFrameEvent.ACTIVATED);
+	    showState("activated");
+            JSLFrameEvent fe =
+                new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.ACTIVATED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
 		((JSLFrameListener)it.next()).JSLFrameActivated(fe);
 	    }
-	    // Enable pasteAction
-	    Actions.setEnabled(true, Actions.EN_PASTE);
+	    // Enable pasteAction (Why this is done here?)
+	    Actions.setEnabled(true, Actions.EN_PASTE); // XXX
 	}
 	public void windowClosed(WindowEvent e) {
+	    showState("closed");
 	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.CLOSED);
 	    Iterator it = listeners.iterator();
 	    while (it.hasNext()) {
 		((JSLFrameListener)it.next()).JSLFrameClosed(fe);
 	    }
+	    closing = false;
 	}
 	public void windowClosing(WindowEvent e) {
+	    showState("closing");
+	    closing = true;
 	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.CLOSING);
 	    Iterator it = listeners.iterator();
@@ -326,10 +346,12 @@ public class JSLFrame {
 	    //if (!fe.isConsumed())
 	    //	proxy.dispose();
 	}
+	public boolean isClosing() {
+	    return closing;
+	}
+
 	public void windowDeactivated(WindowEvent e) {
-	    ErrorMsg.reportStatus(ErrorMsg.FRAME,
-	            "\""
-                    + ((JFrame) e.getWindow()).getTitle() + "\" deactivated.");
+	    showState("deactivated");
 	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEACTIVATED);
 	    Iterator it = listeners.iterator();
@@ -338,6 +360,7 @@ public class JSLFrame {
 	    }
 	}
 	public void windowDeiconified(WindowEvent e) {
+	    showState("deiconified");
 	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEICONIFIED);
 	    Iterator it = listeners.iterator();
@@ -346,6 +369,7 @@ public class JSLFrame {
 	    }
 	}
 	public void windowIconified(WindowEvent e) {
+	    showState("iconified");
 	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.ICONIFIED);
 	    Iterator it = listeners.iterator();
@@ -354,6 +378,7 @@ public class JSLFrame {
 	    }
 	}
 	public void windowOpened(WindowEvent e) {
+	    showState("opened");
 	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.OPENED);
 	    Iterator it = listeners.iterator();
@@ -377,6 +402,10 @@ public class JSLFrame {
 		|| (f == JSLDesktop.getToolBar().getJFrame()
 		    && JSLDesktop.getLastSelectedWindow() == this);
 	}
+	public boolean isIcon() {
+	    return (getExtendedState() & Frame.ICONIFIED) != 0;
+	}
+
 	void fakeActivate() {
 	    WindowEvent we =
 		new WindowEvent(this,

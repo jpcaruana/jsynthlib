@@ -4,9 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+// TODO: Lines marked with XXX are JSynthLib dependent code. They must be removed to
+// make this class a generic class.
 public class JSLDesktop {
     private static JSLDesktopProxy proxy;
     protected static JFrame selected = null;
+    // not used now
     static AbstractAction toolBarAction = new AbstractAction ("Tool Bar") {
 	    public void actionPerformed(ActionEvent e) {
 		JSLDesktop.showToolBar();
@@ -18,7 +21,7 @@ public class JSLDesktop {
     private static JSLDesktop instance = null;
 
     protected JSLDesktop() {
-	if (JSLFrame.useInternalFrames()) {
+	if (JSLFrame.useInternalFrames()) { // XXX
 	    proxy = new JSLJDesktop();
 	} else {
 	    proxy = new JSLFakeDesktop();
@@ -69,7 +72,7 @@ public class JSLDesktop {
 
 	JSLJDesktop() {
 	    super();
-	    selected = new JFrame("JSynthLib");
+	    selected = new JFrame("JSynthLib"); // XXX
 	    int inset = 100;
 	    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	    selected.setBounds(inset, inset,
@@ -79,7 +82,7 @@ public class JSLDesktop {
 	    //Quit this app when the big window closes.
 	    selected.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e) {
-			PatchEdit.exit();
+			PatchEdit.exit(); // XXX
 		    }
 		});
 
@@ -93,16 +96,16 @@ public class JSLDesktop {
 	    putClientProperty("JDesktopPane.dragMode", "outline");
 	    c.add(this, BorderLayout.CENTER);
 
-	    selected.setJMenuBar(Actions.createMenuBar());
+	    selected.setJMenuBar(Actions.createMenuBar()); // XXX
 	    selected.setVisible(true);
 	}
 	public JMenu createWindowMenu() {
 	    JMenu menuWindow = new JMenu("Window");
 	    if (!MacUtils.isMac()) {
-		menuWindow.add(Actions.prefsAction);
+		menuWindow.add(Actions.prefsAction); // XXX
 		menuWindow.setMnemonic(KeyEvent.VK_W);
 	    }
-	    menuWindow.add(Actions.monitorAction);
+	    menuWindow.add(Actions.monitorAction); // XXX
 	    return menuWindow;
 	}
 	public void registerFrame(JSLFrame f) {}
@@ -155,9 +158,9 @@ public class JSLDesktop {
 	    toolbar.getJFrame().setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
 	public void setupInitialMenuBar(JToolBar tb) {
-	    if (invisible != null) {
+	    if (invisible != null) { // MacUtils.isMac()
 		selected = invisible.getJFrame();
-		selected.setJMenuBar(Actions.createMenuBar());
+		selected.setJMenuBar(Actions.createMenuBar()); // XXX
 		selected.setSize(0,0);
 		selected.setUndecorated(true);
 		//selected.setLocation(0,0x7FFFFFFF);
@@ -168,7 +171,7 @@ public class JSLDesktop {
 
 	    registerFrame(toolbar);
 	    //toolbar.addJSLFrameListener(this);
-	    toolbar.setJMenuBar(Actions.createMenuBar());
+	    toolbar.setJMenuBar(Actions.createMenuBar()); // XXX
 	    tb.setFloatable(false);
 	    toolbar.getContentPane().add(tb);
 	    toolbar.pack();
@@ -203,7 +206,7 @@ public class JSLDesktop {
 		    ((JSLWindowMenu)it.next()).add(jf);
 		}
 		windows.add(f);
-		jf.setJMenuBar(Actions.createMenuBar());
+		jf.setJMenuBar(Actions.createMenuBar()); // XXX
 	    }
 	}
 	public void add(JSLFrame f) { registerFrame(f); }
@@ -232,32 +235,45 @@ public class JSLDesktop {
 	    return a;
 	}
 
+	// JSLFrameListener methods : called for both toolbar and JSLFrame
+	private void showState(JSLFrame f, String s) {
+	    ErrorMsg.reportStatus(ErrorMsg.FRAME, "\"" + f.getTitle() + "\" " + s);
+	}
 	public void JSLFrameActivated(JSLFrameEvent e) {
 	    JSLFrame f = e.getJSLFrame();
-	    synchronized (in_fake_activation) {
-		if (in_fake_activation.booleanValue())
-		    return;
-		if (f == toolbar && last_selected != null
-		    && last_selected != toolbar.getJFrame()) {
-		    in_fake_activation = Boolean.TRUE;
-		    last_selected.fakeActivate();
-		    in_fake_activation = Boolean.FALSE;
-		}
-	    }
+	    if (f == toolbar) {
+                synchronized (in_fake_activation) {
+                    if (in_fake_activation.booleanValue())
+                        return;
+                    // When toolbar is activated, activate the last selected
+                    // frame if it is not iconified nor closing.
+                    if (last_selected != null
+                            && last_selected != toolbar.getJFrame()
+                            && !last_selected.isIcon()
+                            && !last_selected.isClosing()) {
+                        showState(last_selected.getJSLFrame(), "FakeActivated");
+                        in_fake_activation = Boolean.TRUE;
+                        last_selected.fakeActivate();
+                        in_fake_activation = Boolean.FALSE;
+                    }
+                }
+            } else {
+                last_selected = null;
+            }
 	    selected = f.getJFrame();
-	    ErrorMsg.reportStatus(ErrorMsg.FRAME, "\""+selected.getTitle()+"\" selected");
+	    showState(f, "selected");
 	}
 	public void JSLFrameClosing(JSLFrameEvent e) {
 	    JSLFrame f = e.getJSLFrame();
 	    if (f == toolbar) {
-		if (windows.size() < 2 && invisible == null) {
-		    PatchEdit.exit();
+		if (windows.size() < 2 && invisible == null) { // !MacUtils.isMac()
+		    PatchEdit.exit(); // XXX
 		} else {
-		    ErrorMsg.reportStatus(ErrorMsg.FRAME, "\"" + f.getTitle() + "\" hidden. " +
-					  (windows.size() - 1)
-					  + " windows still open.");
+		    showState(f, "hidden. " + (windows.size() - 1)
+                            + " windows still open.");
 		}
-	    }
+	    } else
+	        last_selected = null;
 	}
 	public void JSLFrameClosed(JSLFrameEvent e) {
 	    JSLFrame f = e.getJSLFrame();
@@ -266,32 +282,31 @@ public class JSLDesktop {
 		// toolbar should never be closed, only hidden
 		if (toolbar.isVisible()) {
 		    selected = toolbar.getJFrame();
-		    ErrorMsg.reportStatus(ErrorMsg.FRAME,
-		            "\""
-                            + selected.getTitle() + "\" selected");
-		} else if (invisible == null) {
-		    PatchEdit.exit();
+		    showState(toolbar, "selected");
+		} else if (invisible == null) { // !MacUtils.isMac()
+		    PatchEdit.exit(); // XXX
 		} else {
 		    ErrorMsg.reportStatus(ErrorMsg.FRAME,
 		            "All windows closed, but invisible "
 		            + "frame exists. Not exiting.");
 		}
 	    } else {
-		ErrorMsg.reportStatus(ErrorMsg.FRAME,
-		        "\""
-                        + e.getJSLFrame().getTitle() + "\" closed. "
-                        + (windows.size() - 1) + " windows still open.");
+	        showState(f, "closed. " + (windows.size() - 1)
+                        + " windows still open.");
 	    }
 	}
 	public void JSLFrameDeactivated(JSLFrameEvent e) {
-	    try {
-		last_selected = (JSLFrame.JSLJFrame)e.getJSLFrame().getJFrame();
-	    } catch (Exception ex) {
-		last_selected = null;
-	    }
+	    JSLFrame f = e.getJSLFrame();
+            if (f != toolbar
+                    // ignore iconified or closing frame
+                    && !f.isIcon() && !f.isClosing())
+                last_selected = (JSLFrame.JSLJFrame) f.getJFrame();
 	}
 	public void JSLFrameDeiconified(JSLFrameEvent e) {}
-	public void JSLFrameIconified(JSLFrameEvent e) {}
+	public void JSLFrameIconified(JSLFrameEvent e) {
+	    if (e.getJSLFrame() != toolbar)
+	        last_selected = null;
+    	}
 	public void JSLFrameOpened(JSLFrameEvent e) {}
 
 	public void showToolBar() {
