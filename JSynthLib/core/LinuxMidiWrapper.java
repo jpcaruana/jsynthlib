@@ -107,7 +107,7 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		keyboardThread.stopRunning();
 		readPos=writePos;
         //thread = new Thread(keyboardThread);
-		keyboardThread.start();
+		keyboardThread.restartRunning();
 	}
     
 	//FIXME Made public so that PrefsDialog can call it until we straighten this mess out - emenaker 3/12/2003
@@ -287,6 +287,14 @@ public class LinuxMidiWrapper extends MidiWrapper {
 		void stopRunning() {
 			running = false;
 		}
+		/**
+		* Tells the InputThread to restart polling the midi input port
+		* We need this if we are to restart using thread.start(), which isn't working furthermore - ttittmann 05 january 2004
+		*/
+		void restartRunning() {
+			running = true;
+		}
+
 	}
 }
 
