@@ -30,8 +30,8 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
 
     public BankEditorFrame (Patch p)
     {
-        super(PatchEdit.appConfig.getDevice(p.deviceNum).modelName + " "
-	      + PatchEdit.getDriver (p.deviceNum,p.driverNum).patchType
+        super(PatchEdit.appConfig.getDevice(p.deviceNum).getModelName() + " "
+	      + PatchEdit.getDriver (p.deviceNum,p.driverNum).getPatchType()
 	      + " Window",
         true, //resizable
         true, //closable
@@ -229,7 +229,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
     public int getSelectedPatchNum ()
     {
         table=table2;
-        return table.getSelectedColumn ()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow ();
+        return table.getSelectedColumn ()*bankDriver.getNumPatches()/bankDriver.getNumColumns()+table.getSelectedRow ();
     }
     public Patch getSelectedPatch ()
     {
@@ -307,7 +307,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         if (p==null)
         {ErrorMsg.reportError ("Error","That patch is blank.");return;}
         //PatchEdit.getDriver(p.deviceNum,p.driverNum).choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com
-        new SysexStoreDialog(p,table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow() );
+        new SysexStoreDialog(p,table.getSelectedColumn()*bankDriver.getNumPatches()/bankDriver.getNumColumns()+table.getSelectedRow() );
     }
 
     public JInternalFrame EditSelectedPatch ()

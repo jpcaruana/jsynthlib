@@ -629,7 +629,7 @@ public class SceneFrame extends javax.swing.JInternalFrame implements AbstractLi
         }
         Patch myPatch=myModel.getPatchAt(table.getSelectedRow());
         BankDriver myDriver=(BankDriver)PatchEdit.getDriver(myPatch.deviceNum,myPatch.driverNum);
-        for (int i=0;i<myDriver.numPatches;i++)
+        for (int i=0;i<myDriver.getNumPatches();i++)
             if (myDriver.getPatch(myPatch,i)!=null) myModel.addPatch(myDriver.getPatch(myPatch,i));
         myModel.fireTableDataChanged();
         changed=true;

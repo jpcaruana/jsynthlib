@@ -6,6 +6,10 @@ package core;
 
 public class Converter extends Driver
 {
+    public Converter() {
+	super("Converter", "JSynthLib"); // Who is the auther?
+    }
+
     public boolean supportsPatch (StringBuffer patchString,Patch p)
     {
  

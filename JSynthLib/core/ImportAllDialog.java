@@ -167,7 +167,7 @@ public class ImportAllDialog extends JDialog
                             if (extract && (PatchEdit.getDriver(patarray[k].deviceNum,patarray[k].driverNum) instanceof BankDriver))
                             {
                                 BankDriver myDriver=((BankDriver)PatchEdit.getDriver(patarray[k].deviceNum,patarray[k].driverNum));
-                                for (int j=0;j<myDriver.numPatches;j++)
+                                for (int j=0;j<myDriver.getNumPatches();j++)
                                 {
                                     Patch q=(myDriver.getPatch (patarray[k],j));
                                     if (putName==1)

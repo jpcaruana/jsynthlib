@@ -30,14 +30,14 @@ ErrorMsg.reportStatus("PatchGridModel");
      * @return  */
     public int getColumnCount ()
     {
-        return bankDriver.numColumns;
+        return bankDriver.getNumColumns();
     }
 
     /**
      * @return  */
     public int getRowCount ()
     {
-        return bankDriver.numPatches/bankDriver.numColumns;
+        return bankDriver.getNumPatches()/bankDriver.getNumColumns();
     }
 
     /**
@@ -54,8 +54,8 @@ ErrorMsg.reportStatus("PatchGridModel");
      * @return  */
     public Object getValueAt (int row, int col)
     {
-        return (bankDriver.patchNumbers[         col*bankDriver.numPatches/bankDriver.numColumns+row]+" "+
-        bankDriver.getPatchName (bankData,col*bankDriver.numPatches/bankDriver.numColumns+row));
+        return (bankDriver.patchNumbers[         col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row]+" "+
+        bankDriver.getPatchName (bankData,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row));
     }
     /**
      * @param row
@@ -63,7 +63,7 @@ ErrorMsg.reportStatus("PatchGridModel");
      * @return  */
     public Patch getPatchAt(int row, int col)
     {
-        return bankDriver.getPatch(bankData,col*bankDriver.numPatches/bankDriver.numColumns+row);
+        return bankDriver.getPatch(bankData,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
     }
     /**
      * @param c
@@ -93,7 +93,7 @@ ErrorMsg.reportStatus("PatchGridModel");
      * @param col  */
     public void setPatchAt(Patch p,int row,int col)
     {
-        bankDriver.putPatch(bankData,p,col*bankDriver.numPatches/bankDriver.numColumns+row);
+        bankDriver.putPatch(bankData,p,col*bankDriver.getNumPatches()/bankDriver.getNumColumns()+row);
         fireTableCellUpdated (row, col);
     }
     /**
@@ -103,7 +103,7 @@ ErrorMsg.reportStatus("PatchGridModel");
     public void setValueAt (Object value, int row, int col)
     {
 //----- Start phil@muqus.com (allow patch name editing from a bank edit window)
-      int patchNum = col * bankDriver.numPatches / bankDriver.numColumns + row;
+      int patchNum = col * bankDriver.getNumPatches() / bankDriver.getNumColumns() + row;
       bankDriver.setPatchName(bankData, patchNum, ((String)value).substring((bankDriver.patchNumbers[patchNum] + " ").length()));
 //----- End phil@muqus.com
       fireTableCellUpdated (row, col);

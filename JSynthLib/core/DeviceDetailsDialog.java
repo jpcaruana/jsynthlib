@@ -34,7 +34,7 @@ public class DeviceDetailsDialog extends JDialog
 	infoPane.setLayout (new BorderLayout());
 	infoPane.add(new JLabel("Device Name:  "+device.getManufacturerName()+" "+device.getModelName()),BorderLayout.NORTH);	
 	JTextArea jta=new JTextArea(null,10,50);
-	jta.append(device.infoText);
+	jta.append(device.getInfoText());
 	jta.setLineWrap(true);
 	jta.setEditable(false);
 	jta.setWrapStyleWord(true);
