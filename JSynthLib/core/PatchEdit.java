@@ -239,6 +239,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
         menuLib.add(sortAction);
         menuLib.add(searchAction);
+        menuLib.add(crossBreedAction);
         menuLib.add(dupAction);
         menuLib.addSeparator();
 
@@ -277,7 +278,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         menuPatch.addSeparator();
 
  	menuPatch.add(reassignAction);
-        menuPatch.add(crossBreedAction);
         menuPatch.add(extractAction);
         menuPatch.addSeparator();
 
@@ -1261,7 +1261,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
             if (!(JSLDesktop.getSelectedFrame() instanceof PatchEditorFrame))
 		return;
             PatchEditorFrame pf = (PatchEditorFrame) JSLDesktop.getSelectedFrame();
-            pf.faderBank = (pf.faderBank + 1) % pf.numFaderBanks; pf.faderHighlight();
+            pf.nextFader();
 	    return;
         }
     }
@@ -1363,9 +1363,13 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	// get transmitter
 	trns = appConfig.getMasterInTrns();
 	// create output receiver
-	Receiver rcvr = MidiUtil.getReceiver(appConfig.getInitPortOut());
-	rcvr1 = new MasterReceiver(rcvr);
-	trns.setReceiver(rcvr1);
+	try {
+	    Receiver rcvr = MidiUtil.getReceiver(appConfig.getInitPortOut());
+	    rcvr1 = new MasterReceiver(rcvr);
+	    trns.setReceiver(rcvr1);
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
+	}
     }
 
     static void disableMasterIn() {
