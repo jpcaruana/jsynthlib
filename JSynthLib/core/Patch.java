@@ -13,18 +13,32 @@ import java.awt.datatransfer.*;
  * <li> <code>Patch(byte[])</code>
  * </ol>
  *
- * The latter two constructors guess the proper driver by using the
+ * Use <code>Patch(byte[], Driver)</code> form if possible.  The
+ * latter two constructors guess the proper driver by using the
  * <code>Driver.supportsPatch</code> method to set
- * <code>deviceNum</code> and <code>driverNum</code> fields.  If you
- * know that the patch you are creating does not correspond to any
- * driver, use <code>Patch(byte[], (Driver) null)</code>, since it is
- * much more efficient than <code>Patch(byte[])</code>.
+ * <code>deviceNum</code> and <code>driverNum</code> fields.<p>
+ *
+ * Use <code>Patch(byte[])</code> only when you have no idea about
+ * either Driver or Device for which your Patch is.  If you know that
+ * the patch you are creating does not correspond to any driver, use
+ * <code>Patch(byte[], (Driver) null)</code>, since it is much more
+ * efficient than <code>Patch(byte[])</code>.
  *
  * @author ???
  * @version $Id$
  * @see Driver#supportsPatch
  */
-public class Patch extends Object implements Serializable, Transferable {
+public class Patch extends Object
+    implements Serializable, Transferable, Cloneable {
+    // 'deviceNum' and 'driverNum' fields can be replaced by 'driver'
+    // field.
+    //
+    //	private transitent Driver driver;
+    //
+    // 'deviceNum' and 'driverNum' fields are used only to get the
+    // driver reference. But at this point many drivers access them.
+    // Those accesses are not necessary if the drivers use proper
+    // constructor and method.
     /**
      * device number.
      * Use <code>patch.getDriver()</code> instead of
@@ -44,7 +58,7 @@ public class Patch extends Object implements Serializable, Transferable {
      */
     public byte[] sysex ;
 
-    // Why StringBuffer?  And for what are those?
+    // change to 'pravate String' and define setter/getter!!!FIXIT!!!
     /** a comment. */
     StringBuffer date;
     /** another comment. */
@@ -154,6 +168,8 @@ public class Patch extends Object implements Serializable, Transferable {
         ChooseDriver();
     }
 
+    // The following two constructores are obsoleted by introducing
+    // clone() method.
     /**
      * Constructor
      * @param gsysex The MIDI SysEx message.
@@ -162,6 +178,7 @@ public class Patch extends Object implements Serializable, Transferable {
      * @param gcomment A last comment.
      */
     // called by BankEditorFrame and PatchEditorFrame
+    /*
     Patch(byte[] gsysex,
 	  String gdate, String gauthor, String gcomment) {
         this.comment = new StringBuffer(gcomment);
@@ -170,6 +187,7 @@ public class Patch extends Object implements Serializable, Transferable {
         this.sysex = gsysex;
         ChooseDriver();
     }
+    */
 
     /**
      * Constructor - all parameters are known
@@ -181,6 +199,7 @@ public class Patch extends Object implements Serializable, Transferable {
      * @param gcomment A last comment.
      */
     // called by LibraryFrame and SceneFrame
+    /*
     Patch(byte[] gsysex, int deviceNum, int driverNum,
 	  String gdate, String gauthor, String gcomment) {
 	this.comment = new StringBuffer(gcomment);
@@ -190,6 +209,7 @@ public class Patch extends Object implements Serializable, Transferable {
  	this.deviceNum = deviceNum;
  	this.driverNum = driverNum;
     }
+    */
 
     /**
      * Set <code>driverNum</code> by guessing from <code>sysex</code>
@@ -220,7 +240,20 @@ public class Patch extends Object implements Serializable, Transferable {
     /**
      * Set <code>deviceNum</code> and <code>driverNum</code> by
      * guessing from <code>sysex</code> by using
-     * <code>Driver.suportsPatch</code> method.
+     * <code>Driver.suportsPatch</code> method.<p>
+     *
+     * Probably your driver does not have to call this method.  Many
+     * existing drivers call this method after constructor
+     * <code>Patch(byte[])</code> as follows. But it is verbose
+     * because <code>Patch(byte[])</code> calls this method
+     * internally.
+     *
+     * <pre>
+     *      byte sysex[] = new byte[patchSize];
+     *      ...
+     *      Patch p = new Patch(sysex);
+     *      p.ChooseDriver(); // !!!verbose!!!
+     * </pre>
      */
     public void ChooseDriver() { // should be chooseDriver()
         //Integer intg = new Integer(0);
@@ -260,28 +293,39 @@ public class Patch extends Object implements Serializable, Transferable {
 
     // Transferable interface methods
 
-    public Object getTransferData(java.awt.datatransfer.DataFlavor p1)
-	throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException {
+    public Object getTransferData(DataFlavor p1)
+	throws UnsupportedFlavorException, java.io.IOException {
         return this;
     }
 
-    public boolean isDataFlavorSupported(final java.awt.datatransfer.DataFlavor p1) {
+    public boolean isDataFlavorSupported(final DataFlavor p1) {
         // System.out.println("isDataFlavorSupported "+driverNum);
-        if (p1.equals(new DataFlavor(getDriver().getClass(), getDriver().toString()))) {
-            return true;
-        }
-        return false;
+        return p1.equals(new DataFlavor(getDriver().getClass(),
+					getDriver().toString()));
     }
 
-    public java.awt.datatransfer.DataFlavor[] getTransferDataFlavors() {
+    public DataFlavor[] getTransferDataFlavors() {
         // System.out.println("getTransferDataFlavors "+driverNum);
         DataFlavor[] df = new DataFlavor[1];
-	df[0] = new DataFlavor(getDriver().getClass(), getDriver().toString());
-
+	df[0] = new DataFlavor(getDriver().getClass(),
+			       getDriver().toString());
         return df;
     }
 
     // end of Transferable interface methods
+
+    // Clone interface method
+    public Object clone() {
+	try {
+	    Patch p = (Patch) super.clone();
+	    p.sysex = (byte[]) sysex.clone();
+	    return p;
+	} catch (CloneNotSupportedException e) {
+	    // Cannot happen -- we support clone, and so do arrays
+	    throw new InternalError(e.toString());
+	}
+    }
+    // end of Clone interface method
 
     /**
      * Dissect a <code>Patch</code> which has a <code>Converter</code>
