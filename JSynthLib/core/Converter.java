@@ -9,7 +9,7 @@ package core;
  * @author ???
  * @version $Id$
  */
-public class Converter extends Driver {
+abstract public class Converter extends Driver {
     public Converter(String patchType, String authors) {
 	super(patchType, authors);
     }
@@ -18,6 +18,12 @@ public class Converter extends Driver {
 	this("Converter", "JSynthLib"); // Who is the auther?
     }
 
+    /** Convert a Patch into an array of Patches. */
+    // called by Patch.dissect().
+    abstract public Patch[] extractPatch(Patch p);
+
+    // comment out since there is no difference from Driver.supportsPatch
+    /*
     protected boolean supportsPatch (StringBuffer patchString,Patch p) {
         Integer intg = new Integer (0);
 
@@ -32,13 +38,5 @@ public class Converter extends Driver {
 		driverString.setCharAt(j, patchString.charAt(j));
         return (driverString.toString().equalsIgnoreCase(patchString.toString().substring(0, driverString.length())));
     }
-
-//     public void convertPatch (Patch p) {
-//     }
-
-    /** Convert a Patch into an array of Patch. */
-    // called by Patch.dissect().  Should be 'abstract'?
-    protected Patch[] extractPatch(Patch p) {
-        return null;
-    }
+    */
 }
