@@ -67,16 +67,10 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         int row=-1;
         addWidget(miscPane,new ScrollBarLookupWidget("Line Select",patch,0,3,80,new LineModel(patch),null, new String[] {"1","2","1+1'","1+2'"}),0,++row,7,1,0);
 
-		addWidget(miscPane,new CheckBoxWidget("Ring",  patch,new BitModel(patch,15,5),null),0,++row,1,1,0);
-		if(HACK_MODE) {
-	        addWidget(miscPane,new CheckBoxWidget("Noise1",patch,new BitModel(patch,15,4),null),1,row,1,1,0);
-	        addWidget(miscPane,new CheckBoxWidget("Noise2",patch,new BitModel(patch,15,3),null),2,row,1,1,0);
-		}
-		else {
-		    //TODO switch both or neither together
-	        addWidget(miscPane,new CheckBoxWidget("Noise1",patch,new BitModel(patch,15,4),null),1,row,1,1,0);
-	        addWidget(miscPane,new CheckBoxWidget("Noise2",patch,new BitModel(patch,15,3),null),2,row,1,1,0);
-		}
+		addWidget(miscPane,new CheckBoxWidget("Ring",  patch,new BitModel(patch,30,5),null),0,++row,1,1,0);
+        addWidget(miscPane,new CheckBoxWidget("Noise1",patch,new BitModel(patch,30,4),null),1,row,1,1,0);
+        addWidget(miscPane,new CheckBoxWidget("Noise2",patch,new BitModel(patch,30,3),null),2,row,1,1,0);
+	    //TODO non-hack-mode == switch both or neither together
 
 		if(HACK_MODE)
 		    addWidget(miscPane,new ScrollBarWidget("Detune Step",patch,-127,127,0,80,new DetuneStepModel(patch),null),0,++row,7,1,0);
@@ -751,6 +745,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
                 setByte(ofs, getByte(ofs) | pos);
         }
         public int get() {
+            System.out.println(getByte(ofs));
             return (getByte(ofs) & pos) != 0 ? 1 : 0;
         }
     }
