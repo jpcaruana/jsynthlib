@@ -93,14 +93,14 @@ public class Scene extends java.lang.Object implements Serializable, Transferabl
     }
 
     public java.awt.datatransfer.DataFlavor[] getTransferDataFlavors() {
-//         System.out.println("getTransferDataFlavors "+patch.driverNum);
+//         ErrorMsg.reportStatus("getTransferDataFlavors "+patch.driverNum);
         DataFlavor[] df=new DataFlavor[1];
         df[0]= new DataFlavor(patch.getDriver().getClass(),patch.getDriver().toString());
         return df;
     }
 
     public boolean isDataFlavorSupported(java.awt.datatransfer.DataFlavor dataFlavor) {
-//         System.out.println("isDataFlavorSupported "+patch.driverNum);
+//         ErrorMsg.reportStatus("isDataFlavorSupported "+patch.driverNum);
 
         return  dataFlavor.equals(new DataFlavor(patch.getDriver().getClass(),patch.getDriver().toString()));
     }

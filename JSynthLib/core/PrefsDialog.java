@@ -88,7 +88,7 @@ public class PrefsDialog extends JDialog {
 
 	    jtp.addChangeListener (new ChangeListener () {
 		    public void stateChanged (ChangeEvent e) {
-			//System.out.println ("Tab changed: "+((JTabbedPane)e.getSource ()).getSelectedIndex ());
+			//ErrorMsg.reportStatus ("Tab changed: "+((JTabbedPane)e.getSource ()).getSelectedIndex ());
 		    }
 		});
 	    contents = jtp;

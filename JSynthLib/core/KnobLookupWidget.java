@@ -68,6 +68,6 @@ public class KnobLookupWidget extends KnobWidget {
 	t.setToolTipText(mValueLabels[oValue]);
 	t.setValueAsString(mValueLabels[oValue]);
 	sendSysex(oValue);
-	//System.out.println("value = "+(oValue + mBase));
+	//ErrorMsg.reportStatus("value = "+(oValue + mBase));
     }
 }

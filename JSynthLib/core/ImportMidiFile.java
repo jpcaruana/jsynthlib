@@ -12,11 +12,11 @@ import javax.sound.midi.*;
  */
 
 public class ImportMidiFile {
-    
+
     static boolean doImport(java.io.File file) throws java.io.IOException {
         Sequence seq;
         Track[] tr;
-        
+
         try {
             seq=MidiSystem.getSequence(file);
         }catch (Exception ex) {
@@ -24,13 +24,13 @@ public class ImportMidiFile {
             return false;
         }
         tr=seq.getTracks();
-        //System.out.println("Track Count "+tr.length);
-        
+        //ErrorMsg.reportStatus("Track Count "+tr.length);
+
         for (int j=0;j<tr.length;j++) {
-            // System.out.println("Track "+j+":size "+tr[j].size());
+            //ErrorMsg.reportStatus("Track "+j+":size "+tr[j].size());
             for (int i=0;i<tr[j].size();i++) {
                 if (tr[j].get(i).getMessage() instanceof SysexMessage) {
-                    // System.out.println("Track "+j+" Event "+i+" SYSEX!!");
+                    //ErrorMsg.reportStatus("Track "+j+" Event "+i+" SYSEX!!");
                     Patch q=new Patch(tr[j].get(i).getMessage().getMessage());
                     Patch[] patarray=q.dissect();
                     for (int k=0;k<patarray.length;k++) {
@@ -40,6 +40,6 @@ public class ImportMidiFile {
         }
         }
         return true;
-        
+
     }
 }

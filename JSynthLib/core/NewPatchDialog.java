@@ -58,7 +58,7 @@ public class NewPatchDialog extends JDialog
 			break;
 		    } catch (Exception ex) {
 			// Simply do nothing....
-			// System.out.println(ex.toString());
+			// ErrorMsg.reportStatus(ex.toString());
 		    }
 		}
 	    }

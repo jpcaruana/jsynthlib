@@ -41,7 +41,7 @@ public class SceneTableCellEditor implements TableCellEditor, TableModelListener
     }
     
     public Object getCellEditorValue() {
-        //        System.out.println("getCellEditorValue "+box.getSelectedItem());
+//         ErrorMsg.reportStatus("getCellEditorValue "+box.getSelectedItem());
         return new Integer(box.getSelectedIndex());
     }
     public boolean stopCellEditing() {
@@ -76,7 +76,7 @@ public class SceneTableCellEditor implements TableCellEditor, TableModelListener
             row = table.rowAtPoint(e.getPoint());
             col=table.columnAtPoint(e.getPoint());
         }
-        //    System.out.println("selectEditor "+ row);
+        //    ErrorMsg.reportStatus("selectEditor "+ row);
         if ((row!=oldrow)||(col!=oldcol)) {
             oldrow=row;
             oldcol=col;

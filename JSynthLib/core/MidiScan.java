@@ -159,17 +159,15 @@ public class MidiScan extends Thread {
 		responseString.append("0");
 	    responseString.append(Integer.toHexString(0xff  & answerData[k]));
 	}
-	//  System.out.println ("ResponseString "+responseString);
+	//  ErrorMsg.reportStatus ("ResponseString "+responseString);
 	boolean found = false;
 	Enumeration synthisenum = PatchEdit.devConfig.IDStrings();
 	// synthisenum.reset();
 	while (synthisenum.hasMoreElements()) {
 	    String se = (String) synthisenum.nextElement();
-	    // System.out.println ("Checking "+se.getManufacturerName ()
+	    // ErrorMsg.reportStatus ("Checking "+se.getManufacturerName ()
 	    //+" "+se.getModelName ());
 	    if (checkInquiry(responseString, se)) {
-		// System.out.print ("  Found!: ");
-		// System.out.println (se.getManufacturerName ()+" "+se.getModelName ());
 		// Check, wether the driver is already in the list
 		boolean dontadd = false;
 		for (int checkloop = 0; checkloop < PatchEdit.appConfig.deviceCount(); checkloop++) {

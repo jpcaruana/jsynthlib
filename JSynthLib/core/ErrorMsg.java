@@ -2,9 +2,11 @@ package core;
 import javax.swing.*;
 
 /**
- * This class handles error conditions and debug messages. It shows
- * error message dialogs to the user and can also log debug
- * information if a flag is set.<p>
+ * This class handles error or warning conditions and debug
+ * messages. {@link #reportWarning reportWarning} and {@link
+ * #reportError reportError} methods show warning/error message
+ * dialogs to the users.  {@link #reportStatus reportStatus} methods
+ * show debug information to console if a flag is set.<p>
  *
  * The Meaning for the <code>debug</code> variable flag is: (Each
  * number does all of preceding as well.)<p>
@@ -14,6 +16,11 @@ import javax.swing.*;
  * 2 = Print Debug Status Messages & Error Messages
  * 3 = Print Stack Trace for all for non-exception Errors
  * </pre>
+ *
+ * In general <code>System.out.print</code> or
+ * <code>System.out.println</code> should not be used. An example of
+ * the exception is <code>main</code> method for debugging.
+ *
  * @author ???
  * @version $Id$
  */

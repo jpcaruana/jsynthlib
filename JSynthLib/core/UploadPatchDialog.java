@@ -155,7 +155,7 @@ public class UploadPatchDialog extends JDialog {
 		String filestr=new String (sysex,"ISO-8859-1");
 		mime += makeMime("file",filestr);
 	    } catch (Exception e) {
-		System.out.println("UploadPatchDialog encoding failed.");
+		ErrorMsg.reportStatus("UploadPatchDialog encoding failed.");
 	    }
 	    mime += mimeBoundary();
 	    mime += makeMime("username",userName);
@@ -167,7 +167,7 @@ public class UploadPatchDialog extends JDialog {
 	    mime += makeMime("send","Upload");
 	    mime += mimeBoundary();
 	    mime += "\r\n\r\n";
-	    // System.out.println(mime);
+	    // ErrorMsg.reportStatus(mime);
 	    if (postData(repository,mime)==1)
 		setVisible(false);
 	}
@@ -198,7 +198,7 @@ public class UploadPatchDialog extends JDialog {
 	    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	    String str;
 	    while (( str = in.readLine()) != null) {
-		//     System.out.println("Server: "+str);
+		//ErrorMsg.reportStatus("Server: "+str);
 
 		if (str.indexOf("<h2")>-1) {
 		    int st = str.indexOf(">");

@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.*;
 public abstract class PatchTransferHandler extends TransferHandler {
-    public static final DataFlavor PATCH_FLAVOR = 
+    public static final DataFlavor PATCH_FLAVOR =
 	new DataFlavor(Patch[].class, "Patch Array");
     public static final DataFlavor TEXT_FLAVOR =
 	new DataFlavor("application/x-java-serialized-object; class=java.lang.String","string");
@@ -15,7 +15,7 @@ public abstract class PatchTransferHandler extends TransferHandler {
 
     protected abstract Patch getSelectedPatch(JComponent c);
     protected abstract boolean storePatch(Patch p, JComponent c);
-		
+
     protected Transferable createTransferable(JComponent c) {
 
 	Patch p = getSelectedPatch(c);
@@ -24,42 +24,42 @@ public abstract class PatchTransferHandler extends TransferHandler {
 
 	return new PatchTransferable(p);
     }
-		
+
     public int getSourceActions(JComponent c) {
 	return COPY;
     }
-		
+
     public boolean importData(JComponent c, Transferable t){
 	if (canImport(c, t.getTransferDataFlavors())) {
 	    try {
 		Patch p = (Patch)t.getTransferData(PATCH_FLAVOR);
-		
+
 		if (p != null)
 		    return storePatch(p, c);
 	    } catch (UnsupportedFlavorException ufe) {
 	    } catch (Exception ioe) {
 	    }
-     	
+
 	    try{
 		String s = (String)t.getTransferData(TEXT_FLAVOR);
 		Patch p = getPatchFromUrl(s);
-		if (p!=null) 
+		if (p!=null)
 		    return storePatch(p,c);
-	    
+
 	    } catch (UnsupportedFlavorException ufe) {
 	    } catch (IOException ioe) {
 	    }
 	}
-	// Let user know we tried to paste.  
+	// Let user know we tried to paste.
    	Toolkit.getDefaultToolkit().beep();
 	return false;
     }
-    
+
     public Patch getPatchFromUrl(String s)
     {
 
 	try {
-	    System.out.println("S = " + s);
+	    ErrorMsg.reportStatus("S = " + s);
 	    URL u = new URL(s);
 	    InputStream in = u.openStream();
 	    int b; int i=0;
@@ -80,9 +80,9 @@ public abstract class PatchTransferHandler extends TransferHandler {
 	    Patch p = new Patch(sysex);
 	    return p;
 
-	}catch (MalformedURLException e) {System.out.println("Malformed URL");}
-	catch (IOException ioe) {System.out.println("Network I/O Error");}
-	
+	}catch (MalformedURLException e) {ErrorMsg.reportStatus("Malformed URL");}
+	catch (IOException ioe) {ErrorMsg.reportStatus("Network I/O Error");}
+
 
 
 	return null;
@@ -90,8 +90,8 @@ public abstract class PatchTransferHandler extends TransferHandler {
 
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
 	for (int i = 0; i < flavors.length; i++) {
-	   //System.out.println(flavors[i].getMimeType());
-	   //System.out.println(TEXT_FLAVOR.getMimeType());
+	   //ErrorMsg.reportStatus(flavors[i].getMimeType());
+	   //ErrorMsg.reportStatus(TEXT_FLAVOR.getMimeType());
 	   if (PATCH_FLAVOR.match(flavors[i])) {
 		return true;
 	    }

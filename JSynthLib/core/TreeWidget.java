@@ -116,11 +116,11 @@ public class TreeWidget extends SysexWidget {
 
 	if (node != null && node.isLeaf()) {
 	    /*
-	      ErrorMsg.reportStatus("TreeSelectionLister: "
-	      + e.getPath());
-	      int[] tmp = getIndices(e.getPath());
-	      for (int i = 0; i < tmp.length; i++)
-	      System.out.println(tmp[i]);
+	    ErrorMsg.reportStatus("TreeSelectionLister: "
+				  + e.getPath());
+	    int[] tmp = getIndices(e.getPath());
+	    for (int i = 0; i < tmp.length; i++)
+		ErrorMsg.reportStatus(tmp[i]);
 	    */
 	    sendSysex(treeNodes.getValue(getIndices(e.getPath())));
 	} else {

@@ -72,7 +72,7 @@ class SceneListModel extends javax.swing.table.AbstractTableModel implements Abs
      }
 
      public void setValueAt(Object value, int row, int col) {
-         //System.out.println("SetValue at "+row+"  "+col+" Value:"+value);
+         //ErrorMsg.reportStatus("SetValue at "+row+"  "+col+" Value:"+value);
          changed=true;
          Scene myScene=(Scene)sceneList.get(row);
          if (col==0) {

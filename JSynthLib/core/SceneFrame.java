@@ -298,7 +298,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                //System.out.println ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
+                //ErrorMsg.reportStatus ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
                 if (((ListSelectionModel)e.getSource()).getMaxSelectionIndex()>=0) {
                     PatchEdit.extractAction.setEnabled(true);
                     PatchEdit.sendAction.setEnabled(true);
@@ -361,7 +361,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             // There is still something unprocessed in the file
             Patch firstpat=new Patch(buffer,offset);
             offset+=firstpat.sysex.length;
-            //System.out.println("Buffer length:"+ buffer.length+" Patch Lenght: "+firstpat.sysex.length);
+            //ErrorMsg.reportStatus("Buffer length:"+ buffer.length+" Patch Lenght: "+firstpat.sysex.length);
             Patch[] patarray=firstpat.dissect();
 
             if (patarray.length>1) { // Conversion was sucessfull, we have at least one converted patch
@@ -538,7 +538,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
      */
     void sendScene() {
         int i,bankNum,patchNum;
-        //     System.out.println("Transfering Scene");
+        //     ErrorMsg.reportStatus("Transfering Scene");
         for (i=0;i<myModel.sceneList.size();i++) {
             bankNum=((Scene)(myModel.sceneList.get(i))).getBankNumber();
             patchNum=((Scene)(myModel.sceneList.get(i))).getPatchNumber();

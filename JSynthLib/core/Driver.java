@@ -559,10 +559,10 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
 		compareString.append(sysexID.charAt(i));
             }
         }
-// 	System.out.println(toString());
-// 	System.out.println("Comp.String: " + compareString);
-// 	System.out.println("DriverString:" + driverString);
-// 	System.out.println("PatchString: " + patchString);
+// 	ErrorMsg.reportStatus(toString());
+// 	ErrorMsg.reportStatus("Comp.String: " + compareString);
+// 	ErrorMsg.reportStatus("DriverString:" + driverString);
+// 	ErrorMsg.reportStatus("PatchString: " + patchString);
         return (compareString.toString().equalsIgnoreCase
 		(patchString.toString().substring(0, sysexID.length())));
     }

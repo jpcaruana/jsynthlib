@@ -298,7 +298,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
         {
             public void valueChanged(ListSelectionEvent e)
             {
-                //System.out.println ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
+                //ErrorMsg.reportStatus ("ValueChanged"+((ListSelectionModel)e.getSource ()).getMaxSelectionIndex ());
                 if (((ListSelectionModel)e.getSource()).getMaxSelectionIndex()>=0)
                 {
                     PatchEdit.extractAction.setEnabled(true);
@@ -366,7 +366,7 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
             // There is still something unprocessed in the file
             Patch firstpat=new Patch(buffer,offset);
             offset+=firstpat.sysex.length;
-            System.out.println("Buffer length:"+ buffer.length+" Patch Lenght: "+firstpat.sysex.length);
+            ErrorMsg.reportStatus("Buffer length:"+ buffer.length+" Patch Lenght: "+firstpat.sysex.length);
 	    Patch[] patarray=firstpat.dissect();
 
 	    if (patarray.length>1) {

@@ -361,12 +361,12 @@ public class Patch extends Object
     }
 
     public boolean isDataFlavorSupported(final DataFlavor p1) {
-        // System.out.println("isDataFlavorSupported "+driverNum);
+        // ErrorMsg.reportStatus("isDataFlavorSupported "+driverNum);
         return p1.match(PatchTransferHandler.PATCH_FLAVOR);
     }
 
     public DataFlavor[] getTransferDataFlavors() {
-        // System.out.println("getTransferDataFlavors "+driverNum);
+        // ErrorMsg.reportStatus("getTransferDataFlavors "+driverNum);
         DataFlavor[] df = { PatchTransferHandler.PATCH_FLAVOR };
         return df;
     }
