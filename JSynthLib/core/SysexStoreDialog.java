@@ -21,20 +21,19 @@ import javax.swing.*;
 public class SysexStoreDialog extends JDialog {
 
   //===== Instance variables
-  private boolean driverMatched=false;
-  private Driver driver;
-  private Device device;
-  private int bankNum;
+//   private Driver driver;
+//   private Device device;
+//   private int bankNum;
+  private int driverNum;
   private int patchNum;
   private Patch p;
   private StringBuffer patchString;
 
-  JLabel myLabel;
-
-  JComboBox deviceComboBox;
-  JComboBox driverComboBox;
-  JComboBox bankComboBox;
-  JComboBox patchNumComboBox;
+  private JLabel myLabel;
+  private JComboBox deviceComboBox;
+  private JComboBox driverComboBox;
+  private JComboBox bankComboBox;
+  private JComboBox patchNumComboBox;
 
  /**
   * Constructor with standard default patchNumber=0
@@ -67,27 +66,26 @@ public class SysexStoreDialog extends JDialog {
     //----- Create the combo boxes
     driverComboBox = new JComboBox();
     driverComboBox.addActionListener(new DriverActionListener());
-
     deviceComboBox = new JComboBox();
     deviceComboBox.addActionListener(new DeviceActionListener());
-
     bankComboBox = new JComboBox();
-
     patchNumComboBox = new JComboBox();
 
     //----- Populate the combo boxes only with devices, which supports the patch
+    boolean driverMatched = false;
     for (int i=0, n=0;i<PatchEdit.appConfig.deviceCount();i++)
     {
-      device=(Device)PatchEdit.appConfig.getDevice(i);
+      Device device=(Device)PatchEdit.appConfig.getDevice(i);
 
       for (int j=0, m=0;j<device.driverList.size();j++)
       {
-	if ( ((Driver)device.driverList.get(j)).supportsPatch(patchString,p) )
+	Driver driver = (Driver) device.driverList.get(j);
+	if (driver.supportsPatch(patchString, p))
 	{
           deviceComboBox.addItem(device);
 	  driverMatched=true;
 
-	  if (i == p.deviceNum && j == p.driverNum)
+	  if (p.getDriver() == driver)
 	  {
             deviceComboBox.setSelectedIndex(n);
             driverComboBox.setSelectedIndex(m);
@@ -145,10 +143,12 @@ public class SysexStoreDialog extends JDialog {
     pack();
     centerDialog();
 
-    if (driverMatched==true)	this.show();
+    if (driverMatched)
+      this.show();
     else
     {
-      JOptionPane.showMessageDialog(null, "Oops, No driver was found, which support this patch! Nothing will happen", "Error while storing a patch", JOptionPane.WARNING_MESSAGE);
+      JOptionPane.showMessageDialog(null, "Oops, No driver was found, which support this patch! Nothing will happen",
+				    "Error while storing a patch", JOptionPane.WARNING_MESSAGE);
       dispose();
     }
   }
@@ -170,11 +170,10 @@ public class SysexStoreDialog extends JDialog {
   class StoreActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 
-      device   = (Device)deviceComboBox.getSelectedItem();
-      driver   = (Driver)driverComboBox.getSelectedItem();
-      bankNum  = bankComboBox.getSelectedIndex();
-      patchNum = patchNumComboBox.getSelectedIndex();
-
+//       Device device   = (Device)deviceComboBox.getSelectedItem();
+      Driver driver   = (Driver)driverComboBox.getSelectedItem();
+      int bankNum  = bankComboBox.getSelectedIndex();
+      int patchNum = patchNumComboBox.getSelectedIndex();
       driver.storePatch(p, bankNum, patchNum);
 
       setVisible(false);
@@ -188,22 +187,21 @@ public class SysexStoreDialog extends JDialog {
   */
   class DeviceActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-
-      device = (Device)deviceComboBox.getSelectedItem();
       driverComboBox.removeAllItems();
-      bankComboBox.removeAllItems();
-      patchNumComboBox.removeAllItems();
+//       bankComboBox.removeAllItems();
+//       patchNumComboBox.removeAllItems();
 
+      Device device = (Device)deviceComboBox.getSelectedItem();
       if (device != null)
       {
         for (int j=0;j<device.driverList.size ();j++)
         {
-          if ( !(Converter.class.isInstance (device.driverList.get (j))) &&
-		( ((Driver)device.driverList.get(j)).supportsPatch(patchString,p)) )
+	  Driver driver = (Driver) device.driverList.get(j);
+          if (!(Converter.class.isInstance(driver))
+	      && driver.supportsPatch(patchString, p))
               driverComboBox.addItem (device.getDriver(j));
         }
       }
-
       driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
     }
   }
@@ -215,7 +213,7 @@ public class SysexStoreDialog extends JDialog {
   class DriverActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 
-      driver = (Driver)driverComboBox.getSelectedItem();
+      Driver driver = (Driver)driverComboBox.getSelectedItem();
       bankComboBox.removeAllItems();
       patchNumComboBox.removeAllItems();
 

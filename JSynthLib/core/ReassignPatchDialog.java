@@ -23,20 +23,15 @@ import javax.swing.*;
 public class ReassignPatchDialog extends JDialog {
 
   //===== Instance variables
-  private boolean driverMatched=false;
-  private Driver driver;
-  private Device device;
-  private int deviceNum;
   private int driverNum;
   private Patch p;
   private StringBuffer patchString;
 
   private ArrayList deviceAssignmentList = new ArrayList();
 
-  JLabel myLabel;
-
-  JComboBox deviceComboBox;
-  JComboBox driverComboBox;
+  private JLabel myLabel;
+  private JComboBox deviceComboBox;
+  private JComboBox driverComboBox;
 
  /**
   * Constructor
@@ -54,21 +49,17 @@ public class ReassignPatchDialog extends JDialog {
     dialogPanel.add(myLabel, BorderLayout.NORTH);
 
     //=================================== Combo Panel ==================================
-    //----- Create the combo boxes
-    deviceComboBox = new JComboBox();
-    deviceComboBox.addActionListener(new DeviceActionListener());
-
-    driverComboBox = new JComboBox();
-
-    boolean newDevice=true;
+    int deviceNum = 0;
+    int nDriver = 0;		// number of matched driver
     //----- First Populate the Device/Driver List with Device/Driver. which supports the patch
     for (int i=0, n=0; i<PatchEdit.appConfig.deviceCount();i++)
     {
-      device=(Device)PatchEdit.appConfig.getDevice(i);
-
+      Device device = PatchEdit.appConfig.getDevice(i);
+      boolean newDevice = true;
       for (int j=0, m=0; j<device.driverList.size();j++)
       {
-	if ( (driver=(Driver)device.driverList.get(j)).supportsPatch(patchString,p) )
+	Driver driver = (Driver) device.driverList.get(j);
+	if (driver.supportsPatch(patchString, p))
 	{
 	  if (newDevice)	// only one entry for each supporting device
 	  {
@@ -78,17 +69,21 @@ public class ReassignPatchDialog extends JDialog {
 	  }
 	  ((deviceAssignment)deviceAssignmentList.get(n-1)).add(j, driver);	// the original driverNum/driver
 
-	  if ( i == p.deviceNum && j == p.driverNum)	// default is patch internal deviceNum & driverNum
+	  if (p.getDriver() == driver) // default is patch internal deviceNum & driverNum
 	  {
 	    deviceNum = n-1;
             driverNum = m;
           }
-	  driverMatched=true;	// Hipp, Hipp, Hurra - at least one driver was found
+	  nDriver++;
           m++;
         }
-	newDevice = true;
-      }
-    }
+      }	// driver loop
+    } // device loop
+
+    //----- Create the combo boxes
+    deviceComboBox = new JComboBox();
+    deviceComboBox.addActionListener(new DeviceActionListener());
+    driverComboBox = new JComboBox();
 
     //----- Populate the combo boxes with the entries of the deviceAssignmentList
     for (int i=0; i<deviceAssignmentList.size();i++)
@@ -96,6 +91,7 @@ public class ReassignPatchDialog extends JDialog {
       deviceComboBox.addItem( deviceAssignmentList.get(i) );
     }
     deviceComboBox.setSelectedIndex(deviceNum);		// This was the original device
+    deviceComboBox.setEnabled(deviceComboBox.getItemCount() > 1);
 
     //----- Layout the labels in a panel.
     JPanel labelPanel = new JPanel(new GridLayout(0, 1, 5, 5));
@@ -107,7 +103,7 @@ public class ReassignPatchDialog extends JDialog {
     fieldPanel.add(deviceComboBox);
     fieldPanel.add(driverComboBox);
 
-   //----- Create the comboPanel, labels on left, fields on right
+    //----- Create the comboPanel, labels on left, fields on right
     JPanel comboPanel = new JPanel(new BorderLayout());
     comboPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
     comboPanel.add(labelPanel, BorderLayout.CENTER);
@@ -141,15 +137,14 @@ public class ReassignPatchDialog extends JDialog {
     centerDialog();
 
     // show() or not to show(), that's the question!
-    if (driverMatched==true)
+    if (nDriver > 1)
     {
-      if (deviceComboBox.getItemCount()>1)
-	this.show();
-      else
-      {
-        JOptionPane.showMessageDialog(null, "Only one driver was found, which support this patch! Nothing will happen", "Error while reassigning a patch", JOptionPane.INFORMATION_MESSAGE);
-	dispose();
-      }
+      this.show();
+    }
+    else if (nDriver == 1)
+    {
+      JOptionPane.showMessageDialog(null, "Only one driver was found, which support this patch! Nothing will happen", "Error while reassigning a patch", JOptionPane.INFORMATION_MESSAGE);
+      dispose();
     }
     else
     {
@@ -175,8 +170,8 @@ public class ReassignPatchDialog extends JDialog {
   class ReassignActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 
-      p.deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDeviceNum();
-      p.driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).getDriverNum();
+      p.setDriver(((driverAssignment) driverComboBox.getSelectedItem()).getDriver());
+      driverNum = driverComboBox.getSelectedIndex();
 
       setVisible(false);
       dispose();
@@ -191,7 +186,7 @@ public class ReassignPatchDialog extends JDialog {
     public void actionPerformed (ActionEvent evt) {
 
       deviceAssignment myDevAssign = (deviceAssignment)deviceComboBox.getSelectedItem();
-      driverAssignment myDrvAssign;
+//       driverAssignment myDrvAssign;
 
       driverComboBox.removeAllItems();
 
@@ -200,7 +195,7 @@ public class ReassignPatchDialog extends JDialog {
 	ArrayList driverAssignmentList = myDevAssign.getDriverAssignmentList();
         for (int j=0;j<driverAssignmentList.size ();j++)
         {
-	  myDrvAssign = (driverAssignment)driverAssignmentList.get(j);
+	  driverAssignment myDrvAssign = (driverAssignment)driverAssignmentList.get(j);
 
           if ( !(Converter.class.isInstance (myDrvAssign.getDriver()) ) &&
 	       ( myDrvAssign.getDriver().supportsPatch(patchString,p)) )  
@@ -208,10 +203,8 @@ public class ReassignPatchDialog extends JDialog {
         }
       }
       driverComboBox.setSelectedIndex(driverNum);	// the original driver is the default
-
       driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
     }
   }
-
 } 
 

@@ -34,25 +34,25 @@ import java.io.*;
 public class SysexGetDialog extends JDialog {
 
   //===== Instance variables
-  int sysexSize = 0;
-  protected Driver driver;
-  protected Device device;
-  protected int deviceNum;
-  protected int driverNum;
-  protected int bankNum;
-  protected int patchNum;
+  private int sysexSize = 0;
+  private Driver driver;
+//   protected Device device;
+//   protected int deviceNum;
+//   protected int driverNum;
+//   private int bankNum;
+//   private int patchNum;
 
-  static byte[] buffer = new byte[256*1024];                     // N.B. WireMidiWrapper ignores MaxSize parameter of readMessage
-  static byte [] sysex = new byte [256*1024];
+  private static byte[] buffer = new byte[256*1024]; // N.B. WireMidiWrapper ignores MaxSize parameter of readMessage
+  private static byte[] sysex  = new byte[256*1024];
 
-  javax.swing.Timer timer;
+  private javax.swing.Timer timer;
 
-  JLabel myLabel;
+  private JLabel myLabel;
 
-  JComboBox deviceComboBox;
-  JComboBox driverComboBox;
-  JComboBox bankComboBox;
-  JComboBox patchNumComboBox;
+  private JComboBox deviceComboBox;
+  private JComboBox driverComboBox;
+  private JComboBox bankComboBox;
+  private JComboBox patchNumComboBox;
   private ArrayList deviceAssignmentList = new ArrayList();
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -82,26 +82,29 @@ public class SysexGetDialog extends JDialog {
     patchNumComboBox = new JComboBox();
 
     //----- First Populate the Device/Driver List with all Device/Driver combinations except converters
-       for (int i=0;i<PatchEdit.appConfig.deviceCount();i++)
-            {
-      device=(Device)PatchEdit.appConfig.getDevice(i);
-      deviceAssignmentList.add(new deviceAssignment( i, device) );        // the original deviceNum/device
+    // skip 0 (Generic Device)
+    for (int i=1;i<PatchEdit.appConfig.deviceCount();i++)
+    {
+      Device device=PatchEdit.appConfig.getDevice(i);
+      deviceAssignmentList.add(new deviceAssignment(i, device)); // the original deviceNum/device
 
       for (int j=0;j<device.driverList.size();j++)
       {
+	Driver driver = (Driver) device.driverList.get(j);
         // Skipping a converter
-        if (!(Converter.class.isInstance(driver=(Driver)device.driverList.get(j))))
+        if (!(Converter.class.isInstance(driver)))
         {
-          ((deviceAssignment)deviceAssignmentList.get(i)).add(j, driver);     // the original driverNum/driver
+          ((deviceAssignment)deviceAssignmentList.get(i - 1)).add(j, driver); // the original driverNum/driver
         }
       }
     }
 
     //----- Populate the combo boxes with the entries of the deviceAssignmentList
+    // skip Generic Device.
     for (int i=0; i<deviceAssignmentList.size();i++)
     {
         deviceComboBox.addItem( deviceAssignmentList.get(i) );
-      }
+    }
 
     //----- Layout the labels in a panel.
     JPanel labelPanel = new JPanel(new GridLayout(0, 1, 5, 5));
@@ -188,75 +191,75 @@ public class SysexGetDialog extends JDialog {
       return;
 
     byte[] patchSysex;
-       if (sysex[0]==-16) //F0
-    {  patchSysex= new byte[sysexSize];
-       System.arraycopy(sysex, 0, patchSysex, 0, sysexSize);
-    } else
-     {
-     int i=0;
-      while ((sysex[i]!=-16) && (i<sysexSize)) i++;
-      if (i==sysexSize) return;
-      patchSysex= new byte[sysexSize-i];
-      System.arraycopy(sysex, i, patchSysex, 0, sysexSize-i);
-     }
+    if (sysex[0]==-16) { //F0
+	patchSysex= new byte[sysexSize];
+	System.arraycopy(sysex, 0, patchSysex, 0, sysexSize);
+    } else {
+	int i=0;
+	while ((sysex[i]!=-16) && (i<sysexSize))
+	    i++;
+	if (i==sysexSize)
+	    return;
+	patchSysex= new byte[sysexSize-i];
+	System.arraycopy(sysex, i, patchSysex, 0, sysexSize-i);
+    }
 
-    Patch p = new Patch(patchSysex, deviceNum, driverNum );
+//  Patch p = new Patch(patchSysex, deviceNum, driverNum );
+    Patch p = new Patch(patchSysex, driver);
 
     Patch[] patarray = p.dissect();
     for (int k = 0; k < patarray.length; k++) {
-      PatchEdit.Clipboard = patarray[k];
-      StringBuffer patchString = PatchEdit.Clipboard.getPatchHeader();
+      Patch pk = patarray[k];
+      PatchEdit.Clipboard = pk;	// for PastePatch()
+      StringBuffer patchString = pk.getPatchHeader();
 
       // Maybe you don't get the expected patch!
       // Check all devices/drivers again!
-      if ( !(PatchEdit.Clipboard.getDriver().supportsPatch(patchString,PatchEdit.Clipboard)) )
+      if (!(pk.getDriver().supportsPatch(patchString,pk)))
       {
-	boolean firstRun=true;
 	boolean foundDriver=false;
 
-	// first check the requested device
 	testforDriver:
-	for ( int i =PatchEdit.Clipboard.deviceNum;i<PatchEdit.appConfig.deviceCount (); i++)
+	for (int i = 0; i < PatchEdit.appConfig.deviceCount(); i++)
         {
-          device=(Device)PatchEdit.appConfig.getDevice(i);
-
+	  // first check the requested device.
+	  // then starting index '1'. (index 0 is 'generic driver')
+          Device device = (i == 0) ? pk.getDevice() : PatchEdit.appConfig.getDevice(i);
           for (int j=0;j<device.driverList.size();j++)
           {
-            if ( ((Driver)device.driverList.get(j)).supportsPatch(patchString,PatchEdit.Clipboard) )
+	    Driver driver = (Driver) device.driverList.get(j);
+            if (driver.supportsPatch(patchString,pk))
             {
-	      PatchEdit.Clipboard.deviceNum=i;
-	      PatchEdit.Clipboard.driverNum=j;
-	      PatchEdit.getDriver(i,j).trimSysex(PatchEdit.Clipboard);
+	      // driver found
+	      pk.setDriver(driver);
+	      driver.trimSysex(pk);
 	      foundDriver=true;
               break testforDriver;
             }
           }
-	  if (firstRun)
-	  {
-	    i=0;
-	    firstRun=false;
-	  }
 	}
 
         if (foundDriver)
 	{
 	  JOptionPane.showMessageDialog (null,
-		"You requested a "+PatchEdit.getDriver(deviceNum,driverNum).getDriverName()+"patch!"+
-		"\nBut you got a "+PatchEdit.Clipboard.getDriver().getDriverName()+"patch.",
+// 		"You requested a "+PatchEdit.getDriver(deviceNum,driverNum).getDriverName()+"patch!"+
+ 		"You requested a "+driver.getDriverName()+"patch!"+
+		"\nBut you got a "+pk.getDriver().getDriverName()+"patch.",
 		"Warning", JOptionPane.WARNING_MESSAGE);
 	}
 	else
 	{
-	  PatchEdit.Clipboard.deviceNum=0;	//reset
-	  PatchEdit.Clipboard.driverNum=0;	//reset
-	  PatchEdit.Clipboard.setComment("Probably a "
-					 + LookupManufacturer.get(PatchEdit.Clipboard.sysex[1],
-								  PatchEdit.Clipboard.sysex[2],
-								  PatchEdit.Clipboard.sysex[3])
-					 + " Patch, Size: " + PatchEdit.Clipboard.sysex.length);
+	  // driver not found
+	  pk.setDriver(null); //reset
+	  pk.setComment("Probably a "
+			+ LookupManufacturer.get(pk.sysex[1],
+						 pk.sysex[2],
+						 pk.sysex[3])
+			+ " Patch, Size: " + pk.sysex.length);
 	  JOptionPane.showMessageDialog (null,
-		"You requested a "+((Driver)PatchEdit.getDriver(deviceNum,driverNum)).getDriverName()+"patch!"+
-		"\nBut you got a not supported patch!\n"+PatchEdit.Clipboard.getComment(),
+// 		"You requested a "+((Driver)PatchEdit.getDriver(deviceNum,driverNum)).getDriverName()+"patch!"+
+		"You requested a "+driver.getDriverName()+"patch!"+
+		"\nBut you got a not supported patch!\n"+pk.getComment(),
 		"Warning", JOptionPane.WARNING_MESSAGE);
 	}
       }
@@ -266,7 +269,7 @@ public class SysexGetDialog extends JDialog {
       } catch (Exception ex) {
         JOptionPane.showMessageDialog (null, "Library to Receive into must be the focused Window.","Error", JOptionPane.ERROR_MESSAGE);
       }
-    }
+    } // end of k loop
   }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -289,14 +292,12 @@ public class SysexGetDialog extends JDialog {
    public class DeviceActionListener implements ActionListener {
      public void actionPerformed (ActionEvent evt) {
  //      ErrorMsg.reportStatus("DeviceActionListener->actionPerformed");
-
-      deviceAssignment myDevAssign = (deviceAssignment)deviceComboBox.getSelectedItem();
-
        driverComboBox.removeAllItems();
        bankComboBox.removeAllItems();
        patchNumComboBox.removeAllItems();
 
-      if (myDevAssign != null)
+       deviceAssignment myDevAssign = (deviceAssignment)deviceComboBox.getSelectedItem();
+       if (myDevAssign != null)
        {
 	 ArrayList driverAssignmentList = myDevAssign.getDriverAssignmentList();
 	 for (int j=0;j<driverAssignmentList.size ();j++)
@@ -304,12 +305,9 @@ public class SysexGetDialog extends JDialog {
 	   driverComboBox.addItem( (driverAssignment)driverAssignmentList.get(j) );
          }
        }
-
        driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
      }
    } // End InnerClass: DeviceActionListener
-
-
 
 //----------------------------------------------------------------------------------------------------------------------
 // InnerClass: DriverActionListener
@@ -318,30 +316,27 @@ public class SysexGetDialog extends JDialog {
   public class DriverActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 //      ErrorMsg.reportStatus("DriverActionListener->actionPerformed");
-
-      driverAssignment myDrvAssign = (driverAssignment)driverComboBox.getSelectedItem();
-
       bankComboBox.removeAllItems();
       patchNumComboBox.removeAllItems();
 
+      driverAssignment myDrvAssign = (driverAssignment)driverComboBox.getSelectedItem();
       if (myDrvAssign != null) {
-          if (myDrvAssign.getDriver().bankNumbers.length > 1) {
-              for (int i = 0 ; i < myDrvAssign.getDriver().bankNumbers.length ; i++) {
-                  bankComboBox.addItem(myDrvAssign.getDriver().bankNumbers[i]);
+	  Driver driver = myDrvAssign.getDriver();
+          if (driver.bankNumbers.length > 1) {
+              for (int i = 0 ; i < driver.bankNumbers.length ; i++) {
+                  bankComboBox.addItem(driver.bankNumbers[i]);
               }
           }
-
-
-          if (myDrvAssign.getDriver().patchNumbers.length > 1) {
-              for (int i = 0 ; i < myDrvAssign.getDriver().patchNumbers.length ; i++) {
-                  patchNumComboBox.addItem(myDrvAssign.getDriver().patchNumbers[i]);
-              }
-          }
-
-
           bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
+
+          if (driver.patchNumbers.length > 1) {
+              for (int i = 0 ; i < driver.patchNumbers.length ; i++) {
+                  patchNumComboBox.addItem(driver.patchNumbers[i]);
+              }
+          }
           // N.B. Do not enable patch selection for banks
-          patchNumComboBox.setEnabled(!(myDrvAssign.getDriver() instanceof BankDriver) && patchNumComboBox.getItemCount() > 1);
+          patchNumComboBox.setEnabled(!(driver instanceof BankDriver)
+				      && patchNumComboBox.getItemCount() > 1);
       }
     }
   } // End InnerClass: DriverActionListener
@@ -365,12 +360,12 @@ public class SysexGetDialog extends JDialog {
 
   public class GetActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-      device    = (Device) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDevice();
+//       device    = (Device) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDevice();
       driver    = (Driver) ((driverAssignment)driverComboBox.getSelectedItem()).getDriver();
-      deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDeviceNum();
-      driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).getDriverNum();
-      bankNum = bankComboBox.getSelectedIndex();
-      patchNum = patchNumComboBox.getSelectedIndex();
+//       deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDeviceNum();
+//       driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).getDriverNum();
+      int bankNum = bankComboBox.getSelectedIndex();
+      int patchNum = patchNumComboBox.getSelectedIndex();
       int inPort = driver.getInPort();
 
       ErrorMsg.reportStatus("");

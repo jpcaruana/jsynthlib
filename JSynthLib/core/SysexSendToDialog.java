@@ -21,16 +21,15 @@ import javax.swing.*;
 public class SysexSendToDialog extends JDialog {
 
   //===== Instance variables
-  private boolean driverMatched=false;
-  private Driver driver;
-  private Device device;
+//   private boolean driverMatched=false;
+//   private Driver driver;
+//   private Device device;
   private Patch p;
   private StringBuffer patchString;
 
-  JLabel myLabel;
-
-  JComboBox deviceComboBox;
-  JComboBox driverComboBox;
+  private JLabel myLabel;
+  private JComboBox deviceComboBox;
+  private JComboBox driverComboBox;
 
  /**
   * Constructor
@@ -55,19 +54,20 @@ public class SysexSendToDialog extends JDialog {
     driverComboBox = new JComboBox();
 
     //----- Populate the combo boxes only with devices, which supports the patch
+    Driver driver = null;
     for (int i=0, n=0;i<PatchEdit.appConfig.deviceCount();i++)
     {
-      device=(Device)PatchEdit.appConfig.getDevice(i);
-
-      for (int j=0, m=0;j<device.driverList.size();j++)
+      Device device = (Device) PatchEdit.appConfig.getDevice(i);
+      for (int j=0, m=0; j < device.driverList.size(); j++)
       {
-	if ( ((Driver)device.driverList.get(j)).supportsPatch(patchString,p) )
+	Driver drv = (Driver) device.driverList.get(j);
+	if (drv.supportsPatch(patchString, p))
 	{
+	  driver = drv;
           deviceComboBox.addItem(device);
-	  driverComboBox.addItem( driver=(Driver)device.driverList.get(j) );
-	  driverMatched=true;
+	  driverComboBox.addItem(drv);
 
-	  if (i == p.deviceNum && j == p.driverNum)	// default is patch internal deviceNum & driverNum
+	  if (p.getDriver() == drv) // default is patch internal deviceNum & driverNum
 	  {
             deviceComboBox.setSelectedIndex(n);
             driverComboBox.setSelectedIndex(m);
@@ -122,7 +122,7 @@ public class SysexSendToDialog extends JDialog {
     centerDialog();
 
     // show() or not to show(), that's the question!
-    if (driverMatched==true)
+    if (driver != null)
     {
       if (deviceComboBox.getItemCount()>1 ||
           driverComboBox.getItemCount()>1 )
@@ -157,8 +157,8 @@ public class SysexSendToDialog extends JDialog {
   class SendToActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 
-      device   = (Device)deviceComboBox.getSelectedItem();
-      driver   = (Driver)driverComboBox.getSelectedItem();
+//    Device device = (Device)deviceComboBox.getSelectedItem();
+      Driver driver = (Driver)driverComboBox.getSelectedItem();
 
       driver.sendPatch(p);
 
@@ -174,7 +174,7 @@ public class SysexSendToDialog extends JDialog {
   class DeviceActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 
-      device = (Device)deviceComboBox.getSelectedItem();
+      Device device = (Device)deviceComboBox.getSelectedItem();
       driverComboBox.removeAllItems();
 
       if (device != null)
