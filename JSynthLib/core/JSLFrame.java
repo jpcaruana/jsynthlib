@@ -340,6 +340,9 @@ public class JSLFrame {
 		    requestFocus();
 		}
 	    }
+	    // deiconified
+	    if (b && isIcon())
+	        setExtendedState(getExtendedState() & ~ICONIFIED);
 	    super.setVisible(b);
 	}
 	private void showState(String s) {
