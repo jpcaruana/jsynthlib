@@ -239,6 +239,9 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	    //for (int j = 0; j < core.PatchEdit.MidiIn.getNumInputDevices (); j++)
 	    //	cb4.addItem (j + ": " + core.PatchEdit.MidiIn.getInputDeviceName (j));
 	} catch (Exception e) {
+            ErrorMsg.reportError("Error",
+				 "FaderBoxConfigPanel.resetComboBox: " + e
+				 + "\ncurrentDriver: " + currentDriver);
 	}
 	enabledBox.setEnabled(currentDriver.isReady());
 	setContainerEnabled(faderPanel,enabledBox.isEnabled() && enabledBox.isSelected());
