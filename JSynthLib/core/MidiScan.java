@@ -55,8 +55,14 @@ public class MidiScan extends  Thread {
         String report = new String();
 
         try {
-            maxin = PatchEdit.MidiIn.getNumInputDevices();
-            maxout = PatchEdit.MidiOut.getNumOutputDevices();
+            if (PatchEdit.newMidiAPI) {
+                maxin=MidiUtil.getInputMidiDeviceInfo().length;
+                maxout=MidiUtil.getOutputMidiDeviceInfo().length;
+            }
+            else {
+                maxin = PatchEdit.MidiOut.getNumInputDevices();
+                maxout = PatchEdit.MidiOut.getNumOutputDevices();
+            }
             // System.out.println ("Iterating "+maxin+" Inputs and "+maxout+" Outputs");
         } catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
@@ -89,10 +95,15 @@ public class MidiScan extends  Thread {
 		    idData[2] = channel; // Set the transmit channel
 
 		    try {
-			for (int i = 0; i < maxin; i++)
-			    PatchEdit.MidiIn.clearMidiInBuffer(i);
-
-			PatchEdit.MidiOut.writeLongMessage(j, idData);
+			for (int i = 0; i < maxin; i++)               
+                if (PatchEdit.newMidiAPI) {
+                    MidiUtil.clearSysexInputQueue(i);
+                    MidiUtil.send(MidiUtil.getReceiver(j), MidiUtil.byteArrayToSysexMessages(idData)[0]);
+                }
+                else {
+                    PatchEdit.MidiIn.clearMidiInBuffer(i);
+                    PatchEdit.MidiOut.writeLongMessage(j, idData);
+                }
 			sleep(WAITFORRESPONSE);
 			for (int i = 0; i < maxin; i++) { // For all Inputs
 			    ErrorMsg.reportStatus("    in port : " + i);
@@ -107,17 +118,26 @@ public class MidiScan extends  Thread {
 			      sysexSize+=msgsize;
 			      }
 			    */
-			    if (PatchEdit.MidiIn.messagesWaiting(i) == 0)
+                
+			    if (!PatchEdit.newMidiAPI && (PatchEdit.MidiIn.messagesWaiting(i) == 0))
+				continue;
+                
+			    if (PatchEdit.newMidiAPI && (MidiUtil.isSysexInputQueueEmpty(i)))
 				continue;
 
 			    ErrorMsg.reportStatus("    Message Received");
 			    SysexMessage msg;
-			    try {
-				// 				msg = (SysexMessage) inarray[i].readMessage(i, 10);
-				msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(i, 10);
-			    } catch (MidiWrapper.TimeoutException e) {
-				continue;
-			    }
+			   try {
+                   // 				msg = (SysexMessage) inarray[i].readMessage(i, 10);
+                   if (PatchEdit.newMidiAPI) {
+                       msg=(SysexMessage) MidiUtil.getMessage(i,10);
+                   }
+                   else {
+                       msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(i, 10);
+                   }
+               } catch (MidiWrapper.TimeoutException e) {
+                   continue;
+               }
 			    int sysexSize = msg.getLength();
 			    byte [] answerData = msg.getMessage();
 			    if (sysexSize > 0) {
