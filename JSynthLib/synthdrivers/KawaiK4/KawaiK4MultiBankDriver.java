@@ -6,7 +6,7 @@ import javax.swing.*;
 /** Driver for Kawai K4 Multi Bank
  *
  * @author Gerrit Gehnen
- * @version $Id§
+ * @version $Id$
  */
 
 public class KawaiK4MultiBankDriver extends BankDriver
