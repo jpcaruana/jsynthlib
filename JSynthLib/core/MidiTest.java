@@ -107,7 +107,8 @@ public class MidiTest implements Runnable {
 			midiDriver.send(outport,msg);
 
 			try {
-				MidiMessage inmsg = midiDriver.readMessage(inport);
+				// 1 sec =~ 4KB sysex data
+				MidiMessage inmsg = midiDriver.readMessage(inport, 1000);
 				if (areEqual(msg,inmsg)) {
 					return;
 				} else {
