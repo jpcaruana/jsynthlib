@@ -28,9 +28,7 @@ import javax.swing.table.TableColumn;
 
 public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
-    protected IPatch bankData;
-    /** bank driver. */
-    protected IBankDriver bankDriver;
+    protected IBankPatch bankData;
     /** This BankEditorFrame instance. */
     protected final BankEditorFrame instance; // accessed by YamahaFS1RBankEditor
     /** A table model. */
@@ -50,31 +48,30 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
      *
      * @param p a <code>Patch</code> value
      */
-    protected BankEditorFrame(IPatch p) {
-        super(p.getDevice().getModelName() + " "
-	      + p.getDriver().getPatchType()
-	      + " Window",
+    protected BankEditorFrame(IBankPatch p) {
+        super(p.getDevice().getModelName() + " " + p.getType() + " Window",
 	      true, //resizable
 	      true, //closable
 	      true, //maximizable
 	      true); // iconifiable
         instance = this;
 	bankData = p;
-        bankDriver = (IBankDriver) p.getDriver();
         initBankEditorFrame();
     }
 
     /** Initialize the bank editor frame. */
     protected void initBankEditorFrame() {
         //...Create the GUI and put it in the window...
-        myModel = new PatchGridModel(bankData, bankDriver);
+        myModel = new PatchGridModel(bankData);
         table = new JTable(myModel);
         table2 = table;
 	table.setTransferHandler(pth);
 	table.setDragEnabled(true);
 	// Only one patch can be handled.
 	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
+	// Select index (0, 0) to ensure a patch is selected.
+	table.changeSelection(0, 0, false, false);
+	table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
         //table.setRowSelectionAllowed(true);
         //table.setColumnSelectionAllowed(true);
 	table.setCellSelectionEnabled(true);
@@ -115,6 +112,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 		public void JSLFrameActivated(JSLFrameEvent e) {
 		    Actions.setEnabled(false,
 				       Actions.EN_GET
+				       | Actions.EN_EXTRACT
 				       // not available yet!
 				       | Actions.EN_SEND_TO
 				       | Actions.EN_REASSIGN);
@@ -164,7 +162,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	moveToDefaultLocation();
     }
 
-    private boolean checkSelected() {
+    private boolean checkSelected() { // should return true always
         if ((table.getSelectedRowCount() == 0) || (table.getSelectedColumnCount() == 0)) {
 	    ErrorMsg.reportError("Error", "No patch is selected");
 	    return false;
@@ -173,8 +171,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     private int getPatchNum(int row, int col) {
-        return col * bankDriver.getNumPatches() / bankDriver.getNumColumns()
-                + row;
+        return col * bankData.getNumPatches() / bankData.getNumColumns() + row;
     }
 
     private int getSelectedPatchNum() {
@@ -191,7 +188,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         fileIn.read(buffer);
         fileIn.close();
         IPatch p = (DriverUtil.createPatch(buffer));
-        bankDriver.checkAndPutPatch(bankData, p, getSelectedPatchNum());
+        bankData.put(p, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
 
@@ -208,7 +205,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     public void deleteSelectedPatch() {
         if (!checkSelected()) return;
-        bankDriver.deletePatch(bankData, getSelectedPatchNum());
+        bankData.delete(getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
 
@@ -219,18 +216,18 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public IPatch getSelectedPatch() {
-        return bankDriver.getPatch(bankData, getSelectedPatchNum());
+        return bankData.get(getSelectedPatchNum());
     }
 
     public void sendSelectedPatch() {
         if (!checkSelected()) return;
-        IPatch p = getSelectedPatch();
+	// A Bank Patch consists from Single Patches. 
+        ISinglePatch p = (ISinglePatch) getSelectedPatch();
         if (p == null) {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        if (p.getDriver().isSingleDriver())
-            p.send();
+        p.send();
     }
 
     public void sendToSelectedPatch() {
@@ -240,17 +237,15 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void playSelectedPatch() {
-        if (!checkSelected()) 
-            return;
-        IPatch p = getSelectedPatch();
+        if (!checkSelected()) return;
+	// A Bank Patch consists from Single Patches. 
+        ISinglePatch p = (ISinglePatch) getSelectedPatch();
         if (p == null) {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        if (p.getDriver().isSingleDriver()) {
-            p.send();
-            p.play();
-        }
+        p.send();
+        p.play();
     }
 
     public void storeSelectedPatch() {
@@ -260,7 +255,6 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        //p.getDriver().choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com
         new SysexStoreDialog(p, getSelectedPatchNum());
     }
 
@@ -292,7 +286,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
     void revalidateDriver() {
         bankData.setDriver();
-        if (bankData.getDriver().isNullDriver()) {
+        if (bankData.hasNullDriver()) {
             try {
                 setClosed(true);
             } catch (PropertyVetoException e) {
@@ -311,13 +305,11 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 			   Actions.EN_SORT
 			   | Actions.EN_DELETE_DUPLICATES);
 
-	// Why don't we select select at relase one item?
-	Actions.setEnabled(table.getSelectedRowCount() > 0,
+	Actions.setEnabled(table.getSelectedRowCount() > 0, // should be true
 			   Actions.EN_COPY
 			   | Actions.EN_CUT
 			   | Actions.EN_DELETE
 			   | Actions.EN_EXPORT
-			   | Actions.EN_EXTRACT
 			   | Actions.EN_PLAY
 			   | Actions.EN_SEND
 			   | Actions.EN_STORE);
@@ -325,8 +317,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	// All entries are of the same type, so we can check the first one....
 	IPatch myPatch = myModel.getPatchAt(0, 0);
 	Actions.setEnabled(table.getSelectedRowCount() > 0
-			   && myPatch.getDriver().hasEditor(),
-			   Actions.EN_EDIT);
+                && myPatch.hasEditor(), Actions.EN_EDIT);
     }
 
     // Enable pasting
@@ -354,22 +345,20 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     class PatchGridModel extends AbstractTableModel {
-        private IPatch bankData;
-        private IBankDriver bankDriver;
+        private IBankPatch bankData;
 
-	PatchGridModel (IPatch p,IBankDriver d) {
+	PatchGridModel(IBankPatch p) {
 	    super();
 	    ErrorMsg.reportStatus("PatchGridModel");
-	    bankData=p;
-	    bankDriver=d;
+	    bankData = p;
 	}
 
 	public int getColumnCount () {
-	    return bankDriver.getNumColumns();
+	    return bankData.getNumColumns();
 	}
 
 	public int getRowCount () {
-	    return bankDriver.getNumPatches()/bankDriver.getNumColumns();
+	    return bankData.getNumPatches()/bankData.getNumColumns();
 	}
 
 	public String getColumnName (int col) {
@@ -377,9 +366,9 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	}
 
 	public Object getValueAt (int row, int col) {
-	    String patchNumbers[] = bankDriver.getPatchNumbers();
+	    String[] patchNumbers = bankData.getDriver().getPatchNumbers();
 	    int i = getPatchNum(row, col);
-	    return (patchNumbers[i] + " " + bankDriver.getPatchName(bankData, i));
+	    return (patchNumbers[i] + " " + bankData.getName(i));
 	}
 
 	public Class getColumnClass (int c) {
@@ -395,19 +384,19 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 
 	public void setValueAt (Object value, int row, int col) {
 	    int patchNum = getPatchNum(row, col);
-	    String[] patchNumbers = bankDriver.getPatchNumbers();
-	    bankDriver.setPatchName(bankData, patchNum,
-				    ((String) value).substring((patchNumbers[patchNum] + " ").length()));
+	    String[] patchNumbers = bankData.getDriver().getPatchNumbers();
+	    bankData.setName(patchNum,
+	            ((String) value).substring((patchNumbers[patchNum] + " ").length()));
 	    //----- End phil@muqus.com
 	    fireTableCellUpdated (row, col);
 	}
 
 	IPatch getPatchAt(int row, int col) {
-	    return bankDriver.getPatch(bankData, getPatchNum(row, col));
+	    return bankData.get(getPatchNum(row, col));
 	}
 
 	void setPatchAt(IPatch p, int row, int col) {
-	    bankDriver.checkAndPutPatch(bankData, p, getPatchNum(row, col));
+	    bankData.put(p, getPatchNum(row, col));
 	    fireTableCellUpdated (row, col);
 	}
 

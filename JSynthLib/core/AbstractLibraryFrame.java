@@ -286,8 +286,8 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     }
 
     public void sendSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        if (myPatch.getDriver().isSingleDriver()) {
+        ISinglePatch myPatch = (ISinglePatch) myModel.getPatchAt(table.getSelectedRow());
+        if (myPatch.isSinglePatch()) {
             myPatch.send();
         }
     }
@@ -304,8 +304,8 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     }
 
     public void playSelectedPatch() {
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        if (myPatch.getDriver().isSingleDriver()) {
+        ISinglePatch myPatch = (ISinglePatch) myModel.getPatchAt(table.getSelectedRow());
+        if (myPatch.isSinglePatch()) {
             myPatch.send();
             myPatch.play();
         }
@@ -352,11 +352,12 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return;
         }
-        IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        IBankDriver myDriver = (IBankDriver) myPatch.getDriver();
-        for (int i = 0; i < myDriver.getNumPatches(); i++)
-            if (myDriver.getPatch(myPatch, i) != null)
-                myModel.addPatch(myDriver.getPatch(myPatch, i));
+        IBankPatch myPatch = (IBankPatch) myModel.getPatchAt(table.getSelectedRow());
+        for (int i = 0; i < myPatch.getNumPatches(); i++){
+            ISinglePatch p = myPatch.get(i);
+            if (p != null)
+                myModel.addPatch(p);
+        }
         myModel.fireTableDataChanged();
         changed = true;
         //statusBar.setText(myModel.getRowCount() + " Patches");
@@ -407,7 +408,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
 
     private void chooseDriver(IPatch patch) {
         patch.setDriver();
-        if (patch.getDriver().isNullDriver()) {
+        if (patch.hasNullDriver()) {
             // Unkown patch, try to guess at least the manufacturer
             patch.setComment("Probably a "
                     + patch.lookupManufacturer()

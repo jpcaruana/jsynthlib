@@ -33,7 +33,7 @@ public class UploadPatchDialog extends JDialog {
 
 	String patchType;
 	PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-	IPatch q	= library.getSelectedPatch();
+	IPatch q = library.getSelectedPatch();
 
 	JPanel container= new JPanel();
 	container.setLayout (new BorderLayout());
@@ -46,9 +46,8 @@ public class UploadPatchDialog extends JDialog {
 	t2.setText(q.getName());
 	t1.setEditable(false);
 
-	patchType= q.getDriver().getDevice().getManufacturerName();
-	patchType+=" ";
-	patchType+=q.getDriver().getDevice().getModelName();
+	patchType = q.getDriver().getDevice().getManufacturerName() + " "
+                + q.getDriver().getDevice().getModelName();
 	t1.setText(patchType);
 
 	JLabel l4 = new JLabel("Repository:");
@@ -224,16 +223,18 @@ public class UploadPatchDialog extends JDialog {
 	return "-----------------------------18042893838469308861681692777\r\n";
     }
 
-    void play() {
-	try{
-	    PatchBasket library=(PatchBasket)JSLDesktop.getSelectedFrame();
-	    IPatch p = library.getSelectedPatch();
-	    if (p != null && p.getDriver().isSingleDriver()) {
-	        p.send();
-	        p.play();
-	    }
-	} catch (Exception ex) {
-	    JOptionPane.showMessageDialog(null, "Patch Must be Focused","Error", JOptionPane.ERROR_MESSAGE);
-	}
+    private void play() {
+        PatchBasket library = (PatchBasket) JSLDesktop.getSelectedFrame();
+        IPatch p = library.getSelectedPatch();
+        if (p == null) {
+            JOptionPane.showMessageDialog(null, "Patch Must be Selected",
+                    "Warning", JOptionPane.WARNING_MESSAGE);
+        } else if (p.isBankPatch()) {
+            JOptionPane.showMessageDialog(null, "Cannot play a Bank Patch",
+                    "Warning", JOptionPane.WARNING_MESSAGE);
+        } else {
+            ((ISinglePatch) p).send();
+            ((ISinglePatch) p).play();
+        }
     }
 }

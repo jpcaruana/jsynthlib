@@ -35,7 +35,7 @@ import javax.sound.midi.InvalidMidiDataException;
  * @version $Id$
  * @see Patch
  */
-abstract public class Driver implements ISingleDriver {
+abstract public class Driver implements IPatchDriver {
     /**
      * Which device does this driver go with?
      */
@@ -174,8 +174,9 @@ abstract public class Driver implements ISingleDriver {
     public Driver() {
     }
     */
-
+    //
     // IDriver interface methods
+    //
     public final String getPatchType() {
 	return patchType;
     }
@@ -227,12 +228,24 @@ abstract public class Driver implements ISingleDriver {
 		(patchString.substring(0, sysexID.length())));
     }
 
-    public IPatch createPatch(byte[] sysex) {
-        return new Patch(sysex, this);
+    // These are not 'final' because BankDriver and Converter class override
+    // them.
+    // Synth drivers should not override these.
+    public boolean isSingleDriver() {
+        return true;
+    }
+
+    public boolean isBankDriver() {
+        return false;
+    }
+
+    public boolean isConverter() {
+        return false;
     }
     // end of IDriver interface methods
-
+    //
     // IPatchDriver interface methods
+    //
     public int getPatchSize() {
 	return patchSize;
     }
@@ -272,9 +285,14 @@ abstract public class Driver implements ISingleDriver {
      * Create a new Patch. Don't override this unless your driver properly
      * implement this method.
      * @see IPatchDriver#createPatch()
+     * @see #createPatch()
      */
     protected Patch createNewPatch() { // overridden by subclass
 	return null;
+    }
+
+    public IPatch createPatch(byte[] sysex) {
+        return new Patch(sysex, this);
     }
 
     public IPatch[] createPatches(SysexMessage[] msgs) {
@@ -296,7 +314,9 @@ abstract public class Driver implements ISingleDriver {
     }
 
     /**
-     * Look for a proper driver and trim the patch
+     * Look for a proper driver and trim the patch.
+     * @see #createPatches(SysexMessage[])
+     * @see IPatchDriver#createPatches(SysexMessage[])
      */
     private IPatch fixPatch(Patch pk, String patchString) {
         byte[] sysex = pk.getByteArray();
@@ -343,6 +363,8 @@ abstract public class Driver implements ISingleDriver {
      * so it reqires explicit activation with the trimSize variable.
      * @param patch the patch, which should be trimmed to the right size
      * @return the size of the (modified) patch
+     * @see #fixPatch(Patch, String)
+     * @see IPatchDriver#createPatches(SysexMessage[])
      */
     protected int trimSysex(Patch patch) { // no driver overrides this now.
         if (trimSize > 0 && patch.sysex.length > trimSize
@@ -354,9 +376,255 @@ abstract public class Driver implements ISingleDriver {
         return patch.sysex.length; // == trimSize
     }
 
-    public final byte[] export(IPatch patch) {
-        calculateChecksum((Patch) patch);
-        return ((Patch) patch).sysex;
+    /**
+     * Request the synth to send a patch dump. If <code>sysexRequestDump</code>
+     * is not <code>null</code>, a request dump message is sent. Otherwise a
+     * dialog window will prompt users.
+     * @see IPatchDriver#requestPatchDump(int, int)
+     * @see SysexHandler
+     */
+    public void requestPatchDump(int bankNum, int patchNum) {
+	//clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
+	setBankNum(bankNum);
+	setPatchNum(patchNum);
+	if (sysexRequestDump == null) {
+	    JOptionPane.showMessageDialog
+		(PatchEdit.getInstance(),
+		 "The " + toString()
+		 + " driver does not support patch getting.\n\n"
+		 + "Please start the patch dump manually...",
+		 "Get Patch", JOptionPane.WARNING_MESSAGE);
+	} else
+	    send(sysexRequestDump.toSysexMessage(getDeviceID(),
+						 new SysexHandler.NameValue("bankNum", bankNum),
+						 new SysexHandler.NameValue("patchNum", patchNum)));
+    }
+
+    // MIDI in/out mothods to encapsulate lower MIDI layer
+    public final void send(MidiMessage msg) {
+	device.send(msg);
+    }
+
+    public String toString() {
+	return getManufacturerName() + " " + getModelName() + " "
+	    + getPatchType();
+    }
+
+    public void sendParameter(IPatch patch, SysexWidget.IParameter param) {
+        // Subclasses of Driver should use SysexSenders, no this.
+    }
+    // end of IPatchDriver interface methods
+    //
+    // mothods for Patch class
+    //
+    /**
+     * Gets the name of the patch from the sysex. If the patch uses
+     * some weird format or encoding, this needs to be overidden in
+     * the particular driver.
+     * @see Patch#getName()
+     */
+    protected String getPatchName(Patch p) {
+        if (patchNameSize == 0)
+	    return ("-");
+        try {
+ 	    return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
+	} catch (UnsupportedEncodingException ex) {
+	    return "-";
+	}
+    }
+
+    /**
+     * Set the name of the patch in the sysex. If the patch uses some
+     * weird format or encoding, this needs to be overidden in the
+     * particular driver.
+     * @see Patch#setName(String)
+     */
+    protected void setPatchName(Patch p, String name) {
+        if (patchNameSize == 0) {
+	    ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Name Editing.");
+	    return;
+	}
+
+	while (name.length() < patchNameSize)
+		name = name + " ";
+
+        byte[] namebytes = new byte[patchNameSize];
+        try {
+	    namebytes = name.getBytes("US-ASCII");
+	    for (int i = 0; i < patchNameSize; i++)
+		((Patch)p).sysex[patchNameStart + i] = namebytes[i];
+	} catch (UnsupportedEncodingException ex) {
+	    return;
+	}
+    }
+
+    /**
+     * Sends a patch to a set location on a synth.<p>
+     * Override this if required.
+     * @see Patch#send(int, int)
+     */
+    protected void storePatch(Patch p, int bankNum, int patchNum) {
+        setBankNum(bankNum);
+        setPatchNum(patchNum);
+        sendPatch(p);
+    }
+
+    /**
+     * Send Program Change MIDI message. 
+     * @see #storePatch(Patch, int, int)
+     */
+    protected void setPatchNum(int patchNum) {
+        try {
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, getChannel() - 1,
+			   patchNum, 0); // Program Number
+	    send(msg);
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+    }
+
+    /**
+     * Send Control Change (Bank Select) MIDI message.
+     * @see #storePatch(Patch, int, int)
+     */
+    protected void setBankNum(int bankNum) {
+        try {
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
+			   0x00, //  Bank Select (MSB)
+			   bankNum / 128); // Bank Number (MSB)
+	    send(msg);
+	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
+			   0x20, //  Bank Select (LSB)
+			   bankNum % 128); // Bank Number (MSB)
+	    send(msg);
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+    }
+
+    /**
+     * @see Patch#hasEditor()
+     */
+    boolean hasEditor() {
+        try {
+            getClass().getDeclaredMethod("editPatch",
+                    new Class[] { Patch.class });
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Override this if your driver implement Patch Editor.  Don't
+     * override this otherwise.
+     * @see Patch#edit()
+     */
+    protected JSLFrame editPatch(Patch p) {
+	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
+	return null;
+    }
+
+    //
+    // methods for ISinglePatch
+    //
+    /**
+     * Sends a patch to the synth's edit buffer.<p>
+     *
+     * Override this in the subclass if parameters or warnings need to
+     * be sent to the user (aka if the particular synth does not have
+     * a edit buffer or it is not MIDI accessable).
+     * @see Patch#send()
+     * @see ISinglePatch#send()
+     */
+    protected void sendPatch(Patch p) {
+	sendPatchWorker(p);
+    }
+
+    /**
+     * Set Device ID and send the sysex data to MIDI output.
+     * @see #sendPatch(Patch)
+     */
+    protected final void sendPatchWorker(Patch p) {
+        if (deviceIDoffset > 0)
+	    ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
+
+        send(((Patch)p).sysex);
+    }
+
+    /**
+     * Play note.
+     * plays a MIDI file or a single note depending which preference is set.
+     * Currently the MIDI sequencer support isn't implemented!
+     * @see Patch#play()
+     * @see ISinglePatch#play()
+     */
+    protected void playPatch(Patch p) {
+	if (AppConfig.getSequencerEnable())
+            playSequence();
+        else
+            playNote();
+    }
+
+    private void playNote() {
+        try {
+// 	    sendPatch(p);
+	    Thread.sleep(100);
+	    ShortMessage msg = new ShortMessage();
+	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
+			   AppConfig.getNote(),
+			   AppConfig.getVelocity());
+	    send(msg);
+
+	    Thread.sleep(AppConfig.getDelay());
+
+	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
+			   AppConfig.getNote(),
+			   0);	// expecting running status
+	    send(msg);
+	} catch (Exception e) {
+	    ErrorMsg.reportStatus(e);
+	}
+    }
+
+    private void playSequence() {
+	MidiUtil.startSequencer(getDevice().getPort());
+    }
+    // end of ISinglePatch methods
+
+    //
+    // Driver class utility methods
+    //
+    /** Return the name of manufacturer of synth. */
+    protected final String getManufacturerName() {
+	return device.getManufacturerName();
+    }
+
+    /** Return the name of model of synth. */
+    protected final String getModelName() {
+	return device.getModelName();
+    }
+
+    /** Return the personal name of the synth. */
+    protected final String getSynthName() {
+	return device.getSynthName();
+    }
+
+    /** Return MIDI devide ID. */
+    public final int getDeviceID() {
+	return device.getDeviceID();
+    }
+
+    /** Return MIDI channel number. */
+    public final int getChannel() {
+        return device.getChannel();
+    }
+
+    /** Getter of patchNameSize. */
+    public int getPatchNameSize() {
+        return patchNameSize;
     }
 
     /**
@@ -396,105 +664,6 @@ abstract public class Driver implements ISingleDriver {
 	DriverUtil.calculateChecksum(patch.sysex, start, end, offset);
     }
 
-    public final void send(IPatch myPatch, int bankNum, int patchNum) {
-        calculateChecksum((Patch) myPatch);
-        storePatch((Patch) myPatch, bankNum, patchNum);
-    }
-
-    /**
-     * Sends a patch to a set location on a synth.<p>
-     * Override this if required.
-     * @see IPatchDriver#send(IPatch, int, int)
-     */
-    protected void storePatch(Patch p, int bankNum, int patchNum) {
-        setBankNum(bankNum);
-        setPatchNum(patchNum);
-        sendPatch(p);
-    }
-
-    /**
-     * Request the synth to send a patch dump. If <code>sysexRequestDump</code>
-     * is not <code>null</code>, a request dump message is sent. Otherwise a
-     * dialog window will prompt users.
-     *
-     * @see SysexHandler
-     */
-    public void requestPatchDump(int bankNum, int patchNum) {
-	//clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
-	setBankNum(bankNum);
-	setPatchNum(patchNum);
-	if (sysexRequestDump == null) {
-	    JOptionPane.showMessageDialog
-		(PatchEdit.getInstance(),
-		 "The " + toString()
-		 + " driver does not support patch getting.\n\n"
-		 + "Please start the patch dump manually...",
-		 "Get Patch", JOptionPane.WARNING_MESSAGE);
-	} else
-	    send(sysexRequestDump.toSysexMessage(getDeviceID(),
-						 new SysexHandler.NameValue("bankNum", bankNum),
-						 new SysexHandler.NameValue("patchNum", patchNum)));
-    }
-
-    /** Send Program Change MIDI message. */
-    protected void setPatchNum(int patchNum) {
-        try {
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.PROGRAM_CHANGE, getChannel() - 1,
-			   patchNum, 0); // Program Number
-	    send(msg);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	}
-    }
-
-    /** Send Control Change (Bank Select) MIDI message. */
-    protected void setBankNum(int bankNum) {
-        try {
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
-			   0x00, //  Bank Select (MSB)
-			   bankNum / 128); // Bank Number (MSB)
-	    send(msg);
-	    msg.setMessage(ShortMessage.CONTROL_CHANGE, getChannel() - 1,
-			   0x20, //  Bank Select (LSB)
-			   bankNum % 128); // Bank Number (MSB)
-	    send(msg);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	}
-    }
-
-    public boolean hasEditor() {
-        try {
-            getClass().getDeclaredMethod("editPatch",
-                    new Class[] { Patch.class });
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-    }
-
-    public final JSLFrame edit(IPatch p) {
-        return editPatch((Patch) p);
-    }
-
-    /**
-     * Override this if your driver implement Patch Editor.  Don't
-     * override this otherwise.
-     * @see IPatchDriver#edit(IPatch)
-     */
-    protected JSLFrame editPatch(Patch p) {
-	ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Editing.");
-	return null;
-    }
-
-    // MIDI in/out mothods to encapsulate lower MIDI layer
-    /** Send MidiMessage to MIDI outport. */
-    public final void send(MidiMessage msg) {
-	device.send(msg);
-    }
-
     /**
      * Send Sysex byte array data to MIDI outport.
      * 
@@ -528,185 +697,6 @@ abstract public class Driver implements ISingleDriver {
 	send(status, d1, 0);
     }
 
-    public void sendParameter(IPatch patch, SysexWidget.IParameter param) {
-        // Subclasses of Driver should use SysexSenders, no this.
-    }
-
-    public String toString() {
-	return getManufacturerName() + " " + getModelName() + " "
-	    + getPatchType();
-    }
-
-    public final boolean isNullDriver() {
-        return this == AppConfig.getNullDriver();
-    }
-    // end of IPatchDriver methods
-
-    // ISingleDriver methods
-    public final void play(IPatch p) {
-        playPatch((Patch) p);
-    }
-
-    protected void playPatch(Patch p) {
-	playPatch();
-    }
-
-    /**
-     * Play note.
-     * plays a MIDI file or a single note depending which preference is set.
-     * Currently the MIDI sequencer support isn't implemented!
-     * @see ISingleDriver#play(IPatch)
-     */
-    protected void playPatch() {
-	if (AppConfig.getSequencerEnable())
-            playSequence();
-        else
-            playNote();
-    }
-
-    private void playNote() {
-        try {
-// 	    sendPatch(p);
-	    Thread.sleep(100);
-	    ShortMessage msg = new ShortMessage();
-	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
-			   AppConfig.getNote(),
-			   AppConfig.getVelocity());
-	    send(msg);
-
-	    Thread.sleep(AppConfig.getDelay());
-
-	    msg.setMessage(ShortMessage.NOTE_ON, getChannel() - 1,
-			   AppConfig.getNote(),
-			   0);	// expecting running status
-	    send(msg);
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
-    }
-
-    private void playSequence() {
-	MidiUtil.startSequencer(getDevice().getPort());
-    }
-
-    public final void send(IPatch p) {
-        calculateChecksum((Patch) p);
-        sendPatch((Patch) p);
-    }
-
-    /**
-     * Sends a patch to the synth's edit buffer.<p>
-     *
-     * Override this in the subclass if parameters or warnings need to
-     * be sent to the user (aka if the particular synth does not have
-     * a edit buffer or it is not MIDI accessable).
-     * @see ISingleDriver#send(IPatch)
-     */
-    protected void sendPatch(Patch p) {
-	sendPatchWorker(p);
-    }
-
-    /**
-     * Set Device ID and send the sysex data to MIDI output.
-     */
-    protected final void sendPatchWorker(Patch p) {
-        if (deviceIDoffset > 0)
-	    ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
-
-        send(((Patch)p).sysex);
-    }
-    // end of ISingleDriver methods
-
-    /** Return the name of manufacturer of synth. */
-    protected final String getManufacturerName() {
-	return device.getManufacturerName();
-    }
-
-    /** Return the name of model of synth. */
-    protected final String getModelName() {
-	return device.getModelName();
-    }
-
-    /**
-     *  Return the personal name of the synth.
-     * 
-     * @see Device#setSynthName(String)
-     */
-    protected final String getSynthName() {
-	return device.getSynthName();
-    }
-
-    /** Return MIDI devide ID. */
-    public final int getDeviceID() {
-	return device.getDeviceID();
-    }
-
-    /** Return MIDI channel number. */
-    public final int getChannel() {
-        return device.getChannel();
-    }
-
-    /**
-     * Gets the name of the patch from the sysex. If the patch uses
-     * some weird format or encoding, this needs to be overidden in
-     * the particular driver.
-     * @see Patch#getName(int)
-     */
-    protected String getPatchName(Patch p) { // called by bank driver
-        if (patchNameSize == 0)
-	    return ("-");
-        try {
- 	    return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
-	} catch (UnsupportedEncodingException ex) {
-	    return "-";
-	}
-    }
-
-    /**
-     * Set the name of the patch in the sysex. If the patch uses some
-     * weird format or encoding, this needs to be overidden in the
-     * particular driver.
-     * @see Patch#setName(int, String)
-     */
-    protected void setPatchName(Patch p, String name) { // called by bank driver
-        if (patchNameSize == 0) {
-	    ErrorMsg.reportError("Error", "The Driver for this patch does not support Patch Name Editing.");
-	    return;
-	}
-
-	while (name.length() < patchNameSize)
-		name = name + " ";
-
-        byte[] namebytes = new byte[patchNameSize];
-        try {
-	    namebytes = name.getBytes("US-ASCII");
-	    for (int i = 0; i < patchNameSize; i++)
-		((Patch)p).sysex[patchNameStart + i] = namebytes[i];
-	} catch (UnsupportedEncodingException ex) {
-	    return;
-	}
-    }
-
-    /** Getter of patchNameSize. */
-    public int getPatchNameSize() {
-        return patchNameSize;
-    }
-
-    // These are not 'final' because BankDriver and Converter class override
-    // them.
-    // Synth drivers should not override these.
-    public boolean isSingleDriver() {
-        return true;
-    }
-
-    public boolean isBankDriver() {
-        return false;
-    }
-
-    public boolean isConverter() {
-        return false;
-    }
-
     //
     // For debugging.
     //
@@ -716,7 +706,7 @@ abstract public class Driver implements ISingleDriver {
      */
     protected String getFullPatchName(Patch p) {
 	return getManufacturerName() + " | " + getModelName() + " | "
-	    + getPatchType() + " | " + getSynthName() + " | " + getPatchName(p);
+	    + p.getType() + " | " + getSynthName() + " | " + getPatchName(p);
     }
 
     //

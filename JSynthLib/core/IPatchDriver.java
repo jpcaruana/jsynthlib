@@ -9,8 +9,6 @@ import javax.sound.midi.SysexMessage;
  * @author ribrdb
  * @version $Id$
  * @see IDriver
- * @see ISingleDriver
- * @see IBankDriver
  */
 public interface IPatchDriver extends IDriver {
     /**
@@ -78,42 +76,20 @@ public interface IPatchDriver extends IDriver {
     IPatch[] createPatches(SysexMessage[] msgs);
 
     /**
-     * Return sysex byte array of patch.  Checksum must be calculated.
-     * @param patch a <code>IPatch</code> data for this driver.
-     * @return an byte array of Sysex data.
-     */
-    byte[] export(IPatch patch);
-
-    /**
-     * Sends a patch to the specified location on the synth. Checksum must be
-     * calculated by this method.
-     */
-    void send(IPatch myPatch, int bankNum, int patchNum);
-
-    /**
      * Request the synth to send a patch dump.
      */
     void requestPatchDump(int bankNum, int patchNum);
 
     /**
-     * Returns true if a Patch Editor Window is implemented.
-     *
-     * @see #edit
-     */
-    boolean hasEditor();
-
-    /**
-     * Returns a Patch Editor Window for this Patch.
-     *
-     * @see #hasEditor
-     */
-    JSLFrame edit(IPatch p);
-
-    /**
-     * Send a MidiMessage to the MIDI outport for this driver. Checksum must be
-     * calculated by this method.
+     * Send a MidiMessage to the MIDI outport for this driver.
      */
     void send(MidiMessage msg);
+
+    /**
+     * Returns full name for referring to this Driver. Used for labels
+     * by driver selection comboboxes.
+     */
+    String toString();
 
     /**
      * Send a single parameter to the synth.
@@ -121,16 +97,6 @@ public interface IPatchDriver extends IDriver {
      * @param patch Patch containing the data.
      * @param param Description of the parameter.
      */
+    // FIXME Rib, remove this.  (Hiroo)
     void sendParameter(IPatch patch, SysexWidget.IParameter param);
-
-    /**
-     * Check if a driver is null driver (Generic driver).
-     */
-    boolean isNullDriver();
-
-    /**
-     * Returns full name for referring to this Driver. Used for labels
-     * by driver selection comboboxes.
-     */
-    String toString();
 }

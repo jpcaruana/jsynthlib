@@ -213,7 +213,7 @@ public class DevDrvPatchSelector extends JDialog {
                     }
                 }
                 if (driver.isSingleDriver()) {
-                    String[] patchNumbers = getPatchNumbers((ISingleDriver) driver);
+                    String[] patchNumbers = getPatchNumbers(driver);
                     if (patchNumbers.length > 1) {
                         for (int i = 0; i < patchNumbers.length; i++) {
                             patchNumComboBox.addItem(patchNumbers[i]);
@@ -226,7 +226,8 @@ public class DevDrvPatchSelector extends JDialog {
 
             bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
             // N.B. Do not enable patch selection for banks
-            patchNumComboBox.setEnabled(driver.isSingleDriver()
+            patchNumComboBox.setEnabled(driver != null 
+                    && driver.isSingleDriver()
                     && patchNumComboBox.getItemCount() > 1);
         }
     }
@@ -236,7 +237,7 @@ public class DevDrvPatchSelector extends JDialog {
      * to the dialog type (some have patch locations to which you can send but
      * not store)
      */
-    protected String[] getPatchNumbers(ISingleDriver driver)
+    protected String[] getPatchNumbers(IPatchDriver driver)
     {
         return driver.getPatchNumbers();
     }

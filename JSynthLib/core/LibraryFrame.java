@@ -88,8 +88,8 @@ class LibraryFrame extends AbstractLibraryFrame {
                 | Actions.EN_UPLOAD);
 
         Actions.setEnabled(table.getSelectedRowCount() > 0
-                && myModel.getPatchAt(table.getSelectedRow()).getDriver()
-                        .hasEditor(), Actions.EN_EDIT);
+                && myModel.getPatchAt(table.getSelectedRow()).hasEditor(),
+                Actions.EN_EDIT);
     }
 
     void deleteDuplicates() {
@@ -166,7 +166,7 @@ class LibraryFrame extends AbstractLibraryFrame {
                 case SYNTH:
                     return myPatch.getDevice().getSynthName();
                 case TYPE:
-                    return myPatch.getDriver().getPatchType();
+                    return myPatch.getType();
                 case PATCH_NAME:
                     return myPatch.getName();
                 case FIELD1:

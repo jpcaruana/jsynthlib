@@ -7,14 +7,12 @@ package core;
  * @author ribrdb
  * @version $Id$
  * @see IPatchDriver
- * @see ISingleDriver
- * @see IBankDriver
  * @see IConverter
  */
 public interface IDriver {
     /**
      * return type of patch which the driver handles. eg. "Single", "Bank",
-     * "Drumkit", etc.
+     * "Drumkit", "Converter", etc.
      */
     String getPatchType();
 
@@ -42,16 +40,11 @@ public interface IDriver {
 
     /**
      * Returns whether this driver is a Single Driver.
-     * '<code>this instanceof ISingleDriver</code>' does not work, BankDriver and
-     * Converter class extend SingleDriver class which implements ISingleDriver.
-     * @see ISingleDriver
      */
     boolean isSingleDriver();
 
     /**
      * Returns whether this driver is a Bank Driver.
-     * Equivalent with <code>instanceof IBankDriver</code>.
-     * @see IBankDriver
      */
     boolean isBankDriver();
 

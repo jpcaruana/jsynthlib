@@ -119,8 +119,8 @@ public class SortDialog extends JDialog {
             }
             else
             {
-                s1=((IPatch) a1).getDriver().getPatchType();
-                s2=((IPatch) a2).getDriver().getPatchType();
+                s1=((IPatch) a1).getType();
+                s2=((IPatch) a2).getType();
             }
             return s1.compareTo(s2);
         }

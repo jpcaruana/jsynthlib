@@ -35,7 +35,7 @@ public class SysexStoreDialog extends DevDrvPatchSelector {
      * getPatchNumbers is overridden for SystexStoreDialog.
      * Only storable patches are displayed.
      */
-    protected String[] getPatchNumbers(ISingleDriver driver)
+    protected String[] getPatchNumbers(IPatchDriver driver)
     {
         return driver.getPatchNumbersForStore();
     }
@@ -44,10 +44,10 @@ public class SysexStoreDialog extends DevDrvPatchSelector {
      * Makes the actual work after pressing the 'Store' button
      */
     protected void doit() {
-        IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
+        p.setDriver((IPatchDriver) driverComboBox.getSelectedItem());
         int bankNum  = bankComboBox.getSelectedIndex();
         int patchNum = patchNumComboBox.getSelectedIndex();
-        driver.send(p, bankNum, patchNum);
+        p.send(bankNum, patchNum);
 
         setVisible(false);
         dispose();

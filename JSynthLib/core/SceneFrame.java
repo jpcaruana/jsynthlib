@@ -107,8 +107,7 @@ class SceneFrame extends AbstractLibraryFrame {
                 | Actions.EN_UPLOAD);
 
         Actions.setEnabled(table.getSelectedRowCount() > 0
-                && myModel.getPatchAt(table.getSelectedRow()).getDriver()
-                        .hasEditor(), Actions.EN_EDIT);
+                && myModel.getPatchAt(table.getSelectedRow()).hasEditor(), Actions.EN_EDIT);
     }
 
     // begin PatchBasket methods
@@ -172,7 +171,7 @@ class SceneFrame extends AbstractLibraryFrame {
                 case SYNTH:
                     return myPatch.getDevice().getSynthName();
                 case TYPE:
-                    return myPatch.getDriver().getPatchType();
+                    return myPatch.getType();
                 case PATCH_NAME:
                     return myPatch.getName();
                 case BANK_NUM:
@@ -215,7 +214,7 @@ class SceneFrame extends AbstractLibraryFrame {
         public boolean isCellEditable(int row, int col) {
             return (col > PATCH_NAME
                     && !((col == BANK_NUM || col == PATCH_NUM)
-                            && ((Scene) list.get(row)).getPatch().getDriver().isNullDriver()));
+                            && ((Scene) list.get(row)).getPatch().hasNullDriver()));
         }
 
         public void setValueAt(Object value, int row, int col) {

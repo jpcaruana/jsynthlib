@@ -4,16 +4,15 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.SysexMessage;
 
-import core.AppConfig;
 import core.Device;
 import core.ErrorMsg;
 import core.IPatch;
-import core.ISingleDriver;
+import core.IPatchDriver;
 import core.JSLFrame;
 import core.MidiUtil;
 import core.SysexWidget;
 
-public class XMLDriver implements ISingleDriver {
+public class XMLDriver implements IPatchDriver {
     private String authors;
     private XMLPatch base_patch;
 
@@ -207,10 +206,6 @@ public class XMLDriver implements ISingleDriver {
     public final byte[] export(IPatch patch) {
         calculateChecksum(patch);
         return patch.getByteArray();
-    }
-
-    public final boolean isNullDriver() {
-        return this == AppConfig.getNullDriver();
     }
 
     public final boolean isSingleDriver() {

@@ -11,13 +11,13 @@ import java.util.LinkedList;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
 
+import core.AppConfig;
 import core.Device;
 import core.DriverUtil;
 import core.ErrorMsg;
-import core.IBankDriver;
 import core.IPatch;
 import core.IPatchDriver;
-import core.ISingleDriver;
+import core.ISinglePatch;
 import core.JSLFrame;
 import core.LookupManufacturer;
 import core.PatchTransferHandler;
@@ -25,7 +25,7 @@ import core.PatchTransferHandler;
 /**
  * @author ribrdb
  */
-public class XMLPatch implements IPatch {
+public class XMLPatch implements ISinglePatch {
     private byte[][] sysex;
 
     private String date, author, comment;
@@ -61,9 +61,15 @@ public class XMLPatch implements IPatch {
     public int getSize() {
         return size;
     }
+
+    public String getType() {
+        return driver.getPatchType();
+    }
+
     protected void setSize(int size) {
         this.size = size;
     }
+
     public boolean chooseDriver() {
         return false;
     }
@@ -137,6 +143,10 @@ public class XMLPatch implements IPatch {
         }
     }
 
+    public final boolean hasEditor() {
+        return driver.hasEditor();
+    }
+
     public JSLFrame edit() {
         return driver.edit(this);
     }
@@ -146,25 +156,34 @@ public class XMLPatch implements IPatch {
     }
 
     public final byte[] export() {
-        return ((IPatchDriver) driver).export(this);
+        return driver.export(this);
+    }
+
+    public final boolean isSinglePatch() {
+        return true;
+    }
+
+    public final boolean isBankPatch() {
+        return false;
     }
 
     // only for single patch
     public void play() {
-        ((ISingleDriver) driver).play(this);
+        driver.play(this);
     }
 
     public void send() {
-        ((ISingleDriver) driver).send(this);
+        driver.send(this);
     }
 
     // only for bank patch
+    /*
     public void put(IPatch singlePatch, int patchNum) {
-        ((IBankDriver) driver).checkAndPutPatch(this, singlePatch, patchNum);
+        driver.checkAndPutPatch(this, singlePatch, patchNum);
     }
 
     public void delete(int patchNum) {
-        ((IBankDriver) driver).deletePatch(this, patchNum);
+        driver.deletePatch(this, patchNum);
     }
 
     public IPatch get(int patchNum) {
@@ -178,7 +197,7 @@ public class XMLPatch implements IPatch {
     public void setName(int patchNum, String name) {
         ((IBankDriver) driver).setPatchName(this, patchNum, name);
     }
-
+    */
     public SysexMessage[] getMessages() {
         SysexMessage[] msgs = new SysexMessage[sysex.length];
         for (int i = 0; i < sysex.length; i++) {
@@ -339,5 +358,9 @@ public class XMLPatch implements IPatch {
 
     public final String lookupManufacturer() {
         return LookupManufacturer.get(sysex[0][1], sysex[0][2], sysex[0][3]);
+    }
+
+    public boolean hasNullDriver() {
+        return driver == AppConfig.getNullDriver();
     }
 }

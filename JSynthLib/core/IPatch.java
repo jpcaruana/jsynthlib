@@ -5,6 +5,11 @@ import java.io.Serializable;
 
 import javax.sound.midi.SysexMessage;
 
+/**
+ * Common interface for a Single Patch and a Bank Patch.
+ * 
+ * @version $Id$
+ */
 public interface IPatch extends Cloneable, Transferable, Serializable {
 
     /** Getter for date. */
@@ -41,6 +46,11 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     void setDriver();
 
     /**
+     * Check if the Patch's driver is null driver (Generic driver).
+     */
+    boolean hasNullDriver();
+
+    /**
      * Return a hexadecimal string for
      * {@link IDriver#supportsPatch IDriver.suppportsPatch} at most 16 byte
      * sysex data.
@@ -59,6 +69,13 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     void setName(String name);
 
     /**
+     * Returns true if a Patch Editor Window is implemented.
+     *
+     * @see #edit
+     */
+    boolean hasEditor();
+
+    /**
      * Returns a Patch Editor Window for this Patch. Returns <code>null</code>
      * if there is no editor.
      * XXX throw an Exception?
@@ -69,36 +86,6 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      * Sends a patch to a set location on a synth.
      */
     void send(int bankNum, int patchNum);
-
-    // only for Single Patch (Do we need ISinglePatch?)
-    /** Play note. */
-    void play();
-
-    /**
-     * Sends a patch to the synth's edit buffer.
-     */
-    void send();
-    // end of Single Patch
-    
-    // only for Bank Patch (Do we need IBankPatch?)
-    /**
-     * Check a patch if it is for the bank patch and put it into the
-     * bank.
-     */
-    void put(IPatch singlePatch, int patchNum);
-
-    /** Delete a patch. */
-    void delete(int patchNum);
-
-    /** Gets a patch from the bank, converting it as needed. */
-    IPatch get(int patchNum);
-
-    /** Get the name of the patch at the given number <code>patchNum</code>. */
-    String getName(int patchNum);
-
-    /** Set the name of the patch at the given number <code>patchNum</code>. */
-    void setName(int patchNum, String name);
-    // end of Bank Patch
 
     /** Get an array of sysex messages representing this patch. */
     SysexMessage[] getMessages();
@@ -124,8 +111,17 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     /** Get the size (number of byte) of Patch. */
     int getSize();
 
+    /** Get type of Patch. */
+    String getType();
+
     /** Look up manufacturer name from Sysex data. */
     String lookupManufacturer();
+
+    /** Check if a Single Patch. */
+    boolean isSinglePatch();
+
+    /** Check if a Bank Patch. */
+    boolean isBankPatch();
 
     /**
      * Change this patch to contain the same data as p. Used for backing up

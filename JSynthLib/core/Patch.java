@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
+import javax.swing.JOptionPane;
 
 /**
  * A class for MIDI System Exclusive Message patch data.
@@ -34,7 +35,7 @@ import javax.sound.midi.SysexMessage;
  * @version $Id$
  * @see Driver#supportsPatch
  */
-public class Patch implements IPatch {
+public class Patch implements ISinglePatch, IBankPatch {
     /** Driver for this Patch. */
     private transient Driver driver;
 
@@ -177,13 +178,34 @@ public class Patch implements IPatch {
     public final void setDriver() {
         setDriver((IPatchDriver) DriverUtil.chooseDriver(sysex));
     }
-
-    public final byte[] export() {
-        return ((IPatchDriver) driver).export(this);
+ 
+    public final boolean hasNullDriver() {
+        return driver == AppConfig.getNullDriver();
     }
 
-    public final byte[] getByteArray() {
-        return sysex;
+    public String getPatchHeader() {
+        return DriverUtil.getPatchHeader(sysex);
+    }
+
+    public final String getName() {
+        return driver.getPatchName(this);
+    }
+
+    public final void setName(String s) {
+        driver.setPatchName(this, s);
+    }
+
+    public final boolean hasEditor() {
+        return driver.hasEditor();
+    }
+
+    public final JSLFrame edit() {
+        return driver.editPatch(this);
+    }
+
+    public final void send(int bankNum, int patchNum) {
+        driver.calculateChecksum(this);
+        driver.storePatch(this, bankNum, patchNum);
     }
 
     public final SysexMessage[] getMessages() {
@@ -194,18 +216,88 @@ public class Patch implements IPatch {
         }
     }
 
+    public final byte[] export() {
+        driver.calculateChecksum(this);
+        return this.sysex;
+    }
+
+    public final byte[] getByteArray() {
+        return sysex;
+    }
+
     public int getSize() {
         return sysex.length;
     }
     
+    public String getType() {
+        return driver.getPatchType();
+    }
+
     public final String lookupManufacturer() {
         return LookupManufacturer.get(sysex[1], sysex[2], sysex[3]);
+    }
+
+    public final boolean isSinglePatch() {
+        return driver.isSingleDriver();
+    }
+
+    public final boolean isBankPatch() {
+        return driver.isBankDriver();
     }
 
     public void useSysexFromPatch(IPatch ip) {
         if (ip.getSize() != sysex.length)
             throw new IllegalArgumentException();
         sysex = ip.getByteArray();
+    }
+    // end of IPatch interface methods
+
+    // ISinglePatch interface methods
+    public final void play() {
+        driver.playPatch(this);
+    }
+
+    public final void send() {
+        driver.calculateChecksum(this);
+        driver.sendPatch(this);
+    }
+    // end of ISinglePatch interface methods
+
+    // IBankPatch interface methods
+    public final int getNumPatches() {
+        return ((BankDriver) driver).getNumPatches();
+    }
+
+    public final int getNumColumns() {
+        return ((BankDriver) driver).getNumColumns();
+    }
+
+    public final void put(IPatch singlePatch, int patchNum) {
+	if (((BankDriver) driver).canHoldPatch((Patch) singlePatch)) {
+	    ((BankDriver) driver).putPatch(this, (Patch) singlePatch, patchNum);
+	} else {
+	    JOptionPane.showMessageDialog
+		(null,
+		 "This type of patch does not fit in to this type of bank.",
+		 "Error", JOptionPane.ERROR_MESSAGE);
+	    return;
+	}
+    }
+
+    public final void delete(int patchNum) {
+        ((BankDriver) driver).deletePatch(this, patchNum);
+    }
+
+    public final ISinglePatch get(int patchNum) {
+        return ((BankDriver) driver).getPatch(this, patchNum);
+    }
+
+    public final String getName(int patchNum) {
+        return ((BankDriver) driver).getPatchName(this, patchNum);
+    }
+
+    public final void setName(int patchNum, String name) {
+        ((BankDriver) driver).setPatchName(this, patchNum, name);
     }
 
     // Transferable interface methods
@@ -273,61 +365,11 @@ public class Patch implements IPatch {
     }
     */
 
-    public String getPatchHeader() {
-        return DriverUtil.getPatchHeader(sysex);
-    }
-
     //
     // delegation methods
     //
-    public final String getName() {
-        return driver.getPatchName(this);
-    }
-
-    public final void setName(String s) {
-        driver.setPatchName(this, s);
-    }
-
     public final void calculateChecksum() {
         driver.calculateChecksum(this);
-    }
-
-    public final JSLFrame edit() {
-        return driver.editPatch(this);
-    }
-
-    public final void send(int bankNum, int patchNum) {
-        driver.storePatch(this, bankNum, patchNum);
-    }
-
-    // only for single patch
-    public final void play() {
-        driver.play(this);
-    }
-
-    public final void send() {
-        driver.send(this);
-    }
-
-    // only for bank patch
-    public final void put(IPatch singlePatch, int patchNum) {
-        ((BankDriver) driver).checkAndPutPatch(this, singlePatch, patchNum);
-    }
-
-    public final void delete(int patchNum) {
-        ((BankDriver) driver).deletePatch(this, patchNum);
-    }
-
-    public final IPatch get(int patchNum) {
-        return ((BankDriver) driver).getPatch(this, patchNum);
-    }
-
-    public final String getName(int patchNum) {
-        return ((BankDriver) driver).getPatchName(this, patchNum);
-    }
-
-    public final void setName(int patchNum, String name) {
-        ((BankDriver) driver).setPatchName(this, patchNum, name);
     }
 
     /**

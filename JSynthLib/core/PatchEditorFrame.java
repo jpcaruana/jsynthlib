@@ -30,7 +30,7 @@ import javax.swing.UIManager;
  */
 public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     /** This is the patch we are working on. */
-    protected IPatch p;
+    protected ISinglePatch p;
     /** Note that calling addWidget() method may change the value of this. */
     protected GridBagConstraints gbc;
     /** Scroll Pane for the editor frame. */
@@ -79,7 +79,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      * @param name a name to display in the title bar.
      * @param patch a <code>Patch</code> value
      */
-    protected PatchEditorFrame(String name, IPatch patch) {
+    protected PatchEditorFrame(String name, ISinglePatch patch) {
         // create a resizable, closable, maximizable, and iconifiable frame.
         super(name, true, true, true, true);
         p = patch;
@@ -554,7 +554,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 
     void revalidateDriver() {
         p.setDriver();
-        if (p.getDriver().isNullDriver()) {
+        if (p.hasNullDriver()) {
             try {
                 setClosed(true);
             } catch (PropertyVetoException e) {

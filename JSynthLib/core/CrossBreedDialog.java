@@ -86,25 +86,18 @@ public class CrossBreedDialog extends JDialog {
     }
 
     void generatePressed() {
-        crossBreeder.generateNewPatch((PatchBasket) JSLDesktop.getSelectedFrame());
+        crossBreeder.generateNewPatch((PatchBasket) JSLDesktop
+                .getSelectedFrame());
         IPatch p = crossBreeder.getCurrentPatch();
-        try {
-            l1.setText("Patch Type: " + p.getDevice().getManufacturerName()
-                    + " " + p.getDevice().getModelName() + " "
-                    + p.getDriver().getPatchType());
-            play(p);
-        } catch (Exception e) {
-            /*
-             * already taken care off-- we just don't want this thrown any
-             * farther
-             */
-        }
+        l1.setText("Patch Type: " + p.getDevice().getManufacturerName() + " "
+                + p.getDevice().getModelName() + " " + p.getType());
+        play(p);
     }
 
     private void play(IPatch p) {
-        if (p.getDriver().isSingleDriver()) {
-            p.send();
-            p.play();
+        if (p.isSinglePatch()) {
+            ((ISinglePatch) p).send();
+            ((ISinglePatch) p).play();
         }
     }
 }

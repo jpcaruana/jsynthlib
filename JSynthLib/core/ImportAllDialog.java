@@ -152,13 +152,12 @@ public class ImportAllDialog extends JDialog
                         if (putName==2) pk.setAuthor(pk.getAuthor() + files[i].getName());
                         if (myModel.includeDevice[pk.getDriver().getDevice().getDeviceNum()].booleanValue ())
                         {
-                            if (extract && (pk.getDriver().isBankDriver()))
+                            if (extract && (pk.isBankPatch()))
                             {
-                                IBankDriver myDriver=((IBankDriver) pk.getDriver());
-				String[] pn = myDriver.getPatchNumbers();
-                                for (int j=0;j<myDriver.getNumPatches();j++)
+                                String[] pn = ((IPatchDriver) pk.getDriver()).getPatchNumbers();
+                                for (int j=0; j<((IBankPatch) pk).getNumPatches(); j++)
                                 {
-                                    IPatch q=(myDriver.getPatch (pk,j));
+                                    IPatch q = ((IBankPatch) pk).get(j);
                                     if (putName==1)
                                         q.setDate(q.getDate() + files[i].getName() + " " + pn[j]);
                                     if (putName==2)
@@ -215,8 +214,8 @@ public class ImportAllDialog extends JDialog
             }
             else
             {
-                s1=((IPatch) a1).getDriver().getPatchType();
-                s2=((IPatch) a2).getDriver().getPatchType();
+                s1=((IPatch) a1).getType();
+                s2=((IPatch) a2).getType();
             }
 
             return s1.compareTo (s2);
