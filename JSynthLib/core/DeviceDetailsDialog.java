@@ -117,40 +117,6 @@ public class DeviceDetailsDialog extends JDialog {
 	this.setVisible (false);
     }
 
-//    private void RemovePressed () {
-//        table=table2;
-//        if ((table2.getSelectedRow ()==-1))
-//	    return;
-//        if (JOptionPane.showConfirmDialog
-//	    (null,
-//	     "Do you really want to do this? Are you sure?"
-//	     ,"Remove Driver?",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
-//	    return;
-//        try {
-//            device.removeDriver(table2.getSelectedRow ());
-//	    ((DeviceDetailsTableModel)table.getModel ()).fireTableDataChanged ();
-//            table2.repaint ();
-//	    revalidateLibraries();
-//        } catch (Exception e) {
-//	}
-//    }
-
-    private static void revalidateLibraries() {
-	JSLFrame[] jList = PatchEdit.getDesktop().getAllFrames();
-	if (jList.length >0) {
-	    PatchEdit.showWaitDialog();
-	    for (int i=0;i<jList.length;i++) {
-		if (jList[i] instanceof LibraryFrame)
-		    ((LibraryFrame)(jList[i])).revalidateDrivers();
-		else if (jList[i] instanceof BankEditorFrame)
-		    ((BankEditorFrame)(jList[i])).revalidateDriver();
-		else if (jList[i] instanceof PatchEditorFrame)
-		    ((PatchEditorFrame)(jList[i])).revalidateDriver();
-	    }
-	    PatchEdit.hideWaitDialog();
-	}
-    }
-
     private class DeviceDetailsTableModel extends AbstractTableModel {
 	private final String[] columnNames = {
 		"Driver Name",

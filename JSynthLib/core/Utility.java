@@ -175,4 +175,24 @@ public class Utility extends Object {
 	}
     }
 
+    /**
+     * Revalidate Library. Internally this calls <code>revalidateDriver()</code>
+     * method of each frame.
+     */
+    static void revalidateLibraries() {
+        JSLFrame[] jList = PatchEdit.getDesktop().getAllFrames();
+        if (jList.length > 0) {
+            PatchEdit.showWaitDialog();
+            for (int i = 0; i < jList.length; i++) {
+                if (jList[i] instanceof LibraryFrame)
+                    ((LibraryFrame) (jList[i])).revalidateDrivers();
+                else if (jList[i] instanceof BankEditorFrame)
+                    ((BankEditorFrame) (jList[i])).revalidateDriver();
+                else if (jList[i] instanceof PatchEditorFrame)
+                    ((PatchEditorFrame) (jList[i])).revalidateDriver();
+            }
+            PatchEdit.hideWaitDialog();
+        }
+    }
+
 } // End Class: Utility

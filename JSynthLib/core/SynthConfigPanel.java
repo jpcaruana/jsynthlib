@@ -7,16 +7,22 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+//import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.sound.midi.MidiDevice;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+//import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ProgressMonitor;
 import javax.swing.table.AbstractTableModel;
@@ -37,9 +43,9 @@ class SynthConfigPanel extends ConfigPanel {
     /** Multiple MIDI Interface CheckBox */
     private JCheckBox cbxMMI;
     private boolean multiMIDI;
-
     private JTable table;
     private MidiScan midiScan;
+    private JPopupMenu popup;
 
     private static final int SYNTH_NAME	    = 0;
     private static final int DEVICE	    = 1;
@@ -102,18 +108,10 @@ class SynthConfigPanel extends ConfigPanel {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JButton detail = new JButton("Show Details...");
-        detail.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    detailPressed();
-		}
-	    });
-        buttonPanel.add(detail);
-
         JButton add = new JButton("Add Device...");
         add.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    addPressed();
+		    addDevice();
 		}
 	    });
         buttonPanel.add(add);
@@ -122,26 +120,52 @@ class SynthConfigPanel extends ConfigPanel {
         JButton scan = new JButton("Auto-Scan...");
         scan.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    scanPressed();
+		    scanMidi();
 		}
 	    });
 	buttonPanel.add(scan);
         // END OF ADDED BUTTON
 
-        JButton rem = new JButton("Remove Device");
-        rem.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    removePressed();
-		}
-	    });
-        buttonPanel.add(rem);
-
 	++c.gridy;
 	p.add(buttonPanel, c);
 	add(p, BorderLayout.CENTER);
+
+	// popup menu
+	popup = new JPopupMenu();
+	JMenuItem mi;
+	mi = new JMenuItem("Delete");
+	//This works only for JMenuBar.
+        //mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+	mi.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+	        removeDevice();
+	    }
+	});
+	popup.add(mi);
+	mi = new JMenuItem("Property...");
+	mi.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+	        showDeviceProperty();
+	    }
+	});
+	popup.add(mi);
+
+	table.addMouseListener(new MouseAdapter() {
+	    public void mousePressed(MouseEvent e) {
+	        maybeShowPopup(e);
+	    }
+	    public void mouseReleased(MouseEvent e) {
+	        maybeShowPopup(e);
+	    }
+	    private void maybeShowPopup(MouseEvent e) {
+	        if (e.isPopupTrigger()) {
+	            popup.show(e.getComponent(), e.getX(), e.getY());
+	        }
+	    }
+	});
     }
 
-    private void removePressed() {
+    private void removeDevice() {
         if ((table.getSelectedRow() == -1) || (table.getSelectedRow() == 0))
 	    return;
         if (JOptionPane.showConfirmDialog
@@ -149,43 +173,27 @@ class SynthConfigPanel extends ConfigPanel {
 	     JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 	    return;
 	AppConfig.removeDevice(table.getSelectedRow());
-	revalidateLibraries();
+	Utility.revalidateLibraries();
 	((TableModel) table.getModel()).fireTableDataChanged();
 	table.repaint();
     }
 
-    private void detailPressed() {
+    private void showDeviceProperty() {
         if ((table.getSelectedRow() == -1)) // not selected
 	    return;
         AppConfig.getDevice(table.getSelectedRow()).showDetails();
         //((TableModel) table.getModel()).fireTableDataChanged();
     }
 
-    private void addPressed() {
+    private void addDevice() {
 	DeviceAddDialog dad = new DeviceAddDialog(null);
         dad.setVisible(true);
-        revalidateLibraries();
+        Utility.revalidateLibraries();
 	((TableModel) table.getModel()).fireTableDataChanged();
     }
 
-    private void revalidateLibraries() {
-	JSLFrame[] jList = PatchEdit.getDesktop().getAllFrames();
-	if (jList.length > 0) {
-	    PatchEdit.showWaitDialog();
-	    for (int i = 0; i < jList.length; i++) {
-		if (jList[i] instanceof LibraryFrame)
-		    ((LibraryFrame) (jList[i])).revalidateDrivers();
-		else if (jList[i] instanceof BankEditorFrame)
-		    ((BankEditorFrame) (jList[i])).revalidateDriver();
-		else if (jList[i] instanceof PatchEditorFrame)
-		    ((PatchEditorFrame) (jList[i])).revalidateDriver();
-	    }
-	    PatchEdit.hideWaitDialog();
-	}
-    }
-
     // METHOD ADDED BY GERRIT GEHNEN
-    private void scanPressed() {
+    private void scanMidi() {
         if (JOptionPane.showConfirmDialog
 	    (null,
 	     "Scanning the System for supported Synthesizers may take\n"
@@ -207,7 +215,7 @@ class SynthConfigPanel extends ConfigPanel {
         midiScan = new MidiScan((TableModel) table.getModel(), pm, null);
 
         midiScan.start();
-        revalidateLibraries();
+        Utility.revalidateLibraries();
         ((TableModel) table.getModel()).fireTableDataChanged();
     }
     // END OF METHOD ADDED BY GERRIT GEHNEN
@@ -221,6 +229,8 @@ class SynthConfigPanel extends ConfigPanel {
 	((TableModel) table.getModel()).fireTableDataChanged();
     }
 
+    // I gave up using 'Apply' botton for Synth Table. It's is
+    // difficult to defer 'add device' and 'remove device' event.
     void commitSettings() {
 	AppConfig.setMultiMIDI(multiMIDI);
  	((TableModel) table.getModel()).fireTableDataChanged();
@@ -330,80 +340,4 @@ class SynthConfigPanel extends ConfigPanel {
             fireTableCellUpdated(row, col); // really required???
         }
     }
-
-    /*
-    // I gave up using 'Apply' botton for Synth Table. It's is
-    // difficult to defer 'add device' and 'remove device' event.
-    private class DeviceInfo {
-	private String synthName;
-	private int midiIn;
-	private int midiOut;
-	private int channel;
-	private int deviceID;
-
-	private boolean synthNameChanged;
-	private boolean midiInChanged;
-	private boolean midiOutChanged;
-	private boolean channelChanged;
-	private boolean deviceIDChanged;
-
-	DeviceInfo(Device dev) {
-	    synthName = dev.getSynthName();
-	    midiIn   = multiMIDI ? dev.getInPort() : appConfig.getInitPortIn();
-	    midiOut  = multiMIDI ? dev.getPort() : appConfig.getInitPortOut();
-	    channel  = dev.getChannel();
-	    deviceID = dev.getDeviceID();
-	}
-
-	String getsynthName() { return synthName; }
-	int getmidiIn()   { return midiIn; }
-	int getmidiOut()  { return midiOut; }
-	int getchannel()  { return channel; }
-	int getdeviceID() { return deviceID; }
-
-	void setSynthName(String synthName) {
-	    this.synthName = synthName;
-	    synthNameChanged = true;
-	}
-	void setMidiIn(int midiIn) {
-	    this.midiIn    = midiIn;
-	    midiInChanged = true;
-	}
-	void setMidiOut(int midiOut) {
-	    this.midiOut   = midiOut;
-	    midiOutChanged = true;
-	}
-	void setChannel(int channel) {
-	    this.channel   = channel;
-	    channelChanged = true;
-	}
-	void setDeviceID(int deviceID) {
-	    this.deviceID  = deviceID;
-	    deviceIDChanged = true;
-	}
-
-	void apply(Device dev) {
-	    if (synthNameChanged) {
-		dev.setSynthName(synthName);
-		synthNameChanged = false;
-	    }
-	    if (midiInChanged) {
-		dev.setInPort(midiIn);
-		midiInChanged    = false;
-	    }
-	    if (midiOutChanged) {
-		dev.setPort(midiOut);
-		midiOutChanged   = false;
-	    }
-	    if (channelChanged) {
-		dev.setChannel(channel);
-		channelChanged   = false;
-	    }
-	    if (deviceIDChanged) {
-		dev.setDeviceID(deviceID);
-		deviceIDChanged  = false;
-	    }
-	}
-    }
-    */
 }
