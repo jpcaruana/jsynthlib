@@ -89,24 +89,29 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	"253  LOOP 9", "254  LOOP 10", "255  LOOP 11", "256  LOOP 12"
     };
 
+    /** For Alignment, a size to scrollbar labels */
+    //private int labelWidth;
+
     public KawaiK4SingleEditor(Patch patch) {
 	super ("Kawai K4 Single Editor", patch);
+	int lw; 		// label width
 	// Common Pane
 	gbc.weightx = 5;
 	JPanel cmnPane = new JPanel();
 	cmnPane.setLayout(new GridBagLayout());	 gbc.weightx = 0;
-	setLongestLabel("Volume ");
+	//setLongestLabel("Volume ");
+	lw = getLabelWidth("Volume ");
 	addWidget(cmnPane,
 		  new PatchNameWidget(" Name  ", patch),
 		  0, 0, 2, 1, 0);
 	// gbc.weightx=1;
 	addWidget(cmnPane,
-		  new ScrollBarWidget("Volume", patch, 0, 100, 0,
+		  new ScrollBarWidget("Volume", patch, 0, 100, 0, lw,
 				      new K4Model(patch, 10),
 				      new K4Sender(10)),
 		  0, 1, 5, 1, 1);
 	addWidget(cmnPane,
-		  new ScrollBarWidget("Effect", patch, 0, 31, 1,
+		  new ScrollBarWidget("Effect", patch, 0, 31, 1, lw,
 				      new K4Model(patch, 11),
 				      new K4Sender(11)),
 		  0, 2, 5, 1, 2);
@@ -125,14 +130,15 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 				     }),
 		  2, 3, 2, 1, 4);
 
-	setLongestLabel("Mod Wheel Depth");
+	//setLongestLabel("Mod Wheel Depth");
+	lw = getLabelWidth("Mod Wheel Depth");
 	addWidget(cmnPane,
-		  new ScrollBarWidget("Pitchbend Depth", patch, 0, 12, 0,
+		  new ScrollBarWidget("Pitchbend Depth", patch, 0, 12, 0, lw,
 				      new K4Model(patch, 15, 15),
 				      new K4Sender(18)),
 		  0, 4, 4, 1, 5);
 	addWidget(cmnPane,
-		  new ScrollBarWidget("Mod Wheel Depth", patch, 0, 100, -50,
+		  new ScrollBarWidget("Mod Wheel Depth", patch, 0, 100, -50, lw,
 				      new K4Model(patch, 17),
 				      new K4Sender(21)),
 		  0, 5, 5, 1, 6);
@@ -170,20 +176,21 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	//Vibrato Pane
 	JPanel vibPane = new JPanel();
 	vibPane.setLayout(new GridBagLayout());
-	setLongestLabel("Pressure to Depth");
+	//setLongestLabel("Pressure to Depth");
+	lw = getLabelWidth("Pressure to Depth");
 	addWidget(vibPane,
-		  new ScrollBarWidget("Depth", patch, 0, 100, -50,
+		  new ScrollBarWidget("Depth", patch, 0, 100, -50, lw,
 				      new K4Model(patch, 23),
 				      new K4Sender(27)),
 		  0, 0, 5, 1, 9);
 	gbc.weightx = 0;
 	addWidget(vibPane,
-		  new ScrollBarWidget("Speed", patch, 0, 100, 0,
+		  new ScrollBarWidget("Speed", patch, 0, 100, 0, lw,
 				      new K4Model(patch, 16),
 				      new K4Sender(20)),
 		  0, 1, 5, 1, 10);
 	addWidget(vibPane,
-		  new ScrollBarWidget("Pressure to ", patch, 0, 100, -50,
+		  new ScrollBarWidget("Pressure to ", patch, 0, 100, -50, lw,
 				      new K4Model(patch, 22),
 				      new K4Sender(26)),
 		  0, 2, 5, 1, 11);
@@ -204,23 +211,23 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	JPanel lfoPane = new JPanel();
 	lfoPane.setLayout(new GridBagLayout());
 	addWidget(lfoPane,
-		  new ScrollBarWidget("Depth", patch, 0, 100, -50,
+		  new ScrollBarWidget("Depth", patch, 0, 100, -50, lw,
 				      new K4Model(patch, 27),
 				      new K4Sender(31)),
 		  0, 0, 5, 1, 17);
 	gbc.weightx = 0;
 	addWidget(lfoPane,
-		  new ScrollBarWidget("Speed", patch, 0, 100, 0,
+		  new ScrollBarWidget("Speed", patch, 0, 100, 0, lw,
 				      new K4Model(patch, 25),
 				      new K4Sender(29)),
 		  0, 1, 5, 1, 18);
 	addWidget(lfoPane,
-		  new ScrollBarWidget("Delay", patch, 0, 100, 0,
+		  new ScrollBarWidget("Delay", patch, 0, 100, 0, lw,
 				      new K4Model(patch, 26),
 				      new K4Sender(30)),
 		  0, 2, 5, 1, 19);
 	addWidget(lfoPane,
-		  new ScrollBarWidget("Pressure to Depth", patch, 0, 100, -50,
+		  new ScrollBarWidget("Pressure to Depth", patch, 0, 100, -50, lw,
 				      new K4Model(patch, 28),
 				      new K4Sender(32)),
 		  0, 3, 5, 1, 20);
@@ -240,23 +247,23 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	JPanel bndPane = new JPanel();
 	bndPane.setLayout(new GridBagLayout());	 gbc.weightx = 1;
 	addWidget(bndPane,
-		  new ScrollBarWidget("Time", patch, 0, 100, 0,
+		  new ScrollBarWidget("Time", patch, 0, 100, 0, lw,
 				      new K4Model(patch, 18),
 				      new K4Sender(22)),
 		  0, 0, 5, 1, 22);
 	gbc.weightx = 0;
 	addWidget(bndPane,
-		  new ScrollBarWidget("Depth", patch, 0, 100, -50,
+		  new ScrollBarWidget("Depth", patch, 0, 100, -50, lw,
 				      new K4Model(patch, 19),
 				      new K4Sender(23)),
 		  0, 1, 5, 1, 23);
 	addWidget(bndPane,
-		  new ScrollBarWidget("Key Scale to Time", patch, 0, 100, -50,
+		  new ScrollBarWidget("Key Scale to Time", patch, 0, 100, -50, lw,
 				      new K4Model(patch, 20),
 				      new K4Sender(24)),
 		  0, 2, 5, 1, 24);
 	addWidget(bndPane,
-		  new ScrollBarWidget("Velocity to Depth", patch, 0, 100, -50,
+		  new ScrollBarWidget("Velocity to Depth", patch, 0, 100, -50, lw,
 				      new K4Model(patch, 21),
 				      new K4Sender(25)),
 		  0, 3, 5, 1, 25);
@@ -268,7 +275,8 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	scrollPane.add(bndPane, gbc);
 
 	JTabbedPane oscPane = new JTabbedPane();
-	setLongestLabel("Vel to Cutoff");
+	//setLongestLabel("Vel to Cutoff");
+	lw = getLabelWidth("Vel to Cutoff");
 	for (int i = 0; i < 4; i++) {
 	    JPanel panel = new JPanel();
 	    panel.setLayout(new GridBagLayout());
@@ -295,7 +303,7 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 					 }),
 		      0, 0, 3, 5, 33);
 	    addWidget(panel,
-		      new ScrollBarWidget("Level", patch, 0, 100, 0,
+		      new ScrollBarWidget("Level", patch, 0, 100, 0, lw,
 					  new K4Model(patch, 58 + i),
 					  new K4Sender(44, i)),
 		      0, 5, 3, 1, 38);
@@ -305,7 +313,7 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 					 new K4Sender(36, i), waveName),
 		      0, 6, 2, 1, 39);
 	    addWidget(panel,
-		      new ScrollBarWidget("Transpose", patch, 0, 48, -24,
+		      new ScrollBarWidget("Transpose", patch, 0, 48, -24, lw,
 					  new K4Model(patch, 42 + i, 63),
 					  new K4Sender(37, i)),
 		      0, 7, 3, 1, 40);
@@ -320,37 +328,37 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 					 new K4Sender(38, i)),
 		      1, 8, 2, 1, -33);
 	    addWidget(panel,
-		      new ScrollBarWidget("Tune", patch, 0, 100, -50,
+		      new ScrollBarWidget("Tune", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 50 + i),
 					  new K4Sender(40, i)),
 		      0, 9, 3, 1, 42);
 	    addWidget(panel,
-		      new ScrollBarWidget("Vel to Level", patch, 0, 100, -50,
+		      new ScrollBarWidget("Vel to Level", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 78 + i),
 					  new K4Sender(49, i)),
 		      0, 10, 3, 1, 43);
 	    addWidget(panel,
-		      new ScrollBarWidget("Prs to Level", patch, 0, 100, -50,
+		      new ScrollBarWidget("Prs to Level", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 82 + i),
 					  new K4Sender(50, i)),
 		      0, 11, 3, 1, 44);
 	    addWidget(panel,
-		      new ScrollBarWidget("KS to Level", patch, 0, 100, -50,
+		      new ScrollBarWidget("KS to Level", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 86 + i),
 					  new K4Sender(51, i)),
 		      0, 12, 3, 1, 45);
 	    addWidget(panel,
-		      new ScrollBarWidget("OnVel Time", patch, 0, 100, -50,
+		      new ScrollBarWidget("OnVel Time", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 90 + i),
 					  new K4Sender(52, i)),
 		      0, 13, 3, 1, 46);
 	    addWidget(panel,
-		      new ScrollBarWidget("OffVel Time", patch, 0, 100, -50,
+		      new ScrollBarWidget("OffVel Time", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 94 + i),
 					  new K4Sender(53, i)),
 		      0, 14, 3, 1, 47);
 	    addWidget(panel,
-		      new ScrollBarWidget("KS to Time", patch, 0, 100, -50,
+		      new ScrollBarWidget("KS to Time", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 98 + i),
 					  new K4Sender(54, i)),
 		      0, 15, 3, 1, 48);
@@ -410,17 +418,17 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 					 }),
 		      0, 0, 3, 5, 51);
 	    addWidget(panel,
-		      new ScrollBarWidget("Cutoff", patch, 0, 100, 0,
+		      new ScrollBarWidget("Cutoff", patch, 0, 100, 0, lw,
 					  new K4Model(patch, 102 + i),
 					  new K4Sender(55, i)),
 		      0, 5, 3, 1, 55);
 	    addWidget(panel,
-		      new ScrollBarWidget("DCF Depth", patch, 0, 100, -50,
+		      new ScrollBarWidget("DCF Depth", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 112 + i),
 					  new K4Sender(61, i)),
 		      0, 6, 3, 1, 56);
 	    addWidget(panel,
-		      new ScrollBarWidget("Resonance", patch, 0, 7, 1,
+		      new ScrollBarWidget("Resonance", patch, 0, 7, 1, lw,
 					  new K4Model(patch, 104 + i, 7),
 					  new K4Sender(56, i)),
 		      0, 7, 3, 1, 57);
@@ -430,37 +438,37 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 					 new K4Sender(57, i)),
 		      0, 8, 2, 1, -36);
 	    addWidget(panel,
-		      new ScrollBarWidget("Vel to Cutoff", patch, 0, 100, -50,
+		      new ScrollBarWidget("Vel to Cutoff", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 106 + i),
 					  new K4Sender(58, i)),
 		      0, 9, 3, 1, 58);
 	    addWidget(panel,
-		      new ScrollBarWidget("Prs to Cutoff", patch, 0, 100, -50,
+		      new ScrollBarWidget("Prs to Cutoff", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 108 + i),
 					  new K4Sender(59, i)),
 		      0, 10, 3, 1, 59);
 	    addWidget(panel,
-		      new ScrollBarWidget("KS to Cutoff", patch, 0, 100, -50,
+		      new ScrollBarWidget("KS to Cutoff", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 110 + i),
 					  new K4Sender(60, i)),
 		      0, 11, 3, 1, 60);
 	    addWidget(panel,
-		      new ScrollBarWidget("Vel Depth", patch, 0, 100, -50,
+		      new ScrollBarWidget("Vel Depth", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 114 + i),
 					  new K4Sender(62, i)),
 		      0, 12, 3, 1, 61);
 	    addWidget(panel,
-		      new ScrollBarWidget("OnVel Time", patch, 0, 100, -50,
+		      new ScrollBarWidget("OnVel Time", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 124 + i),
 					  new K4Sender(67, i)),
 		      0, 13, 3, 1, 62);
 	    addWidget(panel,
-		      new ScrollBarWidget("OffVel Time", patch, 0, 100, -50,
+		      new ScrollBarWidget("OffVel Time", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 126 + i),
 					  new K4Sender(68, i)),
 		      0, 14, 3, 1, 63);
 	    addWidget(panel,
-		      new ScrollBarWidget("KS to Time", patch, 0, 100, -50,
+		      new ScrollBarWidget("KS to Time", patch, 0, 100, -50, lw,
 					  new K4Model(patch, 128 + i),
 					  new K4Sender(69, i)),
 		      0, 15, 3, 1, 64);
@@ -469,5 +477,9 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	scrollPane.add(dcfPane, gbc);
 	pack();
 	show();
+    }
+
+    private int getLabelWidth(String s) {
+	return (int) (new JLabel(s)).getPreferredSize().getWidth();
     }
 }
