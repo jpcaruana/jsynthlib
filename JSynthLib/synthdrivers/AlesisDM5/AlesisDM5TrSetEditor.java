@@ -68,7 +68,7 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
         addWidget(panel,
                   new KnobWidget("Gain", patch, 0, 99, 0,
                                  new ParamModel(patch, headerSize + trigNum),
-                                 new DM5Sender(trigNum, 3, 99)),
+                                 new DM5Sender(trigNum, DM5Sender.TR_GAIN, 99)),
                   0, 0,
                   1, 1,
                   fdrNbrBase+1);
@@ -77,7 +77,7 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
                   new KnobWidget("Velocy",
                                  patch, 0, 7, 0,
                                  new ParamModel(patch, 19 + (trigNum * 4)),
-                                 new DM5Sender(trigNum, 1, 7)),
+                                 new DM5Sender(trigNum, DM5Sender.TR_V_CURVE, 7)),
                   1, 0,
                   1, 3,
                   fdrNbrBase+2);
@@ -86,7 +86,7 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
                   new KnobWidget("X-Talk",
                                  patch, 0, 99, 0,
                                  new ParamModel(patch, 20 + (trigNum * 4)),
-                                 new DM5Sender(trigNum, 4, 99)),
+                                 new DM5Sender(trigNum, DM5Sender.TR_X_TALK, 99)),
                   2, 0,
                   1, 3,
                   fdrNbrBase+3);
@@ -95,7 +95,7 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
                   new KnobWidget("Noise Flr",
                                  patch, 0, 99, 0,
                                  new ParamModel(patch, 21 + (trigNum * 4)),
-                                 new DM5Sender(trigNum, 6, 99)),
+                                 new DM5Sender(trigNum, DM5Sender.TR_NOISE_FLR, 99)),
                   3, 0,
                   1, 3,
                   fdrNbrBase+4);
@@ -104,7 +104,7 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
                   new KnobWidget("Decay",
                                  patch, 0, 99, 0,
                                  new ParamModel(patch, 22 + (trigNum * 4)),
-                                 new DM5Sender(trigNum, 5, 99)),
+                                 new DM5Sender(trigNum, DM5Sender.TR_DECAY, 99)),
                   4, 0,
                   1, 3,
                   fdrNbrBase+5);
@@ -112,8 +112,20 @@ public class AlesisDM5TrSetEditor extends PatchEditorFrame {
 }
 
 class DM5Sender implements SysexWidget.ISender {
-    private final static int maxTrigNum = 11;
-    private static int lastTrigNum = 99;
+    final static int TR_V_CURVE        = 1;
+    final static int TR_NOTE_NBR       = 2;
+    final static int TR_GAIN           = 3;
+    final static int TR_X_TALK         = 4;
+    final static int TR_DECAY          = 5;
+    final static int TR_NOISE_FLR      = 6;
+    
+    private final static int NRPN_MSB          = 99;
+    private final static int NRPN_LSB          = 98;
+    private final static int DATA_ENTRY_MSB    = 6;
+    private final static int SELECT_ACTIVE_TRG = 0;
+    
+    private final static int MAX_TRIG_NUM = 11;
+    private static int LAST_TRIG_NUM = 99;
     private int param;
     private int trigNum;
     private int max;
@@ -125,46 +137,32 @@ class DM5Sender implements SysexWidget.ISender {
     }
     
     public void send(IPatchDriver driver, int value) {
-        if (trigNum != lastTrigNum) {
-            ShortMessage msgMSB = new ShortMessage();
-            ShortMessage msgTrigNumLSB = new ShortMessage();
-            ShortMessage msgTrigNumDataEntry = new ShortMessage();
+        if (trigNum != LAST_TRIG_NUM) {
             try {
-                msgMSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                                  driver.getDevice().getChannel() - 1, 99, 0);
-                
-                msgTrigNumLSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                                         driver.getDevice().getChannel() - 1, 98, 0);
-                
-                msgTrigNumDataEntry.setMessage(ShortMessage.CONTROL_CHANGE,
-                                               driver.getDevice().getChannel() - 1, 6, trigNum * 127 / maxTrigNum);
-                
-                driver.send(msgMSB);
-                driver.send(msgTrigNumLSB);
-                driver.send(msgTrigNumDataEntry);
+                driver.send(newControlChange(driver, NRPN_MSB, 0));  // Send NRPN MSB
+                driver.send(newControlChange(driver, NRPN_LSB, SELECT_ACTIVE_TRG));  // Command to select active trigger number (NRPN LSB)
+                driver.send(newControlChange(driver, 6, trigNum * 127 / MAX_TRIG_NUM));  // Set the Trigger Number
             } catch  (InvalidMidiDataException e) {
                 ErrorMsg.reportStatus(e);
             }
-            lastTrigNum = trigNum;            
+            LAST_TRIG_NUM = trigNum;            
 
             try {
                 Thread.sleep (50);
             } catch (Exception e) {}
         }
 
-        ShortMessage msgParamLSB = new ShortMessage();
-        ShortMessage msgValueDataEntry = new ShortMessage();
         try {
-            msgParamLSB.setMessage(ShortMessage.CONTROL_CHANGE,
-                                   driver.getDevice().getChannel() - 1, 98, param);
-            
-            msgValueDataEntry.setMessage(ShortMessage.CONTROL_CHANGE,
-                                         driver.getDevice().getChannel() - 1, 6, value * 127 / max);
-
-            driver.send(msgParamLSB);
-            driver.send(msgValueDataEntry);
+            driver.send(newControlChange(driver, NRPN_LSB, param));  // Command to select the parameter
+            driver.send(newControlChange(driver, DATA_ENTRY_MSB, value * 127 / max));  // Set the value of the parameter
         } catch (InvalidMidiDataException e) {
             ErrorMsg.reportStatus(e);
         }
+    }
+    
+    private ShortMessage newControlChange(IPatchDriver driver, int controlNumber, int value) throws InvalidMidiDataException {
+        ShortMessage ccMessage = new ShortMessage();
+        ccMessage.setMessage(ShortMessage.CONTROL_CHANGE, driver.getDevice().getChannel() - 1, controlNumber, value);
+        return ccMessage;
     }
 }
