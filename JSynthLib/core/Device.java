@@ -439,10 +439,17 @@ public /*abstract*/ class Device implements Serializable, Storable {
      */
     public String getDeviceName() {
 	try {
-	    return getManufacturerName() + " " + getModelName()
-		+ " <" + getSynthName() + ">  -  MIDI In Port: "
-		+ PatchEdit.MidiOut.getInputDeviceName(getInPort())
-		+ "  -  MIDI Channel: " + getChannel();
+	    if (PatchEdit.newMidiAPI) {
+		return getManufacturerName() + " " + getModelName()
+		    + " <" + getSynthName() + ">  -  MIDI In Port: "
+		    + MidiUtil.getOutputMidiDeviceInfo(getPort()).getName()
+		    + "  -  MIDI Channel: " + getChannel();
+	    } else {
+		return getManufacturerName() + " " + getModelName()
+		    + " <" + getSynthName() + ">  -  MIDI In Port: "
+		    + PatchEdit.MidiOut.getOutputDeviceName(getPort())
+		    + "  -  MIDI Channel: " + getChannel();
+	    }
 	} catch (Exception e) {
 	    return getManufacturerName() + " " + getModelName() + ": "
 		+ getSynthName();
