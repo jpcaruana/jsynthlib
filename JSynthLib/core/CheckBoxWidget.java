@@ -13,7 +13,7 @@ public class CheckBoxWidget extends SysexWidget {
     /** JCheckBox object. */
     protected JCheckBox cb;
 
-    public CheckBoxWidget(IPatch patch, Parameter param) {
+    public CheckBoxWidget(IPatch patch, IParameter param) {
         super(patch, param);
         createWidgets();
         layoutWidgets();

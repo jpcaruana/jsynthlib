@@ -68,7 +68,7 @@ public abstract class SysexWidget extends JPanel {
     /**
      * New flyweight parameter model. Used with XML drivers.
      */
-    private Parameter parameter = null;
+    private IParameter parameter = null;
     
     /**
      * slider number.<p>
@@ -88,7 +88,7 @@ public abstract class SysexWidget extends JPanel {
     /** <code>Driver</code> associated with the <code>patch</code>. */
     private IPatchDriver driver;
 
-    protected SysexWidget(IPatch patch, Parameter param) {
+    protected SysexWidget(IPatch patch, IParameter param) {
         this(param.getName(), patch, param.getMin(), param.getMax(), null, null);
         parameter = param;
     }
@@ -439,5 +439,23 @@ public abstract class SysexWidget extends JPanel {
          * @param value an <code>int</code> value
          */
         void send(IPatchDriver driver, int value);
+    }
+
+    public interface IParameter {
+        public String getName();
+
+        /* For numeric parameters */
+        public int getMin();
+        public int getMax();
+        public int get(IPatch p);
+        public void set(IPatch p, int val);
+        
+        /* For list parameters */
+        public String[] getValues();
+        
+        /* For String parameters */
+        public String getString(IPatch p);
+        public int getLength();
+        public void set(IPatch p, String stringval);
     }
 }

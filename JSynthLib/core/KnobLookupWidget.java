@@ -11,7 +11,7 @@ import com.dreamfabric.DKnob;
  * @see KnobWidget
  */
 public class KnobLookupWidget extends KnobWidget {
-    public KnobLookupWidget(IPatch patch, Parameter param) {
+    public KnobLookupWidget(IPatch patch, IParameter param) {
         super(patch, param);
 
         mValueLabels = param.getValues();

@@ -570,7 +570,7 @@ public class Driver implements ISingleDriver {
 	send(status, d1, 0);
     }
 
-    public void sendParameter(IPatch patch, Parameter param) {
+    public void sendParameter(IPatch patch, SysexWidget.IParameter param) {
         // Subclasses of Driver should use SysexSenders, no this.
     }
 

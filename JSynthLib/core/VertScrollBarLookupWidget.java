@@ -35,7 +35,7 @@ import javax.swing.event.ChangeListener;
  * @see ScrollBarLookupWidget
  */
 public class VertScrollBarLookupWidget extends ScrollBarLookupWidget {
-    public VertScrollBarLookupWidget(IPatch patch, Parameter param) {
+    public VertScrollBarLookupWidget(IPatch patch, IParameter param) {
         super(patch, param);
     }
     /** Constructor for setting up the VertScrollBarLookupWidget.

@@ -7,9 +7,9 @@
 
 package synthdrivers.NovationNova1;
 import core.*;
-
 import java.io.*;
 import javax.swing.*;
+// XXX extending BankDriver.  Is this correct?
 public class NovationNova1SinglePerformanceDriver extends BankDriver
 {
 

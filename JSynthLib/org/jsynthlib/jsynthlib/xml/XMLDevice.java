@@ -2,10 +2,10 @@ package org.jsynthlib.jsynthlib.xml;
 
 import java.util.prefs.Preferences;
 
-import javax.sound.midi.MidiMessage;
+//import javax.sound.midi.MidiMessage;
 
 import core.Device;
-import core.IDriver;
+//import core.IDriver;
 
 public class XMLDevice extends Device {
     

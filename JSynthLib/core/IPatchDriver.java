@@ -102,7 +102,7 @@ public interface IPatchDriver extends IDriver {
      * @param patch Patch containing the data.
      * @param param Description of the parameter.
      */
-    void sendParameter(IPatch patch, Parameter param);
+    void sendParameter(IPatch patch, SysexWidget.IParameter param);
 
     /**
      * Returns full name for referring to this Driver. Used for labels

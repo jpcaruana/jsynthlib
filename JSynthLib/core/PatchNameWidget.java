@@ -14,7 +14,7 @@ public class PatchNameWidget extends SysexWidget {
     protected JTextField name;
     protected int patchNameSize;
 
-    public PatchNameWidget(IPatch patch, Parameter param) {
+    public PatchNameWidget(IPatch patch, IParameter param) {
         super(patch, param);
         
         patchNameSize = param.getLength();

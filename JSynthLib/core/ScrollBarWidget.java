@@ -29,7 +29,7 @@ public class ScrollBarWidget extends SysexWidget {
     /**Set Label Width explicitly to? zero disables*/
     protected int forceLabelWidth = 0; // for setForceLabelWidth
 
-    public ScrollBarWidget(IPatch patch, Parameter param) {
+    public ScrollBarWidget(IPatch patch, IParameter param) {
         super(patch, param);
 
         base = 0;

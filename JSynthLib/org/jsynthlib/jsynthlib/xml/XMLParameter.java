@@ -7,9 +7,9 @@ import org.jsynthlib.plugins.Decoder;
 import org.jsynthlib.utils.AdvDefaultHandler;
 
 import core.IPatch;
-import core.Parameter;
+import core.SysexWidget;
 
-public class XMLParameter implements Parameter {
+public class XMLParameter implements SysexWidget.IParameter {
     public static final int RANGE = 0;
     public static final int LOOKUP = 1;
     public static final int STRING = 2;

@@ -28,7 +28,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
     /** width of label widget */
     protected int labelWidth;
 
-    public ScrollBarLookupWidget(IPatch patch, Parameter param) {
+    public ScrollBarLookupWidget(IPatch patch, IParameter param) {
         super(patch, param);
 
         options = param.getValues();

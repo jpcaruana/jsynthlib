@@ -30,7 +30,7 @@ public class KnobWidget extends SysexWidget {
     //protected JLabel mLabel;
     private ImageIcon[] mImages;
 
-    public KnobWidget(IPatch patch, Parameter param) {
+    public KnobWidget(IPatch patch, IParameter param) {
         super(patch, param);
         
         mBase = 0;

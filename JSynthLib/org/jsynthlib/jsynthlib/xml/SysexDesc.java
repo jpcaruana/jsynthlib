@@ -5,8 +5,6 @@ import java.util.regex.Pattern;
 import org.jsynthlib.plugins.Checksum;
 import org.jsynthlib.plugins.Decoder;
 
-import core.Parameter;
-
 public class SysexDesc {
     private XMLParameter[] params;
     private Pattern header;

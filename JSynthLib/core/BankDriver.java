@@ -188,8 +188,8 @@ abstract public class BankDriver extends Driver implements IBankDriver {
     // remove the following lines after 0.20 is released.
     //
     /**
-     * Show an error dialog.
-     * @deprecated Don't use this.
+     * This is never called.  Don't have to be implemented.
+     * Not marked as '@deprecated' now, because many drivers are overriding this unnecesarry.
      */
     protected void sendPatch(Patch bank) {  // not used
 	JOptionPane.showMessageDialog
@@ -199,7 +199,7 @@ abstract public class BankDriver extends Driver implements IBankDriver {
 
     /**
      * Banks cannot play.
-     * @deprecated Don't use this.
+     * @deprecated This is never called.
      */
     protected void playPatch(Patch bank) { // not used
 	JOptionPane.showMessageDialog

@@ -1,12 +1,11 @@
 package org.jsynthlib.jsynthlib.xml;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
+//import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
-
-import core.Parameter;
+import core.SysexWidget;
 
 /* This is the class that will be extended by the scripting language */
 public class XMLDriverImplementation {
@@ -47,7 +46,7 @@ public class XMLDriverImplementation {
     public void storePatch(XMLPatch p, int bank, int patch) {
         /* Do nothing by default */
     }
-    public void sendParameter(XMLPatch patch, Parameter param) {
+    public void sendParameter(XMLPatch patch, SysexWidget.IParameter param) {
         /* Do nothing by default */
     }
     public void requestPatchDump(int bank, int patch) {

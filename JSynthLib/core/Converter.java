@@ -31,8 +31,10 @@ abstract public class Converter extends Driver implements IConverter {
             String patchString = patarray[i].getPatchHeader();
             for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {
                 IPatchDriver drv = (IPatchDriver) dev.getDriver(jdrv);
-                if (drv.supportsPatch(patchString, patarray[i].getByteArray()))
+                if (drv.supportsPatch(patchString, patarray[i].getByteArray())) {
                     patarray[i].setDriver(drv);
+                    break;
+                }
             }
         }
         return patarray;

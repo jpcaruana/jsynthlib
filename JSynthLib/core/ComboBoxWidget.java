@@ -20,7 +20,7 @@ public class ComboBoxWidget extends SysexWidget {
     /** An array of the list of the options in the ComboBox. */
     protected Object[] options;
 
-    public ComboBoxWidget(IPatch patch, Parameter param) {
+    public ComboBoxWidget(IPatch patch, IParameter param) {
         super(patch, param);
         options = param.getValues();
         

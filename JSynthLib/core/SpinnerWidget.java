@@ -17,7 +17,7 @@ public class SpinnerWidget extends SysexWidget {
     protected JTextField text;
     protected JSpinner spinner;
 
-    public SpinnerWidget(IPatch patch, Parameter param) {
+    public SpinnerWidget(IPatch patch, IParameter param) {
         super(patch, param);
 
         base = 0;

@@ -9,7 +9,7 @@ import core.IPatch;
 import core.ISingleDriver;
 import core.JSLFrame;
 import core.MidiUtil;
-import core.Parameter;
+import core.SysexWidget;
 
 public class XMLDriver implements ISingleDriver {
     private String authors;
@@ -152,7 +152,7 @@ public class XMLDriver implements ISingleDriver {
         device.send(msg);
     }
 
-    public void sendParameter(IPatch patch, Parameter param) {
+    public void sendParameter(IPatch patch, SysexWidget.IParameter param) {
         imp.sendParameter((XMLPatch)patch, param);
     
     }
