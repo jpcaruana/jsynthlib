@@ -14,22 +14,24 @@ import java.lang.reflect.*;
  * @version $Id$
  */
 public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
+    /** ComboBox for MIDI Out port. */
+    private JComboBox cb1 = null;
+    /** ComboBox for MIDI In port. */
+    private JComboBox cb2 = null;
+    /** ComboBox for MIDI In port for Master Controller. */
+    private JComboBox cb3 = null;
+    /** ComboBox for MIDI Wrapper. */
+    private JComboBox cbDriver = null;
 
-    JComboBox cb1 = null;
-    JComboBox cb2 = null;
-    JComboBox cb3 = null;
-    JComboBox cbDriver = null;
-    JPanel channelPanel = null;
-    Vector midiImps;
-    Vector driverChangeListeners;
-    MidiWrapper currentDriver;
+    private JPanel channelPanel = null;
+    private Vector midiImps;
+    private Vector driverChangeListeners;
+    private MidiWrapper currentDriver;
 
     public MidiConfigPanel(AppConfig appConfig) {
 	super(appConfig);
 	currentDriver = null;
 	driverChangeListeners = new Vector();
-
-	midiImps = MidiWrapper.getSuitableWrappers();
 
 	setLayout (new core.ColumnLayout ());
         JLabel l2 = new JLabel ("MIDI Access Method:");
@@ -38,6 +40,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	cbDriver=new JComboBox ();
 	add (cbDriver);
 	// Fill the combo box with all Midi wrappers in the midiimps vector
+	midiImps = MidiWrapper.getSuitableWrappers();
 	for(int i=0; i<midiImps.size(); i++) {
 	    cbDriver.addItem(midiImps.elementAt(i));
 	}
@@ -49,28 +52,28 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 		    }
 		}
 	    });
+
 	channelPanel = new JPanel();
 	channelPanel.setLayout(new core.ColumnLayout());
-        JLabel l0=new JLabel ("Run Startup Initialization on Midi Ports:");
+        JLabel l0=new JLabel ("Run Startup Initialization on MIDI Ports:");
         channelPanel.add (l0);
         cb1 = new JComboBox ();
         cb2 = new JComboBox ();
-        cb3 = new JComboBox ();
         channelPanel.add (cb1);
         channelPanel.add (cb2);
-
-        JLabel l1=new JLabel ("Receive from Master Controller on Midi Port:");
+        JLabel l1=new JLabel ("Receive from Master Controller on MIDI Port:");
         channelPanel.add (l1);
+        cb3 = new JComboBox ();
         channelPanel.add (cb3);
         add(channelPanel);
-        JButton testButton = new JButton("Test Midi");
+
+        JButton testButton = new JButton("Test MIDI");
 	testButton.addActionListener (new ActionListener () {
 		public void actionPerformed (ActionEvent e) {
 		    MidiTest.runLoopbackTest(currentDriver, cb2.getSelectedIndex(), cb1.getSelectedIndex());
 		}
 	    });
 	add(testButton);
-
 
         init();
     }
@@ -93,7 +96,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
      * constructors.
      */
     protected final String getDefaultPanelName() {
-	return("Midi");
+	return("MIDI");
     }
 
     /**
@@ -107,7 +110,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
     public void commitSettings() {
 	appConfig.setInitPortIn(cb2.getSelectedIndex ());
 	appConfig.setInitPortOut(cb1.getSelectedIndex ());
-	appConfig.setMasterController(cb3.getSelectedIndex ());
+	appConfig.setMasterController(cb3.getSelectedIndex() - 1);
 	appConfig.setMidiPlatform(cbDriver.getSelectedIndex());
     }
 
@@ -116,7 +119,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	if (PatchEdit.appConfig.getInitPortIn()<0) PatchEdit.appConfig.setInitPortIn(0);
 	if (PatchEdit.appConfig.getInitPortOut()<0) PatchEdit.appConfig.setInitPortOut(0);
 	if (PatchEdit.appConfig.getFaderPort()<0) PatchEdit.appConfig.setFaderPort(0);
-	if (PatchEdit.appConfig.getMasterController()<0) PatchEdit.appConfig.setMasterController(0);
+	//if (PatchEdit.appConfig.getMasterController()<0) PatchEdit.appConfig.setMasterController(0);
 	setComboBox(cbDriver,PatchEdit.appConfig.getMidiPlatform());
 	midiDriverSelected((MidiWrapper) cbDriver.getSelectedItem());
     }
@@ -142,6 +145,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	} catch (Exception e) {}
 	cb3.removeAllItems ();
 	try {
+	    cb3.addItem ("Disable Master Controller");
 	    for (int j=0; j< currentDriver.getNumInputDevices ();j++)
 		try {
 		    cb3.addItem (j+": "+currentDriver.getInputDeviceName (j));
@@ -149,7 +153,7 @@ public class MidiConfigPanel extends /* TODO org.jsynthlib.*/ConfigPanel {
 	} catch (Exception e) {}
 	setComboBox(cb1, PatchEdit.appConfig.getInitPortOut());
 	setComboBox(cb2, PatchEdit.appConfig.getInitPortIn());
-	setComboBox(cb3, PatchEdit.appConfig.getMasterController());
+	setComboBox(cb3, PatchEdit.appConfig.getMasterController() + 1);
 	setContainerEnabled(channelPanel,currentDriver.isReady());
     }
 

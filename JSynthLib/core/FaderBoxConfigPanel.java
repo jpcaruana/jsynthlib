@@ -117,8 +117,8 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 			cb4.setSelectedIndex (appConfig.getFaderPort());
 		} catch (Exception e) {
 			core.ErrorMsg.reportError ("Warning",
-				"Values for MidiPorts are out of range!\n" +
-				"Please fix this in the "+getPanelName()+" configuration panel.",e);
+						   "Values for MidiPorts are out of range!\n"
+						   + "Please fix this in the "+getPanelName()+" configuration panel.",e);
 		}
 		cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
 		cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
@@ -140,7 +140,8 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 			try {
 				((JavaMidiWrapper)(core.PatchEdit.MidiIn)).faderMidiPort.setDeviceNumber (MidiPort.MIDIPORT_INPUT,appConfig.getFaderPort());
 				 core.PatchEdit.MidiIn.setInputDeviceNum (appConfig.getFaderPort());
-				 core.PatchEdit.MidiIn.setInputDeviceNum (appConfig.getMasterController());
+				 // no relation to Master Controller (Hiroo)
+				 //core.PatchEdit.MidiIn.setInputDeviceNum (appConfig.getMasterController());
 				 JOptionPane.showMessageDialog (null, "You must exit and restart the program for this change to take effect","Changing Fader Port", JOptionPane.INFORMATION_MESSAGE);
 			} catch (Exception e) {
 			}
