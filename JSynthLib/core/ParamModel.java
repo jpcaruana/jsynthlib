@@ -13,23 +13,11 @@ public class ParamModel implements SysexWidget.IParamModel {
     protected int ofs;
 
     /**
-     * Creates a new <code>ParamModel</code> instance.
-     * 
+     * Left as private not to be used by mistake.
      * @deprecated Use ParamModel(Patch, int) or implement
      *             SysexWidget.IParamModel.
      */
-    public ParamModel() {
-    }
-
-    /**
-     * Creates a new <code>ParamModel</code> instance.
-     *
-     * @param patch a <code>Patch</code> value
-     * @deprecated Use ParamModel(Patch, int) or implement
-     *             SysexWidget.IParamModel.
-     */
-    public ParamModel(Patch patch) {
-	this.patch = patch;
+    private ParamModel() {
     }
 
     /**

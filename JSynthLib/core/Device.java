@@ -93,15 +93,6 @@ public abstract class Device /*implements Serializable, Storable*/ {
     /** The List for all available drivers of this device. */
     private ArrayList driverList = new ArrayList ();
 
-    /*
-     * Creates new Device.
-     * @deprecated Use Device(String, String, String, String, String).
-     */
-    /*
-    public Device () {
-    }
-    */
-
     /**
      * Creates a new <code>Device</code> instance.
      *
@@ -331,18 +322,6 @@ public abstract class Device /*implements Serializable, Storable*/ {
         driverList.add(driver);
     }
 
-    /**
-     * Add Driver at the <code>index</code>.
-     * @param index The index, where the driver is added in the list.
-     * Bulk converters must be added before simple drivers!
-     * @param driver Driver to be added.
-     * @deprecated Call <code>addDriver(Driver)</code> in order.
-     */
-    protected final void addDriver(int index, IDriver driver) {
-	driver.setDevice(this);
-        driverList.add(index, driver);
-    }
-
     /** Size query for driverList. */
     final int driverCount() {
 	return this.driverList.size();
@@ -398,23 +377,4 @@ public abstract class Device /*implements Serializable, Storable*/ {
         DeviceDetailsDialog ddd = new DeviceDetailsDialog(this);
 	ddd.setVisible(true);
     }
-
-    /**
-     * Compares the header & size of a Patch to this driver to see if
-     * this driver is the correct one to support the patch.
-     * @param patchString A sysex string like
-     * <code>"F07E010602413F01000000020000f7"</code>.
-     * @return true if the patchString matches the ID of the device
-     */
-    // commented out since not used.  If you need, change the argument
-    // patchString String instead of StringBuffer.
-//     public /*static*/ boolean checkInquiry (StringBuffer patchString) {
-//         StringBuffer inquiryString = new StringBuffer (inquiryID);
-// 	if (inquiryString.length () > patchString.length())
-// 	    return false;
-// 	for (int j = 0; j < inquiryString.length(); j++)
-//             if (inquiryString.charAt(j) == '*')
-// 		inquiryString.setCharAt(j, patchString.charAt(j));
-//         return (inquiryString.toString().equalsIgnoreCase(patchString.toString().substring(0, inquiryString.length())));
-//     }
 }

@@ -1,5 +1,4 @@
 package core;
-import javax.swing.JOptionPane;
 
 /**
  * This is an implementation of IBankDriver and the base class for bank
@@ -182,64 +181,4 @@ abstract public class BankDriver extends Driver implements IPatchDriver {
      */
     abstract protected void setPatchName(Patch bank, int patchNum, String name);
     // end of IBankDriver methods
-
-    //
-    // remove the following lines after 0.20 is released.
-    //
-    /*
-     * @deprecated Use BankDriver(String, String, int, int).
-     */
-    /*
-    public BankDriver() {
-	super();
-    }
-    */
-    /**
-     * This is never called.  Don't have to be implemented.
-     * @deprecated This method is unnecesarry for bank driver.
-     */
-    protected void sendPatch(Patch bank) {  // not used
-	JOptionPane.showMessageDialog
-	    (null, "You can not send bank data (use store).",
-	     "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
-     * Banks cannot play.
-     * @deprecated This is never called.
-     */
-    protected void playPatch(Patch bank) { // not used
-	JOptionPane.showMessageDialog
-	    (null, "Can not Play Banks, only individual patches.",
-	     "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
-     * Chooses which bank to put the patch into and stores the patch
-     * in it .
-     * @deprecated Don't use this.
-     */
-    /*
-    protected void choosePatch(Patch p) { // not used
-	int bank = 0;
-	if (bankNumbers.length > 1) {
-	    try {
-		String bankstr = (String) JOptionPane.showInputDialog
-		    (null, "Please Choose a Bank", "Storing Patch",
-		     JOptionPane.QUESTION_MESSAGE, null,
-		     bankNumbers, bankNumbers[0]);
-		if (bankstr == null) // cancel
-		    return;
-
-		for (bank = 0; bank < bankNumbers.length; bank++)
-		    if (bankstr.equals(bankNumbers[bank]))
-			break;
-	    } catch (Exception e) {
-		ErrorMsg.reportStatus(e);
-	    }
-	    ErrorMsg.reportStatus("BankDriver:ChoosePatch  Bank = " + bank);
-	}
-	storePatch(p, bank, 0);
-    }
-    */
 }

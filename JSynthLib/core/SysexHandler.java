@@ -4,7 +4,6 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.SysexMessage;
 
 /**
@@ -64,14 +63,6 @@ public class SysexHandler /*implements Serializable*/ {
      */
     public SysexHandler(String src) {
 	setSysex(src);
-    }
-
-    /**
-     * Return length of the sysex byte array.
-     * @deprecated Don't use this.
-     */
-    public int length() {
-	return sysex.length;
     }
 
     /**
@@ -313,94 +304,6 @@ public class SysexHandler /*implements Serializable*/ {
      */
     public byte[] toByteArray() {
 	return toByteArray(0, 0);
-    }
-
-    /**
-     * Send a sysex message to a MIDI output port.
-     *
-     * @param port MIDI output port number.
-     * @param deviceID device ID
-     * @deprecated Use toSysexMessage(int deviceID) and Driver.send().
-     */
-    public void send(int port, byte deviceID) {
-	send(port, toByteArray(deviceID, 0));
-    }
-
-    /**
-     * Send a sysex message to a MIDI output port.
-     *
-     * @param port MIDI output port number.
-     * @param deviceID device ID
-     * @param value data value
-     * @deprecated Use toSysexMessage(int deviceID, int value) and Driver.send().
-     */
-    public void send(int port, byte deviceID, int value) {
-	send(port, toByteArray(deviceID, value));
-    }
-
-    /**
-     * Send a sysex message to a MIDI output port.
-     *
-     * @param port MIDI output port number.
-     * @param deviceID device ID
-     * @param nameValue1 a <code>NameValue</code> value
-     * @see NameValue
-     * @deprecated Use toSysexMessage(int deviceID, NameValue
-     * nameValue1) and Driver.send().
-     */
-    public void send(int port, byte deviceID, NameValue nameValue1) {
- 	send(port, toByteArray(deviceID, new NameValue[] { nameValue1 }));
-    }
-
-    /**
-     * Send a sysex message to a MIDI output port.
-     *
-     * @param port MIDI output port number.
-     * @param deviceID device ID
-     * @param nameValue1 a <code>NameValue</code> value
-     * @param nameValue2 a <code>NameValue</code> value
-     * @see NameValue
-     * @deprecated Use toSysexMessage(int deviceID, NameValue
-     * nameValue1, NameValue nameValue2) and Driver.send().
-     */
-    public void send(int port, byte deviceID, NameValue nameValue1, NameValue nameValue2) {
-	send(port, toByteArray(deviceID, new NameValue[] { nameValue1, nameValue2}));
-    }
-
-    /**
-     * Send a sysex message to a MIDI output port.
-     *
-     * @param port MIDI output port number.
-     * @param deviceID device ID
-     * @param nameValues an array of <code>NameValue</code>.
-     * @see NameValue
-     * @deprecated Use toSysexMessage(int deviceID, NameValue[]
-     * nameValues) and Driver.send().
-     */
-    public void send(int port, byte deviceID, NameValue[] nameValues) {
-	send(port, toByteArray(deviceID, nameValues));
-    }
-
-    /**
-     * Convenience method for sending a sysex message. Static so can
-     * be accessed from non-class methods.
-     *
-     * @param port MIDI output port number
-     * @param sysex an array of sysex byte data
-     * <code>SysexHandler.send(getPort(), sysex)</code>.
-     * @deprecated use <code>Driver.send(sysex)</code>.
-     */
-    public static void send(int port, byte[] sysex) {
-	try {
-	    ErrorMsg.reportStatus("static SysexHandler->send | port: " + port, sysex);
-	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
-	    for (int i = 0; i < a.length; i++)
-		MidiUtil.send(MidiUtil.getReceiver(port), a[i]);
-	} catch (InvalidMidiDataException e) {
-	    ErrorMsg.reportStatus(e);
-	} catch (MidiUnavailableException e) {
-	    ErrorMsg.reportStatus(e);
-	}
     }
 
     /**

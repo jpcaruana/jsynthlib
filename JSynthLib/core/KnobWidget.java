@@ -71,18 +71,6 @@ public class KnobWidget extends SysexWidget {
         layoutWidgets();
     }
 
-    /**
-     * Special constructor for derived classes.
-     * @deprecated
-     */
-    protected KnobWidget(String label, IPatch patch, int min, int max,
-			 IParamModel pmodel, ISender sender) {
-	super(label, patch, min, max, pmodel, sender);
-
-	createWidgets();
-        layoutWidgets();
-    }
-
     protected void createWidgets() {
 	mKnob.setDragType(DKnob.SIMPLE_MOUSE_DIRECTION);
 	if (getLabel() != null) {

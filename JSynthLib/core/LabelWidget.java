@@ -1,5 +1,4 @@
 package core;
-import javax.swing.JLabel;
 
 /**
  * A Label widget.
@@ -17,19 +16,6 @@ public class LabelWidget extends SysexWidget {
 
 	layoutWidgets();
 	createWidgets();
-    }
-
-    /**
-     * Creates a new <code>LabelWidget</code> instance.
-     *
-     * @param jl a JLabel widget.
-     * @deprecated
-     */
-    public LabelWidget(JLabel jl) {
-        super(jl.toString(), null, null, null);
-	setJLabel(jl);		// overwrite jlabel
-
-	layoutWidgets();
     }
 
     protected void createWidgets() {

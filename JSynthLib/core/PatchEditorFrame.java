@@ -17,7 +17,6 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -338,18 +337,6 @@ public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
             widgetList.add(widget);
 
             widget.setSliderNum(slidernum);
-            // This may be removed
-            if (widget instanceof ScrollBarWidget)
-                ((ScrollBarWidget)widget).setForceLabelWidth(forceLabelWidth);
-            /*
-            if (widget instanceof ScrollBarWidget) {
-                sliderList.add(((ScrollBarWidget) widget).slider);
-            } else if (widget instanceof VertScrollBarWidget) {
-                sliderList.add(((VertScrollBarWidget) widget).slider);
-            } else if (widget instanceof ScrollBarLookupWidget) {
-                sliderList.add(((ScrollBarLookupWidget) widget).slider);
-            }
-            */
         } catch (Exception e) {
             ErrorMsg.reportStatus(e);
         }
@@ -603,25 +590,4 @@ public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
     public IPatch getPatch() {
         return p;
     }
-
-    /** Tells JSynthLib what the longest Label you plan to add in this
-     *  set of Widgets is. This will make sure that sliders are lined up
-     *  with each other horizontally. Using this is optional and will
-     *  result in sliders that are aligned horizontally for asthetic
-     *  reasons. Editors can call this more than once to create multiple
-     *  aligned sets of sliders rather than align everything in the entire
-     *  editor to one length.
-     * @deprecated use the constructor of ScrollBarWidget with
-     * labelWidth parameter.
-     */
-    public void setLongestLabel(String s)
-    {
-        JLabel j = new JLabel(s);
-        Dimension d = j.getPreferredSize();
-        forceLabelWidth=(int)d.getWidth();
-    }
-    /** @deprecated use setVisible(). */
-    public void show() {
-        
-   }
 }

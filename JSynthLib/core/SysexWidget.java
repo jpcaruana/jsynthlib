@@ -42,13 +42,7 @@ public abstract class SysexWidget extends JPanel {
 
     /** Label text for the sysexWidget */
     private String label;
-    /**
-     * JLabel widget for the label text
-     *
-     * @deprecated Use 'setLabel(String)' instead of
-     * 'jlabel.setText(String)'.  Use 'getLabel()' instead of
-     * 'jlabel.getText()'.
-     */
+    /** JLabel widget for the label text */
     private JLabel jlabel;
 
     /** <code>Patch</code> associated with the widget. */
@@ -59,15 +53,10 @@ public abstract class SysexWidget extends JPanel {
 
     /**
      * Parameter Model for this widget.
-     * 
-     * @deprecated This was changed to 'private'. Driver does not have to use
-     *             this as far as I see. (Hiroo)
      */
     private IParamModel paramModel;
 
-    /**
-     * New flyweight parameter model. Used with XML drivers.
-     */
+    /** New flyweight parameter model. Used with XML drivers. */
     private IParameter parameter = null;
     
     /**
@@ -134,46 +123,6 @@ public abstract class SysexWidget extends JPanel {
 	this(label, patch, Integer.MIN_VALUE, Integer.MAX_VALUE, pmodel, sender);
     }
 
-    /**
-     * @deprecated use <code>SysexWidget(l, p, null, null)</code>
-     */
-    protected SysexWidget(String label, IPatch patch) {
-	this(label, patch, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
-    }
-
-    /**
-     * @deprecated use <code>SysexWidget(l, null, null, null)</code>
-     */
-    protected SysexWidget(String label) {
-	this(label, null, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
-    }
-
-    /*
-    // now unnecessary.
-    protected SysexWidget() {
-	super();
-	patch = null;		// verbose?
-	setup();
-    }
-
-    // Comment out since not used (and may be useless).
-    public SysexWidget(String l, Patch p, int min, int max,
-		       ParamModel ofs) {
-	this(l, p, min, max, ofs, null);
-    }
-
-    // Comment out since not used (and may be useless).  Note that the
-    // current implementation of setValue(Patch p) and sendSysex()
-    // requires ParamModel.
-    public SysexWidget(String l, Patch p, int min, int max,
-		       ISender s) {
-	this(l, p, min, max, null, s);
-    }
-
-    public SysexWidget(String l, Patch p, int min, int max) {
-	this(l, p, min, max, null, null);
-    }
-    */
 
     /** create Widgets. */
     abstract protected void createWidgets();

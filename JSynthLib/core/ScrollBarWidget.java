@@ -26,9 +26,6 @@ public class ScrollBarWidget extends SysexWidget {
     /** width of label widget */
     protected int labelWidth;
 
-    /**Set Label Width explicitly to? zero disables*/
-    protected int forceLabelWidth = 0; // for setForceLabelWidth
-
     public ScrollBarWidget(IPatch patch, IParameter param) {
         super(patch, param);
 
@@ -72,18 +69,6 @@ public class ScrollBarWidget extends SysexWidget {
 			   int base,
 			   IParamModel pmodel, ISender sender) {
         this(label, patch, min, max, base, -1, pmodel, sender);
-    }
-
-    /**
-     * Constructor for setting up the ScrollBarWidget with an
-     * initial value which overrides the value generated from paramModel.
-     * @param valueInit initial value, displayed at construction of the widget
-     * @deprecated call setValue(int) if really required.
-     */
-    public ScrollBarWidget(String l, IPatch patch, int min, int max, int base,
-			   IParamModel pmodel, ISender sender, int valueInit) {
-	this(l, patch, min, max, base, pmodel, sender);
-        setValue(valueInit);
     }
 
     protected void createWidgets() {
@@ -148,19 +133,5 @@ public class ScrollBarWidget extends SysexWidget {
 
     public void setEnabled(boolean e) {
         slider.setEnabled(e);
-    }
-
-    /** This may be deprecated. */
-    public void setForceLabelWidth(int i) {
-	forceLabelWidth = i;
-
-	if (forceLabelWidth > 0) {
-	    Dimension d = getJLabel().getPreferredSize();
-	    d.setSize(forceLabelWidth, d.getHeight() + 3);
-	    getJLabel().setPreferredSize(d);
-	    d = getJLabel().getMinimumSize();
-	    d.setSize(forceLabelWidth, d.getHeight() + 1);
-	    getJLabel().setMinimumSize(d);
-	}
     }
 }

@@ -115,26 +115,6 @@ public class Patch implements ISinglePatch, IBankPatch {
         driver.trimSysex(this);
     }
 
-    /**
-     * Constructor - only sysex is known.
-     * 
-     * @param sysex
-     *            The MIDI SysEx message.
-     * @param offset
-     *            offset address in <code>gsysex</code>.
-     * @deprecated Don't use this.
-     */
-    // nobody uses this.
-    Patch(byte[] sysex, int offset) {
-        date = new StringBuffer();
-        author = new StringBuffer();
-        comment = new StringBuffer();
-        this.sysex = new byte[sysex.length - offset];
-        System.arraycopy(sysex, offset, this.sysex, 0, sysex.length - offset);
-        setDriver((Driver) DriverUtil.chooseDriver(sysex));
-        driver.trimSysex(this);
-    }
-
     // IPatch interface methods
     public final String getDate() {
         return date.toString();
@@ -336,39 +316,6 @@ public class Patch implements ISinglePatch, IBankPatch {
     }
 
     // end of Clone interface method
-
-    /*
-    public IPatch[] dissect() {
-        IPatch[] patarray;
-        Device dev = getDevice();
-        search: {
-            String patchString = this.getPatchHeader();
-
-            for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
-                IDriver drv = dev.getDriver(idrv);
-                if ((drv.isConverter())
-                        && drv.supportsPatch(patchString, this.sysex)) {
-                    patarray = ((IConverter) drv).extractPatch(this);
-                    if (patarray != null)
-                        break search; // found!
-                }
-            }
-            // No conversion. Try just the original patch....
-            return new IPatch[] { this };
-        }
-        // Conversion was sucessfull, we have at least one
-        // converted patch. Assign a proper driver to each patch of patarray
-        for (int i = 0; i < patarray.length; i++) {
-            String patchString = patarray[i].getPatchHeader();
-            for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {
-                IPatchDriver drv = (IPatchDriver) dev.getDriver(jdrv);
-                if (drv.supportsPatch(patchString, patarray[i].getByteArray()))
-                    patarray[i].setDriver(drv);
-            }
-        }
-        return patarray;
-    }
-    */
 
     //
     // delegation methods

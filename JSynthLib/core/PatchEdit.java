@@ -117,24 +117,6 @@ public final class PatchEdit  {
         return desktop;
     }
 
-    // Generally the app is started by running JSynthLib, so the
-    // following few lines are not necessary, but I won't delete them
-    // just yet.
-    /*
-    public static void main(String[] args) {
-        PatchEdit frame = new PatchEdit();
-        //frame.setVisible(true);
-    }
-    */
-
-    /** deprecated Don't use this. */
-    /*
-    public static Driver getDriver(int deviceNumber, int driverNumber) {
-	if (appConfig == null)
-	    return null;
-        return appConfig.getDevice(deviceNumber).getDriver(driverNumber);
-    }
-    */
     ////////////////////////////////////////////////////////////////////////
     // This allows icons to be loaded even if they are inside a Jar file
     private static ImageIcon loadIcon(String name) { // not used now
