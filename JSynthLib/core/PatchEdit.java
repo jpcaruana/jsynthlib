@@ -1186,6 +1186,17 @@ public class PatchEdit extends JFrame implements MidiDriverChangeListener {
         }
     }
 
+    /**
+     * Output string to MIDI Monitor Window.  Use MidiUtil.log()
+     * instead of this.
+     *
+     * @param s string to be output
+     */
+    static void midiMonitorLog(String s) {
+	if (midiMonitor != null && midiMonitor.isVisible())
+	    midiMonitor.log(s);
+    }
+
     // This allows icons to be loaded even if they are inside a Jar file
     private ImageIcon loadIcon(String name) {
         Object icon;
