@@ -21,9 +21,9 @@ class DefaultChecksum extends Checksum {
     
     public void checksum(XMLPatch p, byte[] msg) {
         sum = 0;
-        for (i in start .. (end < 0 ? msg.length - end : end))
+        for (i in start .. (end < 0 ? msg.size() + end - 1: end))
             sum += msg[i]
-        msg[address < 0 ? msg.length - address : address] = (-sum).and(0x7f)
+        msg[address < 0 ? msg.size() + address - 1: address] = (byte)(-sum).and(0x7f)
     }
 
     public void main(args) {
