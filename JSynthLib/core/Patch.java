@@ -2,8 +2,6 @@ package core;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
 import javax.swing.JOptionPane;
@@ -307,9 +305,12 @@ public class Patch implements ISinglePatch, IBankPatch {
     // Transferable interface methods
 
     public Object getTransferData(DataFlavor flavor)
-            throws UnsupportedFlavorException, IOException {
-        return (Patch) this;
-    }
+            throws UnsupportedFlavorException {
+        if (flavor.match(PatchTransferHandler.PATCH_FLAVOR))
+            return this;
+        else
+            throw new UnsupportedFlavorException(flavor);
+   }
 
     public boolean isDataFlavorSupported(final DataFlavor flavor) {
         ErrorMsg.reportStatus("Patch.isDataFlavorSupported " + flavor);
