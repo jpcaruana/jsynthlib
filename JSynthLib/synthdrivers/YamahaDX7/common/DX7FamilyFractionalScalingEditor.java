@@ -111,7 +111,6 @@ public class DX7FamilyFractionalScalingEditor extends PatchEditorFrame
 	protected void buildEditor(Patch patch)
 	{
 		PatchEdit.waitDialog.show();	// Because it needs some time to build up the editor frame
-    
 
 		int OpNum, KeyNum;
 
@@ -120,27 +119,34 @@ public class DX7FamilyFractionalScalingEditor extends PatchEditorFrame
 
 		for (OpNum = 0 ; OpNum < OpName.length ; OpNum++) {
 			gbc.gridx=6+3*OpNum;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
-			microPane.add(new JLabel(OpName[OpNum]),gbc);
+			microPane.add(new JLabel(OpName[OpNum],SwingConstants.LEFT),gbc);
 
 			for (KeyNum = 0; KeyNum < KeyGrpName.length ; KeyNum++) {
-				gbc.gridx=0;gbc.gridy=10+2*KeyNum;gbc.gridwidth=6;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.WEST;
-				microPane.add(new JLabel(KeyGrpName[KeyNum]),gbc);
+				gbc.gridx=0;gbc.gridy=10+2*KeyNum;gbc.gridwidth=6;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+				microPane.add(new JLabel(KeyGrpName[KeyNum],SwingConstants.LEFT),gbc);
 
 				if ( (KeyNum+OpNum*KeyGrpName.length)%41==0) {
-					addWidget(microPane, new ComboBoxWidget("",
-						      patch,
-						      new FractionalScalingModel(patch,KeyNum+OpNum*KeyGrpName.length),
-						      new FractionalScalingSender(patch, OpNum, KeyNum),
-						      offSetName),
-						      6+3*OpNum, 10+2*KeyNum, 3, 1, KeyNum+OpNum*KeyGrpName.length);
+					addWidget(microPane, new SpinnerWidget(	"",
+						patch,
+						0,
+						254,
+						-127,
+						new FractionalScalingModel(patch,KeyNum+OpNum*KeyGrpName.length),
+						new FractionalScalingSender(patch, OpNum, KeyNum)),
+						6+3*OpNum, 10+2*KeyNum, 1, 1, KeyNum+OpNum*KeyGrpName.length);
 				} else {
-					addWidget(microPane, new ComboBoxWidget("",
-						      patch,
-						      new FractionalScalingModel(patch,KeyNum+OpNum*KeyGrpName.length),
-						      new FractionalScalingSender(patch, OpNum, KeyNum),
-						      scalingName),
-						      6+3*OpNum, 10+2*KeyNum, 3, 1, KeyNum+OpNum*KeyGrpName.length);
+					addWidget(microPane, new SpinnerWidget(	"",
+						patch,
+						0,
+						255,
+						0,
+						new FractionalScalingModel(patch,KeyNum+OpNum*KeyGrpName.length),
+						new FractionalScalingSender(patch, OpNum, KeyNum)),
+						6+3*OpNum, 10+2*KeyNum, 1, 1, KeyNum+OpNum*KeyGrpName.length);
 				}
+
+				gbc.gridx=6+3*OpNum+1;gbc.gridy=10+2*KeyNum;gbc.gridwidth=1;gbc.gridheight=1;
+				microPane.add(new JLabel(" "),gbc);
 			}
 		}
 

@@ -73,7 +73,7 @@ public class DX7FamilyMicroTuningEditor extends PatchEditorFrame
 
 	protected void buildEditor(Patch patch)
 	{
-		PatchEdit.waitDialog.show();	    // Because it needs some time to build up the editor frame
+		PatchEdit.waitDialog.show();	// Because it needs some time to build up the editor frame
 
 		int SemiTone, Octave, keyByte;
 
@@ -82,31 +82,45 @@ public class DX7FamilyMicroTuningEditor extends PatchEditorFrame
 
 		for (Octave = 0 ; Octave < OctaveName.length ; Octave++) {
 			for (SemiTone = 0; SemiTone < SemiToneName.length ; SemiTone++) {
-				if ( (Octave == OctaveName.length-1) && (SemiTone == 8) ) break;
+				if ( (Octave == OctaveName.length-1) && (SemiTone == 8) ) break;	// The last octave goes only till "G8"
 
 				keyByte = SemiTone+12*Octave;
 
-				gbc.gridx=3*SemiTone;gbc.gridy=3*Octave+10;gbc.gridwidth=1;gbc.gridheight=1;
-				microPane.add(new JLabel(SemiToneName[SemiTone]+OctaveName[Octave]),gbc);
+				if (SemiTone == 0) {
+					gbc.gridx=3*SemiTone;gbc.gridy=3*Octave+11;gbc.gridwidth=2;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+					microPane.add(new JLabel("Semitone",SwingConstants.LEFT),gbc);	//Semitone = 100 cent
+					gbc.gridx=3*SemiTone;gbc.gridy=3*Octave+12;gbc.gridwidth=2;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+					microPane.add(new JLabel("1.1719 c",SwingConstants.LEFT),gbc);	//Step	   = 1.1719 cent
+				} else {
+					gbc.gridx=3*SemiTone+10;gbc.gridy=3*Octave+10;gbc.gridwidth=1;gbc.gridheight=1;
+					microPane.add(new JLabel(" "),gbc);
+				}
 
-				addWidget(microPane, new ComboBoxWidget(
-					"Semitones",
-					patch,				// coarse
+				gbc.gridx=3*SemiTone+11;gbc.gridy=3*Octave+10;gbc.gridwidth=1;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.CENTER;
+				microPane.add(new JLabel(SemiToneName[SemiTone]+OctaveName[Octave],SwingConstants.LEFT),gbc);
+
+				addWidget(microPane, new SpinnerWidget(	// coarse
+					"",
+					patch,
+					0,
+					84,
+					-42,
 					new ParamModel(patch,16+2*keyByte),
-					new MicroTuningSender(patch, keyByte , true ),		// true -> coarse
-					CoarseStepName),
-					3*SemiTone+1, 3*Octave+10, 1, 1, 24*Octave+2*SemiTone	);
+					new MicroTuningSender(patch, keyByte , true )),	// true -> coarse
+					3*SemiTone+11, 3*Octave+11, 1, 1, 24*Octave+2*SemiTone	 );
 
-				addWidget(microPane, new ComboBoxWidget(
-					"1.1719/Step",
-					patch,				// fine
+				addWidget(microPane, new SpinnerWidget(	// fine
+					"",
+					patch,
+					0,
+					127,
+					0,
 					new ParamModel(patch,16+2*keyByte+1),
-					new MicroTuningSender(patch, keyByte , false),		// false -> fine
-					FineStepName),
-					3*SemiTone+1, 3*Octave+11, 1, 1, 24*Octave+2*SemiTone+1 );
+					new MicroTuningSender(patch, keyByte , false)),	// false -> fine
+					3*SemiTone+11, 3*Octave+12, 1, 1, 24*Octave+2*SemiTone+1 );
 
 
-				gbc.gridx=3*SemiTone+2;gbc.gridy=3*Octave+12;gbc.gridwidth=1;gbc.gridheight=1;
+				gbc.gridx=3*SemiTone+12;gbc.gridy=3*Octave+13;gbc.gridwidth=1;gbc.gridheight=1;
 				microPane.add(new JLabel(" "),gbc);
 			}
 		}
@@ -115,9 +129,8 @@ public class DX7FamilyMicroTuningEditor extends PatchEditorFrame
 		pack();
 		show();
 
-		PatchEdit.waitDialog.hide();	    // Okay, the editor frame is ready
+		PatchEdit.waitDialog.hide();	// Okay, the editor frame is ready
 	}
-
 
 	/*
 	 * SysexSender - Micro Tuning

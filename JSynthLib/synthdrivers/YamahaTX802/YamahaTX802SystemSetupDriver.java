@@ -57,7 +57,7 @@ public class YamahaTX802SystemSetupDriver extends DX7FamilySystemSetupIIIDriver
 			YamahaTX802SysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10) );
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
-				// Information
+				// show Information
 				YamahaTX802Strings.dxShowInformation(toString(), YamahaTX802Strings.MEMORY_PROTECTION_STRING);
 		}
 

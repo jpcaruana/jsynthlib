@@ -81,11 +81,6 @@ public class YamahaDX7sStrings	extends DX7FamilyStrings
 		"\nIf you are familiar with the DX7s you can switch off the message windows by disabling"+
 		" the \"Display Hints and Tips?\" function. This will avoid all messages!"+
 		"\n\n"+
-		"- \"use Spinner Elements?\""+
-		"\nSince the spinner graphic element needs at least JDK/JRE 1.4 some editors are existing"+
-		" in two versions (with and without spinner elements)."+
-		"\nBoth versions have the same functionality, but different layouts."+
-		"\n\n"+
 		"PATCH TYPE SPECIFIC INFORMATION"+
 		"\n==============================="+
 		"\n\"VOICE\" SINGLE/BANK DRIVER/EDITOR"+

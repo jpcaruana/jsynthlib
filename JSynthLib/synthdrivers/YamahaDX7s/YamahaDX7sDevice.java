@@ -42,7 +42,6 @@ public class YamahaDX7sDevice extends DX7FamilyDevice
 		setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
 		setSwOffMemProtFlag(0x02);	// switched off 'Disable Memory Protection?'	and  enabled
 		setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
-		setSpinnerEditorFlag(0x03);	// switched on  'spinner elements for editors'	and  enabled
 
 		// voice patch
 		addDriver (new YamahaDX7sVoiceSingleDriver());

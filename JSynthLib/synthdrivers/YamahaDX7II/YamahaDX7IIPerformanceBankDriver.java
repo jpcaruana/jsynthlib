@@ -52,7 +52,7 @@ public class YamahaDX7IIPerformanceBankDriver extends DX7FamilyPerformanceIIBank
 			YamahaDX7IISysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)0 );
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
-				// shoe Information 
+				// show Information 
 				YamahaDX7IIStrings.dxShowInformation(toString(), YamahaDX7IIStrings.MEMORY_PROTECTION_STRING);
 		}
 

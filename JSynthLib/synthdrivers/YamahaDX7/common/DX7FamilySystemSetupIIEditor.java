@@ -96,6 +96,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 	{
 		PatchEdit.waitDialog.show();	// Because it needs some time to build up the editor frame
 
+
 		final DecimalFormat freqFormatter = new DecimalFormat("###0.00");
 
 		JTabbedPane systemPane=new JTabbedPane();
@@ -171,20 +172,27 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 
 		systemPane.addTab("Program Change Transmission Table",perfPane);
 
-		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=8;gbc.gridheight=1;
+		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=gbc.BOTH;
 		perfPane.add(new JLabel("If you set the Program Change Transmission Mode to Memory, this Table determines which"),gbc);
-		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=8;gbc.gridheight=1;
+		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=gbc.BOTH;
 		perfPane.add(new JLabel("program change number will be transmitted via MIDI."),gbc);
 
 		gbc.gridx=0;gbc.gridy=3;gbc.gridwidth=1;gbc.gridheight=1; perfPane.add(new JLabel(" "),gbc);
 		gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=1;gbc.gridheight=1; perfPane.add(new JLabel(" "),gbc);
 		for (int i=0, j=0; i<64; i++) {
 			if (i%8==0) j++;
-			addWidget(perfPane,new ComboBoxWidget(Integer.toString(i),patch,new ParamModel(patch,16+21+i),null,PerfSelNoName)    , 0+(i%8), 3+j,1,1,150+i  );
+
+			gbc.gridx=4*(i%8);gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1; perfPane.add(new JLabel(" "),gbc);
+			gbc.gridx=4*(i%8)+1;gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1;gbc.fill=gbc.BOTH;gbc.anchor=gbc.EAST;
+			perfPane.add(new JLabel(Integer.toString(i),SwingConstants.RIGHT),gbc);
+
+			addWidget(perfPane,new SpinnerWidget("",patch,0,127,0,new ParamModel(patch,16+21+i),null)    ,4*(i%8)+2, 3+j,1,1,150+i	);
+
+			gbc.gridx=4*(i%8)+3;gbc.gridy=3+j;gbc.gridwidth=1;gbc.gridheight=1; perfPane.add(new JLabel(" "),gbc);
 		}
-		gbc.gridx=0;gbc.gridy=13;gbc.gridwidth=8;gbc.gridheight=1;
-		perfPane.add(new JLabel(""),gbc);
-		gbc.gridx=0;gbc.gridy=14;gbc.gridwidth=8;gbc.gridheight=1;
+		gbc.gridx=0;gbc.gridy=13;gbc.gridwidth=1;gbc.gridheight=1;
+		perfPane.add(new JLabel(" "),gbc);
+		gbc.gridx=0;gbc.gridy=14;gbc.gridwidth=35;gbc.gridheight=1;gbc.fill=gbc.BOTH;
 		perfPane.add(new JLabel("be included in bulk data only (does not have parameter change code)"),gbc);
 
 		gbc.gridx=0;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;

@@ -64,19 +64,7 @@ public class DX7FamilySystemSetupIIIDriver extends Driver
 
 	public JSLFrame editPatch(Patch p)
 	{
-		if ( ( ((DX7FamilyDevice)(getDevice())).getSpinnerEditorFlag() & 0x01) == 1 ) {
-			if ( (float)(Float.parseFloat(java.lang.System.getProperty("java.specification.version"))) >= (float)(1.4)  ) {
-				// use of JSpinner requires jdk>=1.4 !
-				return new DX7FamilySystemSetupIIIEditor2(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", p);
-			} else {
-				if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
-					// show Information
-					DX7FamilyStrings.dxShowInformation(toString(), DX7FamilyStrings.JDK14_NEEDED_STRING);
-
-				return new DX7FamilySystemSetupIIIEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", p);
-			}
-		} else
-			return new DX7FamilySystemSetupIIIEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", p);
+		return new DX7FamilySystemSetupIIIEditor(getManufacturerName()+" "+getModelName()+" \""+getPatchType()+"\" Editor", p);
 	}
 
 

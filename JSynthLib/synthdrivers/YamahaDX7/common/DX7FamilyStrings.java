@@ -62,14 +62,4 @@ public class DX7FamilyStrings
 	public final static String MEMORY_PROTECTION_STRING=
 		"\n\nHave you disabled the memory protection?"+
 		MEMORY_PROTECTION_MSG_STRING+AVOID_MSG_STRING;
-
-
-	// JAVA environment messages
-	// =========================
-	// JDK 1.4 or higher needed (JSpinner, ...)
-	public final static String JDK14_NEEDED_STRING =
-		"\n\nThe editor with spinner element requires JDK/JRE 1.4 or higher!"+
-		"\n\nAn alternative editor will be used."+
-		AVOID_MSG_STRING;
 }
-

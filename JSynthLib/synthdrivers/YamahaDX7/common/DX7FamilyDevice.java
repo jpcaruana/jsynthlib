@@ -44,9 +44,6 @@ public class DX7FamilyDevice extends Device
 	// switch off "Hints and Tips Messages"?
 	protected JCheckBox	tipsMsg;
 	protected int		tipsMsgFlag;
-	// Editors use spinner?
-	protected JCheckBox	spinnerEditor;
-	protected int		spinnerEditorFlag;
 
 	// Creates a new YamahaDX7FamilyDevice
 	// infact it calls only the constructor of the Device class
@@ -124,30 +121,6 @@ public class DX7FamilyDevice extends Device
 		c.gridx=3;c.gridy=7;c.gridwidth=1;c.gridheight=2;
 		panel.add(tipsMsg,c);
 
-		c.gridx=0;c.gridy=9;c.gridwidth=1;c.gridheight=1;
-		panel.add(new JLabel(" "),c);
-
-
-		c.gridx=0;c.gridy=10;c.gridwidth=3;c.gridheight=1;
-		panel.add(new JLabel("Editor settings:"),c);
-
-		c.gridx=0;c.gridy=13;c.gridwidth=3;c.gridheight=2;
-		panel.add(new JLabel("use Spinner Elements?"),c);
-		spinnerEditor = new JCheckBox();
-		spinnerEditor.setSelected( (getSpinnerEditorFlag() & 0x01) == 0x01);
-		spinnerEditor.setEnabled ( (getSpinnerEditorFlag() & 0x02) == 0x02);
-		spinnerEditor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JCheckBox chb = (JCheckBox)e.getSource();
-				if (chb.isSelected()) setSpinnerEditorFlag( getSpinnerEditorFlag() | 0x01);
-				else setSpinnerEditorFlag( getSpinnerEditorFlag() & 0xfe);
-			}
-		});
-		c.gridx=3;c.gridy=13;c.gridwidth=1;c.gridheight=2;
-		panel.add(spinnerEditor,c);
-		c.gridx=4;c.gridy=13;c.gridwidth=3;c.gridheight=1;
-		panel.add(new JLabel("( needs JDK 1.4 or later! )"),c);
-
 		return panel;
 	  }
 
@@ -168,11 +141,6 @@ public class DX7FamilyDevice extends Device
 	/** Setter for tipsMsgFlag */
 	public void setTipsMsgFlag(int tipsMsgFlag) { this.tipsMsgFlag = tipsMsgFlag; };
 
-	/** Getter for spinnerEditorFlag */
-	public int getSpinnerEditorFlag() { return this.spinnerEditorFlag; };
-	/** Setter for tipsMsgFlag */
-	public void setSpinnerEditorFlag(int spinnerEditorFlag) { this.spinnerEditorFlag = spinnerEditorFlag; };
-
 
 	/**
 	 * Get the names of properties that should be stored and loaded.
@@ -181,8 +149,8 @@ public class DX7FamilyDevice extends Device
 	public Set storedProperties()
 	{
 		final String[] storedPropertyNames = {
-				 "sPBPflag", "swOffMemProtFlag", "tipsMsgFlag" ,"spinnerEditorFlag"
-				 };
+				 "sPBPflag", "swOffMemProtFlag", "tipsMsgFlag"
+		};
 		Set set = super.storedProperties();
 		set.addAll(Arrays.asList(storedPropertyNames));
 		return set;

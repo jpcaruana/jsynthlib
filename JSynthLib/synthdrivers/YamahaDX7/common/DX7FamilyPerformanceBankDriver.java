@@ -52,7 +52,6 @@ public class DX7FamilyPerformanceBankDriver extends BankDriver
 		deviceIDoffset=2;
 		patchNumbers = dxPatchNumbers;
 		bankNumbers  = dxBankNumbers;
-		//numColumns=4;
 		singleSysexID="F0430*01005E";
 		singleSize=102;
 		checksumOffset=4102;

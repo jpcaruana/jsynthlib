@@ -42,7 +42,6 @@ public class YamahaTX7Device extends DX7FamilyDevice
 		setSPBPflag(0x00);		// switched off 'Enable Remote Control?'	and disabled
 		setSwOffMemProtFlag(0x02);	// switched off 'Disable Memory Protection?'	and  enabled
 		setTipsMsgFlag(0x03);		// switched on	'Display Hints and Tips?'	and  enabled
-		setSpinnerEditorFlag(0x00);	// switched off 'spinner elements for editors'	and disabled
 		
 		// voice patch - basic patch for all modells of the DX7 family
 		addDriver (new YamahaTX7VoiceSingleDriver());
