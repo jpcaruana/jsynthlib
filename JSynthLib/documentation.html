@@ -667,12 +667,12 @@ patches of more than one type,the command will randomly choose which
 synthesizer it is creating patches for. <br>
 
 When you use the crossbreeder, you are shown a dialog with four
-buttons. The "close" button quits the crossbreeder. The "Generate"
-button creates a new random patch and plays it for you. The "play"
+buttons. The "Close" button quits the crossbreeder. The "Generate"
+button creates a new random patch and plays it for you. The "Play"
 button replays the patch in case you want to hear it again. You can
 also use the master keyboard controller to play with your random
 patch. If you don't like a patch, simply hit generate to create a new
-one.  If you find something you like, hit the 'keep' button and your
+one.  If you find something you like, hit the "Keep" button and your
 patch will be appended to the current library. Note that as a random
 patch, it will have a random name, so you'll probably want to go in
 and give it a more useful name later.
@@ -956,14 +956,14 @@ synthesizer?</i></h5>
    synthesizer, it would be pretty tough.
 
 <li>You'll need a copy of the Java 1.3 (or higher) JDK. This is
-   available for free from java.sun.com This contains the various
-   tools used to compile JSynthLib.
+   available for free from <a href="http://java.sum.com/">java.sun.com</a>.
+   This contains the various tools used to compile JSynthLib.
 
 <li>You'll need a text editor in order to edit code. Anything will
    work. I wrote a significant part of the JSynthLib core code using
    EDIT.COM which comes with Windows. More recently, I've switched to
-   jEdit, a Java based emacs-like programmer's editor with syntax
-   highlighting and bracket matching.
+   <a href="http://www.jedit.org/">jEdit</a>, a Java based emacs-like
+   programmer's editor with syntax highlighting and bracket matching.
 
 <li>Finally, you'll need to be able to program in Java. If you've
    programmed in C++ before, you can probably pick it up in about an
@@ -1740,20 +1740,24 @@ directory (folder), <kbd>WireNative.dll<kbd>, <kbd>jmidi</kbd>
 directory, and <kbd>MidiPort.dll</kbd> from the latest JSynthLib
 distribution.
 
-At this point Windows (and Linux?) user cannot compile
-<kbd>core/MacOSXMidiWapper.java</kbd>.  But you can download the
-compiled class code via CVS with other files.
+Windows and Linux users need to download pseudo MacOSX classes
+(com.apple.jar) from here<a
+href="http://groups.yahoo.com/group/jsynthlib-dev/files/"></a> and
+extract the files as;
 
-One way to compile all source code is;
 <pre>
-/usr/bin/ls core/*.java | grep -v MacOSXMidiWrapper.java > foo
-javac @foo
-javac synthdrivers/*/*.java
-javac *.java
+jar xvf com.apple.jar
 </pre>
 
 When native MIDI support by Java (JavaSound) become stable on all
-platforms which JSynthLib supports, we don't need this hack.
+platforms which JSynthLib supports, we don't need this pseudo class.
+
+Now you should be able to compile source code as follows;
+<pre>
+javac core/*.java
+javac synthdrivers/*/*.java
+javac *.java
+</pre>
 
 <h3><a name="acknowledgment" href="#toc">We wish to say thank you to....</a></h3>
 ...a large number of contributors. Currently the list is not included here,
