@@ -96,7 +96,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
         super("Waldorf Pulse/Pulse+ Single Editor", patch);
         
         // Initialise attibutes
-        plus = new ImageIcon("synthdrivers/WaldorfPulse/plus.png");
+        plus = new ImageIcon(getClass().getResource("plus.png"));
         page_gbc = new GridBagConstraints();
         page_gbc.fill = GridBagConstraints.BOTH;
         page_gbc.anchor = GridBagConstraints.NORTHWEST;

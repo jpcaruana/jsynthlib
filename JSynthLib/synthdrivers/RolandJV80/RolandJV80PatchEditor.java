@@ -615,7 +615,7 @@ public class RolandJV80PatchEditor extends PatchEditorFrame {
 
         final ImageIcon[] velocityCurves = new ImageIcon[7];
         for (int i = 0; i < 7; i++) {
-        	velocityCurves[i] = new ImageIcon("synthdrivers/RolandJV80/images/velocity" + (i+1) + ".png");
+        	velocityCurves[i] = new ImageIcon(getClass().getResource("images/velocity" + (i+1) + ".png"));
         }
 
         gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.WEST;

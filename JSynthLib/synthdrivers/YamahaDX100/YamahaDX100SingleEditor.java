@@ -15,14 +15,14 @@ class YamahaDX100SingleEditor extends PatchEditorFrame
   public YamahaDX100SingleEditor(Patch patch)
   {
     super ("Yamaha DX21/27/100 Single Editor",patch);
-  algoIcon[0]=new ImageIcon("synthdrivers/YamahaDX100/1.gif");
-  algoIcon[1]=new ImageIcon("synthdrivers/YamahaDX100/2.gif");
-  algoIcon[2]=new ImageIcon("synthdrivers/YamahaDX100/3.gif");
-  algoIcon[3]=new ImageIcon("synthdrivers/YamahaDX100/4.gif");
-  algoIcon[4]=new ImageIcon("synthdrivers/YamahaDX100/5.gif");
-  algoIcon[5]=new ImageIcon("synthdrivers/YamahaDX100/6.gif");
-  algoIcon[6]=new ImageIcon("synthdrivers/YamahaDX100/7.gif");
-  algoIcon[7]=new ImageIcon("synthdrivers/YamahaDX100/8.gif");
+  algoIcon[0]=new ImageIcon(getClass().getResource("1.gif"));
+  algoIcon[1]=new ImageIcon(getClass().getResource("2.gif"));
+  algoIcon[2]=new ImageIcon(getClass().getResource("3.gif"));
+  algoIcon[3]=new ImageIcon(getClass().getResource("4.gif"));
+  algoIcon[4]=new ImageIcon(getClass().getResource("5.gif"));
+  algoIcon[5]=new ImageIcon(getClass().getResource("6.gif"));
+  algoIcon[6]=new ImageIcon(getClass().getResource("7.gif"));
+  algoIcon[7]=new ImageIcon(getClass().getResource("8.gif"));
   final JLabel l=new JLabel(algoIcon[patch.sysex[99-41]]);
 
   JPanel lfoPane=new JPanel();
