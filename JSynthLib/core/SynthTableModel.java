@@ -4,12 +4,20 @@ import javax.swing.table.AbstractTableModel;
 
 // Made public by emenaker 3/12/2003 because stuff that uses it was moved out of core.*
 public class SynthTableModel extends AbstractTableModel {
+    private static final int SYNTH_NAME	    = 0;
+    private static final int DEVICE	    = 1;
+    private static final int MIDI_IN	    = 2;
+    private static final int MIDI_OUT	    = 3;
+    private static final int MIDI_CHANNEL   = 4;
+    private static final int MIDI_DEVICE_ID = 5;
+
     private final String[] columnNames = {
 	"Synth ID",
 	"Device",
-	"Midi In Port",
-	"Midi Out Port",
-	"Midi Channel"
+	"MIDI In Port",
+	"MIDI Out Port",
+	"MIDI Channel",
+	"MIDI Device ID"
     };
 
     SynthTableModel () {
@@ -30,12 +38,12 @@ public class SynthTableModel extends AbstractTableModel {
     public Object getValueAt (int row, int col) {
 	Device myDevice = (Device) PatchEdit.appConfig.getDevice (row);
 
-	if (col == 0)
+	if (col == SYNTH_NAME)
 	    return myDevice.getSynthName ();
-	if (col == 1)
+	if (col == DEVICE)
 	    return (myDevice.getManufacturerName ()
 		    + " " + myDevice.getModelName());
-	if (col == 2) {
+	if (col == MIDI_IN) {
 	    try {
 		return (myDevice.getInPort ()
 			+ ": "
@@ -44,7 +52,7 @@ public class SynthTableModel extends AbstractTableModel {
 		return "-";
 	    }
 	}
-	if (col == 3) {
+	if (col == MIDI_OUT) {
 	    try {
 		return (myDevice.getPort ()
 			+ ": " + PatchEdit.MidiOut.getOutputDeviceName(myDevice.getPort()));
@@ -52,7 +60,12 @@ public class SynthTableModel extends AbstractTableModel {
 		return "-";
 	    }
 	}
-	return new Integer (myDevice.getChannel ());
+	if (col == MIDI_CHANNEL)
+	    return new Integer (myDevice.getChannel());
+	if (col == MIDI_DEVICE_ID)
+	    return new Integer (myDevice.getDeviceID());
+
+	return null;
     }
 
     public boolean isCellEditable (int row, int col) {
@@ -63,23 +76,23 @@ public class SynthTableModel extends AbstractTableModel {
 
     public void setValueAt (Object value, int row, int col) {
 	Device dev = (Device) PatchEdit.appConfig.getDevice(row);
-	if (col == 0)
+	if (col == SYNTH_NAME)
 	    dev.setSynthName((String) value);
-	if (col == 2)
-	    try {
-		dev.setInPort(new Integer(Integer.parseInt(((String) value).substring(0, 2))).intValue());
-	    } catch (Exception e) {
-		dev.setInPort(new Integer(Integer.parseInt(((String) value).substring(0, 1))).intValue());
-	    }
-	if (col == 3)
-	    try {
-		dev.setPort(new Integer(Integer.parseInt(((String) value).substring(0, 2))).intValue());
-	    } catch (Exception e) {
-		dev.setPort(new Integer(Integer.parseInt(((String) value).substring(0, 1))).intValue());
-	    }
-
-	if (col == 4)
+	if (col == MIDI_IN) {
+	    String s = (String) value;
+	    int port = Integer.parseInt(s.substring(0, s.indexOf(':')));
+	    dev.setInPort(port);
+	}
+	if (col == MIDI_OUT) {
+	    String s = (String) value;
+	    int port = Integer.parseInt(s.substring(0, s.indexOf(':')));
+	    dev.setPort(port);
+	}
+	if (col == MIDI_CHANNEL)
 	    dev.setChannel(((Integer) value).intValue());
+
+	if (col == MIDI_DEVICE_ID)
+	    dev.setDeviceID(((Integer) value).intValue());
 
 	fireTableCellUpdated(row, col);
     }
