@@ -107,7 +107,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 	{
 		super.frameOpened();
 		// send performance FIRST
-		p.calculateChecksum();
+		//p.calculateChecksum();
 		p.send();
 		
 		for (int oPart = 0; oPart < 4; oPart++) 

@@ -217,9 +217,9 @@ public class KawaiK5000BankDriver extends BankDriver
      sysex[patchSize-1]=(byte)0xF7;
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,9,patchSize-10);
      Patch p = new Patch(sysex, getDevice());
-     p.getDriver().calculateChecksum(p);
-    return p;
-    }catch (Exception e) {ErrorMsg.reportError("Error","Error in K5000 Bank Driver",e);return null;}
+     p.calculateChecksum();
+     return p;
+   }catch (Exception e) {ErrorMsg.reportError("Error","Error in K5000 Bank Driver",e);return null;}
    }
 public Patch createNewPatch()
  {

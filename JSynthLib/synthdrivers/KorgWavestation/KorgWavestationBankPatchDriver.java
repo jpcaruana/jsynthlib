@@ -116,7 +116,7 @@ public class KorgWavestationBankPatchDriver extends BankDriver {
             sysex[852+8]=(byte)0xF7;
             System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,7,852);
             Patch p = new Patch(sysex, getDevice());
-            p.getDriver().calculateChecksum(p);
+            p.calculateChecksum();
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Wavestation Bank Driver",e);return null;}
     }

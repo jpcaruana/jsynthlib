@@ -102,8 +102,8 @@ public class EnsoniqESQ1BankDriver extends BankDriver
      sysex[209]=(byte)0xF7;     
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,5,204);
      Patch p = new Patch(sysex, getDevice());
-     p.getDriver().calculateChecksum(p);   
-    return p;
+     p.calculateChecksum();   
+     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in ESQ1 Bank Driver",e);return null;}
    }
 public Patch createNewPatch()

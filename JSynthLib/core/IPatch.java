@@ -58,9 +58,6 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     /** Set the patch's name. */
     void setName(String name);
 
-    /** calculate checksum of the patch. */
-    void calculateChecksum();
-    
     /**
      * Returns a Patch Editor Window for this Patch. Returns <code>null</code>
      * if there is no editor.
@@ -78,7 +75,7 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     void play();
 
     /**
-     * Sends a patch to the synth's edit buffer.<p>
+     * Sends a patch to the synth's edit buffer.
      */
     void send();
     // end of Single Patch
@@ -107,10 +104,20 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     SysexMessage[] getMessages();
 
     /**
-     * Get a byte array representing this patch. According to the implementation
-     * of IPatch interface, this method may be expensive. Be careful to use
-     * this. You may want to add a new method to IPatch interface, as getSize()
-     * or lookupManufacturer().
+     * Get a byte array representing this patch.  The checksum is calculated.
+     * @return a byte array of Sysex data.
+     * @see #getByteArray()
+     */
+    byte[] export();
+
+    /**
+     * Get a byte array representing this patch. The checksum may not be
+     * calculated.
+     * <p>
+     * According to the implementation of IPatch interface, this method may be
+     * expensive. Be careful to use this. You may want to add a new method to
+     * IPatch interface, as getSize() or lookupManufacturer().
+     * @see #export()
      */
     byte[] getByteArray();
     

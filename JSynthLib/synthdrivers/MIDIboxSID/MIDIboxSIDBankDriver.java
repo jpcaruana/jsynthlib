@@ -142,7 +142,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 
 	    System.arraycopy(((Patch)bank).sysex, getPatchStart(patchNum), sysex, 8, 256);
 	    Patch p = new Patch(sysex, getDevice());
-	    p.getDriver().calculateChecksum(p);   
+	    p.calculateChecksum();   
 	    return p;
 	} catch( Exception e ) { ErrorMsg.reportError("Error","Error in MIDIboxSID Bank Driver",e);return null; }
     }

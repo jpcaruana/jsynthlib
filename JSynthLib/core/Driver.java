@@ -271,7 +271,7 @@ abstract public class Driver implements ISingleDriver {
     /**
      * Create a new Patch. Don't override this unless your driver properly
      * implement this method.
-     * @see IPatchDriver#createPatch
+     * @see IPatchDriver#createPatch()
      */
     protected Patch createNewPatch() { // overridden by subclass
 	return null;
@@ -299,6 +299,7 @@ abstract public class Driver implements ISingleDriver {
      * Look for a proper driver and trim the patch
      */
     private IPatch fixPatch(Patch pk, String patchString) {
+        byte[] sysex = pk.getByteArray();
         for (int i = 0; i < AppConfig.deviceCount(); i++) {
             // first check the requested device.
             // then starting index '1'. (index 0 is 'generic driver')
@@ -307,7 +308,7 @@ abstract public class Driver implements ISingleDriver {
             for (int j = 0; j < device.driverCount(); j++) {
                 IDriver d = device.getDriver(j);
                 if (d instanceof Driver
-                        && d.supportsPatch(patchString, pk.getByteArray())) {
+                        && d.supportsPatch(patchString, sysex)) {
                     // driver found
                     Driver driver = (Driver) d;
                     pk.setDriver(driver);
@@ -353,8 +354,9 @@ abstract public class Driver implements ISingleDriver {
         return patch.sysex.length; // == trimSize
     }
 
-    public final void calculateChecksum(IPatch myPatch) {
-        calculateChecksum((Patch) myPatch);
+    public final byte[] export(IPatch patch) {
+        calculateChecksum((Patch) patch);
+        return ((Patch) patch).sysex;
     }
 
     /**
@@ -364,7 +366,6 @@ abstract public class Driver implements ISingleDriver {
      * messages.
      *
      * @param p a <code>Patch</code> value
-     * @see IPatchDriver#calculateChecksum(IPatch)
      */
     protected void calculateChecksum(Patch p) {
 	calculateChecksum(p, checksumStart, checksumEnd, checksumOffset);
@@ -389,13 +390,14 @@ abstract public class Driver implements ISingleDriver {
      *            end offset
      * @param offset
      *            offset of the checksum data
-     * @see #calculateChecksum(IPatch)
+     * @see #calculateChecksum(Patch)
      */
     protected static void calculateChecksum(Patch patch, int start, int end, int offset) {
 	DriverUtil.calculateChecksum(patch.sysex, start, end, offset);
     }
 
     public final void send(IPatch myPatch, int bankNum, int patchNum) {
+        calculateChecksum((Patch) myPatch);
         storePatch((Patch) myPatch, bankNum, patchNum);
     }
 
@@ -493,8 +495,13 @@ abstract public class Driver implements ISingleDriver {
 	device.send(msg);
     }
 
-    /** Send Sysex byte array data to MIDI outport. */
-    // Called from SysexWidget
+    /**
+     * Send Sysex byte array data to MIDI outport.
+     * 
+     * @param sysex
+     *            a byte array of Sysex data. If it has checksum, the checksum
+     *            must be calculated before calling this method.
+     */
     public final void send(byte[] sysex) {
 	try {
 	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
@@ -583,6 +590,7 @@ abstract public class Driver implements ISingleDriver {
     }
 
     public final void send(IPatch p) {
+        calculateChecksum((Patch) p);
         sendPatch((Patch) p);
     }
 
@@ -642,7 +650,7 @@ abstract public class Driver implements ISingleDriver {
      * Gets the name of the patch from the sysex. If the patch uses
      * some weird format or encoding, this needs to be overidden in
      * the particular driver.
-     * @see Patch#getName
+     * @see Patch#getName(int)
      */
     protected String getPatchName(Patch p) { // called by bank driver
         if (patchNameSize == 0)
@@ -658,7 +666,7 @@ abstract public class Driver implements ISingleDriver {
      * Set the name of the patch in the sysex. If the patch uses some
      * weird format or encoding, this needs to be overidden in the
      * particular driver.
-     * @see Patch#setName
+     * @see Patch#setName(int, String)
      */
     protected void setPatchName(Patch p, String name) { // called by bank driver
         if (patchNameSize == 0) {
@@ -677,7 +685,6 @@ abstract public class Driver implements ISingleDriver {
 	} catch (UnsupportedEncodingException ex) {
 	    return;
 	}
-        calculateChecksum(p);	// Is this required here?
     }
 
     /** Getter of patchNameSize. */

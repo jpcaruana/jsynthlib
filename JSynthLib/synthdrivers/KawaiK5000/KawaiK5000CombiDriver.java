@@ -137,7 +137,7 @@ ErrorMsg.reportStatus("KawaiK5000CombiDriver->storePatch: " + bankNum + " | " + 
     sysex[sysex.length-1] = (byte)0xF7;
 
     Patch p = new Patch(sysex);
-    p.getDriver().calculateChecksum(p);
+    p.calculateChecksum();
 
     return p;
   }

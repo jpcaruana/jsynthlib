@@ -178,6 +178,10 @@ public class Patch implements IPatch {
         setDriver((IPatchDriver) DriverUtil.chooseDriver(sysex));
     }
 
+    public final byte[] export() {
+        return ((IPatchDriver) driver).export(this);
+    }
+
     public final byte[] getByteArray() {
         return sysex;
     }
@@ -298,32 +302,32 @@ public class Patch implements IPatch {
 
     // only for single patch
     public final void play() {
-        ((ISingleDriver) driver).play(this);
+        driver.play(this);
     }
 
     public final void send() {
-        ((ISingleDriver) driver).send(this);
+        driver.send(this);
     }
 
     // only for bank patch
     public final void put(IPatch singlePatch, int patchNum) {
-        ((IBankDriver) driver).checkAndPutPatch(this, singlePatch, patchNum);
+        ((BankDriver) driver).checkAndPutPatch(this, singlePatch, patchNum);
     }
 
     public final void delete(int patchNum) {
-        ((IBankDriver) driver).deletePatch(this, patchNum);
+        ((BankDriver) driver).deletePatch(this, patchNum);
     }
 
     public final IPatch get(int patchNum) {
-        return ((IBankDriver) driver).getPatch(this, patchNum);
+        return ((BankDriver) driver).getPatch(this, patchNum);
     }
 
     public final String getName(int patchNum) {
-        return ((IBankDriver) driver).getPatchName(this, patchNum);
+        return ((BankDriver) driver).getPatchName(this, patchNum);
     }
 
     public final void setName(int patchNum, String name) {
-        ((IBankDriver) driver).setPatchName(this, patchNum, name);
+        ((BankDriver) driver).setPatchName(this, patchNum, name);
     }
 
     /**

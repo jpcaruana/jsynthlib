@@ -112,7 +112,7 @@ public class YamahaTG33BankDriver extends BankDriver
             sysex[15]=(byte)0x45;  sysex[604]=(byte)0xF7;
             System.arraycopy (((Patch)bank).sysex,getPatchStart (patchNum),sysex,16,587);
             Patch p = new Patch (sysex, getDevice());
-            p.getDriver().calculateChecksum (p);
+            p.calculateChecksum();
             return p;
         }catch (Exception e)
         {ErrorMsg.reportError ("Error","Error in TG33 Bank Driver",e);return null;}

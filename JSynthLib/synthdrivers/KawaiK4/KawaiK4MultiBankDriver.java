@@ -111,7 +111,7 @@ public class KawaiK4MultiBankDriver extends BankDriver {
 	System.arraycopy(((Patch)bank).sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
         try {
             Patch p = new Patch(sysex, getDevice());
-            p.getDriver().calculateChecksum(p);
+            p.calculateChecksum();
             return p;
         } catch (Exception e) {
 	    ErrorMsg.reportError("Error", "Error in K4 MultiBank Driver", e);

@@ -139,7 +139,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 	// It's not good idea to override PatchBasket method.
 	public void sendSelectedPatch()
 	{
- 	  p.getDriver().calculateChecksum(p);
+	  //p.calculateChecksum(); // done by sendPatch(Patch, int)
 	  ((YamahaFS1RVoiceDriver)(p.getDriver())).sendPatch((Patch)p, getPart());
  	}
 

@@ -266,9 +266,9 @@ public class YamahaTX81zBankDriver extends BankDriver
      sysex[141]=(byte)0xF7;     
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum)+51,sysex,118,22);
      Patch p = new Patch(sysex, getDevice());
-     p.getDriver().calculateChecksum(p);   
+     p.calculateChecksum();   
      return p;
-    }catch (Exception e) {ErrorMsg.reportError("Error","Error in TX81z Bank Driver",e);return null;}
+   }catch (Exception e) {ErrorMsg.reportError("Error","Error in TX81z Bank Driver",e);return null;}
    }
 public Patch createNewPatch()
  {

@@ -247,7 +247,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
             return;
         }
         FileOutputStream fileOut = new FileOutputStream(file);
-        fileOut.write(getSelectedPatch().getByteArray());
+        fileOut.write(getSelectedPatch().export());
         fileOut.close();
     }
 
@@ -288,20 +288,17 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     public void sendSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         if (myPatch.getDriver().isSingleDriver()) {
-            myPatch.calculateChecksum();
             myPatch.send();
         }
     }
 
     public void sendToSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.calculateChecksum();
         new SysexSendToDialog(myPatch);
     }
 
     public void reassignSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.calculateChecksum();
         new ReassignPatchDialog(myPatch);
         myModel.fireTableDataChanged();
     }
@@ -309,7 +306,6 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     public void playSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         if (myPatch.getDriver().isSingleDriver()) {
-            myPatch.calculateChecksum();
             myPatch.send();
             myPatch.play();
         }
@@ -317,7 +313,6 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
 
     public void storeSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.calculateChecksum();
         new SysexStoreDialog(myPatch);
     }
 

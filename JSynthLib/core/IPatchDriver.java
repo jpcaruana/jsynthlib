@@ -21,7 +21,7 @@ public interface IPatchDriver extends IDriver {
     int getPatchSize();
 
     /**
-     * Returns String[] returns full list of patchNumbers
+     * Returns String[] returns full list of patchNumbers.
      * @see DriverUtil#generateNumbers
      */
     String[] getPatchNumbers();
@@ -37,7 +37,7 @@ public interface IPatchDriver extends IDriver {
     String[] getPatchNumbersForStore();
 
     /**
-     * Returns String[] returns full list of bankNumbers
+     * Returns String[] returns full list of bankNumbers.
      * @see DriverUtil#generateNumbers
      */
     String[] getBankNumbers();
@@ -78,14 +78,15 @@ public interface IPatchDriver extends IDriver {
     IPatch[] createPatches(SysexMessage[] msgs);
 
     /**
-     * Caluculate check sum of a <code>patch</code>.<p>
-     *
-     * @param patch a <code>IPatch</code> value
+     * Return sysex byte array of patch.  Checksum must be calculated.
+     * @param patch a <code>IPatch</code> data for this driver.
+     * @return an byte array of Sysex data.
      */
-    void calculateChecksum(IPatch patch);
+    byte[] export(IPatch patch);
 
     /**
-     * Sends a patch to the specified location on the synth.
+     * Sends a patch to the specified location on the synth. Checksum must be
+     * calculated by this method.
      */
     void send(IPatch myPatch, int bankNum, int patchNum);
 
@@ -108,7 +109,10 @@ public interface IPatchDriver extends IDriver {
      */
     JSLFrame edit(IPatch p);
 
-    /** Send a MidiMessage to the MIDI outport for this driver. */
+    /**
+     * Send a MidiMessage to the MIDI outport for this driver. Checksum must be
+     * calculated by this method.
+     */
     void send(MidiMessage msg);
 
     /**

@@ -210,7 +210,6 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	{
 	    // XXX: Do we really want to send the patch every
 	    //      time the editor gets focus?
-	    p.calculateChecksum();
             p.send();
 	}
 	
@@ -238,22 +237,18 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void sendSelectedPatch() {
-        p.calculateChecksum();
         p.send();
     }
 
     public void sendToSelectedPatch() {
-        p.calculateChecksum();
         new SysexSendToDialog(p);
     }
 
     public void reassignSelectedPatch() {
-        p.calculateChecksum();
         new ReassignPatchDialog(p);
     }
 
     public void playSelectedPatch() {
-        p.calculateChecksum();
         p.send();
         p.play();
     }

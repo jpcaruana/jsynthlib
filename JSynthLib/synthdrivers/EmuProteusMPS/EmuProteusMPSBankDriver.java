@@ -102,9 +102,9 @@ public class EmuProteusMPSBankDriver extends BankDriver
      byte [] sysex=new byte[319];
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,0,319);
      Patch p = new Patch(sysex, getDevice());
-     p.getDriver().calculateChecksum(p);   
-    return p;
-    }catch (Exception e) {ErrorMsg.reportError("Error","Error in Proteus MPS Bank Driver",e);return null;}
+     p.calculateChecksum();   
+     return p;
+   }catch (Exception e) {ErrorMsg.reportError("Error","Error in Proteus MPS Bank Driver",e);return null;}
    }
 
   public void storePatch (Patch p, int bankNum,int patchNum)

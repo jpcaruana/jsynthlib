@@ -113,7 +113,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	try {
 	    // pass Single Driver !!!FIXIT!!!
 	    Patch p = new Patch(sysex, getDevice());
-	    p.getDriver().calculateChecksum(p);
+	    p.calculateChecksum();
 	    return p;
 	} catch (Exception e) {
 	    ErrorMsg.reportError("Error", "Error in K4 Bank Driver", e);

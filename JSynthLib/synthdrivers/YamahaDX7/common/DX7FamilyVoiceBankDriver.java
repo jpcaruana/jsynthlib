@@ -478,7 +478,7 @@ public class DX7FamilyVoiceBankDriver extends BankDriver
  
 
 			Patch p = new Patch(sysex, getDevice());	// single sysex
-			p.getDriver().calculateChecksum(p);
+			p.calculateChecksum();
 
 			return p;
 		} catch (Exception e) {

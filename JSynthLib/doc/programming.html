@@ -607,7 +607,8 @@ lowest 7 bits, XORs them with 127 and adds one to get the checksum.
 If your synth uses a different algorithm, override this method.<p>
 
 <var>calculateChecksum(Patch)</var> is the method called by JSynthLib
-core.  If your synth does not use checksum, override it by an empty
+core via <var>IPatch.calculateChecksum()</var> method.  If your synth
+does not use checksum, override it by an empty
 method.  If the patch for your synth consists of only one Sysex
 Message, you don't have to override the method.  If your synth uses a
 patch which consists of multiple Sysex Messages, you need to override

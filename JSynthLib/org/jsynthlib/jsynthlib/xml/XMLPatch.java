@@ -145,6 +145,10 @@ public class XMLPatch implements IPatch {
         driver.send(this, bankNum, patchNum);
     }
 
+    public final byte[] export() {
+        return ((IPatchDriver) driver).export(this);
+    }
+
     // only for single patch
     public void play() {
         ((ISingleDriver) driver).play(this);

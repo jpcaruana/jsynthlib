@@ -204,6 +204,11 @@ public class XMLDriver implements ISingleDriver {
         return base_patch.supportsMessages(patch.getMessages());
     }
 
+    public final byte[] export(IPatch patch) {
+        calculateChecksum(patch);
+        return patch.getByteArray();
+    }
+
     public final boolean isNullDriver() {
         return this == AppConfig.getNullDriver();
     }

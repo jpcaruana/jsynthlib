@@ -137,7 +137,7 @@ public class DX7FamilyFractionalScalingBankDriver extends BankDriver
 			}
 
 			Patch p = new Patch(sysex, getDevice());	// single sysex
-			p.getDriver().calculateChecksum(p);
+			p.calculateChecksum();
 
 			return p;
 		} catch (Exception e) {

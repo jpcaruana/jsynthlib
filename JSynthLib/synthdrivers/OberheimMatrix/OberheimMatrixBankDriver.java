@@ -122,9 +122,9 @@ public void putPatch(Patch bank,Patch p,int patchNum)
      byte [] sysex=new byte[275];
      System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,0,275);
      Patch p = new Patch(sysex, getDevice());
-     p.getDriver().calculateChecksum(p);   
-    return p;
-    }catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix 1000 Bank Driver",e);return null;}
+     p.calculateChecksum();   
+     return p;
+   }catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix 1000 Bank Driver",e);return null;}
    }
   protected void sendPatch (Patch p)
    {

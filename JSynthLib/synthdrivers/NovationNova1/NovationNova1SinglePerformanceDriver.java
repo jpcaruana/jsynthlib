@@ -118,7 +118,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
             sysex[295]=(byte)0xF7;
             System.arraycopy(((Patch)bank).sysex,getPatchStart(patchNum),sysex,9,296-9);
             Patch p = new Patch(sysex, getDevice());
-            p.getDriver().calculateChecksum(p);   
+            p.calculateChecksum();   
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }

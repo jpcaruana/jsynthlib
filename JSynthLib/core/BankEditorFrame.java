@@ -202,7 +202,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     	 */
         if (!checkSelected()) return;
         FileOutputStream fileOut = new FileOutputStream(file);
-        fileOut.write(getSelectedPatch().getByteArray());
+        fileOut.write(getSelectedPatch().export());
         fileOut.close();
     }
 
