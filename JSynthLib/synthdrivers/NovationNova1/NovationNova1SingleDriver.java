@@ -127,18 +127,13 @@ class NovationNova1PatchSender extends JDialog
     public static int deviceIDoffset = 0;
     public static int channel = 0;
 
-    // The Midi Out Port the user assigns
-    public Driver localDriver;
-
-
     public NovationNova1PatchSender(JFrame Parent,Patch p, Driver driver)
     {
         super(Parent,"Nova1 Patch Sender",true);
 
         byte [] newsysex = new byte[296];
-        localPatch = new Patch(newsysex);
-        System.arraycopy(p.sysex,0,localPatch.sysex,0,296);
-        localDriver = driver;
+        System.arraycopy(p.sysex,0,newsysex,0,296);
+        localPatch = new Patch(newsysex, driver);
 
         JPanel container= new JPanel();
         container.setLayout (new BorderLayout());
@@ -240,7 +235,7 @@ class NovationNova1PatchSender extends JDialog
         if (deviceIDoffset>0) localPatch.sysex[deviceIDoffset]=(byte)(channel-1);
         try
         {
-            localDriver.send(localPatch.sysex);
+            localPatch.send();
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
         return;
     }
@@ -252,7 +247,7 @@ class NovationNova1PatchSender extends JDialog
         if (deviceIDoffset>0) localPatch.sysex[deviceIDoffset]=(byte)(channel-1);
         try
         {
-            localDriver.send(localPatch.sysex);
+            localPatch.send();
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
         return;
     }
