@@ -203,7 +203,7 @@ abstract public class BankDriver extends Driver implements IPatchDriver {
     */
     /**
      * This is never called.  Don't have to be implemented.
-     * FIXME Not marked as '@deprecated' now, because many drivers are overriding this unnecesarry.
+     * @deprecated This method is unnecesarry for bank driver.
      */
     protected void sendPatch(Patch bank) {  // not used
 	JOptionPane.showMessageDialog

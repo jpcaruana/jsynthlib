@@ -90,9 +90,9 @@ public class VirusMultiBankDriver extends BankDriver {
     putPatch(p, pgm, patchNum);
   }
 
-  protected void sendPatch (Patch p) {
-    sendPatchWorker((Patch)p, 0);
-  }
+//  protected void sendPatch (Patch p) {
+//    sendPatchWorker((Patch)p, 0);
+//  }
 
   protected void sendPatchWorker (Patch p, int bankNum) {
     byte tmp[] = new byte[singleSize];  // send in 128 single-multi messages

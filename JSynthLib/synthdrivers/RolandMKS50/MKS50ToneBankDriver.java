@@ -300,25 +300,25 @@ public class MKS50ToneBankDriver extends BankDriver
     return PatchNum/4*266 + PatchNum%4*64 + 9;
   }
 
-  protected void sendPatch (Patch p)
-  {
-    byte []tmp = new byte[266];  // send in 16 messages containing 4 tones each
-    try
-    {
-      for (int i = 0; i < 16; i++)
-      {
-        System.arraycopy(((Patch)p).sysex, 266*i, tmp, 0, 266);
-        if (deviceIDoffset > 0)
-          tmp[deviceIDoffset] = (byte)(getChannel()-1);
-        send(tmp);
-        Thread.sleep(15);
-      }
-    }
-    catch (Exception e)
-    {
-      ErrorMsg.reportStatus (e);
-      ErrorMsg.reportError("Error", "Unable to send Patch");
-    }
-  }
+//  protected void sendPatch (Patch p)
+//  {
+//    byte []tmp = new byte[266];  // send in 16 messages containing 4 tones each
+//    try
+//    {
+//      for (int i = 0; i < 16; i++)
+//      {
+//        System.arraycopy(((Patch)p).sysex, 266*i, tmp, 0, 266);
+//        if (deviceIDoffset > 0)
+//          tmp[deviceIDoffset] = (byte)(getChannel()-1);
+//        send(tmp);
+//        Thread.sleep(15);
+//      }
+//    }
+//    catch (Exception e)
+//    {
+//      ErrorMsg.reportStatus (e);
+//      ErrorMsg.reportError("Error", "Unable to send Patch");
+//    }
+//  }
 }
 

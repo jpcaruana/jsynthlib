@@ -82,10 +82,10 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	}
     }
 
-    public void sendPatch(Patch p)
-    {
-	storePatch(p, 0, 0);
-    }
+//    public void sendPatch(Patch p)
+//    {
+//	storePatch(p, 0, 0);
+//    }
 
     public int getPatchStart(int patchNum) {
 	int start=(256*patchNum) + 7;

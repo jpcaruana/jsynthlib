@@ -126,19 +126,19 @@ public void putPatch(Patch bank,Patch p,int patchNum)
      return p;
    }catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix 1000 Bank Driver",e);return null;}
    }
-  protected void sendPatch (Patch p)
-   {
-     byte []tmp=new byte[275];
-    if (deviceIDoffset>0) ((Patch)p).sysex[deviceIDoffset]=(byte)(getChannel()-1);
-    try {       
-       for (int i=0;i<100;i++) 
-       {
-       System.arraycopy(((Patch)p).sysex,275*i,tmp,0,275);
-       send(tmp);
-       Thread.sleep(15);
-       }
-    }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}
-   }
+//  protected void sendPatch (Patch p)
+//   {
+//     byte []tmp=new byte[275];
+//    if (deviceIDoffset>0) ((Patch)p).sysex[deviceIDoffset]=(byte)(getChannel()-1);
+//    try {       
+//       for (int i=0;i<100;i++) 
+//       {
+//       System.arraycopy(((Patch)p).sysex,275*i,tmp,0,275);
+//       send(tmp);
+//       Thread.sleep(15);
+//       }
+//    }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}
+//   }
 public Patch createNewPatch()
  {
 	 byte [] sysex = new byte[27500];

@@ -61,9 +61,9 @@ public class P600ProgBankDriver extends BankDriver {
 
   public void setPatchName(Patch p,int patchNum, String name) {}
 
-  protected void sendPatch (Patch p) {
-    sendPatchWorker((Patch)p, 0);
-  }
+//  protected void sendPatch (Patch p) {
+//    sendPatchWorker((Patch)p, 0);
+//  }
 
   protected void sendPatchWorker (Patch p, int bankNum) {
     byte tmp[] = new byte[singleSize];  // send in 100 single-program messages

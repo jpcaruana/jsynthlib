@@ -96,10 +96,10 @@ public class AlesisA6MixBankDriver extends BankDriver
     putPatch(p, Mix, patchNum);
   }
 
-  protected void sendPatch (Patch p)
-  {
-    sendPatchWorker((Patch)p, 0);
-  }
+//  protected void sendPatch (Patch p)
+//  {
+//    sendPatchWorker((Patch)p, 0);
+//  }
 
   protected void sendPatchWorker (Patch p, int bankNum)
   {

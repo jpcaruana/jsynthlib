@@ -161,7 +161,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
     };
 
 
-
+/* commented out because this is not used for bank driver
     public void sendPatch (Patch bank)
     { 
         byte [] newsysex = new byte[296];
@@ -186,7 +186,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
             sendPatchWorker(perf);
         }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}
     }
-
+*/
 
     public void setBankNum(int bankNum)
     {

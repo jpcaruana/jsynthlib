@@ -97,9 +97,9 @@ public class VirusProgBankDriver extends BankDriver {
   }
 
   //protected void sendPatchWorker (Patch p) {
-  protected void sendPatch (Patch p) {
-    sendPatchWorker((Patch)p, 0);
-  }
+//  protected void sendPatch (Patch p) {
+//    sendPatchWorker((Patch)p, 0);
+//  }
 
   protected void sendPatchWorker (Patch p, int bankNum) {
     byte tmp[] = new byte[singleSize];  // send in 128 single-program messages
