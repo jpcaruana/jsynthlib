@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -23,7 +22,7 @@ public class DeviceDetailsDialog extends JDialog {
     private static final int AUTHORS	 = 2;
 
     private JTable table;
-    private JTable table2;
+    //private JTable table2;
     private Device device;
 
     public DeviceDetailsDialog (Device d) {
@@ -59,7 +58,7 @@ public class DeviceDetailsDialog extends JDialog {
 
 	DeviceDetailsTableModel dataModel = new DeviceDetailsTableModel (device);
         JTable table = new JTable (dataModel);
-        table2=table;
+        //table2=table;
         table.setPreferredScrollableViewportSize (new Dimension (500, 250));
         JScrollPane scrollpane = new JScrollPane (table);
         container.add (scrollpane, BorderLayout.CENTER);
@@ -75,13 +74,13 @@ public class DeviceDetailsDialog extends JDialog {
         JPanel buttonPanel = new JPanel ();
         buttonPanel.setLayout ( new FlowLayout (FlowLayout.CENTER) );
 
-        JButton rem = new JButton ("Remove Driver");
-        rem.addActionListener (new ActionListener () {
-            public void actionPerformed (ActionEvent e) {
-                RemovePressed ();
-            }
-        });
-        buttonPanel.add ( rem );
+//        JButton rem = new JButton ("Remove Driver");
+//        rem.addActionListener (new ActionListener () {
+//            public void actionPerformed (ActionEvent e) {
+//                RemovePressed ();
+//            }
+//        });
+//        buttonPanel.add ( rem );
         JButton ok3 = new JButton ("Close");
         ok3.addActionListener (new ActionListener () {
             public void actionPerformed (ActionEvent e) {
@@ -118,23 +117,23 @@ public class DeviceDetailsDialog extends JDialog {
 	this.setVisible (false);
     }
 
-    private void RemovePressed () {
-        table=table2;
-        if ((table2.getSelectedRow ()==-1))
-	    return;
-        if (JOptionPane.showConfirmDialog
-	    (null,
-	     "Do you really want to do this? Are you sure?"
-	     ,"Remove Driver?",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
-	    return;
-        try {
-            device.removeDriver(table2.getSelectedRow ());
-	    ((DeviceDetailsTableModel)table.getModel ()).fireTableDataChanged ();
-            table2.repaint ();
-	    revalidateLibraries();
-        } catch (Exception e) {
-	}
-    }
+//    private void RemovePressed () {
+//        table=table2;
+//        if ((table2.getSelectedRow ()==-1))
+//	    return;
+//        if (JOptionPane.showConfirmDialog
+//	    (null,
+//	     "Do you really want to do this? Are you sure?"
+//	     ,"Remove Driver?",JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+//	    return;
+//        try {
+//            device.removeDriver(table2.getSelectedRow ());
+//	    ((DeviceDetailsTableModel)table.getModel ()).fireTableDataChanged ();
+//            table2.repaint ();
+//	    revalidateLibraries();
+//        } catch (Exception e) {
+//	}
+//    }
 
     private static void revalidateLibraries() {
 	JSLFrame[] jList = PatchEdit.getDesktop().getAllFrames();
