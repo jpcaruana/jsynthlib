@@ -1,52 +1,20 @@
-JSynthLib is copyright 2000-2001 by Brian Klock and Gerrit Gehnen and is
+JSynthLib is copyright 2000-2004 by Brian Klock and Gerrit Gehnen and is
 released under the GPL License. This covers all the code included in this
 distribution with the following exceptions:
 
 ******************************************************************************
 
-Wire is copyright by Niels Gorisse and released under the LGPL License
-(in the \wireclassic directory)
-WireProvider is copyright by Gerrit Gehnen and released under the LGPL License
-(in the \wireprovider directory as well as WireNative.dll in the main directory)
-JavaMIDI is copyright by Robert Marsanyi and is free for non commerical use
-(in the \jmidi directory as well as MidiPort.dll in the main directory)
+WireProvider is copyright by Gerrit Gehnen and released under the LGPL
+License (in the \midiprovider\wireprovider directory as well as
+WireNative.dll in the main directory).
 
 ******************************************************************************
 
 All Synthesizer Drivers (located in the \synthdrivers directory) are released
-under the terms of the GPL.
-They were all written by Brian Klock except for the Novation Nova 1 Driver
-and Korg ER1 Drivers which were written by Yves Lefebvre.
+under the terms of the GPL.  They were written by many developers.
 
 ******************************************************************************
 
-This file contains the text of the GNU General Public License under which
-JSynthLib is released. Normally the license does not allow non-free software
-to be linked with a GPL'ed program. As copyright holder for JSynthLib,
-however, I can make exceptions. The one and only exception which I make for
-JSynthLib is that it can be linked and distributed along with the JavaMIDI
-routines on which JSynthLib depends in the Windows version. These routines
-are freely availible (with source) for non-commercial use, but are not
-free-software / open source.
-
-     **         The JavaMIDI routines are NOT covered under         **
-     **    this GPL License. Robert Marsanyi holds the copyright    **
-     ** on these routines and he determines the licensing for them. ** 
-
-
-As of JSynthLib 0.14, you can use the GPL'd MIDI routines for Linux, and the LGPL'd 
-Midi Routines (Wire) for Windows. The non-free (JavaMIDI) routines are included only
-as a fall back for those people who have trouble with the Wire routines. If Wire
-does not work for you, I recommend submitting a bug report. If there are no complaints
-about Wire, JavaMIDI is to be phased out of JSynthlib.
-
---Brian Klock
-
-
-
-and without further ado, the GPL:
-
-------------
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 
