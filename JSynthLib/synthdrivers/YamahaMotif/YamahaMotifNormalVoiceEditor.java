@@ -180,15 +180,16 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       if (alignleft)
 	widget.setAlignmentX(Component.LEFT_ALIGNMENT);
       widget.setMaximumSize(widget.getPreferredSize());
-	 setPreferredSize(getMinimumSize());
-
+      setPreferredSize(getMinimumSize());
+      /*
       if (widget instanceof ScrollBarWidget)
 	sliderList.add(((ScrollBarWidget)widget).slider);
       if (widget instanceof VertScrollBarWidget)
 	sliderList.add(((VertScrollBarWidget)widget).slider);
-     if (widget instanceof ScrollBarLookupWidget)
-       sliderList.add(((ScrollBarLookupWidget)widget).slider);
-     widgetList.add(widget);
+      if (widget instanceof ScrollBarLookupWidget)
+        sliderList.add(((ScrollBarLookupWidget)widget).slider);
+      */
+      widgetList.add(widget);
     }
     catch (Exception e) {ErrorMsg.reportStatus(e);}     
 
@@ -225,7 +226,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       //panel = Box.createHorizontalBox();
       //c.add(panel);
       sub = addCombo("Subcategory", 0x40700D,new String[] {"--"});
-      cat.cb.addActionListener( new CategoryActionListener(cat, sub) );
+      cat.addEventListener( new CategoryActionListener(cat, sub) );
       //addHGlue();
       //addVGlue(c);
 

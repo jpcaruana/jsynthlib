@@ -893,13 +893,13 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
                                                      "Triangle Sync",
                                                      "Sawtooth Sync",
                                                      "Pulse Sync"});
-                lfo1Shape.cb.addItemListener(new ItemListener()
+                lfo1Shape.addEventListener(new ItemListener()
                     {
                         public void itemStateChanged (ItemEvent e)
                         {
                             if (e.getStateChange() == ItemEvent.SELECTED)
                             {
-                                if (lfo1Shape.cb.getSelectedIndex() >= 5)
+                                if (lfo1Shape.getValue() >= 5)
                                 {
                                     lfo1Speed.changeOptions(lfo1SpeedStrSync);
                                 }

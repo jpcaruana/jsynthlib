@@ -379,12 +379,12 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
         "Early Reflections 4","Rain"});
 	addWidget(aPane,fxTypeBox,0,0,1,1,49);  
       final ScrollBarWidget effectASliders []=new ScrollBarWidget[10];
-        fxTypeBox.cb.addActionListener(new ActionListener() {
+        fxTypeBox.addEventListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
               for (int i=0;i<6;i++)
               {
     	        try {
-			int fxa=fxTypeBox.cb.getSelectedIndex();
+			int fxa=fxTypeBox.getValue();
 			effectASliders[i].setLabel(effectAParams[fxa][i]);
 	 	        effectASliders[i].setMinMax(effectARanges[fxa][i][0],effectARanges[fxa][i][1]);
 		    }
@@ -413,12 +413,12 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
     "Off","Stereo Flange","Stereo Chorus","Phaser","Fuzz 1","Ring Modulator","Delay","Cross Delay","Stereo EQ","Fuzz Lite"});
 	addWidget(bPane,fxbTypeBox,0,0,1,1,57);  
       final ScrollBarWidget effectBSliders []=new ScrollBarWidget[10];
-        fxbTypeBox.cb.addActionListener(new ActionListener() {
+        fxbTypeBox.addEventListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
               for (int i=0;i<6;i++)
               {
     	        try {
-			int fxb=fxbTypeBox.cb.getSelectedIndex();
+			int fxb=fxbTypeBox.getValue();
 			effectBSliders[i].setLabel(effectBParams[fxb][i]);
 	 	        effectBSliders[i].setMinMax(effectBRanges[fxb][i][0],effectBRanges[fxb][i][1]);
 		    }

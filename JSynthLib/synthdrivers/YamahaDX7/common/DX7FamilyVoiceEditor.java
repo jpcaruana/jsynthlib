@@ -102,8 +102,8 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		},
 		{
 			"1.000","10.00","100.0","1000","1.000","10.00","100.0","1000",
-			"1.000","10.00","100.0","1000","1.000","10.00","100.0","1000", 
-			"1.000","10.00","100.0","1000","1.000","10.00","100.0","1000", 
+			"1.000","10.00","100.0","1000","1.000","10.00","100.0","1000",
+			"1.000","10.00","100.0","1000","1.000","10.00","100.0","1000",
 			"1.000","10.00","100.0","1000","1.000","10.00","100.0","1000"
 		}
 	};
@@ -155,7 +155,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		"+Exp",
 		"+Lin"
 	};
-	
+
 	private static ImageIcon algoIcon[]=new ImageIcon[32];
 
 
@@ -201,10 +201,10 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		algoIcon[29]=new ImageIcon("synthdrivers/YamahaDX7/images/algo30.gif");
 		algoIcon[30]=new ImageIcon("synthdrivers/YamahaDX7/images/algo31.gif");
 		algoIcon[31]=new ImageIcon("synthdrivers/YamahaDX7/images/algo32.gif");
-		
+
 		final JLabel l=new JLabel(algoIcon[patch.sysex[6+134]]);
 
-   
+
 		/*
 		 *	 DX7 Voice Parameter - Common settings
 		 */
@@ -213,9 +213,9 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		cmnPane.setLayout(new GridBagLayout());gbc.weightx=0;
 		final ScrollBarWidget algo=new ScrollBarWidget("Algorithm",patch,0,31,1,new ParamModel(patch,6+134),new VoiceSender(134));
 		addWidget(cmnPane,algo,1,2,6,1,17);
-		algo.slider.addChangeListener(new ChangeListener() {
+		algo.addEventListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				l.setIcon(algoIcon[algo.slider.getValue()]);
+				l.setIcon(algoIcon[algo.getValue()]);
 			}
 		});
 		addWidget(cmnPane,new ScrollBarWidget("Feedback",patch,0,7,0,new ParamModel(patch,6+135),new VoiceSender(135)),1,3,6,1,18);
@@ -309,51 +309,51 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		final JLabel OscFreqLabel = new JLabel("Frequency");
 		addWidget(panel,FreqMode,0,1,3,2,1);
 
-		FreqMode.cb.addActionListener(new ActionListener() {
+		FreqMode.addEventListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-				OscFreqLabel.setText("Oscillator Frequency - " + FreqModeName[FreqMode.cb.getSelectedIndex()] + ": " +
-				freqFormatter.format( (Float.valueOf(FreqCoarseName[FreqMode.cb.getSelectedIndex()][FreqCoarse.getValue()]).floatValue()) *
-				(Float.valueOf(FreqFineName[FreqMode.cb.getSelectedIndex()][FreqFine.getValue()]).floatValue()) ));
+				OscFreqLabel.setText("Oscillator Frequency - " + FreqModeName[FreqMode.getValue()] + ": " +
+				freqFormatter.format( (Float.valueOf(FreqCoarseName[FreqMode.getValue()][FreqCoarse.getValue()]).floatValue()) *
+				(Float.valueOf(FreqFineName[FreqMode.getValue()][FreqFine.getValue()]).floatValue()) ));
 			}
 		});
 
-		OscSync.cb.addActionListener(new ActionListener() {
+		OscSync.addEventListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int OscSyncValue=OscSync.cb.getSelectedIndex();
+				int OscSyncValue=OscSync.getValue();
 				SysexWidget w;
-				
+
 				for (int i=0; i<widgetList.size();i++) {
 					w= ((SysexWidget)widgetList.get(i));
-					
+
 					if ( (w instanceof ComboBoxWidget) && (((ComboBoxWidget)w).getLabel().equals("Sync (*)")) )
-						((ComboBoxWidget)w).cb.setSelectedIndex(OscSyncValue);
+						((ComboBoxWidget)w).setValue(OscSyncValue);
 				}
 			}
 		});
 
-		FreqCoarse.slider.addChangeListener(new ChangeListener() {
+		FreqCoarse.addEventListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				OscFreqLabel.setText("Oscillator Frequency - " + FreqModeName[FreqMode.cb.getSelectedIndex()] + ": " +
-				freqFormatter.format((Float.valueOf(FreqCoarseName[FreqMode.cb.getSelectedIndex()][FreqCoarse.slider.getValue()]).floatValue())	*
-				(Float.valueOf(FreqFineName[FreqMode.cb.getSelectedIndex()][FreqFine.getValue()]).floatValue())) );
+				OscFreqLabel.setText("Oscillator Frequency - " + FreqModeName[FreqMode.getValue()] + ": " +
+				freqFormatter.format((Float.valueOf(FreqCoarseName[FreqMode.getValue()][FreqCoarse.getValue()]).floatValue())	*
+				(Float.valueOf(FreqFineName[FreqMode.getValue()][FreqFine.getValue()]).floatValue())) );
 			}
 		});
 
-		FreqFine.slider.addChangeListener(new ChangeListener() {
+		FreqFine.addEventListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				OscFreqLabel.setText("Oscillator Frequency - " + FreqModeName[FreqMode.cb.getSelectedIndex()] + ": " +
-				freqFormatter.format((Float.valueOf(FreqCoarseName[FreqMode.cb.getSelectedIndex()][FreqCoarse.getValue()]).floatValue()) *
-				(Float.valueOf(FreqFineName[FreqMode.cb.getSelectedIndex()][FreqFine.slider.getValue()]).floatValue())) );
+				OscFreqLabel.setText("Oscillator Frequency - " + FreqModeName[FreqMode.getValue()] + ": " +
+				freqFormatter.format((Float.valueOf(FreqCoarseName[FreqMode.getValue()][FreqCoarse.getValue()]).floatValue()) *
+				(Float.valueOf(FreqFineName[FreqMode.getValue()][FreqFine.getValue()]).floatValue())) );
 			}
 		});
-		
+
 		addWidget(panel,OscSync,3,1,3,2,28);
 		addWidget(panel,FreqCoarse,0,3,6,1,2);
 		addWidget(panel,FreqFine,0,4,6,1,3);
 		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=6;gbc.gridheight=1;
-		OscFreqLabel.setText("Oscillator Frequency - " + FreqModeName[FreqMode.cb.getSelectedIndex()] + ": " +
-			freqFormatter.format(( (Float.valueOf(FreqCoarseName[FreqMode.cb.getSelectedIndex()][FreqCoarse.getValue()]).floatValue()) *
-			(Float.valueOf(FreqFineName[FreqMode.cb.getSelectedIndex()][FreqFine.getValue()]).floatValue())  )));
+		OscFreqLabel.setText("Oscillator Frequency - " + FreqModeName[FreqMode.getValue()] + ": " +
+			freqFormatter.format(((Float.valueOf(FreqCoarseName[FreqMode.getValue()][FreqCoarse.getValue()]).floatValue()) *
+			(Float.valueOf(FreqFineName[FreqMode.getValue()][FreqFine.getValue()]).floatValue())  )));
 		panel.add(OscFreqLabel,gbc);
 
 		addWidget(panel,new ScrollBarWidget("Detune",patch,0,14,-7,new ParamModel(patch,6+(i*21)+20),new VoiceSender((i*21)+20)),0,6,6,1,4);
@@ -391,17 +391,17 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		addWidget(panel,new ScrollBarWidget("Amplitude",patch,0,3,0,new ParamModel(patch,6+(i*21)+14),new VoiceSender((i*21)+14)),7,5,6,1,13);
 		final ScrollBarWidget PitchModSens = new ScrollBarWidget("Pitch (*)",patch,0,7,0,new ParamModel(patch,6+143),new VoiceSender(143));
 		addWidget(panel,PitchModSens,7,6,6,1,23);
-		
-		PitchModSens.slider.addChangeListener (new ChangeListener() {
+
+		PitchModSens.addEventListener (new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				int pmsValue=PitchModSens.slider.getValue();
+				int pmsValue=PitchModSens.getValue();
 				SysexWidget w;
-		
+
 				for (int i=0; i<widgetList.size();i++) {
 					w= ((SysexWidget)widgetList.get(i));
-					
+
 					if ( (w instanceof ScrollBarWidget) && (((ScrollBarWidget)w).getLabel().equals("Pitch (*)")) )
-						((ScrollBarWidget)w).slider.setValue(pmsValue);
+						((ScrollBarWidget)w).setValue(pmsValue);
 				}
 			}
 		});
@@ -477,7 +477,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 			if (e.getStateChange()==ItemEvent.SELECTED) OperatorState = (OperatorState | 1) & 0x3f;
 			else OperatorState = (OperatorState & (~1)) & 0x3f;
 		}
-		
+
 		SendOpState();
 	}
 
@@ -509,13 +509,13 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
        // ################### Common voice patch related utility  ############################################
        // Voice Operator State parameter change command
        private final static SysexHandler VoiceOPstate = new SysexHandler("f0 43 @@ 01 1b *value* f7");
-       
-       // send voice operator state 
+
+       // send voice operator state
        private static void xmitVoiceOperatorState(int p, byte ch, byte st)		     // port, channel, OperatorState
        {
-	       VoiceOPstate.send(p, ch, new NameValue("value", st)); 
+	       VoiceOPstate.send(p, ch, new NameValue("value", st));
        }
-	
+
 
 	/*
 	 * SysexSender - Voice Parameter
@@ -526,28 +526,28 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		int parameter;
 		int para_high=0;
 		byte []b = new byte [7];
-	
+
 		public VoiceSender(int param)
 		{
 			parameter=param;
-	
+
 			if (parameter >= 128) {
 				para_high  = 0x01;
 				parameter -= 128;
 			}
-		
+
 			b[0]=(byte)0xF0;
 			b[1]=(byte)0x43;
 			b[3]=(byte)para_high;	// group/subgroup number
 			b[4]=(byte)parameter;
 			b[6]=(byte)0xF7;
 		}
-	
+
 		public byte [] generate (int value)
 		{
 			b[2]=(byte)(0x10+channel-1);
 			b[5]=(byte)value;
-		
+
 			return b;
 		}
 	}

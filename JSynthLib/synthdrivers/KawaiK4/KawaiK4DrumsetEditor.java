@@ -140,6 +140,8 @@ class KawaiK4DrumsetEditor extends PatchEditorFrame {
 		    for (int i = 0; i < widgetList.size(); i++) {
 			w  = ((SysexWidget) widgetList.get(i));
 			w.setValue();
+			// Now w.setValue() does the following job.
+			/*
 			if (w instanceof ScrollBarWidget)
 			    ((ScrollBarWidget) w).slider.setValue(w.getValue());
 			if (w instanceof ScrollBarLookupWidget)
@@ -147,7 +149,9 @@ class KawaiK4DrumsetEditor extends PatchEditorFrame {
 			if (w instanceof ComboBoxWidget)
 			    ((ComboBoxWidget) w).cb.setSelectedIndex(w.getValue());
 			if (w instanceof CheckBoxWidget)
-			    ((CheckBoxWidget) w).cb.setSelected((w.getValue() > 0));                }
+			    ((CheckBoxWidget) w).cb.setSelected((w.getValue() > 0));
+			*/
+		    }
 		}
 	    }
 			     );

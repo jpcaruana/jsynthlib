@@ -45,7 +45,7 @@ import core.ScrollBarWidget;
 import core.SpinnerWidget;
 import core.SysexSender;
 
-public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame 
+public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 {
 	static final String [] OnOffName = new String [] {
 		"Off",
@@ -56,7 +56,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 		"off","norm",
 		"G-1","G-2","G-3","G-4","G-5","G-6","G-7","G-8",
 		"G-9","G-10","G-11","G-12","G-13","G-14","G-15","G-16"
-	}; 
+	};
 
 	static final String [] NoteOnOffName = new String [] {
 		"all",
@@ -78,7 +78,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 	static final String [] SelectChgName = new String [] {
 		"off","1","2","3","4","5","6","7","8",
 		"9","10","11","12","13","14","15","16","all"
-	}; 
+	};
 
 	static final String [] PerfSelNoName = new String [] {
 		"  0","  1","  2","  3","  4","  5","  6","  7","  8","  9"," 10"," 11"," 12"," 13"," 14"," 15",
@@ -112,7 +112,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 		"90 ", "91 ", "92 ", "93 ", "94 ", "95 ", "96 ", "97 ", "98 ", "99 ", "100 ", "101 ", "102 ", "103 ",
 		"104 ", "105 ", "106 ", "107 ", "108 ", "109 ", "110 ", "111 ", "112 ", "113 ", "114 ", "115 ", "116 ",
 		"117 ", "118 ", "119 ", "120 ", "121 ", "122 ", "123 ", "124 ", "125 ", "126 ", "127 "
-	}; 
+	};
 
 
 	public DX7FamilySystemSetupIIIEditor(String name, Patch patch)
@@ -122,7 +122,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 		buildEditor(patch);
 	}
 
-	
+
 	protected void buildEditor(Patch patch)
 	{
 		PatchEdit.waitDialog.show();	// Because it needs some time to build up the editor frame
@@ -139,14 +139,14 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 		systemPane.addTab("System Setup",cmnPane);
 
 		final ScrollBarWidget MasterTune = new ScrollBarWidget(" ",patch,0,127,-64,new ParamModel(patch,16+12-ofs),new MasterTuneSender(64));
-		MasterTune.slider.addChangeListener(new ChangeListener() {
+		MasterTune.addEventListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				MasterTune.setLabel("Master Tuning (Concert Pitch: " +
-					freqFormatter.format(440+(4.400*0.059463094359*1.2 * (MasterTune.slider.getValue()-64))) + " Hz)");
+					freqFormatter.format(440+(4.400*0.059463094359*1.2 * (MasterTune.getValue()-64))) + " Hz)");
 			}
 		});
 		MasterTune.setLabel("Master Tuning (Concert Pitch: " +
-			freqFormatter.format(440+(4.400*0.059463094359*1.2 * (MasterTune.slider.getValue()-64))) + " Hz)");
+			freqFormatter.format(440+(4.400*0.059463094359*1.2 * (MasterTune.getValue()-64))) + " Hz)");
 		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; cmnPane.add(new JLabel(" "),gbc);
 		addWidget(cmnPane,MasterTune,0,1,8,1,1);
 
@@ -210,7 +210,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 		gbc.gridx=0;gbc.gridy=2;gbc.gridwidth=1;gbc.gridheight=1; ctrlPane.add(new JLabel(" "),gbc);
 		for (int i=0, j=0; i<122; i++) {
 			if (i%4==0) j++;
-			
+
 			addWidget(ctrlPane,new ComboBoxWidget(Integer.toString(i),patch,
 						new ParamModel(patch,16+14+i-ofs),null,MIDIcontroller),0+2*(i%4),3+j,2,1,150+i);
 		}
@@ -229,12 +229,12 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 	 *		     (g=6; h=1)
 	 */
 	class SystemSetupSender extends SysexSender
-	{ 
-		int parameter; 
+	{
+		int parameter;
 		byte []b = new byte [7];
-		
+
 		public SystemSetupSender(int param)
-		{ 
+		{
 			parameter=param;
 
 			b[0]=(byte)0xF0;
@@ -243,12 +243,12 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 			b[4]=(byte)parameter;
 			b[6]=(byte)0xF7;
 		}
-		
+
 		public byte [] generate (int value)
-		{ 
+		{
 			b[2]=(byte)(0x10+channel-1);
 			b[5]=(byte)value;
-			
+
 			return b;
 		}
 	}
@@ -261,7 +261,7 @@ public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 	{
 		int parameter;
 		byte []b = new byte [7];
-		
+
 		public MasterTuneSender(int param)
 		{
 			parameter=param;

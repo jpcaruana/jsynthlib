@@ -76,9 +76,9 @@ class KawaiK5000ADDSingleEditor extends PatchEditorFrame
   final ScrollBarWidget numSources = new ScrollBarWidget("Num Sources",patch,2,6,0,new K5kCmnModel(patch,51),new K5kCmnSender(0x0B));
   addWidget(cmn2Panel,numSources,0,2,2,1,2);
 
-    numSources.slider.addChangeListener(new ChangeListener() {
+    numSources.addEventListener(new ChangeListener() {
 	   public void stateChanged(ChangeEvent e) {
-                int i=numSources.slider.getValue();
+                int i=numSources.getValue();
 
                 for (int j = i; j<6; j++)
                   tabPane.remove(srcPanel[j]);

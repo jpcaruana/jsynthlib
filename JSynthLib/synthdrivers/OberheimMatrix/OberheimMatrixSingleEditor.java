@@ -13,7 +13,7 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
 {
   CheckBoxWidget  table1Check[] = new CheckBoxWidget[11];
   ScrollBarWidget table2Slider[] =new ScrollBarWidget[18];   //sliders for the modulation tables (are here to help  workaround a Swing bug)
-  ScrollBarWidget table3Slider[] = new ScrollBarWidget [10];	
+  ScrollBarWidget table3Slider[] = new ScrollBarWidget [10];
   ComboBoxWidget table3Source[] = new ComboBoxWidget[10];
   ComboBoxWidget table3Dest[] = new ComboBoxWidget[10];
 
@@ -46,24 +46,24 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
 			    "LFO1 Speed","LFO1 Amplitude",
 			    "LFO2 Speed","LFO2 Amplitude",
 		            "Portamento Time"};
-			    
+
 
 
   public OberheimMatrixSingleEditor(Patch patch)
   {
-    super ("Oberheim Matrix Single Editor",patch);   
-								     							     
+    super ("Oberheim Matrix Single Editor",patch);
+
   JTabbedPane tabPane=new JTabbedPane();
-   
+
      JPanel modPanel = new JPanel();
      JPanel wavePanel = new JPanel();
 
      wavePanel.setLayout(new GridBagLayout());
-     modPanel.setLayout(new GridBagLayout()); 
+     modPanel.setLayout(new GridBagLayout());
      tabPane.addTab("Wave",wavePanel);gbc.weightx=1;
      tabPane.addTab("Modulation",modPanel);gbc.weightx=1;
-   
-// DCO	1								*  
+
+// DCO	1								*
   JPanel dco1Pane=new JPanel();
   dco1Pane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(dco1Pane,new ScrollBarWidget("Frequency",patch,0,63,0,new MtxModel(patch,9),new MtxSender(0)),0,0,5,1,1);
@@ -73,12 +73,12 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   addWidget(dco1Pane,new CheckBoxWidget("Wave",patch,new BitModel(patch,13,1),new BitSender(patch,6,13)),2,3,1,1,-2);
   addWidget(dco1Pane,new CheckBoxWidget("Click",patch,new MtxModel(patch,22),new MtxSender(9)),4,3,1,1,-3);
   addWidget(dco1Pane,new ScrollBarWidget("DCO Mix",patch,0,63,0,new MtxModel(patch,20), new MtxSender(20)),0,4,5,1,4);
- 
+
    gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=8;
   dco1Pane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"DCO 1 Settings",TitledBorder.CENTER,TitledBorder.CENTER));
   wavePanel.add(dco1Pane,gbc);
 
- // DCO	2								*  
+ // DCO	2								*
   JPanel dco2Pane=new JPanel();
   dco2Pane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(dco2Pane,new ScrollBarWidget("Frequency",patch,0,63,0,new MtxModel(patch,14),new MtxSender(10)),0,0,7,1,5);
@@ -91,27 +91,27 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   addWidget(dco2Pane,new ScrollBarWidget("Detune",patch,0,62,-31,new DetuneModel(patch,19),new DetuneSender(12)),0,4,7,1,8);
   addWidget(dco2Pane,new ComboBoxWidget("Sync Mode",patch,new MtxModel(patch,25),new MtxSender(2),new String []
       			{"No Sync","Soft","Hard","Harder"}),0,5,3,1,9);
- 
+
    gbc.gridx=0;gbc.gridy=8;gbc.gridwidth=3;gbc.gridheight=3;
   dco2Pane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"DCO 2 Settings",TitledBorder.CENTER,TitledBorder.CENTER));
   wavePanel.add(dco2Pane,gbc);
-// Common									*  
+// Common									*
   JPanel commonPane=new JPanel();
   commonPane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(commonPane,new PatchNameWidget(" Name",patch),0,0,3,1,0);
   addWidget(commonPane,new ScrollBarWidget("VCA Amount",patch,0,63,0,new MtxModel(patch,31),new MtxSender(27)),0,1,5,1,10);
   addWidget(commonPane,new ScrollBarWidget("Portamento Rate",patch,0,63,0,new MtxModel(patch,32),new MtxSender(44)),0,2,5,1,11);
   addWidget(commonPane,new CheckBoxWidget("Legato Portamento Enable",patch,new MtxModel(patch,34),new MtxSender(47)),0,3,4,1,-8);
- 
+
   addWidget(commonPane,new ComboBoxWidget("Lag Mode",patch,new MtxModel(patch,33),new MtxSender(46),new String []
       			{"Constant Speed. Lag","Constant Time Lag","Exponential Lag 1","Exponential Lag 2"}),0,4,5,1,12);
   addWidget(commonPane,new ComboBoxWidget("Key Mode",patch,new MtxModel(patch,8),new MtxSender(48),new String []
       			{"Reassign","Rotate","Unison","Reassign w/ Rob"}),0,5,5,1,13);
-  
+
   gbc.gridx=0;gbc.gridy=12;gbc.gridwidth=3;gbc.gridheight=5;
   commonPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Common Settings",TitledBorder.CENTER,TitledBorder.CENTER));
-  wavePanel.add(commonPane,gbc);             
-// LFO 1									*  
+  wavePanel.add(commonPane,gbc);
+// LFO 1									*
   JPanel lfo1Pane=new JPanel();
   lfo1Pane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(lfo1Pane,new ScrollBarWidget("Speed",patch,0,63,0,new MtxModel(patch,35),new MtxSender(80)),0,0,7,1,17);
@@ -124,11 +124,11 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   addWidget(lfo1Pane,new ComboBoxWidget("Sample Src",patch,new MtxModel(patch,40),new MtxSender(88),source
       			   ),0,4,3,1,22);
   addWidget(lfo1Pane,new CheckBoxWidget("Lag Enable",patch,new MtxModel(patch,37),new MtxSender(87)),3,4,1,1,-17);
- 
+
    gbc.gridx=5;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=6;
   lfo1Pane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"LFO 1 Settings",TitledBorder.CENTER,TitledBorder.CENTER));
   wavePanel.add(lfo1Pane,gbc);
-// LFO 2									*  
+// LFO 2									*
   JPanel lfo2Pane=new JPanel();
   lfo2Pane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(lfo2Pane,new ScrollBarWidget("Speed",patch,0,63,0,new MtxModel(patch,42),new MtxSender(90)),0,0,7,1,23);
@@ -141,21 +141,21 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   addWidget(lfo2Pane,new ComboBoxWidget("Sample Src",patch,new MtxModel(patch,47),new MtxSender(98),source
       			   ),0,4,3,1,28);
   addWidget(lfo2Pane,new CheckBoxWidget("Lag Enable",patch,new MtxModel(patch,44),new MtxSender(97)),3,4,1,1,-18);
-  
+
    gbc.gridx=5;gbc.gridy=6;gbc.gridwidth=3;gbc.gridheight=8;
   lfo2Pane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"LFO 2 Settings",TitledBorder.CENTER,TitledBorder.CENTER));
   wavePanel.add(lfo2Pane,gbc);
-// VCF									*  
+// VCF									*
   JPanel vcfPane=new JPanel();
   vcfPane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(vcfPane,new ScrollBarWidget("Frequency",patch,0,127,0,new MtxModel(patch,26),new MtxSender(21)),0,0,7,1,14);
   addWidget(vcfPane,new ScrollBarWidget("Resonance",patch,0,63,0,new MtxModel(patch,27),new MtxSender(24)),0,1,7,1,15);
   addWidget(vcfPane,new ScrollBarWidget("FM Amount",patch,0,63,0,new MtxModel(patch,30),new MtxSender(30)),0,2,7,1,16);
- 
+
    gbc.gridx=0;gbc.gridy=17;gbc.gridwidth=3;gbc.gridheight=6;
   vcfPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"VCF Settings",TitledBorder.CENTER,TitledBorder.CENTER));
   wavePanel.add(vcfPane,gbc);
- // Ramps									*  
+ // Ramps									*
   JPanel rampPane=new JPanel();
   rampPane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(rampPane,new ScrollBarWidget("Ramp 1 Rate",patch,0,63,0,new MtxModel(patch,82),new MtxSender(40)),0,0,7,1,33);
@@ -164,91 +164,91 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
   addWidget(rampPane,new ScrollBarWidget("Ramp 2 Rate",patch,0,63,0,new MtxModel(patch,84),new MtxSender(42)),0,2,7,1,35);
   addWidget(rampPane,new ComboBoxWidget("Ramp 2 Mode",patch,new MtxModel(patch,85),new MtxSender(43),new String []
       			{"Single Trigger","Multi Trigger","External Trigger","External Gated"}),0,7,3,1,36);
-  
+
   gbc.gridx=5;gbc.gridy=14;gbc.gridwidth=3;gbc.gridheight=4;
   rampPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Ramp Settings",TitledBorder.CENTER,TitledBorder.CENTER));
-  wavePanel.add(rampPane,gbc); 
-// Envelope Amplitudes     						* 
+  wavePanel.add(rampPane,gbc);
+// Envelope Amplitudes     						*
   JPanel ampPane=new JPanel();
   ampPane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(ampPane,new ScrollBarWidget("Fnv1 Amplitude",patch,0,63,0,new MtxModel(patch,55),new MtxSender(55)),0,0,7,1,37);
   addWidget(ampPane,new ScrollBarWidget("Env2 Amplitude",patch,0,63,0,new MtxModel(patch,64),new MtxSender(65)),0,1,7,1,38);
   addWidget(ampPane,new ScrollBarWidget("Env3 Amplitude",patch,0,63,0,new MtxModel(patch,73),new MtxSender(75)),0,2,7,1,39);
- 
+
    gbc.gridx=5;gbc.gridy=17;gbc.gridwidth=3;gbc.gridheight=6;
   ampPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Envelope Amplitudes",TitledBorder.CENTER,TitledBorder.CENTER));
   wavePanel.add(ampPane,gbc);
-  
+
   JPanel envPane=new JPanel();
   envPane.setLayout(new GridBagLayout());gbc.weightx=1;
 
-// Envelope 1								*  
+// Envelope 1								*
   JPanel env1Pane=new JPanel();
   env1Pane.setLayout(new GridBagLayout());gbc.weightx=1;
     addWidget(env1Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeNode [] {
-        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),     
-	new EnvelopeNode(0,63,new MtxModel(patch,50),0,0,null,0,false,new MtxSender(50),null,"Dly",null),     	
+        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
+	new EnvelopeNode(0,63,new MtxModel(patch,50),0,0,null,0,false,new MtxSender(50),null,"Dly",null),
 	new EnvelopeNode(0,63,new MtxModel(patch,51),63,63,null,25,false,new MtxSender(51),null,"A",null),
 	new EnvelopeNode(0,63,new MtxModel(patch,52),0,63,new MtxModel(patch,53),25,false,new MtxSender(52),new MtxSender(53),"D","S"),
-        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),     
+        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),
 	new EnvelopeNode(0,63,new MtxModel(patch,54),0,0,null,0,false,new MtxSender(54),null,"R",null),
-      }     ),0,0,7,5,49); 
+      }     ),0,0,7,5,49);
   addWidget(env1Pane,new CheckBoxWidget("Reset Tr",patch,new BitModel(patch,49,0),new BitSender(patch,57,49)),0,6,1,1,-49);
   addWidget(env1Pane,new CheckBoxWidget("Multi Tr",patch,new BitModel(patch,49,1),new BitSender(patch,57,49)),2,6,1,1,-50);
   addWidget(env1Pane,new CheckBoxWidget("Extrn Tr",patch,new BitModel(patch,49,2),new BitSender(patch,57,49)),4,6,1,1,-51);
   addWidget(env1Pane,new CheckBoxWidget("Gated Tr",patch,new BitModel(patch,56,0),new BitSender(patch,59,56)),0,7,1,1,-52);
   addWidget(env1Pane,new CheckBoxWidget("Lfo Tr",patch,new BitModel(patch,56,1),new BitSender(patch,59,56)),2,7,1,1,-53);
   addWidget(env1Pane,new CheckBoxWidget("DADR",patch,new BitModel(patch,57,0),new BitSender(patch,60,57)),4,7,1,1,-54);
-  addWidget(env1Pane,new CheckBoxWidget("Free Run",patch,new BitModel(patch,57,1),new BitSender(patch,60,57)),6,7,1,1,-55);  
+  addWidget(env1Pane,new CheckBoxWidget("Free Run",patch,new BitModel(patch,57,1),new BitSender(patch,60,57)),6,7,1,1,-55);
    gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=7;gbc.gridheight=9;
   env1Pane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Envelope 1",TitledBorder.CENTER,TitledBorder.CENTER));
   envPane.add(env1Pane,gbc);
-// Envelope 2								*  
+// Envelope 2								*
   JPanel env2Pane=new JPanel();
   env2Pane.setLayout(new GridBagLayout());gbc.weightx=1;
     addWidget(env2Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeNode [] {
-        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),     
-	new EnvelopeNode(0,63,new MtxModel(patch,59),0,0,null,0,false,new MtxSender(60),null,"Dly",null),     	
+        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
+	new EnvelopeNode(0,63,new MtxModel(patch,59),0,0,null,0,false,new MtxSender(60),null,"Dly",null),
 	new EnvelopeNode(0,63,new MtxModel(patch,60),63,63,null,25,false,new MtxSender(61),null,"A",null),
 	new EnvelopeNode(0,63,new MtxModel(patch,61),0,63,new MtxModel(patch,62),25,false,new MtxSender(62),new MtxSender(63),"D","S"),
-        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),     
+        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),
 	new EnvelopeNode(0,63,new MtxModel(patch,63),0,0,null,0,false,new MtxSender(64),null,"R",null),
-      }     ),0,0,7,5,54); 
+      }     ),0,0,7,5,54);
   addWidget(env2Pane,new CheckBoxWidget("Reset Tr",patch,new BitModel(patch,58,0),new BitSender(patch,67,58)),0,6,1,1,-56);
   addWidget(env2Pane,new CheckBoxWidget("Multi Tr",patch,new BitModel(patch,58,1),new BitSender(patch,67,58)),2,6,1,1,-57);
   addWidget(env2Pane,new CheckBoxWidget("Extrn Tr",patch,new BitModel(patch,58,2),new BitSender(patch,67,58)),4,6,1,1,-58);
   addWidget(env2Pane,new CheckBoxWidget("Gated Tr",patch,new BitModel(patch,65,0),new BitSender(patch,69,65)),0,7,1,1,-59);
   addWidget(env2Pane,new CheckBoxWidget("Lfo Tr",patch,new BitModel(patch,65,1),new BitSender(patch,69,65)),2,7,1,1,-60);
   addWidget(env2Pane,new CheckBoxWidget("DADR",patch,new BitModel(patch,66,0),new BitSender(patch,68,66)),4,7,1,1,-61);
-  addWidget(env2Pane,new CheckBoxWidget("Free Run",patch,new BitModel(patch,66,2),new BitSender(patch,68,66)),6,7,1,1,-62);  
+  addWidget(env2Pane,new CheckBoxWidget("Free Run",patch,new BitModel(patch,66,2),new BitSender(patch,68,66)),6,7,1,1,-62);
    gbc.gridx=10;gbc.gridy=9;gbc.gridwidth=7;gbc.gridheight=7;
   env2Pane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Envelope 2",TitledBorder.CENTER,TitledBorder.CENTER));
   envPane.add(env2Pane,gbc);
-// Envelope 3								*  
+// Envelope 3								*
   JPanel env3Pane=new JPanel();
   env3Pane.setLayout(new GridBagLayout());gbc.weightx=1;
     addWidget(env3Pane,new EnvelopeWidget("Envelope",patch,new EnvelopeNode [] {
-        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),     
-	new EnvelopeNode(0,63,new MtxModel(patch,68),0,0,null,0,false,new MtxSender(70),null,"Dly",null),     	
+        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
+	new EnvelopeNode(0,63,new MtxModel(patch,68),0,0,null,0,false,new MtxSender(70),null,"Dly",null),
 	new EnvelopeNode(0,63,new MtxModel(patch,69),63,63,null,25,false,new MtxSender(71),null,"A",null),
 	new EnvelopeNode(0,63,new MtxModel(patch,70),0,63,new MtxModel(patch,71),25,false,new MtxSender(72),new MtxSender(73),"D","S"),
-        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),     
+        new EnvelopeNode(63,63,null,5000,5000,null,0,false,null,null,null,null),
 	new EnvelopeNode(0,63,new MtxModel(patch,72),0,0,null,0,false,new MtxSender(74),null,"R",null),
-      }     ),0,0,7,5,59); 
+      }     ),0,0,7,5,59);
   addWidget(env3Pane,new CheckBoxWidget("Reset Tr",patch,new BitModel(patch,67,0),new BitSender(patch,77,67)),0,6,1,1,-33);
   addWidget(env3Pane,new CheckBoxWidget("Multi Tr",patch,new BitModel(patch,67,1),new BitSender(patch,77,67)),2,6,1,1,-34);
   addWidget(env3Pane,new CheckBoxWidget("Extrn Tr",patch,new BitModel(patch,67,2),new BitSender(patch,77,67)),4,6,1,1,-35);
   addWidget(env3Pane,new CheckBoxWidget("Gated Tr",patch,new BitModel(patch,74,0),new BitSender(patch,79,74)),0,7,1,1,-36);
   addWidget(env3Pane,new CheckBoxWidget("Lfo Tr",patch,new BitModel(patch,74,1),new BitSender(patch,79,74)),2,7,1,1,-37);
   addWidget(env3Pane,new CheckBoxWidget("DADR",patch,new BitModel(patch,75,0),new BitSender(patch,78,75)),4,7,1,1,-38);
-  addWidget(env3Pane,new CheckBoxWidget("Free Run",patch,new BitModel(patch,75,1),new BitSender(patch,78,75)),6,7,1,1,-39);  
+  addWidget(env3Pane,new CheckBoxWidget("Free Run",patch,new BitModel(patch,75,1),new BitSender(patch,78,75)),6,7,1,1,-39);
    gbc.gridx=10;gbc.gridy=16;gbc.gridwidth=7;gbc.gridheight=13;
   env3Pane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Envelope 3",TitledBorder.CENTER,TitledBorder.CENTER));
   envPane.add(env3Pane,gbc);
-  
+
   gbc.gridx=10;gbc.gridy=0;gbc.gridwidth=7;gbc.gridheight=30;
   wavePanel.add(envPane,gbc);
-   
+
 // Modulation Matrix                                                *
 //   Setup HardWired Table (Table1)
   Mod1TableModel mod1TableModel=new Mod1TableModel();
@@ -272,18 +272,18 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
 
   TableColumn column = null;
     column = mod1Table.getColumnModel().getColumn(0);
-    column.setPreferredWidth(250); 
+    column.setPreferredWidth(250);
     column = mod1Table.getColumnModel().getColumn(1);
-    column.setPreferredWidth(250); 
+    column.setPreferredWidth(250);
     column = mod1Table.getColumnModel().getColumn(2);
-    column.setPreferredWidth(100);    
-    CheckBoxCellRenderer checkBoxCellRenderer = new CheckBoxCellRenderer(patch);    
+    column.setPreferredWidth(100);
+    CheckBoxCellRenderer checkBoxCellRenderer = new CheckBoxCellRenderer(patch);
     column.setCellRenderer (checkBoxCellRenderer);
     CheckBoxCellEditor checkBoxCellEditor = new CheckBoxCellEditor();
     column.setCellEditor(checkBoxCellEditor);
 
-    
-//    Setup Variable Table (Table2) 
+
+//    Setup Variable Table (Table2)
   Mod2TableModel mod2TableModel=new Mod2TableModel();
   JTable mod2Table = new JTable(mod2TableModel);
   JScrollPane mod2FramePane=new JScrollPane(mod2Table);
@@ -311,24 +311,24 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
        table2Slider[16] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,102),new SliderSender(81));
        table2Slider[17] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,103),new SliderSender(91));
        gbc.gridx=0;gbc.fill=GridBagConstraints.NONE;
-       for (int i=0;i<18;i++)
-         {sliderList.add(table2Slider[i].slider);
+       for (int i=0;i<18;i++) {
+	  //sliderList.add(table2Slider[i].slider);
           modPanel.add(table2Slider[i],gbc);    //work around for Java Swing Bug
-	 }
-  
+       }
+
     column = mod2Table.getColumnModel().getColumn(0);
-    column.setPreferredWidth(200); 
+    column.setPreferredWidth(200);
     column = mod2Table.getColumnModel().getColumn(1);
-    column.setPreferredWidth(250); 
+    column.setPreferredWidth(250);
     column = mod2Table.getColumnModel().getColumn(2);
-    column.setPreferredWidth(500);    
-    SliderCellRenderer sliderCellRenderer = new SliderCellRenderer(2);    
+    column.setPreferredWidth(500);
+    SliderCellRenderer sliderCellRenderer = new SliderCellRenderer(2);
     column.setCellRenderer (sliderCellRenderer);
     SliderCellEditor sliderCellEditor = new SliderCellEditor(2);
     column.setCellEditor(sliderCellEditor);
- 
-    
-//    Setup User Defines Table (Table3) 
+
+
+//    Setup User Defines Table (Table3)
   Mod3TableModel mod3TableModel=new Mod3TableModel();
   mod3Table = new JTable(mod3TableModel);
   JScrollPane mod3FramePane=new JScrollPane(mod3Table);
@@ -358,7 +358,7 @@ MtxModel(patch,104),new ModSender(patch,0),source);
        table3Dest[7] = new ComboBoxWidget("",patch,new MtxModel(patch,127),new ModSender(patch,7),dest);
        table3Dest[8] = new ComboBoxWidget("",patch,new MtxModel(patch,130),new ModSender(patch,8),dest);
        table3Dest[9] = new ComboBoxWidget("",patch,new MtxModel(patch,133),new ModSender(patch,9),dest);
-              
+
        table3Slider[0] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,105),new ModSender(patch,0));
        table3Slider[1] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,108),new ModSender(patch,1));
        table3Slider[2] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,111),new ModSender(patch,2));
@@ -371,35 +371,35 @@ MtxModel(patch,104),new ModSender(patch,0),source);
        table3Slider[9] =new ScrollBarWidget("",patch,0,126,-63,new ModModel(patch,132),new ModSender(patch,9));
 
        gbc.gridx=0;gbc.gridy=0;gbc.fill=GridBagConstraints.NONE;
-       for (int i=0;i<10;i++)
-         {sliderList.add(table3Slider[i].slider);
+       for (int i=0;i<10;i++) {
+	  //sliderList.add(table3Slider[i].slider);
           modPanel.add(table3Slider[i],gbc);    //work around for Java Swing Bug
-	 }
- 
+       }
+
     column = mod3Table.getColumnModel().getColumn(0);
-    column.setPreferredWidth(240); 
+    column.setPreferredWidth(240);
     ComboBoxCellEditor sourceEditor = new ComboBoxCellEditor(0);
     column.setCellEditor(sourceEditor);
     column = mod3Table.getColumnModel().getColumn(1);
-    column.setPreferredWidth(240); 
+    column.setPreferredWidth(240);
     ComboBoxCellEditor destEditor = new ComboBoxCellEditor(1);
     column.setCellEditor(destEditor);
     column = mod3Table.getColumnModel().getColumn(2);
-    column.setPreferredWidth(500);    
-    SliderCellRenderer sliderCellRenderer2 = new SliderCellRenderer(3);    
+    column.setPreferredWidth(500);
+    SliderCellRenderer sliderCellRenderer2 = new SliderCellRenderer(3);
     column.setCellRenderer (sliderCellRenderer2);
     SliderCellEditor sliderCellEditor2 = new SliderCellEditor(3);
     column.setCellEditor(sliderCellEditor2);
- 
+
 //   Set up Tracking Generator
- 
+
    addWidget(modPanel,new EnvelopeWidget("Tracking Generator Function",patch,new EnvelopeNode [] {
-        new EnvelopeNode(0,0,    null,0,63,new MtxModel(patch,77),0,false,null,new MtxSender(34),null,"1"),     
-	new EnvelopeNode(100,100,  null,0,63,new MtxModel(patch,78),0,false,null,new MtxSender(35),null,"2"),     	
+        new EnvelopeNode(0,0,    null,0,63,new MtxModel(patch,77),0,false,null,new MtxSender(34),null,"1"),
+	new EnvelopeNode(100,100,  null,0,63,new MtxModel(patch,78),0,false,null,new MtxSender(35),null,"2"),
 	new EnvelopeNode(100,100,null,0,63,new MtxModel(patch,79),0,false,null,new MtxSender(36),null,"3"),
 	new EnvelopeNode(100,100,null,0,63,new MtxModel(patch,80),0,false,null,new MtxSender(37),null,"4"),
-        new EnvelopeNode(100,100,null,0,63,new MtxModel(patch,81),0,false,null,new MtxSender(38),null,"5"),     
-      }     ),11,11,8,3,2); 
+        new EnvelopeNode(100,100,null,0,63,new MtxModel(patch,81),0,false,null,new MtxSender(38),null,"5"),
+      }     ),11,11,8,3,2);
    addWidget(modPanel,new ComboBoxWidget("Tracking Generator Source ",patch,new MtxModel(patch,76),new MtxSender(33),source
       			   ),11,10,8,1,1);
 
@@ -507,12 +507,12 @@ MtxModel(patch,104),new ModSender(patch,0),source);
 	public Object getValueAt(int row, int col)
 	{
 	    if (col==0)
-		return source[table3Source[row].getValue()];  	      
+		return source[table3Source[row].getValue()];
 	    if (col==1)
 		return dest[table3Dest[row].getValue()];
-	    return new Integer(0);             
+	    return new Integer(0);
 	}
-	
+
         public boolean isCellEditable(int row, int col) {
              return true;
         }
@@ -525,16 +525,16 @@ MtxModel(patch,104),new ModSender(patch,0),source);
                                                   int row, int col)
     {
        if (tablenum==2) return table2Slider[row]; else return table3Slider[row];
-    }							  
+    }
  }
  class SliderCellEditor implements TableCellEditor  {
    int tablenum;
-     SliderCellEditor(int t) {tablenum=t;}	
-  public Component getTableCellEditorComponent (JTable table, Object value, boolean isSelected, 
+     SliderCellEditor(int t) {tablenum=t;}
+  public Component getTableCellEditorComponent (JTable table, Object value, boolean isSelected,
                                                   int row, int col)
     {
        if (tablenum==2) return table2Slider[row]; else return table3Slider[row];
-    }							  
+    }
     public void cancelCellEditing(){};
   public Object getCellEditorValue() {return new Integer(0);}
   public void addCellEditorListener (CellEditorListener l) {}
@@ -550,16 +550,16 @@ MtxModel(patch,104),new ModSender(patch,0),source);
   public Component getTableCellRendererComponent (JTable table, Object value, boolean isSelected, boolean hasFocus,
                                                   int row, int col)
     {
-       return table1Check[row]; 
-    }							  
+       return table1Check[row];
+    }
  }
  class CheckBoxCellEditor implements TableCellEditor  {
-	
-  public Component getTableCellEditorComponent (JTable table, Object value, boolean isSelected, 
+
+  public Component getTableCellEditorComponent (JTable table, Object value, boolean isSelected,
                                                   int row, int col)
     {
-       return table1Check[row]; 
-    }							  
+       return table1Check[row];
+    }
     public void cancelCellEditing(){};
   public Object getCellEditorValue() {return new Integer(0);}
   public void addCellEditorListener (CellEditorListener l) {}
@@ -570,15 +570,15 @@ MtxModel(patch,104),new ModSender(patch,0),source);
  }
  class ComboBoxCellEditor implements TableCellEditor  {
      int editrow;
-     int col;	
+     int col;
   ComboBoxCellEditor (int c) {col=c;};
-  public Component getTableCellEditorComponent (JTable table, Object value, boolean isSelected, 
+  public Component getTableCellEditorComponent (JTable table, Object value, boolean isSelected,
                                                   int row, int col)
     {
        if (col==0) table3Source[row].setVisible(true); else table3Dest[row].setVisible(true);
        editrow=row;
        if (col==0) return table3Source[row]; else return table3Dest[row];
-    }							  
+    }
     public void cancelCellEditing()
       {if (col==0) table3Source[editrow].setVisible(false);
         else table3Dest[editrow].setVisible(false);mod3Table.repaint();};
@@ -587,12 +587,12 @@ MtxModel(patch,104),new ModSender(patch,0),source);
   public boolean isCellEditable (EventObject e) {return true;}
   public void removeCellEditorListener (CellEditorListener l) {}
   public boolean shouldSelectCell (EventObject e) {return true;}
-  public boolean stopCellEditing() 
+  public boolean stopCellEditing()
      {if (col==0) table3Source[editrow].setVisible(false); else table3Dest[editrow].setVisible(false);
       mod3Table.repaint();return true;}
  }
 
- 
+
 //*****************************************************************************************************************
 //  After this point is all of the SysexSender and ParamModel Definitions for this Synth
 
@@ -602,17 +602,17 @@ class MtxSender extends SysexSender
 {
   int parameter;
   byte []b = new byte [7];
-  public MtxSender(int param) 
+  public MtxSender(int param)
   {parameter=param;
    b[0]=(byte)0xF0; b[1]=(byte)0x10;b[2]=(byte)0x06;b[3]=0x06; b[4]=(byte)parameter;b[6]=(byte)0xF7;
   }
   public byte [] generate (int value)
   {b[5]=(byte)value;return b;}
-  
+
 }
 //Parameter Model for most of the Matrix1000 Parameters
  class MtxModel extends ParamModel
-{ 
+{
  public MtxModel(Patch p,int o) {ofs=o*2+5;patch=p;}
  public void set(int i) {patch.sysex[ofs]=(byte)(i%16); patch.sysex[ofs+1]=(byte)(i/16);}
  public int get() {return patch.sysex[ofs]+patch.sysex[ofs+1]*16 ;}
@@ -620,18 +620,18 @@ class MtxSender extends SysexSender
 }
 //Parameter Model for the Matrix1000 Parameters which are bits combined w/ other parameters
  class BitModel extends ParamModel
-{ 
+{
  int bit;
  public BitModel(Patch p,int o,int b) {ofs=o*2+5;patch=p;bit=b;}
  public void set(int i) {
-  if (bit==0) patch.sysex[ofs]=(byte)((patch.sysex[ofs]&6)+i); 
-  if (bit==1) patch.sysex[ofs]=(byte)((patch.sysex[ofs]&5)+i*2); 
-  if (bit==2) patch.sysex[ofs]=(byte)((patch.sysex[ofs]&3)+i*4); 
- }  
+  if (bit==0) patch.sysex[ofs]=(byte)((patch.sysex[ofs]&6)+i);
+  if (bit==1) patch.sysex[ofs]=(byte)((patch.sysex[ofs]&5)+i*2);
+  if (bit==2) patch.sysex[ofs]=(byte)((patch.sysex[ofs]&3)+i*4);
+ }
  public int get() {
    if (bit==0) return (patch.sysex[ofs]+patch.sysex[ofs+1]*16)&1 ;
    if (bit==1) return ((patch.sysex[ofs]+patch.sysex[ofs+1]*16)&2)/2 ;
-   if (bit==2) return ((patch.sysex[ofs]+patch.sysex[ofs+1]*16)&4)/4 ;       
+   if (bit==2) return ((patch.sysex[ofs]+patch.sysex[ofs+1]*16)&4)/4 ;
   return 0;
  }
 }
@@ -642,12 +642,12 @@ class BitSender extends SysexSender
 {
   int parameter;int ofs;core.Patch patch;
   byte []b = new byte [7];
-  public BitSender(core.Patch p,int param,int o) 
+  public BitSender(core.Patch p,int param,int o)
   {parameter=param;ofs=o*2+5;patch=p;
    b[0]=(byte)0xF0; b[1]=(byte)0x10;b[2]=(byte)0x06;b[3]=0x06; b[4]=(byte)parameter;b[6]=(byte)0xF7;
   }
   public byte [] generate (int value)
-  {b[5]=(byte)patch.sysex[ofs];return b;}  
+  {b[5]=(byte)patch.sysex[ofs];return b;}
 }
 
 //The Matrix1000 Detune parameter uses a unique format, basically its 5 bits of data w/ bits 6 and 7 both being the
@@ -655,7 +655,7 @@ class BitSender extends SysexSender
 //manipulate it. This is a kluge done by ear, I tried reverse engineering another Matrix editor only to find it didn't
 //handle detune correctly. This sounds like it does the right thing though.
  class DetuneModel extends ParamModel
-{ 
+{
  public DetuneModel(Patch p,int o) {ofs=o*2+5;patch=p;}
  public void set(int i) {
    i-=31;
@@ -675,20 +675,20 @@ class DetuneSender extends SysexSender
 {
   int parameter;
   byte []b = new byte [7];
-  public DetuneSender(int param) 
+  public DetuneSender(int param)
   {parameter=param;
    b[0]=(byte)0xF0; b[1]=(byte)0x10;b[2]=(byte)0x06;b[3]=0x06; b[4]=(byte)parameter;b[6]=(byte)0xF7;
   }
   public byte [] generate (int value)
   {  value-=31;
-     if (value<0) value=32+64+(32+value);	  
+     if (value<0) value=32+64+(32+value);
      b[5]=(byte)value;
      return b;}
-  
+
 }
 //Model for Modulation Matrix Amount Parameters
  class ModModel extends ParamModel
-{ 
+{
  public ModModel(Patch p,int o) {ofs=o*2+5;patch=p;}
  public void set(int i) {
    i-=63;
@@ -721,7 +721,7 @@ class ModSender extends SysexSender
 	  b[6]=(byte)(b[6]%64);
 	  if (b[6]<0) b[6]=(byte)(128+b[6]);
 	  return b;
-  }  
+  }
   public int get(int ofs) {int value=patch.sysex[ofs*2+5]+patch.sysex[ofs*2+5+1]*16; return value;}
 
 }
@@ -730,17 +730,15 @@ class SliderSender extends SysexSender
 {
   int parameter;
   byte []b = new byte [7];
-  public SliderSender(int param) 
+  public SliderSender(int param)
   {parameter=param;
    b[0]=(byte)0xF0; b[1]=(byte)0x10;b[2]=(byte)0x06;b[3]=0x06; b[4]=(byte)parameter;b[6]=(byte)0xF7;
   }
   public byte [] generate (int value)
   {  value-=63;
-     if (value<0) value=32+64+(32+value);	  
+     if (value<0) value=32+64+(32+value);
      b[5]=(byte)value;
      return b;}
 }
 
 }
-
-

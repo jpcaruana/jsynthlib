@@ -49,9 +49,9 @@ class YamahaTX81zSingleEditor extends PatchEditorFrame
   final ScrollBarWidget algo=new ScrollBarWidget(" Algorithm",patch,0,7,1,new ParamModel(patch,99),new VcedSender(52));
   addWidget(cmnPane,algo,1,0,3,1,17);
 
-    algo.slider.addChangeListener(new ChangeListener() {
+    algo.addEventListener(new ChangeListener() {
 	   public void stateChanged(ChangeEvent e) {
-                l.setIcon(algoIcon[algo.slider.getValue()]);                
+                l.setIcon(algoIcon[algo.getValue()]);                
                }});
 
 

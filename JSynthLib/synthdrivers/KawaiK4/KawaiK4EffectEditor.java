@@ -96,9 +96,14 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
 	final ImageIcon algoIcon1=new ImageIcon (algoPic1);
 	final ImageIcon algoIcon2=new ImageIcon (algoPic2);
 	*/
+	/*
         final JLabel parameter1 = new JLabel(effectParam1[0]);
         final JLabel parameter2 = new JLabel(effectParam2[0]);
         final JLabel parameter3 = new JLabel(effectParam3[0]);
+	*/
+        final LabelWidget parameter1 = new LabelWidget(effectParam1[0]);
+        final LabelWidget parameter2 = new LabelWidget(effectParam2[0]);
+        final LabelWidget parameter3 = new LabelWidget(effectParam3[0]);
 	final ScrollBarWidget scroll1
 	    = new ScrollBarWidget("Send2", patch, 0, 100, 0,
 				  new K4Model(patch, 12), new K4Sender(88, 0));
@@ -149,21 +154,31 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         scroll6.setEnabled(patch.sysex[8] >= 9);
         scroll7.setEnabled(patch.sysex[8] >= 9);
         scroll8.setEnabled(patch.sysex[8] >= 9);
+	/*
         parameter1.setText(effectParam1[patch.sysex[8]]);
         parameter2.setText(effectParam2[patch.sysex[8]]);
         parameter3.setText(effectParam3[patch.sysex[8]]);
+	*/
+        parameter1.setLabel(effectParam1[patch.sysex[8]]);
+        parameter2.setLabel(effectParam2[patch.sysex[8]]);
+        parameter3.setLabel(effectParam3[patch.sysex[8]]);
 
 	ComboBoxWidget effectTypeWidget
 	    = new ComboBoxWidget("Effect Type", patch,
 				 new K4Model(patch, 0), new K4Sender(82), effectName);
 
-        effectTypeWidget.cb.addItemListener(new ItemListener() {
+        effectTypeWidget.addEventListener(new ItemListener() {
 		public void itemStateChanged(ItemEvent e) {
 		    if (e.getStateChange() == ItemEvent.SELECTED) {
 			int i = ((JComboBox) e.getSource()).getSelectedIndex();
+			/*
 			parameter1.setText(effectParam1[i]);
 			parameter2.setText(effectParam2[i]);
 			parameter3.setText(effectParam3[i]);
+			*/
+			parameter1.setLabel(effectParam1[i]);
+			parameter2.setLabel(effectParam2[i]);
+			parameter3.setLabel(effectParam3[i]);
 			//System.out.println("Effect selected:"+i);
 			scroll1.setEnabled(i >= 9);
 			scroll2.setEnabled(i >= 9);
@@ -199,9 +214,14 @@ class KawaiK4EffectEditor extends PatchEditorFrame {
         cmnPane.setLayout(new GridBagLayout());
 
         addWidget(cmnPane, effectTypeWidget, 0, 3, 2, 1, 3);
+	/*
         addWidget(cmnPane, new LabelWidget(parameter1), 0, 4, 1, 1, 1);
         addWidget(cmnPane, new LabelWidget(parameter2), 0, 5, 1, 1, 1);
-        addWidget(cmnPane, new LabelWidget(parameter3), 0, 6, 1, 1, 1);
+	addWidget(cmnPane, new LabelWidget(parameter3), 0, 6, 1, 1, 1);
+	*/
+        addWidget(cmnPane, parameter1, 0, 4, 1, 1, 1);
+        addWidget(cmnPane, parameter2, 0, 5, 1, 1, 1);
+	addWidget(cmnPane, parameter3, 0, 6, 1, 1, 1);
 
         addWidget(cmnPane,
 		  new ScrollBarWidget("", patch, 0, 7, 0,

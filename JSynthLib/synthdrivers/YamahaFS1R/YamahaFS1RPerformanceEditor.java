@@ -204,7 +204,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 			for (int part = 0; part < 4; part++)
 			{
 				// rafraichir les menus
-				int oSelIndex = mBankSelector[part].cb.getSelectedIndex ();
+				int oSelIndex = mBankSelector[part].getValue();
 				mVoiceSelector[part].cb.removeAllItems();
 				if (oSelIndex > 0)
 				{
@@ -286,8 +286,8 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		ComboBoxWidget oBankCB = new ComboBoxWidget("Bank", p, oModel, new YamahaFS1RPerformanceDriver.Sender(1, aPart), mVoicesBanks);
 		ItemListener oList1[] = oBankCB.cb.getItemListeners();
 		oBankCB.cb.removeItemListener(oList1[0]);
-		oBankCB.cb.addItemListener(new BankItemListener(aPart));
-		oBankCB.cb.addItemListener(oList1[0]);
+		oBankCB.addEventListener(new BankItemListener(aPart));
+		oBankCB.addEventListener(oList1[0]);
 		mBankSelector[aPart-1] = oBankCB;
 		oPartPane.add(oBankCB);
 				
@@ -297,12 +297,12 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		// celui de la banque courante
 		ItemListener oList[] = mVoiceSelector[aPart-1].cb.getItemListeners();
 		mVoiceSelector[aPart-1].cb.removeItemListener(oList[0]);
-		mVoiceSelector[aPart-1].cb.addItemListener(new ItemListener() {
+		mVoiceSelector[aPart-1].addEventListener(new ItemListener() {
 			// send the bank voice to the current part
 			public void itemStateChanged (ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
 				{
-					if (mBankSelector[aPart-1].cb.getSelectedIndex() == 1)
+					if (mBankSelector[aPart-1].getValue() == 1)
 					{ 
 						// envoi sysex de la voice interne selectionnee
 						JComboBox oCB = (JComboBox)e.getSource();
@@ -312,7 +312,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 				}
 			}
 		});
-		mVoiceSelector[aPart-1].cb.addItemListener(oList[0]);
+		mVoiceSelector[aPart-1].addEventListener(oList[0]);
 		oPartPane.add(mVoiceSelector[aPart-1]);
 		
 		// get the part voice

@@ -45,7 +45,7 @@ import core.ScrollBarWidget;
 import core.SpinnerWidget;
 import core.SysexSender;
 
-public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame 
+public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 {
 	static final String [] OnOffName = new String [] {
 		"Off",
@@ -78,11 +78,11 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 
 	static final String [] SelectChgName = new String [] {
 		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15"
-	}; 
+	};
 
 	static final String [] MidiReceiveName = new String [] {
 		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9","10","11","12","13","14","15","off"
-	}; 
+	};
 
 	static final String [] PerfSelNoName = new String [] {
 		"  0","  1","  2","  3","  4","  5","  6","  7","  8","  9"," 10"," 11"," 12"," 13"," 14"," 15",
@@ -100,7 +100,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 	public DX7FamilySystemSetupIIEditor(String name, Patch patch)
 	{
 		super (name, patch);
-    
+
 		buildEditor(patch);
 	}
 
@@ -121,14 +121,14 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 		systemPane.addTab("System Setup",cmnScrollPane);
 
 		final ScrollBarWidget MasterTune = new ScrollBarWidget(" "	      ,patch,0,127,-64,new ParamModel(patch,16+20), new MasterTuneSender(64) );
-		MasterTune.slider.addChangeListener(new ChangeListener() {
+		MasterTune.addEventListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				MasterTune.setLabel("Master Tuning (Concert Pitch: "
-					+ freqFormatter.format(440+(4.400*0.059463094359*1.2 * (MasterTune.slider.getValue()-64))) + " Hz)");
+					+ freqFormatter.format(440+(4.400*0.059463094359*1.2 * (MasterTune.getValue()-64))) + " Hz)");
 			}
 		});
 		MasterTune.setLabel("Master Tuning (Concert Pitch: "
-			+ freqFormatter.format(440+(4.400*0.059463094359*1.2 * (MasterTune.slider.getValue()-64))) + " Hz)");
+			+ freqFormatter.format(440+(4.400*0.059463094359*1.2 * (MasterTune.getValue()-64))) + " Hz)");
 		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; cmnPane.add(new JLabel(" "),gbc);
 		addWidget(cmnPane,MasterTune,0,1,8,1,1);
 		addWidget(cmnPane,new ComboBoxWidget("Memory Protection (*)",patch,new ParamModel(patch,16+19),new SystemSetupSender(83),MemProtName),0,2,4,1,2);
@@ -143,7 +143,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 
 		addWidget(cmnPane,new ComboBoxWidget("Transmit Voice Message"	,patch,new ParamModel(patch,16+ 1),new SystemSetupSender(65),OnOffName)	 ,0,7,4,1, 5);
 		addWidget(cmnPane,new ComboBoxWidget("Transmit Channel"	    ,patch,new ParamModel(patch,16+ 0),new SystemSetupSender(64),SelectChgName)  ,4,7,4,1, 6);
- 
+
 		addWidget(cmnPane,new ComboBoxWidget("MIDI OMNI Mode "	    ,patch,new ParamModel(patch,16+ 4),new SystemSetupSender(68),OnOffName)	 ,0,8,4,1, 7);
 		addWidget(cmnPane,new ComboBoxWidget("Receive Channel - A"	    ,patch,new ParamModel(patch,16+ 2),new SystemSetupSender(66),MidiReceiveName),4,8,4,1, 8);
 		addWidget(cmnPane,new ComboBoxWidget("Receive Channel - B"	    ,patch,new ParamModel(patch,16+ 3),new SystemSetupSender(67),MidiReceiveName),8,8,4,1, 9);
@@ -225,7 +225,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 	{
 		int parameter;
 		byte []b = new byte [7];
-		
+
 		public SystemSetupSender(int param)
 		{
 			parameter=param;
@@ -236,17 +236,17 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 			b[4]=(byte)parameter;
 			b[6]=(byte)0xF7;
 		}
-	
+
 		public byte [] generate (int value)
 		{
 			b[2]=(byte)(0x10+channel-1);
 			b[5]=(byte)value;
-		
+
 			return b;
 		}
 	}
 
-	
+
 	/*
 	 * SysexSender - Master Tune
 	 *		     (g=1; h=0)
@@ -255,7 +255,7 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 	{
 		int parameter;
 		byte []b = new byte [7];
-	
+
 		public MasterTuneSender(int param)
 		{
 			parameter=param;
@@ -266,12 +266,12 @@ public class DX7FamilySystemSetupIIEditor extends PatchEditorFrame
 			b[4]=(byte)parameter;
 			b[6]=(byte)0xF7;
 		}
-	
+
 		public byte [] generate (int value)
 		{
 			b[2]=(byte)(0x10+channel-1);
 			b[5]=(byte)value;
-		
+
 			return b;
 		}
 	}

@@ -149,7 +149,7 @@ class AlesisQSProgramEditor extends PatchEditorFrame
                                                 QSConstants.VOICE_NAMES_KYBD[0]);
         addWidget(this, sampleBox, 2, yPos, 2, 1, controlIdx++);
 
-        groupBox.cb.addActionListener( new GroupActionListener(groupBox, sampleBox) );
+        groupBox.addEventListener( new GroupActionListener(groupBox, sampleBox) );
 
     }
 

@@ -571,7 +571,7 @@ class EffectsWindow
 		JPanel oPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		ParamModel oVariationTypeModel = new YamahaFS1RPerformanceDriver.Model(p, 0x012B);
 		ComboBoxWidget oSelVariation = new ComboBoxWidget("", p, oVariationTypeModel, new YamahaFS1RPerformanceDriver.Sender(0x012B), mVariations);
-		oSelVariation.cb.addItemListener(new ItemListener() {
+		oSelVariation.addEventListener(new ItemListener() {
 			public void itemStateChanged (ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
 				{
@@ -634,7 +634,7 @@ class EffectsWindow
 		JPanel oPanel3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		ParamModel oInsertionTypeModel = new YamahaFS1RPerformanceDriver.Model(p, 0x012F);
 		ComboBoxWidget oSelInsertion = new ComboBoxWidget("", p, oInsertionTypeModel, new YamahaFS1RPerformanceDriver.Sender(0x012F), mInsertions);
-		oSelInsertion.cb.addItemListener(new ItemListener() {
+		oSelInsertion.addEventListener(new ItemListener() {
 			public void itemStateChanged (ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
 				{
@@ -758,7 +758,7 @@ class EffectsWindow
 		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		ParamModel oReverbTypeModel = new YamahaFS1RPerformanceDriver.Model(p, 0x0128);
 		ComboBoxWidget oSelReverb = new ComboBoxWidget("", p, oReverbTypeModel, new YamahaFS1RPerformanceDriver.Sender(0x0128), mReverbs);
-		oSelReverb.cb.addItemListener(new ItemListener() {
+		oSelReverb.addEventListener(new ItemListener() {
 			public void itemStateChanged (ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED)
 				{

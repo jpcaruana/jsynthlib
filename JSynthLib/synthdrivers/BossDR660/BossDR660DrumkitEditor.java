@@ -25,7 +25,7 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
  final String [] waveNameList = new String [] {
  "  0- ambient kick","  1- attack kick","  2- basket ball kick","  3- boing solid kick","  4- breater kick","  5- bright kick",
  "  6- dance kick","  7- deep kick","  8- delay kick","  9- door kick"," 10- deep reverb kick"," 11- dry kick 1",
- " 12- dry kick 2"," 13- dull kick"," 14- electronic kick 1"," 15- electronic kick 2"," 16- gate kick 1"," 17- gate kick 2", 
+ " 12- dry kick 2"," 13- dull kick"," 14- electronic kick 1"," 15- electronic kick 2"," 16- gate kick 1"," 17- gate kick 2",
  " 18- hard acoustic kick"," 19- house kick"," 20- hybrid kick"," 21- mondo reverb kick"," 22- mondo kick"," 23- mondo deep kick",
  " 24- pillow kick"," 25- punch kick"," 26- rap kick"," 27- real kick"," 28- reverb kick"," 29- room kick 1"," 30- room kick 2",
  " 31- sharp kick"," 32- shell kick"," 33- smash kick"," 34- soft acoustic kick"," 35- solid kick"," 36- strength kick",
@@ -67,20 +67,20 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
  "242- reverse metallic beat","243- reverse hi-Q","244- reverse clap","245- reverse shot","246- reverse ambience",
  "247- reverse reverb","248- kick ambience","249- snare ambience","250- tom ambience","251- long reverb","252- gate reverb",
  "253- slap bass","254- synth bass","255- OFF"
- 
- 
- }; 
+
+
+ };
  final String [] padList = new String [] {
  "A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11","A12","A13","A14","A15","A16",
  "B01","B02","B03","B04","B05","B06","B07","B08","B09","B10","B11","B12","B13","B14","B15","B16",
  "-01","-02","-03","-04","-05","-06","-07","-08","-09","-10","-11","-12","-13","-14","-15","-16","-17","-18","-19","-20",
  "-21","-22","-23"};
 
- 
+
   int drum=0;
  public BossDR660DrumkitEditor(Patch patch)
   {
-    super ("Boss DR660 Drumkit Editor",patch);   
+    super ("Boss DR660 Drumkit Editor",patch);
   JPanel kitPane=new JPanel();
   kitPane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(kitPane,new PatchNameWidget(" Name",patch),1,1,2,1,0);
@@ -88,8 +88,8 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
       			{"Exp1","Lin1","Exp2","Lin2","XfdO","XfdI","Fix1","Fix2"}),1,2,1,1,1);
   addWidget(kitPane,new ComboBoxWidget("Sense Curve B",patch,new ParamModel(patch,0x555),new BankSender(1),new String []
       			{"Exp1","Lin1","Exp2","Lin2","XfdO","XfdI","Fix1","Fix2"}),1,3,1,1,2);
-  addWidget(kitPane,new CheckBoxWidget("Bank Layer",patch,new ParamModel(patch,0x556),new BankSender(2)),1,4,1,1,-1);  
- 
+  addWidget(kitPane,new CheckBoxWidget("Bank Layer",patch,new ParamModel(patch,0x556),new BankSender(2)),1,4,1,1,-1);
+
   gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=4;
   kitPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"DrumKit Settings",TitledBorder.CENTER,TitledBorder.CENTER));
   scrollPane.add(kitPane,gbc);
@@ -98,9 +98,9 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
   fxPane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(fxPane,new ComboBoxWidget("Effect Type",patch,new ParamModel(patch,0x53C),new FXSender(0),new String []
       			{"Hall","Room","Plate","Delay","Pan-Delay"}),1,1,2,1,3);
-  
+
   addWidget(fxPane,new ScrollBarWidget("  Reverb Time",patch,0,31,0,new ParamModel(patch,0x53D),new FXSender(1)),1,2,3,1,4);
- 
+
   gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=3;gbc.gridheight=4;
   fxPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Effects Settings",TitledBorder.CENTER,TitledBorder.CENTER));
   scrollPane.add(fxPane,gbc);
@@ -112,19 +112,22 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
   cb.addActionListener (new ActionListener() { 
    public void actionPerformed(ActionEvent e)
    {drum=cb.getSelectedIndex();
-    SysexWidget w;
+   SysexWidget w;
    for (int i=0; i<widgetList.size();i++)
    {w= ((SysexWidget)widgetList.get(i)); 
-	 w.setValue();
+   w.setValue();
+       // Now w.setValue() does the following job.
+       /*
 	 if (w instanceof ScrollBarWidget) ((ScrollBarWidget)w).slider.setValue(w.getValue());
 	 if (w instanceof ScrollBarLookupWidget) ((ScrollBarLookupWidget)w).slider.setValue(w.getValue());
          if (w instanceof ComboBoxWidget) ((ComboBoxWidget)w).cb.setSelectedIndex(w.getValue());
          if (w instanceof CheckBoxWidget) ((CheckBoxWidget)w).cb.setSelected((w.getValue()>0));
+       */
    }
-  }}
+   }}
   );
-  
- 
+
+
   gbc.gridx=4;gbc.gridy=0;gbc.gridwidth=3;gbc.gridheight=2;
   padPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Choose a Pad",TitledBorder.CENTER,TitledBorder.CENTER));
   scrollPane.add(padPane,gbc);
@@ -132,7 +135,7 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
   JPanel drumPane=new JPanel();
   drumPane.setLayout(new GridBagLayout());gbc.weightx=1;
   addWidget(drumPane,new ComboBoxWidget("Instrument",patch,new WaveModel(patch,9),new WaveSender(),waveNameList),1,1,2,1,3);
-  
+
   addWidget(drumPane,new ScrollBarWidget("Level",patch,0,15,0,new DrumModel(patch,11),new DrumSender(2)),1,2,3,1,4);
   addWidget(drumPane,new ScrollBarWidget("Nuance",patch,0,15,-7,new DrumModel(patch,12),new DrumSender(3)),1,3,3,1,5);
   addWidget(drumPane,new ScrollBarWidget("Pitch",patch,0,512,-240,new PitchModel(patch,13),new PitchSender()),1,4,3,1,6);
@@ -146,22 +149,22 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
   addWidget(drumPane,new ScrollBarWidget("Reverb Send",patch,0,15,0,new DrumModel(patch,19),new DrumSender(10)),1,8,3,1,10);
   addWidget(drumPane,new ScrollBarWidget("Chorus Send",patch,0,15,0,new DrumModel(patch,20),new DrumSender(11)),1,9,3,1,11);
   addWidget(drumPane,new ScrollBarWidget("Midi Note",patch,27,81,0,new NoteModel(patch,0x4FA),new NoteSender()),1,10,3,1,12);
-  
- 
+
+
   gbc.gridx=4;gbc.gridy=2;gbc.gridwidth=3;gbc.gridheight=4;
   drumPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Drum Setting",TitledBorder.CENTER,TitledBorder.CENTER));
   scrollPane.add(drumPane,gbc);
    pack();
    show();
 
-   
+
   }
 
 class BankSender extends SysexSender
 {
   int parameter;
   byte []b = new byte [12];
-  public BankSender(int param) 
+  public BankSender(int param)
   {parameter=param;
    b[0]=(byte)0xF0; b[1]=(byte)0x41;b[3]=(byte)0x52;b[4]=0x12;b[5]=0x0;b[6]=0x03;b[7]=0x0;
    b[8]=(byte)parameter;b[11]=(byte)0xF7;
@@ -177,14 +180,14 @@ class BankSender extends SysexSender
     sum=(byte)(sum%128);
   b[10]=(byte)sum;
   return b;}
-  
+
 }
 
 class FXSender extends SysexSender
 {
   int parameter;
   byte []b = new byte [12];
-  public FXSender(int param) 
+  public FXSender(int param)
   {parameter=param;
    b[0]=(byte)0xF0; b[1]=(byte)0x41;b[3]=(byte)0x52;b[4]=0x12;b[5]=0x0;b[6]=0x02;b[7]=0x0;
    b[8]=(byte)parameter;b[11]=(byte)0xF7;
@@ -200,13 +203,13 @@ class FXSender extends SysexSender
     sum=(byte)(sum%128);
   b[10]=(byte)sum;
   return b;}
-  
+
 }
 class DrumSender extends SysexSender
 {
-  int parameter; 
+  int parameter;
   byte []b = new byte [12];
-  public DrumSender(int param) 
+  public DrumSender(int param)
   {parameter=param;
    b[0]=(byte)0xF0; b[1]=(byte)0x41;b[3]=(byte)0x52;b[4]=0x12;b[5]=0x0;b[6]=0x00;b[7]=(byte)drum;
    b[8]=(byte)parameter;b[11]=(byte)0xF7;
@@ -223,13 +226,13 @@ class DrumSender extends SysexSender
     sum=(byte)(sum+1);
     sum=(byte)(sum%128);
   b[10]=(byte)sum;
-  return b;}  
+  return b;}
 }
 
 class NoteSender extends SysexSender
-{ 
+{
   byte []b = new byte [12];
-  public NoteSender() 
+  public NoteSender()
   {
    b[0]=(byte)0xF0; b[1]=(byte)0x41;b[3]=(byte)0x52;b[4]=0x12;b[5]=0x0;b[6]=0x01;b[7]=0;
    b[8]=(byte)drum;b[11]=(byte)0xF7;
@@ -246,14 +249,14 @@ class NoteSender extends SysexSender
     sum=(byte)(sum+1);
     sum=(byte)(sum%128);
   b[10]=(byte)sum;
-  return b;}  
+  return b;}
 }
 
 class PitchSender extends SysexSender
 {
-  
+
   byte []b = new byte [13];
-  public PitchSender() 
+  public PitchSender()
   {
    b[0]=(byte)0xF0; b[1]=(byte)0x41;b[3]=(byte)0x52;b[4]=0x12;b[5]=0x0;b[6]=0x00;b[7]=(byte)drum;
    b[8]=(byte)4;b[12]=(byte)0xF7;
@@ -273,13 +276,13 @@ class PitchSender extends SysexSender
     sum=(byte)(sum%128);
   b[11]=(byte)sum;
   return b;}
-  
+
 }
 class WaveSender extends SysexSender
 {
-  
+
   byte []b = new byte [13];
-  public WaveSender() 
+  public WaveSender()
   {
    b[0]=(byte)0xF0; b[1]=(byte)0x41;b[3]=(byte)0x52;b[4]=0x12;b[5]=0x0;b[6]=0x00;b[7]=(byte)drum;
    b[8]=(byte)0;b[12]=(byte)0xF7;
@@ -299,21 +302,21 @@ class WaveSender extends SysexSender
     sum=(byte)(sum%128);
   b[11]=(byte)sum;
   return b;}
-  
+
 }
 
  class DrumModel extends ParamModel
-{ 
- int ofs;
+{
+    // int ofs;
  public DrumModel(Patch p,int o) {ofs=o;patch=p;}
  public void set(int i) {patch.sysex[ofs+drum*23]=(byte)(i);}
  public int get() {return ((patch.sysex[ofs+drum*23]));}
 
 }
- 
+
  class NoteModel extends ParamModel
-{ 
- int ofs;
+{
+    // int ofs;
  public NoteModel(Patch p,int o) {ofs=o;patch=p;}
  public void set(int i) {patch.sysex[ofs+drum]=(byte)(i);}
  public int get() {return ((patch.sysex[ofs+drum]));}
@@ -321,8 +324,8 @@ class WaveSender extends SysexSender
 }
 
  class PitchModel extends ParamModel
-{ 
- int ofs;
+{
+    // int ofs;
  public PitchModel(Patch p,int o) {ofs=o;patch=p;}
  public void set(int i) {patch.sysex[ofs+drum*23]=(byte)(i/128);
                          patch.sysex[ofs+drum*23+1]=(byte)(i%128);}
@@ -330,8 +333,8 @@ class WaveSender extends SysexSender
 
 }
  class WaveModel extends ParamModel
-{ 
- int ofs;
+{
+    // int ofs;
  public WaveModel(Patch p,int o) {ofs=o;patch=p;}
  public void set(int i) {patch.sysex[ofs+drum*23]=(byte)(i/16);
                          patch.sysex[ofs+drum*23+1]=(byte)(i%16);}
