@@ -25,9 +25,6 @@ public class JSLFrame {
     /** parent JSLDesktop. */
     private JSLDesktop desktop;
 
-    // only for JSLJFrame.
-    private static JFrame lastselection = null;
-    private static int frame_count = 0;
     /**
      * Creates a non-resizable, non-closable, non-maximizable, non-iconifiable
      * JSLFrame with no title.
@@ -39,7 +36,6 @@ public class JSLFrame {
 	    proxy = new JSLJFrame(this);
 //	if (JSLDesktop.getInstance() != null)
 //	    JSLDesktop.registerFrame(this);
-	frame_count++;
     }
     /**
      * Creates a JSLFrame with the specified title, resizability, closability,
@@ -54,7 +50,6 @@ public class JSLFrame {
 	    proxy = new JSLJFrame(this, s);
 //	if (JSLDesktop.getInstance() != null)
 //	    JSLDesktop.registerFrame(this);
-	frame_count++;
     }
 
     /** set parent JSLDesktop.  Called by JSLDesktop.add method. */
@@ -96,6 +91,7 @@ public class JSLFrame {
     public Dimension getSize(Dimension rv) { return proxy.getSize(rv); }
     /** Moves this component to a new location. */
     public void setLocation(int x, int y) { proxy.setLocation(x,y); }
+    public void setLocation(Point p) { proxy.setLocation(p); }
     /** Shows or hides this component depending on the value of parameter b. */
     public void setVisible(boolean b) { proxy.setVisible(b); }
     /**
@@ -116,8 +112,6 @@ public class JSLFrame {
     public int getX() { return proxy.getX(); }
     /** Returns the current y coordinate of the components origin. */
     public int getY() { return proxy.getY(); }
-    /** Moves and resizes this component. */
-    public void reshape(int a, int b, int c, int d) { proxy.reshape(a,b,c,d); }
     /** Returns whether the frame is the currently "selected" or active frame. */
     public boolean isSelected() { return proxy.isSelected(); }
     /** Checks if this Window is showing on screen. */
@@ -146,24 +140,7 @@ public class JSLFrame {
     // original (non-JInternalFrame compatible) methods
     /** Move the frame to default location. */
     public void moveToDefaultLocation() {
-        //proxy.moveToDefaultLocation();
-        int x, y, yofs = 0;
-        int xsep = 30;
-        int ysep = JSLDesktop.useMDI() ? 30 : desktop.getYDecoration();
-        Dimension d = desktop.getSize();
-
-        JFrame tb = JSLDesktop.useMDI() ? null : desktop.getToolBar().getJFrame();
-        if (tb != null && tb.getLocation().getY() < 100)
-            yofs = (int) (tb.getLocation().getY() - ysep + tb.getSize()
-                    .getHeight());
-        x = (xsep * frame_count) % (int) (d.getWidth() - getSize().getWidth());
-        if (x < 0)
-            x = 0;
-        y = yofs + (ysep * frame_count)
-                % (int) (d.getHeight() - getSize().getHeight() - yofs);
-        if (y < 0)
-            y = yofs + ysep;
-        setLocation(x, y);
+        setLocation(desktop.getDefaultLocation(getSize()));
     }
 
     // only for Actions.PasteAction
@@ -171,8 +148,6 @@ public class JSLFrame {
 	return false;
     }
     // mothods for JSLDeskTop
-    /** Reset the counter of the number of frames. */
-    static void resetFrameCount() { frame_count = 0; }
     /**  */
     JFrame getJFrame() {
 	if (proxy instanceof JFrame)
@@ -207,9 +182,9 @@ public class JSLFrame {
 	public int getX();
 	public int getY();
 	public boolean isVisible();
-	public void reshape(int a, int b, int c, int d);
 	public void setVisible(boolean b);
 	public void setLocation(int x, int y);
+	public void setLocation(Point p);
 	public JSLFrameListener[] getJSLFrameListeners();
 	public void removeJSLFrameListener(JSLFrameListener l);
 	public void setPreferredSize(Dimension d);

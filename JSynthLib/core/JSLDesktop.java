@@ -1,5 +1,6 @@
 package core;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -28,6 +29,7 @@ public class JSLDesktop {
 	};
     private Boolean in_fake_activation = Boolean.FALSE;
     //private static Boolean in_get_instance = Boolean.FALSE;
+    private static int frame_count = 0;
     private int xdecoration = 0, ydecoration = 0;
     //private JSLDesktop instance = null;
     private Action exitAction;
@@ -76,6 +78,33 @@ public class JSLDesktop {
 //	}
 	return this; // now this method is useless
     }
+
+    /** @see JSLFrame#moveToDefaultLocation() */
+    Point getDefaultLocation(Dimension frameSize) {
+        int xofs = 0;
+        int yofs = 0;
+        if (!JSLDesktop.useMDI()) {
+            JFrame tb = getToolBar().getJFrame();
+            if (tb != null && tb.getLocation().getY() < 100) { // Do we need this check?
+                xofs = (int) tb.getLocation().getX();
+                yofs = (int) (tb.getLocation().getY() + tb.getSize().getHeight());
+            }
+        }
+
+        int xsep = 30;
+        int ysep = JSLDesktop.useMDI() ? 30 : ydecoration;
+        Dimension screenSize = getSize();
+        int x = xofs + (xsep * frame_count) % (int) (screenSize.getWidth() - frameSize.getWidth() - xofs);
+        if (x < 0)
+            x = 0;
+        int y = yofs + (ysep * frame_count) % (int) (screenSize.getHeight() - frameSize.getHeight() - yofs);
+        if (y < 0)
+            y = yofs + ysep;
+
+        frame_count++;
+        return new Point(x, y);
+    }
+
     // JDesktopPane compatible methods
     /** Returns all JInternalFrames currently displayed in the desktop. */
     public JSLFrame[] getAllFrames() { return proxy.getAllJSLFrames(); }
@@ -104,7 +133,7 @@ public class JSLDesktop {
     /** add a JSLFrame under this JSLDesktop control. */
     public void add(JSLFrame f) {
         f.add(this); // let JSLFrame know his parent
-        proxy.add(f); 
+        proxy.add(f);
     }
     /** add frame in SDI mode. Do nothing in MDI mode. */
     //static void registerFrame(JSLFrame f) { proxy.registerFrame(f); }
@@ -114,10 +143,6 @@ public class JSLDesktop {
     JSLFrame getToolBar() { return proxy.getToolBar(); }
     /**  */
     JSLFrame getInvisible() { return proxy.getInvisible(); }
-    /**  */
-    int getXDecoration() { return xdecoration; }
-    /**  */
-    int getYDecoration() { return ydecoration; }
     /**  */
     private void showToolBar() { proxy.showToolBar(); }
 
@@ -247,7 +272,6 @@ public class JSLDesktop {
 
 	    add(toolbar);
 	    toolbar.setVisible(true);
-	    JSLFrame.resetFrameCount();
 	}
 	public JSLFrame getInvisible() { return invisible; }
 	public JMenu createWindowMenu() {
