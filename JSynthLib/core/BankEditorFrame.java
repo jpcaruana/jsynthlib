@@ -165,8 +165,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     /** change state of Actions based on the state of the table. */
     private void enableActions() {
         // one or more patches are included.
-        Actions.setEnabled(table.getRowCount() > 0, Actions.EN_SAVE
-                | Actions.EN_SAVE_AS | Actions.EN_SEARCH);
+        Actions.setEnabled(table.getRowCount() > 0, Actions.EN_SEARCH);
 
         // sort is not supported yet.
         //Actions.setEnabled(table.getRowCount() > 1, Actions.EN_SORT);
