@@ -1,13 +1,12 @@
 /*
- * JSynthlib-SingleEditor for Yamaha DX7 Mark-I
- * (with system ROM V 1.8 from October 24th 1985 - article no. IG114690)
- * =====================================================================
+ * JSynthlib - "Voice" Editor for Yamaha DX7 Mark-I
+ * ================================================
  * @author  Torsten Tittmann
- * file:    YamahaDX7SingleEditor.java
- * date:    08.10.2002
- * @version 0.2-pre
+ * file:    YamahaDX7VoiceEditor.java
+ * date:    25.02.2003
+ * @version 0.3
  *
- * Copyright (C) 2002  Torsten.Tittmann@t-online.de
+ * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,14 +25,19 @@
  *
  * history:
  *         23.08.2002 v0.1: first published release
- *         xx.xx.xxxx v0.2: - final Strings are now static for less memory consumption
+ *         31.10.2002 v0.2: - editor name changed (YamahaDX7SingleEditor -> YamahaDX7SingleVoiceEditor)
  *                          - renamed SysexSender (VcedSender->DX7VoiceSender) to be more distinct
+ *                          - final Strings are now static for less memory consumption
  *                          - unused code AcedSender removed
+ *                          - unnecessary code removed
  *                          - OperatorState-function rewritten:
  *                            ° complete separation of variable OperatorState from patch field 155
  *                            ° own JCheckBox eventlistener and OperatorState-send method
  *                            ° DX7OpSender and DX7OpModel removed
  *                            ° PlaySelectedPatch, gotFocus, lostFocus changed
+ *         25.02.2003 v0.3: - SendOpState() changed ("SysexHandler" instead of "try/catch" construct)
+ *                          - editor name changed (YamahaDX7SingleVoiceEditor -> YamahaDX7VoiceEditor)
+ *
  */
 
 package synthdrivers.YamahaDX7;
@@ -46,7 +50,7 @@ import java.awt.event.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
-class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
+class YamahaDX7VoiceEditor extends PatchEditorFrame implements ItemListener
 {
   JCheckBox Op0State;
   JCheckBox Op1State;
@@ -55,15 +59,16 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
   JCheckBox Op4State;
   JCheckBox Op5State;
 
-  int OperatorState = 0x3f;  //voice parameter OPERATOR ON/OFF (#155), which isn't stored with the voice.
+  //voice parameter OPERATOR ON/OFF (#155), which isn't stored with the voice.
+  int OperatorState = 0x3f;
 
   static final String [] OnOffName = new String [] {"Off","On"};
 
   static final String [] KeyTransposeName = new String [] {"C1","C#1","D1","D#1","E1","F1","F#1","G1","G#1","A1","A#1","B1",
-                                                    "C2","C#2","D2","D#2","E2","F2","F#2","G2","G#2","A2","A#2","B2",
-                                                    "C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3",
-                                                    "C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4",
-                                                    "C5"};
+                                                           "C2","C#2","D2","D#2","E2","F2","F#2","G2","G#2","A2","A#2","B2",
+                                                           "C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3",
+                                                           "C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4",
+                                                           "C5"};
 
   static final String [] LfoWaveName = new String [] {"Triangle","Saw down","Saw up","Square","Sine","S/Hold"};
 
@@ -110,23 +115,23 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
 
 
   static final String [] KbdBreakPointName = new String [] {                                                 "A-1","A#-1","B-1",
-                                                     "C0","C#0","D0","D#0","E0","F0","F#0","G0","G#0","A0","A#0","B0",
-                                                     "C1","C#1","D1","D#1","E1","F1","F#1","G1","G#1","A1","A#1","B1",
-                                                     "C2","C#2","D2","D#2","E2","F2","F#2","G2","G#2","A2","A#2","B2",
-                                                     "C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3",
-                                                     "C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4",
-                                                     "C5","C#5","D5","D#5","E5","F5","F#5","G5","G#5","A5","A#5","B5",
-                                                     "C6","C#6","D6","D#6","E6","F6","F#6","G6","G#6","A6","A#6","B6",
-                                                     "C7","C#7","D7","D#7","E7","F7","F#7","G7","G#7","A7","A#7","B7",
-                                                     "C8"};
+                                                            "C0","C#0","D0","D#0","E0","F0","F#0","G0","G#0","A0","A#0","B0",
+                                                            "C1","C#1","D1","D#1","E1","F1","F#1","G1","G#1","A1","A#1","B1",
+                                                            "C2","C#2","D2","D#2","E2","F2","F#2","G2","G#2","A2","A#2","B2",
+                                                            "C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3",
+                                                            "C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4",
+                                                            "C5","C#5","D5","D#5","E5","F5","F#5","G5","G#5","A5","A#5","B5",
+                                                            "C6","C#6","D6","D#6","E6","F6","F#6","G6","G#6","A6","A#6","B6",
+                                                            "C7","C#7","D7","D#7","E7","F7","F#7","G7","G#7","A7","A#7","B7",
+                                                            "C8"};
 
   static final String [] KbdCurveName = new String [] {"-Lin","-Exp","+Exp","+Lin"};
   ImageIcon algoIcon[]=new ImageIcon[32];
 
 
-  public YamahaDX7SingleEditor(Patch patch)
+  public YamahaDX7VoiceEditor(Patch patch)
   {
-    super ("Yamaha DX7 Single Editor",patch);
+    super ("Yamaha DX7 \"Voice\" Editor",patch);
     algoIcon[ 0]=new ImageIcon("synthdrivers/YamahaDX7/gif/algo01.gif");
     algoIcon[ 1]=new ImageIcon("synthdrivers/YamahaDX7/gif/algo02.gif");
     algoIcon[ 2]=new ImageIcon("synthdrivers/YamahaDX7/gif/algo03.gif");
@@ -168,7 +173,7 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
 
     JPanel cmnPane= new JPanel();
     cmnPane.setLayout(new GridBagLayout());gbc.weightx=0;
-    final ScrollBarWidget algo=new ScrollBarWidget("Algorithm",patch,0,31,1,new ParamModel(patch,6+134),new DX7VoiceSender(134));
+    final ScrollBarWidget algo=new ScrollBarWidget("Algorithm",patch,0,31,1,new ParamModel(patch,6+134),new VoiceSender(134));
     addWidget(cmnPane,algo,1,2,6,1,17);
     algo.slider.addChangeListener(new ChangeListener()
     {
@@ -177,8 +182,8 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
         l.setIcon(algoIcon[algo.slider.getValue()]);
       }
     });
-    addWidget(cmnPane,new ScrollBarWidget("Feedback",patch,0,7,0,new ParamModel(patch,6+135),new DX7VoiceSender(135)),1,3,6,1,18);
-    addWidget(cmnPane,new ScrollBarLookupWidget("Key Transpose",patch,0,48,new ParamModel(patch,6+144),new DX7VoiceSender(144),KeyTransposeName),1,1,6,1,19);
+    addWidget(cmnPane,new ScrollBarWidget("Feedback",patch,0,7,0,new ParamModel(patch,6+135),new VoiceSender(135)),1,3,6,1,18);
+    addWidget(cmnPane,new ScrollBarLookupWidget("Key Transpose",patch,0,48,new ParamModel(patch,6+144),new VoiceSender(144),KeyTransposeName),1,1,6,1,19);
     addWidget(cmnPane,new PatchNameWidget(patch,"Name (10 Char.)"),1,0,6,1,0);
     gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=1;gbc.gridheight=1;
     cmnPane.add(new JLabel(" "),gbc);
@@ -228,16 +233,16 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
 
     JPanel lfoPane=new JPanel();
     lfoPane.setLayout(new GridBagLayout());gbc.weightx=0;
-    addWidget(lfoPane,new ScrollBarWidget("Speed",patch,0,99,0,new ParamModel(patch,6+137),new DX7VoiceSender(137)),0,0,6,1,20);
-    addWidget(lfoPane,new ScrollBarWidget("Delay",patch,0,99,0,new ParamModel(patch,6+138),new DX7VoiceSender(138)),0,1,6,1,21);
-    addWidget(lfoPane,new ScrollBarWidget("PMD",patch,0,99,0,new ParamModel(patch,6+139),new DX7VoiceSender(139)),0,2,6,1,22);
-    addWidget(lfoPane,new ScrollBarWidget("AMD",patch,0,99,0,new ParamModel(patch,6+140),new DX7VoiceSender(140)),0,3,6,1,24);
+    addWidget(lfoPane,new ScrollBarWidget("Speed",patch,0,99,0,new ParamModel(patch,6+137),new VoiceSender(137)),0,0,6,1,20);
+    addWidget(lfoPane,new ScrollBarWidget("Delay",patch,0,99,0,new ParamModel(patch,6+138),new VoiceSender(138)),0,1,6,1,21);
+    addWidget(lfoPane,new ScrollBarWidget("PMD",patch,0,99,0,new ParamModel(patch,6+139),new VoiceSender(139)),0,2,6,1,22);
+    addWidget(lfoPane,new ScrollBarWidget("AMD",patch,0,99,0,new ParamModel(patch,6+140),new VoiceSender(140)),0,3,6,1,24);
     gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=6;gbc.gridheight=1;
     lfoPane.add(new JLabel(" "),gbc);
     gbc.gridx=0;gbc.gridy=5;gbc.gridwidth=6;gbc.gridheight=1;
     lfoPane.add(new JLabel(" "),gbc);
-    addWidget(lfoPane,new ComboBoxWidget("Wave",patch,new ParamModel(patch,6+142),new DX7VoiceSender(142),LfoWaveName),1,5,1,3,26);
-    addWidget(lfoPane,new ComboBoxWidget("Sync",patch,new ParamModel(patch,6+141),new DX7VoiceSender(141),OnOffName),2,5,1,3,27);
+    addWidget(lfoPane,new ComboBoxWidget("Wave",patch,new ParamModel(patch,6+142),new VoiceSender(142),LfoWaveName),1,5,1,3,26);
+    addWidget(lfoPane,new ComboBoxWidget("Sync",patch,new ParamModel(patch,6+141),new VoiceSender(141),OnOffName),2,5,1,3,27);
     gbc.gridx=0;gbc.gridy=6;gbc.gridwidth=6;gbc.gridheight=1;
     lfoPane.add(new JLabel(" "),gbc);
     gbc.gridx=0;gbc.gridy=7;gbc.gridwidth=6;gbc.gridheight=1;
@@ -262,10 +267,10 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
       oscPane.addTab("OP"+(j),panel);gbc.weightx=1;
 
       // left side of "oscPane"
-      final ComboBoxWidget FreqMode = new ComboBoxWidget("Mode",patch,new ParamModel(patch,6+(i*21)+17),new DX7VoiceSender((i*21)+17),FreqModeName);
-      final ComboBoxWidget OscSync = new ComboBoxWidget("Sync (*)",patch,new ParamModel(patch,6+136),new DX7VoiceSender(136),OnOffName);
-      final ScrollBarWidget FreqCoarse = new ScrollBarWidget("Frequency Coarse",patch,0,31,0,new ParamModel(patch,6+(i*21)+18),new DX7VoiceSender((i*21)+18));
-      final ScrollBarWidget FreqFine = new ScrollBarWidget("Frequency Fine",patch,0,99,0,new ParamModel(patch,6+(i*21)+19),new DX7VoiceSender((i*21)+19));
+      final ComboBoxWidget FreqMode = new ComboBoxWidget("Mode",patch,new ParamModel(patch,6+(i*21)+17),new VoiceSender((i*21)+17),FreqModeName);
+      final ComboBoxWidget OscSync = new ComboBoxWidget("Sync (*)",patch,new ParamModel(patch,6+136),new VoiceSender(136),OnOffName);
+      final ScrollBarWidget FreqCoarse = new ScrollBarWidget("Frequency Coarse",patch,0,31,0,new ParamModel(patch,6+(i*21)+18),new VoiceSender((i*21)+18));
+      final ScrollBarWidget FreqFine = new ScrollBarWidget("Frequency Fine",patch,0,99,0,new ParamModel(patch,6+(i*21)+19),new VoiceSender((i*21)+19));
       final JLabel OscFreqLabel = new JLabel("Frequency");
       addWidget(panel,FreqMode,0,1,3,2,1);
 
@@ -316,21 +321,21 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
       OscFreqLabel.setText("Oscillator                    Frequency "+FreqModeName[FreqMode.cb.getSelectedIndex()]+": "+ freqFormatter.format(( (Float.valueOf(FreqCoarseName[FreqMode.cb.getSelectedIndex()][FreqCoarse.getValue()]).floatValue()) * (Float.valueOf(FreqFineName[FreqMode.cb.getSelectedIndex()][FreqFine.getValue()]).floatValue())  )));
       panel.add(OscFreqLabel,gbc);
 
-      addWidget(panel,new ScrollBarWidget("Detune",patch,0,14,-7,new ParamModel(patch,6+(i*21)+20),new DX7VoiceSender((i*21)+20)),0,6,6,1,4);
+      addWidget(panel,new ScrollBarWidget("Detune",patch,0,14,-7,new ParamModel(patch,6+(i*21)+20),new VoiceSender((i*21)+20)),0,6,6,1,4);
       gbc.gridx=0;gbc.gridy=7;gbc.gridwidth=6;gbc.gridheight=1;
       panel.add(new JLabel(" "),gbc);
       gbc.gridx=0;gbc.gridy=8;gbc.gridwidth=6;gbc.gridheight=1;
       panel.add(new JLabel("Keyboard Level Scaling"),gbc);
-      addWidget(panel,new ScrollBarLookupWidget("Breakpoint",patch,0,99,new ParamModel(patch,6+(i*21)+8),new DX7VoiceSender((i*21)+8),KbdBreakPointName),0,9,6,1,5);
+      addWidget(panel,new ScrollBarLookupWidget("Breakpoint",patch,0,99,new ParamModel(patch,6+(i*21)+8),new VoiceSender((i*21)+8),KbdBreakPointName),0,9,6,1,5);
       gbc.gridx=0;gbc.gridy=10;gbc.gridwidth=6;gbc.gridheight=1;
       panel.add(new JLabel(" "),gbc);
-      addWidget(panel,new ComboBoxWidget("Curve Left",patch,new ParamModel(patch,6+(i*21)+11),new DX7VoiceSender((i*21)+11),KbdCurveName),0,11,3,2,6);
-      addWidget(panel,new ComboBoxWidget("Curve Right",patch,new ParamModel(patch,6+(i*21)+12),new DX7VoiceSender((i*21)+12),KbdCurveName),3,11,3,2,8);
-      addWidget(panel,new ScrollBarWidget("Depth Left",patch,0,99,0,new ParamModel(patch,6+(i*21)+9),new DX7VoiceSender((i*21)+9)),0,13,6,1,17);
-      addWidget(panel,new ScrollBarWidget("Depth Right",patch,0,99,0,new ParamModel(patch,6+(i*21)+10),new DX7VoiceSender((i*21)+10)),0,14,6,1,9);
+      addWidget(panel,new ComboBoxWidget("Curve Left",patch,new ParamModel(patch,6+(i*21)+11),new VoiceSender((i*21)+11),KbdCurveName),0,11,3,2,6);
+      addWidget(panel,new ComboBoxWidget("Curve Right",patch,new ParamModel(patch,6+(i*21)+12),new VoiceSender((i*21)+12),KbdCurveName),3,11,3,2,8);
+      addWidget(panel,new ScrollBarWidget("Depth Left",patch,0,99,0,new ParamModel(patch,6+(i*21)+9),new VoiceSender((i*21)+9)),0,13,6,1,17);
+      addWidget(panel,new ScrollBarWidget("Depth Right",patch,0,99,0,new ParamModel(patch,6+(i*21)+10),new VoiceSender((i*21)+10)),0,14,6,1,9);
       gbc.gridx=0;gbc.gridy=15;gbc.gridwidth=6;gbc.gridheight=1;
       panel.add(new JLabel(" "),gbc);
-      addWidget(panel,new ScrollBarWidget("Keyboard Rate Scaling",patch,0,7,0,new ParamModel(patch,6+(i*21)+13),new DX7VoiceSender((i*21)+13)),0,16,6,1,10);
+      addWidget(panel,new ScrollBarWidget("Keyboard Rate Scaling",patch,0,7,0,new ParamModel(patch,6+(i*21)+13),new VoiceSender((i*21)+13)),0,16,6,1,10);
 
       gbc.gridx=0;gbc.gridy=16;gbc.gridwidth=6;gbc.gridheight=1;
       panel.add(new JLabel(" "),gbc);
@@ -344,12 +349,12 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
       // right side of "oscPane"
       gbc.gridx=7;gbc.gridy=0;gbc.gridwidth=6;gbc.gridheight=1;
       panel.add(new JLabel("Operator"),gbc);
-      addWidget(panel,new ScrollBarWidget("Output Level",patch,0,99,0,new ParamModel(patch,6+(i*21)+16),new DX7VoiceSender((i*21)+16)),7,1,6,1,11);
-      addWidget(panel,new ScrollBarWidget("Velocity Sensitivity",patch,0,7,0,new ParamModel(patch,6+(i*21)+15),new DX7VoiceSender((i*21)+15)),7,2,6,1,12);
+      addWidget(panel,new ScrollBarWidget("Output Level",patch,0,99,0,new ParamModel(patch,6+(i*21)+16),new VoiceSender((i*21)+16)),7,1,6,1,11);
+      addWidget(panel,new ScrollBarWidget("Velocity Sensitivity",patch,0,7,0,new ParamModel(patch,6+(i*21)+15),new VoiceSender((i*21)+15)),7,2,6,1,12);
       gbc.gridx=7;gbc.gridy=4;gbc.gridwidth=6;gbc.gridheight=1;
       panel.add(new JLabel("Modulation Sensitivity"),gbc);
-      addWidget(panel,new ScrollBarWidget("Amplitude",patch,0,3,0,new ParamModel(patch,6+(i*21)+14),new DX7VoiceSender((i*21)+14)),7,5,6,1,13);
-      final ScrollBarWidget PitchModSens = new ScrollBarWidget("Pitch (*)",patch,0,7,0,new ParamModel(patch,6+143),new DX7VoiceSender(143));
+      addWidget(panel,new ScrollBarWidget("Amplitude",patch,0,3,0,new ParamModel(patch,6+(i*21)+14),new VoiceSender((i*21)+14)),7,5,6,1,13);
+      final ScrollBarWidget PitchModSens = new ScrollBarWidget("Pitch (*)",patch,0,7,0,new ParamModel(patch,6+143),new VoiceSender(143));
       addWidget(panel,PitchModSens,7,6,6,1,23);
       PitchModSens.slider.addChangeListener (new ChangeListener()
       {
@@ -371,10 +376,10 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
       addWidget(panel,new EnvelopeWidget("Envelope Generator",patch,new EnvelopeNode []
       {
         new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
-        new EnvelopeNode(0,99,new ParamModel(patch,6+(i*21)+0),0,99,new ParamModel(patch,6+(i*21)+4),0,true,new DX7VoiceSender((i*21)+0),new DX7VoiceSender((i*21)+4),"R1","L1"),
-        new EnvelopeNode(0,99,new ParamModel(patch,6+(i*21)+1),0,99,new ParamModel(patch,6+(i*21)+5),0,true,new DX7VoiceSender((i*21)+1),new DX7VoiceSender((i*21)+5),"R2","L2"),
-        new EnvelopeNode(0,99,new ParamModel(patch,6+(i*21)+2),0,99,new ParamModel(patch,6+(i*21)+6),0,true,new DX7VoiceSender((i*21)+2),new DX7VoiceSender((i*21)+6),"R3","L3"),
-        new EnvelopeNode(0,99,new ParamModel(patch,6+(i*21)+3),0,99,new ParamModel(patch,6+(i*21)+7),0,true,new DX7VoiceSender((i*21)+3),new DX7VoiceSender((i*21)+7),"R4","L4"),
+        new EnvelopeNode(0,99,new ParamModel(patch,6+(i*21)+0),0,99,new ParamModel(patch,6+(i*21)+4),0,true,new VoiceSender((i*21)+0),new VoiceSender((i*21)+4),"R1","L1"),
+        new EnvelopeNode(0,99,new ParamModel(patch,6+(i*21)+1),0,99,new ParamModel(patch,6+(i*21)+5),0,true,new VoiceSender((i*21)+1),new VoiceSender((i*21)+5),"R2","L2"),
+        new EnvelopeNode(0,99,new ParamModel(patch,6+(i*21)+2),0,99,new ParamModel(patch,6+(i*21)+6),0,true,new VoiceSender((i*21)+2),new VoiceSender((i*21)+6),"R3","L3"),
+        new EnvelopeNode(0,99,new ParamModel(patch,6+(i*21)+3),0,99,new ParamModel(patch,6+(i*21)+7),0,true,new VoiceSender((i*21)+3),new VoiceSender((i*21)+7),"R4","L4"),
       }),7,8,6,9,14);
 
 
@@ -400,10 +405,10 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
     addWidget(pegPane,new EnvelopeWidget("Pitch Envelope Generator",patch,new EnvelopeNode []
     {
       new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),
-      new EnvelopeNode(0,99,new ParamModel(patch,6+126),0,99,new ParamModel(patch,6+130),0,true,new DX7VoiceSender(126),new DX7VoiceSender(130),"Rate 1","Pitch 1"),
-      new EnvelopeNode(0,99,new ParamModel(patch,6+127),0,99,new ParamModel(patch,6+131),0,true,new DX7VoiceSender(127),new DX7VoiceSender(131),"Rate 2","Pitch 2"),
-      new EnvelopeNode(0,99,new ParamModel(patch,6+128),0,99,new ParamModel(patch,6+132),0,true,new DX7VoiceSender(128),new DX7VoiceSender(132),"Rate 3","Pitch 3"),
-      new EnvelopeNode(0,99,new ParamModel(patch,6+129),0,99,new ParamModel(patch,6+133),0,true,new DX7VoiceSender(129),new DX7VoiceSender(133),"Rate 4","Pitch 4"),
+      new EnvelopeNode(0,99,new ParamModel(patch,6+126),0,99,new ParamModel(patch,6+130),0,true,new VoiceSender(126),new VoiceSender(130),"Rate 1","Pitch 1"),
+      new EnvelopeNode(0,99,new ParamModel(patch,6+127),0,99,new ParamModel(patch,6+131),0,true,new VoiceSender(127),new VoiceSender(131),"Rate 2","Pitch 2"),
+      new EnvelopeNode(0,99,new ParamModel(patch,6+128),0,99,new ParamModel(patch,6+132),0,true,new VoiceSender(128),new VoiceSender(132),"Rate 3","Pitch 3"),
+      new EnvelopeNode(0,99,new ParamModel(patch,6+129),0,99,new ParamModel(patch,6+133),0,true,new VoiceSender(129),new VoiceSender(133),"Rate 4","Pitch 4"),
     }),0,0,1,9,1);
 
     gbc.gridx=0;gbc.gridy=18;gbc.gridwidth=1;gbc.gridheight=1;
@@ -417,138 +422,67 @@ class YamahaDX7SingleEditor extends PatchEditorFrame implements ItemListener
     show();
   }
 
-  public void itemStateChanged(ItemEvent e)	// ItemListener for OperatorState Checkboxes (independent of voice patch and JS-Widgets)
+
+  // ItemListener for OperatorState Checkboxes (independent of voice patch and JS-Widgets)
+  public void itemStateChanged(ItemEvent e)
   {
     Object source = e.getItemSelectable();
 
     if (source == Op0State)
     {
-      if (e.getStateChange()==ItemEvent.SELECTED)
-      {
-        OperatorState = (OperatorState | 32) & 0x3f;
-      }
-      else
-      {
-        OperatorState = (OperatorState & (~32)) & 0x3f;
-      }
+      if (e.getStateChange()==ItemEvent.SELECTED) OperatorState = (OperatorState | 32) & 0x3f;
+      else OperatorState = (OperatorState & (~32)) & 0x3f;
     }
     else if (source == Op1State)
     {
-      if (e.getStateChange()==ItemEvent.SELECTED)
-      {
-        OperatorState = (OperatorState | 16) & 0x3f;
-      }
-      else
-      {
-        OperatorState = (OperatorState & (~16)) & 0x3f;
-      }
+      if (e.getStateChange()==ItemEvent.SELECTED) OperatorState = (OperatorState | 16) & 0x3f;
+      else OperatorState = (OperatorState & (~16)) & 0x3f;
     }
     else if (source == Op2State)
     {
-      if (e.getStateChange()==ItemEvent.SELECTED)
-      {
-        OperatorState = (OperatorState | 8) & 0x3f;
-      }
-      else
-      {
-        OperatorState = (OperatorState & (~8)) & 0x3f;
-      }
+      if (e.getStateChange()==ItemEvent.SELECTED) OperatorState = (OperatorState | 8) & 0x3f;
+      else OperatorState = (OperatorState & (~8)) & 0x3f;
     }
     else if (source == Op3State)
     {
-      if (e.getStateChange()==ItemEvent.SELECTED)
-      {
-        OperatorState = (OperatorState | 4) & 0x3f;
-      }
-      else
-      {
-        OperatorState = (OperatorState & (~4)) & 0x3f;
-      }
+      if (e.getStateChange()==ItemEvent.SELECTED) OperatorState = (OperatorState | 4) & 0x3f;
+      else OperatorState = (OperatorState & (~4)) & 0x3f;
     }
     else if (source == Op4State)
     {
-      if (e.getStateChange()==ItemEvent.SELECTED)
-      {
-        OperatorState = (OperatorState | 2) & 0x3f;
-      }
-      else
-      {
-        OperatorState = (OperatorState & (~2)) & 0x3f;
-      }
+      if (e.getStateChange()==ItemEvent.SELECTED) OperatorState = (OperatorState | 2) & 0x3f;
+      else OperatorState = (OperatorState & (~2)) & 0x3f;
     }
     else if (source == Op5State)
     {
-      if (e.getStateChange()==ItemEvent.SELECTED)
-      {
-        OperatorState = (OperatorState | 1) & 0x3f;
-      }
-      else
-      {
-        OperatorState = (OperatorState & (~1)) & 0x3f;
-      }
+      if (e.getStateChange()==ItemEvent.SELECTED) OperatorState = (OperatorState | 1) & 0x3f;
+      else OperatorState = (OperatorState & (~1)) & 0x3f;
     }
-    //System.out.println("ItemListener - "+ ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).getPatchName(p) + ": OperatorState="+OperatorState);
-    SendOpState();	// transmit OperatorState to Synth
+    SendOpState();
   }
 
 
-  public void SendOpState()	// transmit OperatorState to Synth
+  // transmit OperatorState to Synth
+  public void SendOpState()
   {
-    try { PatchEdit.MidiOut.writeLongMessage(
-                               ( (Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum)) ).getPort(),
-                               new byte[] {(byte)0xF0,
-                                           (byte)0x43,
-                                           (byte)(0x10+ ( (Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum)) ).getChannel() - 1),
-                                           (byte)0x01,	// \ Paramenter #155
-                                           (byte)0x1b,	// /
-                                           (byte)(OperatorState & 0x3f),
-                                           (byte)0xF7}
-                                            );
-        } catch (Exception e) {ErrorMsg.reportError("Error","Error in Yamaha DX7 Single Editor",e);}
+    DX7ParamChanges.xmitVoiceOperatorState( (int) ( ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum)) ).getPort() ) ,
+                                            (byte)( 0x10+ ( (Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum)) ).getChannel() ),
+                                            (byte)( OperatorState & 0x3f )
+                                          );
   }
+
 
   public void PlaySelectedPatch()
   {
     SendSelectedPatch();							// send Patch to Synth
-    //System.out.println("PlaySelPatch - "+ ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).getPatchName(p) + ": OperatorState="+OperatorState);
     SendOpState();								// transmit OperatorState to Synth
-    ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).playPatch(p);	// and now play the patch (only NoteOn-NoteOff!)
+    ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).playPatch(p);	// and now play the patch, Sam! (only NoteOn-NoteOff!)
   };
+
 
   public void gotFocus()
   {
-    //System.out.println("gotFocus     - "+ ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).getPatchName(p) + ": OperatorState="+OperatorState);
-    SendOpState();								// transmit OperatorState to Synth
+    SendOpState();
   }
 
-}
-
-/*
- * SysexSender - Voice Parameter
- */
-class DX7VoiceSender extends SysexSender
-{
-  int parameter;
-  int para_high=0;
-  byte []b = new byte [7];
-  public DX7VoiceSender(int param)
-  {
-    parameter=param;
-    if (parameter >= 128)
-    {
-      para_high  = 0x01;
-      parameter -= 128;
-    }
-    b[0]=(byte)0xF0;
-    b[1]=(byte)0x43;
-    b[3]=(byte)para_high;
-    b[4]=(byte)parameter;
-    b[6]=(byte)0xF7;
-  }
-  public byte [] generate (int value)
-  {
-    b[2]=(byte)(0x10+channel-1);
-    b[5]=(byte)value;
-    return b;
-  }
 }
