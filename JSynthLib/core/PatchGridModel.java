@@ -9,7 +9,7 @@ package core;
 
 import javax.swing.table.AbstractTableModel;
 
-class PatchGridModel extends AbstractTableModel
+public class PatchGridModel extends AbstractTableModel
 {
 
     public Patch bankData;
