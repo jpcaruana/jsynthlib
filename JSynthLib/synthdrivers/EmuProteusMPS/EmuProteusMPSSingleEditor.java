@@ -533,7 +533,6 @@ class InstSender extends SysexSender
 
  class MPSModel extends ParamModel
 {
- int ofs;
  public MPSModel(Patch p,int o) {super(p,o*2+7);}
  public void set(int i)
  {
@@ -556,7 +555,6 @@ class InstSender extends SysexSender
 }
  class InstModel extends ParamModel
 {
- int ofs;
  public InstModel(Patch p,int o) {super(p,o*2+7);}
  public void set(int i)
  {
