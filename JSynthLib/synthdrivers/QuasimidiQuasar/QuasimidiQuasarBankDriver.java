@@ -111,7 +111,6 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
 								0,
 								this.singleSize);
 			Patch p = new Patch(sysex);
-//			p.ChooseDriver();
 			
 			return p;
 		} catch (Exception e) {
@@ -148,22 +147,7 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
 				 "The " + toString()
 				 + " driver does not support patch getting.\n\n"
 				 + "Please start the patch dump manually...",
-				 "Get Patch", JOptionPane.WARNING_MESSAGE);
-				 /*
-			JOptionPane.showMessageDialog(PatchEdit.instance,
-				"The " + getDriverName() + " driver does not support patch getting.\n\nPlease start the patch dump manually...",
-				"Get Patch",
-				JOptionPane.WARNING_MESSAGE
-			);
-			byte buffer[] = new byte[256*1024];
-
-			try {
-				while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
-					PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
-			} catch (Exception ex) {
-				ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.", ex);
-			}
-*/
+				 "Get Patch", JOptionPane.WARNING_MESSAGE);		
 		}
 		else {
 			// Request dumps for all 100 RAM peformances (that are 5 * 100 requests!!!)
@@ -172,16 +156,11 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
 					
 					this.sysexRequestDump = new SysexHandler( QuasarConstants.QUASAR_SYSEX_PERFORMANCE_REQUEST[count] );
 					
-					send(sysexRequestDump.toSysexMessage(super.getDeviceID(),
+					send(sysexRequestDump.toSysexMessage(getDeviceID(),					
 						 new NameValue("perfNumber", patchNo + QuasarConstants.QUASAR_SYSEX_PERFORMANCE_OFFSET)
 						 								)
 					);
-/*
-					sysexRequestDump.send(
-						port, (byte)channel,
-						new NameValue("perfNumber", patchNo + QuasarConstants.QUASAR_SYSEX_PERFORMANCE_OFFSET)
-					);
-*/
+
 					try {
 						// Wait a little bit so that everything is in the correct sequence
 						Thread.sleep(50);
@@ -212,7 +191,6 @@ public class QuasimidiQuasarBankDriver extends BankDriver {
        	}
 
         Patch p = new Patch(sysex);
-//        p.ChooseDriver();
 
         return p;
     }

@@ -37,15 +37,12 @@ public class QuasimidiQuasarDevice extends Device {
     /**
     * Constructor for DeviceListWriter.
     */
-    public QuasimidiQuasarDevice () {
+    public QuasimidiQuasarDevice() {
     	super(	"Quasimidi",
     			"Quasar",
         		"F07E**06023F20**************F7",
         		INFO_TEXT,
         		"Joachim Backhaus");
-
-        // synthName isn't used anymore (since 0.19)
-        // synthName = "Quasar";
     }
 
 
@@ -54,7 +51,7 @@ public class QuasimidiQuasarDevice extends Device {
     *
     * @param prefs	The Preferences for this device
     */
-    public QuasimidiQuasarDevice (Preferences prefs) {
+    public QuasimidiQuasarDevice(Preferences prefs) {
     	this();
 
     	this.prefs = prefs;
