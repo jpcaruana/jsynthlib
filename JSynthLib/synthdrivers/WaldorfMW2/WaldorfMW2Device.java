@@ -55,6 +55,7 @@ public class WaldorfMW2Device extends Device {
         this();
         this.prefs = prefs;
         
+        addDriver(new WaldorfMW2AllSoundConverter());
         addDriver(new WaldorfMW2SingleDriver());
         addDriver(new WaldorfMW2BankDriver());
     }

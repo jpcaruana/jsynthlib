@@ -44,7 +44,7 @@ public class WaldorfMW2SingleDriver extends Driver {
     public WaldorfMW2SingleDriver() {
         super("Single program", "Joachim Backhaus");
         
-        this.sysexID = MW2Constants.SYSEX_ID + "10";
+        this.sysexID = MW2Constants.SYSEX_ID + "10****";
         
         this.sysexRequestDump = new SysexHandler( "F0 3E 0E @@ 00 *BB* *NN* *XSUM* F7" );
         
@@ -52,7 +52,8 @@ public class WaldorfMW2SingleDriver extends Driver {
         this.patchNameSize = MW2Constants.PATCH_NAME_SIZE;
         this.deviceIDoffset = MW2Constants.DEVICE_ID_OFFSET;
         
-        this.checksumStart = MW2Constants.SYSEX_HEADER_OFFSET;  // Fuck it! The SysEx documentation said 5 but that's wrong!
+        // The SysEx documentation said 5 but that's wrong!
+        this.checksumStart = MW2Constants.SYSEX_HEADER_OFFSET;
         this.checksumOffset = this.checksumStart + MW2Constants.PURE_PATCH_SIZE;
         this.checksumEnd = this.checksumOffset - 1;        
         
@@ -124,22 +125,27 @@ public class WaldorfMW2SingleDriver extends Driver {
         calculateChecksum(p);
         
         sendPatchWorker(p);
-    }       
+    }   
     
-    public static void createPatchHeader(Patch tempPatch) {
+    protected static void createPatchHeader(Patch tempPatch, int bankNo, int patchNo) {
         if (tempPatch.sysex.length > 8) {
             tempPatch.sysex[0] = MW2Constants.SYSEX_START_BYTE;
             tempPatch.sysex[1] = (byte) 0x3E; // Waldorf Electronics GmbH ID
             tempPatch.sysex[2] = (byte) 0x0E; // Microwave 2 ID
             tempPatch.sysex[3] = (byte) tempPatch.getDevice().getDeviceID(); // Device ID
             tempPatch.sysex[4] = (byte) 0x10; // Sound Dump
-            tempPatch.sysex[5] = (byte) 0x20; // Location (use Edit Buffer)
-            tempPatch.sysex[6] = (byte) 0x00; // Location (use Edit Buffer)
+            tempPatch.sysex[5] = (byte) bankNo; // Location
+            tempPatch.sysex[6] = (byte) patchNo; // Location
             tempPatch.sysex[7] = (byte) 0x01; // Sound format (has to be 1, as 0 doesn't work!)
         }
     }
     
-    public static void createPatchFooter(Patch tempPatch) {
+    protected void createPatchHeader(Patch tempPatch) {
+        // Location (use Edit Buffer)
+        createPatchHeader(tempPatch, 0x20, 0x00);        
+    }
+    
+    protected static void createPatchFooter(Patch tempPatch) {
         if (264 <= tempPatch.sysex.length) {
             //tempPatch.sysex[263] = (byte) 0x00; // Checksum
             tempPatch.sysex[264] = MW2Constants.SYSEX_END_BYTE;
