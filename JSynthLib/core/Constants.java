@@ -5,11 +5,14 @@
 
 package core;
 
+/**
+ * @version $Id$
+ */
 public class Constants {
 
 	/** Devices Config properties file name */
 	public static String RESOURCE_NAME_DEVICES_CONFIG =
-		"/synthdrivers.properties";
+		"synthdrivers.properties";
 
 	/** App Config properties file name */
 	public static String FILE_NAME_APP_CONFIG = "JSynthLib.properties";

@@ -43,7 +43,7 @@ public class DevicesConfig {
 	public DevicesConfig() {
 
 		// Load properties file
-		InputStream in = this.getClass().getResourceAsStream(Constants.RESOURCE_NAME_DEVICES_CONFIG);
+		InputStream in = this.getClass().getResourceAsStream("/" + Constants.RESOURCE_NAME_DEVICES_CONFIG);
 		//Properties configProps = new Properties();
 		try {
 			configProps.load(in);
