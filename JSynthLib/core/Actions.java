@@ -515,18 +515,26 @@ final class Actions {
         PatchEdit.showWaitDialog("Loading " + file + " ...");
         AbstractLibraryFrame frame = new LibraryFrame(file);
         // try LibraryFrame then SceneFrame
-        try {
-            frame.open(file);
-        } catch (Exception e) {
-            frame = new SceneFrame(file);
-            try {
-                frame.open(file);
-            } catch (Exception e1) {
-                PatchEdit.hideWaitDialog();
-                ErrorMsg.reportError("Error", "Error Loading Library", e1);
-                return;
-            }
+
+        if (file.exists() ) {
+        	try {
+            	frame.open(file);
+            } catch (Exception e) {
+                try {
+                	frame.open(file);
+	            } catch (Exception e1) {
+	                PatchEdit.hideWaitDialog();
+	                ErrorMsg.reportError("Error", "Error Loading Library:\n " + file.getAbsolutePath() , e1);
+	                return;
+	            }
+	        }
         }
+        else {
+            PatchEdit.hideWaitDialog();
+            System.err.println("File Does Not Exist:\n" + file.getAbsolutePath() );
+            return;
+        }
+
         PatchEdit.hideWaitDialog();
 
         frame.setVisible(true);
@@ -569,7 +577,7 @@ final class Actions {
     private static File showSaveDialog(AbstractLibraryFrame oFrame) {
 	CompatibleFileDialog fc = new CompatibleFileDialog();
         FileFilter filter = oFrame.getFileFilter();
-	    
+
         fc.addChoosableFileFilter(filter);
         fc.setFileFilter(filter);
         fc.setCurrentDirectory(new File (AppConfig.getLibPath()));
