@@ -1,0 +1,769 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>JSynthLib Documentation</title>
+</head>
+
+<body bgcolor="#E5ED9D" text="Black" link="#3D75B4" vlink="#315480" alink="Red" leftmargin=40 topmargin=40>
+
+<font face="Verdana,arial,helvetica" size="-1">
+<h2>JSynthLib Documentation</h2>
+    <ol type="I">
+	    <li><a href="#overview">JSynthLib Overview</a>
+   	    <ol type="A">
+	    <li><a href="#purpose">Purpose</a>
+	    <li><a href="#features">Features</a>
+        </ol>
+	<li><a href="#install">Installing JSynthLib</a>
+	<li><a href="#using">Using JSynthLib</a>
+	<li><a href="#synths">Notes about Particular Synths</a>
+	<li><a href="#trouble">Troubleshooting</a>
+	<li><a href="#Contrib">Contributing to JSynthLib</a>
+</ol>
+<a name="Overview"></a><h3>JSynthLib Overview</h3>
+<a name="Purpose"></a><h4>Why write JSynthLib?</h4>
+<p>I have a lot of electronic music making equipment: synthesizers, midi controllers, effects processors, all kinds of fun stuff, almost
+all of which I bought used off the internet. So why, after I've spend thousands of dollars on hardware, not just spend a couple
+of hundred more and purchase one of the many availible commercial universal patch editor/ librarians such as MidiQuest or SoundDiver? I
+like Free Software. I like the control, the power, and the community. With Free Software / Open Source / Copyleft the user is a stakeholder
+not just a consumer.( Of course, I'm not a Free Software fanatic or I wouldn't be using Java). In 1997 had used Linux for several months 
+exclusively, but finally gave in and set up a dual-boot with Windows 95 in order to do Midi Sequencing. For the past several years I've 
+used Cakewalk to sequence and a myriad of Shareware and Freeware editors for various synths (some synths I have no editors for) </p>
+<p>Since 1997 both Linux sequencers and Linux hardware support have improved dramatically, but leaving Windows behind would require 
+leaving behind all of the Synth editors I used. So in June 1999, I set up to write a universal patch librarian for Linux. The problem
+with this is that I still do all of my music stuff in Windows, I merely hope to convert to Linux when the software is ready. So I
+require a program which can run under both Operating systems. I began writing in C++ using a cross platform GUI library but quickly
+got tangled in too many implementation details and caveats and gave up. Recently I realized that Java/Swing gives me the flexibility
+I need for my application. JSynthLib runs under Windows and Linux.</p>
+<p></p>
+<a name="Features"></a> <h4>JSynthLib Features</h4>
+<h5>Librarian Features</h5>
+<ul>
+<li>Create / Load / Save heterogeneous collections of Patches in Libraries. Libraries can contain various types of patches and patches
+for multiple synths can be stored in a single library.
+<li>Attach comments and user defined attributes to patches. Can be used for Author, instrument, rating, etc.)
+<li>Sort Libraries by patch name or attributes
+<li>Automatically eliminate duplicates from libraries
+<li>Import / Export raw Sysex Data. JSynthLib automatically determines the patch type for sysex data if a suitable driver is loaded.
+<li>Cut/Copy/Paste patches between Libraries and also banks of Patches
+<li>Easy Creation of Banks of Patches by Dragging Patches from other banks and Libraries
+<li>Automatically extract all patches from a bank
+<li>Automatically import all patches in a directory and optionally auto extract all patches from banks.
+<li>Search function to find patches in large libraries
+<li>Store Patches to any location on a Synth or to a temporary buffer (where supported) for previewing etc.
+<li>Receive sysex from Synths (max size 256k)
+<li>Request sysex dumps from Synths 
+<li>Create new patches or banks
+<li>Cross Breed patches to create new patches by combining aspects of existing patches
+<li>Automatically patch master controller to proper synthesizer to preview patch
+<li>"Play" function with User selected Note, duration and velocity to preview without a midi controller
+</ul>
+<h5>Editor Features</h5>
+<ul>
+<li>Edit patches graphically through on screen sliders, envelopes, check boxes, etc.
+<li>Send changes to synths in realtime (on synths supporting this feature)
+<li>Automatically patch master controller to proper synthesizer to preview patch
+<li>"Play" function with User selected Note, duration and velocity to preview without a midi controller
+<li>Allow on screen controls to be manipulated with midi controllers. This allows you to use a Midi fader
+    box (such as a Peavey PC1600) to edit any synth.
+</ul>
+<h5>Extensibility Features</h5>	
+<ul>
+<li> New Drivers and Editors can be created relatively easily by extending given Java Classes
+<li> Widget set (sliders, checkboxes etc) which automatically send sysex and interface with patch data
+
+</ul>
+<a name="install"></a><h3>Installing JSynthLib</h3>
+<p><b>Microsoft Windows</b><p>
+<ul>
+<li>Download the .ZIP file from the web site and unzip it to any directory (for example c:\jsynthlib).
+<li>Create a shortcut on the desktop to JSynthLib.jar (optional)
+<li>Make sure you have a Java Run Time Environment which supports Java 1.3. If you do not have
+it, you can download it from <a href="http://java.sun.com">Sun</a>
+<li>Run JSynthLib.jar either by double-clicking the icon or by typing 'java -jar JSynthLib.jar' from the command prompt
+<li>Go to Config->Preferences->MIDI and set 'Midi Platform' to MS-Windows (WireProvider).
+<li>Go to Config->Synths and add and configure the Synthesizers you want to use with JSynthLib
+<li>Set any other preferences (such as Midi Fader Port, Default Directories) as you wish
+<li>Quit JSynthLib after you are done configuring it and restart it. Now you can go back into it and use it.
+</ul>
+
+<p><b>GNU/Linux</b><p>
+<ul>
+<li>Download the .zip file from the web site, and unzip it 
+<li>Make sure you have a Java Run Time Environment which supports Java 1.3. If you do not have
+it, you can download it from <a href="http://java.sun.com">Sun</a>
+<li>Edit the file linuxdevices.conf in the main JSynthLib Directory to reflect your setup. Each line in this file represents
+ one device that you wish to have accessable in JSynthLib. </li>
+<li>Run JSynthLib.jar by typing '/usr/java/jdk1.3/bin/java -jar JSynthLib.jar' from the command prompt. (If you installed java to a different path, of course you should use that path instead)
+<li>Go to Config->Preferences->MIDI and set 'Midi Platform' to Gnu/Linux (/dev/*). 
+<li>Go to Config->Synths and add and configure the Synthesizers you want to use with JSynthLib
+<li>Set any other preferences (such as Midi Fader Port, Default Directories) as you wish
+<li>Quit JSynthLib after you are done configuring it and restart it. Now you can go back into it and use it.
+</ul>
+
+
+<p><b>Mac OS</b><p>
+Note that this is untested and I'm not sure if it will work, when I manage to get my hands on a Mac I'll create a version of JSynthLib
+designed for the Mac. Update: I believe this will probably <i>not</i> work at this time. As JRE 1.3 does not seem
+to be out for Mac OS. It may be possible to run JSynthLib under Mac OS-X by using the Linux Driver. If anyone has any success with this, please notify me.
+<ul>
+<li>Get and install the Windows Version of JSynthLib
+<li>Download and Install the Macintosh version of the JavaMIDI driver from the JavaMIDI Home page
+<li>Delete the .dll file from the JSynthLib directory
+<li>In theory, JSynthLib should now work on a Mac
+</ul>
+<a name="using"></a><h3>Using JSynthLib</h3>
+<h4>The Main Windows</h4>
+There are three main types of windows which you will be working with when using JSynthLib. Each provides access to a particular type
+of data. The first is a Library Window which holds patches. Different types of patches can be stored in one library, or you can use
+a library to hold only patches for a particular synthesizer.<p>
+
+ A<b><i> Library window</i></b> looks like a table where each row represents one patch.
+The columns represent different pieces of information about the patch. The columns are:<p>
+<b>Synth-- </b>A shorthand identifier for the synthesizer to which the patch belongs. For example, if a patch is for a Yamaha TG33 
+Synthesizer, this field might read "TG33". These identifiers merely help the user to see what patch goes with each synthesizer and 
+are merely arbitrary identifiers. The identifier used for each synthesizer can be changed in the preferences>synths menu.<p>
+<b>Type-- </b> This tells what kind of patch the patch is. The most common values for this field are "Single" which means the patch 
+represents a single patch in the synthesizer or "Bank" which means this patch actually holds an entire bank (set) of patches. Other
+values are possible for particular types of synthesizers, for example, a drum machine would probably have a "DrumKit" type rather than
+a "Single" type. Words like "Single", "Multi", and "Bank" are standard synthesizer jargon. If you are unfamiliar with synthesizer
+terminology you should probably brush up in order to use this program.<p>
+<b>PatchName-- </b> Obviously, this is the name of the patch. Note that this is the name of the patch as it appears in the actual
+synthesizer data for the patch, so it suffers the same limitations as the synthesizer impresses upon its data. For example, if the
+synthesizer only allows for 6 characters in a patch name, so will JSynthLib. Some synthesizers do not support patch names at all, and
+most of the time "Bank" type patches will not support names.<p>
+<b>field1 / field2--</b> These two fields hold data outside of the actual data used by the Synthesizer and can therefore hold values 
+even for patches belonging to synthesizers which lack patch names. The meaning of these two fields is user defines, for example, you
+could set all of the field1 values in a library to be the name of the author of the patch and all of the field2 values to be the
+type of instrument that the patch is trying to emulate (Guitar/Piano/Drum, etc) <p>
+<b>comment</b> This is another field which holds data outside of the actual data used by the Synthesizer. The main difference between
+field1 / field2 and comment is that the comment field can hold longer strings and that you can not sort a library based on the comment
+field.<p>
+In addition to the table of patches, a library window contains a footer which tells the number of patches in the library.<p>
+A <b><i>Bank Editor Window</i></b> looks like a two dimensional table/array of patch names and numbers. This represents a bank of patches
+for a particular synthesizer. The number of patches in the bank and the numbering scheme used is dependant on the synthesizer. For
+example,the Oberheim Matrix 1000 holds 100 patches in a bank numbered 0-99, which the Kawai K4 holds 64 numbered 1-A to 16-D.
+<p>A <b><i>Single Editor Window</i></b> is by far the most complex window in the program. This window holds implementation details for
+one single patch. Here you can set various parameters that make the sound of the patch using sliders, checkboxes, comboboxes, etc. The
+layout of this window and the controls availible depends on the synthesizer to which the patch belongs.</p>
+<p> ALthough, the exact layout and function of the controls shown in the Single Editor will depend on the
+synthesizer to which the patch belongs, all Single Editor Windows share much in common.
+
+<p>A Control is an element in the Editor Window which controls a specific aspect of the 
+patch, such as Filter Cutoff or Resonance. There are four basic types of controls.
+
+<ol><li>   a Slider Control consists of a label, a slider, and a numeric readout.. You can tell the current value of the control both graphically (by how far the slider is over) and by the
+value of the numeric readout. You can change the value of the control only by moving the
+slider. You can either click to the side of the pointer on the slider, drag the pointer, or
+click on it and then use the arrows on the keyboard. In any case, each time the value is
+changed, JSynthLib will send a real-time sysex message to the synthesizer (on synths which support realtime sysex messages) telling it to update the value internally. Some synthesizers may take a few seconds to process all the incoming data before being availible
+to play a note , making real-time 'tweaking' difficult.
+
+<li>      a ComboBox Control consists of a label and a textfield. The textfield tells you what the current value of the control is set for. Clicking on this textfield will produce a menu from which you can choose one of the other values for the control.
+
+<li>      a CheckBox Control consists of a label and a checkbox. Clicking the check box will
+turn the setting the control represents on or off.
+
+<li>      an Envelope Control consists of a graphical depiction of the envelope and a label
+and numeric display for each parameter the envelope controls. Commonly, these parameters will be the Attack, Delay, Sustain, and Release parameters for a particular DCA. To change
+a parameter, simply click and drag one of the nodes (rectangles) on the envelope. Some nodes control two parameters, one on the vertical axis and one on the horizontal. Others control
+only one parameter and are therefore fixed in position on one axis. There are also some nodes which do not control any parameters and are therefore fixed in position. JSynthLib will draw lines connecting all the nodes to show a graphical depiction of the envelope given
+the current settings.
+</ol>
+<p>In addition to these controls, there are a number of interface elements which do not interact with the synthesizer or patch data and only serve to make the presentation of the data more clear. One of these are the frames which surround groups of related controls. For example a frame labeled "Filter" might surround a group of sliders labeled "Cutoff", "Resonance", and "Envelope Bias" to show you that these three parameters are a part of the synth's filter section.
+
+<p>Second, are tables which are simply grid-like structures used to hold parameters. As of version 0.12, only the Oberheim Matrix Editor makes use of tables. Note that you can click
+and drag on the table's headings to change the order in which parameters are displayed.
+
+<p>Third are "Tabs". By clicking on a tab, you are taken to a different set of parameters to edit. Sometimes the tabs surround entire editor screens, but usually they surround only a
+group of parameters. For example, In the Yamaha TX81z editor, there are four tabs, one for
+each Operator, by clicking on one of them, the section of controls related to the Operator
+is set to control the operator you have chosen.
+
+<p>Although Editing on-screen using a mouse or keyboard is efficient and all editing functions can be realized this way, JSynthLib also provides another, optional, method to edit controls-- Faders.
+A Fader is simply any knob or slider you might have on a synthesizer oR fader box which, when moved sends a MIDI Controller Message. Almost all synthesizers have at least one or two, and some advanced ones such as the Kawai K5000S have as many as sixteen or more. In addition, there are "Controller Surfaces" you can buy which consist only of Faders (either as knobs or slider). 
+
+<p>These faders are generally used to edit parameters on synthesizers, but have two major drawbacks. First, they are often designed to work only on a certain, hardwired parameter or
+only for a particular synthesizer. Second, its difficult to picture whats happening when editing this way, because you don't get any visual feedback. You can't simply look at a Controller Surface and tell what the current settings are for the parameters (unless you have a motorized controller surface).
+
+<p>JSynthLib allows you to overcome these limitations. If you have a Controller Surface or other source of MIDI Controller Messages which has at least 16 Faders, you can edit any synthesizer supported by JSynthLib and see visual feedback on your computer screen.
+
+<p>To set up your controller surface, look under Config->Preferences->Midi. Look at that section in
+this documentation for help on setting these up.
+
+<p>Once set up, when you move a fader, the corresponding control in the active Editor Window
+will move. As you probably realize, however, there are usually more than 16 controls in an
+editor window. This is where the concept of fader banks come in. A fader bank is a group of
+16 controls which respond to faders. You can choose which bank your fader movements are sent
+to either by using the 15th and 16th buttons on you Controller Surface (if your controller surface supplies buttons and well has faders) or by using the "Next Fader Bank" Option on the toolbar. Note that the labels for the controls in the currently selected fader bank are darkened slightly. To determine which fader bank and fader number will move a particular
+control, simply let the mouse cursor hover over the label for that control and a tooltip will pop up with this information.
+
+<p>When you close an editor window, a dialog box will pop up asking what you wish to do with any changes to the patch. If you choose to "Revert to Original", then any changes you have made in the editing session will be lost. If you choose to "Keep Changes", the changes are stored over the original patch in the library and the original version is lost. The third option "Revert and send Changes to Clipboard" is the best of both worlds. The Original patch is kept as in the "Revert to Original" setting,but the changed version of the patch is placed on the clipboard. You can then use the Patch->Paste command to place it into a patch library of bank of your choosing. This is useful if you like the new edits you have created, but also like the original patch.
+
+
+<h4>JSynthLib Menu Functions</h4>
+<h5>Right-Click Menu</h5>
+If your right-click on a patch in a Library Window or a Bank Editor Window, a menu will appear which allows you to manipulate the patch
+in various ways. All of the functions on this menu are also availible from the menu bar and a description of what they do can be found
+under their menu bar entries in this documentation.
+<h5>The Library Menu</h5>
+The Library menu on the menubar allows you to access a number of functions to manipulate Libraries of patches (see <b>Library Window</b>)
+above. These functions act on a library or act on all of the patches in the library. Functions which manipulate a single patch within
+a library are located under the Patch Menu. The availible functions in the Library Menu are:
+<p><b>New-- </b> This creates a new Library which contains no patches and displays it on the screen. This function is also availible from
+the toolbar.
+<p><b>Open-- </b>This prompts you for a file name and then loads the previously saved library under that name from disk and displays it on the screen. Note that if the library is very large, the
+program might take several seconds to read it from disk. The filename of the loaded library is placed on the top frame of the Library
+Window. This function is also availible from the Toolbar.
+<p><b>Save-- </b>This saves a library window to disk. The library window which you wish to save must be the currently focused (active)
+window when you choose this option. If the library does not have a file name, then the program will pop up a save as dialog box just
+as if you had chosen the Save As Option instead. This function is also availible from the Toolbar.
+<p><b>Save As-- </b> this function pops up a file dialog box to ask you for a new name and then saves the currently focused Library
+Window under that name.
+<p><b>Sort-- </b> This function will sort all of the patches in a library by either the type, patchname, field1 or field2 field (the
+program will prompt you for the sort field) The sort algorithm used is stable, so you can for example sort by patchname and then sort
+by synth in order to get a library that is sorted by synth type and then sorted by patchname within each synth type.
+<p><b>Search-- </b> This function allows you to search for patches within a library. You enter the text to search for, and where you want the text to be located, whether in the patch name, field1, field2, comment, or any of the fields. Then you use the "Find First" button to locate the first patch matching the search criteria, or the "Find Next" buton to locate the next one.
+<p><b>Delete Dups</b> This function will search through a library for identical patches and delete all but one copy. This is most
+useful immediatly after you have imported all your patches in to JSynthLib. Many times copies of the same patch are sitting around
+in different places on a hard drive. This only deletes patches that are perfect duplicates, so if as much as one byte is different,
+they will not be considered duplicates and will not be deleted. Therefore two identical patches with different names will not
+be considered duplicates by this function.
+<p><b>Exit</b> The Exit command doesn't really belong in the Library Menu since it doesn't act on a library, but we had to put
+it somewhere and this seemed like as good a place as any other. Basically this command just exits the program. It will <b>not</b> warn
+you about unsaved data!
+<h5> The Patch Menu</h5>
+The Patch menu allows you to access a number of functions which manipulate individual patches which are located either in a Library
+Window, a Bank Edit Window, or (for some functions) in a Single Patch Editor Window. The availible functions in the Patch Menu are:
+<p><b>Copy--</b> This function copies the currently selected patch to the clipboard. It will copy the currently hilighted patch from
+the currently focused Library Window or Bank Edit Window. If the current Window is a Single Patch Editor window, then the patch
+represented by the current position of the editing controls is copied to the clipboard. This function is also availible from the
+toolbar and from the right-click pop up menu.
+<p><b>Cut--</b> This command simply preforms a <i>Copy</i> command followed by a <i>Delete</i> command. It is also availible from
+the toolbar and from the right-click pop up menu.
+<p><b>Delete-- </b> This deletes the currently selected patch in the currently focused Library Window or Bank Editor Window. If the
+current window is a Single Editor Window then this command has no function. 
+<p><b>Paste-- </b> This copies a patch from the clipboard to the currently selected location in a Library Window or Bank Editor
+Window. If the currently focused window is a Library Window but no patch is selected, then the patch will be appended, otherwise
+it will be inserted before the selected patch. If the currently focused window is a Bank Editor Window, then the patch on the clipboard
+will <b>replace</b> the currently hilighted patch. Note also that while a Library Window can hold any type of sysex data, a Bank Editor
+Window is designed to hold only one particular type of data. If the data type is invalid, the paste will not work. The same is true for
+the Import command. This command is also availible from the toolbar and from the right-click pop up menu.
+<p><b>Import--</b> This function will load raw Sysex data from disk into the currently focused Library Window or Bank Editor Window.
+If a driver is installed (under Config->Synths) which recognizes the format of this data, then it will be turned into a patch
+of the proper type, otherwise it will be listed as "unknown".  This function is also availible from the toolbar.
+<p><b>Export--</b> This function will save the raw Sysex data from the currently selected patch (in a Library Window or Bank Editor
+Window) to disk, stripping away field1, field2, and comment. The data will be in the raw form suitable for sending to the synthesizer
+of importing into another editor for that type of data.
+<p><b>Import All--</b> This is a powerful function that is very useful when you first start using JSynthLib. It is designed to 
+quickly import a large amount of data into a Library Window. If you've been using other editor or librarian programs to manipulate
+your synthesizer data or if you have downloaded patches for your synthesizer from the internet, you might have a large patch library
+that you will want accessible from JSynthLib. If your patch Library is stored in the proprietary format of some other Synthesizer
+Librarian program, you will have to get that program to export it to the industry standard .SYX format (raw Sysex Data). The Import
+All command will take all the files in a directory and attempt to import them into JSynthLib. <br>
+You will be prompted for several options when you choose this function. First you must choose a directory to import from The Java
+Standard for choosing directories from a file dialog is to single-click on it so the directory name is highlighted, but do not
+enter the directory you wish to import from. If you accidental enter the directory you wish to import from, back up one level before
+hitting the OK button on the file dialog.<br>
+Next, you must choose which types of patches you wish to import at this time. You will be given a list of each Synthesizer driver you
+have installed in your system, each with a checkbox next to it. Check the box to include that type of patch in your import. If you
+check the box for "unknown" then even data that the program does not understand will be imported. For example, you can use this to
+create one big library of all your patches for all your synths, or you can import only the singles patches for a particular synth
+in order to create a library of all your patches for that synth.<br>
+You are also given the option to place the filename from which each patch came from either in field1 or field2. This is useful if
+the patch does not have a name of if you've grown accustomed to referring to it  by its file name.  You are also given the option
+of automatically extracting patches from banks. When you import patches, you might get full banks of patches in addition to singles.
+To access these patches, you must choose to edit the Bank Data. Sometimes this is desirable, but often you'll want to see all of your
+Single Patches at the top level of your library. If this option is checked, any banks that are imported will be automatically extracted
+and the patches taken out and placed in the library (you can do this yourself with the Patch->Extract option. If both this option
+and the option to place the filename in field1 or field2 are checked, each of the extracted patches will get the filename followed
+by their location in the bank placed in their field. For example " MYSOUNDS1.SYX 34 ".
+<p><b>Send-- </b> This option will send the currently highlighted patch in the currently focused Library Window or Bank Edit Window
+to the proper synthesizer. The idea is to send the data so that you can test it out. On synths which support it, the data will be sent
+to a temporary edit buffer so that no other data in the synthesizer is overwritten. Unfortunately, not all synths support temporary edit
+buffers, so on these synths a set patch (usually the first non-preset) will be overwritten with the sent data. In order for the send
+command to work, the synthesizer corresponding to the patch must be correctly set up from Config->synths. 
+<p><b>Store-- </b> Like Send, this function also sends the currently selected patch to the correct synthesizer. This option however,
+will prompt you for a patch location (bank and patch numbers) on the synthesizer to store the patch to. It will then store it 
+to the synthesizer, overwriting whatever patch may already be at that location. This function is also availible from the toolbar.
+<p><b>Get--</b> This function will receive sysex data from a synthesizer. When you choose this command, a dialog box will appear, giving
+ you several options. First, choose which kind of patch you wish to get from any of the installed synthesizer drivers. Where applicable, you
+  must also chose a bank and patch number for the patch to get. Once this is all set, press the 'Get' button. If JSynthLib knows the correct
+  code to automatically start the sysex dump for your chosen driver, it will do so. Otherwise, you will be prompted to manually start the patch
+  dump from the front panel of the synthesizer. Once JSynthLib receives data from the synth, it will tell you how many
+  bytes have been received. When the entire sysex dump has been received, you must decide what to do with it. If you press the
+   'paste' button, the received patch will be pasted in the currently focused library. If you wish to discard the received patch,
+   you can simply press 'get' again to get a different patch or press 'Cancel' to quit the dialog. When your done press 'done'.
+<p><b>Play-- </b> This command will send the currently selected patch to the proper synths followed by a midi command to play a note.
+This is useful for checking a patch out quickly or without a master controller keyboard. The specifics on which note is played, how
+hard it it hit, and how long it is held can be set in the Note Chooser Dialog Box, which is accessible from config->Choose Note
+The play function is also availible from the toolbar and from the right-click menu.
+<p><b>Edit--</b> Using the Editing command on a Patch for the driver contains editing support will bring up an Editor Window. This window
+will consist of various sliders, checkboxes, and other controls which can be manipulated to change the patch. The layout and function
+of these controls is dependant on the architecture of the synthesizer you are working with. Your synthesizer manual should give
+you the information you need in order to understand how it generates sound and what the various parameters do. This command is also
+availible from the right-click menu. See the section under 'Editing Patches' for more information
+<p><b>Crossbreed-- </b> Crossbreeding patches is a cool way to make new 'random' patches. Rather than simply sending random data
+to a synthesizer (which would likely end up sending it lots of garbage and out-of-range values), the crossbreed command generates
+random combinations of the patches in a library. To use it to best affect, you need an as-large-as-possible library full of patches for
+the synthesizer you wish to create patches for. If the library contains patches of more than one type,the command will randomly choose
+which synthesizer it is creating patches for. <br>
+When you use the crossbreeder, you are shown a dialog with four buttons. The "close" button quits the crossbreeder. The "Generate" button
+creates a new random patch and plays it for you. The "play" button replays the patch in case you want to hear it again. You can also
+use the master keyboard controller to play with your random patch. If you don't like a patch, simply hit generate to create a new one.
+If you find something you like, hit the 'keep' button and your patch will be appended to the current library. Note that as a random
+patch, it will have a random name, so you'll probably want to go in and give it a more useful name later.
+<p><b>New--</b> This command creates a new (blank or default) patch. When you choose this option you will be given a list of the types
+of patches you are able to create. (Which patch types are availible depends on which synth drivers you have loaded). The patch will be
+added to the currently focused patch library window.
+<p><b>Extract--</b> You run the extract command on patches which represent entire banks of patches rather than singles. Make sure the
+bank patch you wish to extract is highlighted in the currently focused library window. When you choose this option, the bank will be
+deleted and replaced with all the single patches which were inside of the bank. The same effect can be achieved when importing patches by
+using an option to the "Import All" command. See that part of the documentation for more details.
+<h5>The Config Menu</h5>
+<p><b>Synths</b>-- 
+This is where you tell JSynthLib what synthesizers you have and how they are configured. When you open this window, you will 
+see a list of the "Synth Drivers" which you have installed. Note that many synths have more than one Synth Driver, all of which
+are installed in order to use all functionality on that synth. The left-most parameter is a shorthand "ID" for the synthesizer.
+JSynthLib doesn't care what this is set to, its simply short name given to the synth that JSynthLib will use to refer to that 
+synth. Generally, you will keep the defaults. You might change this, for example, If you've become accustomed to calling your
+Yamaha TX81z, "Yamaha" or "Bob" rather than "TX81z" (the default). The middle parameter is the name of the driver. To the right
+are two parameters which tell JSynthLib how to access the synthesizer. You must correctly set the Midi Port and Channel for
+your synthesizer. </p>
+<p>
+Three buttons at the bottom allow more functionality. You can only add or remove drivers if no Library or Editor windows are 
+currently opened. The add button pops up a list of all the synthesizers supported by your version of JSynthLib. You choose one
+from the list in order to install it and then configure it as explained above. When you choose a synthesizer, all the drivers 
+associated with that synthesizer will be installed. There is also a button to remove, or uninstall a synthesizer driver, for 
+example if you no longer own a particular synth. The third button closes the Synth dialog.</p>
+<p>As of version 0.15, there is an additional button called "Auto-Scan". Currently this feature only works when you are running JSynthLib under Windows and using the WireProvider MIDI drivers. When you chose this option, JSynthLib will attempt to scan your MIDI ports for supported Synthesizers and correctly add and configure them for you. It is not able to detect certain synths (such as Yamaha and Roland) and you should doublecheck the settings it determines for accuracy, but it can still be more conventient then having to add and configure them all by hand.</p>
+<p><b>Preferences</b>--
+This dialog is used to configure various settings that determine how JSynthLib functions.
+There are three sets of parameters, each with its own tab. The four sets are "General","Directories", "Midi", and "Fader Box"
+
+<p> Under general, you can set the look-and-feel which JSynthLib will use., You can also change the Platform on which
+you are running JSynthLib. Note that there are two different options for MS-Windows. This is because JSynthLib provides
+two different methods to communicate with MIDI devices under Windows. I recommend using the WireProvider option.
+It seems to work well and can transfer large sysex messages. The JavaMIDI option is included in case WireProvider does not work on your set up. If this is the case, you should e-mail in a bug report, and use JavaMIDI for now.
+<p>In the directorys tab, you can set the default directory from which JSynthLib will attempt to load and save files. The library path determines where the .patchlib files are loaded and saved. The sysex path is used by the import and export commands.
+<p>The second tab holds MIDI settings. The parameter called "Run Initialization on midi ports" only needs to be played with if JSynthLib tells you to on startup or if you want to free the ports for another program. Basically, it needs to grab a couple of midi ports on your system when it starts up to initialize itself. Normally it just grabs the first ones it sees and thats fine. On some systems though, the first MIDI ports will be in use by some other program, or you'll want them left alone for some other program to use. Most MIDI port drivers allow more than one program to use the port, but not all. These parameters just give you the most control possible.
+<p>The master controller port determines which MIDI port JSynthlib will watch for Notes being played. If notes are played (for example from a midi keyboard) on this port, JSynthLib will echo them to whatever Synthesizer you are currently working with. (Either by having an editor open in the foreground or having a library open in the foreground and having a patch selected). This allows you more controlling auditioning patches than just using the "play" command. If you have no master controller or don't want to use one, just set this to the same value as your "Run Initialization on" MIDI IN port.
+<p>The fader tab allows you to configure your fader box if you want to use one. A fader box can be useful when editing patches, see the section of this documentation on editing patches for details of what they do. If you want to enable faders, you just check the enable box and set the fader port to the port on which you want to receive faders. Note that due to a bug in the MIDI routines used, JSynthLib will also receive faders on the master controller port.
+<p>JSynthLib recognizes up to 16 Sliders/Knobs and up to 16 Buttons. You can configure which midi controller number and channel will recognized as each button and slider. You can either do this by hand, or use one of the preset buttons. THe Kawai K5000 is set to respond to the 16 knobs on your Kawai as the 16 sliders and ignore the buttons. The Peavey PC1600 preset simply responds to controller 24 on channels 1-16 as sliders 1 through 16 and controllers 25 on channels 1-16 as buttons 1-16. Its up to you to configure your PC1600 to send these values (its very easy).
+<p>Note that if you are using buttons, buttons 15 and 16 are special purpose, they increment or decrement your fader bank by one.
+<p>There is also a variable for most recent fader. If this controller is received it is patched to whatever fader has been accessed most recently. For example you could set your mod wheel to send to whichever fader you've used most recently.
+
+
+
+<p><b>Choose Note</b>-- When you choose the 'play' command to hear a sound, the patch is played at a particular note, velocity and
+duration. The Choose Note dialog allows you to determine what note, velocity and duration are used.
+
+<a name="synths"</a><h3>Notes on Particular Synths</h3>
+<i>In this section of the documentation, issues relating only to the use of JSynthLib with particular
+synthesizers will be discussed</i><p>
+<b>Boss-DR660</b>- It is not possible to edit effects settings on the Boss-DR660 with JSynthLib,
+but all other editing functions are availible.<p>
+<b>Emu Proteus MPS</b>- This synthesizer lacks a MIDI addressable patch buffer. Therefore, when you
+send or play a patch from within JSynthLib, the patch at location 100 on the Proteus will be overwritten.
+JSynthLib treats this location as an edit buffer.<p>
+<b>Ensoniq ESQ-1</b>- Whenever JSynthLib sends a Patch to the ESQ, the synthesizer will go to a
+screen where you must hit 'exit' on the front panel before you can send another patch. This is
+kind of annoying, so if anyone knows a way around this let me know. The other ESQ librarians I 
+checked out had the same problem, so it may be impossible.<p>
+<b>Kawai K4 / K4r</b>- There are no known issues or problems with this synthesizer <p>
+<b>Kawai K5000</b>- The 'crossbreed' option does not work with this synth. Also, note that changes
+made to patches in the K5000 will be lost when you turn it off, unless you preform the backup to
+non-volitile ram from the front panel. Also, Patch A01 will be used as the midi edit buffer. <p>
+<b>Oberheim Matrix 1000</b>- I've noticed that this synthesizer responds slowly to changes of certain
+parameters, such as the Modulation Matrix. This is a limitation of the synthesizer, not of JSynthLib.
+Luckily, the slow response parameters tend not to be the ones you would want to tweak in real time.<p>
+<b>Oberheim Matrix 6 / 6r</b>- I've had one report that the Single Driver and the Single Editor for
+the Matrix 1000 also work with these synths, but that the Bank Driver does not, since these use a
+different bank format. Can anyone verify this?<p>
+<b>Yamaha TG33</b> There are no known issues or problems with this syntesizer. I am looking for
+information which would allow me to write a Single Editor for this synth.<p>
+<b>Yamaha TX81z</b>- It is possible to make the TX81z's internal midi buffer overflow if you send it
+too much Data too quickly. This should only happen if you are using a fader box and throwing the
+faders around rapidly.</p>
+<b>Yamaha DX21/DX27/DX100- </b> These synths all use the same editor, since they are compatable, however some parameters will not have an effect on the sound on all three synths. 
+<a name="Trouble"</a><h3>Troubleshooting JSynthLib</h3>
+<b><i>[Windows]</i> I can't get the MIDI to initialize. I've tried setting the initialization ports to every port in
+my system, but I still get an error on startup</b><br>
+This usually happens if you are using the JavaMIDI driver.
+Go into Config->Prefs->General and set 'Midi Platform' to MS-Windows (WireProvider). When using the JavaMIDI drivers, 
+certain MIDI devices just refuse to work.
+<p><b><i>[Gnu/Linux]</i>All the fonts have way to much space between the letters and look awful!</b><br>
+This is a Java issue under Linux. Supposidly it can be fixed by tweeking your fonts.properties file, but I haven't
+been able to get it to look right. Anyone have a fix for this?<p>
+<p><b><i>[General]</i>I changed some settings in JSynthLib to values that don't work. Now I can't even get it to
+run well enough to change them back!</b><br>
+Delete the file called <i>PatchEdit.config</i> in your JSynthLib Directory. Now JSynthLib will go back to it's
+default settings the next time it is run and you can re-configure it.
+<p><b><i>[General]</i>What information should I give when I report a bug?</b><br>
+If you run JSynthLib with the parameter '2' as in 'java JSynthLib 2 >outputfile', JSynthLib will
+place information regarding any errors that occur in the file 'outputfile'. Sending this file with
+your bug report would be useful. Also, make sure to include all relevant information about what you
+were doing when the bug occurred and what your system setup is like.
+
+<a name="Contrib"></a><h3>Contributing to JSynthLib</h3>
+
+
+<b><i>Adding Support for Additional Synthesizers:</i></b>
+<br>
+<br>
+<b>Section 1: Introduction</b><br>
+<br>
+Alright, so you've got JSynthLib and like what it does. The problem is that it doesn't support one of<br>
+the synthesizers you own. You drop a line to jsynthlib@overwhelmed.org to find out if anyone is<br>
+working on adding support for that synth and find out that no one is. You decide to volunteer to <br>
+add support. Triumphantly you let us know your intention and set down to hacking. This document is designed to help you to complete this task.<br>
+<br>
+ <i>(A) How hard is it to add support for a new synthesizer to JSynthLib?</i> <br>
+   <br>
+	The hardest part is simply becoming familiar with how JSynthLib works and how it's layed out<br>
+internally. Spend some time looking through the driver code for other synthesizers and you'll basically<br>
+pick it up by osmosis. Once your familiar with what you have to do, actually doing it shouldn't take<br>
+too long. I've gotten librarian (not editing) support for synthesizers hacked up in under two hours.<br>
+It depends of course, on the complexity of the synthesizer and the quality of the sysex specification.<br>
+Adding editing support can be a little more time consuming, but is probably even easier than writing<br>
+librarian support. I've spent anywhere between 3 or 4 hours (working on the DR660 Editor) up to 5 days<br>
+(working on the Matrix 1000 editor). If you run into any trouble, you can email jsynthlib@<br>
+overwhelmed.org for help. <br>
+<br>
+ <i>(B) What do I need in order to add support for a new synthesizer?</i><br>
+<br>
+	 1. At the very least, you need a sysex specification for your synthesizer. In most cases, the<br>
+	    sysex specification is located in the back of the manual, but this is not always the case. 	        
+		    Sometimes they are also availible on the internet if you look around enough. <br>
+	 2. You probably also need the synthesizer you wish to add support for (for testing). While it <br>
+	    might be possible to do it without the synthesizer, it would be pretty tough.<br>
+	 3. You'll need a copy of the Java 1.3 JDK. This is availible for free from java.sun.com<br>
+            This contains the various tools used to compile JSynthLib<br>
+	 4. You'll need a text editor in order to edit code. Anything will work. I wrote a significant<br>
+	    part of the JSynthLib core code using EDIT.COM which comes with Windows. More recently,<br>
+	    I've switched to jEdit, a Java based emacs-like programmer's editor with syntax highlighting<br>
+	    and bracket matching.<br>
+	 5. Finally, you'll need to be able to program in Java. If you've programmed in C++ before,<br>
+            you can probably pick it up in about an hour (I did). If you are coming from C++ the most<br>
+	    important thing to know is that Java passes all objects by reference, not value.<br>
+<br>
+<i> (C) Who owns the copyright to the code I contribute to JSynthLib?<br></i>
+ <br>
+	You do. Unless you specifically assign your copyright to me, you retain ownership. Of course,<br>
+you must release your code under the GNU General Public License since it is considered a work derrived<br>
+from JSynthLib, but in addition to releasing it under the GNU Public License, you can do whatever else<br>
+you want with it.<br>
+<br>
+ <br>
+<br>
+<b>Section 2: Setting out to work on JSynthLib </b><br>
+<br>
+	This section is simply designed towards setting up a working environment (under Windows) for<br>
+doing work on JSynthLib. If you have a different way of setting up your working environment, feel free<br>
+to use it, but this works for me.<br>
+	First, decompress JSynthLib.zip to the directory you are going to work in (such as C:\JSynthLib)<br>
+Next, open up a DOS prompt set to 50 row display and set it to that directory. This is used to run<br>
+JSynthLib for testing (the 50 row display helps keep error messages from scolling off the screen too fast). Make sure that the java.exe and javac.exe executables are in your path for easy access. Next, open up your trusty editor to the correct directory.<br>
+	<br>
+<br>
+<b>Section 3: The Layout of JSynthLib<br></b>
+<br>
+	If you look at the JSynthLib directory, you'll see a number of files and directories. Since you are only adding support for a synthesizer, and not working on the core program, you don't have to worry about most of these. For you, the most important areas are the SynthDrivers directory where code pertaining to various synthesizers are kept, and the JSynthLib.jar file, which holds most of the code.<br>
+<br>
+Though 99% of your work will go in the SynthDrivers directory, you need to tell the core JSynthLib program about the existance of your new code. To do so, you must make a small change to the core program itself. All of the core code is kept bundled up inside the JSynthLib.jar file. To extract it, run<br>
+jar -xvf JSynthLib.jar<br>
+<br>
+This will extract all of the files inside the .jar into the directory. You will now see more files and<br>
+directories in your JSynthLib directory. You now have access to the source code for the entire program.<br>
+In addition to the SynthDrivers subdirecory, you will now see one labeled &quot;core&quot; (there are others too but they aren't important). Inside the core directory is all the code for the main part of JSynthLib.<br>
+Feel free to look around.<br>
+<br>
+Important: Once you've extracted the .Jar file and made changes to the resultant files, you must launch<br>
+JSynthLib using &quot;java JSynthLib&quot; instead of &quot;java -jar JSynthLib.jar&quot;. Otherwise you just run the old .Jar file and none of your alterations get used.<br>
+<br>
+When you compile parts of JSynthLib, always do so from the main JSynthLib directory. For example, to compile the file synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java sit in the main JSynthLib<br>
+directory and type &quot;javac synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java&quot; Don't enter that<br>
+directory and just type &quot;javac BossDR660DrumkitDriver.java&quot;, it won't work.<br>
+<br>
+<b>Section 4: The Three areas of Synthesizer support<br></b>
+<br>
+	To add full support for a synthesizer, there are three things you need to write. You need a<br>
+Single Driver, a Bank Driver, and a Single Editor. Each of these provides different functionality.<br>
+First, you would write the Single Driver. This is the only part which is strictly necessary. It provides routines to allow JSynthLib to detect data for the synth, to communicate with the synthesizer, and to calculate checksums on the data. Once this is written, JSynthLib will have Librarian support<br>
+for your synthesizer. Note that you must write a Single Driver first-- both the Bank Driver and Single Editor use the Single Driver in order to communicate with the synthesizer.<br>
+<br>
+The Bank Driver provides the ability to work with banks of patches, to combine singles into banks and to<br>
+extract banks into singles. While this functionality isn't strictly necessary, it is nice to have.<br>
+<br>
+The Single Editor is the fun part. This is a graphical representation of the synthesizers internals<br>
+which allows parameters to be changed and edited. It depends on the single driver for some of its<br>
+functionality, so you must write that first.<br>
+<br>
+  You will also need to write a device file. This is very easy, just copy an existing one and change it to suit your needs.
+  Basically, the device file just holds some information about the synthesizer that in earlier versions of JSynthLib had
+  to be hard coded into each driver. Also, it is responsible for loading each driver for the device.  
+<br><br>
+<b>Section 5: Writing a Single Driver for your Synthesizer.<br></b>
+<br>
+	<i>Step 1: Create the files<br></i>
+<br>
+Under the synthdrivers directory, create a directory for your synth. Into it copy a Single driver from<br>
+one of the other synthesizers and change its name to match your synthesizers. Go through that file and<br>
+change all the references to that synthesizer to yours. I recommend using the KawaiK4SingleDriver<br>
+as a starting point because its the most simple driver.<br>
+<br>
+       <i> Step 2: Tell the core program about your driver.<br></i>
+<br>
+Edit the file called core\DeviceAddDialog.java. This is the only file in the core JSynthLib program that you will have to edit. Eventually I hope to write autodetection code so that this isn't necessary, but right now it is. Near the top of the files are a bunch of &quot;import&quot; lines, add one for your synthesizer.<br>
+Next add your synthesizer's name to the availibleDrivers array. Finally, near the bottom of the file,<br>
+you need to add a block of code for your syntheizer to the OKPressed() function which loads your driver.<br>
+Just write it exactly like the ones for the other drivers. If you plan to do a bank driver too, add that<br>
+line in also, otherwise leave that line out. The code will look like this:<br>
+<br>
+if (s.equals(&quot;Oberheim Matrix 6/6R/1000 Driver&quot;))<br>
+     {PatchEdit.DeviceList.add(new OberheimMatrixDevice());
+     return;}<br>
+<br>
+Make sure the name in the IF statement exactly matches the name you put in the availibleDrivers array.<br>
+Save this file and compile it making sure there are no errors. if all goes well, JSynthLib now knows<br>
+about your driver. Now you just have to write it :)<br>
+<br>
+	<i>Step 3: Write the damn thing<br></i>
+<br>
+Your single driver will be a subclass of the core\Driver class. Open up the file core\Driver.java and take a look at that file. All of the variables and functions are documented as to their purpose. Also look at your single driver code (which you copied from another synthesizer) Between these two files you should be able to figure out what to do.<br>
+<br>
+First, you change your constructor to provide the correct information to the driver. This information is<br>
+used by the functions in driver.java to manipulate the data. If your syntheizer were perfectly regular, that would be just about all there was to writing the driver. However, most synths have their unique<br>
+quirks and features that are impossible to decribe using just data. Therefore you will probably have<br>
+to override some of the functions in driver.java to perform for your synth. <br>
+<br>
+Looking at your driver code (which you stole from the KawaiK4 code like I told you to)<br>
+You'll see that we had to implement functions to Store and Send patches to the synth. This is common, since usually, slightly different sysex messages are used to send a patch to the editing buffer (and not overwrite a patch) or to a specific patch (and overwrite). Change these functions to match your synth. If your synth has no edit buffer, you'll need to write the send method to treat a specific patch location on the synth as the edit buffer and overwrite it (see the EmuProteusMPS Driver for an example of this).<br>
+<br>
+You'll also see that for the KawaiK4, I had to override the computeChecksum method in drivers.java because the K4 uses a different algorithem than the default.  You'll find that the checksum computation is the most common method which needs to be overriden, either because of multiple checksums or because your synth uses a different method to compute its checksum (by default JSynthLib adds all of the data bytes, takes the lowest 7 bits, xors them with 127 and adds one to get the checksum). All of this is in core\drivers.java. Take a look. Computing the checksum properly is the hardest part of <br>
+writing the driver. Trial and error. If your synth uses the default checksum method, you can erase this method from your source file. Otherwise implement it. Note that in the K4 version, two lines are commented out. This is bad programming, I should have erased them. Sorry.<br>
+<br>
+There are two functions that will always need to be overridden if you wish to provide that functionality becuase there is no default version in core\driver.java. T%hese are both easy to implement. One of these is the function which returns a new (blank) patch. The other opens an editing window for the patch and must be included if you plan to write a Single Editor for your synth. You should be able to figure out how to write these by looking at the code for the K4.<br>
+<br>
+There may be other functions in core\driver.java that you will need to override for your synth. In general, spend time looking at that file and also the drivers for all of the other synths to get a feel for how things are done.<br>
+<br>
+Once your driver is working, JSynthLib now has Librarian support for your synth. Celebrate. And send in the code to us so we can include it in the next release of JSynthLib.<br>
+<br>
+<b>Section 6: Writing a Bank Driver for your Synthesizer<br></b>
+<br>
+If you've decided to write a bank driver for your synth, make sure you told JSynthLib that back in Section 5 Step 2 of this document. Basically, write this the same way you did the single driver. Copy the BankDriver from the KawaiK4 or one of the other synths and edit it to fit your needs. Change all the data in the constructor to fit you synth. The bank driver subclasses core\BankDriver.java. I recommend you look at that file (its commented nicely) and figure out which functions you need to override.<br>
+<br>
+<b>Section 7: Writing a Single Editor for your Synthesizer.<br></b>
+<br>
+Alright, so you've written a single driver and maybe a bank driver and now have Librarian support for your synthesizer. JSynthLib can load, save and play patches. Pretty neat. But the real trick is to add editing support for your synth. Writing an editor is both easier and harder than writing a driver. Its easier because you usually don't have to override functions. Its harder because you have to write a Java/Swing Interface. Swing is the default graphical toolkit that comes with Java. Its the graphical interface which all of JSynthLib uses. If you don't know Swing at all you might want to get a Java book, but you can get away with just the Tutorials on java.sun.com and the API guide that you can download when you download the JDK.<br>
+<br>
+You can do like with the SingleDriver and start out by copying an existing editor over and renaming the file, classes, constructor, etc. I recomend the YamahaTX81z Editor since its the simplest.<br>
+<br>
+Basically, its the job of the constructor to set up the interface for your editor by using a number of functions and widgets provided by JSynthLib and a number of Java / Swing features. I like to set up all my sliders and checkboxes and figure out where they go and what there ranges are first, get a nice pretty GUI on screen and then go back and put in the numbers to make it actually work. Basically you are going to create a number of JPane's and place controlls inside them using the addWidget function. Then you insert these JPanes onto &quot;scrollPane&quot; (the background of the window) (scrollPane is created by JSynthLib for your convenience)<br>
+If you want Tabs and such, you can implement them the same way the other editors do using the Java/Swing feature. For a simple synth, you can get away with just putting all the Panes directly onto scrollPane.<br>
+<br>
+Make sure you've taken a look at how all the other single editors are set up, the code contained within them explains all this better than I could hope to with mere words.<br>
+<br>
+   (A) How to add Widgets:<br>
+<br>
+	JSynthLib comes with several Widgets I've created which automatically deal with sending sysex and whatnot. All you have to do is tell them where to go and what values to send out. You create them like this: (example from the TX81z Editor)<br>
+<br>
+ addWidget(cmnPane,new ScrollBarWidget(&quot; Feedback&quot;,patch,0,7,0,new ParamModel(patch,100),new                                          VcedSender(53)),1,1,3,1,18);<br>
+<br>
+The first parameter is the name of the pane you wish to put the widget on. You would have created this pane previously as a JPane. Usually I use panes to break the interface into functional sections (such as LFO parameters, filter parameters, etc.)<br>
+<br>
+The second parameter is the widget to create, in this case a Scrollbar. Notice that the widget itself takes a few parameters, we'll get to that in a moment). the last 5 parameters after the end of the constructor for the Widget are all numbers. The first four represend the location and size of the widget within the Pane (Read up on gridbaglayout in sun's java tutorial). They are (in order) the horizontal location, the vertical location, the horizontal size, and the vertical size). The last number is the fader number. Each widget needs to have a unique fader number and they should go in order. lable all widgets with positive numbers except for checkboxes which get negative numbers (buttons). So the sliders etc. would go 1,2,3,4,5.. and the checkboxes would go -1,-2,-3,-4,-5.. etc.<br>
+<br>
+    (B) The provided widgets:<br>
+<br>
+         ScrollBarWidgets contain a label, a slider, and a numeric readout of the value of the slider. They are the most common widgets. The first parameter to the widget should be its label. the second one will always be &quot;patch&quot;. The next two values are the minimum and maximum values on the slider. The fifth value is a value offset for the slider. This is usually zero, but gets used if the parameter in the syntheizer is (for example ) 0 through 127, but should be displayed as -63 to +63). The last two parameters are a model and sender for this fader (we'll get to those after we deal with the widgets)<br>
+<br>
+   	 ScrollBarLookupWidgets are just like ScrollBarWidgets but they let the numeric readout contain values other than numbers. They are used rarely, for example if a parameter can take the values of OFF, 1,2,3,4,5,6 or 7. You might use one. You wouldn't want to use a ScrollBar because the first value should be OFF, not zero. You could also use a combobox in this situation. The constructor is about the same as for a combo box.<br>
+ 	 ComboBoxWidgets are dropdown list of choices that are best used for non-numeric data (such as LFO shape). Here's an example of setting up a ComboBoxWidget:<br>
+<br>
+       addWidget(panel,new ComboBoxWidget(&quot;EG Shift&quot;,patch,new ParamModel(patch,20+(i*5)),new     <br>
+            AcedSender(i*5+4),new String [] {&quot;96db&quot;,&quot;48db&quot;,&quot;24db&quot;,&quot;12db&quot;}),0,4,1,1,5);<br>
+<br>
+Parameters to the constructor are 1) The Label  2) &quot;patch&quot;  3) a model 4) a sender 5) an array of all the values that it can contain.<br>
+<br>
+	CheckBoxWidgets are used for parameters that can be either on or off. Heres an example:<br>
+<br>
+ addWidget(lfoPane,new CheckBoxWidget(&quot;1&quot;,patch,new ParamModel(patch,55+3*13),new 	VcedSender(3*13+8)),3,6,1,1,-19);<br>
+<br>
+Parameters to the Constructor are 1)The Label 2) &quot;patch&quot; 3) a model 4) a sender<br>
+<br>
+	EnvelopeWidgets, the final widget type, are vastly more complex than the others.They represent several parameters on the synth, such as the attack, decay, sustain, and release of a VCA envlope.<br>
+Note that the fader number you give to an envelope widget represents it's first fader number, it will take as many as it needs starting at that one to represent all of it's parameters.<br>
+<br>
+The constructor for an envelope widget takes in its constructor a list of EnvelopeNodes, each with its own constructor. Each EnvelopeNode is one of the movable squares on the envelope. Some of these nodes<br>
+are stationary, some contain two parameters on the synth and can be moved vertically and horizontally and others contain only one parameter and can therefore be moved in only one direction. Here is an example:<br>
+<br>
+     addWidget(panel,new EnvelopeWidget(&quot;  Envelope&quot;,patch,new EnvelopeNode [] {<br>
+        new EnvelopeNode(0,0,null,0,0,null,0,false,null,null,null,null),     <br>
+	new EnvelopeNode(0,31,new ParamModel(patch,i*13+47),30,30,null,10,true,new 	<br>
+   	  VcedSender(i*13),null,&quot; AR&quot;,null),<br>
+	new EnvelopeNode(0,31,new ParamModel(patch,i*13+48),0,15,new 	   	  <br>
+	  ParamModel(patch,i*13+51),25,true,new VcedSender(i*13+1),new <br>
+	  VcedSender(i*13+4),&quot;D1R&quot;,&quot;D1L&quot;),<br>
+	new EnvelopeNode(0,31,new ParamModel(patch,i*13+49),0,0,null,10,true,new 	   	  <br>
+	   VcedSender(i*13+2),null,&quot;D2R&quot;,null),<br>
+	new EnvelopeNode(1,15,new ParamModel(patch,i*13+50),0,0,null,0,true,new 	              	<br>
+	  VcedSender(i*13+3),null,&quot;RR&quot;,null),<br>
+      }     ),3,0,3,5,10);<br>
+<br>
+As you can see, the Envelope Widget takes a lable, followed by &quot;patch&quot; and then an array of envelope<br>
+nodes. The parameters given to the nodes constructor have the following meaning:<br>
+<br>
+ public EnvelopeNode(int minx, int maxx,ParamModel ofsx, int miny, int maxy, ParamModel ofsy,int basey,boolean invertx, SysexSender x, SysexSender y,String namex, String namey)<br>
+<br>
+minx- The minimum value permitted by the Synth-Parameter which rides the X-Axis of the Node<br>
+maxx -The maximum value   &quot;&quot;            &quot;&quot;                        &quot;&quot;               &quot;&quot;<br>
+miny-      minumum        &quot;&quot;            &quot;&quot;                        &quot;&quot;     Y-Axis    &quot;&quot;<br>
+maxy- The  maximum        &quot;&quot;            &quot;&quot;                        &quot;&quot;       &quot;&quot;      &quot;&quot;<br>
+<br>
+ofsx and ofsy- For the X and Y parameters-- this is the ParameterModel which provides reading/writing abilities to the sysex data representing the parameter<br>
+<br>
+basey- Sometimes you don't want Zero on a Y-access-riding-parameter to be all the way down at the bottom. This gives it a little bit of rise. BaseY will be added to all Y values. (This doesn't change the function of the envelopeWidget, but makes it look nicer and possibly be more intuitive to use<br>
+<br>
+invertx- sometimes on an x-riding attribute 0 is the fastest, other times its the slowest. THis allows you to choose<br>
+<br>
+x & y- The senders which send sysex messages to the synths when the Node is moved<br>
+<br>
+namex, name y, the names of the parameters riding each access<br>
+**Using nulls for the Models and Senders and setting min to max means that a node is stationary on that axis and has no related parameter<br>
+**Using EnvelopeNode.SAME (or 5000) for MinY & MaxY means that the height remains at whatever the previous node was at.<br>
+<br>
+I hope that made sense, if not, just take a look at the way EnvelopeWidgets are used by various single editors.<br>
+<br>
+<br>
+<br>
+	(C) Models and Senders<br>
+<br>
+	Models and Senders are objects which commicate data between the synth and the widgets. Senders first: Everytime a widget moves, its Sender gets told. The job of the Sender is to send a Sysex string to the synth informing it of the change. Usually a Single Editor will have one or more Sender. Sometimes more than one is used because a synth uses more than one method to transfer the data. Here's an example<br>
+from the YamahaTX81z Editor:<br>
+<br>
+<br>
+class VcedSender extends SysexSender<br>
+{<br>
+  int parameter;<br>
+  byte []b = new byte [7];<br>
+  public VcedSender(int param) <br>
+  {parameter=param;<br>
+   b[0]=(byte)0xF0; b[1]=(byte)0x43;b[3]=(byte)0x12;b[4]=(byte)parameter;b[6]=(byte)0xF7;<br>
+  }<br>
+  public byte [] generate (int value)<br>
+  {b[5]=(byte)value;b[2]=(byte)(16+channel-1);return b;}<br>
+  <br>
+}<br>
+<br>
+The TX81z has two senders, VcedSender (shown above) and AcedSender (not shown) because it uses two<br>
+slightly different methods to transfer two types of data (called Vced and Aced in the TX81z manuel)<br>
+The Consturctor for a sender takes a parameter representing which parameter a particular instance of the sender should control and creates a sysex message containing all necessary information except for the data value to be transmitted and the channel to transmit on. When the widget attatched to this instance of the sender moves, the generate method of the sender gets called with the value to send. The generate function simply puts the value and channel into the message and returns it.<br>
+<br>
+In addition to sending changes to the synth, we want to keep track of the changes to the patch so that when we next call up this patch the changes are there. We also want to be able to set the Widgets to the correct values for a particular patch when the Single Editor is opened. This is what the Model is for.<br>
+The default model is called ParamModel and is used by the YamahaTX81z editor. Its constructor takes two parameters, the patch being edited &quot;patch&quot; and the offset into the patch of the value. Sometimes the<br>
+default can be used, othertimes it is either necessary or more convenient to subclass ParamModel to make your own Model. Here's an example from the KawaiK4 Editor:<br>
+<br>
+<br>
+ class K4Model extends ParamModel<br>
+{ <br>
+ public int bitmask;<br>
+ public int mult;<br>
+ public K4Model(Patch p,int o) {ofs=o+8;patch=p;bitmask=255;mult=1;}<br>
+ public K4Model(Patch p,int o,int b) {ofs=o+8;patch=p;bitmask=b;<br>
+        if ((bitmask&1)==1) mult=1; else<br>
+        if ((bitmask&2)==2) mult=2; else<br>
+        if ((bitmask&4)==4) mult=4; else<br>
+        if ((bitmask&8)==8) mult=8; else<br>
+        if ((bitmask&16)==16) mult=16; else<br>
+        if ((bitmask&32)==32) mult=32; else<br>
+        if ((bitmask&64)==64) mult=64; else<br>
+        if ((bitmask&128)==128) mult=128;<br>
+<br>
+ }<br>
+ public void set(int i) {patch.sysex[ofs]=(byte)((i*mult)+(patch.sysex[ofs]&(~bitmask)));}<br>
+ public int get() {return ((patch.sysex[ofs]&bitmask)/mult);}<br>
+<br>
+}<br>
+<br>
+In the case of the KawaiK4, we couldn't just use ParamModel, because some Kawai K4 parameters are bitmasks stored in the same byte as other parameters. The above class K4Model, takes care of deciphering the bitmasks. The model is designed to take the same two parameters as ParamModel. It implements two functions in addition to its constructor. the set function is given a value and must set its parameter to the value. the get must return the value of its parameter. <br>
+<br>
+Note how the models and senders are used in the addWidget functions in the various editors. addWidget doesn't care if you use the default JSynthLib 'ParamModel' or if you implement your own. This makes the widgets much more extensible. They can be used without needing to know how exactly the data is supposed to be accessed. THe model and sender takes care of that.<br>
+<br>
+This probably all sounds more complex than it really is, just take a look at the editors for various other synths, try changing some things maybe to see how they work. It shouldn't be too hard to figure out, but i'm not too good at explaining. <br>
+<br>
+	(d) Action Listeners<br>
+<br>
+Java/Swing provides a construct known as an action listener which allows you to write a routine which is called whenever a widget is moved. You never need to use these for dealing with built in JSynthLib widgets because they take care of it themselves. It is usefull however if you want to have a widget do something more than control the synth. the Yamaha TX81x editor, for example, uses one to change the picture of the algorithem everytime the 'algorithem' slider is moved.<br>
+<br>
+<br>
+<br>
+<b>Section 8: Testing Your Driver...<br></b>
+<i>This section of the Documentation was written by Yves Lefebvre.</i>
+<p>This is an attempt to do a test plan when writing a new driver for J. It take little time to do and may help finding problem before the driver is available publicly.
+
+
+<p>First thing to do: you must do some single dump and some bank dump from your synth to your computer without using JSyntLib (I use Cakewalk to do that but there should be some simple freeware to do this). Save those dump in .syx format (binary). Remember, we are not using JSynthLib at his point in order to have something "clean" to refer to when testing the new driver.
+
+<p>One important note : It seems that some synth could have "bugs" in their factory patches. So if you resend those patch to the synth, they will be "corrected". To test this, you can simply resend the bank dump from your PC to the synth and do a new bank dump from synth to PC. If there are difference and the first bank dump and the second, this is probably the problem I mention. Normally, resending the second dump should be consistent after that. Any dump from synth to PC should be identical to the second dump since the synth has now "corrected" the original dump! I had this problem with some specific patch of my Nova after restoring original patches on the unit with the "Restore from ROM" command. I had spent some time figuring out the difference between dump so I'm warning you not to do the same mistake!
+
+<p>Now, redo the same thing (single dump and bank dump) but this time, change your device id number on the synth (sometime call global Midi channel). Those new dump may have some byte different or not. In most case, single dump will be identical while bank dump may be different.
+
+
+<p><b>Single driver:</b>
+
+<p>-Try to open a "clean" .syx file from J and send it to the edit buffer of your synth. Try it to see if the name and sound seems OK. Do a dump (with external soft) and compare the file, they should be identical. Make sure that the patch is really in the edit buffer (and not written in memory) by changing patch on the synth and going back to the patch number it was before the send: the patch you just send should not be there (this may vary with some synth model).
+
+<p>-Try to do a single patch dump to J. Check that the patch name is correct in JSynthLib. Export it to a .syx file and compare it (diff) with the original "clean" version. Should be the same. (Those steps will confirm that loading external file and receiving/sending a dump give the same result)
+
+
+<p>-Try to store this patch at different location in the synth. At least, try to store in patch 0 or 1 and to the highest patch number of your synth. Do that in every user bank if possible. Verify that the patch appear in all the location you save it.
+
+<p>-Create a new patch with JSynthLib and send it to your synth. Make sure the new patch didn't do anything wrong on the synth (if your new patch is all 0 with a name, some synth may react strangely to invalid combination of values). If you want to play safe, your createNewPatch method could construct a valid default patch for your synth: just do a dump of a simple patch and integrate this in the code.
+
+<p>-Now, redo all those step with a different id number on the synth. Change JSynthLib accordingly to that new Id (channel number). Some time, it's possible you left a bug if you didn't test with a different ID (channel number).
+
+<p><b>Bank driver:</b>
+
+<p>- Open a "clean" .syx bank file with JSynthLib. Make sure that all individual patch name make sense.
+
+<p>- Send one patch from the bank to your synth. Make a dump (from your synth) of that single patch with another software. Now, do a diff of this dump with a previously made dump of that same patch. This will make sure that extracting a patch from a bank and sending it to the synth gave the exact same thing. You should really do a binary compare of the file since just playing it is not enough. Even if some parameter are sent wrong, the patch may sound correct to your ear, so you need to do a real compare.
+
+<p>- Erase all bank memory on your synth. Now, send the whole bank from JSynthLib to your synth. Do a dump from the synth to your external software. The .syx file should be the same than the original one. This is not the same thing than the previous step: extracting a single patch from a bank and sending a whole bank is very different. Note: one potential problem here is that some synth may need more time to "digest" a big bank dump from your PC. In those cases, you should put some delay in your code until you find a safe speed.
+
+<p>- Try sending your bank to all possible banks in the synth and verify their integrity.
+
+<p>- Now, you should redo some of those steps with a different channel number, just to make sure. Note that the bank .syx file will likely have the channel byte different so you need to extract a "clean" bank with the new channel first from your synth.
+
+<p><b>Editor: </b>
+
+<p>Note: I never write an editor but here are some suggestions:
+
+<p>- Usually, modifications done in the editor are sent in real-time to your synth. However, the editor must also make the same modification in the single patch that is edited. To test that it works correctly, you should made some modification in the editor and save the patch (do not send that patch to the edit buffer of your synth). Now, on your synth, the same patch should be in the edit buffer since all single edit will have send sysex for every parameter changed. Do a dump from your synth to PC and compare it to the patch JSynthLib just created. They should be identical. Normally, you should try each fader or knob in the editor to be sure they are controlling the correct parameter. Just move each one at random when creating the patch. If you do that some time (random edit, saving and comparing the file), chance are the editor behave correctly. Note: I suggest to move each fader at random because putting all of them to 0 or max is not a good idea since your editor may send knob info to the wrong place and you will not be able to detect it by comparing the .syx file!
+
+
+<p>Last step, send your new driver for integration in the next release of JSynthLib!
+
+<p>Yves Lefebvre
+<br>ivanohe@abacom.com
+<br>www.abacom.com/~ivanohe
+
+<br>
+<br>
+<br>
+<b>Section 9: Final words...<br></b>
+<br>
+Of course, nothing ever works the first time. Its never as easy as it should be. If you have problems getting the synth to do what your editor or driver is telling it to do. here's two debugging tricks I use.<br>
+	1) This is pretty common, but just sprinkle &quot;System.out.println&quot; statemenets through out the troublesome code. Get a good idea of what values are what when and look for something that shouldnt be. Better yet, use ErrorMsg.reportError("ErrorMsg goes here") instead. This way the message is only printed if JSynthLib is run in debugging mode (aka java -jar JSynthLib.jar 2) <br>
+	2) Use a midi cable to connect your computer's midi out to midi in. Get a program from the internet to printout all incomming midi messages. now you can see what messages your editor/driver is sending and you can check them for correctness.<br>
+      3) When you are working on a driver and it doesn't seem to be doing what the code looks like it should do, one common problem is that if you make a change to the Constructor, you need to go into JSynthLib and remove the driver from the SynthConfig Dialog box and then add it again. Otherwise the newly Changed constructor isn't getting called.<br>
+Good Luck. <br>
+	
+
+</body>
+</html>
+
+</body>
+<p></p>
+</html>

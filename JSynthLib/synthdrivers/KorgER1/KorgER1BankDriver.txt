@@ -1,0 +1,3 @@
+There is no Bank driver for the Korg yet. Their bank dump seems weird (first patch in the bank is identical to a single, other start to vary in size and content), so my attempt were not sucessfull. The doc they have is not accurate about the content of a patch: there is more byte in a real dump than in the doc and the order of byte is not like in the doc... If someone want to do a bank driver, please contact me (ivanohe@abacom.com), I could provide what I had already done to save you some time.
+
+Yves
