@@ -41,8 +41,6 @@ public class AlesisDM5SysInfoDriver extends Driver {
         sysexID = Constants.SYS_INFO_SYSEX_MATCH_ID;
         
         patchSize = Constants.HDR_SIZE + Constants.SYS_INFO_SIZE + 1;
-//        patchNameStart = Constants.PATCH_NAME_START; // includes the sysex header
-//        patchNameSize = Constants.PATCH_NAME_SIZE;
         deviceIDoffset = Constants.DEVICE_ID_OFFSET;
         bankNumbers = Constants.SYS_INFO_BANK_LIST;
         patchNumbers = Constants.SYS_INFO_PATCH_LIST;
@@ -55,25 +53,6 @@ public class AlesisDM5SysInfoDriver extends Driver {
         super(patchType, authors);
     }
 
-    /** Checks whether this is a valid Alesis DM5 System Info Patch.
-        * This version does not use patchString because patchString sometimes
-        * has the wrong opcode for a SysInfo patch.
-        */
-    public boolean supportsPatch (String patchString, byte[] sysex) {
-        if ((sysex[0] == Constants.SYS_INFO_DUMP_HDR_BYTES[0])
-            && (sysex[1] == Constants.SYS_INFO_DUMP_HDR_BYTES[1])
-            && (sysex[2] == Constants.SYS_INFO_DUMP_HDR_BYTES[2])
-            && (sysex[3] == Constants.SYS_INFO_DUMP_HDR_BYTES[3])
-            && (sysex[4] == Constants.SYS_INFO_DUMP_HDR_BYTES[4])
-            && (sysex[5] == (byte)getChannel())
-            && (sysex[6] == Constants.SYS_INFO_DUMP_HDR_BYTES[6])
-            && (sysex.length == Constants.HDR_SIZE + Constants.SYS_INFO_SIZE + 1)) {
-            return true;
-        } else {
-            return false;
-        }           
-    }
-    
     /** Send Program Change MIDI message. The Alesis System Info driver does
         * not utilize program change messages. This method is overrided with a
         * null method.*/
@@ -93,5 +72,12 @@ public class AlesisDM5SysInfoDriver extends Driver {
     public void requestPatchDump(int bankNum, int patchNum) {
         send(SYS_REQ.toSysexMessage(getChannel(),
                                     new SysexHandler.NameValue("channel", getChannel())));
+    }
+    
+    /** Opens an edit window on the specified patch.
+        */
+    protected JSLFrame editPatch(Patch p)
+    {
+        return new AlesisDM5SysInfoEditor((Patch)p);
     }
 }
