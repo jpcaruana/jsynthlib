@@ -1,7 +1,3 @@
-/*
- * NewPatchDialog.java
- *$Id$
- */
 package core;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -25,13 +21,12 @@ import java.awt.*;
 import java.io.*;
     
 /**
- *
- * NewPatchDialog.java - Dialog to create a new Patch of the loaded Devices resp. Drivers
+ * Dialog to create a new Patch of the loaded Devices respective Drivers.
  * Any 'Generic' device and 'Converter' driver are skipped.
- * 
+ *
  * @author  unascribed
  * @author  Torsten Tittmann
- * @version v 1.1, 2003-02-09 
+ * @version $Id$
  */
 public class NewPatchDialog extends JDialog
 {
@@ -76,10 +71,10 @@ public class NewPatchDialog extends JDialog
             {
               try
               {
-                            // If the actual driver doesn't override the method "createNewPatch"
-                            // this command will throw an exception. 
-                            // This means, that the driver doesn't support the creation of a new patch
-                            PatchEdit.getDriver(i,j).getClass().getDeclaredMethod("createNewPatch",null);
+		  // If the actual driver doesn't override the method "createNewPatch"
+		  // this command will throw an exception. 
+		  // This means, that the driver doesn't support the creation of a new patch
+		  PatchEdit.getDriver(i,j).getClass().getDeclaredMethod("createNewPatch",null);
                 ((deviceAssignment)deviceAssignmentList.get(index)).add(j, driver);     // the original driverNum/driver
                         }
               catch (Exception ex)
@@ -128,11 +123,16 @@ public class NewPatchDialog extends JDialog
 
 	  System.out.println("Bingo "+driver.toString());
 	  //System.out.println(deviceComboBox.getSelectedIndex()+" & "+ driverComboBox.getSelectedIndex());
-          PatchEdit.Clipboard=driver.createNewPatch();
-	  PatchEdit.Clipboard.deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDeviceNum();
-	  PatchEdit.Clipboard.driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).getDriverNum();
- 	  System.out.println("deviceNum="+PatchEdit.Clipboard.deviceNum+" & driverNum="+PatchEdit.Clipboard.driverNum);
-
+          Patch p = driver.createNewPatch();
+	  if (p != null) {
+	      PatchEdit.Clipboard = p;
+	      // deviceNum and driverNum is already set by the constructor of Patch called in createNewPatch.
+// 	      PatchEdit.Clipboard.deviceNum = (int) ((deviceAssignment)deviceComboBox.getSelectedItem()).getDeviceNum();
+// 	      PatchEdit.Clipboard.driverNum = (int) ((driverAssignment)driverComboBox.getSelectedItem()).getDriverNum();
+// 	      System.out.println("deviceNum="+PatchEdit.Clipboard.deviceNum+" & driverNum="+PatchEdit.Clipboard.driverNum);
+	  } else {
+	      ErrorMsg.reportError("New Patch Error", "The driver does not support `New Patch' function.");
+	  }
           setVisible(false);
 	  dispose();
                         }
@@ -140,7 +140,7 @@ public class NewPatchDialog extends JDialog
       buttonPanel.add( create );
             
       //----- Create "Cancel" button
-            JButton cancel = new JButton("Cancel");
+      JButton cancel = new JButton("Cancel");
       cancel.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
