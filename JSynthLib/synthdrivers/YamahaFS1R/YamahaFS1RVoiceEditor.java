@@ -399,12 +399,12 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 
 		JPanel oAllPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		FS1RModel oSkirtM = new BitModel(p, 0x05, aOp, 0x38, 3);
-		oAllPanel.add(new ComboBoxWidget("Freq mode", p, oFreqModeM, new FS1RSender(0x05, aOp), new String []{"Ratio", "Fixed"}));
+		oAllPanel.add(new ComboBoxWidget("Freq mode", p, oFreqModeM, new BitSender(p, 0x05, aOp), new String []{"Ratio", "Fixed"}));
 		oAllPanel.add(new SpinnerWidget("Skirt", p, 0, 7, 0, oSkirtM, new BitSender(p, 0x05, aOp)));
 		oAllPanel.add(new CheckBoxWidget("Key sync", p, oKeySyncM, new BitSender(p, 0, aOp)));
 
 		JPanel oResPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oResPanel.add(new ComboBoxWidget("Freq mode", p, oFreqModeM, new FS1RSender(0x05, aOp), new String []{"Ratio", "Fixed"}));
+		oResPanel.add(new ComboBoxWidget("Freq mode", p, oFreqModeM, new BitSender(p, 0x05, aOp), new String []{"Ratio", "Fixed"}));
 		oResPanel.add(new SpinnerWidget("Skirt", p, 0, 7, 0, oSkirtM, new BitSender(p, 0x05, aOp)));
 		oResPanel.add(new KnobWidget("Resonance", p, 0, 99, 0, new FS1RModel(p, 0x06, aOp), new FS1RSender(0x06, aOp)));
 		oResPanel.add(new CheckBoxWidget("Key sync", p, oKeySyncM, new BitSender(p, 0, aOp)));
