@@ -314,7 +314,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         protected Transferable createTransferable(JComponent c) {
             JTable t = (JTable) c;
             PatchGridModel m = (PatchGridModel) t.getModel();
-            return (Transferable) m.getPatchAt(t.getSelectedRow(), t
+            return m.getPatchAt(t.getSelectedRow(), t
                     .getSelectedColumn());
         }
 

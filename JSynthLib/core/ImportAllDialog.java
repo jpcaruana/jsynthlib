@@ -155,7 +155,7 @@ public class ImportAllDialog extends JDialog
                             LibraryFrame frame = (LibraryFrame) PatchEdit.getDesktop().getSelectedFrame();
                             if (extract && (pk.isBankPatch()))
                             {
-                                String[] pn = ((IPatchDriver) pk.getDriver()).getPatchNumbers();
+                                String[] pn = pk.getDriver().getPatchNumbers();
                                 for (int j=0; j<((IBankPatch) pk).getNumPatches(); j++)
                                 {
                                     IPatch q = ((IBankPatch) pk).get(j);
@@ -254,7 +254,7 @@ public class ImportAllDialog extends JDialog
 
          public Object getValueAt (int row, int col)
          {
-             Device myDevice=(Device)AppConfig.getDevice (row);
+             Device myDevice = AppConfig.getDevice(row);
              if (col==1) return myDevice.getManufacturerName ()+" "+myDevice.getModelName ()/*+" "+myDriver.getPatchType ()*/;
              else return includeDevice[row];
          }

@@ -105,7 +105,7 @@ public final class TD6SingleDriver extends Driver {
     public void storePatch (Patch p, int bankNum, int patchNum) {
 // 	ErrorMsg.reportStatus("storePatch: " + p);
 //  	ErrorMsg.reportStatus("storePatch: " + device);
-	storePatch(((Patch)p).sysex, 0, patchNum);
+	storePatch(p.sysex, 0, patchNum);
     }
 
     /**
@@ -232,6 +232,6 @@ public final class TD6SingleDriver extends Driver {
      */
     public JSLFrame editPatch(Patch p) {
 // 	ErrorMsg.reportStatus("editPatch: " + device);
-	return new TD6SingleEditor((Patch)p);
+	return new TD6SingleEditor(p);
     }
 }

@@ -54,7 +54,7 @@ public class DKnob extends JComponent {
 
     private Arc2D hitArc = new Arc2D.Float(Arc2D.PIE);
 
-    private float ang = (float) START_ANG;
+    private float ang = START_ANG;
     private float val;
     private int dragpos = -1;
     private float startVal;
@@ -114,11 +114,11 @@ public class DKnob extends JComponent {
 	addMouseMotionListener(new MouseMotionAdapter() {
 		public void mouseDragged(MouseEvent me) {
 		    if ( dragType == SIMPLE) {
-			float f = DRAG_SPEED * (float)((me.getX() + me.getY()) - dragpos);
+			float f = DRAG_SPEED * ((me.getX() + me.getY()) - dragpos);
 			setValue(startVal + f);
 		    }
 		    else if (dragType == SIMPLE_MOUSE_DIRECTION) {
-			float f = (float)(DRAG_SPEED * (me.getX() + me.getY() - dragpos));
+			float f = (DRAG_SPEED * (me.getX() + me.getY() - dragpos));
 			setValue(startVal - f);
 		    }
 		    else if ( dragType == ROUND) {
@@ -196,7 +196,7 @@ public class DKnob extends JComponent {
 	if (val < 0) val = 0;
 	if (val > 1) val = 1;
 	this.val = val;
-	ang = START_ANG - (float) LENGTH_ANG * val;
+	ang = START_ANG - LENGTH_ANG * val;
 	repaint();
 	fireChangeEvent();
     }
@@ -288,7 +288,7 @@ public class DKnob extends JComponent {
 	    int y = oOffset + oSizeDiv2 - (int)(oSizeDiv2 * oSin);
 	    g.drawLine(oOffset + oSizeDiv2, oOffset + oSizeDiv2, x, y);
 	    g.setColor(Color.gray);
-	    int s2 = (int) Math.max(size / 6, 6);
+	    int s2 = Math.max(size / 6, 6);
 	    g.drawOval(oOffset + s2, oOffset + s2, size - s2*2, size - s2*2);
 
 	    int dx = (int)(2 * oSin);

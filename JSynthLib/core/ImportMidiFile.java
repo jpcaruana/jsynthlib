@@ -15,7 +15,7 @@ import javax.sound.midi.*;
 
 public class ImportMidiFile {
 
-    static boolean doImport(java.io.File file) throws java.io.IOException {
+    static boolean doImport(java.io.File file) {
         Sequence seq;
         Track[] tr;
 

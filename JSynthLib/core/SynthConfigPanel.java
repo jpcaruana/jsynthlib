@@ -251,7 +251,7 @@ class SynthConfigPanel extends ConfigPanel {
 		    return getValueAt(0, c).getClass();
 		}
 		public Object getValueAt(int row, int col) {
-		    Device myDevice = (Device) AppConfig.getDevice(row);
+		    Device myDevice = AppConfig.getDevice(row);
 
 		    switch (col) {
 			    case SYNTH_NAME:
@@ -304,7 +304,7 @@ class SynthConfigPanel extends ConfigPanel {
 		}
 
 		public void setValueAt(Object value, int row, int col) {
-		    Device dev = (Device) AppConfig.getDevice(row);
+		    Device dev = AppConfig.getDevice(row);
 		    switch (col) {
 		    case SYNTH_NAME:
 			dev.setSynthName((String) value);

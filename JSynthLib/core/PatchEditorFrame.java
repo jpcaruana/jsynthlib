@@ -487,7 +487,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                 if (w.getNumFaders() == 1)
                     w.setValue((int) (w.getValueMin() + ((float) (value) / 127 * (w.getValueMax() - w.getValueMin()))));
                 else            // EnvelopeWidget
-                    w.setFaderValue(fader, (int) value);
+                    w.setFaderValue(fader, value);
                 w.repaint();
                 return;
             }
@@ -502,7 +502,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
                 if (w.getNumFaders() == 1)
                     w.setValue((int) (w.getValueMin() + ((float) (value) / 127 * (w.getValueMax() - w.getValueMin()))));
                 else            // EnvelopeWidget
-                    w.setFaderValue(fader, (int) value);
+                    w.setFaderValue(fader, value);
                 w.repaint();
                 recentWidget = w;
                 return;

@@ -387,10 +387,10 @@ public final class MidiUtil {
 	ArrayList list = new ArrayList();
 
         for (int i = 0; i < d.length; i++) {
-	    if ((int) (d[i] & 0xFF) == SysexMessage.SYSTEM_EXCLUSIVE) {
+	    if ((d[i] & 0xFF) == SysexMessage.SYSTEM_EXCLUSIVE) {
 		int j;
 		// let cause exception if there is no END_OF_EXCLUSIVE
-		for (j = i + 1; (int) (d[j] & 0xff) != ShortMessage.END_OF_EXCLUSIVE; j++)
+		for (j = i + 1; (d[j] & 0xff) != ShortMessage.END_OF_EXCLUSIVE; j++)
 		    ;
 		// here d[j] is EOX.
 		int l = j - i + 1;
@@ -434,7 +434,7 @@ public final class MidiUtil {
 	//   "msg instanceof com.sun.media.sound.FastShortMessage"
 	// since we don't have the class.
 	if (msg.getClass().toString().equals("class com.sun.media.sound.FastShortMessage"))
-	    return (MidiMessage) conv(msg);
+	    return conv(msg);
 	else
 	    return msg;
     }
@@ -538,7 +538,7 @@ public final class MidiUtil {
 	    // pop the oldest message
 	    MidiMessage msg = (MidiMessage) list.remove(0);
 	    // for java 1.4.2 bug
-	    msg = (MidiMessage) MidiUtil.fixShortMessage(msg);
+	    msg = MidiUtil.fixShortMessage(msg);
 	    log("RECV: ", msg);
 	    return msg;
 	}
@@ -620,7 +620,7 @@ public final class MidiUtil {
 	    } while (firstMsg || buffer[totalLen - 1] != (byte) ShortMessage.END_OF_EXCLUSIVE);
 	    SysexMessage sysexmsg = new SysexMessage();
 	    sysexmsg.setMessage(buffer, totalLen);
-	    return (MidiMessage) sysexmsg;
+	    return sysexmsg;
 	}
 
 	MidiMessage getMessage()
@@ -919,7 +919,7 @@ public final class MidiUtil {
 	System.out.println(midiMessageToString(sysex));
 	smsg.setMessage(ShortMessage.MIDI_TIME_CODE, 0x4B, 0x70); // 1B
 	System.out.println(midiMessageToString(smsg));
-	MidiMessage msg = (MidiMessage) new ShortMessage();
+	MidiMessage msg = new ShortMessage();
 	((ShortMessage) msg).setMessage(ShortMessage.SONG_POSITION_POINTER, 0x4B, 0x70); // 2B
 	System.out.println(midiMessageToString(msg));
     }

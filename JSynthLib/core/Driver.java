@@ -278,7 +278,7 @@ abstract public class Driver implements IPatchDriver {
     }
 
     public final IPatch createPatch() {
-        return (IPatch) createNewPatch();
+        return createNewPatch();
     }
 
     /**
@@ -452,7 +452,7 @@ abstract public class Driver implements IPatchDriver {
         try {
             namebytes = name.getBytes("US-ASCII");
             for (int i = 0; i < patchNameSize; i++)
-                ((Patch)p).sysex[patchNameStart + i] = namebytes[i];
+                p.sysex[patchNameStart + i] = namebytes[i];
         } catch (UnsupportedEncodingException ex) {
             return;
         }
@@ -549,9 +549,9 @@ abstract public class Driver implements IPatchDriver {
      */
     protected final void sendPatchWorker(Patch p) {
         if (deviceIDoffset > 0)
-            ((Patch)p).sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
+            p.sysex[deviceIDoffset] = (byte) (getDeviceID() - 1);
 
-        send(((Patch)p).sysex);
+        send(p.sysex);
     }
 
     /**

@@ -202,7 +202,7 @@ class SceneFrame extends AbstractLibraryFrame {
                 }
             } catch (NullPointerException e) {
                 ErrorMsg.reportStatus("SceneFrame.getValueAt: row=" + row
-                        + ", col=" + col + ", Patch=" + (Patch) myPatch);
+                        + ", col=" + col + ", Patch=" + myPatch);
                 ErrorMsg.reportStatus("row count =" + getRowCount());
                 e.printStackTrace();
                 return null;
@@ -298,7 +298,7 @@ class SceneFrame extends AbstractLibraryFrame {
             SceneListModel pm = (SceneListModel) ((JTable) c).getModel();
             Scene s = pm.getSceneAt(((JTable) c).getSelectedRow());
             ErrorMsg.reportStatus("SceneFrame.createTransferable " + s);
-            return (Transferable) s;
+            return s;
         }
 
         public boolean importData(JComponent c, Transferable t) {

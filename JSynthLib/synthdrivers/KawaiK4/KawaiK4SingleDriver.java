@@ -58,9 +58,9 @@ public class KawaiK4SingleDriver extends Driver {
 	    Thread.sleep(100);
 	} catch (Exception e) {
 	}
-	((Patch)p).sysex[3] = (byte) 0x20;
-	((Patch)p).sysex[6] = (byte) (bankNum << 1);
-	((Patch)p).sysex[7] = (byte) (patchNum);
+	p.sysex[3] = (byte) 0x20;
+	p.sysex[6] = (byte) (bankNum << 1);
+	p.sysex[7] = (byte) (patchNum);
 	sendPatchWorker(p);
 	try {
 	    Thread.sleep(100);
@@ -70,8 +70,8 @@ public class KawaiK4SingleDriver extends Driver {
     }
 
     public void sendPatch(Patch p) {
-	((Patch)p).sysex[3] = (byte) 0x23;
-	((Patch)p).sysex[7] = (byte) 0x00;
+	p.sysex[3] = (byte) 0x23;
+	p.sysex[7] = (byte) 0x00;
 	sendPatchWorker(p);
     }
 
@@ -98,7 +98,7 @@ public class KawaiK4SingleDriver extends Driver {
     }
 
     public JSLFrame editPatch(Patch p) {
-	return new KawaiK4SingleEditor((Patch)p);
+	return new KawaiK4SingleEditor(p);
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {

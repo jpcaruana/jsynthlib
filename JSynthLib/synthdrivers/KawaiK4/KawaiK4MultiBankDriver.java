@@ -48,7 +48,7 @@ public class KawaiK4MultiBankDriver extends BankDriver {
         int nameStart = getPatchStart(patchNum);
         nameStart += 0; //offset of name in patch data
         try {
-            StringBuffer s = new StringBuffer(new String(((Patch)p).sysex, nameStart,
+            StringBuffer s = new StringBuffer(new String(p.sysex, nameStart,
 							 10, "US-ASCII"));
             return s.toString();
         } catch (UnsupportedEncodingException ex) {
@@ -66,7 +66,7 @@ public class KawaiK4MultiBankDriver extends BankDriver {
         try {
             namebytes = name.getBytes("US-ASCII");
             for (int i = 0; i < patchNameSize; i++)
-                ((Patch)p).sysex[patchNameStart + i] = namebytes[i];
+                p.sysex[patchNameStart + i] = namebytes[i];
 
         } catch (UnsupportedEncodingException ex) {
 	    return;
@@ -98,7 +98,7 @@ public class KawaiK4MultiBankDriver extends BankDriver {
 		 "Error", JOptionPane.ERROR_MESSAGE);
 	    return;
 	}
-        System.arraycopy(((Patch)p).sysex, HSIZE, ((Patch)bank).sysex, getPatchStart(patchNum), SSIZE);
+        System.arraycopy(p.sysex, HSIZE, bank.sysex, getPatchStart(patchNum), SSIZE);
         calculateChecksum(bank);
     }
 
@@ -108,7 +108,7 @@ public class KawaiK4MultiBankDriver extends BankDriver {
 	sysex[3] = (byte) 0x20; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
 	sysex[6] = (byte) 0x00; sysex[7] = (byte) (0x40 + patchNum);
 	sysex[HSIZE + SSIZE] = (byte) 0xF7;
-	System.arraycopy(((Patch)bank).sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
+	System.arraycopy(bank.sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
         try {
             Patch p = new Patch(sysex, getDevice());
             p.calculateChecksum();
@@ -142,9 +142,9 @@ public class KawaiK4MultiBankDriver extends BankDriver {
 	    Thread.sleep(100);
 	} catch (Exception e) {
 	}
-        ((Patch)p).sysex[3] = (byte) 0x21;
-        ((Patch)p).sysex[6] = (byte) (bankNum << 1);
-        ((Patch)p).sysex[7] = (byte) 0x40;
+        p.sysex[3] = (byte) 0x21;
+        p.sysex[6] = (byte) (bankNum << 1);
+        p.sysex[7] = (byte) 0x40;
         sendPatchWorker(p);
         try {
 	    Thread.sleep(100);

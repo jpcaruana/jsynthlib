@@ -42,7 +42,7 @@ public class NewPatchDialog extends JDialog
 	// Device/Driver. which supports the "createNewPatch" method
 	// Skipping the generic device (i == 0)
 	for (int i=1; i < AppConfig.deviceCount(); i++) {
-	    Device device = (Device) AppConfig.getDevice(i);
+	    Device device = AppConfig.getDevice(i);
 	    for (int j=0; j < device.driverCount(); j++) {
 		IDriver driver = device.getDriver(j);
 		if ((driver.isSingleDriver() || driver.isBankDriver()) // Skipping a converter

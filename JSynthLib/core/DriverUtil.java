@@ -122,9 +122,9 @@ public class DriverUtil {
         // 	for (int i = 1; (sysex.length < 16) ? i < sysex.length : i < 16; i++)
         // {
         for (int i = 1; i < Math.min(16, sysex.length); i++) {
-            if ((int) (sysex[i] & 0xff) < 0x10)
+            if ((sysex[i] & 0xff) < 0x10)
                 patchstring.append("0");
-            patchstring.append(Integer.toHexString((int) (sysex[i] & 0xff)));
+            patchstring.append(Integer.toHexString((sysex[i] & 0xff)));
         }
         return patchstring.toString();
     }

@@ -190,7 +190,7 @@ public class SysexGetDialog extends JDialog {
 
        Device device = (Device) deviceComboBox.getSelectedItem();
        for (int i = 0; i < device.driverCount(); i++) {
-	 IDriver driver = (IDriver) device.getDriver(i);
+	 IDriver driver = device.getDriver(i);
 	 if (driver.isSingleDriver() || driver.isBankDriver()) {
 	   driverComboBox.addItem(driver);
 	 }
@@ -262,7 +262,7 @@ public class SysexGetDialog extends JDialog {
       //----- Start timer and request dump
       myLabel.setText("Getting sysex dump...");
       // patchsize value is similiar to expected transmission time *3
-      timeOut = (long) driver.getPatchSize();
+      timeOut = driver.getPatchSize();
       sysexSize = 0;
       queue = new ArrayList();
       MidiUtil.clearSysexInputQueue(inPort);	// clear MIDI input buffer

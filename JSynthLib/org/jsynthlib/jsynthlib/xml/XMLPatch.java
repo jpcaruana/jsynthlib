@@ -122,9 +122,9 @@ public class XMLPatch implements ISinglePatch {
         StringBuffer patchstring = new StringBuffer("F0");
         int end = Math.min(16, data.length);
         for (int i = 0; i < end; i++) {
-            if ((int) (data[i] & 0xff) < 0x10)
+            if ((data[i] & 0xff) < 0x10)
                 patchstring.append("0");
-            patchstring.append(Integer.toHexString((int) (data[i] & 0xff)));
+            patchstring.append(Integer.toHexString((data[i] & 0xff)));
         }
         return patchstring.toString();        
     }

@@ -207,7 +207,7 @@ class LibraryFrame extends AbstractLibraryFrame {
                     return null;
                 }
             } catch (NullPointerException e) {
-                ErrorMsg.reportStatus("LibraryFrame.getValueAt: row=" + row + ", col=" + col + ", Patch=" + (Patch) myPatch);
+                ErrorMsg.reportStatus("LibraryFrame.getValueAt: row=" + row + ", col=" + col + ", Patch=" + myPatch);
                 ErrorMsg.reportStatus("row count =" + getRowCount());
                 //e.printStackTrace();
                 return null;
@@ -261,12 +261,12 @@ class LibraryFrame extends AbstractLibraryFrame {
         // begin PatchTableModel interface methods
         // It is caller's responsibility to update Table.
         void addPatch(IPatch p) {
-            ErrorMsg.reportStatus("LibraryFrame.addPatch: Patch=" + (Patch) p);
+            ErrorMsg.reportStatus("LibraryFrame.addPatch: Patch=" + p);
             list.add(p);
         }
 
         void setPatchAt(IPatch p, int row) {
-            ErrorMsg.reportStatus("LibraryFrame.setPatchAt: row=" + row + ", Patch=" + (Patch) p);
+            ErrorMsg.reportStatus("LibraryFrame.setPatchAt: row=" + row + ", Patch=" + p);
             list.set(row, p);
         }
 
@@ -297,7 +297,7 @@ class LibraryFrame extends AbstractLibraryFrame {
             PatchTableModel pm = (PatchTableModel) ((JTable) c).getModel();
             IPatch p = pm.getPatchAt(((JTable) c).getSelectedRow());
             ErrorMsg.reportStatus("PatchListTransferHandler.createTransferable " + p);
-            return (Transferable) p;
+            return p;
         }
 
         protected boolean storePatch(IPatch p, JComponent c) {

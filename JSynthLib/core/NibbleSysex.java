@@ -133,6 +133,6 @@ public class NibbleSysex extends Object {
     }
 
     for (int i = 0; i < nData; i++)
-      this.putNibbleInt((int)bytes[i], nBytesPerData, iMultiplier);
+      this.putNibbleInt(bytes[i], nBytesPerData, iMultiplier);
   }
 }

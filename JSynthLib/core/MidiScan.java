@@ -197,7 +197,7 @@ public class MidiScan extends Thread {
                 // Check, wether the driver is already in the list
                 boolean dontadd = false;
                 for (int checkloop = 0; checkloop < AppConfig.deviceCount(); checkloop++) {
-                    String checkDevice = ((Device) AppConfig.getDevice(checkloop)).getClass().getName();
+                    String checkDevice = AppConfig.getDevice(checkloop).getClass().getName();
                     if (checkDevice.equalsIgnoreCase(PatchEdit.devConfig.classNameForIDString(se))) {
                         dontadd = true; // Oh, its already there....
                     }
@@ -237,9 +237,9 @@ public class MidiScan extends Thread {
             
             for (int x = 0; x < msgsize; x++) {
                 report += " ";
-                if ((0xff & (int) answerData[x]) < 0x10)
+                if ((0xff & answerData[x]) < 0x10)
                     report += "0";
-                report += Integer.toHexString(0xff & (int) answerData[x]);
+                report += Integer.toHexString(0xff & answerData[x]);
                 if ((answerData[x] & 0xff) == 0xf7)
                     break;
             }

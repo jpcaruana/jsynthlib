@@ -78,7 +78,7 @@ public class Utility extends Object {
 	if (len == -1 || offset + len > d.length)
 	    len = d.length - offset;
 	for (int i = 0; i < len; i++) {
-	    int c = (int) (d[offset + i] & 0xff);
+	    int c = (d[offset + i] & 0xff);
 	    if (c < 0x10)
 		buf.append("0");
 	    buf.append(Integer.toHexString(c));
@@ -110,14 +110,14 @@ public class Utility extends Object {
 
 	StringBuffer buf = new StringBuffer();
 	for (int i = 0; i < bytes - 4; i++) {
-	    int c = (int) (d[offset + i] & 0xff);
+	    int c = (d[offset + i] & 0xff);
 	    if (c < 0x10)
 		buf.append("0");
 	    buf.append(Integer.toHexString(c) + " ");
 	}
 	buf.append("..");
 	for (int i = len - 3; i < len; i++) {
-	    int c = (int) (d[offset + i] & 0xff);
+	    int c = (d[offset + i] & 0xff);
 	    buf.append(" ");
 	    if (c < 0x10)
 		buf.append("0");
