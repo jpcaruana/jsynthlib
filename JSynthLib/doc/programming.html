@@ -7,14 +7,14 @@
 
     Use structured text instead of B, I, or TT
 
-    EM:         Indicates emphasis. 
-    STRONG:     Indicates stronger emphasis. 
-    CITE:       Contains a citation or a reference to other sources. 
-    DFN:        Indicates that this is the defining instance of the enclosed term. 
+    EM:         Indicates emphasis.
+    STRONG:     Indicates stronger emphasis.
+    CITE:       Contains a citation or a reference to other sources.
+    DFN:        Indicates that this is the defining instance of the enclosed term.
     CODE:       Designates a fragment of computer code.
-    SAMP:       Designates sample output from programs, scripts, etc. 
-    KBD:        Indicates text to be entered by the user. 
-    VAR:        Indicates an instance of a variable or program argument. 
+    SAMP:       Designates sample output from programs, scripts, etc.
+    KBD:        Indicates text to be entered by the user.
+    VAR:        Indicates an instance of a variable or program argument.
 -->
 
 <html>
@@ -114,7 +114,17 @@ in the future. Use consistent coding style.
 <a href="#examples">The Java Programming Language</a> by Ken Arnold and James Gosling (creators of Java
 language) are good examples.  We encourage you to follow the coding
 style in these documents especially you are editing source code in
-core package.  Preferred indentation level is 4.
+core package.<br>
+<p><strong>Important:</strong> Use an indentation level of 4 and a "tab stop"/ "displayed tab width" value of 8.<br>
+The reason for this is compatibility with:</p>
+<ul>
+  <li>... Emacs in Java mode which replaces 8 blank spaces to 1 tab if possible.</li>
+  <li>... Unix command line tools like cat, less, tail, ...</li>
+  <li>... viewcvs, the CVS browser that SourceForge uses.</li>
+</ul>
+The JSynthLib team recommends the use of <a href="#setupEclipse">Eclipse</a> which is able to support this settings.<br>
+Text editors that also support these settings are e.g. <a href="http://www.jedit.org/">jEdit</a> and
+<a href="http://scintilla.sourceforge.net/SciTE.html">SciTE</a> which are both open source and availabe for Linux, Mac OS X and Windows like Eclipse.
 
 <h3>I.b. Using Javadoc</h3>
 
@@ -259,7 +269,7 @@ You can downloaded the latest source code via CVS from SourceForge CVS
 server.
 
 <pre>
-    cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/jsynthlib login 
+    cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/jsynthlib login
     cvs -z3 -d:pserver:anonymous@cvs.sf.net:/cvsroot/jsynthlib co JSynthLib
 </pre>
 
@@ -400,7 +410,7 @@ sit in the main JSynthLib directory and type
 <pre>
     javac synthdrivers\BossDR660Driver\BossDR660DrumkitDriver.java
 </pre>.
-Don't enter that directory and just type; 
+Don't enter that directory and just type;
 <pre>
     javac BossDR660DrumkitDriver.java # does not work
 </pre>
@@ -468,11 +478,11 @@ A Synth Driver communicates with JSynthLib core by using the following
 interfaces.
 <pre>
     {@link core.Device} class (required)
-    
+
     {@link core.IDriver} interface
       {@link core.IPatchDriver} interface extends {@link core.IDriver} (required)
       {@link core.IConverter} interface (optional)
-    
+
     {@link core.IPatch} interface
       {@link core.ISinglePatch} interface extends {@link core.IPatch} (required)
       {@link core.IBankPatch} interface extends {@link core.IPatch} (optional)
@@ -486,11 +496,11 @@ your driver with reasonable effort.
 Most of the current synthdrivers extend the following classes;
 <pre>
     {@link core.Device} class
-    
+
     {@link core.Driver} class implements {@link core.IPatchDriver}
     {@link core.BankDriver} class implements {@link core.IPatchDriver} (optional)
     {@link core.Converter} class implements {@link core.IConverter} (optional)
-    
+
     {@link core.Patch} class implements {@link core.ISinglePatch} and {@link core.IBankPatch} class
 </pre>
 
@@ -880,7 +890,7 @@ parameters given to the EnvelopeWidget.Node constructor have the
 following meaning:
 
 <pre>
-    public Node(int minx, int maxx, ParamModel pmodelx, 
+    public Node(int minx, int maxx, ParamModel pmodelx,
                 int miny, int maxy, ParamModel pmodely,
                 int basey,
                 boolean invertx,
@@ -1220,7 +1230,7 @@ use.
 <var>System.out.println</var> statements through out the troublesome
 code. Get a good idea of what values are what when and look for
 something that shouldn't be. Better yet, use
-<var>ErrorMsg.reportError("ErrorMsg goes here")</var> instead. 
+<var>ErrorMsg.reportError("ErrorMsg goes here")</var> instead.
 
 <li>Use a MIDI cable to connect your computer's MIDI out to MIDI
 in. Use build in MIDI Monitor Window or get a program (for example <a
@@ -1238,7 +1248,7 @@ called.
  -->
 </ol>
 
-<h3>How to set up <a href="http://www.eclipse.org/">Eclipse</a> for JSynthLib?</h3>
+<h3><a name="setupEclipse"></a>How to set up <a href="http://www.eclipse.org/">Eclipse</a> for JSynthLib?</h3>
 
 Here is the setting I'm using for Eclipse 3.0.
 <ol>
@@ -1260,7 +1270,7 @@ set to '8'.
   <li><a name="website" href="http://www.jsynthlib.org">JSynthLib Home Page</a>
   <li><a name="cvssite"
   href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
-  SourceForge.net Developer Home Page</a> 
+  SourceForge.net Developer Home Page</a>
     <font size="-1">(contains the CVS Repository)</font>
   <li><a name="mailinglist" href="mailto:jsynthlib-devel@lists.sourceforge.net">JSynthLib mailing list</a>
   <li><a name="yahoofiles" href="http://groups.yahoo.com/group/jsynthlib-dev/files/">JSynthLib Yahoo group - file section</a>
