@@ -16,7 +16,8 @@ class PatchListTransferHandler extends PatchTransferHandler {
     }
     protected boolean storePatch(Patch p, JComponent c) {
 	try {
-	    p.chooseDriver();
+	    if (p.getDriver() == null)
+	    	p.chooseDriver();
 	    JTable t = (JTable)c;
 	    AbstractPatchListModel m =
 		(AbstractPatchListModel)t.getModel();
