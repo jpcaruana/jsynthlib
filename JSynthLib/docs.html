@@ -510,18 +510,15 @@ as a starting point because its the most simple driver.<br>
 <br>
        <i> Step 2: Tell the core program about your driver.<br></i>
 <br>
-Edit the file called core\DeviceAddDialog.java. This is the only file in the core JSynthLib program that you will have to edit. Eventually I hope to write autodetection code so that this isn't necessary, but right now it is. Near the top of the files are a bunch of &quot;import&quot; lines, add one for your synthesizer.<br>
-Next add your synthesizer's name to the availibleDrivers array. Finally, near the bottom of the file,<br>
-you need to add a block of code for your syntheizer to the OKPressed() function which loads your driver.<br>
+Edit the file called \synthdrivers.properties. This is the only file in the core JSynthLib program that you will have to edit. Eventually I hope to write autodetection code so that this isn't necessary, but right now it is. Near the top of the files are a bunch of &quot;import&quot; lines, add one for your synthesizer.<br>
+Next add an entry with your synthesizer's name and class to the properties file<br>
 Just write it exactly like the ones for the other drivers. If you plan to do a bank driver too, add that<br>
-line in also, otherwise leave that line out. The code will look like this:<br>
+line in also, otherwise leave that line out. The entry will look like this:<br>
 <br>
-if (s.equals(&quot;Oberheim Matrix 6/6R/1000 Driver&quot;))<br>
-     {PatchEdit.DeviceList.add(new OberheimMatrixDevice());
-     return;}<br>
+deviceName.OberheimMatrix1000=Oberheim Matrix 1000 Driver<br>
+deviceClass.OberheimMatrix1000=synthdrivers.OberheimMatrix.OberheimMatrix1000Device<br>
 <br>
-Make sure the name in the IF statement exactly matches the name you put in the availibleDrivers array.<br>
-Save this file and compile it making sure there are no errors. if all goes well, JSynthLib now knows<br>
+Save this file.  If all goes well, JSynthLib now knows<br>
 about your driver. Now you just have to write it :)<br>
 <br>
 	<i>Step 3: Write the damn thing<br></i>
