@@ -117,8 +117,7 @@ class GP16BitModel extends ParamModel {
   int bit;
   public GP16BitModel(Patch p, int o, int b)
   {
-    patch = p;
-    ofs = o;
+    super(p,o);
     bit = b;
   }
   public void set(int i)

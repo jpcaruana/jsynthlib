@@ -305,7 +305,7 @@ class WaveSender extends SysexSender
  class DrumModel extends ParamModel
 {
     // int ofs;
- public DrumModel(Patch p,int o) {ofs=o;patch=p;}
+ public DrumModel(Patch p,int o) {super(p,o);}
  public void set(int i) {patch.sysex[ofs+drum*23]=(byte)(i);}
  public int get() {return ((patch.sysex[ofs+drum*23]));}
 
@@ -314,7 +314,7 @@ class WaveSender extends SysexSender
  class NoteModel extends ParamModel
 {
     // int ofs;
- public NoteModel(Patch p,int o) {ofs=o;patch=p;}
+ public NoteModel(Patch p,int o) {super(p,o);}
  public void set(int i) {patch.sysex[ofs+drum]=(byte)(i);}
  public int get() {return ((patch.sysex[ofs+drum]));}
 
@@ -323,7 +323,7 @@ class WaveSender extends SysexSender
  class PitchModel extends ParamModel
 {
     // int ofs;
- public PitchModel(Patch p,int o) {ofs=o;patch=p;}
+ public PitchModel(Patch p,int o) {super(p,o);}
  public void set(int i) {patch.sysex[ofs+drum*23]=(byte)(i/128);
                          patch.sysex[ofs+drum*23+1]=(byte)(i%128);}
  public int get() {return ((patch.sysex[ofs+drum*23]*128+patch.sysex[ofs+1+drum*23]));}
@@ -332,7 +332,7 @@ class WaveSender extends SysexSender
  class WaveModel extends ParamModel
 {
     // int ofs;
- public WaveModel(Patch p,int o) {ofs=o;patch=p;}
+ public WaveModel(Patch p,int o) {super(p,o);}
  public void set(int i) {patch.sysex[ofs+drum*23]=(byte)(i/16);
                          patch.sysex[ofs+drum*23+1]=(byte)(i%16);}
  public int get() { return((patch.sysex[ofs+drum*23]*16+patch.sysex[ofs+1+drum*23]));}

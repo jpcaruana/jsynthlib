@@ -311,8 +311,7 @@ public class DX7FamilyPerformanceIIIEditor extends PatchEditorFrame
 
 		public PerformanceModel(Patch p, int o)
 		{
-			patch=p;
-			ofs=16+(2*o);
+		        super(p, 16 + 2 * o);
 		}
 		
 		public void set(int i)

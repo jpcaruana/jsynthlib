@@ -14,15 +14,19 @@ public class ParamModel implements SysexWidget.IParamModel {
 
     /**
      * Creates a new <code>ParamModel</code> instance.
+     * 
+     * @deprecated Use ParamModel(Patch, int) or implement
+     *             SysexWidget.IParamModel.
      */
-    // @deprecated Use ParamModel(Patch) or ParamModel(Patch, int).
-    public ParamModel() {	// Can be removed?
+    public ParamModel() {
     }
 
     /**
      * Creates a new <code>ParamModel</code> instance.
      *
      * @param patch a <code>Patch</code> value
+     * @deprecated Use ParamModel(Patch, int) or implement
+     *             SysexWidget.IParamModel.
      */
     public ParamModel(Patch patch) {
 	this.patch = patch;

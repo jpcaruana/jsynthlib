@@ -534,7 +534,7 @@ class InstSender extends SysexSender
  class MPSModel extends ParamModel
 {
  int ofs;
- public MPSModel(Patch p,int o) {patch=p;ofs=o*2+7;}
+ public MPSModel(Patch p,int o) {super(p,o*2+7);}
  public void set(int i)
  {
     if (i<0) {
@@ -557,7 +557,7 @@ class InstSender extends SysexSender
  class InstModel extends ParamModel
 {
  int ofs;
- public InstModel(Patch p,int o) {patch=p;ofs=o*2+7;}
+ public InstModel(Patch p,int o) {super(p,o*2+7);}
  public void set(int i)
  {
 	 if (i>125) {i-=125; i+=512;}

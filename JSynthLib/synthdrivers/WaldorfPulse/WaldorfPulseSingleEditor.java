@@ -1154,8 +1154,7 @@ class WaldorfPulseSingleEditor extends PatchEditorFrame
     {
         public TuneParamModel(Patch p, int o)
         {
-            patch = p;
-            ofs = o;
+            super(p, o);
         }
         public void set(int i)
         {

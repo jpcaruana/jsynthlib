@@ -169,8 +169,7 @@ public class DX7FamilyFractionalScalingEditor extends PatchEditorFrame
 
 		public FractionalScalingModel(Patch p, int o)
 		{
-			patch=p;
-			ofs=16+(2*o);
+		    super(p, 16 + 2 * o);
 		}
 	
 		public void set(int i)

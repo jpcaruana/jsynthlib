@@ -141,7 +141,8 @@ public class AlesisDM5SysInfoEditor extends PatchEditorFrame {
             * whether the values are reversed (low to high).
             */
         public DM5SysInfoModel(Patch p, int o, int b, boolean r) {
-            ofs = o; patch = p; bitmask = b; reverse = r;
+            super(p, o); 
+            bitmask = b; reverse = r;
             if ((bitmask&  1) ==   1) mult =   1; else
                 if ((bitmask&  2) ==   2) mult =   2; else
                     if ((bitmask&  4) ==   4) mult =   4; else

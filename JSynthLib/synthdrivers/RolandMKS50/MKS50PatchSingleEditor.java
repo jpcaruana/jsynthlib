@@ -129,8 +129,7 @@ class MKSOfsModel extends ParamModel
   int pofs;
   public MKSOfsModel(Patch p, int o, int po)
   {
-    patch = p;
-    ofs = o;
+    super(p, o);
     pofs = po;
   }
   public void set(int i)
@@ -173,8 +172,7 @@ class MKSBitModel extends ParamModel
   int bit;
   public MKSBitModel(Patch p, int o, int b)
   {
-    patch = p;
-    ofs = o;
+    super(p, o);
     bit = b;
   }
   public void set(int i)
@@ -229,8 +227,7 @@ class MKS2sCompModel extends ParamModel
   int max;
   public MKS2sCompModel(Patch p, int o, int m)
   {
-    patch = p;
-    ofs = o;
+    super(p, o);
     max = m;
   }
   public void set(int i)

@@ -781,8 +781,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 			@param offset dans la table
 		*/
 		FS1RModel(Patch p,int offset) {
-			ofs = offset + 9;
-			patch = p;
+			super(p, offset + 9);
 		}
 		/**
 		*	Parametre d'operateur
@@ -790,9 +789,8 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		 @param aOp operator number 1..8
 		 */
 		FS1RModel(Patch p,int offset, int aOp) {
+			super(p, YamahaFS1RVoiceDriver.COMMON_SIZE+YamahaFS1RVoiceDriver.VOICE_SIZE*(aOp-1) + offset + 9);
 			mOperator = aOp;
-			ofs = YamahaFS1RVoiceDriver.COMMON_SIZE+YamahaFS1RVoiceDriver.VOICE_SIZE*(mOperator-1) + offset + 9;
-			patch = p;
 		}
 		public void set(int i) {
 			patch.sysex[ofs] = (byte)(i & 127);

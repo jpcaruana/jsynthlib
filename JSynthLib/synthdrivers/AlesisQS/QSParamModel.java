@@ -1,7 +1,7 @@
 package synthdrivers.AlesisQS;
 
 import core.Patch;
-import core.ParamModel;
+import core.SysexWidget;
 
 /**
  * Param model AlesisQS keyboards.  Allows changing of specific ranges of bits
@@ -10,13 +10,13 @@ import core.ParamModel;
  * @version $Id$
  */
 
-public class QSParamModel extends ParamModel
+public class QSParamModel implements SysexWidget.IParamModel
 {
 	private int msBit;
 	private int bitSize;
     private boolean signed;
     private int offset;
-	// Patch patch defined in parent
+	private Patch patch;
 
 	/**
 	 * Create a new param model, given the starting and ending bytes and bits

@@ -407,8 +407,7 @@ class X3Model extends ParamModel
    * @param o Offset
    */
   public X3Model(Patch p, int o) {
-    ofs = o;
-    patch = p;
+    super(p, o);
   }
 
   /**
@@ -419,8 +418,7 @@ class X3Model extends ParamModel
    * @param bit Which bit to set (0-7)
    */
   public X3Model(Patch p, int o, int bit) {
-    ofs = o;
-    patch = p;
+    super(p, o);
     this.bit = bit;
   }
 
@@ -433,8 +431,7 @@ class X3Model extends ParamModel
    * @param bits How many bits affected from <code>bit</code>
    */
   public X3Model(Patch p, int o, int bit, int bits) {
-    ofs = o;
-    patch = p;
+    super(p, o);
     this.bit = bit;
     this.bits = bits;
   }
@@ -505,8 +502,7 @@ class X3Model extends ParamModel
 class MultiSoundModel extends ParamModel
 {
   public MultiSoundModel(Patch p, int o) {
-    ofs = o;
-    patch = p;
+    super(p, o);
   }
 
   // ofs+EXTRA_HEADER+1 has the MSB and ofs+EXTRA_HEADER has the LSB

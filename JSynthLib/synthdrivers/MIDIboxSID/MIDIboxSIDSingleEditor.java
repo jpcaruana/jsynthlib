@@ -639,15 +639,13 @@ class SIDModel extends ParamModel
 
     public SIDModel(Patch _patch, int _offset)
     {
-	ofs = _offset + 8;
-	patch = _patch;
+        super(_patch, _offset + 10);
 	flag = -1;
     }
 
     public SIDModel(Patch _patch, int _offset, int _flag)
     {
-	ofs     = _offset + 8;
-	patch   = _patch;
+        super(_patch, _offset + 10);
 	flag    = _flag;
 	bitmask = (1 << flag);
 	mapped_values = new int[]{}; // (empty)
@@ -655,10 +653,7 @@ class SIDModel extends ParamModel
 
     public SIDModel(Patch _patch, int _offset, int _flag, int _bitmask)
     {
-	int i;
-
-	ofs     = _offset + 8;
-	patch   = _patch;
+	super(_patch, _offset + 10);
 	flag    = _flag;
 	bitmask = _bitmask << flag;
 	mapped_values = new int[]{}; // (empty)
@@ -666,8 +661,7 @@ class SIDModel extends ParamModel
 
     public SIDModel(Patch _patch, int _offset, int _flag, int _bitmask, int []_mapped_values)
     {
-	ofs     = _offset + 8;
-	patch   = _patch;
+        super(_patch, _offset + 10);
 	flag    = _flag;
 	bitmask = _bitmask << flag;
 	mapped_values = _mapped_values;

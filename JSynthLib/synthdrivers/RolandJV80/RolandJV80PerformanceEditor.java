@@ -386,8 +386,7 @@ public class RolandJV80PerformanceEditor extends PatchEditorFrame {
 	class JVModel extends ParamModel {
 	    final static int DATA_OFFSET = 9;
 	    JVModel(Patch p, int part, int msg_offset) {
-	        super(p);
-	        ofs = DATA_OFFSET + msg_offset;
+	        super(p, DATA_OFFSET + msg_offset);
 	        if (part >= 0)
 	            ofs += ((RolandJV80PerformanceDriver) p.getDriver()).performancePartOffsets[part];
 	    }

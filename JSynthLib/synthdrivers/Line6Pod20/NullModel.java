@@ -28,7 +28,7 @@ import core.*;
 *
 * @author Jeff Weber
 */
-class NullModel extends ParamModel {
+class NullModel implements SysexWidget.IParamModel {
     /** Constructs aNullModel.*/
     NullModel() {} 
     /** Null method for NullModel.*/

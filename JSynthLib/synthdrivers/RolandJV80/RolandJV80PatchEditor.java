@@ -94,8 +94,7 @@ public class RolandJV80PatchEditor extends PatchEditorFrame {
 	    final static int DATA_OFFSET = 9;
 	    // tone == -1 -> common
 	    JVModel(Patch p, int tone, int msg_offset) {
-	        super(p);
-	        ofs = DATA_OFFSET + msg_offset;
+	        super(p, DATA_OFFSET + msg_offset);
 	        if (tone >= 0)
 	            ofs += ((RolandJV80PatchDriver)p.getDriver()).patchToneOffsets[tone];
 	    }

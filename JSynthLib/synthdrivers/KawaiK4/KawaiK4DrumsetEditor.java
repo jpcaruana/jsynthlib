@@ -231,7 +231,8 @@ class KawaiK4DrumsetEditor extends PatchEditorFrame {
         pack();
     }
 
-    class K4DrumWaveModel extends ParamModel {
+    class K4DrumWaveModel implements SysexWidget.IParamModel {
+        private Patch patch;
         private int source;
         public K4DrumWaveModel(Patch p, int s) {
 	    patch = p; source = s;
@@ -254,11 +255,14 @@ class KawaiK4DrumsetEditor extends PatchEditorFrame {
         private int mult;
 
         public K4DrumModel(Patch p, int o) {
-	    ofs = o + 8; patch = p; bitmask = 255; mult = 1;
+            super(p, o + 8);
+	    bitmask = 255;
+	    mult = 1;
 	}
 
         public K4DrumModel(Patch p, int o, int b) {
-	    ofs = o + 8; patch = p; bitmask = b;
+            super(p, o + 8);
+            bitmask = b;
 	    if ((bitmask & 1) == 1) mult = 1;
 	    else if ((bitmask & 2) == 2) mult = 2;
 	    else if ((bitmask & 4) == 4) mult = 4;

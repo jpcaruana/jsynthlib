@@ -51,8 +51,7 @@ class BitModel extends ParamModel {
         * and the mask representing the parameter.
         */
     BitModel(Patch p, int offset, byte mask) {
-        this.patch = p;
-        this.ofs = offset;
+        super(p, offset);
         this.mask = mask;
         
         int bitPos = 1;

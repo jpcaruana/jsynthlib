@@ -25,11 +25,11 @@
  */
 
 package synthdrivers.RolandMT32;
-import core.ParamModel;
 import core.Patch;
+import core.SysexWidget;
 
-
-class WaveModel extends ParamModel {
+class WaveModel implements SysexWidget.IParamModel {
+    private Patch patch;
     private int source;
 
     public WaveModel(Patch p, int s) {

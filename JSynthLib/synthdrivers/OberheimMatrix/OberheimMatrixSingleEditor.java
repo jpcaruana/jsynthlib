@@ -611,7 +611,7 @@ class MtxSender extends SysexSender
 //Parameter Model for most of the Matrix1000 Parameters
  class MtxModel extends ParamModel
 {
- public MtxModel(Patch p,int o) {ofs=o*2+5;patch=p;}
+ public MtxModel(Patch p,int o) {super(p,o*2+5);}
  public void set(int i) {patch.sysex[ofs]=(byte)(i%16); patch.sysex[ofs+1]=(byte)(i/16);}
  public int get() {return patch.sysex[ofs]+patch.sysex[ofs+1]*16 ;}
 
@@ -620,7 +620,7 @@ class MtxSender extends SysexSender
  class BitModel extends ParamModel
 {
  int bit;
- public BitModel(Patch p,int o,int b) {ofs=o*2+5;patch=p;bit=b;}
+ public BitModel(Patch p,int o,int b) {super(p,o*2+5);bit=b;}
  public void set(int i) {
   if (bit==0) patch.sysex[ofs]=(byte)((patch.sysex[ofs]&6)+i);
   if (bit==1) patch.sysex[ofs]=(byte)((patch.sysex[ofs]&5)+i*2);
@@ -654,7 +654,7 @@ class BitSender extends SysexSender
 //handle detune correctly. This sounds like it does the right thing though.
  class DetuneModel extends ParamModel
 {
- public DetuneModel(Patch p,int o) {ofs=o*2+5;patch=p;}
+ public DetuneModel(Patch p,int o) {super(p,o*2+5);}
  public void set(int i) {
    i-=31;
    if (i<0)i=64+32+32+i;
@@ -687,7 +687,7 @@ class DetuneSender extends SysexSender
 //Model for Modulation Matrix Amount Parameters
  class ModModel extends ParamModel
 {
- public ModModel(Patch p,int o) {ofs=o*2+5;patch=p;}
+ public ModModel(Patch p,int o) {super(p,o*2+5);}
  public void set(int i) {
    i-=63;
    if (i<0)i=64+128+i;

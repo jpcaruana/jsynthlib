@@ -7,15 +7,13 @@ class K4Model extends ParamModel {
     private int mult;
 
     public K4Model(Patch p, int offset) {
-        ofs = offset + 8;
-        patch = p;
+        super(p, offset + 8);
         bitmask = 255;
         mult = 1;
     }
 
     public K4Model(Patch p, int offset, int bitmask) {
-        ofs = offset + 8;
-        patch = p;
+        super(p, offset + 8);
         this.bitmask = bitmask;
         if ((bitmask & 1) == 1)
             mult = 1;

@@ -30,11 +30,11 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
 import core.ComboBoxWidget;
-import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
 import core.ScrollBarWidget;
 import core.SysexSender;
+import core.SysexWidget;
 
 
 
@@ -279,7 +279,7 @@ class AlesisDMProFXSender extends SysexSender
 }
 
 
-class AlesisDMProFXModel extends ParamModel
+class AlesisDMProFXModel implements SysexWidget.IParamModel
 {
 
     private AlesisDMProParser m_oParser;

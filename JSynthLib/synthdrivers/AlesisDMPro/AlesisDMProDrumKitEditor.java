@@ -169,7 +169,7 @@ class AlesisDMProDrumKitEditor extends PatchEditorFrame
 
       JComboBox m_cboOther = null;
 
-      public BuddyCombo (String l,Patch p,ParamModel ofs,SysexSender s, String []o,JComboBox cboOther)
+      public BuddyCombo (String l,Patch p,SysexWidget.IParamModel ofs,SysexSender s, String []o,JComboBox cboOther)
         {
         super(l,p,ofs,s,o);
         m_cboOther = cboOther;
@@ -247,30 +247,27 @@ class AlesisDMProSender extends SysexSender
 }
 
 
-class AlesisDMProModel extends ParamModel
-{
-
+class AlesisDMProModel implements SysexWidget.IParamModel {
     private AlesisDMProParser m_oParser;
     private int m_nByte;
     private int m_nBit;
     private int m_nBits;
 
-     public AlesisDMProModel(AlesisDMProParser oParser, int nByte, int nBit, int nBits) {
+    public AlesisDMProModel(AlesisDMProParser oParser, int nByte, int nBit,
+            int nBits) {
+        m_oParser = oParser;
+        m_nByte = nByte;
+        m_nBit = nBit;
+        m_nBits = nBits;
+    }
 
-         m_oParser = oParser;
-         m_nByte = nByte;
-         m_nBit = nBit;
-         m_nBits = nBits;
+    public void set(int i) {
+        m_oParser.setValue(m_nByte, m_nBit, m_nBits, i);
+    }
 
-     }
-
-     public void set(int i) {
-         m_oParser.setValue(m_nByte, m_nBit, m_nBits, i);
-     }
-
-     public int get() {
+    public int get() {
         return m_oParser.getValue(m_nByte, m_nBit, m_nBits);
-     }
+    }
 }
 
 /**

@@ -70,8 +70,7 @@ static class FS1RSender extends SysexSender
 		@param offset dans la table
 	*/
 	public FS1RModel(Patch p,int offset) {
-		ofs = offset + YamahaFS1RSystemDriver.DATA_OFFSET;
-		patch = p;
+		super(p, offset + YamahaFS1RSystemDriver.DATA_OFFSET);
 	}
 	public void set(int i) {
 		patch.sysex[ofs] = (byte)(i & 127);

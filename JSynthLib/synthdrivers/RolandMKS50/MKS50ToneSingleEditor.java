@@ -194,8 +194,7 @@ class MKSShiftModel extends ParamModel
 {
   public MKSShiftModel(Patch p, int o)
   {
-    ofs = o;
-    patch = p;
+    super(p, o);
   }
   public void set(int i)
   {
