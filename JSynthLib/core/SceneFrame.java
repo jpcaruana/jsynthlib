@@ -392,39 +392,37 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
 
     public void sendSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-	IPatchDriver d = myPatch.getDriver();
-	if (d instanceof ISingleDriver) {
-	    ((ISingleDriver)d).calculateChecksum(myPatch);
-	    ((ISingleDriver)d).sendPatch(myPatch);
+	if (myPatch.getDriver() instanceof ISingleDriver) {
+	    myPatch.calculateChecksum();
+	    myPatch.send();
 	}
     }
 
     public void sendToSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.getDriver().calculateChecksum(myPatch);
+        myPatch.calculateChecksum();
         new SysexSendToDialog(myPatch);
     }
 
     public void reassignSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.getDriver().calculateChecksum(myPatch);
+        myPatch.calculateChecksum();
         new ReassignPatchDialog(myPatch);
         myModel.fireTableDataChanged();
     }
 
     public void playSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-	IPatchDriver d = myPatch.getDriver();
-	if (d instanceof ISingleDriver) {
-	    ((ISingleDriver)d).calculateChecksum(myPatch);
-	    ((ISingleDriver)d).sendPatch(myPatch);
-	    ((ISingleDriver)d).playPatch(myPatch);
+	if (myPatch.getDriver() instanceof ISingleDriver) {
+	    myPatch.calculateChecksum();
+	    myPatch.send();
+	    myPatch.play();
 	}
     }
 
     public void storeSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.getDriver().calculateChecksum(myPatch);
+        myPatch.calculateChecksum();
         new SysexStoreDialog(myPatch);
     }
 
@@ -435,7 +433,7 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         }
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         changed = true;
-        return myPatch.getDriver().editPatch(myPatch);
+        return myPatch.edit();
     }
 
     public ArrayList getPatchCollection() {
@@ -515,8 +513,8 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             int bankNum   = myModel.getSceneAt(i).getBankNumber();
             int patchNum  = myModel.getSceneAt(i).getPatchNumber();
             IPatch myPatch = myModel.getPatchAt(i);
-            myPatch.getDriver().calculateChecksum(myPatch);
-            myPatch.getDriver().storePatch(myPatch, bankNum, patchNum);
+            myPatch.calculateChecksum();
+            myPatch.store(bankNum, patchNum);
         }
     }
 

@@ -1,6 +1,7 @@
 /* $Id$ */
 
 package core;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,90 +20,95 @@ public class CrossBreedDialog extends JDialog {
     public CrossBreedDialog(JFrame parent) {
         super(parent, "Patch Cross-Breeder", false);
         crossBreeder = new CrossBreeder();
-	JPanel container = new JPanel();
-        container.setLayout (new BorderLayout());
+        JPanel container = new JPanel();
+        container.setLayout(new BorderLayout());
         JPanel p4 = new JPanel();
-        p4.setLayout (new ColumnLayout());
-	l1 = new JLabel("Patch Type: ");
+        p4.setLayout(new ColumnLayout());
+        l1 = new JLabel("Patch Type: ");
 
-	JPanel buttonPanel = new JPanel();
-	JPanel buttonPanel2 = new JPanel();
-	JButton gen = new JButton("Generate");
-	gen.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    generatePressed();
-		} });
+        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel2 = new JPanel();
+
+        JButton gen = new JButton("Generate");
+        gen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                generatePressed();
+            }
+        });
         buttonPanel2.add(gen);
-	JButton play = new JButton("Play");
-	play.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    play();
-		} });
+
+        JButton play = new JButton("Play");
+        play.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                play(crossBreeder.getCurrentPatch());
+            }
+        });
         buttonPanel2.add(play);
-	JButton keep = new JButton("Keep");
-	keep.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    try {
-			PatchBasket library = (PatchBasket) JSLDesktop.getSelectedFrame();
-			IPatch q = crossBreeder.getCurrentPatch();
-			library.pastePatch(q);
-		    } catch (Exception ex) {
-			JOptionPane.showMessageDialog
-			    (null, "Destination Library Must be Focused",
-			     "Error", JOptionPane.ERROR_MESSAGE);
-		    }
-		}
-	    });
+
+        JButton keep = new JButton("Keep");
+        keep.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    PatchBasket library = (PatchBasket) JSLDesktop
+                            .getSelectedFrame();
+                    IPatch q = crossBreeder.getCurrentPatch();
+                    library.pastePatch(q);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null,
+                            "Destination Library Must be Focused", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         buttonPanel2.add(keep);
 
-	JButton ok = new JButton("Close");
+        JButton ok = new JButton("Close");
         ok.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    OKPressed();
-		}
-	    });
-	buttonPanel.add(ok);
-	getRootPane().setDefaultButton(ok);
-        p4.add(l1);
+            public void actionPerformed(ActionEvent e) {
+                OKPressed();
+            }
+        });
+        buttonPanel.add(ok);
+        getRootPane().setDefaultButton(ok);
 
-	container.add(p4, BorderLayout.NORTH);
-	container.add(buttonPanel2, BorderLayout.CENTER);
-	container.add(buttonPanel, BorderLayout.SOUTH);
-	getContentPane().add(container);
-	// setSize(400,300);
+        p4.add(l1);
+        container.add(p4, BorderLayout.NORTH);
+        container.add(buttonPanel2, BorderLayout.CENTER);
+        container.add(buttonPanel, BorderLayout.SOUTH);
+        getContentPane().add(container);
+        // setSize(400,300);
         pack();
-	Utility.centerDialog(this);
+        Utility.centerDialog(this);
     }
 
     public void show() {
-	super.show();
+        super.show();
     }
 
     void OKPressed() {
- 	this.setVisible(false);
+        this.setVisible(false);
     }
 
     void generatePressed() {
-	crossBreeder.workFromLibrary((PatchBasket) JSLDesktop.getSelectedFrame());
-	crossBreeder.generateNewPatch();
-	IPatch p = crossBreeder.getCurrentPatch();
-	try {
-	    l1.setText("Patch Type: " + p.getDevice().getManufacturerName() + " "
-		       + p.getDevice().getModelName() + " "
-		       + p.getDriver().getPatchType());
-	    play();
-	} catch (Exception e) {
-	    /*already taken care off-- we just don't want this thrown any farther*/
-	}
+        crossBreeder.generateNewPatch((PatchBasket) JSLDesktop.getSelectedFrame());
+        IPatch p = crossBreeder.getCurrentPatch();
+        try {
+            l1.setText("Patch Type: " + p.getDevice().getManufacturerName()
+                    + " " + p.getDevice().getModelName() + " "
+                    + p.getDriver().getPatchType());
+            play(p);
+        } catch (Exception e) {
+            /*
+             * already taken care off-- we just don't want this thrown any
+             * farther
+             */
+        }
     }
 
-    void play() {
-	IPatch p = crossBreeder.getCurrentPatch();
-	if (p == null) return;
-	IPatchDriver d = p.getDriver();
-	if (d instanceof ISingleDriver) {
-	    ((ISingleDriver)d).sendPatch(p);
-	    ((ISingleDriver)d).playPatch(p);
-	}
+    private void play(IPatch p) {
+        if (p.getDriver() instanceof ISingleDriver) {
+            p.send();
+            p.play();
+        }
     }
 }

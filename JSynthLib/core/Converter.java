@@ -9,6 +9,7 @@ package core;
  * @author ???
  * @version $Id$
  */
+// XXX Implement IDriver instead of extending Driver
 abstract public class Converter extends Driver {
     public Converter(String patchType, String authors) {
 	super(patchType, authors);

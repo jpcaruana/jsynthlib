@@ -235,9 +235,8 @@ public class UploadPatchDialog extends JDialog {
 
 	    if (p==null || !(p.getDriver() instanceof ISingleDriver))
 	        return;
-	    ISingleDriver d = (ISingleDriver)p.getDriver();
-	    d.sendPatch(p);
-	    d.playPatch(p);
+	    p.send();
+	    p.play();
 	} catch (Exception ex) {
 	    JOptionPane.showMessageDialog(null, "Patch Must be Focused","Error", JOptionPane.ERROR_MESSAGE);
 	}

@@ -185,7 +185,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
         byte [] buffer = new byte [(int) file.length()];
         fileIn.read(buffer);
         fileIn.close();
-        IPatch p = new Patch(buffer);
+        IPatch p = new Patch(buffer); // FIXME Factory
         bankDriver.checkAndPutPatch(bankData, p, getSelectedPatchNum());
         myModel.fireTableDataChanged();
     }
@@ -224,9 +224,8 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        IPatchDriver d = p.getDriver();
-        if (d instanceof ISingleDriver)
-            ((ISingleDriver)d).sendPatch(p);
+        if (p.getDriver() instanceof ISingleDriver)
+            p.send();
     }
 
     public void sendToSelectedPatch() {
@@ -242,10 +241,9 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return;
 	}
-        IPatchDriver d = p.getDriver();
-        if (d instanceof ISingleDriver) {
-            ((ISingleDriver)d).sendPatch(p);
-	   ((ISingleDriver)d).playPatch(p);
+        if (p.getDriver() instanceof ISingleDriver) {
+            p.send();
+            p.play();
         }
     }
 
@@ -268,7 +266,7 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
 	    ErrorMsg.reportError("Error", "That patch is blank.");
 	    return null;
 	}
-        PatchEditorFrame pf = (PatchEditorFrame) (p.getDriver().editPatch(p));
+        PatchEditorFrame pf = (PatchEditorFrame) p.edit();
         pf.setBankEditorInformation(this, table.getSelectedRow(), table.getSelectedColumn());
         return pf;
     }

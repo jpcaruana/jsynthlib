@@ -38,6 +38,7 @@ public interface IPatchDriver extends IDriver {
     /**
      * Create a new Patch.
      */
+    // XXX replace with IPatch createPatch()
     public abstract Patch createNewPatch();
 
     /**

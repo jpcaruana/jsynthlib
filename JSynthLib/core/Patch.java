@@ -346,6 +346,48 @@ public class Patch implements IPatch {
         driver.calculateChecksum(this);
     }
 
+    public JSLFrame edit() {
+        return driver.editPatch(this);
+    }
+
+    public void store(int bankNum, int patchNum) {
+        driver.storePatch(this, bankNum, patchNum);
+    }
+
+    public void trimSysex() {
+        driver.trimSysex(this);
+    }
+
+    // only for single patch
+    public void play() {
+        ((ISingleDriver) driver).playPatch(this);
+    }
+
+    public void send() {
+        ((ISingleDriver) driver).sendPatch(this);
+    }
+
+    // only for bank patch
+    public void put(IPatch singlePatch, int patchNum) {
+        ((IBankDriver) driver).checkAndPutPatch(this, singlePatch, patchNum);
+    }
+
+    public void delete(int patchNum) {
+        ((IBankDriver) driver).deletePatch(this, patchNum);
+    }
+
+    public IPatch get(int patchNum) {
+        return ((IBankDriver) driver).getPatch(this, patchNum);
+    }
+
+    public String getName(int patchNum) {
+        return ((IBankDriver) driver).getPatchName(this, patchNum);
+    }
+
+    public void setName(int patchNum, String name) {
+        ((IBankDriver) driver).setPatchName(this, patchNum, name);
+    }
+
     public void useSysexFromPatch(IPatch ip) {
         byte[] s = ip.getByteArray();
         if (s.length != sysex.length)

@@ -388,39 +388,37 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 
     public void sendSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-	IPatchDriver d = myPatch.getDriver();
-	if (d instanceof ISingleDriver) {
-	    ((ISingleDriver)d).calculateChecksum(myPatch);
-	    ((ISingleDriver)d).sendPatch(myPatch);
+	if (myPatch.getDriver() instanceof ISingleDriver) {
+	    myPatch.calculateChecksum();
+	    myPatch.send();
 	}
     }
 
     public void sendToSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-	myPatch.getDriver().calculateChecksum(myPatch);
+	myPatch.calculateChecksum();
 	new SysexSendToDialog(myPatch);
     }
 
     public void reassignSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-	myPatch.getDriver().calculateChecksum(myPatch);
+	myPatch.calculateChecksum();
 	new ReassignPatchDialog(myPatch);
 	myModel.fireTableDataChanged();
     }
 
     public void playSelectedPatch() {
         IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.getDriver().calculateChecksum(myPatch);
-        IPatchDriver d = myPatch.getDriver();
-        if (d instanceof ISingleDriver) {
-            ((ISingleDriver)d).sendPatch(myPatch);
-            ((ISingleDriver)d).playPatch(myPatch);
+        myPatch.calculateChecksum();
+        if (myPatch.getDriver() instanceof ISingleDriver) {
+            myPatch.send();
+            myPatch.play();
         }
     }
 
     public void storeSelectedPatch() {
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
-        myPatch.getDriver().calculateChecksum(myPatch);
+        myPatch.calculateChecksum();
  	new SysexStoreDialog(myPatch);
     }
 
@@ -431,7 +429,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	}
 	IPatch myPatch = myModel.getPatchAt(table.getSelectedRow());
         changed = true;
-        return myPatch.getDriver().editPatch(myPatch);
+        return myPatch.edit();
     }
 
     public ArrayList getPatchCollection() {
@@ -499,7 +497,7 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
     }
 
     /**
-     * This needs to not use Patch.  Maybe IPatch should extend Comparable.
+     * FIXME This needs to not use Patch.  Maybe IPatch should extend Comparable.
      */
     void deleteDuplicates() {
 	Collections.sort(myModel.list, new SysexSort());

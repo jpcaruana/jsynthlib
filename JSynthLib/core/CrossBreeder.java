@@ -22,9 +22,9 @@ public class CrossBreeder {
     /** The patch library we are working on. */
     private PatchBasket library;
 
-    // Why this is not 'Patch generateNewPatch(PatchBasket lib)'?
-    public void generateNewPatch() {
-	try {
+    public void generateNewPatch(PatchBasket library) {
+        this.library = library;
+        try {
 	    Patch father = getRandomPatch();
 	    Driver drv = (Driver)father.getDriver();
 	    byte[] sysex = new byte[father.sysex.length];
@@ -35,22 +35,18 @@ public class CrossBreeder {
 		// look for a patch with same Driver and enough length
 		do {
 		    source = getRandomPatch();
-		} while (source.getDriver() != drv
-			 || source.sysex.length <= i);
+		} while (source.getDriver() != drv || source.sysex.length <= i);
 		p.sysex[i] = source.sysex[i];
 	    }
 	    ErrorMsg.reportStatus("patch : " + father + ", " + p);
-	    p.getDriver().calculateChecksum(p);
+	    p.calculateChecksum();
 	} catch (Exception e) {
 	    ErrorMsg.reportError("Error", "Internal Error", e);
 	}
     }
+
     public IPatch getCurrentPatch() {
 	return p;
-    }
-
-    public void workFromLibrary (PatchBasket lib) {
-	library = lib;
     }
 
     private Patch getRandomPatch() {

@@ -10,39 +10,39 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
 
     /**
      * Guess and set Driver for the patch by using
-     * {@link Driver#supportsPatch Driver.supportsPatch}method.
+     * {@link IDriver#supportsPatch IDriver.supportsPatch}method.
      * 
      * @return <code>true</code> if a driver is found, <code>false</code>
      *         otherwise.
      */
-    public boolean chooseDriver();
+    boolean chooseDriver();
 
     /** Getter for date. */
-    public String getDate();
+    String getDate();
 
     /** Setter for date. */
-    public void setDate(String date);
+    void setDate(String date);
 
     /** Getter for author of the patch. */
-    public String getAuthor();
+    String getAuthor();
 
     /** Setter for author of the patch. */
-    public void setAuthor(String author);
+    void setAuthor(String author);
 
     /** Getter for comment. */
-    public String getComment();
+    String getComment();
 
     /** Setter for comment. */
-    public void setComment(String comment);
+    void setComment(String comment);
 
     /** Return Device for this patch. */
-    public Device getDevice();
+    Device getDevice();
 
     /** Return Driver for this patch. */
-    public IPatchDriver getDriver();
+    IPatchDriver getDriver();
 
     /** Set driver. */
-    public void setDriver(IPatchDriver driver);
+    void setDriver(IPatchDriver driver);
 
     /**
      * Dissect an <code>IPatch</code> which has a <code>Converter</code>
@@ -53,31 +53,82 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      * @return a <code>IPatch[]</code> value
      * @see Converter
      */
-    public IPatch[] dissect();
+    IPatch[] dissect();
 
     /**
      * Return a hexadecimal string for
-     * {@link Driver#supportsPatch Driver.suppportsPatch}at most 16 byte sysex
+     * {@link IDriver#supportsPatch IDriver.suppportsPatch}at most 16 byte sysex
      * data.
      * 
      * @see IDriver#supportsPatch
      */
-    public StringBuffer getPatchHeader();
+    StringBuffer getPatchHeader();
 
     /**
      * Returns the patch's name. This is not necessarily the name stored on the
      * synth.
      */
-    public String getName();
+    String getName();
 
     /** Set the patches name. */
-    public void setName(String name);
+    void setName(String name);
+
+    /** calculate checksum of the patch. */
+    void calculateChecksum();
+    
+    /**
+     * Returns a Patch Editor Window for this Patch. Returns <code>null</code>
+     * if there is no editor.
+     * XXX throw an Exception?
+     */
+    JSLFrame edit();
+
+    /**
+     * Sends a patch to a set location on a synth.
+     */
+    void store(int bankNum, int patchNum);
+
+    /**
+     * This method trims a patch. Useful for files containg more than one bank for example.
+     * XXX: I think we can remove this once we have a propper patch factory.
+     */
+    void trimSysex();
+
+    // only for Single Patch (Do we need ISinglePatch?)
+    /** Play note. */
+    void play();
+
+    /**
+     * Sends a patch to the synth's edit buffer.<p>
+     */
+    void send();
+    // end of Single Patch
+    
+    // only for Bank Patch (Do we need IBankPatch?)
+    /**
+     * Check a patch if it is for the bank patch and put it into the
+     * bank.
+     */
+    void put(IPatch singlePatch, int patchNum);
+
+    /** Delete a patch. */
+    void delete(int patchNum);
+
+    /** Gets a patch from the bank, converting it as needed. */
+    IPatch get(int patchNum);
+
+    /** Get the name of the patch at the given number <code>patchNum</code>. */
+    String getName(int patchNum);
+
+    /** Set the name of the patch at the given number <code>patchNum</code>. */
+    void setName(int patchNum, String name);
+    // end of Bank Patch
 
     /** Get an array of sysex messages representing this patch. */
-    public SysexMessage[] getMessages();
+    SysexMessage[] getMessages();
 
     /** Get a byte array representing this patch. */
-    public byte[] getByteArray();
+    byte[] getByteArray();
 
     /**
      * Change this patch to contain the same data as p. Used for backing up
@@ -86,7 +137,7 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      * @param p
      *            Patch whose data we should use.
      */
-    public void useSysexFromPatch(IPatch p);
+    void useSysexFromPatch(IPatch p);
 
-    public Object clone();
+    Object clone();
 }

@@ -112,15 +112,15 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
             });
         addJSLFrameListener(new JSLFrameListener() {
                 public void JSLFrameClosing(JSLFrameEvent e) {
-					frameClosing();
+                    frameClosing();
                 }
 
                 public void JSLFrameOpened(JSLFrameEvent e) {
-					frameOpened();
+                    frameOpened();
                 }
 
                 public void JSLFrameActivated(JSLFrameEvent e) {
-					frameActivated();
+                    frameActivated();
                     gotFocus();
 
                     Actions.setEnabled(false,
@@ -205,11 +205,10 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	*/
 	protected void frameActivated()
 	{
-		// XXX: Do we really want to send the patch every
-		//      time the editor gets focus?
-		ISingleDriver d = (ISingleDriver)p.getDriver();
-		d.calculateChecksum(p);
-		d.sendPatch(p);
+	    // XXX: Do we really want to send the patch every
+	    //      time the editor gets focus?
+	    p.calculateChecksum();
+            p.send();
 	}
 	
 
@@ -236,25 +235,24 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     public void sendSelectedPatch() {
-        p.getDriver().calculateChecksum(p);
-        ((ISingleDriver)p.getDriver()).sendPatch(p);
+        p.calculateChecksum();
+        p.send();
     }
 
     public void sendToSelectedPatch() {
-        p.getDriver().calculateChecksum(p);
+        p.calculateChecksum();
         new SysexSendToDialog(p);
     }
 
     public void reassignSelectedPatch() {
-        p.getDriver().calculateChecksum(p);
+        p.calculateChecksum();
         new ReassignPatchDialog(p);
     }
 
     public void playSelectedPatch() {
-        p.getDriver().calculateChecksum(p);
-        ISingleDriver d = (ISingleDriver)p.getDriver();
-        d.sendPatch(p);
-        d.playPatch(p);
+        p.calculateChecksum();
+        p.send();
+        p.play();
     }
 
     public void storeSelectedPatch() {
