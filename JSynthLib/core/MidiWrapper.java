@@ -140,11 +140,19 @@ public abstract class MidiWrapper {
 	abstract MidiMessage getMessage(int port) throws InvalidMidiDataException;
 
 	/**
-	 * This allows you to read a JavaSound-compatible MidiMessage
-	 * object. It automatically detects if it's a SysexMessage or
-	 * ShortMessage and returns the appropriate object.
+	 * <code>readMessage</code> allows you to read a
+	 * JavaSound-compatible MidiMessage object. It automatically
+	 * detects if it's a SysexMessage or ShortMessage and returns
+	 * the appropriate object.
 	 *
-	 * Throw TimeoutException if a MIDI message cannot read in the
+	 * JavaSound allows to divide a System Exclusive message into
+	 * multiple SysexMessage objects.  <code>readMessage</code>
+	 * concatinates the divided SysexMessages received from low
+	 * layer into one SysexMessage terminated by EOX (End of
+	 * Exclusive) and returns it.  If a SysexMessage is terminated
+	 * by a ShortMessage, InvalidMidiDataException is thrown.
+	 *
+	 * TimeoutException is thrown if a MIDI message cannot read in the
 	 * time specified by <code>timeout</code>.
 	 *
 	 * @param port The port to read from
@@ -157,9 +165,12 @@ public abstract class MidiWrapper {
 		return readMessage(port, timeout, false);
 	}
 
-	/** Causes timeout after 1 second. */
+	/**
+	 * Causes timeout after 5 second. About 16KB System exclusive
+	 * message can be received.
+	 */
 	public MidiMessage readMessage(int port) throws Exception {
-		return readMessage(port, 1000, false); // 1 second
+		return readMessage(port, 5000, false); // 5 second
 	}
 
 	/**
@@ -169,19 +180,18 @@ public abstract class MidiWrapper {
 		return (SysexMessage) readMessage(port, timeout, true);
 	}
 
-	/** Causes timeout after 1 second. */
+	/**
+	 * Causes timeout after 5 second. About 16KB System exclusive
+	 * message can be received.
+	 */
 	public SysexMessage readSysexMessage(int port) throws Exception {
-		return (SysexMessage) readMessage(port, 1000, true); // 1 second
+		return (SysexMessage) readMessage(port, 5000, true); // 5 second
 	}
 
 	/**
 	 * This allows you to read a JavaSound-compatible MidiMessage
 	 * object. It automatically detects if it's a SysexMessage or
 	 * ShortMessage and returns the appropriate object.
-	 *
-	 * SysexMessage returned contains whole System Exclusive
-	 * message even when lower API places place the data in one or
-	 * more SysexMessages.
 	 *
 	 * Throw TimeoutException if a MIDI message cannot read in the
 	 * time specified by <code>timeout</code>.
@@ -211,13 +221,13 @@ public abstract class MidiWrapper {
 		    throw new InvalidMidiDataException(getInputDeviceName(port));
 		int len = msg.getLength();
 		if (firstMsg) {
-		    buffer = msg.getMessage();
-		    totalLen = len;
 		    if (msg.getStatus() != SysexMessage.SYSTEM_EXCLUSIVE)
 			if (ignoreShortMessage)
 			    continue;
 			else
 			    return msg;
+		    buffer = msg.getMessage();
+		    totalLen = len;
 		    if (buffer[totalLen - 1] == (byte) ShortMessage.END_OF_EXCLUSIVE)
 			return msg;
 		    firstMsg = false;
@@ -246,7 +256,7 @@ public abstract class MidiWrapper {
 		    }
 		    buffer = combineBuffer;
 		}
-	    } while (buffer[totalLen - 1] != (byte) ShortMessage.END_OF_EXCLUSIVE);
+	    } while (firstMsg || buffer[totalLen - 1] != (byte) ShortMessage.END_OF_EXCLUSIVE);
 	    SysexMessage sysexmsg = new SysexMessage();
 	    sysexmsg.setMessage(buffer, totalLen);
 	    return (MidiMessage) sysexmsg;
