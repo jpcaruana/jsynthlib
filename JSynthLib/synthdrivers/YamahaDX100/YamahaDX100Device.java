@@ -35,7 +35,7 @@ public class YamahaDX100Device extends Device implements ItemListener
     /** Creates new YamahaTX81zDevice */
     public YamahaDX100Device ()
     {
-	super ("Yamaha","DX21 / DX27 / DX100",null,infoText,"Gerrit Gehnen");
+	super ("Yamaha","DX21 / DX27 / DX100",null,infoText,"Brian Klock");
         setSynthName("DX21");
         addDriver (new YamahaDX100BankDriver ());
         addDriver (new YamahaDX100SingleDriver ());

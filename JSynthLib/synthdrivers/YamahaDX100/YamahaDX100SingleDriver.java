@@ -9,7 +9,7 @@ public class YamahaDX100SingleDriver extends Driver
 
    public YamahaDX100SingleDriver()
    {
-   super ("Single","Gerrit Gehnen");
+   super ("Single","Brian Klock");
    sysexID= "F043**03005D";
    patchNameStart=83;
    patchNameSize=10;

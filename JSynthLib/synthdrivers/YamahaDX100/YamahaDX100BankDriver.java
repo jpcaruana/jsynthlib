@@ -10,7 +10,7 @@ public class YamahaDX100BankDriver extends BankDriver
 
    public YamahaDX100BankDriver()
    {
-   super ("Bank","Gerrit Gehnen",32,4);
+   super ("Bank","Brian Klock",32,4);
    sysexID="F043**042000";
    deviceIDoffset=2;
    bankNumbers =new String[] {"0-Internal"};
