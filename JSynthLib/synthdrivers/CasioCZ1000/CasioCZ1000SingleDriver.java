@@ -165,33 +165,11 @@ public class CasioCZ1000SingleDriver extends Driver
         } catch (Exception e) {};
     }
 
-/*TODO delete me
-    public boolean supportsPatch(String patchString, byte[] sysex) {
-        // Gross cheat .. patches coming from the synth are 263 bytes;
-        // all other cases are 264 bytes.  I hope we're not threaded..
-        if(sysex.length == 263)
-            patchSize = 263;
-        boolean supported = super.supportsPatch(patchString, sysex);
-        patchSize = 264;
-        return supported;
-    }
-    
-    public IPatch createPatch(byte[] sysex) {
-        // Casio returns a 263 byte patch, but everyone expects 264,
-        // because the sysex sent to the Casio contains the bank number,
-        // while the sysex sent back does not.
-        if(sysex.length == 263) {
-            byte[] sysex2 = new byte[264];
-            System.arraycopy(sysex, 0, sysex2, 0, 6);
-            sysex2[6] = 0x60;  //default to edit buffer
-            System.arraycopy(sysex, 6, sysex2, 7, sysex.length-6);
-            sysex = sysex2;
-        }
-        return new Patch(sysex, this);
-    }
-*/
-    
     public JSLFrame editPatch(Patch p) {
         return new CasioCZ1000SingleEditor(p);
+    }
+
+    /** No support, so ignore quietly. */
+    protected void setPatchName(Patch p, String name) {
     }
 }
