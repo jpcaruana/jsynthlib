@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.4 2004-07-22 07:10:29 jbackhaus Exp $
+	Version: $Id: build.xml,v 1.5 2004-07-23 05:51:59 jbackhaus Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -45,7 +45,7 @@
 	<property name="synthdrivers"  location="${build}/synthdrivers"/>
 	
 	<property name="synth"  value="**"/>
-	<property name="deprecation"  value="off"/>
+	<property name="deprecation"  value="on"/>
 
 	<!-- Conditions -->
 	<condition property="isMacOS"> <os family="mac"/> </condition>
