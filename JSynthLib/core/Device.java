@@ -291,6 +291,8 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * send MidiMessage to MIDI output. Called by Driver.send().
      */
     public final void send(MidiMessage message) {
+	if (rcvr == null)
+	    return;
 	try {
 	    if (midiOutBufSize == 0 && AppConfig.getMidiOutBufSize() == 0)
 	        MidiUtil.send(rcvr, message);
