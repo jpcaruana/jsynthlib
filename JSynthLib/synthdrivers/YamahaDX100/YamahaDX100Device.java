@@ -16,10 +16,17 @@ import java.util.Arrays;;
 /**
  *
  * @author  Gerrit Gehnen
- * @version 0.1
+ * @version $Id$
  */
 public class YamahaDX100Device extends Device implements ItemListener
 {
+    private static final String infoText="The Yamaha synth is susceptable to internal midi buffer overflow if you send it a lot of Data"+
+	          "quickly. With JSynthLib, this can happenif you are using a fader box and throwing the faders"+
+		  "around rapidly. Otherwise, it should not be a problem\n\n"+
+		  "JSynthLib supports the DX21/27/100 as both a Single and Bank Librarian and also supports Patch Editing."+
+		  "Note that though these three synths share one driver, some parameters may only effect the sound on certain "+
+		  "models. Therefore, under 'configuration' you can choose which of the three models you own.";
+
     private int whichSynth;
     JRadioButton b1;
     JRadioButton b2;
@@ -28,18 +35,11 @@ public class YamahaDX100Device extends Device implements ItemListener
     /** Creates new YamahaTX81zDevice */
     public YamahaDX100Device ()
     {
-        manufacturerName="Yamaha";
-        modelName="DX21 / DX 27 / DX100";
-        synthName="DX21";
+	super ("Yamaha","DX21 / DX27 / DX100",null,infoText,"Gerrit Gehnen");
+        setSynthName("DX21");
         addDriver (new YamahaDX100BankDriver ());
         addDriver (new YamahaDX100SingleDriver ());
-       infoText="The Yamaha synth is susceptable to internal midi buffer overflow if you send it a lot of Data"+
-	          "quickly. With JSynthLib, this can happenif you are using a fader box and throwing the faders"+
-		  "around rapidly. Otherwise, it should not be a problem\n\n"+
-		  "JSynthLib supports the DX21/27/100 as both a Single and Bank Librarian and also supports Patch Editing."+
-		  "Note that though these three synths share one driver, some parameters may only effect the sound on certain "+
-		  "models. Therefore, under 'configuration' you can choose which of the three models you own.";
-        setWhichSynth(21);         
+	setWhichSynth(21);         
     }
     public JPanel config()
    {

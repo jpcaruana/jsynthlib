@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.YamahaTX81z;
 import core.*;
 import javax.swing.*;
@@ -55,7 +58,7 @@ class YamahaTX81zSingleEditor extends PatchEditorFrame
 
   addWidget(cmnPane,new ScrollBarWidget(" Feedback",patch,0,7,0,new ParamModel(patch,100),new VcedSender(53)),1,1,3,1,18);
   addWidget(cmnPane,new ScrollBarWidget(" Transpose",patch,0,48,-24,new ParamModel(patch,109),new VcedSender(62)),1,2,3,1,19);
-  addWidget(cmnPane,new PatchNameWidget(patch," Name"),1,3,2,1,0);
+  addWidget(cmnPane,new PatchNameWidget(" Name",patch),1,3,2,1,0);
   addWidget(cmnPane,new CheckBoxWidget("Mono Mode",patch,new ParamModel(patch,110),new VcedSender(63)),3,3,1,1,-17);  
   gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=4;
   cmnPane.add(l,gbc);

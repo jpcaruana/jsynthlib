@@ -8,18 +8,16 @@ import core.*;
 /**
  *
  * @author  Brian Klock
- * @version
+ * @version $Id$
  */
 public class GenericDevice extends Device
 {
  
     public GenericDevice ()
     {
-        manufacturerName="Generic";
-        modelName="Device";
+	super ("Generic","Device",null,null,"Brian Klock");
         setSynthName("???");
-        addDriver (new Driver());
-   
+        addDriver (new Driver("Sysex","Brian Klock"));
     }
 
 }

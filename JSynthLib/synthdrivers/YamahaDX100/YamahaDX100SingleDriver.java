@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.YamahaDX100;
 import core.*;
 import javax.swing.*;
@@ -6,10 +9,7 @@ public class YamahaDX100SingleDriver extends Driver
 
    public YamahaDX100SingleDriver()
    {
-   manufacturer="Yamaha";
-   model="DX21/DX27/DX100";
-   patchType="Single";
-   id="DX100";
+   super ("Single","Gerrit Gehnen");
    sysexID= "F043**03005D";
    patchNameStart=83;
    patchNameSize=10;
@@ -43,8 +43,7 @@ public Patch createNewPatch()
      sysex[0]=(byte)0xF0;sysex[1]=(byte)0x43;sysex[2]=(byte)0x00;
      sysex[3]=(byte)0x03;sysex[4]=(byte)0x00;sysex[5]=(byte)0x5D;
      sysex[100]=(byte)0xF7 ; 
-	Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+	Patch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;

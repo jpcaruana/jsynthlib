@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.YamahaDX100;
 import core.*;
 import java.io.*;
@@ -7,10 +10,7 @@ public class YamahaDX100BankDriver extends BankDriver
 
    public YamahaDX100BankDriver()
    {
-   manufacturer="Yamaha";
-   model="DX21 / DX 27 / DX100";
-   patchType="Bank";
-   id="DX100";
+   super ("Bank","Gerrit Gehnen",32,4);
    sysexID="F043**042000";
    deviceIDoffset=2;
    bankNumbers =new String[] {"0-Internal"};
@@ -18,8 +18,6 @@ public class YamahaDX100BankDriver extends BankDriver
                               "I09","I10","I11","I12","I13","I14","I15","I16", 
                               "I17","I18","I19","I20","I21","I22","I23","I24",
                               "I25","I26","I27","I28","I29","I30","I31","I32"};  
-   numPatches=patchNumbers.length;
-   numColumns=4;
    singleSize=101;
    singleSysexID="F043**03005D";
 
@@ -219,9 +217,8 @@ public class YamahaDX100BankDriver extends BankDriver
   
      sysex[100]=(byte)0xF7;     
      System.arraycopy(bank.sysex,getPatchStart(patchNum)+51,sysex,77,22);
-     Patch p = new Patch(sysex);
-     p.ChooseDriver();
-     PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);   
+     Patch p = new Patch(sysex, getDevice());
+     p.getDriver().calculateChecksum(p);
      return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in TX81z Bank Driver",e);return null;}
    }
@@ -232,8 +229,7 @@ public Patch createNewPatch()
      sysex[03]=(byte)0x04;sysex[04]=(byte)0x20;sysex[05]=(byte)0x00;
      sysex[4103]=(byte)0xF7;
      
-	Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+	Patch p = new Patch(sysex, this);
 	 for (int i=0;i<32;i++) 
 	   setPatchName(p,i,"NewPatch");
 	 calculateChecksum(p);	 

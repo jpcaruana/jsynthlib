@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.YamahaTX81z;
 import core.*;
 import javax.swing.*;
@@ -6,10 +9,7 @@ public class YamahaTX81zSingleDriver extends Driver
 
    public YamahaTX81zSingleDriver()
    {
-   manufacturer="Yamaha";
-   model="TX81z";
-   patchType="Single";
-   id="TX81z";
+   super ("Single","Brian Klock");
    sysexID= "F043**7E00214C4D2020383937364145";
    patchNameStart=124;
    patchNameSize=10;
@@ -24,7 +24,7 @@ public void calculateChecksum(Patch p)
  {
    calculateChecksum(p,6,38,39);  //calculate ACED Checksum
    calculateChecksum(p,47,139,140);  //calculate VCED Checksum
-   p.sysex[43]=((byte)(channel-1));
+   p.sysex[43]=((byte)(getChannel()-1));
  }
 public void storePatch (Patch p, int bankNum,int patchNum)
   {   
@@ -33,13 +33,13 @@ public void storePatch (Patch p, int bankNum,int patchNum)
    sendPatch(p);
    try{
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+channel-1),(byte)0x13,(byte)0x41,(byte)0x7F,(byte)0xF7});   
+   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+getChannel()-1),(byte)0x13,(byte)0x41,(byte)0x7F,(byte)0xF7});   
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+channel-1),(byte)0x13,(byte)0x48,(byte)0x7F,(byte)0xF7});
+   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+getChannel()-1),(byte)0x13,(byte)0x48,(byte)0x7F,(byte)0xF7});
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+channel-1),(byte)0x13,(byte)0x41,(byte)0x00,(byte)0xF7});
+   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+getChannel()-1),(byte)0x13,(byte)0x41,(byte)0x00,(byte)0xF7});
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+channel-1),(byte)0x13,(byte)0x48,(byte)0x7F,(byte)0xF7});
+   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)(0x10+getChannel()-1),(byte)0x13,(byte)0x48,(byte)0x7F,(byte)0xF7});
 
    }catch (Exception e){ErrorMsg.reportError("Error","Unable to Play Patch",e);}
   }
@@ -54,9 +54,9 @@ public Patch createNewPatch()
      sysex[15]=(byte)0x45;sysex[40]=(byte)0xF7;
      sysex[41]=(byte)0xF0;sysex[42]=(byte)0x43;sysex[43]=(byte)0x00;
      sysex[44]=(byte)0x03;sysex[45]=(byte)0x00;sysex[46]=(byte)0x5D;
-     sysex[141]=(byte)0xF7 ; 
-	Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+     sysex[141]=(byte)0xF7 ;
+
+	Patch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;
