@@ -65,6 +65,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
      setPatchNum(patchNum);
      sendPatchWorker (p);
    }
+    /*
    public void choosePatch (Patch p)
    {
      
@@ -77,6 +78,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
      storePatch(p,patchNum.intValue()/100,patchNum.intValue()%100);
          }catch (Exception e) {JOptionPane.showMessageDialog(null, "Invalid Patch Number Entered!","Error", JOptionPane.ERROR_MESSAGE);}
    }
+    */
    public void sendPatch (Patch p)
    {
      

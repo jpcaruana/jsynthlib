@@ -124,11 +124,12 @@ public class EnsoniqVFXSingleDriver extends Driver
 	 *
 	 *@param  p  Description of the Parameter
 	 */
+	/*
 	public void choosePatch(Patch p)
 	{
 		storePatch(p, 0, 0);
 	}
-
+	*/
 
 
 	/**

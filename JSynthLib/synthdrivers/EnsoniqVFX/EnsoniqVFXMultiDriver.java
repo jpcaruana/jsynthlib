@@ -35,17 +35,17 @@ public class EnsoniqVFXMultiDriver extends Driver
 	}
 
 
-
 	/**
 	 *  Description of the Method
 	 *
 	 *@param  p  Description of the Parameter
 	 */
+	/*
 	public void choosePatch(Patch p)
 	{
 		storePatch(p, 0, 0);
 	}
-
+	*/
 
 
 	/**

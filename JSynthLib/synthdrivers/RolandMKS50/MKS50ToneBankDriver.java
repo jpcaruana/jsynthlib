@@ -45,6 +45,7 @@ public class MKS50ToneBankDriver extends BankDriver
     sendPatchWorker(p);
   }
 
+  /*
   public void choosePatch (Patch p)
   {
     JOptionPane.showMessageDialog(PatchEdit.getInstance(),
@@ -59,7 +60,7 @@ public class MKS50ToneBankDriver extends BankDriver
     );
     storePatch(p, 0, 0);
   }
-
+  */
   public void putPatch(Patch bank, Patch p, int patchNum)
   {
     if (!canHoldPatch(p))

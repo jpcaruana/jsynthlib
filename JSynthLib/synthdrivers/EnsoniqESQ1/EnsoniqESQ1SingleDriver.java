@@ -64,9 +64,10 @@ public class EnsoniqESQ1SingleDriver extends Driver
   }
 
 
+/*
 public void choosePatch (Patch p)
 {storePatch(p,0,0);}
-
+*/
 
 
 public void storePatch (Patch p, int bankNum,int patchNum)
