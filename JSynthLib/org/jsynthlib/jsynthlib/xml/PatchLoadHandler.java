@@ -86,6 +86,7 @@ public class PatchLoadHandler extends AdvDefaultHandler {
         }
         public void addParameter(XMLParameter p) throws SAXParseException {
             decoder.finishParameter(p);
+            p.setSysexIndex(id);
             params.add(p);
         }
         public void addString(XMLParameter p) throws SAXParseException {
