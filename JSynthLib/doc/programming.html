@@ -124,12 +124,12 @@ core package.<br>
 Add javadoc on important members (methods and fields).
 <var>public</var> and </var>protected</var> member must be documented.
 
-<h3>I.c. Proper Use of Access Control Modifier</h3>
+<h3>I.c. Proper Use of Access Control Modifier (for core developers)</h3>
 This is important for codes under "core/".
-It would be much easier for programmers to write a driver if the methods and the fields were used properly.
+It would be much easier for programmers to write a driver if the methods and the fields were used properly.<br>
 
-I see many easy use of public or package (default) modifier in files under "core/".
-If private or protected is used properly I don't have to do grep all files to see how a method or a field is used.<p>
+Many classes make easy use of public or package (default) modifiers in files under "core/".
+If private or protected is used properly there is no need to grep all files to see how a method or a field is used.<p>
 
 Especially we have to be very careful to make a public (or package) field.
 If you really need to access it, consider using protected or defining getFoo() or setFoo() method.<p>
@@ -1280,9 +1280,9 @@ Here is the setting I'm using for Eclipse 3.0.
 <li> On <kbd>Project->Java Build Path->Library</kbd> tab, add
 <kbd>groovy.jar</kbd> and <kbd>asm.jar</kbd>.
 
-<li> For using the Javadoc generation go to
+<li> For using the Javadocs for the JDK (e.g. the "J2SE 5.0 Documentation") go to
 <kbd>Preferences->Java->Installed JREs->Edit->Javadoc URL</kbd> set to
-the directory where you installed the Javadoc. A short
+the directory where you installed the Javadocs. A short
 description is shown when moving the mouse cursor on a class or a member.  You can
 see the full documentation by hitting <kbd>Shift-F2</kbd> after selecting
 a class or member.
