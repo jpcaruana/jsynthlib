@@ -19,7 +19,9 @@ public final class MacUtils extends Application {
 	// Should this check for Aqua L&F too?
 	return System.getProperty("os.name").startsWith("Mac OS X")
 	    // Just to make sure.
-	    && System.getProperty("java.vm.version").startsWith("1.4");
+	    && System.getProperty("java.vm.version").startsWith("1.4")
+		// It's really confusing if screen menu bar isn't enabled
+		&& "true".equals(System.getProperty("apple.laf.useScreenMenuBar"));
     }
 
     static void init(final Action exitAction,
