@@ -20,8 +20,8 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 
-
-class SynthTableModel extends AbstractTableModel
+// Made public by emenaker 3/12/2003 because stuff that uses it was moved out of core.*
+public class SynthTableModel extends AbstractTableModel
 {
     final String[] columnNames =
     {"Synth ID",

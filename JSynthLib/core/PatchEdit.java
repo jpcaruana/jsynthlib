@@ -12,11 +12,11 @@ import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import javax.sound.midi.*;
-public class PatchEdit extends JFrame
-{
+//TODO import /*TODO org.jsynthlib.*/midi.*;
+public class PatchEdit extends JFrame implements MidiDriverChangeListener {
     public static JDesktopPane desktop;
-    //    public static ArrayList DriverList = new ArrayList ();
-    //public static ArrayList deviceList = new ArrayList ();
+    //   public static ArrayList DriverList = new ArrayList ();
+    //   public static ArrayList deviceList = new ArrayList ();
     public static Patch Clipboard;
     public static MidiWrapper MidiOut;
     public static MidiWrapper MidiIn;
@@ -26,7 +26,7 @@ public class PatchEdit extends JFrame
     public static int currentPort;
     public static PrefsDialog prefsDialog;
 	public static AppConfig appConfig;
-    public static NoteChooserDialog noteChooserDialog;
+    // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
     public static WaitDialog waitDialog;
     public static javax.swing.Timer echoTimer;
     public static int newFaderValue[] = new int[33];
@@ -71,14 +71,28 @@ public class PatchEdit extends JFrame
         instance = this;              // phil@muqus.com (so can pop-up windows with PatchEdit as the         
         boolean loadPrefsSuccessfull,loadDriverSuccessfull;
 		this.appConfig = new AppConfig();
-        prefsDialog=new PrefsDialog (this, this.appConfig);
-        noteChooserDialog = new NoteChooserDialog (PatchEdit.this, this.appConfig);
-        
+
+        prefsDialog=new PrefsDialog (this);
         loadPrefsSuccessfull=loadPrefs ();
-        loadDriverSuccessfull=loadMidiDriver ();
-        MidiIn=MidiOut;
+		// Add the configuration panels to the prefsDialog
+        prefsDialog.addPanel(new /*TODO org.jsynthlib.*/GeneralConfigPanel(appConfig));
+		prefsDialog.addPanel(new /*TODO org.jsynthlib.*/DirectoryConfigPanel(appConfig));
+		/*TODO org.jsynthlib.*/FaderBoxConfigPanel faderbox = new /*TODO org.jsynthlib.*/FaderBoxConfigPanel(appConfig);
+		/*TODO org.jsynthlib.midi.*/MidiConfigPanel midiConfigPanel = null;
+		try {
+			midiConfigPanel = new /*TODO org.jsynthlib.midi.*/MidiConfigPanel(appConfig);
+			midiConfigPanel.addDriverChangeListener(this);
+			midiConfigPanel.addDriverChangeListener(faderbox); // Notify the faderbox, too... - emenaker 2003.03.19
+    		prefsDialog.addPanel(midiConfigPanel);
+    		MidiIn = MidiOut = midiConfigPanel.getMidiWrapper();
+		} catch (Exception e) {
+			System.err.println(e);
+			e.printStackTrace();
+		}
+		prefsDialog.addPanel(faderbox);
+		prefsDialog.addPanel(new /*TODO org.jsynthlib.*/NoteChooserConfigPanel(appConfig));
         
-        prefsDialog.init ();  //loads in the config file and sets parameters
+		prefsDialog.init ();  //loads in the config file and sets parameters
         // Now lets set up how the pretty application should look
         int inset = 100;
         Dimension screenSize = Toolkit.getDefaultToolkit ().getScreenSize ();
@@ -94,8 +108,9 @@ public class PatchEdit extends JFrame
             public void windowClosing (WindowEvent e)
             {
                 savePrefs ();
-                unloadMidiDriver();
-		System.exit (0);
+				// We shouldn't need to unload the midi driver if the whole JVM is going away.
+                // unloadMidiDriver();
+				System.exit (0);
             }
         });
         
@@ -110,8 +125,8 @@ public class PatchEdit extends JFrame
         setVisible (true);
         if (!loadPrefsSuccessfull)
             ErrorMsg.reportError ("Error", "Unable to load user preferences. Defaults loaded\n If you've just installed or just upgraded this software, this is normal.");
-        if (!loadDriverSuccessfull)
-            ErrorMsg.reportError ("Error","Unable to Initialize MIDI IN/OUT! \nMidi Transfer will be unavailable this session.\nChange the Initialization Port Settings under Preferences and restart.");
+		//if (!loadDriverSuccessfull)
+            //ErrorMsg.reportError ("Error","Unable to Initialize MIDI IN/OUT! \nMidi Transfer will be unavailable this session.\nChange the Initialization Port Settings under Preferences and restart.");
         
         //Set up a silly little dialog we can pop up for the user to gawk at while we do time consuming work later on.
         waitDialog=new WaitDialog (this);
@@ -235,26 +250,32 @@ public class PatchEdit extends JFrame
         
         JMenu menuConfig = new JMenu ("Config");
         menuConfig.setMnemonic (KeyEvent.VK_C);
-        JMenuItem menuSynths = new JMenuItem ("Synths");
-        menuSynths.setMnemonic (KeyEvent.VK_S);
-        menuSynths.addActionListener (new ActionListener ()
-        {
-            public void actionPerformed (ActionEvent e)
-            {
-                SynthConfigDialog scd= new SynthConfigDialog (PatchEdit.this);
-                scd.show ();
-            }
-        }
-        );
-        menuConfig.add (menuSynths);
         PrefsAction prefsAction=new PrefsAction ();
         menuConfig.add (prefsAction);
-        NoteChooserAction noteChooserAction=new NoteChooserAction ();
-        menuConfig.add (noteChooserAction);
-        MonitorAction monitorAction=new MonitorAction ();
-        menuConfig.add (monitorAction);
+        // NoteChooserAction noteChooserAction=new NoteChooserAction ();
+        // menuConfig.add (noteChooserAction); -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
 
         menuBar.add (menuConfig);
+
+		// Moved "Synths" and "Midi Monitor" to a "Window" menu - emenaker 2003.03.24        
+		JMenu menuWindow = new JMenu ("Window");
+		menuWindow.setMnemonic (KeyEvent.VK_C);
+		JMenuItem menuSynths = new JMenuItem ("Synths");
+		menuSynths.setMnemonic (KeyEvent.VK_S);
+		menuSynths.addActionListener (new ActionListener ()
+		{
+			public void actionPerformed (ActionEvent e)
+			{
+				SynthConfigDialog scd= new SynthConfigDialog (PatchEdit.this);
+				scd.show ();
+			}
+		}
+		);
+		menuWindow.add (menuSynths);
+		MonitorAction monitorAction=new MonitorAction ();
+		menuWindow.add (monitorAction);
+
+		menuBar.add (menuWindow);
         
         JMenu menuHelp = new JMenu ("Help");
         menuHelp.setMnemonic (KeyEvent.VK_H);
@@ -494,8 +515,9 @@ public class PatchEdit extends JFrame
     }
     
     //And this one loads the settings on start up.
-    public boolean loadPrefs ()
-    {
+    public boolean loadPrefs () {
+    	/*
+    	 * These are handled by the individual ConfigPanels now - emenaker 2003.03.25
         appConfig.setInitPortIn(0);
         appConfig.setInitPortOut(0);
         appConfig.setLibPath("");
@@ -503,100 +525,29 @@ public class PatchEdit extends JFrame
         appConfig.setNote(60);
 		appConfig.setVelocity(100);
 		appConfig.setDelay(500);
+    	 */
 
-        try
-        {
+		try {
 			// Load the appconfig
 			this.appConfig.load();
 			return true;
-        } catch(Exception e)
-		{
+		} catch(Exception e) {
 			return false;
-        }
-		finally {
+		} finally {
 			if (this.appConfig.deviceCount()==0) {
 				appConfig.addDevice (new synthdrivers.Generic.GenericDevice());
 			}
 		}
-    }
+	}
     
-    // This code loads the midi driver specified in the preferences.
-    boolean loadMidiDriver ()
-    {
-        Class wrapperClass;
-        
-        if (appConfig.getInitPortIn()<0) appConfig.setInitPortIn(0);
-        if (appConfig.getInitPortOut()<0) appConfig.setInitPortOut(0);
-        if (appConfig.getFaderPort()<0) appConfig.setFaderPort(0);
-        if (appConfig.getMasterController()<0) appConfig.setMasterController(0);
-        
-        
-        try
-        {
-            switch (appConfig.getMidiPlatform())
-            {
-                case 0: MidiOut=new DoNothingMidiWrapper (0,0); break;
-                case 2: MidiOut=new WireMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
-                case 3: MidiOut=new LinuxMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
-                case 4: wrapperClass=java.lang.Class.forName("core.MacOSXMidiWrapper");
-                        MidiOut= (MidiWrapper)(wrapperClass.newInstance());
-                        MidiOut.setInputDeviceNum(appConfig.getInitPortIn());
-                        MidiOut.setOutputDeviceNum(appConfig.getInitPortOut());
-                        break;
-                //new MacOSXMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
-                case 5: MidiOut=new JavasoundMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
-            }
-            MidiIn=MidiOut;
-        } catch (Exception e)
-        {
-            e.printStackTrace ();
-            return false;
-            
-        }
-        if (appConfig.getMidiPlatform()!=1) return true;
-        
-        // Ugly Special Case code for Initializing JavaMIDI, which is very picky about initializing.
-        
-        try
-        {
-            MidiOut=new  JavaMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut());
-            currentPort=appConfig.getInitPortOut();
-        }
-        catch (Exception e6)
-        {
-            ErrorMsg.reportError ("Error!","Unable to Initialize MIDI IN/OUT! \nMidi Transfer will be unavailable this session.\nChange the Initialization Port Settings under Preferences and restart.",e6);
-            try
-            {
-                appConfig.setFaderPort(1);
-                MidiOut=new JavaMidiWrapper (1,1);
-                currentPort=1;
-            }
-            catch (Exception e7)
-            {
-                try
-                {appConfig.setFaderPort(2);MidiOut=new
-                 JavaMidiWrapper (2,2);currentPort=2; } catch (Exception e8)
-                 {
-                     try
-                     {appConfig.setFaderPort(3);MidiOut=new
-                      JavaMidiWrapper (4,4);currentPort=3; } catch (Exception e9)
-                      {
-                          try
-                          {appConfig.setFaderPort(3);MidiOut=new
-                           JavaMidiWrapper (5,5);currentPort=3; } catch (Exception e10)
-                           {
-                               try
-                               {appConfig.setFaderPort(3);MidiOut=new
-                                JavaMidiWrapper (6,6);currentPort=3; } catch (Exception e11)
-                                {
-                                    try
-                                    {appConfig.setFaderPort(3);MidiOut=new
-                                     JavaMidiWrapper (7,7);currentPort=3; } catch (Exception e12)
-                                     {
-                                     }}}}}}
-                                     
-        }
-        return true;
+	/**
+	* This used to be loadMidiDriver() but it is now a callback method that gets notified by
+	* MidiConfigPanel if the user changes midi drivers. Initialization of the drivers is now handled by
+	* the drivers themselves. - emenaker 2003.03.12
+	* @param driver The new MidiWrapper
+	*/
+	public void midiDriverChanged(MidiWrapper driver) {
+		MidiIn = MidiOut = driver;
     }
     
     
@@ -1155,7 +1106,10 @@ public class PatchEdit extends JFrame
             prefsDialog.show ();
         }
     }
-    public class NoteChooserAction extends AbstractAction
+/*
+	noteChooserDialog got replaced by NoteChooserConfigPanel - emenaker 2003.03.17
+
+        class NoteChooserAction extends AbstractAction
     {
         public NoteChooserAction ()
         {
@@ -1167,7 +1121,9 @@ public class PatchEdit extends JFrame
         {
             noteChooserDialog.show ();
         }
+
     }
+*/
     
     //This is a comparator class used by the delete duplicated action to sort based on the sysex data
     //Sorting this way makes the Dups search much easier, since the dups must be next to each other
@@ -1266,7 +1222,6 @@ public class PatchEdit extends JFrame
         }
         return (ImageIcon)icon;
     }
-
 	
     protected void beginEcho ()
     {
@@ -1274,65 +1229,48 @@ public class PatchEdit extends JFrame
         {
             byte buffer[] = new byte[128];
             Patch p;
-            public void actionPerformed (ActionEvent evt)
-            {
-                
-                try
-                {
-                    //FIXME there is a bug in the javaMIDI classes so this routine gets the inputmessages from the faderbox as well as the
-                    // master controller. I cant figure out a way to fix it so let's just handle them here.
-                    
-                    if ((appConfig.getFaderEnable()) &(PatchEdit.MidiIn.messagesWaiting (appConfig.getMasterController())>0))
-                        for (int i=0;i<33;i++) newFaderValue[i]=255;
-                    while (PatchEdit.MidiIn.messagesWaiting (appConfig.getMasterController())>0)
-                    {
-                        int size; 
-                        int port;
-                        size=PatchEdit.MidiIn.readMessage (appConfig.getMasterController(),buffer,128);
-                        p=PatchEdit.Clipboard;
-                        if ((desktop.getSelectedFrame () instanceof PatchBasket)&&(!(desktop.getSelectedFrame () instanceof PatchEditorFrame)))
-                        {
-                            if ((desktop.getSelectedFrame () instanceof LibraryFrame ))
-                                if (((LibraryFrame)((desktop.getSelectedFrame ()))).table.getSelectedRowCount ()==0)
-                                break;
-                            ((PatchBasket)desktop.getSelectedFrame ()).CopySelectedPatch ();
-                        }
-                        else 
-						if (desktop.getSelectedFrame() instanceof PatchEditorFrame)
-						{
-                            Clipboard=((PatchEditorFrame)desktop.getSelectedFrame ()).p;
+            public void actionPerformed (ActionEvent evt) {
+				try {
+					//FIXME there is a bug in the javaMIDI classes so this routine gets the inputmessages from the faderbox as well as the
+					// master controller. I cant figure out a way to fix it so let's just handle them here.
+					if(appConfig.getMasterController()>-1 && appConfig.getMasterController()<MidiIn.getNumInputDevices()) {
+						if ((appConfig.getFaderEnable()) &(PatchEdit.MidiIn.messagesWaiting (appConfig.getMasterController())>0)) {
+							for (int i=0;i<33;i++)
+								newFaderValue[i]=255;
+							while (PatchEdit.MidiIn.messagesWaiting (appConfig.getMasterController())>0) {
+								int size; 
+								int port;
+								size=PatchEdit.MidiIn.readMessage (appConfig.getMasterController(),buffer,128);
+								p=PatchEdit.Clipboard;
+								if ((desktop.getSelectedFrame () instanceof PatchBasket)&&(!(desktop.getSelectedFrame () instanceof PatchEditorFrame))) {
+									if ((desktop.getSelectedFrame () instanceof LibraryFrame ) &
+									  ((LibraryFrame)((desktop.getSelectedFrame ()))).table.getSelectedRowCount ()==0)
+										break;
+									((PatchBasket)desktop.getSelectedFrame ()).CopySelectedPatch ();
+								} else
+									Clipboard=((PatchEditorFrame)desktop.getSelectedFrame ()).p;
+								//port=(PatchEdit.deviceList.get (Clipboard.deviceNum)).
+								port=appConfig.getDevice(Clipboard.deviceNum).getPort();
+								if ((appConfig.getFaderEnable())&(desktop.getSelectedFrame () instanceof PatchEditorFrame) && (buffer[0]&0xF0) == 0xB0)
+									sendFaderMessage (buffer[0],buffer[1],buffer[2]);
+								else
+									if ( (buffer[0]&0xF0) == 0xD0) {
+										//do nothing for now
+									} else {
+										if (((buffer[0] & 0xF0) > 0x70) && ((buffer[0] & 0xF0) <0xF0 ))
+											buffer[0]=(byte)((buffer[0] & 0xF0) +appConfig.getDevice(Clipboard.deviceNum).getChannel()-1);
+										PatchEdit.MidiOut.writeLongMessage (port,buffer,size);
+									}
+								PatchEdit.Clipboard=p;
+							}
 						}
-						else 
-						if (desktop.getSelectedFrame() instanceof PatchContainer)
-						{
-                            Clipboard=((PatchContainer)desktop.getSelectedFrame ()).getPatch();
-						}
-                        //   port=(PatchEdit.deviceList.get (Clipboard.deviceNum)).
-                        port=appConfig.getDevice(Clipboard.deviceNum).getPort();
-                        if ((appConfig.getFaderEnable())&(desktop.getSelectedFrame () instanceof PatchEditorFrame) && (buffer[0]&0xF0) == 0xB0)
-                            sendFaderMessage (buffer[0],buffer[1],buffer[2]);
-			else
-			    if ( (buffer[0]&0xF0) == 0xD0)
-				{
-				    //do nothing for now
+					}
+				} catch (Exception ex) {
+					ErrorMsg.reportStatus (ex);
 				}
-                        else
-                         
-			    {
-                            if (((buffer[0] & 0xF0) > 0x70) && ((buffer[0] & 0xF0) <0xF0 ))
-                                buffer[0]=(byte)((buffer[0] & 0xF0) +appConfig.getDevice(Clipboard.deviceNum).getChannel()-1);
-                            PatchEdit.MidiOut.writeLongMessage (port,buffer,size);
-                        }
-                        PatchEdit.Clipboard=p;
-                    }
-                    
-                } catch (Exception ex)
-                {ErrorMsg.reportStatus (ex);};
-                
             }
-        }
-        );
-        echoTimer.start (); 
+        });
+        echoTimer.start ();
     }
     
     void sendFaderMessage (byte status, byte controller, byte value)
@@ -1345,12 +1283,6 @@ public class PatchEdit extends JFrame
             {((PatchEditorFrame)desktop.getSelectedFrame ()).faderMoved (i,value);   break;}
             i++;
         }
-    }
-    
-    public void unloadMidiDriver ()
-    {
-        if (MidiIn!=null)
-            MidiIn.close ();
     }
     
     public static Driver getDriver (int deviceNumber, int driverNumber)

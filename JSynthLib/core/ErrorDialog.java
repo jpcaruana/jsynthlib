@@ -116,7 +116,10 @@ public class ErrorDialog extends javax.swing.JDialog {
         messagePanel.setBorder(new javax.swing.border.EmptyBorder(new java.awt.Insets(10, 10, 10, 10)));
         jPanel3.add(messagePanel, java.awt.BorderLayout.CENTER);
 
-        iconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Error.gif")));
+		// I put this in a try/catch block because, if the image was missing, it threw an exception - emenaker 3/12/2003
+		try {
+	        iconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Error.gif")));
+		} catch (NullPointerException e) {}
         jPanel3.add(iconLabel, java.awt.BorderLayout.WEST);
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.NORTH);
@@ -187,11 +190,24 @@ public class ErrorDialog extends javax.swing.JDialog {
         dialog.setMessage((String)message);
         // Convert the text of the exception to a String
         ByteArrayOutputStream bas=new ByteArrayOutputStream();
-        e.printStackTrace(new PrintStream(bas));
-        // and fill it into the box
-        dialog.exceptionText=bas.toString();
+        /*
+         * If we were given a null instead of a real exception, we should notice that
+         * and say so rather than causing a NullPointerException to get displayed
+         * in the dialog, which could be misleading - emenaker 2003.03.18
+         */
+         PrintStream ps = new PrintStream(bas);
+		if(e!=null) {
+			ps.println("The error was:");
+			ps.println("  " + e.getMessage());
+			ps.println("The exception text is:");
+	        e.printStackTrace(ps);
+		} else {
+			ps.println("There were no details provided.");
+		}
+		// and fill it into the box
+		dialog.exceptionText=bas.toString();
+		// TODO: Make the informationPane scroll to the top
         dialog.showButton.setVisible(true);
-        
         dialog.show();
     }
     

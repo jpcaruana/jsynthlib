@@ -1,4 +1,4 @@
-package core;
+package core; //TODO org.jsynthlib.midi;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -8,10 +8,11 @@ import javax.swing.event.*;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import core.*; //FIXME  core.* will go away eventually - emenaker 3/12/2003
 public class MidiMonitor extends JDialog
 {
  final MyEditorPane jt;
- MidiMonitor()
+ public MidiMonitor()
    {
      super(PatchEdit.instance,"JSynthLib Midi Monitor",false);
         JPanel container= new JPanel();

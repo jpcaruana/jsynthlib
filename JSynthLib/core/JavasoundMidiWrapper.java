@@ -73,7 +73,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
     }
     
     public  JavasoundMidiWrapper() throws Exception {
-        this(0,0);
+        /* this(0,0); Mustn't do this. We need to be able to instantiate without trying to grab any ports - emenaker 2003.09.01 */
     }
     
     //this gets called whenever a midimessage arrives at input
@@ -106,7 +106,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
         close();
     }
     
-    protected  void setInputDeviceNum(int port)throws Exception {
+    /*TODO protected*/public  void setInputDeviceNum(int port)throws Exception {
         try {
             if ((port==PatchEdit.appConfig.getFaderPort()) && (fader!=null)) {
                 MidiDevice srcDevice=MidiSystem.getMidiDevice((MidiDevice.Info)sourceInfoVector.get(port));
@@ -130,7 +130,7 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
             ErrorMsg.reportError("Error","Wire MIDI is flipping out.",e);}
     }
     
-    protected  void setOutputDeviceNum(int port)throws Exception {
+    /*TODO protected*/public  void setOutputDeviceNum(int port)throws Exception {
         if (currentOutport!=port) {
             //output.close ();
             MidiDevice destDevice=MidiSystem.getMidiDevice((MidiDevice.Info)destinationInfoVector.get(port));
@@ -240,17 +240,14 @@ public class JavasoundMidiWrapper extends MidiWrapper implements Receiver {
         return msg.getLength();
     }
     
-    /** This method should return true, if this wrapper is
-   * supported on the actual platform (a wrapper for
-   * MacOSX should return true only on Mac's with OSX
-   * etc.)
-   * @return true, if wrapper is supported, false if wrapper is not supported at this
-   * platform.
-   *
-   */
-    public boolean isSupported() {
-        // TODO: Implement real functionality here
-        return true;
-    }
-    
+	public String getWrapperName() {
+		return("MS Windows (JavaSound)");
+	}
+
+	public static boolean supportsPlatform(String platform) {
+		if(platform.length()==0 || platform.indexOf("Windows")>-1) {
+			return(true);
+		}
+		return(false);
+	}
 }

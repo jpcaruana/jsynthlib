@@ -189,8 +189,24 @@ public class AppConfig implements Storable {
 	/** Size query for deviceList */
 	public int deviceCount() { return this.deviceList.size(); };
 
+	// Returns the "os.name" system property - emenaker 2003.03.13
+	public String getOSName() {
+		return(getSystemProperty("os.name"));
+	}
 
+	// Returns the "java.specification.version" system property - emenaker 2003.03.13
+	public String getJavaSpecVersion() {
+		return(getSystemProperty("java.specification.version"));
+	}
 
+	// Looks up a system property and returns "" on exceptions
+	private String getSystemProperty(String key) {
+		try {
+			return(System.getProperty(key));
+		} catch(Exception e) {}
+		return("");
+	}
+	
 	// For Storable interface
 
 	private String[] storedPropertyNames = {

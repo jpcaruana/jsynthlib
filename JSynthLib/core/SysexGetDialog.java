@@ -377,6 +377,9 @@ public class SysexGetDialog extends JDialog {
 
       //----- Clear MidiIn buffer
       try {
+      	if(PatchEdit.MidiIn == null) {
+      		System.err.println("Yup... it's null!");
+      	}
         while (PatchEdit.MidiIn.messagesWaiting(driver.inPort) > 0)
           PatchEdit.MidiIn.readMessage(driver.inPort, buffer, 1024);
 

@@ -18,6 +18,7 @@ import java.util.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
+//TODO import org.jsynthlib.midi.*;
 public class SynthConfigDialog extends JDialog
 {
     JTable table;
@@ -77,8 +78,14 @@ public class SynthConfigDialog extends JDialog
                 ScanPressed ();
             }
         });
-       if (!(PatchEdit.MidiOut instanceof JavaMidiWrapper))
-            buttonPanel.add ( scan );
+		// I changed this around a little bit. First, we're no longer comparing against
+		// individual midi wrappers (like JavaMidiWrapper). Second, the scan button is
+		// *always* there... it's just either enabled or disabled. Having GUI items appear
+		// and disappear is probably not a good idea, because a user might go back to where
+		// they *think* they saw a button once, and not find it... leading to general 
+		// confusion regarding the interface. - emenaker 2003.03.13
+		buttonPanel.add ( scan );
+		scan.enable( PatchEdit.MidiOut.supportsScanning());
         // END OF ADDED BUTTON
 
         JButton add = new JButton ("Add Device");

@@ -2,12 +2,13 @@
  * MidiScan.java
  *
  */
-package core;
+package core; //TODO org.jsynthlib.midi;
 
 import javax.sound.midi.*;
 import java.util.Vector;
 import java.util.*;
 import javax.swing.table.AbstractTableModel;
+import core.*;
 /**
  *
  * @author Gerrit Gehnen
