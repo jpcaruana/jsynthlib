@@ -318,37 +318,33 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
             }
         });
     }
-/*    Old Code
-    public void ImportPatch (File file) throws IOException,FileNotFoundException
-    {
-        FileInputStream fileIn= new FileInputStream (file);
-        byte [] buffer =new byte [(int)file.length ()];
-        fileIn.read (buffer);
-        fileIn.close ();
-        if (table.getSelectedRowCount ()==0) myModel.PatchList.add (new Patch (buffer));
-        else myModel.PatchList.add (table.getSelectedRow (),new Patch (buffer));
-        myModel.fireTableDataChanged ();
-        changed=true;
-        statusBar.setText (myModel.PatchList.size ()+" Patches");
-    }
- */
-    public void ImportPatch (File file) throws IOException,FileNotFoundException
-    {
+    
+    public void ImportPatch(File file) throws IOException,FileNotFoundException {
         int i;
-        FileInputStream fileIn= new FileInputStream (file);
-        byte [] buffer =new byte [(int)file.length ()];
-        fileIn.read (buffer);
-        fileIn.close ();
-        
-        Patch firstpat=new Patch (buffer);
-        
-        Patch[] patarray=firstpat.dissect ();
-        
-        if (patarray.length>1)
-        { // Conversion was sucessfull, we have at least one converted patch
-            for (int j=0;j<patarray.length;j++)
-            {
-                myModel.PatchList.add (patarray[j]); // add all converted patches
+        boolean hasMorePatches=true;
+        int startIndex=0;
+        int endIndex;
+        FileInputStream fileIn= new FileInputStream(file);
+        byte [] buffer =new byte [(int)file.length()];
+        fileIn.read(buffer);
+        fileIn.close();
+        while (hasMorePatches) {
+            // Search, if the file contains more than one Sysex-Message
+            for (endIndex=startIndex;endIndex<buffer.length;endIndex++) {
+                if (buffer[endIndex]==(byte)0xF7) // End of Message found
+                    break;
+            }
+            //Copy the Message into an separate buffer
+            byte [] partBuffer=new byte[endIndex-startIndex+1];
+            System.arraycopy(buffer,startIndex,partBuffer,0,endIndex-startIndex+1);
+            
+            Patch firstpat=new Patch(partBuffer);
+            
+            Patch[] patarray=firstpat.dissect();
+            
+            if (patarray.length>1) { // Conversion was sucessfull, we have at least one converted patch
+                for (int j=0;j<patarray.length;j++) {
+                    myModel.PatchList.add(patarray[j]); // add all converted patches
             }
         }
         else
@@ -359,8 +355,12 @@ public class LibraryFrame extends JInternalFrame implements PatchBasket
             else
                 myModel.PatchList.add (table.getSelectedRow (),firstpat);
         }
-        
-        myModel.fireTableDataChanged ();
+            startIndex=endIndex+1;
+            // If not the complete file is processed, proceed with the next part
+            if (endIndex>=buffer.length-1)
+                hasMorePatches=false;
+        }
+        myModel.fireTableDataChanged();
         changed=true;
         statusBar.setText (myModel.PatchList.size ()+" Patches");
     }
