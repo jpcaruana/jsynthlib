@@ -6,6 +6,10 @@ import core.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Properties;
+import java.util.Arrays;
+import java.util.Set;
+
 
 public class NordLeadDevice extends Device implements ItemListener {
   static final String DRIVER_INFO =
@@ -30,6 +34,9 @@ public class NordLeadDevice extends Device implements ItemListener {
   NordLeadConfig nlConfig;
   JComboBox channelList;
 
+  /** Holds value of property globalChannel. */
+  private int globalChannel;
+  
   /** Creates new NordLead */
   public NordLeadDevice() {
     manufacturerName = "Nord";
@@ -46,37 +53,14 @@ public class NordLeadDevice extends Device implements ItemListener {
       JOptionPane.WARNING_MESSAGE
     );
     
-    drv=new NLPatchBankDriver();
-    ((NLPatchBankDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-       
-    drv=new NLPatchSingleDriver();
-    ((NLPatchSingleDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-    
-    drv=new NLDrumBankDriver();
-    ((NLDrumBankDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-    
-    drv=new NLDrumSingleDriver();
-    ((NLDrumSingleDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-        
-    drv=new NLPerfBankDriver();
-    ((NLPerfBankDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-        
-    drv=new NLPerfSingleDriver();
-    ((NLPerfSingleDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-        
-    drv=new NL2PerfBankDriver();
-    ((NL2PerfBankDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
-        
-    drv=new NL2PerfSingleDriver();
-    ((NL2PerfSingleDriver)drv).setNlConfig(nlConfig);
-    addDriver(drv);
+    addDriver(new NLPatchBankDriver());
+    addDriver(new NLPatchSingleDriver());
+    addDriver(new NLDrumBankDriver());
+    addDriver(new NLDrumSingleDriver());
+    addDriver(new NLPerfBankDriver());
+    addDriver(new NLPerfSingleDriver());
+    addDriver(new NL2PerfBankDriver());
+    addDriver(new NL2PerfSingleDriver());
     }
 
   public JPanel config() {
@@ -98,5 +82,40 @@ public class NordLeadDevice extends Device implements ItemListener {
     if (e.getItemSelectable() == channelList) {
       nlConfig.setGlobalChannel(channelList.getSelectedIndex() + 1);
     }
+  }
+  
+  /** Getter for property globalChannel.
+   * @return Value of property globalChannel.
+   *
+   */
+  public int getGlobalChannel() {
+      return this.globalChannel;
+  }
+  
+  /** Setter for property globalChannel.
+   * @param globalChannel New value of property globalChannel.
+   *
+   */
+  public void setGlobalChannel(int globalChannel) {
+      this.globalChannel = globalChannel;
+  }
+  
+  /**
+   * Get the names of properties that should be stored and loaded.
+   * @return a Set of field names
+   */
+  public Set storedProperties()
+  {
+    final String[] storedPropertyNames = {"globalChannel"};
+    Set set = super.storedProperties();
+    set.addAll(Arrays.asList(storedPropertyNames));
+    return set;
+  }
+
+  /**
+   * Method that will be called after loading
+   */
+  public void afterRestore()
+  {
   }
 }

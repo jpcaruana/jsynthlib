@@ -60,8 +60,10 @@ public class VirusMultiSingleDriver extends Driver {
     (byte)0x47, (byte)0x47, (byte)0x47, (byte)0x47, (byte)0x47, (byte)0x47, (byte)0x47, (byte)0x47,
     (byte)0x47, (byte)0x7B, (byte)0xF7
   };
-  AccessVirusConfig avConfig;
-
+  
+ 
+ 
+  
   public VirusMultiSingleDriver() {
   //public VirusMultiSingleDriver(AccessVirusConfig avc) {
 //    avConfig = avc;
@@ -98,7 +100,7 @@ public class VirusMultiSingleDriver extends Driver {
 
   public void sendPatch(Patch p, int bankNum, int patchNum) {
     Patch p2 = new Patch(p.sysex);
-    p2.sysex[deviceIDoffset] = (byte)(avConfig.getDeviceId() - 1);
+    p2.sysex[deviceIDoffset] = (byte)(((AccessVirusDevice)device).getDeviceId() - 1);
     p2.sysex[BANK_NUM_OFFSET] = (byte)bankNum;
     p2.sysex[PATCH_NUM_OFFSET] = (byte)patchNum;
     calculateChecksum(p2);
@@ -112,7 +114,7 @@ public class VirusMultiSingleDriver extends Driver {
 
   public void playPatch(Patch p) {
     Patch p2 = new Patch(p.sysex);
-    p2.sysex[deviceIDoffset] = (byte)(avConfig.getDeviceId() - 1);
+    p2.sysex[deviceIDoffset] = (byte)(((AccessVirusDevice)device).getDeviceId() - 1);
     p2.sysex[BANK_NUM_OFFSET] = 0; // edit buffer
     p2.sysex[PATCH_NUM_OFFSET] = 0; // single mode
     calculateChecksum(p2);
@@ -126,26 +128,11 @@ public class VirusMultiSingleDriver extends Driver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(avConfig.getDeviceId()),
+    sysexRequestDump.send(port, (byte)(((AccessVirusDevice)device).getDeviceId()),
         new NameValue("bankNum", 1), new NameValue("patchNum", patchNum)
     );
   }
   
-  /** Getter for property avConfig.
-   * @return Value of property avConfig.
-   *
-   */
-  public synthdrivers.AccessVirus.AccessVirusConfig getAvConfig() {
-      return avConfig;
-  }
-  
-  /** Setter for property avConfig.
-   * @param avConfig New value of property avConfig.
-   *
-   */
-  public void setAvConfig(synthdrivers.AccessVirus.AccessVirusConfig avConfig) {
-      this.avConfig = avConfig;
-  }
-  
+ 
 }
 

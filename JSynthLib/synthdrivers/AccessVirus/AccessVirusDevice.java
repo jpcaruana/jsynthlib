@@ -6,6 +6,10 @@ import core.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Properties;
+import java.util.Arrays;
+import java.util.Set;
+import java.io.*;
 
 public class AccessVirusDevice extends Device implements ItemListener {
   static final String DRIVER_INFO =
@@ -18,38 +22,32 @@ public class AccessVirusDevice extends Device implements ItemListener {
   String channels[] = { "1", "2", "3", "4", "5", "6", "7", "8",
     "9", "10", "11", "12", "13", "14", "15", "16", "Omni"
   };
-  AccessVirusConfig avConfig;
+  //AccessVirusConfig avConfig;
   
   JComboBox channelList;
-
+  
+  /** Holds value of property deviceId. */
+  private int deviceId;
+  
   /** Creates new AccessVirus */
   public AccessVirusDevice() {
     manufacturerName = "Access";
     modelName = "Virus";
     //patchType = "Bank";
     synthName = "Virus";
+    deviceId = 17;
     infoText = DRIVER_INFO;
-    avConfig = new AccessVirusConfig();
+    //avConfig = new AccessVirusConfig();
     Driver drv;
     JOptionPane.showMessageDialog(PatchEdit.instance,
       DRIVER_INFO, "Access Virus Driver Release Notes",
       JOptionPane.WARNING_MESSAGE
     );
-    drv=new VirusProgBankDriver();
-    ((VirusProgBankDriver)drv).setAvConfig(avConfig);
-    addDriver(drv);
-    
-    drv=new VirusProgSingleDriver();
-    ((VirusProgSingleDriver)drv).setAvConfig(avConfig);
-    addDriver(drv);
-    
-    drv=new VirusMultiBankDriver();
-    ((VirusMultiBankDriver)drv).setAvConfig(avConfig);
-    addDriver(drv);
-    
-    drv=new VirusMultiSingleDriver();
-    ((VirusMultiSingleDriver)drv).setAvConfig(avConfig);
-    addDriver(drv);
+       
+    addDriver(new VirusProgBankDriver());
+    addDriver(new VirusProgSingleDriver());
+    addDriver(new VirusMultiBankDriver());
+    addDriver(new VirusMultiSingleDriver());
     
   }
 
@@ -59,7 +57,7 @@ public class AccessVirusDevice extends Device implements ItemListener {
     panel.add(new JLabel("Select Virus MIDI Device Id"));
     channelList = new JComboBox(channels);
     channelList.setMaximumSize(new Dimension(150, 25));
-    channelList.setSelectedIndex(avConfig.getDeviceId() - 1);
+    channelList.setSelectedIndex(deviceId - 1);
     channelList.addItemListener(this);
     panel.add(channelList);
     return panel;
@@ -70,7 +68,47 @@ public class AccessVirusDevice extends Device implements ItemListener {
       return;
     }
     if (e.getItemSelectable() == channelList) {
-      avConfig.setDeviceId(channelList.getSelectedIndex() + 1);
+  //    avConfig.setDeviceId(channelList.getSelectedIndex() + 1);
+    setDeviceId(channelList.getSelectedIndex()+1);  
+    
     }
+  }
+  
+  /** Getter for property deviceId.
+   * @return Value of property deviceId.
+   *
+   */
+  public int getDeviceId() {
+      return this.deviceId;
+  }
+  
+  /** Setter for property deviceId.
+   * @param deviceId New value of property deviceId.
+   *
+   */
+  public void setDeviceId(int deviceId) {
+      this.deviceId = deviceId;
+  }
+  
+  
+  /**
+   * Get the names of properties that should be stored and loaded.
+   * @return a Set of field names
+   */
+  public Set storedProperties()
+  {
+    final String[] storedPropertyNames = {
+					 "deviceId"
+                                         };
+    Set set = super.storedProperties();
+    set.addAll(Arrays.asList(storedPropertyNames));
+    return set;
+  }
+
+  /**
+   * Method that will be called after loading
+   */
+  public void afterRestore()
+  {
   }
 }

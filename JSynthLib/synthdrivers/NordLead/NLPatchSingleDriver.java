@@ -42,7 +42,7 @@ public class NLPatchSingleDriver extends Driver {
     (byte)0x00, (byte)0x00, (byte)0x01, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x02, (byte)0x00,
     (byte)0x04, (byte)0x00, (byte)0xF7
   };
-  NordLeadConfig nlConfig;
+  //NordLeadConfig nlConfig;
 
   public NLPatchSingleDriver() {
   //public NLPatchSingleDriver(NordLeadConfig nlc) {
@@ -112,7 +112,7 @@ public class NLPatchSingleDriver extends Driver {
   }
 
   protected void sendPatchWorker(Patch p) {
-    p.sysex[deviceIDoffset] = (byte)(nlConfig.getGlobalChannel() - 1);
+    p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)device).getGlobalChannel() - 1);
     try {
       PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
     } catch (Exception e) {
@@ -121,26 +121,10 @@ public class NLPatchSingleDriver extends Driver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(nlConfig.getGlobalChannel()),
+    sysexRequestDump.send(port, (byte)(((NordLeadDevice)device).getGlobalChannel()),
         new NameValue("bankNum", bankNum + 11), new NameValue("patchNum", patchNum)
     );
   }
-  
-  /** Getter for property nlConfig.
-   * @return Value of property nlConfig.
-   *
-   */
-  public synthdrivers.NordLead.NordLeadConfig getNlConfig() {
-      return nlConfig;
-  }
-  
-  /** Setter for property nlConfig.
-   * @param nlConfig New value of property nlConfig.
-   *
-   */
-  public void setNlConfig(synthdrivers.NordLead.NordLeadConfig nlConfig) {
-      this.nlConfig = nlConfig;
-  }
-  
+   
 }
 
