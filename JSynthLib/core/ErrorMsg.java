@@ -1,6 +1,7 @@
+// $Id$
+
 // This class handles error conditions and debug messages. It shows error message dialogs to the user and can also log 
 // debug information if a flag is set.
-
 
 /*  The Meaning for the debug variable flag is: (Each # does all of preceding as well)
     0 = No Debugging Info at all
@@ -16,20 +17,23 @@ public class ErrorMsg
   public static int debug;    //are we in debugging mode?
   public static void reportError(String errorTitle, String errorMSG)
     {
-      JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
+      //JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
+      ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
       if (debug >1)System.out.println("ERR> '"+errorMSG+"' reported." );
       if (debug>2) Thread.dumpStack();
     }
   public static void reportWarning(String errorTitle, String errorMSG)
     {
-      JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
+      //JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
+        ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.WARNING_MESSAGE);
       if (debug >1)System.out.println("WAR> '"+errorMSG+"' reported." );
       if (debug>2) Thread.dumpStack();
     }
 
   public static void reportError(String errorTitle, String errorMSG, Exception e)
     {
-     JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
+     //JOptionPane.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE);
+     ErrorDialog.showMessageDialog(PatchEdit.instance/*phil@muqus.com*/, errorMSG, errorTitle, JOptionPane.ERROR_MESSAGE,e);
       if (debug >1)System.out.println("ERR> '"+errorMSG+"' reported." );
      reportStatus(e);
     }
