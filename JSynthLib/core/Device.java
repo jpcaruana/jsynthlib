@@ -56,6 +56,8 @@ abstract public class Device implements Serializable, Storable
     {
         inquiryID="NONE";
 	infoText="There is no information about this Device.";
+       	inPort = PatchEdit.appConfig.getInitPortIn();
+ 	port = PatchEdit.appConfig.getInitPortOut();
     }
     
     public String getManufacturerName ()

@@ -154,10 +154,10 @@ public class Driver extends Object implements Serializable, Storable
                 
             }
         }
-        System.out.println("Manufacturer:"+manufacturer+" Model:"+model+" Patch Type:"+patchType);
-        System.out.println("Comp.String: "+compareString);
-        System.out.println("DriverString:"+driverString);
-        System.out.println("PatchString: "+patchString);
+     // System.out.println("Manufacturer:"+manufacturer+" Model:"+model+" Patch Type:"+patchType);
+     // System.out.println("Comp.String: "+compareString);
+     // System.out.println("DriverString:"+driverString);
+     // System.out.println("PatchString: "+patchString);
         return (compareString.toString ().equalsIgnoreCase (patchString.toString ().substring (0,driverString.length ())));
     }
     
