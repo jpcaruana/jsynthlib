@@ -234,14 +234,15 @@ public class MidiTest implements Runnable {
 	 * @return True if the messages are equal
 	 */
 	public static boolean areEqual(MidiMessage msg1, MidiMessage msg2) {
-		ErrorMsg.reportStatus(msg1 + ", " + msg1.getLength()
-				      + ": " + msg2 + ", " + msg2.getLength());
-		if (msg1.getLength() != msg2.getLength())
+		int msg1size = msg1.getLength();
+		int msg2size = msg2.getLength();
+		ErrorMsg.reportStatus(msg1 + ", " + msg1size + ": " + msg2 + ", " + msg2size);
+		if (msg1size != msg2size)
 			return false;
 
 		byte[] thisdata = msg1.getMessage();
 		byte[] thatdata = msg2.getMessage();
-		for (int i = 0; i < thisdata.length; i++) {
+		for (int i = 0; i < msg1size; i++) {
 			if (thisdata[i] != thatdata[i]) {
 				return false;
 			}
@@ -249,27 +250,5 @@ public class MidiTest implements Runnable {
 		// If we made it this far, then we checked all bytes and none mismatched
 		return true;
 	}
-
-	/**
-	 * This converts a MidiMessage <code>msg</code> to a string of
-	 * hex values, with 16 values per line and each line
-	 * terminated by a newline character (but the last line is not
-	 * unless it has 16 values in it).
-	 */
-	//- emenaker 2003.03.25
-	/*
-	public static String messageToString(MidiMessage msg) {
-		String str = new String();
-		byte[] msgarray = msg.getMessage();
-		char[] hexchar = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-		for(int i=0; i<msgarray.length; i++) {
-			str = str + " 0x" + hexchar[(msgarray[i] & 0xFF) / 16] + hexchar[(msgarray[i] & 0x0F)];
-			if(i % 16 == 15) {
-				str = str + "\n";
-			}
-		}
-		return(str);
-	}
-	*/
 }
 //(setq c-basic-offset 8)
