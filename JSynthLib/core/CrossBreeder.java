@@ -21,7 +21,6 @@ public class CrossBreeder {
 	    Patch source;
 	    byte[] sysex = new byte[father.sysex.length];
 	    p = new Patch(sysex);
-	    p.comment = new StringBuffer(); // Clear the wrong "Invalid Manufacturer" comment!
 	    for (int i = 0; i < father.sysex.length; i++) {
 		// look for a patch with same Driver and enough length
 		do {
