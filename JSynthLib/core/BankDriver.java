@@ -4,25 +4,35 @@ import javax.swing.*;
 
 /** This is the base class for all Bank / Bulk Drivers. */
 public class BankDriver extends Driver {
-    /** The Number of Patches the Bank holds. */
+    /**
+     * The Number of Patches the Bank holds.
+     * @deprecated Use the getter method.
+     */
     // can be private final
     protected int numPatches;
-    /** How many columns to use when displaying the patches as a table. */
+    /**
+     * How many columns to use when displaying the patches as a table.
+     * @deprecated Use the getter method.
+     */
     // can be private final
     protected int numColumns;
 
     // for default canHoldPatch
     /**
-     * The Sysex header for the patches which go in this bank.  It can
-     * have wildcards (<code>*</code>).
-     * (ex. <code>"F041**003F12"</code>)
+     * The Sysex header for the patches which go in this bank.  This
+     * should be same value as the <code>sysexID</code> field of the
+     * single driver.  It can be up to 16 bytes and have wildcards
+     * (<code>*</code>).  (ex. <code>"F041**003F12"</code>)
+     * @see Driver#sysexID
      * @see #canHoldPatch
      */
+    // This can be "private static final".
     protected String singleSysexID;
     /**
      * The size of the patches which go in this bank.
      * @see #canHoldPatch
      */
+    // This can be "private static final".
     protected int singleSize;
 
     /**
@@ -42,6 +52,9 @@ public class BankDriver extends Driver {
 	this.numColumns = numColumns;
     }
 
+    /**
+     * @deprecated Use BankDriver(String, String, int, int).
+     */
     public BankDriver() {
 	super();
     }
@@ -68,10 +81,12 @@ public class BankDriver extends Driver {
 
     /** Set the name of the patch at the given number <code>patchNum</code>. */
     protected void setPatchName(Patch p, int patchNum, String name) {
+	// override this.
     }
 
     /** Get the name of the patch at the given number <code>patchNum</code>. */
     protected String getPatchName(Patch p, int patchNum) {
+	// override this.
 	return "-";
     }
 
@@ -80,8 +95,30 @@ public class BankDriver extends Driver {
 	setPatchName(p, patchNum, "          ");
     }
 
-    /** Puts a patch into the bank, converting it as needed. */
-    protected void putPatch(Patch  bank, Patch p, int patchNum) {
+    /**
+     * Puts a patch into the bank, converting it as
+     * needed. <code>p</code> is already checked by
+     * <code>canHoldPatch</code>, although it was not.
+     */
+    protected void putPatch(Patch bank, Patch p, int patchNum) {
+    }
+
+    /**
+     * Check a patch by using <code>canHoldPatch()</code> and put it
+     * into the bank.
+     * @see putPatch
+     * @see canHoldPatch
+     */
+    void checkAndPutPatch(Patch bank, Patch p, int patchNum) {
+	if (canHoldPatch(p)) {
+	    putPatch(bank, p, patchNum);
+	} else {
+	    JOptionPane.showMessageDialog
+		(null,
+		 "This type of patch does not fit in to this type of bank.",
+		 "Error", JOptionPane.ERROR_MESSAGE);
+	    return;
+	}
     }
 
     /** Gets a patch from the bank, converting it as needed. */
@@ -100,39 +137,41 @@ public class BankDriver extends Driver {
     }
 
     /** Show an error dialog. */
+    // Cannot we disable the menu for this?
     protected void sendPatch(Patch p) {
 	JOptionPane.showMessageDialog
-	    (null, "You can not send bank data (use store)",
+	    (null, "You can not send bank data (use store).",
 	     "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    /** Chooses which bank to put the patch into. */
+    /**
+     * Chooses which bank to put the patch into and stores the patch
+     * in it .
+     */
     protected void choosePatch(Patch p) {
 	int bank = 0;
-	if (bankNumbers.length == 1) {
-	    storePatch(p, 0, 0);
-	    return;
+	if (bankNumbers.length > 1) {
+	    try {
+		String bankstr = (String) JOptionPane.showInputDialog
+		    (null, "Please Choose a Bank", "Storing Patch",
+		     JOptionPane.QUESTION_MESSAGE, null,
+		     bankNumbers, bankNumbers[0]);
+		if (bankstr == null) // cancel
+		    return;
+
+		for (bank = 0; bank < bankNumbers.length; bank++)
+		    if (bankstr.equals(bankNumbers[bank]))
+			break;
+	    } catch (Exception e) {
+		ErrorMsg.reportStatus(e);
+	    }
+	    ErrorMsg.reportStatus("BankDriver:ChoosePatch  Bank = " + bank);
 	}
-	try {
-	    String bankstr = (String) JOptionPane.showInputDialog
-		(null, "Please Choose a Bank", "Storing Patch",
-		 JOptionPane.QUESTION_MESSAGE, null,
-		 bankNumbers, bankNumbers[0]);
-	    if (bankstr == null)
-		return;
-	    for (int i = 0; i < bankNumbers.length; i++)
-		if (bankstr.equals(bankNumbers[i])) {
-		    bank = i;
-		    break;
-		}
-	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
-	}
-	ErrorMsg.reportStatus("BankDriver:ChoosePatch  Bank = " + bank);
 	storePatch(p, bank, 0);
     }
 
     /** Banks cannot play. */
+    // Cannot we disable the menu for this?
     public void playPatch(Patch p) {
 	JOptionPane.showMessageDialog
 	    (null, "Can not Play Banks, only individual patches.",
@@ -148,15 +187,17 @@ public class BankDriver extends Driver {
      * Compares the header & size of a Single Patch to this driver to
      * see if this bank can hold the patch.
      */
+    // cf. Driver.supportsPatch
     protected boolean canHoldPatch(Patch p) {
         if ((singleSize != p.sysex.length) && (singleSize != 0))
 	    return false;
 
-        StringBuffer patchString =  p.getPatchHeader();
+        String patchString = p.getPatchHeader().toString();
         StringBuffer driverString = new StringBuffer(singleSysexID);
 	for (int j = 0; j < driverString.length(); j++)
 	    if (driverString.charAt(j) == '*')
 		driverString.setCharAt(j, patchString.charAt(j));
-	return (driverString.toString().equalsIgnoreCase(patchString.toString().substring(0, driverString.length())));
+	return (driverString.toString().equalsIgnoreCase
+		(patchString.substring(0, driverString.length())));
     }
 }
