@@ -16,6 +16,7 @@ import java.io.*;
 import javax.sound.midi.*;
 import java.awt.datatransfer.*;
 import javax.swing.event.*;
+import java.net.URL;
 
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
@@ -349,69 +350,56 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
     private static JToolBar createToolBar() {
 	// create tool bar
-        JButton b;
         toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(500, 35));
         toolBar.setFloatable(true);
 
-        b = toolBar.add(newAction);
-        b.setToolTipText("New Library");
-        b.setIcon(loadIcon("images/New24.gif"));
-        b.setText(null);
-        b = toolBar.add(openAction);
-        b.setToolTipText("Open Library");
-        b.setIcon(loadIcon("images/Open24.gif"));
-        b.setText(null);
-        b = toolBar.add(saveAction);
-        b.setToolTipText("Save Library");
-        b.setIcon(loadIcon("images/Save24.gif"));
-        b.setText(null);
+        toolBar.add(createToolBarButton(newAction, "New", "New Library"));
+        toolBar.add(createToolBarButton(openAction, "Open", "Open Library"));
+	toolBar.add(createToolBarButton(saveAction, "Save", "Save Library"));
+
         toolBar.addSeparator();
 
-        b = toolBar.add(copyAction);
-        b.setToolTipText("Copy Patch");
-        b.setIcon(loadIcon("images/Copy24.gif"));
-        b.setText(null);
-        b = toolBar.add(cutAction);
-        b.setToolTipText("Cut Patch");
-        b.setIcon(loadIcon("images/Cut24.gif"));
-        b.setText(null);
-        b = toolBar.add(pasteAction);
-        b.setToolTipText("Paste Patch");
-        b.setIcon(loadIcon("images/Paste24.gif"));
-        b.setText(null);
-        b = toolBar.add(importAction);
-        b.setToolTipText("Import Patch");
-        b.setIcon(loadIcon("images/Import24.gif"));
-        b.setText(null);
-        b = toolBar.add(exportAction);
-        b.setToolTipText("Export Patch");
-        b.setIcon(loadIcon("images/Export24.gif"));
-        b.setText(null);
+        toolBar.add(createToolBarButton(copyAction, "Copy", "Copy Patch"));
+        toolBar.add(createToolBarButton(cutAction, "Cut", "Cut Patch"));
+        toolBar.add(createToolBarButton(pasteAction, "Paste", "Paste Patch"));
+        toolBar.add(createToolBarButton(importAction, "Import", "Import Patch"));
+	toolBar.add(createToolBarButton(exportAction, "Export", "Export Patch"));
+
         toolBar.addSeparator();
 
-        b = toolBar.add(playAction);
-        b.setToolTipText("Play Patch");
-        b.setIcon(loadIcon("images/Volume24.gif"));
-        b.setText(null);
-        b = toolBar.add(storeAction);
-        b.setToolTipText("Store Patch");
-        b.setIcon(loadIcon("images/ComposeMail24.gif"));
-        b.setText(null);
-        b = toolBar.add(editAction);
-        b.setToolTipText("Edit Patch");
-        b.setIcon(loadIcon("images/Edit24.gif"));
-        b.setText(null);
+        toolBar.add(createToolBarButton(playAction, "Play", "Play Patch"));
+        toolBar.add(createToolBarButton(storeAction, "Store", "Store Patch"));
+        toolBar.add(createToolBarButton(editAction, "Edit", "Edit Patch"));
+
         toolBar.addSeparator();
 
-        b = toolBar.add(nextFaderAction);
-        b.setToolTipText("Go to Next Fader Bank");
-        b.setIcon(loadIcon("images/Forward24.gif"));
-        b.setText(null);
+        toolBar.add(createToolBarButton(nextFaderAction, "Next", "Go to Next Fader Bank"));
 
         return toolBar;
     }
 
+    protected static JButton createToolBarButton(Action a, String label, String tooltip) {
+	String label2 = label.toLowerCase();
+	URL u1 = PatchEdit.class.getResource("/images/" + label2 + ".png");
+	URL u2 = PatchEdit.class.getResource("/images/disabled-"+label2+".png");
+	//Create and initialize the button.
+	JButton button = new JButton(a);
+	button.setToolTipText(tooltip);
+	
+	if (u1 != null) {                      //image found
+	    button.setText(null);
+	    button.setIcon(new ImageIcon(u1, label));
+	    if (u2 != null) {
+		button.setDisabledIcon(new ImageIcon(u2, label));
+	    }
+	} else {                                     //no image found
+	    button.setText(label);
+	    System.err.println("Resource not found: " + "images/" + label + ".png");
+	}
+	return button;
+    }
+    
     private static void initForMac(final ExitAction exitAction,
 				   final PrefsAction prefsAction,
 				   final AboutAction aboutAction) {
