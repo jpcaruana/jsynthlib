@@ -38,6 +38,7 @@ import javax.swing.border.TitledBorder;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
+import core.Driver;
 import core.EnvelopeWidget;
 import core.Patch;
 import core.PatchEditorFrame;
@@ -58,7 +59,7 @@ class AlesisQSProgramEditor extends PatchEditorFrame
 
     JPanel topPane = new JPanel();
     topPane.setLayout(new GridBagLayout());
-    addWidget(topPane,new PatchNameWidget("Name",patch),0,0,1,1,0);
+    addWidget(topPane,new PatchNameWidget("Name", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,1,1,0);
     gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1;
     scrollPane.add(topPane, gbc);
 

@@ -11,6 +11,7 @@ import javax.swing.border.TitledBorder;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
+import core.Driver;
 import core.EnvelopeWidget;
 import core.ParamModel;
 import core.Patch;
@@ -41,7 +42,7 @@ class MKS50ToneSingleEditor extends PatchEditorFrame
     scrollPane.add(rightPane, gbc);
 
     JPanel namePane = new JPanel();
-    addWidget(namePane, new PatchNameWidget(" Name",patch), 0, 0, 2, 1, 0);
+    addWidget(namePane, new PatchNameWidget(" Name", patch, ((Driver) patch.getDriver()).getPatchNameSize()), 0, 0, 2, 1, 0);
     gbc.gridx = 0;
     gbc.gridy = 0;
     gbc.gridwidth = 1;

@@ -29,6 +29,14 @@ public class ScrollBarWidget extends SysexWidget {
     /**Set Label Width explicitly to? zero disables*/
     protected int forceLabelWidth = 0; // for setForceLabelWidth
 
+    public ScrollBarWidget(IPatch patch, Parameter param) {
+        super(patch, param);
+
+        base = 0;
+        labelWidth = -1;
+        createWidgets();
+        layoutWidgets();
+    }
     /** Constructor for setting up the ScrollBarWidget.<p>
      *
      * For <code>labelWidth</code> you can obtain a length of a string
@@ -127,9 +135,13 @@ public class ScrollBarWidget extends SysexWidget {
 	slider.setValue(v);
     }
 
-    public void setMinMax(int min, int max) {
-	super.setMinMax(min, max);
+    public void setMin(int min) {
+        super.setMin(min);
         slider.setMinimum(min);
+        slider.setValue(getValue());
+    }
+    public void setMax(int max) {
+        super.setMax(max);
         slider.setMaximum(max);
         slider.setValue(getValue());
     }

@@ -19,9 +19,4 @@ public interface ISingleDriver extends IPatchDriver {
      * a edit buffer or it is not MIDI accessable).
      */
     void sendPatch(IPatch patch);
-
-    /**
-     * Returns the maximum size of patch name.
-     */
-    int getPatchNameSize();
 }

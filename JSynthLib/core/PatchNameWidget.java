@@ -14,15 +14,13 @@ public class PatchNameWidget extends SysexWidget {
     protected JTextField name;
     protected int patchNameSize;
 
-    /**
-     * Creates a new <code>PatchNameWidget</code> instance.
-     * @param label a label text.
-     * @param patch a <code>Patch</code>, which is edited.
-     */
-    public PatchNameWidget(String label, IPatch patch) {
-        this(label, patch, ((ISingleDriver) patch.getDriver()).getPatchNameSize());
+    public PatchNameWidget(IPatch patch, Parameter param) {
+        super(patch, param);
+        
+        patchNameSize = param.getLength();
+        createWidgets();
+        layoutWidgets();
     }
-
     /**
      * Creates a new <code>PatchNameWidget</code> instance.
      * @param label a label text.

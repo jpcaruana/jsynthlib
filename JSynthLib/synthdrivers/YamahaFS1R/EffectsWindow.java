@@ -690,7 +690,9 @@ class EffectsWindow
 			if (i < mInsertionNames[aIndex].length && mInsertionNames[aIndex][i] != null)
 			{
 				mInsertionWidgets[i].setLabel(mInsertionNames[aIndex][i]);
-				mInsertionWidgets[i].setMinMax(mInsertionParams[aIndex][i][MIN], mInsertionParams[aIndex][i][MAX]);
+                KnobWidget r = mInsertionWidgets[i];
+				r.setMin(mInsertionParams[aIndex][i][MIN]);
+                r.setMax(mInsertionParams[aIndex][i][MAX]);
 				mInsertionWidgets[i].setEnabled(true);
 				if (aInitDefault)
 				{
@@ -713,7 +715,9 @@ class EffectsWindow
 			{
 				mVariationWidgets[i].setEnabled(true);
 				mVariationWidgets[i].setLabel(mVariationNames[aIndex][i]);
-				mVariationWidgets[i].setMinMax(mVariationParams[aIndex][i][MIN], mVariationParams[aIndex][i][MAX]);
+                KnobWidget r = mVariationWidgets[i];
+				r.setMin(mVariationParams[aIndex][i][MIN]);
+                r.setMax(mVariationParams[aIndex][i][MAX]);
 				if (aInitDefault)
 				{
 					mVariationWidgets[i].setValue(mVariationParams[aIndex][i][DEFAULT]);
@@ -738,7 +742,9 @@ class EffectsWindow
 			{
 				mReverbWidgets[i].setEnabled(true);
 				mReverbWidgets[i].setLabel(mReverbNames[aIndex][i]);
-				mReverbWidgets[i].setMinMax(mReverbParams[aIndex][i][MIN], mReverbParams[aIndex][i][MAX]);
+                KnobWidget r = mReverbWidgets[i];
+				r.setMin(mReverbParams[aIndex][i][MIN]);
+                r.setMax(mReverbParams[aIndex][i][MAX]);
 				if (aInitDefault)
 				{
 					mReverbWidgets[i].setValue(mReverbParams[aIndex][i][DEFAULT]);

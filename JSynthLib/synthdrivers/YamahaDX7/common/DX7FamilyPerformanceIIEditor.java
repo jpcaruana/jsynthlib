@@ -30,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import core.ComboBoxWidget;
+import core.Driver;
 import core.EnvelopeWidget;
 import core.ParamModel;
 import core.Patch;
@@ -213,7 +214,7 @@ public class DX7FamilyPerformanceIIEditor extends PatchEditorFrame
 
 
 		gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=1; cmnPane.add(new JLabel(" "),gbc);
-		addWidget(cmnPane,new PatchNameWidget("Name (20 Char.)", patch), 0, 1,6, 1, 0);
+		addWidget(cmnPane,new PatchNameWidget("Name (20 Char.)", patch, ((Driver) patch.getDriver()).getPatchNameSize()), 0, 1,6, 1, 0);
 
 		gbc.gridx=0;gbc.gridy=2;gbc.gridwidth=1;gbc.gridheight=1; cmnPane.add(new JLabel(" "),gbc);
 		addWidget(cmnPane,new ComboBoxWidget("Voice Number - A"	   ,patch,new ParamModel(patch,16+ 1),new PerformanceSender( 1),VoiceName)     ,0, 3,4,1, 2);

@@ -310,14 +310,15 @@ final class AppConfig {
      *
      * @param className name of Device class
      * (ex. "synthdrivers.KawaiK4.KawaiK4Device").
-     * @param prefs <code>Preferences</code> node for the Device.
+     * @param prefs <code>Preferences</code> node for the  Device.
      * @return a <code>Device</code> value created.
      */
     private static Device addDevice(String className, Preferences prefs) {
     	Device device = PatchEdit.devConfig.createDevice(className, prefs);
-	device.setup();
-    	deviceList.add(device); // always returns true
-
+        if (device != null) {
+            device.setup();
+    	    deviceList.add(device); // always returns true
+        }
 	return device;
     }
 
@@ -337,9 +338,7 @@ final class AppConfig {
     /** returns the 1st unused device node name for Preferences. */
     private static Preferences getDeviceNode(String s) {
 	ErrorMsg.reportStatus("getDeviceNode: " + s);
-	try {
-		s = s.substring(s.lastIndexOf('.') + 1, s.lastIndexOf("Device"));
-	} catch (StringIndexOutOfBoundsException ex) {}
+	s = DevicesConfig.shortNameForClassName(s);
 	ErrorMsg.reportStatus("getDeviceNode: -> " + s);
 	int i;
 	try {

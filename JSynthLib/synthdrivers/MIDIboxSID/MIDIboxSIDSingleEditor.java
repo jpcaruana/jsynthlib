@@ -202,7 +202,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	// Common Pane
 	JPanel cmnPane=new JPanel();
 	cmnPane.setLayout(new GridBagLayout());
-	addWidget(cmnPane,new PatchNameWidget(" Name  ",patch),0,0,2,1,0);
+	addWidget(cmnPane,new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,2,1,0);
 
 	// horizontal location, the vertical location, the horizontal size, and the vertical size). The last number is the fader number
 

@@ -27,6 +27,7 @@ import javax.swing.table.TableColumn;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
+import core.Driver;
 import core.EnvelopeWidget;
 import core.JSLDesktop;
 import core.JSLFrame;
@@ -179,7 +180,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 
 		// Common Pane (common-others)
 		JPanel oCommonPane = new JPanel(new FlowLayout(FlowLayout.LEFT, HGAP, 0));
-		oCommonPane.add(new PatchNameWidget(" Name  ",patch));
+		oCommonPane.add(new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()));
 		oCommonPane.add(new SpinnerWidget("Note shift", patch, 0, 48, -24, new FS1RModel(patch, 0x1E), new FS1RSender(0x1E)));
 		oCommonPane.add(new ComboBoxWidget("Category", patch, new FS1RModel(patch, 0x0E), new FS1RSender(0x0E), mCategories));
 		oCommonPane.add(new KnobWidget("Algorithm", patch, 0, 87, 1, new FS1RModel(patch, 0x2C), new FS1RSender(0x2C), mAlgoImages));

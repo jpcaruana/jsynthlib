@@ -23,6 +23,7 @@ import javax.swing.border.TitledBorder;
 import core.BankEditorFrame;
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
+import core.Driver;
 import core.JSLDesktop;
 import core.JSLFrameEvent;
 import core.JSLFrameListener;
@@ -237,7 +238,7 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 		Box oPanel = Box.createVerticalBox();
 
 		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel1.add(new PatchNameWidget("Name",p));
+		oPanel1.add(new PatchNameWidget("Name", p, ((Driver) p.getDriver()).getPatchNameSize()));
 		oPanel1.add(new ComboBoxWidget("Category", p, new YamahaFS1RPerformanceDriver.Model((Patch)p, 0x0E), new YamahaFS1RPerformanceDriver.Sender(0x0E), YamahaFS1RVoiceEditor.mCategories));
 		oPanel.add(oPanel1);
 

@@ -1,0 +1,193 @@
+package org.jsynthlib.jsynthlib.xml;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.SysexMessage;
+
+import core.Device;
+import core.IPatch;
+import core.ISingleDriver;
+import core.JSLFrame;
+import core.MidiUtil;
+import core.Parameter;
+
+public class XMLDriver implements ISingleDriver {
+    private String authors;
+    private XMLPatch base_patch;
+
+    private XMLDevice device;
+    private XMLDriverImplementation imp;
+    private String manufacturer;
+    private String model;
+    private String name;
+    private final String[] patch_numbers;
+    private final String[] writable_patch_numbers;
+    private final String[] bank_numbers;
+    private final String[] writable_bank_numbers;
+    
+
+    XMLDriver(final String[] patch_numbers,
+            final String[] writable_patch_numbers, final String[] bank_numbers,
+            final String[] writable_bank_numbers, XMLPatch p, XMLDriverImplementation imp) {
+        this.patch_numbers = patch_numbers;
+        if (writable_patch_numbers == null)
+            this.writable_patch_numbers = patch_numbers;
+        else
+            this.writable_patch_numbers = writable_patch_numbers;
+        this.bank_numbers = bank_numbers;
+        if (writable_bank_numbers == null)
+            this.writable_bank_numbers = bank_numbers;
+        else
+            this.writable_bank_numbers = writable_bank_numbers;
+        base_patch = p;
+        this.imp = imp;
+    }
+
+    /* TODO
+    public String[] getBankNumbersForStore() {
+        return writable_bank_numbers;
+    }
+    */
+    
+    public void calculateChecksum(IPatch patch) {
+        ((XMLPatch)patch).calculateChecksum();
+    }
+
+    public boolean canCreatePatch() {
+        return true;
+    }
+
+    public IPatch createPatch() {
+        return base_patch.newPatch();
+    }
+
+    public IPatch[] createPatch(byte[] sysex) {
+        SysexMessage[] msgs;
+        try {
+            msgs = MidiUtil.byteArrayToSysexMessages(sysex);
+        } catch (InvalidMidiDataException e) {
+            return null;
+        }
+        return createPatch(msgs);
+    }
+
+    public IPatch[] createPatch(SysexMessage[] msgs) {
+        XMLPatch np = base_patch.newEmptyPatch();
+        np.setMessages(msgs);
+        return null;
+    }
+    public JSLFrame editPatch(IPatch p) {
+        return null;
+    }
+
+    public String getAuthors() {
+        return authors;
+    }
+    void setAuthors(String s) {
+        authors = s;
+    }
+
+    public String[] getBankNumbers() {
+        return bank_numbers;
+    }
+
+    public int getChannel() {
+        return device.getChannel();
+    }
+
+    public Device getDevice() {
+        return device;
+    }
+    
+    public int getInPort() {
+        return device.getInPort();
+    }
+
+    public String getManufacturerName() {
+        return manufacturer;
+    }
+
+    void setManufacturerName(String s) {
+        manufacturer = s;
+    }
+    
+    public String getModelName() {
+        return model;
+    }
+
+    void setModelName(String s) {
+        model = s;
+    }
+
+    public String[] getPatchNumbers() {
+        return patch_numbers;
+    }
+
+    public String[] getPatchNumbersForStore() {
+        return writable_patch_numbers;
+    }
+
+    public int getPatchSize() {
+        return base_patch.getSize();
+    }
+
+    public String getPatchType() {
+        return name;
+    }
+
+    // XXX: XML Editors
+    public boolean hasEditor() {
+        return false;
+    }
+    public void playPatch(IPatch patch) {
+        imp.playPatch((XMLPatch)patch);
+    }
+
+    public void requestPatchDump(int bankNum, int patchNum) {
+        imp.requestPatchDump(bankNum, patchNum);
+    
+    }
+
+    public void send(MidiMessage msg) {
+        device.send(msg);
+    }
+
+    public void sendParameter(IPatch patch, Parameter param) {
+        imp.sendParameter((XMLPatch)patch, param);
+    
+    }
+
+    public void sendPatch(IPatch patch) {
+        imp.sendPatch((XMLPatch)patch);
+    }
+
+    public void setDevice(Device device) {
+        this.device = (XMLDevice)device;
+        if (manufacturer == null)
+            manufacturer = device.getManufacturerName();
+        if (model == null)
+            model = device.getModelName();
+        if (authors == null)
+            authors = device.getAuthors();
+        base_patch.setDevice(this.device);
+        base_patch.setDriver(this);
+    }
+    public void storePatch(IPatch myPatch, int bankNum, int patchNum) {
+        imp.storePatch((XMLPatch)myPatch, bankNum, patchNum);    
+    }
+
+    public boolean supportsPatch(String patchString, byte[] sysex) {
+        SysexMessage[] msgs;
+        try {
+            msgs = MidiUtil.byteArrayToSysexMessages(sysex);
+        } catch (InvalidMidiDataException e) {
+            return false;
+        }
+        return base_patch.supportsMessages(msgs);
+    }
+
+    public boolean supportsPatch(String patchString, IPatch patch) {
+        return base_patch.supportsMessages(patch.getMessages());
+    }
+
+}

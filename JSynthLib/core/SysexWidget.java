@@ -68,6 +68,11 @@ public abstract class SysexWidget extends JPanel {
     private ParamModel paramModel; // accessed by some drivers unnecessarily.
 
     /**
+     * New flyweight parameter model. Used with XML drivers.
+     */
+    private Parameter parameter = null;
+    
+    /**
      * slider number.<p>
      * Posivite for slider.<p>
      * Negative for button.
@@ -85,6 +90,11 @@ public abstract class SysexWidget extends JPanel {
     /** <code>Driver</code> associated with the <code>patch</code>. */
     private IPatchDriver driver;
 
+    protected SysexWidget(IPatch patch, Parameter param) {
+        this(param.getName(), patch, param.getMin(), param.getMax(), null, null);
+        parameter = param;
+    }
+    
     /**
      * Creates a new <code>SysexWidget</code> instance.
      *
@@ -180,7 +190,12 @@ public abstract class SysexWidget extends JPanel {
 
     /** Return the current value. */
     public int getValue() {
-	return valueCurr;
+        // Don't cache with new model, so listeners will work
+        if (parameter == null) {
+            return valueCurr;
+        } else {
+            return parameter.get(patch);
+        }
     }
 
     /** Set value. This does not update widget state. */
@@ -189,7 +204,11 @@ public abstract class SysexWidget extends JPanel {
 	    v = valueMin;
 	if (v > valueMax)
 	    v = valueMax;
-	valueCurr = v;
+	if (parameter == null) {
+	    valueCurr = v;
+	} else {
+	    parameter.set(patch, v);
+	}
     }
 
     /**
@@ -206,13 +225,8 @@ public abstract class SysexWidget extends JPanel {
      * the widget state.
      */
     public void setValue() {
-	if (paramModel != null)
+	if (parameter == null && paramModel != null)
 	    setValue(paramModel.get());
-    }
-
-    /** @deprecated Use no arg <code>setValue()</code>. */
-    public void setValue(IPatch p) { // 'p' is not used!!!
-	setValue();
     }
 
     /**
@@ -222,10 +236,14 @@ public abstract class SysexWidget extends JPanel {
      */
     protected void sendSysex(int v) {
 	_setValue(v);
-	// Don't use 'v' instead of 'valueCurr'.
-	if (paramModel != null)
-	    paramModel.set(valueCurr);
-	sendSysex(sysexSender, valueCurr);
+	if (parameter == null) {
+	    // Don't use 'v' instead of 'valueCurr'.
+	    if (paramModel != null)
+	        paramModel.set(valueCurr);
+	    sendSysex(sysexSender, valueCurr);
+	} else {
+	    driver.sendParameter(patch, parameter);
+	}
     }
 
     /**
@@ -234,6 +252,8 @@ public abstract class SysexWidget extends JPanel {
      * widget state is chagned.<p>
      * This method does not do min/max range check.  It is caller's
      * responsibility.
+     * 
+     * XXX: Should be private once EnvelopeWidget is updated.
      */
     // for ExnvelopeWidget
     protected void sendSysex(SysexSender s, int v) {
@@ -260,16 +280,17 @@ public abstract class SysexWidget extends JPanel {
 	return valueMax;
     }
 
-    /** Change mix/max value. */
-    protected void setMinMax(int min, int max) {
-	valueMin = min;
-	valueMax = max;
-        if (valueCurr > max)
-	    valueCurr = max;
-        if (valueCurr < min)
-	    valueCurr = min;
+    public void setMin(int min) {
+        valueMin = min;
+        if (getValue() < min)
+            setValue(min);
     }
-
+    public void setMax(int max) {
+        valueMax = max;
+        if (getValue() > max)
+            setValue(max);
+    }
+    
     /** Return <code>Patch</code> value. */
     protected IPatch getPatch() {
 	return patch;

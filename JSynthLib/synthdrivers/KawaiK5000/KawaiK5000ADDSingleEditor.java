@@ -3,6 +3,7 @@
  */
 package synthdrivers.KawaiK5000;
 import core.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
@@ -71,7 +72,7 @@ class KawaiK5000ADDSingleEditor extends PatchEditorFrame
  gbc.weightx=5;
   JPanel cmn2Panel = new JPanel();
   cmn2Panel.setLayout(new GridBagLayout());
-  addWidget(cmn2Panel,new PatchNameWidget(" Name  ",patch),0,0,2,1,0);
+  addWidget(cmn2Panel,new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,2,1,0);
   addWidget(cmn2Panel,new ScrollBarWidget("Volume",patch,0,127,0,new K5kCmnModel(patch,48),new K5kCmnSender(8)),0,1,2,1,1);
   final ScrollBarWidget numSources = new ScrollBarWidget("Num Sources",patch,2,6,0,new K5kCmnModel(patch,51),new K5kCmnSender(0x0B));
   addWidget(cmn2Panel,numSources,0,2,2,1,2);

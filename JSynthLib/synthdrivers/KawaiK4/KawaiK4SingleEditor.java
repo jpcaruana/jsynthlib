@@ -4,6 +4,7 @@
  */
 package synthdrivers.KawaiK4;
 import core.*;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
@@ -102,7 +103,7 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	//setLongestLabel("Volume ");
 	lw = getLabelWidth("Volume ");
 	addWidget(cmnPane,
-		  new PatchNameWidget(" Name  ", patch),
+		  new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),
 		  0, 0, 2, 1, 0);
 	// gbc.weightx=1;
 	addWidget(cmnPane,

@@ -45,19 +45,6 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     void setDriver(IPatchDriver driver);
 
     /**
-     * Dissect an <code>IPatch</code> which has a <code>Converter</code>
-     * driver into an array of <code>IPatch</code>. Each patch in the
-     * original patch must be for a same Device, but may be for some different
-     * Drivers.
-     * 
-     * @return a <code>IPatch[]</code> value
-     * @see IConverter
-     */
-    // called by ImportAllDialog, ImportMidiFile, SysexGetDialog,
-    // LibraryFrame, and SceneFrame.
-    //IPatch[] dissect();
-
-    /**
      * Return a hexadecimal string for
      * {@link IDriver#supportsPatch IDriver.suppportsPatch}at most 16 byte sysex
      * data.

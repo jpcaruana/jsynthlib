@@ -34,6 +34,7 @@ import javax.swing.border.TitledBorder;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
+import core.Driver;
 import core.ErrorMsg;
 import core.KnobLookupWidget;
 import core.ParamModel;
@@ -90,7 +91,7 @@ final class TD6SingleEditor extends PatchEditorFrame {
 	gbc.gridx = 0; gbc.gridy = 0;
 	scrollPane.add(topPane, gbc);
 	addWidget(topPane,
-		  new PatchNameWidget("Drum Kit Name ", patch),
+		  new PatchNameWidget("Drum Kit Name ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),
 		  0, 0, 1, 1, 0);
 	/*
 	 * Tabbed Pane

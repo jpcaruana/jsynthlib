@@ -11,6 +11,7 @@
 
 package core;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -21,8 +22,14 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
+import org.jsynthlib.jsynthlib.xml.XMLDeviceFactory;
+
+
 class DevicesConfig {
 
+    /** Character used in the Preferences as file separator for xml files */
+    private static final char XML_FILE_SEPARATOR = ':';
+    
     /** Properties representing config file, synthdrivers.properties. */
     private Properties configProps = new Properties();
 
@@ -115,17 +122,30 @@ class DevicesConfig {
 	}
 	String[][] xmldevices = XMLDeviceFactory.getDeviceNames();
 	if (xmldevices != null) {
-		for (int i = 0; i < xmldevices.length; i++) {
-			String deviceName = xmldevices[i][0];
-			String deviceClass = ":" + xmldevices[i][2];
-			deviceNames.add(deviceName);
-			inqueryIDProps.setProperty(xmldevices[i][1], deviceClass);
-			deviceProps.setProperty(deviceName, deviceClass);
-			//XXX: just use the name for now
-			shortNameProps.setProperty(deviceName, deviceClass);
-		}
+	    for (int i = 0; i < xmldevices.length; i++) {
+	        String deviceName = xmldevices[i][0];
+	        String deviceClass = XML_FILE_SEPARATOR + xmldevices[i][2];
+	        deviceClass = deviceClass.replace(File.separatorChar, XML_FILE_SEPARATOR);
+	        String shortName = shortNameForClassName(deviceClass);
+	        deviceNames.add(deviceName);
+	        inqueryIDProps.setProperty(xmldevices[i][1], deviceClass);
+	        deviceProps.setProperty(deviceName, deviceClass);
+	        shortNameProps.setProperty(shortName, deviceClass);
+	    }
 	}
 	Collections.sort(deviceNames);
+    }
+    
+    static String shortNameForClassName(String s) {
+        String shortName;
+        if (s.charAt(0) == XML_FILE_SEPARATOR) {
+            int start = s.lastIndexOf(XML_FILE_SEPARATOR);
+            int end = s.lastIndexOf(".xml");
+            shortName = s.substring(start + 1, end) + "(XML)";
+        } else {
+            shortName = s.substring(s.lastIndexOf('.') + 1, s.lastIndexOf("Device"));
+        }
+        return shortName;
     }
 
     /**
@@ -159,7 +179,8 @@ class DevicesConfig {
     */
         
     Device createDevice(String className, Preferences prefs) {
-    		if (className.charAt(0) == ':') {
+    		if (className.charAt(0) == XML_FILE_SEPARATOR) {
+    		        className = className.replace(XML_FILE_SEPARATOR,File.separatorChar);
     			return XMLDeviceFactory.createDevice(className.substring(1),
     					prefs);
     		} else {

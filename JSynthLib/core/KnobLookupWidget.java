@@ -11,6 +11,12 @@ import com.dreamfabric.DKnob;
  * @see KnobWidget
  */
 public class KnobLookupWidget extends KnobWidget {
+    public KnobLookupWidget(IPatch patch, Parameter param) {
+        super(patch, param);
+
+        mValueLabels = param.getValues();
+        mKnob.setToolTipText(mValueLabels[getValue()]);
+    }
     private String[] mValueLabels;
 
     /**

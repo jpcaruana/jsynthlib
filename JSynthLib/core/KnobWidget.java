@@ -30,6 +30,13 @@ public class KnobWidget extends SysexWidget {
     //protected JLabel mLabel;
     private ImageIcon[] mImages;
 
+    public KnobWidget(IPatch patch, Parameter param) {
+        super(patch, param);
+        
+        mBase = 0;
+        createWidgets();
+        layoutWidgets();
+    }
     /**
      * Creates a new <code>KnobWidget</code> instance.
      *
@@ -161,13 +168,6 @@ public class KnobWidget extends SysexWidget {
 	    //oWidthOff = 0;
 	}
 	//setMaximumSize(new Dimension(120+oWidthOff, 80));
-    }
-
-    /**
-     * In order to get it public.
-     */
-    public void setMinMax(int min, int max) {
-	super.setMinMax(min, max);
     }
 
     public void setValue(int v) {

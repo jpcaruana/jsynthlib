@@ -127,7 +127,7 @@ public class Patch implements IPatch {
         author = new StringBuffer();
         comment = new StringBuffer();
         this.sysex = new byte[sysex.length - offset];
-        System.arraycopy(sysex, offset, sysex, 0, sysex.length - offset);
+        System.arraycopy(sysex, offset, this.sysex, 0, sysex.length - offset);
         chooseDriver();
     }
 

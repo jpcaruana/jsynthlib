@@ -17,6 +17,13 @@ public class SpinnerWidget extends SysexWidget {
     protected JTextField text;
     protected JSpinner spinner;
 
+    public SpinnerWidget(IPatch patch, Parameter param) {
+        super(patch, param);
+
+        base = 0;
+        createWidgets();
+        layoutWidgets();
+    }
     /**
      * Constructor for setting up the SpinnerWidget.
      * @param l Label for the Widget.
@@ -79,13 +86,17 @@ public class SpinnerWidget extends SysexWidget {
 	spinner.setValue(new Integer(v + base));
     }
 
-    public void setMinMax(int min, int max) {
-	super.setMinMax(min, max);
+    public void setMin(int min) {
+        super.setMin(min);
         ((SpinnerNumberModel) (spinner.getModel())).setMinimum(new Integer(min));
+        spinner.setValue(new Integer(getValue()));
+    }
+    public void setMax(int max) {
+        super.setMax(max);
         ((SpinnerNumberModel) (spinner.getModel())).setMaximum(new Integer(max));
         spinner.setValue(new Integer(getValue()));
     }
-
+    
     public void setEnabled(boolean e) {
         spinner.setEnabled(e);
     }

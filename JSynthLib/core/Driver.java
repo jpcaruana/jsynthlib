@@ -925,4 +925,8 @@ public class Driver implements ISingleDriver {
     public void trimSysex(IPatch patch) {
         trimSysex((Patch) patch);
     }
+
+    public void sendParameter(IPatch patch, Parameter param) {
+        // Subclasses of Driver should use SysexSenders, no this.
+    }
 }

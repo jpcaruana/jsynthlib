@@ -110,4 +110,11 @@ public interface IPatchDriver extends IDriver {
      */
     public abstract void storePatch(IPatch myPatch, int bankNum, int patchNum);
 
+    /**
+     * Send a single parameter to the synth.
+     * 
+     * @param patch Patch containing the data.
+     * @param param Description of the parameter.
+     */
+    public abstract void sendParameter(IPatch patch, Parameter param);
 }

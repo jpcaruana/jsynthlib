@@ -3,6 +3,7 @@
  */
 package synthdrivers.EmuProteusMPS;
 import core.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -165,7 +166,7 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
   gbc.weightx=5;
   JPanel cmnPane=new JPanel();
   cmnPane.setLayout(new GridBagLayout());	 gbc.weightx=0;
-   addWidget(cmnPane,new PatchNameWidget(" Name  ",patch),0,0,4,1,0);
+   addWidget(cmnPane,new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,4,1,0);
 // gbc.weightx=1;
    addWidget(cmnPane,new ScrollBarLookupWidget("Pitch Bend Range",patch,0,13,new MPSModel(patch,0x7B),new MPSSender(123),new String[]{
       "None","+/-1","+/-2","+/-3","+/-4","+/-5","+/-6","+/-7","+/-8","+/-9","+/-10","+/-11","+/-12","Global"}),0,1,5,1,1);
@@ -386,7 +387,9 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
     	        try {
 			int fxa=fxTypeBox.getValue();
 			effectASliders[i].setLabel(effectAParams[fxa][i]);
-	 	        effectASliders[i].setMinMax(effectARanges[fxa][i][0],effectARanges[fxa][i][1]);
+            ScrollBarWidget r = effectASliders[i];
+	 	        r.setMin(effectARanges[fxa][i][0]);
+                r.setMax(effectARanges[fxa][i][1]);
 		    }
 		catch (Exception e1){effectASliders[i].setLabel("Unused");}
               }
@@ -398,7 +401,9 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
           effectASliders[i]=new ScrollBarWidget("Unused",patch,0,100,0,new MPSModel(patch,0x84+i),new MPSSender(132+i));
 	  addWidget(aPane,effectASliders[i],0,i+2,1,1,51+i);
 	  try {
-            effectASliders[i].setMinMax(effectARanges[effectA][i][0],effectARanges[effectA][i][1]);
+            ScrollBarWidget r = effectASliders[i];
+            r.setMin(effectARanges[effectA][i][0]);
+            r.setMax(effectARanges[effectA][i][1]);
 	    effectASliders[i].setLabel(effectAParams[effectA][i]);}
 	   catch (Exception e){effectASliders[i].setLabel("Unused");}
 
@@ -420,7 +425,9 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
     	        try {
 			int fxb=fxbTypeBox.getValue();
 			effectBSliders[i].setLabel(effectBParams[fxb][i]);
-	 	        effectBSliders[i].setMinMax(effectBRanges[fxb][i][0],effectBRanges[fxb][i][1]);
+            ScrollBarWidget r = effectBSliders[i];
+	 	        r.setMin(effectBRanges[fxb][i][0]);
+                r.setMax(effectBRanges[fxb][i][1]);
 		    }
 		catch (Exception e1){effectBSliders[i].setLabel("Unused");}
               }
@@ -433,7 +440,9 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
 	  addWidget(bPane,effectBSliders[i],0,i+2,1,1,59+i);
 	  try {
             effectBSliders[i].setLabel(effectBParams[effectB][i]);
- 	    effectBSliders[i].setMinMax(effectBRanges[effectA][i][0],effectBRanges[effectA][i][1]); }
+            ScrollBarWidget r = effectBSliders[i];
+ 	    r.setMin(effectBRanges[effectA][i][0]);
+        r.setMax(effectBRanges[effectA][i][1]); }
  	 catch (Exception e){effectBSliders[i].setLabel("Unused");}
 
        }
