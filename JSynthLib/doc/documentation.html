@@ -178,8 +178,8 @@ the latest update installed.
 JSynthLib-0.19 and/or later uses MIDI Provider, a platform dependent
 layer of the Java MIDI API.  Depends on a version of your Java
 Environment, you have to install a MIDI Provider.
-
-<h4>Microsoft Windows</h4>
+<ul>
+<li><b>Microsoft Windows</b>
 
 If you have a J2SE version 1.4.2 or newer installed, you don't have to
 install a MIDI Provider.<p>
@@ -191,7 +191,7 @@ directory and put <kbd>WireProvider.dll</kbd> under
 <kbd>$JAVA_HOME/jre/bin/</kbd> directory.  ($JAVA_HOME is the root
 directory of J2SE installation.)
 
-<h4>GNU/Linux</h4>
+<li><b>GNU/Linux</b>
 
 If you have a J2SE version 1.5 or newer installed, you don't have to
 install a MIDI Provider.<p>
@@ -220,7 +220,7 @@ You may also use the Tritonus ALSA MIDI Provider instead of
 href="http://www.tritonus.org/">Tritonus: Open Source Java Sound</a>
 web site for further information.
 
-<h4>Mac OS X</h4>
+<li><b>Mac OS X</b>
 
 <!--If you have a J2SE older than version 1.5 installed, c
 1.5 isn't availble for OS X yet, and it probably won't contain a
@@ -237,6 +237,7 @@ user installation).<p>
 You may use <a
 href="http://www.cems.uwe.ac.uk/~lrlang/plumstone/">Plum Stone</a>
 instead of <kbd>CAProvider</kbd>.
+</ul>
 
 <h3>Step 3: Installing and Invoking JSynthLib</h3>
 
@@ -305,16 +306,18 @@ library to hold only patches for a particular synthesizer.
 
 <p>A Library Window looks like a table where each row
 represents one patch.  The columns represent different pieces of
-information about the patch. The columns are:
+information about the patch.
 
-<p><b>Synth-- </b>A shorthand identifier for the synthesizer to which the
+<p>The columns are:
+<ul>
+<li><b>Synth-- </b>A shorthand identifier for the synthesizer to which the
 patch belongs. For example, if a patch is for a Yamaha TG33
 Synthesizer, this field might read "TG33". These identifiers merely
 help the user to see what patch goes with each synthesizer and are
 merely arbitrary identifiers. The identifier used for each synthesizer
 can be changed in the Window-&gt;synths menu.
 
-<p><b>Type-- </b> This tells what kind of patch the patch is. The most
+<li><b>Type-- </b> This tells what kind of patch the patch is. The most
 common values for this field are "Single" which means the patch
 represents a single patch in the synthesizer or "Bank" which means
 this patch actually holds an entire bank (set) of patches. Other
@@ -324,7 +327,7 @@ a drum machine would probably have a "DrumKit" type rather than a
 synthesizer jargon. If you are unfamiliar with synthesizer terminology
 you should probably brush up in order to use this program.
 
-<p><b>PatchName-- </b> Obviously, this is the name of the patch. Note
+<li><b>PatchName-- </b> Obviously, this is the name of the patch. Note
 that this is the name of the patch as it appears in the actual
 synthesizer data for the patch, so it suffers the same limitations as
 the synthesizer impresses upon its data. For example, if the
@@ -332,7 +335,7 @@ synthesizer only allows for 6 characters in a patch name, so will
 JSynthLib. Some synthesizers do not support patch names at all, and
 most of the time "Bank" type patches will not support names.
 
-<p><b>field1 / field2--</b> These two fields hold data outside of the
+<li><b>field1 / field2--</b> These two fields hold data outside of the
 actual data used by the Synthesizer and can therefore hold values even
 for patches belonging to synthesizers which lack patch names. The
 meaning of these two fields is user defines, for example, you could
@@ -340,11 +343,12 @@ set all of the field1 values in a library to be the name of the author
 of the patch and all of the field2 values to be the type of instrument
 that the patch is trying to emulate (Guitar/Piano/Drum, etc)
 
-<p><b>comment--</b> This is another field which holds data outside of the
+<li><b>comment--</b> This is another field which holds data outside of the
 actual data used by the Synthesizer. The main difference between
 field1 / field2 and comment is that the comment field can hold longer
 strings and that you can not sort a library based on the comment
 field.
+</ul>
 
 <p>In addition to the table of patches, a library window contains a
 footer which tells the number of patches in the library.
@@ -358,32 +362,34 @@ it contains the locations for the patches in the synth's memories in
 addition to the patches themselves. You can transfer the patches all
 together with the "Library-&gt;Transfer Scene" function to the synths.
 Very practical for the recall of a specific sound setup.
-The columns are:
- 
-<p><b>Synth-- </b>A shorthand identifier for the synthesizer to which the
+
+<p>The columns are:
+<ul> 
+<li><b>Synth-- </b>A shorthand identifier for the synthesizer to which the
 patch belongs. It's the same as in the <a href="#library">library window</a>
 above.
 
-<p><b>Type-- </b> It's the same as in the <a href="#library">library window</a>
+<li><b>Type-- </b> It's the same as in the <a href="#library">library window</a>
 above.
 
-<p><b>PatchName-- </b> Obviously, this is the name of the patch. 
+<li><b>PatchName-- </b> Obviously, this is the name of the patch. 
 It's the same as in the <a href="#library">library window</a> above.
 
-<p><b>Bank Number--</b> This is the first difference to the library.
+<li><b>Bank Number--</b> This is the first difference to the library.
 This column contains the bank number for your patch, since patches are usually
 organized in banks in the synthesizers. You can select a bank with a drop-down
 menu. The actual content of the drop-down is determined by the patch type and
 the architecture of the synth.
 
-<p><b>Patch Number--</b> 
+<li><b>Patch Number--</b> 
 This column contains the patch number for your patch within the bank.
 Again, you can select a patch number with a drop-down
 menu. The actual content of the drop-down is determined by the patch type and
 the architecture of the synth.
 
-<p><b>comment--</b> This is another field which holds data outside of the
+<li><b>comment--</b> This is another field which holds data outside of the
 actual data used by the Synthesizer.
+</ul>
 
 <p>In addition to the table of patches, a scene window contains a
 footer which tells the number of patches in the scene.
@@ -528,39 +534,39 @@ like the new edits you have created, but also like the original patch.
 <h3><a name="menus" href="#toc">The Menu Functions</a></h3>
 
 <h4><a name="file menu" href="#toc">File Menu</a></h4>
-
-<p><b>Open-- </b>This prompts you for a file name and then loads the
+<ul>
+<li><b>Open-- </b>This prompts you for a file name and then loads the
 previously saved library under that name from disk and displays it on
 the screen. Note that if the library is very large, the program might
 take several seconds to read it from disk. The filename of the loaded
 library is placed on the top frame of the Library Window. This
 function is also available from the Toolbar.
 
-<p><b>Save-- </b>This saves a library window to disk. The library
+<li><b>Save-- </b>This saves a library window to disk. The library
 window which you wish to save must be the currently focused (active)
 window when you choose this option. If the library does not have a
 file name, then the program will pop up a save as dialog box just as
 if you had chosen the Save As Option instead. This function is also
 available from the Toolbar.
 
-<p><b>Save As-- </b> this function pops up a file dialog box to ask
+<li><b>Save As-- </b> this function pops up a file dialog box to ask
 you for a new name and then saves the currently focused Library Window
 under that name.
 
-<p><b>Import--</b> This function will load raw Sysex data and/or MIDI
+<li><b>Import--</b> This function will load raw Sysex data and/or MIDI
 files from disk into the currently focused Library Window or Bank
 Editor Window.  If a driver is installed (under Window-&gt;Synths) which
 recognizes the format of this data, then it will be turned into a
 patch of the proper type, otherwise it will be listed as "unknown".
 This function is also available from the toolbar.
 
-<p><b>Export--</b> This function will save the raw Sysex data from the
+<li><b>Export--</b> This function will save the raw Sysex data from the
 currently selected patch (in a Library Window or Bank Editor Window)
 to disk, stripping away field1, field2, and comment. The data will be
 in the raw form suitable for sending to the synthesizer of importing
 into another editor for that type of data.
 
-<p><b>Import All--</b> This is a powerful function that is very useful
+<li><b>Import All--</b> This is a powerful function that is very useful
 when you first start using JSynthLib. It is designed to quickly import
 a large amount of data into a Library Window. If you've been using
 other editor or librarian programs to manipulate your synthesizer data
@@ -606,12 +612,9 @@ filename in field1 or field2 are checked, each of the extracted
 patches will get the filename followed by their location in the bank
 placed in their field. For example " MYSOUNDS1.SYX 34 ".
 
-<p><b>Exit--</b> The Exit command doesn't really belong in the Library
-Menu since it doesn't act on a library, but we had to put it somewhere
-and this seemed like as good a place as any other. Basically this
-command just exits the program. It will <em>not</em> warn you about
-unsaved data!
-
+<li><b>Exit--</b> Basically this command just exits the program.
+It will <em>not</em> warn you about unsaved data!
+</ul>
 <h4><a name="library menu" href="#toc">Library Menu</a></h4>
 
 The Library menu on the menu bar allows you to access a number of
@@ -620,25 +623,25 @@ functions to <a href="#library">Library</a> and <a href="#scene">Scene</a>.
 the patches in the library. Functions which manipulate a single patch
 within a library are located under the Patch Menu. The available
 functions in the Library Menu are:
-
-<p><b>Transfer Scene-- </b> This transfers all patches of the selected Scene
+<ul>
+<li><b>Transfer Scene-- </b> This transfers all patches of the selected Scene
 to their configured places in the synths.
 
-<p><b>Sort-- </b> This function will sort all of the patches in a
+<li><b>Sort-- </b> This function will sort all of the patches in a
 library by either the type, patch name, field1 or field2 field (the
 program will prompt you for the sort field) The sort algorithm used is
 stable, so you can for example sort by patch name and then sort by
 synth in order to get a library that is sorted by synth type and then
 sorted by patch name within each synth type.
 
-<p><b>Search-- </b> This function allows you to search for patches
+<li><b>Search-- </b> This function allows you to search for patches
 within a library. You enter the text to search for, and where you want
 the text to be located, whether in the patch name, field1, field2,
 comment, or any of the fields. Then you use the "Find First" button to
 locate the first patch matching the search criteria, or the "Find
 Next" button to locate the next one.
 
-<p><b>Crossbreed-- </b> Crossbreeding patches is a cool way to make
+<li><b>Crossbreed-- </b> Crossbreeding patches is a cool way to make
 new 'random' patches. Rather than simply sending random data to a
 synthesizer (which would likely end up sending it lots of garbage and
 out-of-range values), the crossbreed command generates random
@@ -659,7 +662,7 @@ patch will be appended to the current library. Note that as a random
 patch, it will have a random name, so you'll probably want to go in
 and give it a more useful name later.
 
-<p><b>Delete Dups--</b> This function will search through a library for
+<li><b>Delete Dups--</b> This function will search through a library for
 identical patches and delete all but one copy. This is most useful
 immediately after you have imported all your patches in to
 JSynthLib. Many times copies of the same patch are sitting around in
@@ -669,21 +672,21 @@ not be considered duplicates and will not be deleted. Therefore two
 identical patches with different names will not be considered
 duplicates by this function.
 
-<p><b>New Library-- </b> This creates a new Library which
+<li><b>New Library-- </b> This creates a new Library which
 contains no patches and displays it on the screen. This function is
 also available from the toolbar.
 
-<p><b>New Scene-- </b> This creates a new Scene which contains
+<li><b>New Scene-- </b> This creates a new Scene which contains
 no patches and displays it on the screen.
-
+</ul>
 <h4><a name="patch menu" href="#toc">Patch Menu</a></h4>
 
 The Patch menu allows you to access a number of functions which
 manipulate individual patches which are located either in a Library
 Window, a Bank Edit Window, or (for some functions) in a Single Patch
 Editor Window. The available functions in the Patch Menu are:
-
-<p><b>Copy--</b> This function copies the currently selected patch to
+<ul>
+<li><b>Copy--</b> This function copies the currently selected patch to
 the clipboard. It will copy the currently highlighted patch from the
 currently focused Library Window or Bank Edit Window. If the current
 Window is a Single Patch Editor window, then the patch represented by
@@ -691,11 +694,11 @@ the current position of the editing controls is copied to the
 clipboard. This function is also available from the toolbar and from
 the right-click pop up menu.
 
-<p><b>Cut--</b> This command simply performs a <em>Copy</em> command
+<li><b>Cut--</b> This command simply performs a <em>Copy</em> command
 followed by a <em>Delete</em> command. It is also available from the
 toolbar and from the right-click pop up menu.
 
-<p><b>Paste-- </b> This copies a patch from the clipboard to the
+<li><b>Paste-- </b> This copies a patch from the clipboard to the
 currently selected location in a Library Window or Bank Editor
 Window. If the currently focused window is a Library Window but no
 patch is selected, then the patch will be appended, otherwise it will
@@ -708,11 +711,11 @@ is invalid, the paste will not work. The same is true for the Import
 command. This command is also available from the toolbar and from the
 right-click pop up menu.
 
-<p><b>Delete-- </b> This deletes the currently selected patch in the
+<li><b>Delete-- </b> This deletes the currently selected patch in the
 currently focused Library Window or Bank Editor Window. If the current
 window is a Single Editor Window then this command has no function.
 
-<p><b>Send-- </b> This option will send the currently highlighted
+<li><b>Send-- </b> This option will send the currently highlighted
 patch in the currently focused Library Window or Bank Edit Window to
 the proper synthesizer. The idea is to send the data so that you can
 test it out. On synths which support it, the data will be sent to a
@@ -723,18 +726,18 @@ will be overwritten with the sent data. In order for the send command
 to work, the synthesizer corresponding to the patch must be correctly
 set up from Window-&gt;synths.
 
-<p><b>Send to-- </b> Like Send, this function also sends the currently
+<li><b>Send to-- </b> Like Send, this function also sends the currently
 selected patch to the synthesizer specified.  This function is also
 available from the toolbar.
 
-<p><b>Store-- </b> Like Send, this function also sends the currently
+<li><b>Store-- </b> Like Send, this function also sends the currently
 selected patch to the correct synthesizer. This option however, will
 prompt you for a patch location (bank and patch numbers) on the
 synthesizer to store the patch to. It will then store it to the
 synthesizer, overwriting whatever patch may already be at that
 location. This function is also available from the toolbar.
 
-<p><b>Get--</b> This function will receive sysex data from a
+<li><b>Get--</b> This function will receive sysex data from a
 synthesizer. When you choose this command, a dialog box will appear,
 giving you several options. First, choose which kind of patch you wish
 to get from any of the installed synthesizer drivers. Where
@@ -751,7 +754,7 @@ focused library. If you wish to discard the received patch, you can
 simply press 'get' again to get a different patch or press 'Cancel' to
 quit the dialog. When your done press 'done'.
 
-<p><b>Edit--</b> Using the Editing command on a Patch for the driver
+<li><b>Edit--</b> Using the Editing command on a Patch for the driver
 contains editing support will bring up an Editor Window. This window
 will consist of various sliders, checkboxes, and other controls which
 can be manipulated to change the patch. The layout and function of
@@ -762,7 +765,7 @@ what the various parameters do. This command is also available from
 the right-click menu. See the section under 'Editing Patches' for more
 information
 
-<p><b>Play-- </b> This command will send the currently selected patch
+<li><b>Play-- </b> This command will send the currently selected patch
 to the proper synths followed by a MIDI command to play a note.  This
 is useful for checking a patch out quickly or without a master
 controller keyboard. The specifics on which note is played, how hard
@@ -771,11 +774,11 @@ Dialog Box, which is accessible from Window-&gt;Preferences-&gt;Play Note. The p
 function is also available from the toolbar and from the right-click
 menu.
 
-<p><b>Reassign-- </b> Each patch is corresponding to a particular
+<li><b>Reassign-- </b> Each patch is corresponding to a particular
 synth Driver.  A patch can be used by more than one kind of synths.
 This command select a synth driver.
 
-<p><b>Extract--</b> You run the extract command on patches which
+<li><b>Extract--</b> You run the extract command on patches which
 represent entire banks of patches rather than singles. Make sure the
 bank patch you wish to extract is highlighted in the currently focused
 library window. When you choose this option, the bank will be deleted
@@ -784,18 +787,18 @@ bank. The same effect can be achieved when importing patches by using
 an option to the "Import All" command. See that part of the
 documentation for more details.
 
-<p><b>New Patch--</b> This command creates a new (blank or default)
+<li><b>New Patch--</b> This command creates a new (blank or default)
 patch. When you choose this option you will be given a list of the
 types of patches you are able to create. (Which patch types are
 available depends on which synth drivers you have loaded). The patch
 will be added to the currently focused patch library window.
 
-<p><b>Upload--</b> Upload a patch to
+<li><b>Upload--</b> Upload a patch to
 <a href="http://www.jsynthlib.org/patches/">JSynthLib Patch Archive</a>.
-
+</ul>
 <h4><a name="window menu" href="#toc">Window Menu</a></h4>
-
-<p><b>Synths--</b> This is where you tell JSynthLib what synthesizers
+<ul>
+<li><b>Synths--</b> This is where you tell JSynthLib what synthesizers
 you have and how they are configured. When you open this window, you
 will see a list of the "Synth Drivers" which you have installed. Note
 that many synths have more than one Synth Driver, all of which are
@@ -828,12 +831,12 @@ and configure them for you. It is not able to detect certain synths
 determines for accuracy, but it can still be more convenient then
 having to add and configure them all by hand.</p>
 
-<p><b>Preferences--</b>
+<li><b>Preferences--</b>
 Preferences dialog is used to configure various settings that determine how
 JSynthLib functions.  There are six tabs "General", "Directories", "MIDI",
 "Fader Box", "Play Note", and "Repository".
-
-<p>Under <b>General</b>, you can set the look-and-feel which JSynthLib
+<ul>
+<li>Under <b>General</b>, you can set the look-and-feel which JSynthLib
 will use.  You can also change the GUI style, MDI (Multiple Document
 Interface: everything in single window) or SDI (Single Document
 Interface: each frame has its own window).
@@ -849,12 +852,12 @@ does not work on your set up. If this is the case, you should e-mail
 in a bug report, and use JavaMIDI for now.
 -->
 
-<p>In the <b>Directory</b> tab, you can set the default directory from which
+<li>In the <b>Directory</b> tab, you can set the default directory from which
 JSynthLib will attempt to load and save files. The <b>library path</b>
 determines where the <kbd>.patchlib</kbd> files are loaded and
 saved. The <b>sysex path</b> is used by the import and export commands.
 
-<p>The <b>MIDI</b> tab holds MIDI settings.  The parameter called <b>Run
+<li>The <b>MIDI</b> tab holds MIDI settings.  The parameter called <b>Run
 Initialization on MIDI ports</b> only needs to be played with if
 JSynthLib tells you to on startup or if you want to free the ports for
 another program. Basically, it needs to grab a couple of MIDI ports on
@@ -879,7 +882,7 @@ controlling auditioning patches than just using the "play" command. If
 you have no master controller or don't want to use one, disable
 <b>Enable Master Controller</b> check box.
 
-<p>The <b>Fader Box</b> tab allows you to configure your fader box if you want to
+<li>The <b>Fader Box</b> tab allows you to configure your fader box if you want to
 use one. A fader box can be useful when editing patches, see the
 section of this documentation on editing patches for details of what
 they do. If you want to enable faders, you just check the enable box
@@ -905,16 +908,16 @@ is received it is patched to whatever fader has been accessed most
 recently. For example you could set your mod wheel to send to
 whichever fader you've used most recently.
 
-<p>When you choose the 'play' command to hear a sound, the patch is
+<li>When you choose the 'play' command to hear a sound, the patch is
 played at a particular note, velocity and duration. The <b>Play Note</b>
 tab allows you to determine what note, velocity and duration are
 used.
 
-<p><b>Repository</b> tab set up settings for uploading patch.
-
-<p><b>MIDI Monitor--</b> Open MIDI Monitor window.  This is useful for
+<li><b>Repository</b> tab set up settings for uploading patch.
+</ul>
+<li><b>MIDI Monitor--</b> Open MIDI Monitor window.  This is useful for
 trouble shooting.
-
+</ul>
 <h4><a name="popup menu" href="#toc">Pop-up Menu</a></h4>
 
 If your right-click on a patch in a Library Window or a Bank Editor
