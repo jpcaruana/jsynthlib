@@ -26,8 +26,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
     // This field will be removed when new MIDI API become stable.
     static boolean newMidiAPI = false;
 
-    public static MidiWrapper MidiOut;
-    public static MidiWrapper MidiIn;
+    static MidiWrapper MidiOut;
+    static MidiWrapper MidiIn;
     public static AppConfig appConfig;
     // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
     public static WaitDialog waitDialog; // define showWaitDialog() and hideWaitDialog()
@@ -589,7 +589,7 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         //frame.setVisible(true);
     }
     */
-    /**
+    /*
      * This used to be loadMidiDriver() but it is now a callback
      * method that gets notified by MidiConfigPanel if the user
      * changes midi drivers. Initialization of the drivers is now
@@ -806,6 +806,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 		    if (frm != null) {
 			frm.setVisible(true);
 			JSLDesktop.add(frm);
+			// What's this??? sliderList is used only this. !!!FIXIT!!!
+			/*
 			if (frm instanceof PatchEditorFrame)
 			    for (int i = 0; i < ((PatchEditorFrame) frm).sliderList.size(); i++) {
 				JSlider slider = (JSlider) ((PatchEditorFrame) frm).sliderList.get(i);
@@ -815,12 +817,14 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 				    slider.setSize(dim);
 				}
 			    }
+			*/
 			try {
 			    frm.setSelected(true);
 			} catch (java.beans.PropertyVetoException ex) {
 			}
 		    }
 		} catch (Exception ex) {
+		    // For which Exception is this message for? !!!FIXIT!!!
 		    ErrorMsg.reportError("Error", "Library holding Patch to Edit must be the focused Window.", ex);
 		}
 	    }
