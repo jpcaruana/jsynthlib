@@ -112,15 +112,15 @@ class SimpleDecoder extends Decoder {
         Byte[] b = new Byte[size]
         mask = 1 << (word_size + 1)
         if (big_endian) {
-            shift = 0
-            offset = word_size
-        } else {
             shift = word_size*(size - 1)
             offset = -word_size
+        } else {
+            shift = 0
+            offset = word_size
         }
         for (i in 0 .. size - 1) {
             b[i] = (value % (mask << shift)) >> shift
-            shift += word_size
+            shift += offset
         }
         return b
     }
