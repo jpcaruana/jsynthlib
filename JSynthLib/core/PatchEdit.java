@@ -21,7 +21,7 @@ import javax.swing.JFrame;
 public final class PatchEdit  {
     static DevicesConfig devConfig;
 
-    private static JSLDesktop desktop;
+    private static Actions.MenuDesktop desktop;
     private static PrefsDialog prefsDialog;
     private static WaitDialog waitDialog;
 
@@ -48,7 +48,7 @@ public final class PatchEdit  {
 
 	// Set up the GUI.
 	JSLDesktop.setGUIMode(AppConfig.getGuiStyle() == AppConfig.GUI_MDI);
-	desktop = new JSLDesktop("JSynthLib", Actions.createToolBar(),
+	desktop = new Actions.MenuDesktop("JSynthLib", Actions.createMenuBar(), Actions.createToolBar(),
                 Actions.exitAction);
 
 	// Show dialog for the 1st invokation.
@@ -62,11 +62,11 @@ public final class PatchEdit  {
 	Actions.createPopupMenu();
 
 	// set up Preference Dialog Window
-	prefsDialog = new PrefsDialog(desktop.getSelectedWindow());
+	prefsDialog = new PrefsDialog(getInstance());
 
         //Set up a silly little dialog we can pop up for the user to
         //gawk at while we do time consuming work later on.
-        waitDialog = new WaitDialog(desktop.getSelectedWindow());
+        waitDialog = new WaitDialog(getInstance());
 
         // Start pumping MIDI information from Input --> Output so the
         // user can play a MIDI Keyboard and make pretty music
@@ -81,12 +81,6 @@ public final class PatchEdit  {
 	}
     }
 
-    static void exit() {
-	ErrorMsg.reportStatus("JSynthLib exiting...");
-	AppConfig.savePrefs();
-	System.exit(0);
-    }
-
     protected void finalize() {	// ???
 	ErrorMsg.reportStatus("JSynthLib finalizing...");
 	masterInEnable(false);
@@ -98,12 +92,28 @@ public final class PatchEdit  {
 
     /**
      * Returns the current active JFrame. Used for the <code>owner</code>
-     * parameter for <code>JDialog</code> constructor.
+     * parameter for <code>JDialog</code> constructor. Use this for a dialog
+     * window which depends on a frame.
+     * 
+     * @see #getRootFrame()
      */
     public static JFrame getInstance() {
 	return desktop == null ? null : desktop.getSelectedWindow();
     }
-    public static JSLDesktop getDesktop() {
+    /**
+     * Returns the root JFrame for the <code>owner</code> parameter for
+     * <code>JDialog</code> constructor. Use this for a dialog window which
+     * does not depend on a frame.
+     * 
+     * @see #getInstance()
+     */
+    public static JFrame getRootFrame() {
+	return desktop == null ? null : desktop.getRootFrame();
+    }
+    /**
+     * Returns JSLDesktop object.
+     */
+    public static Actions.MenuDesktop getDesktop() {
         return desktop;
     }
 

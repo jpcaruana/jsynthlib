@@ -40,7 +40,7 @@ import javax.swing.table.AbstractTableModel;
  * @author Gerrit.Gehnen
  * @version $Id$
  */
-abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
+abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBasket {
     protected JTable table;
     protected PatchTableModel myModel;
 
@@ -52,11 +52,7 @@ abstract class AbstractLibraryFrame extends JSLFrame implements PatchBasket {
     private File filename;
 
     AbstractLibraryFrame(String title, String type, PatchTransferHandler pth) {
-        super(title,
-                true, //resizable
-                true, //closable
-                true, //maximizable
-                true); //iconifiable
+        super(PatchEdit.getDesktop(), title);
         TYPE = type;
         this.pth = pth;
 

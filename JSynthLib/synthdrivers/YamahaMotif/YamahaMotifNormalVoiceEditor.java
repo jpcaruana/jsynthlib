@@ -177,7 +177,8 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       if (alignleft)
 	widget.setAlignmentX(Component.LEFT_ALIGNMENT);
       widget.setMaximumSize(widget.getPreferredSize());
-      setPreferredSize(getMinimumSize());
+      // commented out by Hiroo
+      //setPreferredSize(getMinimumSize());
       /*
       if (widget instanceof ScrollBarWidget)
 	sliderList.add(((ScrollBarWidget)widget).slider);

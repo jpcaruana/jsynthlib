@@ -1,5 +1,6 @@
 package core;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -9,6 +10,7 @@ import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,7 +23,7 @@ import javax.swing.filechooser.FileFilter;
  * Define Action classes
  * @version $Id$
  */
-final class Actions {
+final public class Actions {
     // I hope 64bit is enough for a while.
     static final long EN_ABOUT			= 0x0000000000000001L;
     static final long EN_COPY			= 0x0000000000000002L;
@@ -114,7 +116,7 @@ final class Actions {
     private static Action importAction;
     private static Action importAllAction;
     private static Action licenseAction;
-    static Action monitorAction; // refered by JSLDesktop and JSLWindowMenu
+    private static Action monitorAction;
     private static Action newAction;
     private static Action newPatchAction;
     private static Action newSceneAction;
@@ -123,7 +125,7 @@ final class Actions {
     private static Action openAction;
     private static Action pasteAction;
     private static Action playAction;
-    static Action prefsAction; // refered by JSLDesktop and JSLWindowMenu
+    private static Action prefsAction;
     private static Action reassignAction;
     private static Action saveAction;
     private static Action saveAsAction;
@@ -143,6 +145,8 @@ final class Actions {
     private static DocumentationWindow hpWin;
 
     private static Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+    /** just for efficiency. */
+    private static boolean isMac = MacUtils.isMac();
 
     // don't have to call constructor for Utility class.
     private Actions() {
@@ -193,7 +197,7 @@ final class Actions {
         prevFaderAction		= new PrevFaderAction(mnemonics);
 	uploadAction		= new UploadAction(mnemonics);
 
-	if (MacUtils.isMac())
+	if (isMac)
 	    MacUtils.init(exitAction, prefsAction, aboutAction);
 	else
 	    setMnemonics(mnemonics); // set keyboard short cut
@@ -201,17 +205,27 @@ final class Actions {
 
     /** This sets up the Menubar. Called from JSLDesktop. */
     static JMenuBar createMenuBar() {
-        return createMenuBar(PatchEdit.getDesktop());
-    }
-    static JMenuBar createMenuBar(JSLDesktop desktop) {
-	JMenuItem mi;
         HashMap mnemonics = new HashMap();
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        JMenuBar menuBar = new JMenuBar();
 
-	// create "File" Menu
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createFileMenu(mnemonics, mask));
+	menuBar.add(createLibraryMenu(mnemonics, mask));
+        menuBar.add(createPatchMenu(mnemonics, mask));
+	menuBar.add(createWindowMenu(mnemonics, mask));
+        menuBar.add(createHelpMenu(mnemonics, mask));
+
+	// set keyboard short cut
+	if (!isMac)
+	    setMnemonics(mnemonics);
+
+        return menuBar;
+    }
+
+    private static JMenu createFileMenu(HashMap mnemonics, int mask) {
+        JMenuItem mi;
         JMenu menuFile = new JMenu("File");
-	mnemonics.put(menuFile, new Integer(KeyEvent.VK_F));
+        mnemonics.put(menuFile, new Integer(KeyEvent.VK_F));
         mi = menuFile.add(openAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, mask));
         mi = menuFile.add(saveAction);
@@ -223,15 +237,17 @@ final class Actions {
         menuFile.add(exportAction);
         menuFile.add(importAllAction);
 
-        if (!MacUtils.isMac()) {
-	    menuFile.addSeparator();
-	    menuFile.add(exitAction);
-	}
-	menuBar.add(menuFile);
+        if (!isMac) {
+            menuFile.addSeparator();
+            menuFile.add(exitAction);
+        }
+        return menuFile;
+    }
 
-	// create "Library" Menu
+    private static JMenu createLibraryMenu(HashMap mnemonics, int mask) {
+        JMenuItem mi;
         JMenu menuLib = new JMenu("Library");
-	mnemonics.put(menuLib, new Integer(KeyEvent.VK_L));
+        mnemonics.put(menuLib, new Integer(KeyEvent.VK_L));
 
         menuLib.add(transferSceneAction);
         menuLib.addSeparator();
@@ -242,14 +258,16 @@ final class Actions {
         menuLib.add(deleteDuplicatesAction);
         menuLib.addSeparator();
 
-	mi = menuLib.add(newAction);
-	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
+        mi = menuLib.add(newAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
         menuLib.add(newSceneAction);
-	menuBar.add(menuLib);
+        return menuLib;
+    }
 
-	// create "Patch" Menu
+    private static JMenu createPatchMenu(HashMap mnemonics, int mask) {
+        JMenuItem mi;
         JMenu menuPatch = new JMenu("Patch");
-	mnemonics.put(menuPatch, new Integer(KeyEvent.VK_P));
+        mnemonics.put(menuPatch, new Integer(KeyEvent.VK_P));
         mi = menuPatch.add(copyAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COPY, 0));
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, mask));
@@ -276,44 +294,136 @@ final class Actions {
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, mask));
         menuPatch.addSeparator();
 
- 	menuPatch.add(reassignAction);
+        menuPatch.add(reassignAction);
         menuPatch.add(extractAction);
         menuPatch.addSeparator();
 
         menuPatch.add(newPatchAction);
-	menuPatch.add(uploadAction);
-        menuBar.add(menuPatch);
-	menuPatch.addMenuListener(new MenuListener() {
-		public void menuCanceled(MenuEvent e) {
-		}
-		public void menuDeselected(MenuEvent e) {
-		}
-		public void menuSelected(MenuEvent e) {
-		    pasteAction.setEnabled(true);
-		}
-	    });
+        menuPatch.add(uploadAction);
+        menuPatch.addMenuListener(new MenuListener() { // need this???
+            public void menuCanceled(MenuEvent e) {}
+            public void menuDeselected(MenuEvent e) {}
+            public void menuSelected(MenuEvent e) {
+                pasteAction.setEnabled(true);
+            }
+        });
+        return menuPatch;
+    }
 
-	// create "Window" menu
-	JMenu menuWindow = desktop.createWindowMenu();
-	menuBar.add(menuWindow);
+    /** List of JSLWindowMenus including one for invisible frame. */
+    private static ArrayList windowMenus = new ArrayList();
+    private static JMenu createWindowMenu(HashMap mnemonics, int mask) {
+        JSLWindowMenu wm = new JSLWindowMenu("Window");
+        windowMenus.add(wm);
 
-	// create "Help" menu
+	if (!isMac) {
+	    wm.add(prefsAction);
+	    wm.setMnemonic(KeyEvent.VK_W);
+	}
+	wm.add(monitorAction);
+	//wm.add(JSLDesktop.toolBarAction);
+	wm.addSeparator();
+	JMenuItem mi = wm.add(closeAction);
+	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, mask));
+	wm.addSeparator();
+
+	// add menu entries of existing frames
+	JSLDesktop desktop = PatchEdit.getDesktop();
+	if (desktop != null) { // when desktop is created, 'desktop' is still null.
+            Iterator it = desktop.getJSLFrameIterator();
+            while (it.hasNext()) {
+                wm.add((JSLFrame) it.next());
+            }
+        }
+        return wm;
+    }
+    private static Action closeAction = new AbstractAction("Close") {
+        public void actionPerformed(ActionEvent ex) {
+            try {
+                PatchEdit.getDesktop().getSelectedFrame().setClosed(true);
+            } catch (PropertyVetoException e) {
+                // don't know how to handle this.
+                e.printStackTrace();
+            }
+        }
+    };
+
+    /** to keep track the relation between a JSLMenuBar and a JSLFrame. */
+    private static HashMap frames = new HashMap();
+    /** JSLDesktop with Menu support. */
+    public static class MenuDesktop extends JSLDesktop {
+
+        MenuDesktop(String title, JMenuBar mb, JToolBar tb, Action exitAction) {
+            super(title, mb, tb, exitAction);
+        }
+        public void add(JSLFrame frame) {
+            super.add(frame);
+            Iterator it = windowMenus.iterator();
+            while (it.hasNext()) {
+                ((JSLWindowMenu) it.next()).add(frame);
+            }
+        }
+        public void JSLFrameClosed(JSLFrameEvent e) {
+            super.JSLFrameClosed(e);
+            JSLFrame frame = e.getJSLFrame();
+            windowMenus.remove(frames.get(frame));
+            frames.remove(frame);
+        }
+    }
+    /** JSLDesktop with Menu support. */
+    public static class MenuFrame extends JSLFrame {
+        private MenuDesktop desktop;
+
+        public MenuFrame(MenuDesktop desktop, String title, boolean addToolBar,
+                boolean resizable, boolean closable,
+                boolean maximizable, boolean iconifiable) {
+            super(desktop, title, resizable, closable, maximizable, iconifiable);
+            this.desktop = desktop;
+	    if (addToolBar) {
+	        JToolBar tb = createToolBar();
+	        getContentPane().add(tb, BorderLayout.NORTH);
+	        tb.setVisible(true);
+	    }
+            if (!JSLDesktop.useMDI()) {
+                JMenuBar mb = createMenuBar();
+                setJMenuBar(mb);
+                frames.put(this, mb);
+            }
+        }
+        /** create a resizable, closable, maximizable, and iconifiable frame with toolbar. */
+        public MenuFrame(MenuDesktop desktop, String title) {
+            this(desktop, title, AppConfig.getToolBar(), true, true, true, true);
+        }
+        public void setVisible(boolean b) {
+	    if (isMac && !JSLDesktop.useMDI()) {
+	        JFrame frame = getJFrame();
+		if (b) {
+		    if (frame.getJMenuBar() == null)
+		        setJMenuBar(frames.get(this) == null ? createMenuBar() : (JMenuBar) frames.get(this));
+		} else {
+		    // Remove menubar and change focus once so frame can be disposed.
+		    // http://lists.apple.com/archives/java-dev/2003/Dec/msg00122.html
+		    // Java 1.4.2 still has this bug.
+		    setJMenuBar(null);
+		    desktop.getInvisible().requestFocus();
+		    frame.requestFocus();
+		}
+	    }
+	    super.setVisible(b);
+        }
+    }
+    private static JMenu createHelpMenu(HashMap mnemonics, int mask) {
+        JMenuItem mi;
         JMenu menuHelp = new JMenu("Help");
-	mnemonics.put(menuHelp, new Integer(KeyEvent.VK_H));
-	mi = menuHelp.add(docsAction);
+        mnemonics.put(menuHelp, new Integer(KeyEvent.VK_H));
+        mi = menuHelp.add(docsAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, 0));
-	// J2SE 1.4.2 is not ready for HTML of www.jsynthlib.org site
-	//mi = menuHelp.add(homePageAction);
-	mi = menuHelp.add(licenseAction);
-	if (!MacUtils.isMac())
-	    menuHelp.add(aboutAction);
-        menuBar.add(menuHelp);
-
-	// set keyboard short cut
-	if (!MacUtils.isMac())
-	    setMnemonics(mnemonics);
-
-        return menuBar;
+        // J2SE 1.4.2 is not ready for HTML of www.jsynthlib.org site
+        //mi = menuHelp.add(homePageAction);
+        mi = menuHelp.add(licenseAction);
+        if (!isMac)
+            menuHelp.add(aboutAction);
+        return menuHelp;
     }
 
     /** This sets up the mnemonics */
@@ -500,8 +610,39 @@ final class Actions {
 	    uploadAction.setEnabled(b);
     }
 
-    /** This creates a new empty Library/Scene Window */
-    private static void createLibraryFrame(AbstractLibraryFrame frame) {
+    /** Create a new Library Window and load a Library from disk to
+	fill it! Fun! */
+    static void openFrame(File file) {
+        PatchEdit.showWaitDialog("Loading " + file + " ...");
+        AbstractLibraryFrame frame;
+        if (file.exists()) {
+            // try LibraryFrame then SceneFrame
+            frame = new LibraryFrame(file);
+            try {
+                frame.open(file);
+            } catch (Exception e) {
+                frame = new SceneFrame(file);
+                try {
+                    frame.open(file);
+                } catch (Exception e1) {
+                    PatchEdit.hideWaitDialog();
+                    ErrorMsg.reportError("Error", "Error Loading Library:\n "
+                            + file.getAbsolutePath(), e1);
+                    return;
+                }
+            }
+        } else {
+            PatchEdit.hideWaitDialog();
+            ErrorMsg.reportError("Error", "File Does Not Exist:\n" + file.getAbsolutePath() );
+            return;
+        }
+        PatchEdit.hideWaitDialog();
+
+        addLibraryFrame(frame);
+    }
+
+    /** add and show a Library/Scene Window */
+    private static void addLibraryFrame(AbstractLibraryFrame frame) {
         PatchEdit.getDesktop().add(frame);
         frame.moveToDefaultLocation();
         frame.setVisible(true);
@@ -511,46 +652,6 @@ final class Actions {
 	    //I don't *actually* know what this is for :-)
 	    ErrorMsg.reportStatus(e);
 	}
-    }
-
-    /** Create a new Library Window and load a Library from disk to
-	fill it! Fun! */
-    static void openFrame(File file) {
-        PatchEdit.showWaitDialog("Loading " + file + " ...");
-        AbstractLibraryFrame frame = new LibraryFrame(file);
-        // try LibraryFrame then SceneFrame
-
-        if (file.exists() ) {
-        	try {
-            	frame.open(file);
-            } catch (Exception e) {
-            	frame = new SceneFrame(file);
-
-                try {
-                	frame.open(file);
-	            } catch (Exception e1) {
-	                PatchEdit.hideWaitDialog();
-	                ErrorMsg.reportError("Error", "Error Loading Library:\n " + file.getAbsolutePath() , e1);
-	                return;
-	            }
-	        }
-        }
-        else {
-            PatchEdit.hideWaitDialog();
-            System.err.println("File Does Not Exist:\n" + file.getAbsolutePath() );
-            return;
-        }
-        PatchEdit.getDesktop().add(frame);
-        frame.moveToDefaultLocation();
-
-        PatchEdit.hideWaitDialog();
-
-        frame.setVisible(true);
-        try {
-            frame.setSelected(true);
-        } catch (PropertyVetoException e) {
-            ErrorMsg.reportStatus(e);
-        }
     }
 
     /** This one saves a Library to Disk */
@@ -796,7 +897,7 @@ final class Actions {
 		    JSLFrame frm =
 			getSelectedFrame().editSelectedPatch();
 		    if (frm != null) {
-			PatchEdit.getDesktop().add(frm);
+		        PatchEdit.getDesktop().add(frm);
 		        frm.moveToDefaultLocation();
 			frm.setVisible(true);
 			// hack for old Java bug
@@ -932,7 +1033,7 @@ final class Actions {
 	    mnemonics.put(this, new Integer('N'));
         }
         public void actionPerformed(ActionEvent e) {
-	    createLibraryFrame(new LibraryFrame());
+	    addLibraryFrame(new LibraryFrame());
 	}
     }
 
@@ -942,7 +1043,7 @@ final class Actions {
         }
 
         public void actionPerformed(ActionEvent e) {
-            createLibraryFrame(new SceneFrame());
+            addLibraryFrame(new SceneFrame());
         }
     }
 
@@ -1016,7 +1117,15 @@ final class Actions {
         }
 
         public void actionPerformed(ActionEvent e) {
-	    PatchEdit.exit();
+            ErrorMsg.reportStatus("JSynthLib exiting...");
+//            Iterator it = PatchEdit.getDesktop().getJSLFrameIterator();
+//            while (it.hasNext()) {
+//                JSLFrame f = (JSLFrame) it.next();
+//                // TODO : check unsaved data and return if canceled.
+//            }
+
+            AppConfig.savePrefs();
+            System.exit(0);
         }
     }
 

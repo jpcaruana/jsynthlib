@@ -197,6 +197,15 @@ public final class AppConfig {
         prefs.putInt("guiStyle", guiStyle);
     }
 
+    /** Getter for tool bar */
+    static boolean getToolBar() {
+        return prefs.getBoolean("toolBar", MacUtils.isMac());
+    }
+    /** Setter for tool bar */
+    static void setToolBar(boolean b) {
+        prefs.putBoolean("toolBar", b);
+    }
+
     /**
      * Getter for midiEnable. Returns false if either MIDI input nor
      * output is not available.

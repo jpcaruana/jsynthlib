@@ -8,13 +8,14 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.text.Document;
 
-import core.JSLFrame;
+import core.Actions;
+import core.PatchEdit;
 
 
-class HelpWindow extends JSLFrame
+class HelpWindow extends Actions.MenuFrame
 {
 	HelpWindow() {
-		super("Yamaha FS1R Editor Help",true,true,true,true);
+		super(PatchEdit.getDesktop(),"Yamaha FS1R Editor Help",true,true,true,true,false);
 		setSize(530, 400);
 		JEditorPane jt = new JEditorPane();
 		jt.setEditable(false);

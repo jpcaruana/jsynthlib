@@ -29,7 +29,7 @@ import javax.swing.UIManager;
  * @author ???
  * @version $Id$
  */
-public class PatchEditorFrame extends JSLFrame implements PatchBasket {
+public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
     /** This is the patch we are working on. */
     protected ISinglePatch p;
     /** Scroll Pane for the editor frame. */
@@ -81,8 +81,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
      *            patch library or a bank patch.
      */
     protected PatchEditorFrame(String name, ISinglePatch patch) {
-        // create a resizable, closable, maximizable, and iconifiable frame.
-        super(name, true, true, true, true);
+        super(PatchEdit.getDesktop(), name);
 
         nFrame++;
         p = patch;

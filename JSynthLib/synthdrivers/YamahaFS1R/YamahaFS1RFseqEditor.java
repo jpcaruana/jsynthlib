@@ -17,8 +17,8 @@ import javax.swing.JRadioButton;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import core.Actions;
 import core.ComboBoxWidget;
-import core.JSLFrame;
 import core.KnobWidget;
 import core.Patch;
 import core.PatchEdit;
@@ -82,7 +82,7 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		JButton oGraphButton = new JButton("Edit graph");
 		oGraphButton.addActionListener(new ActionListener() {
                     public void actionPerformed (ActionEvent e) {
-                        JSLFrame oWin = new FSeqGraphWindow();
+                        Actions.MenuFrame oWin = new FSeqGraphWindow();
                         PatchEdit.getDesktop().add(oWin);
                         oWin.setVisible(true);
                         oWin.moveToFront();
@@ -94,10 +94,10 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		return oPanel;
 	}
 	
-	class FSeqGraphWindow extends JSLFrame
+	class FSeqGraphWindow extends Actions.MenuFrame
 	{
 		FSeqGraphWindow() {
-			super("Formant sequence graphic editor", true, true, true, true);
+			super(PatchEdit.getDesktop(),"Formant sequence graphic editor");
 			setSize(600, 400);
 			Container oPane = getContentPane();
 			

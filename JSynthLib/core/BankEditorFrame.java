@@ -26,7 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
-public class BankEditorFrame extends JSLFrame implements PatchBasket {
+public class BankEditorFrame extends Actions.MenuFrame implements PatchBasket {
     /** This is the patch we are working on. */
     protected IBankPatch bankData;
     /** This BankEditorFrame instance. */
@@ -46,11 +46,8 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
      *            a <code>Patch</code> value
      */
     protected BankEditorFrame(IBankPatch bankPatch) {
-        super(bankPatch.getDevice().getModelName() + " " + bankPatch.getType() + " Window",
-                true, //resizable
-                true, //closable
-                true, //maximizable
-                true); // iconifiable
+        super(PatchEdit.getDesktop(),
+                bankPatch.getDevice().getModelName() + " " + bankPatch.getType() + " Window");
         instance = this;
         bankData = bankPatch;
         initBankEditorFrame();

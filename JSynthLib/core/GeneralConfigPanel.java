@@ -1,6 +1,10 @@
 package core;
 
 import javax.swing.*;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,6 +21,8 @@ public class GeneralConfigPanel extends ConfigPanel {
 
     private JComboBox cbLF;
     private JComboBox cbGS;
+    private JCheckBox cbxTB;
+
     private static UIManager.LookAndFeelInfo[] installedLF;
     static {
 	installedLF = UIManager.getInstalledLookAndFeels();
@@ -24,9 +30,16 @@ public class GeneralConfigPanel extends ConfigPanel {
 
     public GeneralConfigPanel(PrefsDialog parent) {
 	super(parent);
-	setLayout(new core.ColumnLayout());
 
-	JLabel l0 = new JLabel("GUI Look and Feel:");
+	setLayout(new BorderLayout());
+	JPanel p = new JPanel(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
+
+	// Look & Feel combobox
+	JLabel l = new JLabel("GUI Look and Feel:");
+	c.gridx = 0; c.gridy = 0; c.fill = GridBagConstraints.HORIZONTAL;
+	p.add(l, c);
+
 	cbLF = new JComboBox();
 	for (int j = 0; j < installedLF.length; j++)
 	    cbLF.addItem(installedLF[j].getName());
@@ -35,12 +48,13 @@ public class GeneralConfigPanel extends ConfigPanel {
 		    setModified(true);
 		}
 	    });
-	JPanel p = new JPanel();
-	p.add(l0);
-	p.add(cbLF);
-	add(p);
+	c.gridx = 1; c.gridy = 0;
+	p.add(cbLF, c);
 
-	JLabel l1 = new JLabel("GUI Style:                 ");
+	// GUI style (MDI/SDI) combobox
+	l = new JLabel("GUI Style:");
+	c.gridx = 0; c.gridy = 1;
+	p.add(l, c);
 	cbGS = new JComboBox(new String[] {
 	    "MDI (Single Window)",
 	    "SDI (Multiple Windows)",
@@ -50,15 +64,22 @@ public class GeneralConfigPanel extends ConfigPanel {
 		    setModified(true);
 		}
 	    });
-	p = new JPanel();
-	p.add(l1);
-	p.add(cbGS);
-	add(p);
+	c.gridx = 1; c.gridy = 1;
+	p.add(cbGS, c);
+	
+	// Tool Bar check box
+	cbxTB = new JCheckBox("Add Tool Bar on Each Frame in SDI Mode");
+	c.gridx = 0; c.gridy = 2; c.gridwidth = 2;
+	p.add(cbxTB, c);
+
+	add(p, BorderLayout.CENTER);
+	//add(p, BorderLayout.PAGE_START);
     }
 
     void init() {
 	cbLF.setSelectedIndex(AppConfig.getLookAndFeel());
 	cbGS.setSelectedIndex(AppConfig.getGuiStyle());
+	cbxTB.setSelected(AppConfig.getToolBar());
     }
 
     void commitSettings() {
@@ -74,5 +95,7 @@ public class GeneralConfigPanel extends ConfigPanel {
                     JOptionPane.INFORMATION_MESSAGE);
             AppConfig.setGuiStyle(cbGS.getSelectedIndex());
         }
+	if (AppConfig.getToolBar() != cbxTB.isSelected())
+	    AppConfig.setToolBar(cbxTB.isSelected());
     }
 }

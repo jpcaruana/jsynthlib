@@ -1,12 +1,23 @@
 package core;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.event.*;
-import java.util.*;
-import java.lang.ref.WeakReference;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.event.FocusListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.beans.PropertyVetoException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuBar;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 
 // addJSLFrameListener should probably be implemented in JSLFrame
 // for dynamic switching of type
@@ -16,12 +27,14 @@ import java.awt.datatransfer.DataFlavor;
  * documentation of JInternalFrame.
  * 
  * @see JSLDesktop
+ * @see JSLWindowMenu
  * @see javax.swing.JInternalFrame
  * @see javax.swing.JFrame
  * @author Rib Rdb
+ * @author Hiroo Hayashi
  */
 public class JSLFrame {
-    protected JSLFrameProxy proxy;
+    private JSLFrameProxy proxy;
     /** parent JSLDesktop. */
     private JSLDesktop desktop;
 
@@ -29,7 +42,8 @@ public class JSLFrame {
      * Creates a non-resizable, non-closable, non-maximizable, non-iconifiable
      * JSLFrame with no title.
      */
-    public JSLFrame() {
+    public JSLFrame(JSLDesktop desktop) {
+        this.desktop = desktop;
 	if (JSLDesktop.useMDI())
 	    proxy = new JSLIFrame(this);
 	else
@@ -39,20 +53,16 @@ public class JSLFrame {
      * Creates a JSLFrame with the specified title, resizability, closability,
      * maximizability, and iconifiability.
      */
-    public JSLFrame(String s, boolean resizable, boolean closable,
+    public JSLFrame(JSLDesktop desktop, String title, boolean resizable, boolean closable,
 		    boolean maximizable, boolean iconifiable) {
+        this.desktop = desktop;
 	if (JSLDesktop.useMDI())
-	    proxy = new JSLIFrame(this, s, resizable, closable, maximizable,
+	    proxy = new JSLIFrame(this, title, resizable, closable, maximizable,
 				  iconifiable);
 	else
-	    proxy = new JSLJFrame(this, s);
+	    proxy = new JSLJFrame(this, title);
     }
 
-    /** set parent JSLDesktop.  Called by JSLDesktop.add method. */
-    void add(JSLDesktop d) {
-        desktop = d;
-    }
-    
     // JInternalFrame compatible methods
     /** Convenience method that moves this component to position 0 if its parent is a JLayeredPane. */
     public void moveToFront() { proxy.moveToFront(); }
@@ -62,8 +72,6 @@ public class JSLFrame {
     /** Closes this internal frame if the argument is true. */
     public void setClosed(boolean b)
     	    throws java.beans.PropertyVetoException { proxy.setClosed(b); }
-    /** Sets the preferred size of this component. */
-    public void setPreferredSize(Dimension d) { proxy.setPreferredSize(d); }
     /** If the minimum size has been set to a non-null value just returns it. */
     public Dimension getMinimumSize() { return proxy.getMinimumSize(); }
     /** Returns the content pane for this internal frame. */
@@ -78,7 +86,7 @@ public class JSLFrame {
      * Adds the specified focus listener to receive focus events from this
      * component when this component gains input focus.
      */
-    public void addFocusListener(FocusListener l) {proxy.addFocusListener(l);}
+    public void addFocusListener(FocusListener l) { proxy.addFocusListener(l); }
     /** Resizes this component so that it has width width and height height. */
     public void setSize(int w, int h) { proxy.setSize(w, h); }
     /** Returns the size of this component in the form of a Dimension object. */
@@ -87,6 +95,7 @@ public class JSLFrame {
     public Dimension getSize(Dimension rv) { return proxy.getSize(rv); }
     /** Moves this component to a new location. */
     public void setLocation(int x, int y) { proxy.setLocation(x,y); }
+    /** Moves this component to a new location. */
     public void setLocation(Point p) { proxy.setLocation(p); }
     /** Shows or hides this component depending on the value of parameter b. */
     public void setVisible(boolean b) { proxy.setVisible(b); }
@@ -95,12 +104,6 @@ public class JSLFrame {
      * visible.
      */
     public boolean isVisible() { return proxy.isVisible(); }
-    /*
-     * If the internal frame is not visible, brings the internal frame to the
-     * front, makes it visible, and attempts to select it.
-     * !!!This is deprecated. Use setVisible().!!!
-     */
-    //public void show() { proxy.show(); }
     /** Causes subcomponents of this frame to be laid out at their preferred size. */
     public void pack() { proxy.pack(); }
     /** Makes this frame invisible, unselected, and closed. */
@@ -111,14 +114,10 @@ public class JSLFrame {
     public int getY() { return proxy.getY(); }
     /** Returns whether the frame is the currently "selected" or active frame. */
     public boolean isSelected() { return proxy.isSelected(); }
-    /** Checks if this Window is showing on screen. */
-    public boolean isShowing() { return proxy.isShowing(); }
     /** Returns whether this Window is iconified. */
     public boolean isIcon() { return proxy.isIcon(); }
     /** Returns whether this Window is closing. */
     public boolean isClosing() { return proxy.isClosing(); }
-    /** Convenience method that searches the ancestor hierarchy for a JDesktop instance. */
-    public JSLDesktop getDesktopPane() { return desktop; }
     /** Adds the specified listener to receive frame events from this frame. */
     public void addJSLFrameListener(JSLFrameListener l) {
 	proxy.addJSLFrameListener(l);
@@ -145,15 +144,14 @@ public class JSLFrame {
 	return false;
     }
     // mothods for JSLDeskTop
-    /**  */
+    /** Returns JFrame object.  Only for SDI mode. */
     JFrame getJFrame() {
-	if (proxy instanceof JFrame)
-	    return (JFrame)proxy;
-	else
-	    return null;
+	return (JFrame) proxy;
     }
-    /**  */
-    JSLFrameProxy getProxy() { return proxy; }
+    /** Returns JInternalFrame object.  Only for MDI mode. */
+    JInternalFrame getJInternalFrame() {
+        return (JInternalFrame) proxy;
+    }
 
     interface JSLFrameProxy {
 	public void moveToFront();
@@ -184,7 +182,7 @@ public class JSLFrame {
 	public void setLocation(Point p);
 	public JSLFrameListener[] getJSLFrameListeners();
 	public void removeJSLFrameListener(JSLFrameListener l);
-	public void setPreferredSize(Dimension d);
+	//public void setPreferredSize(Dimension d);
 	public boolean isSelected();
 	public boolean isShowing();
 	public boolean isIcon();
@@ -201,13 +199,8 @@ public class JSLFrame {
 	    parent = new WeakReference(p);
 	    addInternalFrameListener(this);
 	}
-	public JSLIFrame(JSLFrame p, String title) {
-	    super(title);
-	    parent = new WeakReference(p);
-	    addInternalFrameListener(this);
-	}
-	public JSLIFrame(JSLFrame p, String s, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
-	    super(s, resizable, closable, maximizable, iconifiable);
+	public JSLIFrame(JSLFrame p, String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
+	    super(title, resizable, closable, maximizable, iconifiable);
 	    parent = new WeakReference(p);
 	    addInternalFrameListener(this);
 	}
@@ -217,6 +210,16 @@ public class JSLFrame {
 	}
 	public void addJSLFrameListener(JSLFrameListener l) {
 	    listeners.add(l);
+	}
+	public void setVisible(boolean b) {
+	    ErrorMsg.reportStatus(ErrorMsg.FRAME, "setVisible : " + getTitle());
+	    super.setVisible(b);
+	    try {
+                setSelected(b);
+            } catch (PropertyVetoException e) {
+                // don't know how this exception occurs
+                e.printStackTrace();
+            }
 	}
 
 	public void internalFrameActivated(InternalFrameEvent e) {
@@ -295,8 +298,7 @@ public class JSLFrame {
     }
 
     /** use JFrame for SDI (Single Document Interface) mode. */
-    class JSLJFrame extends JFrame implements JSLFrameProxy,
-						      WindowListener {
+    class JSLJFrame extends JFrame implements JSLFrameProxy, WindowListener {
 	private WeakReference parent;
 	protected ArrayList listeners = new ArrayList();
 	private boolean closing = false;
@@ -313,7 +315,7 @@ public class JSLFrame {
 	    parent = new WeakReference(p);
 	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
-	public JSLFrame getJSLFrame() { return (JSLFrame)parent.get(); }
+	public JSLFrame getJSLFrame() { return (JSLFrame) parent.get(); }
 	public void moveToFront() { toFront(); }
 	public void setSelected(boolean b) { if (!isFocused() && b) toFront(); }
 	public void setClosed(boolean b) {
@@ -327,19 +329,6 @@ public class JSLFrame {
 	}
 
 	public void setVisible(boolean b) {
-	    if (MacUtils.isMac()) {
-		if (b && getJMenuBar() == null) {
-		    setJMenuBar(Actions.createMenuBar());
-		} else if (!b) {
-		    // Remove menubar so frame can be disposed.
-		    // http://archives:archives@lists.apple.com/archives/java-dev/2003/Dec/04/disposingofjframesusescr.001.txt
-		    //JMenuBar mb = getJMenuBar();
-		    setJMenuBar(null);
-
-		    desktop.getInvisible().getJFrame().requestFocus();
-		    requestFocus();
-		}
-	    }
 	    // deiconified
 	    if (b && isIcon())
 	        setExtendedState(getExtendedState() & ~ICONIFIED);
@@ -427,7 +416,6 @@ public class JSLFrame {
 	public void removeJSLFrameListener(JSLFrameListener l) {
 	    listeners.remove(l);
 	}
-	public void setPreferredSize(Dimension d) {}
 	public boolean isSelected() {
 	    return (desktop.getSelectedFrame().getJFrame() == this);
 	}
@@ -436,11 +424,10 @@ public class JSLFrame {
 	}
 
 	void fakeActivate() {
-	    WindowEvent we =
-		new WindowEvent(this,
-				WindowEvent.WINDOW_ACTIVATED, null);
-	    processWindowEvent(we);
-	}
+            WindowEvent we = new WindowEvent(this,
+                    WindowEvent.WINDOW_ACTIVATED, null);
+            processWindowEvent(we);
+        }
     }
 }
 
