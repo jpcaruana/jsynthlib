@@ -210,24 +210,33 @@ NOTE: This chapter is updated for new MIDI layer.
 
 <ul>
 <li>Download the .zip file from the web site, and unzip it to any
-    directory (for example <kbd>c:\jsynthlib</kbd>).
-<li>OS X comes with java preinstalled.
-<li>If you have a J2SE older than version 1.5 installed, copy
-    <kbd>midiprovider/CAProvider.jar</kbd> under
+    directory (for example <kbd>~/Applications/jsynthlib</kbd>).
+<!-- 
+     Future releases should be in the form of Aplication Bundles in a tarball.
+-->
+<li>OS X comes with java preinstalled, but you should be sure you have the latest update installed.
+<li>
+<!--If you have a J2SE older than version 1.5 installed, c
+1.5 isn't availble for OS X yet, and it probably won't contain a
+builtin MIDI provider.-->
+    Copy <kbd>midiprovider/CAProvider.jar</kbd> to
     <kbd>/Library/Java/Extensions/</kbd>
-    directory(<kbd>~/Library/Java/Extensions/</kbd> should also work
-    for single user installation).<br>
+    (<kbd>~/Library/Java/Extensions/</kbd> should also work
+    for a single user installation).<br>
     You may use <a
     href="http://www.cems.uwe.ac.uk/~lrlang/plumstone/">PlumStone</a>
     instead of <kbd>CAProvider.jar</kbd>.
-<li>Run JSynthLib.jar by typing <kbd>java -jar JSynthLib.jar</kbd>
-    from the shell prompt.
+<li>Run JSynthLib.jar by typing <kbd>java
+     -Dapple.laf.useScreenMenuBar=ture -jar JSynthLib.jar</kbd>
+    from the Terminal. You can also double click the jar file, but then
+    each window will have it's own menu bar.
+<!-- Application bundle will remove this step -->
 <li>Go to Config-&gt;Synths and add and configure the Synthesizers you
     want to use with JSynthLib.
 <li>Set any other preferences (such as MIDI Fader Port, Default
     Directories) as you wish.
 <li>Quit JSynthLib after you are done configuring it and restart
-    it. Now you can go back into it and use it.
+    it. Now you can go back into it and use it.<!-- Why quit? -->
 </ul>
 
 <!--
