@@ -160,6 +160,7 @@ public class JSLDesktop {
 		selected = invisible.getJFrame();
 		selected.setJMenuBar(PatchEdit.createMenuBar());
 		selected.setSize(0,0);
+		selected.setUndecorated(true);
 		//selected.setLocation(0,0x7FFFFFFF);
 		selected.pack();
 		selected.setVisible(true);
