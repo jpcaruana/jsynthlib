@@ -38,17 +38,228 @@ public final class MidiUtil {
 
     /**
      * holds the state if a SysexMessage is completely displayed or
-     * shorten to one hexdump line.
+     * shorten to one hexdump line. (Complete Sysex Message)
      */
-    private static boolean CSMstate=false;
+    private static boolean CSMstate = false;
 
+    private static MidiDevice.Info[] outputMidiDeviceInfo;
+    private static MidiDevice.Info[] inputMidiDeviceInfo;
+    private static Receiver[] midiOutRcvr;
+    private static MidiUtil.SysexInputQueue[] sysexInputQueue;
+
+    // static initialization
+    static {
+	try {
+	    outputMidiDeviceInfo = createOutputMidiDeviceInfo();
+	    inputMidiDeviceInfo = createInputMidiDeviceInfo();
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+	midiOutRcvr = new Receiver[outputMidiDeviceInfo.length];
+	sysexInputQueue = new MidiUtil.SysexInputQueue[inputMidiDeviceInfo.length];
+    }
+
+    // don't have to call constructor for Utility class.
     private MidiUtil() {
+    }
+
+    /** Returns an array of MidiDevice.Info for MIDI input device. */
+    private static MidiDevice.Info[] createInputMidiDeviceInfo()
+	throws MidiUnavailableException {
+	ArrayList list = new ArrayList();
+
+	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < infos.length; i++) {
+	    // throws MidiUnavailableException
+	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+	    if (device.getMaxTransmitters() != 0
+		&& !(device instanceof Synthesizer)
+		&& !(device instanceof Sequencer))
+		list.add(infos[i]);
+	}
+	return (MidiDevice.Info[]) list.toArray(new MidiDevice.Info[0]);
+    }
+
+    /** Returns an array of MidiDevice.Info for MIDI output device. */
+    private static MidiDevice.Info[] createOutputMidiDeviceInfo()
+	throws MidiUnavailableException {
+	ArrayList list = new ArrayList();
+
+	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < infos.length; i++) {
+	    // throws MidiUnavailableException
+	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+	    if (device.getMaxReceivers() != 0
+		&& !(device instanceof Synthesizer)
+		&& !(device instanceof Sequencer))
+		list.add(infos[i]);
+	}
+	return (MidiDevice.Info[]) list.toArray(new MidiDevice.Info[0]);
+    }
+
+    /** Returns an array of MidiDevice.Info for MIDI Sequencer device. */
+    // not used now
+    private MidiDevice.Info[] createSequencerMidiDeviceInfo()
+	throws MidiUnavailableException {
+	ArrayList list = new ArrayList();
+
+	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < infos.length; i++) {
+	    // throws MidiUnavailableException
+	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+	    if (device instanceof Sequencer)
+		list.add(infos[i]);
+	}
+	return (MidiDevice.Info[]) list.toArray(new MidiDevice.Info[0]);
+    }
+
+    /** Returns an array of MidiDevice.Info for MIDI Synthesizer device. */
+    // not used now
+    private static MidiDevice.Info[] createSynthesizerMidiDeviceInfo()
+	throws MidiUnavailableException {
+	ArrayList list = new ArrayList();
+
+	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < infos.length; i++) {
+	    // throws MidiUnavailableException
+	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+	    if (device instanceof Synthesizer)
+		list.add(infos[i]);
+	}
+	return (MidiDevice.Info[]) list.toArray(new MidiDevice.Info[0]);
+    }
+
+    /** return an array of MidiDevice.Info for MIDI output */
+    static MidiDevice.Info[] getOutputMidiDeviceInfo() {
+	return outputMidiDeviceInfo;
+    }
+
+    /** return an array of MidiDevice.Info for MIDI input */
+    static MidiDevice.Info[] getInputMidiDeviceInfo() {
+	return inputMidiDeviceInfo;
+    }
+
+    /** return an entry of MidiDevice.Info for MIDI output */
+    static MidiDevice.Info getOutputMidiDeviceInfo(int i) {
+	return outputMidiDeviceInfo[i];
+    }
+
+    /** return an entry of MidiDevice.Info for MIDI input */
+    static MidiDevice.Info getInputMidiDeviceInfo(int i) {
+	return inputMidiDeviceInfo[i];
+    }
+
+    /** for SynthTabelModel (will be obsoleted) */
+    static int getOutPort(MidiDevice.Info info) {
+	for (int i = 0; i < outputMidiDeviceInfo.length; i++) {
+	    if (outputMidiDeviceInfo[i] == info)
+		return i;
+	}
+	return -1;
+    }
+
+    /** for SynthTabelModel (will be obsoleted) */
+    static int getInPort(MidiDevice.Info info) {
+	for (int i = 0; i < inputMidiDeviceInfo.length; i++) {
+	    if (inputMidiDeviceInfo[i] == info)
+		return i;
+	}
+	return -1;
+    }
+
+    /** get opened MidiDevice for Output */
+    private static MidiDevice getOutputMidiDevice(int port) {
+	MidiDevice dev = null;
+	try {
+	    dev = MidiSystem.getMidiDevice(outputMidiDeviceInfo[port]);
+	    if (!dev.isOpen()) {
+		ErrorMsg.reportStatus("open outport: "
+				      + dev.getDeviceInfo().getName());
+		dev.open();
+	    }
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+	return dev;
+    }
+
+    /** get Receiver */
+    static Receiver getReceiver(int port) {
+	if (midiOutRcvr[port] != null)
+	    return midiOutRcvr[port];
+
+	MidiDevice dev = getOutputMidiDevice(port);
+	try {
+	    Receiver r = dev.getReceiver();
+	    midiOutRcvr[port] = r;
+	    return r;
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+	return null;
+    }
+
+    /** get opened MidiDevice for Input */
+    private static MidiDevice getInputMidiDevice(int port) {
+	MidiDevice dev = null;
+	try {
+	    dev = MidiSystem.getMidiDevice(inputMidiDeviceInfo[port]);
+	    if (!dev.isOpen()) {
+		ErrorMsg.reportStatus("open inport: "
+				      + dev.getDeviceInfo().getName());
+		dev.open();
+	    }
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+	return dev;
+    }
+
+    /** get Transmitter */
+    static Transmitter getTransmitter(int port) {
+	// Transmitter cannot be shared.
+	MidiDevice dev = getInputMidiDevice(port);
+	try {
+	    return dev.getTransmitter();
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+	return null;
+    }
+
+    /** Setup input queue for MIDI System Exclusive Message input */
+    static void setSysexInputQueue(int port) {
+	if (sysexInputQueue[port] != null)
+	    return;
+	MidiUtil.SysexInputQueue rcvr = new MidiUtil.SysexInputQueue();
+	Transmitter trns;
+	try {
+	    trns = getInputMidiDevice(port).getTransmitter();
+	    trns.setReceiver(rcvr);
+	    sysexInputQueue[port] = rcvr;
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+    }
+    /** clear MIDI input queue */
+    static void clearSysexInputQueue(int port) {
+	setSysexInputQueue(port);
+	sysexInputQueue[port].clearQueue();
+    }
+    /** return <code>true</code> when MIDI input queue is empty */
+    static boolean isSysexInputQueueEmpty(int port) {
+	return sysexInputQueue[port].isEmpty();
+    }
+    /** get Sysex Message from MIDI input queue */
+    static MidiMessage getMessage(int port, long timeout)
+	throws MidiUtil.TimeoutException, InvalidMidiDataException {
+	return sysexInputQueue[port].getMessage(timeout);
     }
 
     /**
      * Converts a byte array into an array of SysexMessages.  Each
      * SysexMessage must be terminated by END_OF_EXCLUSIVE.
-    */
+     */
     public static SysexMessage[] byteArrayToSysexMessages(byte[] d)
 	throws InvalidMidiDataException {
 	ArrayList list = new ArrayList();
@@ -59,6 +270,8 @@ public final class MidiUtil {
 		// let cause exception if there is no END_OF_EXCLUSIVE
 		for (j = i + 1; (int) (d[j] & 0xff) != ShortMessage.END_OF_EXCLUSIVE; j++)
 		    ;
+		// here d[j] is EOX.
+		j++;
 		int l = j - i;
 		byte[] b = new byte[l];
 		System.arraycopy(d, i, b, 0, l);
@@ -68,7 +281,7 @@ public final class MidiUtil {
 		i = j;
 	    }
 	}
-	return (SysexMessage[]) list.toArray();
+	return (SysexMessage[]) list.toArray(new SysexMessage[0]);
     }
 
     /**
@@ -115,68 +328,173 @@ public final class MidiUtil {
 	return msg;
     }
 
-    /** Returns an array of MidiDevice.Info for MIDI input device. */
-    public static MidiDevice.Info[] getInputMidiDeviceInfo()
-	throws MidiUnavailableException {
-	ArrayList list = new ArrayList();
+    /**
+     * MIDI Output buffer size.  If set to '0', Whole Sysex data is
+     * sent in one packet.  Set '0' unless you have problem.
+     */
+    private static final int BUFSIZE = 0;
 
-	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
-        for (int i = 0; i < infos.length; i++) {
-	    // throws MidiUnavailableException
-	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
-	    if (device.getMaxReceivers() != 0
-		&& !(device instanceof Synthesizer)
-		&& !(device instanceof Sequencer))
-		list.add(infos[i]);
+    /**
+     * Send a <code>MidiMessage</code>.  If BUFSIZE is non-zero, data
+     * size will be limited to the size.
+     */
+    public static void send(Receiver rcv, MidiMessage msg)
+	throws MidiUnavailableException, InvalidMidiDataException {
+	int size = msg.getLength();
+
+	if (BUFSIZE == 0 || size <= BUFSIZE) {
+	    rcv.send(msg, -1);
+	    logOut(rcv, msg);
+	} else {
+	    // divide large System Exclusive Message into multiple
+	    // small messages.
+	    byte[] sysex = msg.getMessage();
+	    byte[] tmpArray = new byte[BUFSIZE + 1];
+	    for (int i = 0; size > 0; i += BUFSIZE, size -= BUFSIZE) {
+		int s = Math.min(size, BUFSIZE);
+
+		if (i == 0) {
+		    System.arraycopy(sysex, i, tmpArray, 0, s);
+		    ((SysexMessage) msg).setMessage(tmpArray, s);
+		} else {
+		    tmpArray[0] = (byte) SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE;
+		    System.arraycopy(sysex, i, tmpArray, 1, s);
+		    ((SysexMessage) msg).setMessage(tmpArray, ++s);
+		}
+		rcv.send(msg, -1);
+		logOut(rcv, msg);
+	    }
 	}
-	return (MidiDevice.Info[]) list.toArray();
     }
 
-    /** Returns an array of MidiDevice.Info for MIDI output device. */
-    public static MidiDevice.Info[] getOutputMidiDeviceInfo()
-	throws MidiUnavailableException {
-	ArrayList list = new ArrayList();
+    //
+    // MIDI Data Input
+    //
+    static class InputQueue implements Receiver {
+	private List list = Collections.synchronizedList(new LinkedList());
 
-	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
-        for (int i = 0; i < infos.length; i++) {
-	    // throws MidiUnavailableException
-	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
-	    if (device.getMaxTransmitters() != 0
-		&& !(device instanceof Synthesizer)
-		&& !(device instanceof Sequencer))
-		list.add(infos[i]);
+	InputQueue() {
 	}
-	return (MidiDevice.Info[]) list.toArray();
+
+	//Receiver interface
+	public void close() {
+	}
+
+	public void send(MidiMessage msg, long timeStamp) {
+	    ErrorMsg.reportStatus("InputQueue: " + msg);
+	    list.add(msg);
+	    logOut(this, msg); // !!!FIXIT!!!
+	}
+
+	void clearQueue() {
+	    list.clear();
+	}
+
+	boolean isEmpty() {
+	    return list.size() == 0;
+	}
+
+	MidiMessage getMessage() throws
+	    InvalidMidiDataException, TimeoutException {
+	    // pop the oldest message
+	    MidiMessage msg = (MidiMessage) list.remove(0);
+	    // for java 1.4.2 bug
+	    msg = (MidiMessage) MidiUtil.fixShortMessage(msg);
+	    logOut(this, msg); // !!!FIXIT!!!
+	    return msg;
+	}
     }
 
-    /** Returns an array of MidiDevice.Info for MIDI Sequencer device. */
-    public static MidiDevice.Info[] getSequencerMidiDeviceInfo()
-	throws MidiUnavailableException {
-	ArrayList list = new ArrayList();
-
-	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
-        for (int i = 0; i < infos.length; i++) {
-	    // throws MidiUnavailableException
-	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
-	    if (device instanceof Sequencer)
-		list.add(infos[i]);
+    static class SysexInputQueue extends InputQueue {
+	public void send(MidiMessage msg, long timeStamp) {
+	    int status = msg.getStatus();
+	    if ((status == SysexMessage.SYSTEM_EXCLUSIVE)
+		|| (status == SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE)) {
+		super.send(msg, timeStamp);
+	    }
 	}
-	return (MidiDevice.Info[]) list.toArray();
+
+	// for 32KB sysex message which is biggest we know.
+	private static final int DEFAULT_TIMEOUT = 10000;
+	private static final int MIN_TIMEOUT = 1000;
+
+	MidiMessage getMessage(long timeout)
+	    throws TimeoutException, InvalidMidiDataException {
+	    long start = System.currentTimeMillis();
+	    byte [] buffer = {};
+	    int totalLen = 0;
+	    boolean firstMsg = true;
+	    if (timeout == 0)
+		timeout = DEFAULT_TIMEOUT;
+	    else if (timeout < MIN_TIMEOUT)
+		timeout = MIN_TIMEOUT;
+	    do {
+		// wait for data
+		while (isEmpty()) {
+		    try {
+			Thread.sleep(10); // define const!!!FIXIT!!!
+		    } catch (InterruptedException e) {
+			;	// ignore
+		    }
+		    if (System.currentTimeMillis() - start > timeout)
+			throw new TimeoutException();
+		}
+		MidiMessage msg = super.getMessage();
+		if (msg == null)
+		    throw new InvalidMidiDataException(); // !!!add info
+		int len = msg.getLength();
+		if (firstMsg) {
+		    if (msg.getStatus() != SysexMessage.SYSTEM_EXCLUSIVE)
+			// this is illegal and just ignore
+			continue;
+		    buffer = msg.getMessage();
+		    totalLen = len;
+		    if (buffer[totalLen - 1] == (byte) ShortMessage.END_OF_EXCLUSIVE)
+			return msg;
+		    firstMsg = false;
+		} else {
+		    int status = msg.getStatus();
+		    // take the Real Time messages (0xf8-0xff) out of
+		    // the messages a MidiWrapper returns.
+		    if ((status & 0xf8) == 0xf8)
+			continue;
+		    // throw an Exception, if an exclusive message is
+		    // terminated by "any other Status byte (except
+		    // Real Time messages)".
+		    // THIS IS NOT CORRECT BEHAVIOR. !!!FIXIT!!!
+		    if (status != SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE)
+			throw new InvalidMidiDataException(); // add info !!!
+		    // Combine the newly-read stuff into an new array
+		    // with the existing stuff
+		    byte [] buf = msg.getMessage();
+		    byte[] combineBuffer = new byte[totalLen + len];
+		    System.arraycopy(buffer,  0, combineBuffer, 0, totalLen);
+		    if (len == 1) { // I think this is javax.sound.midi bug.
+			combineBuffer[totalLen] = (byte) ShortMessage.END_OF_EXCLUSIVE;
+			totalLen++;
+		    } else {
+			System.arraycopy(buf, 1, combineBuffer, totalLen, len - 1);
+			totalLen += len - 1;
+		    }
+		    buffer = combineBuffer;
+		}
+	    } while (firstMsg || buffer[totalLen - 1] != (byte) ShortMessage.END_OF_EXCLUSIVE);
+	    SysexMessage sysexmsg = new SysexMessage();
+	    sysexmsg.setMessage(buffer, totalLen);
+	    return (MidiMessage) sysexmsg;
+	}
+
+	MidiMessage getMessage()
+	    throws TimeoutException, InvalidMidiDataException {
+	    return getMessage(DEFAULT_TIMEOUT);
+	}
     }
 
-    /** Returns an array of MidiDevice.Info for MIDI Synthesizer device. */
-    public static MidiDevice.Info[] getSynthesizerMidiDeviceInfo()
-	throws MidiUnavailableException {
-	ArrayList list = new ArrayList();
-
-	MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
-        for (int i = 0; i < infos.length; i++) {
-	    // throws MidiUnavailableException
-	    MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
-	    if (device instanceof Synthesizer)
-		list.add(infos[i]);
+    public static class TimeoutException extends Exception {
+	public TimeoutException() {
+	    super();
+	    //super("Timeout on MIDI input port " + getInputDeviceName(port));
 	}
-	return (MidiDevice.Info[]) list.toArray();
     }
 
     //
@@ -357,7 +675,7 @@ public final class MidiUtil {
 	    return (statusString(m) + "\n  "
 		    + shortMessageToString((ShortMessage) m));
 	else if (m instanceof SysexMessage) {
-	    if (CSMstate == true) {
+	    if (CSMstate) {
 		return ("SysEX:length="
 			+ m.getLength() + "\n  "
 			+ sysexMessageToString((SysexMessage) m, 16));
@@ -391,7 +709,11 @@ public final class MidiUtil {
      * @exception InvalidMidiDataException if an error occurs
      */
     public static void logIn(int port, MidiMessage msg) {
-	log(port, " RECV ", msg);
+	log("Port: " + port + " RECV ", msg);
+    }
+
+    public static void logIn(Transmitter trns, MidiMessage msg) {
+	log(trns.toString() + " RECV ", msg);
     }
 
     /**
@@ -403,12 +725,16 @@ public final class MidiUtil {
      * @exception InvalidMidiDataException if an error occurs
      */
     public static void logOut(int port, MidiMessage msg) {
-	log(port, " XMIT ", msg);
+	log("Port: " + port + " XMIT ", msg);
     }
 
-    private static void log(int port, String dir, MidiMessage msg) {
+    public static void logOut(Receiver rcv, MidiMessage msg) {
+	log(rcv.toString() + " XMIT ", msg);
+    }
+
+    private static void log(String str, MidiMessage msg) {
 	try {
-	    log("Port: " + port + dir + midiMessageToString(msg) + "\n");
+	    log(str + midiMessageToString(msg) + "\n");
 	} catch	(InvalidMidiDataException e) {
 	    log("InvalidMidiDataException: " + msg + "\n");
 	}
@@ -439,14 +765,26 @@ public final class MidiUtil {
     }
 
     private static void log(int port, String dir, byte[] sysex, int length) {
-	if (CSMstate == true ) {
+	if (CSMstate) {
 	    log("Port: " + port + dir + length + " bytes :\n  "
 	        + hexDump(sysex, 0, length, 16) + "\n");
 	} else {
             log("Port: " + port + dir + length + " bytes :\n  "
-		+hexDumpOneLine(sysex, 0, length, 16) + "\n");
+		+ hexDumpOneLine(sysex, 0, length, 16) + "\n");
 	}
     }
+
+    /**
+     * Get the state of displaying Midi Messages.  (Complete Sysex
+     * Message)
+     */
+    static boolean getCSM() { return CSMstate; }
+
+    /**
+     * Toggle the state of displaying Midi messages.  (Complete Sysex
+     * Message)
+     */
+    static void toggleCSM() { CSMstate = !CSMstate; }
 
     /** Only for debugging. */
     public static void main(String[] args) throws InvalidMidiDataException {
@@ -515,17 +853,5 @@ public final class MidiUtil {
 	((ShortMessage) msg).setMessage(ShortMessage.SONG_POSITION_POINTER, 0x4B, 0x70); // 2B
 	System.out.println(midiMessageToString(msg));
     }
-
-    /**
-     * Get the state of displaying Midi Messages.
-     * (Completely or Shorten Message)
-     */
-    static boolean getCSM() { return CSMstate; }
-
-    /**
-     * Toggle the state of displaying Midi messages.
-     * (Completely or Shorten Message)
-     */
-    static void toggleCSM() { CSMstate = !CSMstate; }
 
 } // MidiUtil

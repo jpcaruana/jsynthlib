@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import javax.swing.UIManager;
+import javax.sound.midi.*;
 
 public class AppConfig implements Storable {
     /* Configurable properties */
@@ -33,19 +34,21 @@ public class AppConfig implements Storable {
     // application, if you didn't change them.
     private String libPath		= ".";
     private String sysexPath		= ".";
-    private int initPortIn		= 0;
-    private int initPortOut		= 0;
     private int note			= 0;
     private int velocity		= 0;
     private int delay			= 0;
-    private int masterController	= 0;
     private int lookAndFeel		= 0;
     private int guiStyle		= MacUtils.isMac() ? 1 : 0;
     private boolean midiEnable		= false;
     private int midiPlatform		= 0;
+    private int initPortIn		= 0;
+    private int initPortOut		= 0;
     private boolean masterInEnable	= false;
-    private int faderPort		= 0;
+    private int masterController	= -1;
+    private Transmitter masterInTrns;
     private boolean faderEnable		= false;
+    private int faderPort		= 0;
+    private Transmitter faderInTrns;
     private int[] faderController	= new int[Constants.NUM_FADERS];
     private int[] faderChannel		= new int[Constants.NUM_FADERS];
 
@@ -55,10 +58,10 @@ public class AppConfig implements Storable {
 
     private ArrayList deviceList	= new ArrayList();
 
-    private JSLMidiDevice midiIn;
-    private JSLMidiDevice midiOut;
-    private JSLMidiDevice midiMasterIn;
-    private JSLMidiDevice midiFaderIn;
+    //private JSLMidiDevice midiIn;
+    //private JSLMidiDevice midiOut;
+    private MidiDevice midiMasterIn;
+    private MidiDevice midiFaderIn;
 
     /** MidiDevice.Info.name|vendor. */
     private static MidiWrapper midiWrapper = null;
@@ -154,22 +157,6 @@ public class AppConfig implements Storable {
     /** Setter for sysexPath */
     public void setSysexPath(String sysexPath) { this.sysexPath = sysexPath; }
 
-    /** Getter for initPortIn */
-    public int getInitPortIn() { return this.initPortIn; }
-    /** Setter for initPortIn */
-    public void setInitPortIn(int initPortIn) {
-	if (initPortIn < 0) initPortIn = 0;
-	this.initPortIn = initPortIn;
-    }
-
-    /** Getter for initPortOut */
-    public int getInitPortOut() { return this.initPortOut; }
-    /** Setter for initPortOut */
-    public void setInitPortOut(int initPortOut) {
-	if (initPortOut < 0) initPortOut = 0;
-	this.initPortOut = initPortOut;
-    }
-
     /** Getter for note */
     public int getNote() { return this.note; }
     /** Setter for note */
@@ -184,15 +171,6 @@ public class AppConfig implements Storable {
     public int getDelay() { return this.delay; }
     /** Setter for delay */
     public void setDelay(int delay) { this.delay = delay; }
-
-    /** Getter for masterController */
-    public int getMasterController() { return this.masterController; }
-    /** Setter for masterController */
-    public void setMasterController(int masterController) {
-	if (masterController < 0) masterController = 0;
-	this.masterController = masterController;
-    }
-
 
     /**Getter for RepositoryURL */
     public String getRepositoryURL() { return this.repositoryURL; }
@@ -275,18 +253,34 @@ public class AppConfig implements Storable {
      * it's only used by the main app to obtain the midi driver after
      * the initial instantiation (ie, before it ever gets a
      * midiDriverChanged() callback).
-     * @return
+     * @return a MidiWrapper object
      */
     public static MidiWrapper getMidiWrapper() {
 	return (midiWrapper);
     }
 
-    /** Getter for masterInEnable */
+    /** Getter for midiEnable */
     public boolean getMidiEnable() { return this.midiEnable; }
-    /** Setter for midiinEnable */
+    /** Setter for midiEnable */
     public void setMidiEnable(boolean midiEnable) {
 	this.midiEnable = midiEnable;
 	ErrorMsg.reportStatus("setMidiEnable: " + midiEnable);
+    }
+
+    /** Getter for initPortIn */
+    public int getInitPortIn() { return this.initPortIn; }
+    /** Setter for initPortIn */
+    public void setInitPortIn(int initPortIn) {
+	if (initPortIn < 0) initPortIn = 0;
+	this.initPortIn = initPortIn;
+    }
+
+    /** Getter for initPortOut */
+    public int getInitPortOut() { return this.initPortOut; }
+    /** Setter for initPortOut */
+    public void setInitPortOut(int initPortOut) {
+	if (initPortOut < 0) initPortOut = 0;
+	this.initPortOut = initPortOut;
     }
 
     /** Getter for masterInEnable */
@@ -294,12 +288,22 @@ public class AppConfig implements Storable {
     /** Setter for masterInEnable */
     public void setMasterInEnable(boolean masterInEnable) { this.masterInEnable = masterInEnable; }
 
-    /** Getter for faderPort */
-    public int getFaderPort() { return this.faderPort; }
-    /** Setter for faderPort */
-    public void setFaderPort(int faderPort) {
-	if (faderPort < 0) faderPort = 0;
-	this.faderPort = faderPort;
+    /** Getter for masterController */
+    public int getMasterController() { return this.masterController; }
+    /** Setter for masterController */
+    public void setMasterController(int masterController) {
+	boolean changed = this.masterController != masterController;
+	if (masterController < 0) masterController = 0;
+	if (PatchEdit.newMidiAPI && changed) {
+	    // others may be using
+	    //if (masterInTrns != null) masterInTrns.close();
+	    masterInTrns = MidiUtil.getTransmitter(faderPort);
+	}
+	this.masterController = masterController;
+    }
+
+    Transmitter getMasterInTrns() {
+	return masterInTrns;
     }
 
     /** Getter for faderEnable */
@@ -307,19 +311,25 @@ public class AppConfig implements Storable {
     /** Setter for faderEnable */
     public void setFaderEnable(boolean faderEnable) { this.faderEnable = faderEnable; }
 
-    //int[] faderController
-    /** Indexed getter for faderController */
-    public int getFaderController(int i) { return this.faderController[i]; }
-    /** Indexed setter for faderController */
-    public void setFaderController(int i, int faderController) { this.faderController[i] = faderController; }
-    /** Getter for faderController */
-    public int[] getFaderController() { return this.faderController; }
-    /** Setter for faderController */
-    public void setFaderController(int[] newFaderController) {
-	this.faderController = newFaderController;
+    /** Getter for faderPort */
+    public int getFaderPort() { return this.faderPort; }
+    /** Setter for faderPort */
+    public void setFaderPort(int faderPort) {
+	boolean changed = this.faderPort != faderPort;
+	if (faderPort < 0) faderPort = 0;
+	if (PatchEdit.newMidiAPI && changed) {
+	    // others may be using (true?)
+	    //if (faderInTrns != null) faderInTrns.close();
+	    faderInTrns = MidiUtil.getTransmitter(faderPort);
+	}
+	this.faderPort = faderPort;
     }
 
-    //int[] faderChannel
+    Transmitter getFaderInTrns() {
+	return faderInTrns;
+    }
+
+    //int[] faderChannel (0 <= channel < 16, 16:off)
     /** Indexed getter for faderChannel */
     public int getFaderChannel(int i) { return this.faderChannel[i]; }
     /** Indexed setter for faderChannel */
@@ -329,6 +339,18 @@ public class AppConfig implements Storable {
     /** Setter for faderChannel */
     public void setFaderChannel(int[] newFaderChannel) {
 	this.faderChannel = newFaderChannel;
+    }
+
+    //int[] faderController (0 <= controller < 256, 256:off)
+    /** Indexed getter for faderController */
+    public int getFaderController(int i) { return this.faderController[i]; }
+    /** Indexed setter for faderController */
+    public void setFaderController(int i, int faderController) { this.faderController[i] = faderController; }
+    /** Getter for faderController */
+    public int[] getFaderController() { return this.faderController; }
+    /** Setter for faderController */
+    public void setFaderController(int[] newFaderController) {
+	this.faderController = newFaderController;
     }
 
     // Standard getters/setters
@@ -402,14 +424,14 @@ public class AppConfig implements Storable {
 
     /** Getter/setter for MidiDevice.info */
     // These are experimental code.
-    public JSLMidiDevice getMidiIn() { return midiIn; }
-    public JSLMidiDevice getMidiOut() { return midiOut; }
-    public JSLMidiDevice getMidiMasterIn() { return midiMasterIn; }
-    public JSLMidiDevice getMidiFaderIn() { return midiFaderIn; }
-    public void setMidiIn(JSLMidiDevice midiIn) { this.midiIn = midiIn; }
-    public void setMidiOut(JSLMidiDevice midiOut) { this.midiOut = midiOut; }
-    public void setMidiMasterIn(JSLMidiDevice midiMasterIn) { this.midiMasterIn = midiMasterIn; }
-    public void setMidiFaderIn(JSLMidiDevice midiFaderIn) { this.midiFaderIn = midiFaderIn; }
+    //public JSLMidiDevice getMidiIn() { return midiIn; }
+    //public JSLMidiDevice getMidiOut() { return midiOut; }
+    //public JSLMidiDevice getMidiMasterIn() { return midiMasterIn; }
+    //public JSLMidiDevice getMidiFaderIn() { return midiFaderIn; }
+    //public void setMidiIn(JSLMidiDevice midiIn) { this.midiIn = midiIn; }
+    //public void setMidiOut(JSLMidiDevice midiOut) { this.midiOut = midiOut; }
+    //public void setMidiMasterIn(JSLMidiDevice midiMasterIn) { this.midiMasterIn = midiMasterIn; }
+    //public void setMidiFaderIn(JSLMidiDevice midiFaderIn) { this.midiFaderIn = midiFaderIn; }
 
     // For Storable interface
     private static final String[] storedPropertyNames = {
@@ -435,7 +457,7 @@ public class AppConfig implements Storable {
 	return set;
     }
 
-    /**
+    /*
      * Method that will be called after loading
      */
     public void afterRestore() {

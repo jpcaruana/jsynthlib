@@ -1,6 +1,7 @@
 package core;
 
 import javax.swing.table.AbstractTableModel;
+import javax.sound.midi.MidiDevice;
 
 // Made public by emenaker 3/12/2003 because stuff that uses it was moved out of core.*
 public class SynthTableModel extends AbstractTableModel {
@@ -38,34 +39,42 @@ public class SynthTableModel extends AbstractTableModel {
     public Object getValueAt (int row, int col) {
 	Device myDevice = (Device) PatchEdit.appConfig.getDevice (row);
 
-	if (col == SYNTH_NAME)
+	switch (col) {
+	case SYNTH_NAME:
 	    return myDevice.getSynthName ();
-	if (col == DEVICE)
+	case DEVICE:
 	    return (myDevice.getManufacturerName ()
 		    + " " + myDevice.getModelName());
-	if (col == MIDI_IN) {
-	    try {
-		return (myDevice.getInPort ()
-			+ ": "
-			+ PatchEdit.MidiOut.getInputDeviceName(myDevice.getInPort()));
-	    } catch (Exception e) {
-		return "-";
+	case MIDI_IN:
+	    if (PatchEdit.newMidiAPI) {
+		return MidiUtil.getInputMidiDeviceInfo(myDevice.getInPort()).getName();
+	    } else {
+		try {
+		    return (myDevice.getInPort ()
+			    + ": "
+			    + PatchEdit.MidiOut.getInputDeviceName(myDevice.getInPort()));
+		} catch (Exception e) {
+		    return "-";
+		}
 	    }
-	}
-	if (col == MIDI_OUT) {
-	    try {
-		return (myDevice.getPort ()
-			+ ": " + PatchEdit.MidiOut.getOutputDeviceName(myDevice.getPort()));
-	    } catch (Exception e) {
-		return "-";
+	case MIDI_OUT:
+	    if (PatchEdit.newMidiAPI) {
+		return MidiUtil.getOutputMidiDeviceInfo(myDevice.getPort()).getName();
+	    } else {
+		try {
+		    return (myDevice.getPort ()
+			    + ": " + PatchEdit.MidiOut.getOutputDeviceName(myDevice.getPort()));
+		} catch (Exception e) {
+		    return "-";
+		}
 	    }
-	}
-	if (col == MIDI_CHANNEL)
+	case MIDI_CHANNEL:
 	    return new Integer (myDevice.getChannel());
-	if (col == MIDI_DEVICE_ID)
+	case MIDI_DEVICE_ID:
 	    return new Integer (myDevice.getDeviceID());
-
-	return null;
+	default:
+	    return null;
+	}
     }
 
     public boolean isCellEditable (int row, int col) {
@@ -79,14 +88,22 @@ public class SynthTableModel extends AbstractTableModel {
 	if (col == SYNTH_NAME)
 	    dev.setSynthName((String) value);
 	if (col == MIDI_IN) {
-	    String s = (String) value;
-	    int port = Integer.parseInt(s.substring(0, s.indexOf(':')));
-	    dev.setInPort(port);
+	    if (PatchEdit.newMidiAPI) {
+		dev.setInPort(MidiUtil.getInPort((MidiDevice.Info) value));
+	    } else {
+		String s = (String) value;
+		int port = Integer.parseInt(s.substring(0, s.indexOf(':')));
+		dev.setInPort(port);
+	    }
 	}
 	if (col == MIDI_OUT) {
-	    String s = (String) value;
-	    int port = Integer.parseInt(s.substring(0, s.indexOf(':')));
-	    dev.setPort(port);
+	    if (PatchEdit.newMidiAPI) {
+		dev.setPort(MidiUtil.getOutPort((MidiDevice.Info) value));
+	    } else {
+		String s = (String) value;
+		int port = Integer.parseInt(s.substring(0, s.indexOf(':')));
+		dev.setPort(port);
+	    }
 	}
 	if (col == MIDI_CHANNEL)
 	    dev.setChannel(((Integer) value).intValue());

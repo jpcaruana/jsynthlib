@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.lang.reflect.*;
+import javax.sound.midi.MidiUnavailableException;
 //import core.*;
 
 /**
@@ -100,7 +101,10 @@ public class MidiConfigPanel extends ConfigPanel {
 	JLabel cbOutLabel = new JLabel("Out Port:");
 	gridbag.setConstraints(cbOutLabel, gbc);
 	cbPanel.add (cbOutLabel);
-        cbOut = new JComboBox ();
+	if (PatchEdit.newMidiAPI)
+	    cbOut = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
+	else
+	    cbOut = new JComboBox();
 	gbc.gridx=1; gbc.gridy=4; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
 	gridbag.setConstraints(cbOut, gbc);
         cbPanel.add (cbOut);
@@ -109,7 +113,10 @@ public class MidiConfigPanel extends ConfigPanel {
 	JLabel cbInLabel = new JLabel("In Port:");
 	gridbag.setConstraints(cbInLabel, gbc);
         cbPanel.add (cbInLabel);
-	cbIn = new JComboBox ();
+	if (PatchEdit.newMidiAPI)
+	    cbIn = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+	else
+	    cbIn = new JComboBox();
 	gbc.gridx=1; gbc.gridy=5; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
 	gridbag.setConstraints(cbIn, gbc);
         cbPanel.add (cbIn);
@@ -147,7 +154,10 @@ public class MidiConfigPanel extends ConfigPanel {
 	    });
 
 	gbc.gridx=1; gbc.gridy=10; gbc.gridheight=1; gbc.gridwidth=gbc.REMAINDER;
-        cbMC = new JComboBox ();
+	if (PatchEdit.newMidiAPI)
+	    cbMC = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+	else
+	    cbMC = new JComboBox();
 	cbMC.setEnabled(cbxEnMC.isEnabled() && cbxEnMC.isSelected());
 	gridbag.setConstraints(cbMC, gbc);
         cbPanel.add (cbMC);
@@ -200,21 +210,16 @@ public class MidiConfigPanel extends ConfigPanel {
 	appConfig.setInitPortIn(midiIn);
 	appConfig.setInitPortOut(midiOut);
 	appConfig.setMasterController(masterIn);
-
-	if (PatchEdit.newMidiAPI) {
-	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) appConfig.getMidiWrapper();
-	    appConfig.setMidiIn(jw.getInputDevice(midiIn));
-	    appConfig.setMidiOut(jw.getOutputDevice(midiOut));
-	    appConfig.setMidiMasterIn(jw.getInputDevice(masterIn));
-	}
 	appConfig.setMasterInEnable(cbxEnMC.isSelected());
 
-	// Notify all listeners
-	for(int i = 0; i < driverChangeListeners.size(); i++) {
-	    ((MidiDriverChangeListener) driverChangeListeners.elementAt(i)).midiDriverChanged(AppConfig.getMidiWrapper());
+	if (!PatchEdit.newMidiAPI) {
+	    // Notify all listeners
+	    for(int i = 0; i < driverChangeListeners.size(); i++) {
+		((MidiDriverChangeListener) driverChangeListeners.elementAt(i)).midiDriverChanged(AppConfig.getMidiWrapper());
+	    }
+	    resetPortComboBoxes();
+	    repackContainer();
 	}
-	resetPortComboBoxes();
-	repackContainer();
     }
 
     public void init() {
@@ -240,34 +245,29 @@ public class MidiConfigPanel extends ConfigPanel {
 	}
 	resetPortComboBoxes();
     }
-    
+
     /**
      * This clears the port-selector combo boxes and re-populates them with the
      * ports available from the current MIDI driver - emenaker 2003.03.19
      */
     private void resetPortComboBoxes() {
 	MidiWrapper currentDriver = appConfig.getMidiWrapper();
-	cbOut.removeAllItems ();
-	try {
-	    for (int j=0; j< currentDriver.getNumOutputDevices ();j++)
-		try {
+	if (!PatchEdit.newMidiAPI) {
+	    cbOut.removeAllItems ();
+	    cbIn.removeAllItems ();
+	    cbMC.removeAllItems ();
+	    try {
+		for (int j=0; j< currentDriver.getNumOutputDevices ();j++)
 		    cbOut.addItem (j+": "+ currentDriver.getOutputDeviceName (j));
-		} catch (Exception e) {}
-	} catch (Exception e) {}
-	cbIn.removeAllItems ();
-	try {
-	    for (int j=0; j< currentDriver.getNumInputDevices ();j++)
-		try {
+		for (int j=0; j< currentDriver.getNumInputDevices ();j++)
 		    cbIn.addItem (j+": "+currentDriver.getInputDeviceName (j));
-		} catch (Exception e) {}
-	} catch (Exception e) {}
-	cbMC.removeAllItems ();
-	try {
-	    for (int j=0; j< currentDriver.getNumInputDevices ();j++)
-		try {
+		for (int j=0; j< currentDriver.getNumInputDevices ();j++)
 		    cbMC.addItem (j+": "+currentDriver.getInputDeviceName (j));
-		} catch (Exception e) {}
-	} catch (Exception e) {}
+	    } catch (Exception e) {
+		ErrorMsg.reportStatus(e);
+	    }
+	}
+
 	setComboBox(cbOut, PatchEdit.appConfig.getInitPortOut());
 	setComboBox(cbIn, PatchEdit.appConfig.getInitPortIn());
 	setComboBox(cbMC, PatchEdit.appConfig.getMasterController());

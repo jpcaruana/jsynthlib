@@ -14,6 +14,7 @@ public class MidiTest implements Runnable {
 
 	/** Max data size of system exclusive message test. */
 	private static final int MAX_SYSEX_SIZE = 500;
+	private static Receiver rcvr;
 
 	/**
 	 * This runs a few tests on a midi in/out pair. The idea is that you connect the two ports with a
@@ -34,6 +35,8 @@ public class MidiTest implements Runnable {
 				       "transferred properly. This process usually takes about\n" +
 				       "5 to 10 seconds, so be patient.\n");
 
+		if (PatchEdit.newMidiAPI)
+			rcvr = MidiUtil.getReceiver(outport);
 		try {
 			Vector msgList = getMidiMessages();
 
@@ -72,6 +75,8 @@ public class MidiTest implements Runnable {
 					     "connected to each other with a MIDI cable.",e);
 			return(false);
 		}
+		if (PatchEdit.newMidiAPI)
+			rcvr.close();
 		return(true);
 	}
 
@@ -80,54 +85,59 @@ public class MidiTest implements Runnable {
 	 * midi cable and it basically tries to send one of every kind of message and it checks to see if
 	 * those messages get back to the "in" port intact.
 	 */
-	static void runLoopbackTest(MidiWrapper midiDriver, int inport, int outport, MidiMessage msg) throws Exception{
-// 		try {
+	static void runLoopbackTest(MidiWrapper midiDriver, int inport, int outport, MidiMessage msg) throws Exception {
+		if (PatchEdit.newMidiAPI)
+			MidiUtil.clearSysexInputQueue(inport);
+		else
 			midiDriver.clearMidiInBuffer(inport);
 
-			// If it's a sysex message, we need to make sure that it's got a 0xF7 on the end.
-			// If not, we'll put one on...
-			if(msg instanceof SysexMessage) {
-				// We need to send the stop message....
-				SysexMessage sysexstop = new SysexMessage();
-				byte[] buffer = msg.getMessage();
-				int len = msg.getLength();
-				// buffer.length may not be equal to msg.getLength()
- 				//if(buffer[buffer.length-1] != (byte) ShortMessage.END_OF_EXCLUSIVE) {
-				if(buffer[len - 1] != (byte) ShortMessage.END_OF_EXCLUSIVE) {
-					// There's not a 0xF7 at the end. We need to put one there....
-					buffer = new byte[len+1];
-					System.arraycopy(msg.getMessage(),0,buffer,0,len);
-					buffer[len]=(byte) ShortMessage.END_OF_EXCLUSIVE;
-					((SysexMessage) msg).setMessage(buffer, buffer.length);
-				}
+		// If it's a sysex message, we need to make sure that it's got a 0xF7 on the end.
+		// If not, we'll put one on...
+		if(msg instanceof SysexMessage) {
+			// We need to send the stop message....
+			SysexMessage sysexstop = new SysexMessage();
+			byte[] buffer = msg.getMessage();
+			int len = msg.getLength();
+			// buffer.length may not be equal to msg.getLength()
+			//if(buffer[buffer.length-1] != (byte) ShortMessage.END_OF_EXCLUSIVE) {
+			if(buffer[len - 1] != (byte) ShortMessage.END_OF_EXCLUSIVE) {
+				// There's not a 0xF7 at the end. We need to put one there....
+				buffer = new byte[len+1];
+				System.arraycopy(msg.getMessage(),0,buffer,0,len);
+				buffer[len]=(byte) ShortMessage.END_OF_EXCLUSIVE;
+				((SysexMessage) msg).setMessage(buffer, buffer.length);
 			}
+		}
 
-			// Send it
+		// Send it
+		if (PatchEdit.newMidiAPI)
+			MidiUtil.send(rcvr, msg);
+		else
 			midiDriver.send(outport,msg);
 
-			try {
-				// 1 sec =~ 4KB sysex data
-				MidiMessage inmsg = midiDriver.readMessage(inport, 1000);
-				if (areEqual(msg,inmsg)) {
-					return;
-				} else {
-					ErrorMsg.reportError("Error",
-							     "Data Compare Error:"
-							     + "\nreceived data: "
-							     + MidiUtil.midiMessageToString(inmsg)
-							     + "\nexpected data: "
-							     + MidiUtil.midiMessageToString(msg));
-					throw new Exception("Data mismatch");
-				}
-			} catch (MidiWrapper.TimeoutException e) {
-				ErrorMsg.reportError("Warning","Didn't see anything come into the input");
-				throw e;
-				//throw(new Exception("Time expired without seeing any message come in"));
+		try {
+			// 1 sec =~ 4KB sysex data
+			MidiMessage inmsg;
+			if (PatchEdit.newMidiAPI)
+				inmsg = MidiUtil.getMessage(inport, 1000);
+			else
+				inmsg = midiDriver.readMessage(inport, 1000);
+			if (areEqual(msg,inmsg)) {
+				return;
+			} else {
+				ErrorMsg.reportError("Error",
+						     "Data Compare Error:"
+						     + "\nreceived data: "
+						     + MidiUtil.midiMessageToString(inmsg)
+						     + "\nexpected data: "
+						     + MidiUtil.midiMessageToString(msg));
+				throw new Exception("Data mismatch");
 			}
-// 		} catch (Exception e) {
-// 			ErrorMsg.reportError("Error","Exception",e);
-// 			throw e;
-// 		}
+		} catch (MidiWrapper.TimeoutException e) {
+			ErrorMsg.reportError("Warning","Didn't see anything come into the input");
+			throw e;
+			//throw(new Exception("Time expired without seeing any message come in"));
+		}
 	}
 
 	/**
@@ -143,7 +153,7 @@ public class MidiTest implements Runnable {
 	private static Vector getMidiMessages() throws Exception {
 		Vector msgList = new Vector();
 		ShortMessage msg = new ShortMessage();
-		if (testShortMessage) {
+		if (testShortMessage && !PatchEdit.newMidiAPI) {
 			// Make a bunch of messages and try sending
 			// them. Why use data bytes 0x4B, 0x70?  Well,
 			// it's binary 0100110001110000 (a zero, a

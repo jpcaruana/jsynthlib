@@ -138,7 +138,8 @@ public class SysexGetDialog extends JDialog {
     dialogPanel.add(buttonPanel, BorderLayout.SOUTH);
 
     //===================================== Timer ==========================
-    PatchEdit.echoTimer.stop();
+    if (!PatchEdit.newMidiAPI)
+      PatchEdit.echoTimer.stop();
     timer = new javax.swing.Timer(0, new TimerActionListener());
 
     //===== Listener
@@ -253,7 +254,8 @@ public class SysexGetDialog extends JDialog {
       timer.stop();
       pasteIntoSelectedFrame();
       setVisible(false);
-      PatchEdit.echoTimer.start();
+      if (!PatchEdit.newMidiAPI)
+	PatchEdit.echoTimer.start();
     }
   } // End InnerClass: DoneActionListener
 
@@ -341,7 +343,10 @@ public class SysexGetDialog extends JDialog {
 // 	if(PatchEdit.MidiIn == null) {
 // 	  System.err.println("Yup... it's null!");
 // 	}
-	PatchEdit.MidiIn.clearMidiInBuffer(inPort);
+	if (PatchEdit.newMidiAPI)
+	  MidiUtil.clearSysexInputQueue(inPort);
+	else
+	  PatchEdit.MidiIn.clearMidiInBuffer(inPort);
       } catch (Exception ex) {
         ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
       }
@@ -361,11 +366,27 @@ public class SysexGetDialog extends JDialog {
 // InnerClass: TimerActionListener
 //--------------------------------------------------------------------------
 
+  private boolean isEmpty() {
+    if (PatchEdit.newMidiAPI)
+      return MidiUtil.isSysexInputQueueEmpty(inPort);
+    else
+      try {
+	return PatchEdit.MidiIn.messagesWaiting(inPort) <= 0;
+      } catch (Exception e) {
+	ErrorMsg.reportStatus(e);
+	return true;
+      }
+  }
+
   public class TimerActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
       try {
-        while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0) {
-          SysexMessage msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(inPort, timeOut);
+        while (!isEmpty()) {
+          SysexMessage msg;
+	  if (PatchEdit.newMidiAPI)
+	    msg = (SysexMessage) MidiUtil.getMessage(inPort, timeOut);
+	  else
+	    msg = (SysexMessage) PatchEdit.MidiIn.readSysexMessage(inPort, timeOut);
 	  queue.add(msg);
 //  	  ErrorMsg.reportStatus ("TimerActionListener | size more bytes: " + msg.getLength());
           sysexSize += msg.getLength();

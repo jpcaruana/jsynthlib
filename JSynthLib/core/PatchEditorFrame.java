@@ -303,12 +303,9 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     private Transmitter trns;
     private Receiver rcvr;
     void enableFaderIn() {
-	try {
-	    trns = PatchEdit.appConfig.getMidiFaderIn().getTransmitter();
-	    rcvr = new FaderReceiver();
-	} catch (MidiUnavailableException e) {
-	    ErrorMsg.reportError("Error", "Fader Controller", e);
-	}
+	// get transmitter
+	trns = PatchEdit.appConfig.getFaderInTrns();
+	rcvr = new FaderReceiver();
 	trns.setReceiver(rcvr);
     }
 
@@ -319,7 +316,7 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 	    rcvr.close();
     }
 
-    protected void finalize() {
+    protected void finalize() {	// ???
 	disableFaderIn();
     }
 
@@ -334,11 +331,20 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
 		return;
 	    ShortMessage msg = (ShortMessage) message;
 	    if (msg.getCommand() == ShortMessage.CONTROL_CHANGE) {
-		int channel = msg.getChannel();
-		int controller = msg.getData1();
+		int channel = msg.getChannel();	// 0 <= channel < 16
+		int controller = msg.getData1(); // 0 <= controller < 256
+		ErrorMsg.reportStatus("FaderReceiver: channel: " + channel
+				      + ", control: " + controller
+				      + ", value: " + msg.getData2());
 		for (int i = 0; i < Constants.NUM_FADERS; i++) {
-		    if ((PatchEdit.appConfig.getFaderController(i) == controller)
-			&& (PatchEdit.appConfig.getFaderChannel(i) == channel)) {
+		    // faderChannel: 0:channel l, ..., 15:channel 16, 16:off
+		    // faderController: 0 <= value < 256, 256:off
+		    /*
+		    ErrorMsg.reportStatus(i + ": faderChannel: " + PatchEdit.appConfig.getFaderChannel(i)
+					  + ", faderController: " + PatchEdit.appConfig.getFaderController(i));
+		    */
+		    if ((PatchEdit.appConfig.getFaderChannel(i) == channel)
+			&& (PatchEdit.appConfig.getFaderController(i) == controller)) {
 			faderMoved(i, msg.getData2());
 			break;
 		    }
@@ -353,6 +359,8 @@ public class PatchEditorFrame extends JSLFrame implements PatchBasket {
     }
 
     private void faderMoved(int fader, int value) {
+	ErrorMsg.reportStatus("FaderMoved: fader: " + fader
+			      + ", value: " + value);
 	if (fader == 32) {
 	    faderBank = (faderBank + 1) % numFaderBanks;
 	    faderHighlight();

@@ -885,16 +885,18 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	// GetAction->actionPerformed
 	//-----------------------------------------------------------------
 	public void actionPerformed(ActionEvent e) {
-	    echoTimer.stop();
+	    if (!newMidiAPI)
+		echoTimer.stop();
 	    SysexGetDialog myDialog = new SysexGetDialog(PatchEdit.getInstance());
 	    myDialog.show();
-	    echoTimer.start();
+	    if (!newMidiAPI)
+		echoTimer.start();
 	}
 
     } // End SubClass: GetAction
     //------ End phil@muqus.com
 
- static class UploadAction extends AbstractAction {
+    static class UploadAction extends AbstractAction {
 	public UploadAction(Map mnemonics) {
 	    super("Upload...", null);
 	    mnemonics.put(this, new Integer('U'));
@@ -907,7 +909,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	}
 
     }
-
 
     // denis: mis en public toutes les classes Action
     static class ImportAction extends AbstractAction {
@@ -1302,9 +1303,9 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         return (ImageIcon) icon;
     }
 
-
     ////////////////////////////////////////////////////////////////////////
     // MIDI Master Input
+    // masterInTrans (trns) -> MasterReceiver (rcvr1) -> initPortOut(rcvr)
     private static class MasterReceiver implements Receiver {
 	private Receiver rcvr;
 
@@ -1314,7 +1315,8 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 
 	//Receiver interface
 	public void close() {
-	    this.rcvr.close();
+	    if (rcvr != null)
+		rcvr.close();
 	}
 
 	public void send(MidiMessage message, long timeStamp) {
@@ -1322,29 +1324,34 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
 	    if ((0x80 <= status) && (status < 0xF0))  // MIDI channel Voice Message
 		// I believe Sysex message must be ignored.
 		//|| status == SysexMessage.SYSTEM_EXCLUSIVE)
-		ErrorMsg.reportStatus("MasterIN: " + message);
+		ErrorMsg.reportStatus("MasterReceiver: " + message);
 		this.rcvr.send(message, timeStamp);
+		MidiUtil.logIn(trns, message);
 	}
     }
 
     private static Transmitter trns;
-    private static Receiver rcvr;
+    private static Receiver rcvr1;
 
     static void enableMasterIn() {
-	try {
-	    trns = appConfig.getMidiMasterIn().getTransmitter();
-	    rcvr = new MasterReceiver(appConfig.getMidiOut().getReceiver());
-	} catch (MidiUnavailableException e) {
-	    ErrorMsg.reportError("Error", "Master Controller", e);
-	}
-	trns.setReceiver(rcvr);
+	disableMasterIn();
+	// get transmitter
+	trns = appConfig.getMasterInTrns();
+	// create output receiver
+	Receiver rcvr = MidiUtil.getReceiver(appConfig.getInitPortOut());
+	rcvr1 = new MasterReceiver(rcvr);
+	trns.setReceiver(rcvr1);
     }
 
     static void disableMasterIn() {
 	if (trns != null)
 	    trns.close();
-	if (rcvr != null)
-	    rcvr.close();
+	if (rcvr1 != null)
+	    rcvr1.close();
+    }
+
+    protected void finalize() {	// ???
+	disableMasterIn();
     }
 
     ////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 import java.text.*;
 // import java.util.Set;
 // import java.util.HashSet;
@@ -674,17 +675,31 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     // MIDI in/out mothods to encapsulate lower MIDI layer
     /** Send ShortMessage to MIDI outport. */
     protected final void send(MidiMessage msg) throws Exception {
-	PatchEdit.MidiOut.send(getPort(), msg);
+	if (PatchEdit.newMidiAPI)
+	    device.send(msg);
+	else
+	    PatchEdit.MidiOut.send(getPort(), msg);
     }
 
     /** Send Sysex byte array data to MIDI outport. */
     protected final void send(byte[] sysex) throws Exception {
-	PatchEdit.MidiOut.writeLongMessage(getPort(), sysex);
+	if (PatchEdit.newMidiAPI) {
+	    SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
+	    for (int i = 0; i < a.length; i++)
+		device.send(a[i]);
+	} else
+	    PatchEdit.MidiOut.writeLongMessage(getPort(), sysex);
     }
 
-    /** clear MIDI input buffer */
+    /**
+     * clear MIDI input buffer.  Only used by YamahaDX7 now. Is this
+     * really required?
+     */
     protected final void clearMidiInBuffer() throws Exception {
-	PatchEdit.MidiIn.clearMidiInBuffer(getInPort());
+	if (PatchEdit.newMidiAPI)
+	    MidiUtil.clearSysexInputQueue(getInPort());
+	else
+	    PatchEdit.MidiIn.clearMidiInBuffer(getInPort());
     }
 
     // For storable interface

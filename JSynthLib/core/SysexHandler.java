@@ -1,6 +1,7 @@
 package core;
 import java.io.*;
 import java.util.*;
+import javax.sound.midi.SysexMessage;
 
 /**
  * SysexHandler.java is a class for efficient and convenient
@@ -296,13 +297,21 @@ public class SysexHandler extends Object implements Serializable {
      *
      * @param port MIDI output port number
      * @param sysex an array of sysex byte data
+     * <code>SysexHandler.send(getPort(), sysex)</code>.
      */
+    // @deprecated use <code>send(sysex)</code> instead of
     // Make MidiWrapper.writeLongMessage(port, sysex) static, then
     // this method will be obsoleted.  Hiroo
     public static void send(int port, byte[] sysex) {
 	try {
 	    ErrorMsg.reportStatus("static SysexHandler->send | port: " + port, sysex);
-	    PatchEdit.MidiOut.writeLongMessage(port, sysex);
+	    if (PatchEdit.newMidiAPI) {
+		SysexMessage[] a = MidiUtil.byteArrayToSysexMessages(sysex);
+		for (int i = 0; i < a.length; i++)
+		    MidiUtil.send(MidiUtil.getReceiver(port), a[i]);
+	    } else {
+		PatchEdit.MidiOut.writeLongMessage(port, sysex);
+	    }
 	} catch (Exception ex) {
 	    ErrorMsg.reportStatus(ex);
 	}

@@ -192,8 +192,11 @@ public abstract class SysexWidget extends JPanel {
 	    // do it only if there is a sysex-sender available
             try {
 		s.channel = (byte) device.getChannel();
-                PatchEdit.MidiOut.writeLongMessage(device.getPort(),
-						   s.generate(v));
+		if (PatchEdit.newMidiAPI)
+		    driver.send(s.generate(v));
+		else
+		    PatchEdit.MidiOut.writeLongMessage(device.getPort(),
+						       s.generate(v));
             } catch (Exception e) {
 		ErrorMsg.reportStatus(e);
 	    }

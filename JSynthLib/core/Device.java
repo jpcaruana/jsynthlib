@@ -77,18 +77,20 @@ public /*abstract*/ class Device implements Serializable, Storable {
      */
     // For simplicity every driver contains the port number as well.
     // So the setter must set the port in all drivers
-    private int inPort;
+    private int inPort = -1;
     /**
      * The MIDI output port number, where the cable <B>to</B> the
      * device is connected.
      */
-    private int port;   //outport
+    private int port = -1;	// outport
 
     /**
      * The List for all available drivers of this device.
      */
     ArrayList driverList = new ArrayList ();
 
+    /** MIDI output Receiver */
+    private Receiver rcvr;
     /**
      * Creates new Device.
      * @deprecated Use Device(String, String, String, String, String).
@@ -245,7 +247,7 @@ public /*abstract*/ class Device implements Serializable, Storable {
     }
 
     /**
-     * Getter for property port.
+     * Getter for property port (MIDI output port).
      * @return Value of property port.
      */
     public int getPort () {
@@ -265,19 +267,31 @@ public /*abstract*/ class Device implements Serializable, Storable {
      * @param port New value of property port.
      */
     public void setPort (int port) { // public for storable
-        this.port = port;
 	// remove the following lines when 'driver.port' becomes 'private'.
 	/*
         Iterator iter = driverList.iterator();
         while (iter.hasNext ())
             ((Driver) iter.next()).setPort(port);
 	*/
-	/*
-	if (PatchEdit.newMidiAPI && PatchEdit.MidiOut != null) {
-	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) PatchEdit.MidiOut;
-	    setMidiOut(jw.getOutputDevice(port));
+	if (PatchEdit.newMidiAPI) {
+	    if (this.port != port) {
+		if (rcvr != null)
+		    rcvr.close();
+		rcvr = MidiUtil.getReceiver(port);
+	    }
 	}
-	*/
+        this.port = port;
+    }
+
+    /** send MidiMessage to MIDI output. Called by Driver.send(). */
+    void send(MidiMessage message) {
+	try {
+	    MidiUtil.send(rcvr, message);
+	} catch (MidiUnavailableException e) {
+	    ErrorMsg.reportStatus(e);
+	} catch (InvalidMidiDataException e) {
+	    ErrorMsg.reportStatus(e);
+	}
     }
 
     /**
@@ -292,12 +306,8 @@ public /*abstract*/ class Device implements Serializable, Storable {
         while (iter.hasNext())
             ((Driver) iter.next()).setInPort(inPort);
 	*/
-	/*
-	if (PatchEdit.newMidiAPI && PatchEdit.MidiIn != null) {
-	    JavasoundMidiWrapper jw = (JavasoundMidiWrapper) PatchEdit.MidiIn;
-	    setMidiIn(jw.getInputDevice(port));
-	}
-	*/
+	if (PatchEdit.newMidiAPI)
+	    MidiUtil.setSysexInputQueue(inPort);
     }
 
     // Getters/Setters, etc for Drivers
@@ -375,6 +385,7 @@ public /*abstract*/ class Device implements Serializable, Storable {
 	return PatchEdit.appConfig.getDeviceIndex(this);
     }
 
+    /*
     public JSLMidiDevice getMidiIn() {
 	return midiIn;
     }
@@ -384,7 +395,6 @@ public /*abstract*/ class Device implements Serializable, Storable {
     public JSLMidiDevice getMidiOut() {
 	return midiIn;
     }
-    private Receiver rcvr;
     public void setMidiOut(JSLMidiDevice midiOut) {
 	this.midiOut = midiOut;
 	// Do we need a separate method?
@@ -396,10 +406,7 @@ public /*abstract*/ class Device implements Serializable, Storable {
 	    ErrorMsg.reportError("Error", "setMidiOut: ", e);
 	}
     }
-
-    public void send(MidiMessage message) {
-	rcvr.send(message, -1);
-    }
+    */
 
     // For storable interface
     /**

@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
 import javax.swing.table.TableColumn;
+import javax.sound.midi.MidiDevice;
 ////TODO import org.jsynthlib.midi.*;
 
 public class SynthConfigDialog extends JDialog {
@@ -40,24 +41,34 @@ public class SynthConfigDialog extends JDialog {
         column.setPreferredWidth (250);
         column = table.getColumnModel ().getColumn (2);
         column.setPreferredWidth (150);
-        try {
-	    JComboBox comboBox2 = new JComboBox ();
-	    for (int j = 0; j < PatchEdit.MidiOut.getNumInputDevices (); j++)
-		comboBox2.addItem (j + ": " + PatchEdit.MidiOut.getInputDeviceName (j));
-	    column.setCellEditor (new DefaultCellEditor (comboBox2));
-	} catch (Exception e) {
+	JComboBox comboBox;
+	if (PatchEdit.newMidiAPI)
+	    comboBox = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+	else {
+	    comboBox = new JComboBox();
+	    try {
+		for (int j = 0; j < PatchEdit.MidiOut.getNumInputDevices (); j++)
+		    comboBox.addItem (j + ": " + PatchEdit.MidiOut.getInputDeviceName (j));
+	    } catch (Exception e) {
+		ErrorMsg.reportStatus(e);
+	    }
 	}
-
+	column.setCellEditor (new DefaultCellEditor (comboBox));
         column = table.getColumnModel ().getColumn (3);
         column.setPreferredWidth (150);
 
-        try {
-	    JComboBox comboBox = new JComboBox ();
-	    for (int j = 0; j < PatchEdit.MidiOut.getNumOutputDevices (); j++)
-		comboBox.addItem (j + ": " + PatchEdit.MidiOut.getOutputDeviceName (j));
-	    column.setCellEditor (new DefaultCellEditor (comboBox));
-	} catch (Exception e) {
+	if (PatchEdit.newMidiAPI)
+	    comboBox = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
+	else {
+	    comboBox = new JComboBox();
+	    try {
+		for (int j = 0; j < PatchEdit.MidiOut.getNumOutputDevices (); j++)
+		    comboBox.addItem (j + ": " + PatchEdit.MidiOut.getOutputDeviceName (j));
+	    } catch (Exception e) {
+		ErrorMsg.reportStatus(e);
+	    }
 	}
+	column.setCellEditor (new DefaultCellEditor (comboBox));
         column = table.getColumnModel ().getColumn (4);
         column.setPreferredWidth (75);
 
