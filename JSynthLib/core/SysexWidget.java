@@ -349,11 +349,11 @@ public abstract class SysexWidget extends JPanel {
     public void setSliderNum(int num) {
         _setSliderNum(num);
         if (num > 0)
-	    setToolTipText("Bank " + ((num - 1) / 16)
+	    setToolTipText("Bank " + ((num - 1) / 16 + 1)
 			   + "  Slider " + (((num - 1) % 16) + 1));
         if (num < 0) {
 	    num = 0 - num;
-	    setToolTipText("Bank " + ((num - 1) / 16)
+	    setToolTipText("Bank " + ((num - 1) / 16 + 1)
 			   + "  Button " + (((num - 1) % 16) + 1));
         }
     }
