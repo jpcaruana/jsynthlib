@@ -42,25 +42,18 @@ class ScaledDblParamModel extends ParamModel {
         int sysexValue = ((i - minCC) * (maxSysex - minSysex) / (maxCC - minCC)) + minSysex;
         byte msB = (byte)(sysexValue / 256);
         byte lsB = (byte)(sysexValue % 256);
-        patch.sysex[ofs]=msB;
-        patch.sysex[ofs+1]=lsB;
+        PatchBytes.setSysexByte(patch, 9, ofs, msB);
+        PatchBytes.setSysexByte(patch, 9, ofs+1, lsB);
     }
     
     public int get() {
-        System.out.println(">>>>>>>>>>>>>>>>"); //Test
-        System.out.println("Offset = " + ofs);  //Test
-        
-//        int msB = (int)(0xff & patch.sysex[ofs]);
         int msB = (int)PatchBytes.getSysexByte(patch.sysex, 9, ofs);
-//        int lsB = (int)(0xff & patch.sysex[ofs+1]);
         int lsB = (int)PatchBytes.getSysexByte(patch.sysex, 9, ofs+1);
         System.out.println("msB = " + msB);  //Test
         System.out.println("lsB = " + lsB);  //Test
 
         int returnValue = msB << 8;
         returnValue = returnValue | lsB;
-        System.out.println("returnValue = " + returnValue);  //Test
-        System.out.println("<<<<<<<<<<<<<<<<"); //Test
         returnValue = ((returnValue - minSysex) * (maxCC - minCC) / (maxSysex - minSysex)) + minCC;
         if (reverse) {
             returnValue = (maxCC - minCC) - (returnValue - minCC) + minCC;

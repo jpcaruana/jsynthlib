@@ -46,9 +46,8 @@ class DelayCoarseSpeedModel extends ParamModel {
         sysexValue += getFineValue();
         byte msB = (byte)(sysexValue / 256);
         byte lsB = (byte)(sysexValue % 256);
-        patch.sysex[ofs]=msB;
-        patch.sysex[ofs+1]=lsB;
-        //  System.out.println("Sysex offset = " + (ofs - 9) + "  Setting Value = " + TestNibbilizer.dump(patch.sysex[ofs]) + " " + TestNibbilizer.dump(patch.sysex[ofs+1]) + " from " + i);    //Test
+        PatchBytes.setSysexByte(patch, 9, ofs, msB);
+        PatchBytes.setSysexByte(patch, 9, ofs+1, lsB);
     }
     
     public int get() {
@@ -57,28 +56,24 @@ class DelayCoarseSpeedModel extends ParamModel {
         if (reverse) {
             returnValue = (maxCC - minCC) - (returnValue - minCC) + minCC;
         }
-        //  System.out.println("Sysex offset = " + (ofs - 9) + "  Getting From Value = " + TestNibbilizer.dump(patch.sysex[ofs]) + " " + TestNibbilizer.dump(patch.sysex[ofs+1]) + " to " + returnValue);    //Test
         return returnValue;
     }
     
     private int getBytesValue() {
-        int msB = (int)(0xff & patch.sysex[ofs]);
-        int lsB = (int)(0xff & patch.sysex[ofs+1]);
+        int msB = (int)PatchBytes.getSysexByte(patch.sysex, 9, ofs);
+        int lsB = (int)PatchBytes.getSysexByte(patch.sysex, 9, ofs+1);
         int bytesValue = msB << 8;
         bytesValue = bytesValue | lsB;
-        //  System.out.println("Bytes Value = " + bytesValue);
         return bytesValue;
     }
     
     private int getCoarseValue() {
         int coarseValue = getBytesValue() - getFineValue();
-        //  System.out.println("Coarse Value = " + coarseValue);
         return coarseValue;
     }
     
     private int getFineValue() {
         int fineValue = getBytesValue() % scaleFactor;
-        //  System.out.println("Fine Value = " + fineValue);
         return fineValue;
     }
 }

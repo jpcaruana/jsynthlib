@@ -34,42 +34,40 @@ class DelayFineSpeedModel extends ParamModel {
     
     public void set(int i) {
         int coarseValue = getCoarseValue();
-        //  System.out.println("Control Value = " + (i * maxSysex / maxCC));
         int newValue = coarseValue + (i * maxSysex / maxCC);
-        //  System.out.println("newValue = " + Integer.toHexString(newValue));
-        patch.sysex[ofs-2] = (byte)(newValue >>> 16);
-        patch.sysex[ofs-1] = (byte)((newValue >>> 8) & 0xFF);
-        patch.sysex[ofs]   = (byte)(newValue & 0xFF);
-        //  System.out.println("Bytes = " + Integer.toHexString(patch.sysex[ofs-2]) + " " + Integer.toHexString(patch.sysex[ofs-1]) + " " + Integer.toHexString(patch.sysex[ofs]));
-        //  patch.sysex[ofs]=(byte)(i * maxSysex / maxCC);
-        //  System.out.println("Sysex offset = " + (ofs - 9) + "  Setting Value = " + TestNibbilizer.dump(patch.sysex[ofs]) + " from " + i);    //Test
+
+        byte byte1 = (byte)(newValue >>> 16);
+        PatchBytes.setSysexByte(patch, 9, ofs-2, byte1);
+
+        byte byte2 = (byte)((newValue >>> 8) & 0xFF);
+        PatchBytes.setSysexByte(patch, 9, ofs-1, byte2);
+
+        byte byte3 = (byte)(newValue & 0xFF);
+        PatchBytes.setSysexByte(patch, 9, ofs, byte3);
     }
     
     public int get() {
         int returnValue =  getFineValue() * maxCC / maxSysex;
-        //  System.out.println("Sysex offset = " + (ofs - 9) + "  Getting From Value = " + TestNibbilizer.dump(patch.sysex[ofs]) + " to " + returnValue);    //Test
         return returnValue;
     }
     private int getBytesValue() {
-        int msB =  (int)(0xff & patch.sysex[ofs-2]);
-        int midB = (int)(0xff & patch.sysex[ofs-1]);
-        int lsB =  (int)(0xff & patch.sysex[ofs]);
+        int msB  = (int)(0xff & PatchBytes.getSysexByte(patch.sysex, 9, ofs-2));
+        int midB = (int)(0xff & PatchBytes.getSysexByte(patch.sysex, 9, ofs-1));
+        int lsB  = (int)(0xff & PatchBytes.getSysexByte(patch.sysex, 9, ofs));
+        
         int bytesValue = msB << 16;
         bytesValue = bytesValue | midB << 8;
         bytesValue = bytesValue | lsB;
-        //  System.out.println("Bytes Value = " + bytesValue);
         return bytesValue;
     }
     
     private int getCoarseValue() {
         int coarseValue = getBytesValue() - getFineValue();
-        //  System.out.println("Coarse Value = " + coarseValue);
         return coarseValue;
     }
     
     private int getFineValue() {
-        int fineValue = getBytesValue() % (3 * 256);   //  (2**8));
-                                                       //  System.out.println("Fine Value = " + fineValue);
+        int fineValue = getBytesValue() % (3 * 256);
         return fineValue;
     }
 }
