@@ -405,6 +405,7 @@ public class XMLPatch implements ISinglePatch {
         } else {
             useBasePatch(driver.getBasePatch());
         }
+        cache = new HashMap();
     }
     
 
