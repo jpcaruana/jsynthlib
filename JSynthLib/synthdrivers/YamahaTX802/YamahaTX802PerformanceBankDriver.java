@@ -1,10 +1,8 @@
 /*
  * JSynthlib - "Performance" Bank Driver for Yamaha TX802
  * ======================================================
+ * @version $Id$
  * @author  Torsten Tittmann
- * file:    YamahaTX802PerformanceBankDriver.java
- * date:    25.02.2003
- * @version 0.1
  *
  * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
  *
@@ -27,11 +25,7 @@
  * CAUTION: This is an experimental driver. It is not tested on a real device yet!
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  *
- * history:
- *         25.02.2003 v0.1: first published release
- *
  */
-
 package synthdrivers.YamahaTX802;
 import core.*;
 import java.io.*;
@@ -69,8 +63,8 @@ public class YamahaTX802PerformanceBankDriver extends BankDriver
   {
     if ( ((YamahaTX802Device)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getSwOffMemProtFlag()==1 )
     {
-      // switch off memory protection (internal+cartridge!)
-      TX802ParamChanges.swOffMemProt(port, (byte)(channel+0x10), (byte)0 );
+      // switch off memory protection 
+      TX802ParamChanges.swOffMemProt(port, (byte)(channel+0x10) );
     }
     else
     {
