@@ -4,8 +4,8 @@
  * =====================================================================
  * @author  Torsten Tittmann
  * file:    YamahaDX7BankDriver.java
- * date:    23.08.2002
- * @version 0.1
+ * date:    08.10.2002
+ * @version 0.2-pre
  *
  * Copyright (C) 2002  Torsten.Tittmann@t-online.de
  *
@@ -22,6 +22,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *
+ * history:
+ *         23.08.2002 v0.1: first published release
+ *         xx.xx.xxxx v0.2: - unused setPatchName method removed
+ *
  */
 
 package synthdrivers.YamahaDX7;
@@ -166,7 +172,7 @@ public class YamahaDX7BankDriver extends BankDriver
     } catch (UnsupportedEncodingException ex) {return "-";}
   }
 
-
+/*
   public void setPatchName(Patch p,int patchNum, String name)
   {
     patchNameSize=10;
@@ -183,7 +189,7 @@ public class YamahaDX7BankDriver extends BankDriver
 
     } catch (UnsupportedEncodingException ex) {return;}
   }
-
+*/
 
   public void putPatch(Patch bank,Patch p,int patchNum) //puts a patch into the bank, converting it as needed
   {

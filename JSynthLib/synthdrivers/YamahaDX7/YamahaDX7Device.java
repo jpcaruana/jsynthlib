@@ -4,8 +4,8 @@
  * =====================================================================
  * @author  Torsten Tittmann
  * file:    YamahaDX7Device.java
- * date:    23.08.2002
- * @version 0.1
+ * date:    08.10.2002
+ * @version 0.2-pre
  *
  * Copyright (C) 2002  Torsten.Tittmann@t-online.de
  *
@@ -21,7 +21,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.i
+ *
+ *
+ * history:
+ *         23.08.2002 v0.1: first published release
+ *         xx.xx.xxxx v0.2: - added TX7 Performance support
+ *
  */
 
 package synthdrivers.YamahaDX7;
@@ -35,11 +41,11 @@ import java.util.Arrays;
 public class YamahaDX7Device extends Device
 {
   // which 6-Operator FM Synths and extensions are existing?
-  //public String[] whichSynthString = {"DX7","TX7","DX1","DX5","DX7-SER7","DX7-E!Card","DX7-SuperMax","TX216","TX416","TX816","DX7IID/FD","DX7s","TX802"}; 
+  //public final String[] whichSynthString = {"DX7","TX7","DX1","DX5","DX7-SER7","DX7-E!Card","DX7-SuperMax","TX216","TX416","TX816","DX7IID/FD","DX7s","TX802"}; 
 
   // the Support of these Synths are implemented
-  public String[] whichSynthString = {"DX7","TX7"};
-  private String  whichSynth;
+  public final String[] whichSynthString = {"DX7","TX7"};
+  private String   whichSynth;
 
   // Simulate DX7 panel button pushes by sending SysEx commands ?
   JCheckBox       sPBP;
@@ -76,6 +82,10 @@ public class YamahaDX7Device extends Device
                    "\nto send a patch! (Memory Protect Off & Sys Info Available)"+				// tt+lb
                    dx7AutomationString+dx7avoidMsgString;
 
+  final static String dx7PerformanceString =
+		   "\n\nThe DX7 Mark-I doesn't support the TX7 Performance Data.";
+		  
+
   // TX7 information messages of single voice and bank driver
   final static String tx7ReceiveString =
                    "\n\nHave you prepared your TX7 to receive a patch? (Memory Protect Off)"+			// tt+lb
@@ -93,6 +103,16 @@ public class YamahaDX7Device extends Device
                    "\nbuffer! You have to choose the desired voice manually."+					// tt+lb
                    dx7avoidMsgString;
 
+  final static String tx7RequestPerformanceString =
+                   "\n\nRequesting a single performance dump will deliver the performance data"+
+                   "\nvoice in the edit buffer! You have to choose the desired voice manually."+
+                   dx7avoidMsgString;
+
+  final static String tx7PerformanceString =
+		   "\n\nThe TX7 does'nt support storing of Single Performance Data."+
+                   "\nThe Data has been placed in the edit buffer!"+
+                   dx7avoidMsgString;
+
 
     /** Creates new YamahaDX7Device */
     public YamahaDX7Device ()
@@ -101,8 +121,10 @@ public class YamahaDX7Device extends Device
         modelName="DX7";
         synthName="DX7";
 
-        addDriver (new YamahaDX7BankDriver ());
         addDriver (new YamahaDX7SingleDriver ());
+        addDriver (new YamahaDX7BankDriver ());
+        addDriver (new YamahaTX7SinglePerformanceDriver ());	// experimental !!!!
+        addDriver (new YamahaTX7BankPerformanceDriver ());	// experimental !!!!
 
         infoText=
                 "JSynthLib supports single/bank librarian and voice editing functions on a"+			// tt+lb
@@ -139,12 +161,20 @@ public class YamahaDX7Device extends Device
                 "\n\n"+												// tt+lb
                 "VOICE EDITOR"+											// tt+lb
                 "\nOnly those parameters are implemented, which are stored in the patch."+			// tt+lb
-                " So, you won't find any function parameter like Pitchband, Portamento, etc."+			// tt+lb
-                " (Perhaps, these will be part of a PERFORMANCE DRIVER/EDITOR)"+				// tt+lb
+                " So, you don't find any function parameter like Pitchband, Portamento, etc."+			// 
+                " These are part of the TX7 PERFORMANCE DRIVER/EDITOR."+					// 
                 "\nThere is only one exception: the OPERATOR ON/OFF buttons, because they are"+			// tt+lb
                 " usefull for programming."+									// tt+lb
                 "\nAt this time only the direction JSynthLib->DX7 is working. If a parameter is changed on"+	// tt+lb
-                " the DX7 itself, JSynthlib doesn't become aware of this.";					// tt+lb
+                " the DX7 itself, JSynthlib doesn't become aware of this."+					// tt+lb
+		"\n\n"+
+		"TX7 SINGLE/BANK PERFORMANCE DRIVER"+
+		"\nOnly the TX7 supports this patch type! Maybe the TX216/416/816 supports this patches too."+
+		"\nThe format of the performance patches of the DX7-II Synths (DX7-II, TX802, DX7s, ...)"+
+		" is different!"+
+		"\n\n"+
+		"TX7 PERFORMANCE EDITOR"+
+		"\nNot implemented yet!";
 
         setWhichSynth("DX7");
         setSPBPval(0);    // Disable 'Enable DX7 Remote Control?' function by default!
@@ -173,7 +203,7 @@ public class YamahaDX7Device extends Device
           JComboBox cb = (JComboBox)e.getSource();
           String synthindex = (String)cb.getSelectedItem();
           setWhichSynth(synthindex);
-          setSynthName(getWhichSynth());
+          setSynthName(getWhichSynth());	//Is it usefull? The modelname of the driver isn't named (e.g. TX7 Single Performance instead of Single Performance)
         }
       });
       c.gridx=3;c.gridy=1;c.gridwidth=3;c.gridheight=2;
