@@ -45,19 +45,13 @@
 
 
 	<!-- Building -->
-	<target name="build" depends="init,linuxchardev" 
+	<target name="build" depends="init" 
 			description="Build the complete package">
-		<!-- Libraries -->
-		<copy file="WireNative.dll" todir="${build}"/>
-		<copy todir="${build}/jmidi">
-			<fileset dir="jmidi"/>
-		</copy>
-
 		<!-- Compile -->
 		<javac srcdir="${src}" destdir="${build}">
 			<include name="**/*.java"/>
-			<exclude name="midiprovider/**"/>
 			<exclude name="core/MacOSXMidiWrapper.java" unless="isMacOS"/>
+			<exclude name="midiprovider/**/*.java"/>
 		</javac>
 
 		<!-- Extra files -->
@@ -110,15 +104,6 @@
 				<include name="${docs}"/>
 				<include name="build.xml"/>
 				
-				<!-- Libraries -->
-				<include name="WireProvider/**"/>
-				<include name="jmidi/**"/>
-				<include name="WireNative.dll"/>
-
-				<!-- Linux CharDev extras -->
-				<include name="midiprovider/LinuxCharDev/build.xml"/>
-				<include name="midiprovider/LinuxCharDev/META-INF/services/javax.sound.midi.spi.MidiDeviceProvider"/>
-
 				<!-- Junk -->
 				<exclude name="${api_docs}/**"/>
 			</tarfileset>
@@ -157,15 +142,4 @@
 		<delete dir="${build}"/>
 	</target>
 
-
-	<!-- Linux CharDev midi provider -->
-	<!-- FIXME: Not sure if linuxchardev should be built together with
-		 JSynthLib. If not, remove this target and all dependencies on it,
-		 and remove all the midichardev stuff from the dist target -->
-	<target name="linuxchardev" if="isUnix" depends="init">
-		<ant antfile="midiprovider/LinuxCharDev/build.xml" target="build">
-			<property name="src" location="midiprovider/LinuxCharDev"/>
-			<property name="build" location="${build}"/>
-		</ant>
-	</target>
 </project>
