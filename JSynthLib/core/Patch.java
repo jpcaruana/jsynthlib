@@ -69,6 +69,7 @@ public class Patch extends Object
     private StringBuffer comment;
 
     // not used.  What's this?
+    // I belive this is used by java to maintain backwords compatabl
     static final long serialVersionUID = 2220769917598497681L;
 
     /**

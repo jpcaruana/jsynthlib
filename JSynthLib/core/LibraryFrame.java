@@ -118,8 +118,16 @@ public class LibraryFrame extends JSLFrame implements AbstractLibraryFrame
                     PatchEdit.sortAction.setEnabled(true);
                     PatchEdit.dupAction.setEnabled(true);
                 }
-
-		enableMenus();
+		if (table.getSelectedRowCount()>0) {
+                    PatchEdit.extractAction.setEnabled(true);
+                    PatchEdit.sendAction.setEnabled(true);
+                    PatchEdit.sendToAction.setEnabled(true);
+                    PatchEdit.playAction.setEnabled(true);
+                    PatchEdit.storeAction.setEnabled(true);
+                    PatchEdit.reassignAction.setEnabled(true);
+		    PatchEdit.uploadAction.setEnabled(true);
+		}
+ enableMenus();
             }
 
             public void JSLFrameClosed(JSLFrameEvent e)
