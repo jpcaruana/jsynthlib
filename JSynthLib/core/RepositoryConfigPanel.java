@@ -1,5 +1,10 @@
 package core;
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -10,6 +15,7 @@ import javax.swing.event.CaretListener;
 /**
  * ConfigPanel for MIDI patch download repository.
  * @author Brian Klock
+ * @author Hiroo Hayashi
  * @version $Id$
  */
 class RepositoryConfigPanel extends ConfigPanel {
@@ -24,31 +30,33 @@ class RepositoryConfigPanel extends ConfigPanel {
 
     RepositoryConfigPanel(PrefsDialog parent) {
 	super(parent);
-	setLayout(new ColumnLayout());
+	setLayout(new BorderLayout());
+	JPanel p = new JPanel(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
+	c.fill = GridBagConstraints.HORIZONTAL;
+	c.insets = new Insets(10, 0, 0, 0);
+	
+	JLabel l = new JLabel("Patch Repository:");
+	l.setToolTipText("Before uploading patches to a repository, You need to make an account.");
+	c.gridx = 0; c.gridy = 0; c.gridwidth = 1;
+	p.add(l, c);
 
-	JLabel ll0 = new JLabel("Before you can upload patches to a repository, You will need to go to there");
-	JLabel ll1 = new JLabel("in your web browser and make an account if you do not have one.");
+	c.gridx = 0; c.gridy++;
+	p.add(new JLabel("Repository Site:"), c);
+	c.gridx = 1;
+	p.add(t1, c);
 
-	JPanel p1 = new JPanel();
-	JLabel l1 = new JLabel("Repository Site: ");
-	p1.add(l1);
-	p1.add(t1);
+	c.gridx = 0; c.gridy++;
+	p.add(new JLabel("User Name:"), c);
+	c.gridx = 1;
+	p.add(t2, c);
 
-	JPanel p2 = new JPanel();
-	JLabel l2 = new JLabel("User Name:        ");
-	p2.add(l2);
-	p2.add(t2);
+	c.gridx = 0; c.gridy++;
+	p.add(new JLabel("Password:"), c);
+	c.gridx = 1;
+	p.add(t3, c);
 
-	JPanel p3 = new JPanel();
-	JLabel l3 = new JLabel("Password:          ");
-	p3.add(l3);
-	p3.add(t3);
-
-	add(ll0);
-	add(ll1);
-	add(p1);
-	add(p2);
-	add(p3);
+	add(p, BorderLayout.CENTER);
 
 	CaretListener cl = new CaretListener() {
 		public void caretUpdate(CaretEvent e) {

@@ -20,6 +20,8 @@ import javax.swing.JTabbedPane;
 /**
  * User Preference Dialog Window.
  * @version $Id$
+ * @author ???
+ * @author Hiroo Hayashi
  * @see ConfigPanel
  */
 public class PrefsDialog extends JDialog {

@@ -5,12 +5,14 @@ import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
  * ConfigPanel for generic parameters.
  * @author Joe Emenaker
+ * @author Hiroo Hayashi
  * @version $Id$
  */
 public class GeneralConfigPanel extends ConfigPanel {
@@ -36,9 +38,8 @@ public class GeneralConfigPanel extends ConfigPanel {
 	GridBagConstraints c = new GridBagConstraints();
 
 	// Look & Feel combobox
-	JLabel l = new JLabel("GUI Look and Feel:");
 	c.gridx = 0; c.gridy = 0; c.fill = GridBagConstraints.HORIZONTAL;
-	p.add(l, c);
+	p.add(new JLabel("GUI Look and Feel:"), c);
 
 	cbLF = new JComboBox();
 	for (int j = 0; j < installedLF.length; j++)
@@ -52,9 +53,9 @@ public class GeneralConfigPanel extends ConfigPanel {
 	p.add(cbLF, c);
 
 	// GUI style (MDI/SDI) combobox
-	l = new JLabel("GUI Style:");
-	c.gridx = 0; c.gridy = 1;
-	p.add(l, c);
+	c.gridx = 0; c.gridy++;
+	c.insets = new Insets(10, 0, 0, 0);
+	p.add(new JLabel("GUI Style:"), c);
 	cbGS = new JComboBox(new String[] {
 	    "MDI (Single Window)",
 	    "SDI (Multiple Windows)",
@@ -64,16 +65,15 @@ public class GeneralConfigPanel extends ConfigPanel {
 		    setModified(true);
 		}
 	    });
-	c.gridx = 1; c.gridy = 1;
+	c.gridx = 1;
 	p.add(cbGS, c);
 	
 	// Tool Bar check box
 	cbxTB = new JCheckBox("Add Tool Bar on Each Frame in SDI Mode");
-	c.gridx = 0; c.gridy = 2; c.gridwidth = 2;
+	c.gridx = 0; c.gridy++; c.gridwidth = 2;
 	p.add(cbxTB, c);
 
 	add(p, BorderLayout.CENTER);
-	//add(p, BorderLayout.PAGE_START);
     }
 
     void init() {

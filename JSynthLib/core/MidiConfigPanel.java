@@ -1,7 +1,9 @@
 package core;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,6 +16,7 @@ import javax.swing.JPanel;
 /**
  * The panel that configures the MIDI layer. Taken out of PrefsDialog.
  * @author Joe Emenaker
+ * @author Hiroo Hayashi
  * @version $Id$
  */
 class MidiConfigPanel extends ConfigPanel {
@@ -38,95 +41,56 @@ class MidiConfigPanel extends ConfigPanel {
     MidiConfigPanel(PrefsDialog parent) {
 	super(parent);
 
-	setLayout(new ColumnLayout());
+	setLayout(new BorderLayout());
+	JPanel p = new JPanel(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
 
 	cbxEnMidi = new JCheckBox("Enable MIDI Interface");
-	add(cbxEnMidi);
+	c.gridx = 0; c.gridy = 0; c.gridwidth = 2;
+	p.add(cbxEnMidi);
 
-	// panel for other settings
-	JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new ColumnLayout());
+	c.fill = GridBagConstraints.HORIZONTAL;
 
-	GridBagLayout gridbag = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
-	JPanel cbPanel = new JPanel(gridbag);
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	gbc.ipadx = 1;
-	gbc.anchor = GridBagConstraints.WEST;
-
-
-	// make a space
-	gbc.gridx = 0; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth = 1;
-	JLabel l3 = new JLabel(" ");
-	gridbag.setConstraints(l3, gbc);
-        cbPanel.add(l3);
 	// Output Port/Input Port selection
-	/*
-	gbc.gridx = 0; gbc.gridy = 3; gbc.gridheight = 1; gbc.gridwidth = 3;
-	//gbc.gridwidth=gbc.REMAINDER;
-        JLabel cbLabel = new JLabel("Run Startup Initialization on MIDI Ports:");
-	gridbag.setConstraints(cbLabel, gbc);
-	cbPanel.add(cbLabel);
-	*/
-	gbc.gridx = 0; gbc.gridy = 4; gbc.gridheight = 1; gbc.gridwidth = 1;
-	JLabel cbOutLabel = new JLabel("Output Port:");
-	gridbag.setConstraints(cbOutLabel, gbc);
-	cbPanel.add(cbOutLabel);
+	c.gridx = 0; c.gridy++; c.gridwidth = 1;
+	c.insets = new Insets(10, 0, 0, 0);
+	p.add(new JLabel("Output Port:"), c);
 	cbOut = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
-	gbc.gridx = 1; gbc.gridy = 4; gbc.gridheight = 1;
-	gbc.gridwidth = GridBagConstraints.REMAINDER;
-	gridbag.setConstraints(cbOut, gbc);
-        cbPanel.add(cbOut);
+	c.gridx = 1;
+        p.add(cbOut, c);
 
-	gbc.gridx = 0; gbc.gridy = 5; gbc.gridheight = 1; gbc.gridwidth = 1;
-	JLabel cbInLabel = new JLabel("Input Port:");
-	gridbag.setConstraints(cbInLabel, gbc);
-        cbPanel.add(cbInLabel);
+	c.gridx = 0; c.gridy++;
+	c.insets = new Insets(0, 0, 0, 0);
+        p.add(new JLabel("Input Port:"), c);
 	cbIn = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
-	gbc.gridx = 1; gbc.gridy = 5; gbc.gridheight = 1;
-	gbc.gridwidth = GridBagConstraints.REMAINDER;
-	gridbag.setConstraints(cbIn, gbc);
-        cbPanel.add(cbIn);
+	c.gridx = 1;
+        p.add(cbIn, c);
 
 	// master controller selection
-	/*
-	gbc.gridx = 0; gbc.gridy = 6; gbc.gridheight = 1; // gbc.gridwidth=3;
-	gbc.gridwidth = GridBagConstraints.REMAINDER;
-	JLabel l1 = new JLabel("Receive from Master Controller on MIDI Port:");
-	gridbag.setConstraints(l1, gbc);
-        cbPanel.add(l1);
-	*/
 	cbxEnMC = new JCheckBox("Enable Master Controller Input Port");
-	gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2; gbc.gridheight = 1;
-	cbPanel.add(cbxEnMC, gbc);
+	cbxEnMC.setToolTipText("If enabled MIDI messages from Master Input Port are sent to Output Port.");
+	c.gridx = 0; c.gridy++; c.gridwidth = 2;
+	p.add(cbxEnMC, c);
 
-	gbc.gridx = 0; gbc.gridy = 8; gbc.gridheight = 1; gbc.gridwidth = 1;
+	c.gridx = 0; c.gridy++; c.gridwidth = 1;
 	JLabel cbMInLabel = new JLabel("Master Input Port:");
 	cbMInLabel.setToolTipText("MIDI notes from this port are echoed to the output MIDI port.");
-	gridbag.setConstraints(cbMInLabel, gbc);
-        cbPanel.add(cbMInLabel);
-	gbc.gridx = 1; gbc.gridy = 8; gbc.gridheight = 1;
-	gbc.gridwidth = GridBagConstraints.REMAINDER;
+        p.add(cbMInLabel, c);
+	c.gridx = 1;
 	cbMC = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
-	gridbag.setConstraints(cbMC, gbc);
-        cbPanel.add(cbMC);
-
-	// make a space
-	gbc.gridx = 0; gbc.gridy = 9; gbc.gridheight = 1; gbc.gridwidth = 1;
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	JLabel l0 = new JLabel(" ");
-	gridbag.setConstraints(l0, gbc);
-        cbPanel.add(l0);
+        p.add(cbMC, c);
 
 	// MIDI loopback test
-	gbc.gridx = 1; gbc.gridy = 10; gbc.gridheight = 1; gbc.gridwidth = 1;
-	gbc.fill = GridBagConstraints.NONE;
-        testButton = new JButton("MIDI Loopback Test...");
-	gridbag.setConstraints(testButton, gbc);
-	cbPanel.add(testButton);
+	c.gridx = 0; c.gridy++;
+	c.insets = new Insets(10, 0, 0, 0);
+	p.add(new JLabel("MIDI Loopback Test:"), c);
+	c.gridx = 1;
+	c.fill = GridBagConstraints.NONE;
+	c.anchor = GridBagConstraints.WEST;
+	testButton = new JButton("Run...");
+	p.add(testButton, c);
 
-	mainPanel.add(cbPanel);
-	add(mainPanel);
+	add(p, BorderLayout.CENTER);
 
 	// add actionListeners
 	cbxEnMidi.addActionListener(new ActionListener() {

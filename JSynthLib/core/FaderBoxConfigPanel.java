@@ -9,6 +9,7 @@ import java.awt.event.*;
 /**
  * Config panel for Fader Input setting.
  * @author Joe Emenaker
+ * @author Hiroo Hayashi
  * @version $Id$
  */
 class FaderBoxConfigPanel extends ConfigPanel {
@@ -31,21 +32,18 @@ class FaderBoxConfigPanel extends ConfigPanel {
 
     FaderBoxConfigPanel(PrefsDialog parent) {
 	super(parent);
-	setLayout(new GridBagLayout());
-	GridBagConstraints gbc = new GridBagConstraints();
+	setLayout(new BorderLayout());
+	JPanel p = new JPanel(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
 
-	gbc.fill = GridBagConstraints.HORIZONTAL; gbc.ipadx = 1; gbc.anchor = GridBagConstraints.WEST;
+	c.fill = GridBagConstraints.HORIZONTAL; 
+	c.anchor = GridBagConstraints.WEST;
 
 	// Fader Port selection
-	/*
-	JLabel l0 = new JLabel("Receive Faders from MIDI Port:  ");
-	gbc.gridx = 0; gbc.gridy = 1; gbc.gridheight = 1; gbc.gridwidth = 4;
-	add(l0, gbc);
-	*/
 	enabledBox = new JCheckBox("Enable Fader Input Port");
-	enabledBox.setToolTipText("sliders and buttons are controlled by Control Change MIDI message.");
-	gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth = 2;
-	add(enabledBox, gbc);
+	enabledBox.setToolTipText("Sliders and buttons are controlled by Control Change MIDI message.");
+	c.gridx = 0; c.gridy = 0; c.gridheight = 1; c.gridwidth = 2;
+	p.add(enabledBox, c);
 	enabledBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 			setContainerEnabled(faderPanel, enabledBox.isSelected());
@@ -62,7 +60,7 @@ class FaderBoxConfigPanel extends ConfigPanel {
 		    setModified(true);
 		}
 	    });
-	gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth=GridBagConstraints.REMAINDER;
+	c.gridy++; c.gridwidth=GridBagConstraints.REMAINDER;
 	faderPanel.add(cbFdr, BorderLayout.NORTH);
 
 	// Init Slider JList
@@ -122,17 +120,18 @@ class FaderBoxConfigPanel extends ConfigPanel {
 	// right side
 	JPanel dataPanel = new JPanel();
 	dataPanel.setLayout(new GridBagLayout());
-	gbc.anchor = GridBagConstraints.EAST;
-	gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2; gbc.gridheight = 1;
-	dataPanel.add(new JLabel("MIDI Channel    #  "), gbc);
-	gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2; gbc.gridheight = 1;
-	dataPanel.add(new JLabel("MIDI Control #  "), gbc);
-	gbc.gridx = 2; gbc.gridy = 1; gbc.gridwidth = 2; gbc.gridheight = 1;
-	dataPanel.add(cbChannel, gbc);
-	gbc.gridx = 2; gbc.gridy = 2; gbc.gridwidth = 2; gbc.gridheight = 1;
-	dataPanel.add(cbControl, gbc);
-	gbc.gridx = 2; gbc.gridy = 5; gbc.gridwidth = 5; gbc.gridheight = 3;
-	gbc.fill = GridBagConstraints.BOTH;
+	GridBagConstraints dc = new GridBagConstraints();
+	dc.anchor = GridBagConstraints.EAST;
+	dc.gridx = 0; dc.gridy = 1; dc.gridwidth = 2;
+	dataPanel.add(new JLabel("MIDI Channel Number: "), dc);
+	dc.gridx = 0; dc.gridy = 2; dc.gridwidth = 2;
+	dataPanel.add(new JLabel("MIDI Control Number: "), dc);
+	dc.gridx = 2; dc.gridy = 1; dc.gridwidth = 2;
+	dataPanel.add(cbChannel, dc);
+	dc.gridx = 2; dc.gridy = 2; dc.gridwidth = 2;
+	dataPanel.add(cbControl, dc);
+	dc.gridx = 2; dc.gridy = 5; dc.gridwidth = 5;
+	dc.fill = GridBagConstraints.BOTH;
 	dataPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 	faderPanel.add(dataPanel, BorderLayout.CENTER);
 	// lower side
@@ -165,8 +164,9 @@ class FaderBoxConfigPanel extends ConfigPanel {
 
 	faderPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-	gbc.gridx = 0; gbc.gridy = 8; gbc.gridwidth = 7; gbc.gridheight = 1;
-	add(faderPanel, gbc);
+	c.gridx = 0; c.gridy++; c.gridwidth = 1; c.gridheight = 1;
+	p.add(faderPanel, c);
+	add(p, BorderLayout.CENTER);
     }
 
     void init() {

@@ -1,7 +1,10 @@
 package core;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -22,6 +25,7 @@ import javax.swing.table.TableColumn;
 /**
  * ConfigPanel for Synthesizer Configuration
  * @author ???
+ * @author Hiroo Hayashi
  * @version $Id$
  */
 class SynthConfigPanel extends ConfigPanel {
@@ -46,7 +50,11 @@ class SynthConfigPanel extends ConfigPanel {
 
     SynthConfigPanel(PrefsDialog parent) {
         super(parent);
-	setLayout(new ColumnLayout());
+
+        setLayout(new BorderLayout());
+	JPanel p = new JPanel(new GridBagLayout());
+	GridBagConstraints c = new GridBagConstraints();
+	c.gridx = 0; c.gridy = 0;
 
 	// create synth driver table
         table = new JTable(new TableModel());
@@ -74,7 +82,7 @@ class SynthConfigPanel extends ConfigPanel {
         column.setPreferredWidth(75);
 
         JScrollPane scrollpane = new JScrollPane(table);
-        add(scrollpane/*, BorderLayout.CENTER*/);
+        p.add(scrollpane, c);
 	//((TableModel) table.getModel()).fireTableDataChanged();
 	//table.setRowSelectionInterval(0, 0);
 
@@ -87,13 +95,14 @@ class SynthConfigPanel extends ConfigPanel {
 		    setModified(true);
 		}
 	});
-	add(cbxMMI);
+	++c.gridy;
+	p.add(cbxMMI, c);
 
 	// create buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JButton detail = new JButton("Show Details");
+        JButton detail = new JButton("Show Details...");
         detail.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    detailPressed();
@@ -101,7 +110,7 @@ class SynthConfigPanel extends ConfigPanel {
 	    });
         buttonPanel.add(detail);
 
-        JButton add = new JButton("Add Device");
+        JButton add = new JButton("Add Device...");
         add.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    addPressed();
@@ -110,7 +119,7 @@ class SynthConfigPanel extends ConfigPanel {
         buttonPanel.add(add);
 
         // BUTTON ADDED BY GERRIT GEHNEN
-        JButton scan = new JButton("Auto-Scan");
+        JButton scan = new JButton("Auto-Scan...");
         scan.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    scanPressed();
@@ -127,7 +136,9 @@ class SynthConfigPanel extends ConfigPanel {
 	    });
         buttonPanel.add(rem);
 
-        add(buttonPanel);
+	++c.gridy;
+	p.add(buttonPanel, c);
+	add(p, BorderLayout.CENTER);
     }
 
     private void removePressed() {
@@ -226,104 +237,98 @@ class SynthConfigPanel extends ConfigPanel {
     }
 
     private class TableModel extends AbstractTableModel {
-		private final String[] columnNames = {
-		    "Synth ID",
-		    "Device",
-		    "MIDI In Port",
-		    "MIDI Out Port",
-		    "Channel #",
-		    "Device ID"
-		};
+        private final String[] columnNames = { "Synth ID", "Device",
+                "MIDI In Port", "MIDI Out Port", "Channel #", "Device ID" };
 
-		TableModel() {
-		}
+        TableModel() {
+        }
 
-		public int getColumnCount() {
-		    return columnNames.length;
-		}
-		public String getColumnName(int col) {
-		    return columnNames[col];
-		}
-		public int getRowCount() {
-		    return AppConfig.deviceCount();
-		}
-		public Class getColumnClass(int c) {
-		    return getValueAt(0, c).getClass();
-		}
-		public Object getValueAt(int row, int col) {
-		    Device myDevice = AppConfig.getDevice(row);
+        public int getColumnCount() {
+            return columnNames.length;
+        }
 
-		    switch (col) {
-			    case SYNTH_NAME:
-					return myDevice.getSynthName();
-			    case DEVICE:
-					return (myDevice.getManufacturerName()
-						+ " " + myDevice.getModelName());
-			    case MIDI_IN:
-					if (MidiUtil.isInputAvailable()) {
-						try {
-						    int port = multiMIDI ?
-							myDevice.getInPort() : AppConfig.getInitPortIn();
-						    return MidiUtil.getInputMidiDeviceInfo(port).getName();
-						}
-						catch(Exception ex) {
-							return "not available";
-						}
-					} else {
-					    return "not available";
-					}
-			    case MIDI_OUT:
-					if (MidiUtil.isOutputAvailable()) {
-						try {
-						    int port = multiMIDI ?
-							myDevice.getPort() : AppConfig.getInitPortOut();
-						    return MidiUtil.getOutputMidiDeviceInfo(port).getName();
-						} catch(Exception ex) {
-							return "not available";
-						}
-					} else {
-					    return "not available";
-					}
-			    case MIDI_CHANNEL:
-					return new Integer(myDevice.getChannel());
-			    case MIDI_DEVICE_ID:
-					return new Integer(myDevice.getDeviceID());
-			    default:
-					return null;
-		    }
-		}
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
 
-		public boolean isCellEditable(int row, int col) {
-		    //Note that the data/cell address is constant,
-		    //no matter where the cell appears onscreen.
-		    return (col == SYNTH_NAME
-			    || (col == MIDI_IN && multiMIDI)
-			    || (col == MIDI_OUT && multiMIDI)
-			    || col == MIDI_CHANNEL
-			    || col == MIDI_DEVICE_ID);
-		}
+        public int getRowCount() {
+            return AppConfig.deviceCount();
+        }
 
-		public void setValueAt(Object value, int row, int col) {
-		    Device dev = AppConfig.getDevice(row);
-		    switch (col) {
-		    case SYNTH_NAME:
-			dev.setSynthName((String) value);
-			break;
-		    case MIDI_IN:
-			dev.setInPort(MidiUtil.getInPort((MidiDevice.Info) value));
-			break;
-		    case MIDI_OUT:
-			dev.setPort(MidiUtil.getOutPort((MidiDevice.Info) value));
-			break;
-		    case MIDI_CHANNEL:
-			dev.setChannel(((Integer) value).intValue());
-			break;
-		    case MIDI_DEVICE_ID:
-			dev.setDeviceID(((Integer) value).intValue());
-			break;
-		    }
-		    fireTableCellUpdated(row, col); // really required???
-		}
+        public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        public Object getValueAt(int row, int col) {
+            Device myDevice = AppConfig.getDevice(row);
+
+            switch (col) {
+            case SYNTH_NAME:
+                return myDevice.getSynthName();
+            case DEVICE:
+                return (myDevice.getManufacturerName() + " " + myDevice
+                        .getModelName());
+            case MIDI_IN:
+                if (MidiUtil.isInputAvailable()) {
+                    try {
+                        int port = multiMIDI ? myDevice.getInPort() : AppConfig
+                                .getInitPortIn();
+                        return MidiUtil.getInputMidiDeviceInfo(port).getName();
+                    } catch (Exception ex) {
+                        return "not available";
+                    }
+                } else {
+                    return "not available";
+                }
+            case MIDI_OUT:
+                if (MidiUtil.isOutputAvailable()) {
+                    try {
+                        int port = multiMIDI ? myDevice.getPort() : AppConfig
+                                .getInitPortOut();
+                        return MidiUtil.getOutputMidiDeviceInfo(port).getName();
+                    } catch (Exception ex) {
+                        return "not available";
+                    }
+                } else {
+                    return "not available";
+                }
+            case MIDI_CHANNEL:
+                return new Integer(myDevice.getChannel());
+            case MIDI_DEVICE_ID:
+                return new Integer(myDevice.getDeviceID());
+            default:
+                return null;
+            }
+        }
+
+        public boolean isCellEditable(int row, int col) {
+            //Note that the data/cell address is constant,
+            //no matter where the cell appears onscreen.
+            return (col == SYNTH_NAME || (col == MIDI_IN && multiMIDI)
+                    || (col == MIDI_OUT && multiMIDI) || col == MIDI_CHANNEL || col == MIDI_DEVICE_ID);
+        }
+
+        public void setValueAt(Object value, int row, int col) {
+            Device dev = AppConfig.getDevice(row);
+            switch (col) {
+            case SYNTH_NAME:
+                dev.setSynthName((String) value);
+                break;
+            case MIDI_IN:
+                dev.setInPort(MidiUtil.getInPort((MidiDevice.Info) value));
+                break;
+            case MIDI_OUT:
+                dev.setPort(MidiUtil.getOutPort((MidiDevice.Info) value));
+                break;
+            case MIDI_CHANNEL:
+                dev.setChannel(((Integer) value).intValue());
+                break;
+            case MIDI_DEVICE_ID:
+                dev.setDeviceID(((Integer) value).intValue());
+                break;
+            }
+            fireTableCellUpdated(row, col); // really required???
+        }
     }
 
     /*

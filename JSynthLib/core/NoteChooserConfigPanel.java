@@ -2,15 +2,17 @@ package core;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -21,19 +23,21 @@ import javax.swing.event.ChangeListener;
  * played... when the user changes something in a synth editor.
  *
  * @author Unknown - Hacked up by emenaker 2003.03.17
+ * @author Hiroo Hayashi
  */
-public class NoteChooserConfigPanel extends ConfigPanel {
+public class NoteChooserConfigPanel extends ConfigPanel implements ActionListener {
     {
 	panelName = "Play Note";
 	nameSpace = "playnote";
     }
 
     /* enable MIDI sequencer for test purpose?  */
-    private static final boolean 	useSequencer = false;
+    private static final boolean	useSequencer = false;
 
-    private JCheckBox			enabledSequencer;
-    private JPanel 			sequencePanel;
-    private final 			JTextField t0 = new JTextField(null, 20);
+    private JRadioButton seqButton;
+    private JRadioButton toneButton;
+    private JPanel sequencePanel;
+    private final JTextField t0 = new JTextField(null, 20);
     
     // not used yet.
     //private boolean sequencerEnable;
@@ -46,8 +50,8 @@ public class NoteChooserConfigPanel extends ConfigPanel {
     private int note;
     private int velocity;
     private int delay;
-
     private JPanel notePanel;
+
     private final JTextField t1 = new JTextField("0", 5);
     private final JTextField t2 = new JTextField("0", 5);
     private final JTextField t3 = new JTextField("0", 5);
@@ -61,39 +65,37 @@ public class NoteChooserConfigPanel extends ConfigPanel {
     private final String[] noteName = new String[] {
 	"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
     };
+    private final String SEQ_LABEL = "MIDI Sequencer";
+    private final String TONE_LABEL = "Single Tone";
 
     NoteChooserConfigPanel(PrefsDialog parent) {
 	super(parent);
 
 	setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-	gbc.fill = GridBagConstraints.BOTH; gbc.ipadx = 1; gbc.anchor = GridBagConstraints.WEST;
+        GridBagConstraints c = new GridBagConstraints();
+	c.anchor = GridBagConstraints.WEST;
 
 	// display sequencer parts only if 'useSequencer=true"
-	if (useSequencer==true) {
+	if (useSequencer == true) {
 	    /*
-	     * Checkbox which method should be used
+	     * Radio button which method should be used
 	     */
-	    enabledSequencer = new JCheckBox("Playing MIDI files?");
-	    enabledSequencer.setToolTipText("if enabled a MIDI file is played for hearing a patch. Otherwise a single tone is played.");
-	    gbc.gridx = 1; gbc.gridy = 0; gbc.gridheight = 1; gbc.gridwidth = 2;
-            add(enabledSequencer, gbc);
-	    enabledSequencer.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    setContainerEnabled(sequencePanel, enabledSequencer.isSelected());
-		    setContainerEnabled(notePanel, !enabledSequencer.isSelected());
-		    setModified(true);
-		}
-	    });
+	    seqButton  = new JRadioButton(SEQ_LABEL);
+	    toneButton = new JRadioButton(TONE_LABEL);
+	    ButtonGroup group = new ButtonGroup();
+	    group.add(seqButton);
+	    group.add(toneButton);
+	    seqButton.addActionListener(this);
+	    toneButton.addActionListener(this);
+
+	    c.gridx = 0; c.gridy = 0;
+            add(seqButton, c);
 	
 	    /*
 	     * create own sequence panel for file chooser
 	     */
-	    sequencePanel = new JPanel(new ColumnLayout());
 	    t0.setEditable(false);
 
-	    JLabel l0 = new JLabel("MIDI file to play: ");
-            JPanel p0 = new JPanel();
 	    JButton b0 = new JButton("Browse");
 	    b0.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
@@ -110,32 +112,22 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 	        }
 	    });
 
-	    p0.add(l0);
-            p0.add(t0);
-	    p0.add(b0);
-	    sequencePanel.add(p0);
+	    sequencePanel = new JPanel();
+	    sequencePanel.add(new JLabel("MIDI file to play: "));
+	    sequencePanel.add(t0);
+	    sequencePanel.add(b0);
 
-	    gbc.gridx = 1; gbc.gridy = 2; gbc.gridheight = 1; gbc.gridwidth = 2;
-	    add(sequencePanel, gbc);
+	    c.gridy++;
+	    add(sequencePanel, c);
+
+	    c.gridy++; c.insets = new Insets(10, 0, 0, 0);
+            add(toneButton, c);
+            c.insets = new Insets(0, 0, 0, 0);
 	}
 
-	// add a little distance between both panels
-	gbc.gridx = 1; gbc.gridy = 3; gbc.gridheight = 1; gbc.gridwidth = 2;
-	add(new JLabel(" "),gbc);
-	
 	/*
 	 * create own note chooser panel
 	 */
-	notePanel = new JPanel(new ColumnLayout());
-
-	JPanel p1 = new JPanel();
-	JLabel l1 = new JLabel("MIDI Note : ");
-	JPanel p2 = new JPanel();
-	JLabel l2 = new JLabel("Velocity  :  ");
-	JPanel p3 = new JPanel();
-	JLabel l3 = new JLabel("Duration  :");
-	JLabel l4 = new JLabel("msec");
-
 	// Update the text fields whenever the slider changes
 	s1.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
@@ -164,15 +156,31 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 	s3.setMajorTickSpacing(500); s3.setPaintLabels(true);
 	t1.setEditable(false); t2.setEditable(false); t3.setEditable(false);
 
-	p1.add(l1); p1.add(s1); p1.add(t1);
-	p2.add(l2); p2.add(s2); p2.add(t2);
-	p3.add(l3); p3.add(s3); p3.add(t3); p3.add(l4);
-	notePanel.add(p1);
-	notePanel.add(p2);
-	notePanel.add(p3);
+	notePanel = new JPanel(new GridBagLayout());
+	GridBagConstraints nc = new GridBagConstraints();
+	nc.gridy = 0;
+	nc.gridx = 0; notePanel.add(new JLabel("MIDI Note : "), nc);
+	nc.gridx = 1; notePanel.add(s1, nc); 
+	nc.gridx = 2; notePanel.add(t1, nc);
+	nc.gridy = 1;
+	nc.gridx = 0; notePanel.add(new JLabel("Velocity  :  "), nc);
+	nc.gridx = 1; notePanel.add(s2, nc); 
+	nc.gridx = 2; notePanel.add(t2, nc);
+	nc.gridy = 2;
+	nc.gridx = 0; notePanel.add(new JLabel("Duration  :"), nc);
+	nc.gridx = 1; notePanel.add(s3, nc); 
+	nc.gridx = 2; notePanel.add(t3, nc);
+	nc.gridx = 3; notePanel.add(new JLabel("msec"), nc);
 
-	gbc.gridx = 1; gbc.gridy = 4; gbc.gridheight = 6; gbc.gridwidth = 2;
-	add(notePanel, gbc);
+	c.gridy++;
+	add(notePanel, c);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        setContainerEnabled(sequencePanel, e.getActionCommand().equals(SEQ_LABEL));
+        setContainerEnabled(notePanel, e.getActionCommand().equals(TONE_LABEL));
+
+        setModified(true);
     }
 
     void init() {
@@ -194,20 +202,22 @@ public class NoteChooserConfigPanel extends ConfigPanel {
 	s3.setValue(delay);
 	refreshTextFields();
 
-	if (useSequencer==true) {
+	if (useSequencer == true) {
 	    /* Sequencer related parts */
-            enabledSequencer.setSelected(AppConfig.getSequencerEnable());
+	    boolean isSeq = AppConfig.getSequencerEnable();
+	    seqButton.setSelected(isSeq);
+	    toneButton.setSelected(!isSeq);
 	    t0.setText(AppConfig.getSequencePath());
 	    
-	    setContainerEnabled(sequencePanel, enabledSequencer.isSelected());
-            setContainerEnabled(notePanel, !enabledSequencer.isSelected());
+	    setContainerEnabled(sequencePanel, isSeq);
+            setContainerEnabled(notePanel, !isSeq);
 	}
     }
 
     void commitSettings() {
-	if (useSequencer==true) {
+	if (useSequencer == true) {
 	    /* Sequencer related parts */
-	    AppConfig.setSequencerEnable(enabledSequencer.isSelected());
+	    AppConfig.setSequencerEnable(seqButton.isSelected());
 	    AppConfig.setSequencePath(t0.getText());
 	}
 
