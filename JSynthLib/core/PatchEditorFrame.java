@@ -73,6 +73,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket
              public void internalFrameActivated(InternalFrameEvent e) 
 	     {((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);
 	      ((Driver)(PatchEdit.getDriver(p.deviceNum,p.driverNum))).sendPatch(p);
+               gotFocus();
 	       PatchEdit.receiveAction.setEnabled (false);
                PatchEdit.pasteAction.setEnabled (false);
                PatchEdit.sendAction.setEnabled (true);
@@ -256,8 +257,11 @@ public void setBankEditorInformation (BankEditorFrame bf, int row,int col)
   if (p.deviceNum==0) {try{setClosed(true);}catch (Exception e){}; return;}
   }
   
-}
-  
-	 
+
+public void gotFocus()
+ {
+ }
+
+}      
 	
 

@@ -1,5 +1,6 @@
 package synthdrivers.KawaiK5000;
 import java.io.*;
+import javax.swing.*;
 import core.*;
 public class KawaiK5000ADDSingleDriver extends Driver
 {
@@ -102,7 +103,6 @@ public void calculateChecksum(Patch p)
  }*/
 
 //----- Start phil@muqus.com
-
 //----------------------------------------------------------------------------------------------------------------------
 // KawaiK5000ADDSingleDriver->requestPatchDump
 //----------------------------------------------------------------------------------------------------------------------
@@ -115,5 +115,24 @@ public void calculateChecksum(Patch p)
   }
 
 //----- End phil@muqus.com
-}
 
+
+public JInternalFrame editPatch(Patch p)
+ {
+     return new KawaiK5000ADDSingleEditor(p);
+ }
+
+public Patch createNewPatch()
+  { 
+  try {
+    FileInputStream fileIn= new FileInputStream (new File("synthdrivers/KawaiK5000/k5k.syx"));
+    byte [] buffer =new byte [2768];
+    fileIn.read(buffer);
+    fileIn.close();
+    Patch p=new Patch(buffer);
+    p.ChooseDriver();
+    return p;
+  }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
+  }
+
+}

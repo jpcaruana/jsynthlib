@@ -326,11 +326,21 @@ public void choosePatch (Patch p, int patchNum)
       setBankNum(bankNum);
       setPatchNum(patchNum);
       if (sysexRequestDump == null)
-      JOptionPane.showMessageDialog(PatchEdit.instance,
+       {
+        JOptionPane.showMessageDialog(PatchEdit.instance,
         "The " + getDriverName() + " driver does not support patch getting.\n\nPlease start the patch dump manually...",
         "Get Patch",
         JOptionPane.WARNING_MESSAGE
-      );
+        );
+        byte buffer[] = new byte[256*1024];
+        try {
+           while (PatchEdit.MidiIn.messagesWaiting(inPort) > 0)
+            PatchEdit.MidiIn.readMessage(inPort, buffer, 1024);
+           } catch (Exception ex) {
+          ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
+         }
+        
+      }
     else
         
 	sysexRequestDump.send(
