@@ -87,7 +87,7 @@ Go to <a href="documentation.html">JSynthLib User's Guide</a>.
 <h2><a name="common" href="#toc">I. Before we start...</a></h2>
 First a few words about writing code which will be shared by many developers.
 
-Even if someone want write <strong>just</strong> a driver for his/her synth, the code will be readed by others too.
+Even if someone want write <strong>just</strong> a driver for his/her synth, the code will be read by others too.
 Maybe some changes are necessary since an API change or another developer want take a look how a special issue is solved.
 
 Following some rules makes the life easier for all who contribute to JSynthLib.
@@ -122,11 +122,11 @@ Readability of code is very important.<p>
 
 <h2><a name="compiling" href="#toc">II. How to Compile Files and Check Out from CVS</a></h2>
 
-JSynthlib distribution includes source code.  First extract files from
+JSynthLib distribution includes source code.  First extract files from
 the jar file.
 
 <pre>
-mkdir JSynthlib
+mkdir JSynthLib
 cd JSynthLib
 jar xf ../JSynthLib-XXX.jar
 </pre>
@@ -162,7 +162,7 @@ Although the source code for each version of JSynthLib is included in
 the JSynthLib distribution, you may wish to download the latest
 version of the source code to get any improvements made after the
 latest release.  We sometimes have to change API to make JSynthLib
-better. Your driver developed for the released JSynthlib may be
+better. Your driver developed for the released JSynthLib may be
 required some changes for the latest version.
 
 You can downloaded the latest source code via CVS from SourceForge CVS
@@ -173,8 +173,8 @@ cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/jsynthlib login
 cvs -z3 -d:pserver:anonymous@cvs.sf.net:/cvsroot/jsynthlib co JSynthLib
 </pre>
 
-For more detail go to CVS page on <a href="#cvssite">JSynthLib's
-Sourceforge.net site</a>.
+For more detail go to CVS page on <a href="#cvssite">JSynthLib
+SourceForge.net site</a>.
 
 <h2><a name="writing" href="#toc">III. Writing the Driver</a></h2>
 
@@ -312,7 +312,7 @@ Don't enter that directory and just type
 <pre>
 javadoc -locale en_US -breakiterator -quiet -d doc/API -use -author -version -overview doc/programming.html core/*.java
 </pre>
-View <strong>doc/API/index.html</strong> with your favarite browser.
+View <strong>doc/API/index.html</strong> with your favorite browser.
 
 <h3><a name="areas" href="#toc">III.d. The Four Areas of Synthesizer Support</a></h3>
 
@@ -367,7 +367,7 @@ You have to let JSynthLib know about your driver. Execute the
 following command on your command shell,
 
 <pre>
-java core/DeviceListWrite
+java core/DeviceListWriter
 </pre>
 
 and click &quot;OK&quot; button on the pop-up windows.
@@ -552,13 +552,13 @@ the vertical size).
 
 <p>The last parameter is the fader number. Each widget
 needs to have a unique fader number and they should go in order. label
-all widgets with positive numbers except for checkboxes which get
+all widgets with positive numbers except for CheckBoxes which get
 negative numbers (buttons). So the sliders etc. would go
-1, 2, 3, 4, 5.. and the checkboxes would go -1, -2, -3, -4, -5... etc.
+1, 2, 3, 4, 5.. and the CheckBoxes would go -1, -2, -3, -4, -5... etc.
 
 <h4>III.g.2. The Provided Widgets:</h4>
 
-<b>ScrollBarWidgets</b> contain a label, a slider, and a numeric
+<b>ScrollBarWidget</b> contain a label, a slider, and a numeric
 readout of the value of the slider. They are the most common
 widgets. The first parameter to the widget should be its label. the
 second one will always be <var>patch</var>. The next two values are
@@ -569,15 +569,15 @@ should be displayed as -63 to +63). The last two parameters are a
 <a href="#modelsender">Model and Sender</a> for this fader (we'll get
 to those after we deal with some other widgets.).
 
-<p><b>ScrollBarLookupWidgets</b> are just like ScrollBarWidgets but they
+<p><b>ScrollBarLookupWidget</b> are just like ScrollBarWidget but they
 let the numeric readout contain values other than numbers. They are
 used rarely. For example if a parameter can take the values of OFF,
 1,2,3,4,5,6 or 7, you might use one. You wouldn't want to use a
-ScrollBar because the first value should be OFF, not zero. You could
-also use a ComboBoxWidgets in this situation. The constructor is about the
+ScrollBarWidget because the first value should be OFF, not zero. You could
+also use a ComboBoxWidget in this situation. The constructor is about the
 same as for a combo box.
 
-<p><b>ComboBoxWidgets</b> are drop-down list of choices that are best used
+<p><b>ComboBoxWidget</b> are drop-down list of choices that are best used
 for non-numeric data (such as LFO shape). Here's an example of setting
 up a ComboBoxWidget:
 
@@ -594,7 +594,7 @@ Parameters to the constructor are 1) a Label, 2) <var>patch</var>, 3)
 a Model, 4) a Sender, and  5) an array of all the values that it can
 contain.
 
-<p><b>CheckBoxWidgets</b> are used for parameters that can be either on
+<p><b>CheckBoxWidget</b> are used for parameters that can be either on
 or off. Heres an example:
 
 <pre>
@@ -608,7 +608,7 @@ or off. Heres an example:
 Parameters to the Constructor are 1) a Label, 2) <var>patch</var>, 3)
 a Model, and 4) a Sender.
 
-<p><b>EnvelopeWidgets,</b> the final widget type, are vastly more complex
+<p><b>EnvelopeWidget,</b> the final widget type, are vastly more complex
 than the others.They represent several parameters on the synth, such
 as the attack, decay, sustain, and release of a VCA envelope.
 
@@ -653,7 +653,7 @@ can therefore be moved in only one direction. Here is an example:
 
 As you can see, the Envelope Widget takes a label, followed by
 <var>patch</var> and then an array of EnvelopeNodes. The parameters
-given to the Envelopenodes constructor have the following meaning:
+given to the EnvelopeNodes constructor have the following meaning:
 
 <pre>
     public EnvelopeNode(int minx, int maxx, ParamModel ofsx, 
@@ -697,7 +697,7 @@ height remains at whatever the previous node was at.
 </small>
 
 <p>I hope that made sense, if not, just take a look at the way
-EnvelopeWidgets are used by various single editors.
+EnvelopeWidget are used by various single editors.
 
 <p>
 <b>CheckBoxWidget</b>,
@@ -998,12 +998,12 @@ called.
 <ul>
   <li><a name="website" href="http://www.jsynthlib.org">JSynthLib Home Page</a><br>
     <font size="-1">Universal Synth Librarian &amp Patch Editor</font>
-  <li><a name="cvssite" href="http://sourceforge.net/cvs/?group_id=41208">JSynthLib Sourceforge.net site</a><br>
+  <li><a name="cvssite" href="http://sourceforge.net/cvs/?group_id=41208">JSynthLib SourceForge.net site</a><br>
     <font size="-1">(contains the CVS Repository)</font>
-  <li><a name="yahoogroup" href="http://groups.yahoo.com/group/jsynthlib-dev/">JSynthLib Yahoo group &amp mailinglist</a><br>
+  <li><a name="yahoogroup" href="http://groups.yahoo.com/group/jsynthlib-dev/">JSynthLib Yahoo group &amp mailing list</a><br>
     <font size="-1">(also home of the jsynthlib-dev mailinglist)</font>
   <li><a name="yahoofiles" href="http://groups.yahoo.com/group/jsynthlib-dev/files/">JSynthLib Yahoo group - file section</a><br>
-    <font size="-1">(contains the pseudo MacOSX classes)</font>
+    <font size="-1">(contains the pseudo Mac OS X classes)</font>
   <li><a name="wireprovider"
   href="http://www.geocities.com/ggehnen/">MIDI Provider for
   Windows</a>.  JDK older than 1.4.2 requires this.
@@ -1017,12 +1017,15 @@ For overviews, tutorials, examples, guides, and tool documentation, please see:<
 <ul>
   <li><a name="tutorial" href="http://java.sun.com/docs/books/tutorial/uiswing/">SUN Java tutorials</a><br>
     <font size="-1">The online tutorials</font>
-  <li><a name="javaapi" href="http://java.sun.com/j2se/1.4.2/docs/api/">Java<sup><font size="-2">TM</font></sup> 2SDK Version 1.4.2 API specification</a><br>
-    <font size="-1">The online J2SDK Version 1.4.2 API specification</font>
-  <li><a name="javadocdownload" href="http://java.sun.com/j2se/1.4.2/download.html#docs">Java<sup><font size="-2">TM</font></sup> 2SDK Version 1.4.2, Standard Edition Documentation</a><br>
-    <font size="-1">Downloadable J2SDK Version 1.4.2 documentation</font>
+  <li><a name="javaapi"
+  href="http://java.sun.com/j2se/1.4.2/docs/api/">Java<sup><font
+  size="-2">TM</font></sup> 2 SDK Version 1.4.2 API specification</a><br>
+    <font size="-1">The online 2 SDK Version 1.4.2 API specification</font>
+  <li><a name="javadocdownload"
+  href="http://java.sun.com/j2se/1.4.2/download.html#docs">Java<sup><font size="-2">TM</font></sup> 2 SDK Version 1.4.2, Standard Edition Documentation</a><br>
+    <font size="-1">Downloadable Java 2 SDK Version 1.4.2 documentation</font>
   <li><a name="examples"href="http://java.sun.com/docs/books/javaprog/">The Java Programming Language</a><br>
-    <font size="-1">Sample Code by Ken Arnold and James Gosling (creators of Java Language).</font>
+    <font size="-1">written by Ken Arnold and James Gosling (creators of Java Language).</font>
   <li><a name="codeconv" href="http://java.sun.com/docs/codeconv/index.html">Code Conventions for the Java Programming Language</a><br>
     <font size="-1">Standards and styles for coding Java programs. </font>
   <li><a href="http://java.sun.com/products/jdk/javadoc/writingdoccomments.html">How to Write Doc Comments for Javadoc</a><br>
@@ -1040,7 +1043,8 @@ is a good resource of Java Sound.
     <font size="-1">The MMA is the original source for information on MIDI (Musical Instrument Digital Interface) technology.</font>
 </ul><p>
 
-The <strong>Complete MIDI 1.0 Detailed Specification</strong> isn't downloadable from the MMA Website.<br>
+The <strong>Complete MIDI 1.0 Detailed Specification</strong> isn't
+downloadable from the MMA Web site.<br>
 But you'll find a MIDI specification for example at
 <ul>
   <li><a href="http://www.borg.com/~jglatt/">www.borg.com</a>.

@@ -212,13 +212,13 @@ reflect your setup.  Here is an example;
 Each line in this file represents one device that you wish to have
 accessible in JSynthLib.<br>
 
-With the LinuxCharDev MidiProvider no concurrent access of the used
+With the LinuxCharDev MIDI Provider no concurrent access of the used
 devices is provided. The OSS/"ALSA rawmidi" interfaces are used.<p>
 
-You may also use the Tritonus ALSA MidiProvider instead of
+You may also use the Tritonus ALSA MIDI Provider instead of
 <kbd>LinuxCharDev</kbd>. Please see the <a
 href="http://www.tritonus.org/">Tritonus: Open Source Java Sound</a>
-website for further information.
+web site for further information.
 
 <h4>Mac OS X</h4>
 
@@ -261,7 +261,7 @@ instead of <kbd>CAProvider</kbd>.
     JSynthLib-XXX.jar</kbd> from the shell prompt.
 
 <li>[Mac OS X] Run JSynthLib.jar by typing <kbd>java
-     -Dapple.laf.useScreenMenuBar=ture -jar JSynthLib-XXX.jar</kbd>
+     -Dapple.laf.useScreenMenuBar=true -jar JSynthLib-XXX.jar</kbd>
     from the Terminal. You can also double click the jar file, but then
     each window will have it's own menu bar.
     Application bundle would remove this step.
@@ -353,10 +353,10 @@ footer which tells the number of patches in the library.
 <p>A <b><i><a name="scene">Scene window</a></i></b> looks very much like the library window.
 It is intended to gather all patches for different synths, which are
 needed in a particular "scene". A "scene" can be a song or a set of
-songs - that depends on you. The advantage of a scene is, that
-it contains in addition to the synth's and patches the locations for the
-patches in the synt's memories. You can transfer the patches all together
-with the "Library-&gt;Transfer Scene" function to the synths.
+songs - that depends on you. The advantage of a scene is that
+it contains the locations for the patches in the synth's memories in
+addition to the patches themselves. You can transfer the patches all
+together with the "Library-&gt;Transfer Scene" function to the synths.
 Very practical for the recall of a specific sound setup.
 The columns are:
  
@@ -426,9 +426,9 @@ Resonance. There are four basic types of controls.
      take a few seconds to process all the incoming data before being
      available to play a note , making real-time 'tweaking' difficult.
 
-<p>2. a <b>ComboBox Control</b> consists of a label and a textfield. The
-     textfield tells you what the current value of the control is set
-     for. Clicking on this textfield will produce a menu from which
+<p>2. a <b>ComboBox Control</b> consists of a label and a text-field. The
+     text-field tells you what the current value of the control is set
+     for. Clicking on this text-field will produce a menu from which
      you can choose one of the other values for the control.
 
 <p>3. a <b>CheckBox Control</b> consists of a label and a checkbox. Clicking
@@ -449,18 +449,19 @@ Resonance. There are four basic types of controls.
 
 <p>In addition to these controls, there are a number of interface
 elements which do not interact with the synthesizer or patch data and
-only serve to make the presentation of the data more clear. One of
-these are the <b>frames</b> which surround groups of related controls. For
+only serve to make the presentation of the data more clear.
+
+<p>1. <b>frames</b> which surround groups of related controls. For
 example a frame labeled "Filter" might surround a group of sliders
 labeled "Cutoff", "Resonance", and "Envelope Bias" to show you that
 these three parameters are a part of the synth's filter section.
 
-<p>Secon, are <b>tables</b> which are simply grid-like structures used to
+<p>2. <b>tables</b> which are simply grid-like structures used to
 hold parameters. As of version 0.12, only the Oberheim Matrix Editor
 makes use of tables. Note that you can click and drag on the table's
 headings to change the order in which parameters are displayed.
 
-<p>Third are <b>tabs</b>. By clicking on a tab, you are taken to a
+<p>3. <b>tabs</b>. By clicking on a tab, you are taken to a
 different set of parameters to edit. Sometimes the tabs surround
 entire editor screens, but usually they surround only a group of
 parameters. For example, In the Yamaha TX81z editor, there are four
@@ -508,7 +509,7 @@ and well has faders) or by using the "Next Fader Bank" Option on the
 toolbar. Note that the labels for the controls in the currently
 selected fader bank are darkened slightly. To determine which fader
 bank and fader number will move a particular control, simply let the
-mouse cursor hover over the label for that control and a tooltip will
+mouse cursor hover over the label for that control and a tool-tip will
 pop up with this information.
 
 <p>When you close an editor window, a dialog box will pop up asking
@@ -770,9 +771,9 @@ Dialog Box, which is accessible from Window-&gt;Preferences-&gt;Play Note. The p
 function is also available from the toolbar and from the right-click
 menu.
 
-<p><b>Reassign-- </b> Each patch is corresponding to a perticular
+<p><b>Reassign-- </b> Each patch is corresponding to a particular
 synth Driver.  A patch can be used by more than one kind of synths.
-This commond select a synth driver.
+This command select a synth driver.
 
 <p><b>Extract--</b> You run the extract command on patches which
 represent entire banks of patches rather than singles. Make sure the
@@ -820,8 +821,7 @@ uninstall a synthesizer driver, for example if you no longer own a
 particular synth. The third button closes the Synth dialog.</p>
 
 <p>As of version 0.15, there is an additional button called
-"Auto-Scan".  Currently this feature does not work with the
-JavaMIDI-drivers.  When you chose this option, JSynthLib will attempt
+"Auto-Scan".  When you chose this option, JSynthLib will attempt
 to scan your MIDI ports for supported Synthesizers and correctly add
 and configure them for you. It is not able to detect certain synths
 (such as Yamaha and Roland) and you should double check the settings it
@@ -1073,9 +1073,9 @@ If you like JSynthLib and want to contribute, you can do this in many ways:
 The common place to address your notes should be the Tracker on <a
 href="http://sourceforge.net/projects/jsynthlib/">JSynthLib
 SourceForge site</a> or
-<a href="./programming.html#yahoogroup">jsynthlib-dev mailinglist</a>.
+<a href="./programming.html#yahoogroup">jsynthlib-dev mailing list</a>.
 
-<p>If you want write bugfixes, additional drivers/editor or core elements please take
+<p>If you want write bug fixes, additional drivers/editor or core elements please take
 a look at the <a href="./programming.html">JSynthLib Programmer's Guide</a>.
 
 <h2><a name="acknowledgment" href="#toc">We wish to say thank you to....</a></h2>
@@ -1083,7 +1083,7 @@ a look at the <a href="./programming.html">JSynthLib Programmer's Guide</a>.
 because we would forget one or two for sure. So we left them out complete.
 <p>
 But we would like to say "thank you" to the people outside of the JSynthLib development team
-who gave us some timesaving code examples and ideas:
+who gave us some time saving code examples and ideas:
 <ul>
 <li>Joakim Eriksson for his DKnob widget (see at 
 <a href="http://www.dreamfabric.com/"> www.dreamfabric.com </a>).

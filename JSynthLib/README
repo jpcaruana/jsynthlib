@@ -1,4 +1,4 @@
-$Id: README,v 1.1 2004-06-26 17:12:28 hayashi Exp $
+$Id: README,v 1.2 2004-06-28 03:04:04 hayashi Exp $
 
 JSynthLib --- A Universal MIDI Synthsizer Librarian/Editor
 
@@ -66,13 +66,13 @@ Install:
 
 	Each line in this file represents one device that you wish to
 	have accessible in JSynthLib.
-	With the LinuxCharDev MidiProvider no concurrent access of the
+	With the LinuxCharDev MIDI Provider no concurrent access of the
 	used devices is provided. The OSS/"ALSA rawmidi" interfaces
 	are used.
 
-	You may also use the Tritonus ALSA MidiProvider instead of
+	You may also use the Tritonus ALSA MIDI Provider instead of
 	LinuxCharDev. Please see the Tritonus: Open Source Java Sound
-	website for further information.
+	web site for further information.
 
     Mac OS X
 
@@ -106,7 +106,7 @@ Install:
 	  from the shell prompt.
 
 	  [Mac OS X] Run JSynthLib.jar by typing
-		java -Dapple.laf.useScreenMenuBar=ture -jar JSynthLib-XXX.jar
+		java -Dapple.laf.useScreenMenuBar=true -jar JSynthLib-XXX.jar
 	  from the Terminal. You can also double click the jar file,
 	  but then each window will have it's own menu
 	  bar. Application bundle would remove this step.
