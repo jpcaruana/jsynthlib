@@ -16,8 +16,6 @@ import java.awt.dnd.*;
 import java.awt.datatransfer.*;
 
 public class BankEditorFrame extends JInternalFrame implements PatchBasket {
-//     protected static final int xOffset = 30;
-//     protected static final int yOffset = 30;
     /** This is the patch we are working on. */
     protected Patch bankData;
     /** bank driver. */
