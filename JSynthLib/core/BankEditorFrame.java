@@ -1,14 +1,12 @@
 /* $Id$ */
 package core;
-//import javax.swing.JTable;
-//import javax.swing.table.AbstractTableModel;
-//import javax.swing.table.TableColumn;
 
-import javax.swing.JScrollPane;
-//import javax.swing.JFrame;
-//import javax.swing.SwingUtilities;
-//import javax.swing.JOptionPane;
 import javax.swing.JInternalFrame;
+//import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
+//import javax.swing.SwingUtilities;
 import javax.swing.event.*;
 import java.util.*;
 import java.awt.event.*;
@@ -31,6 +29,10 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
     // These refer a same JTable object.  For what table2 is?
     protected DNDPatchTable table;
     protected DNDPatchTable table2;
+
+    protected Dimension preferredScrollableViewportSize = new Dimension(500, 70);
+    protected int autoResizeMode = JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS;
+    protected int preferredColumnWidth = 75;
 
     /**
      * Creates a new <code>BankEditorFrame</code> instance.
@@ -57,9 +59,10 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
         myModel = new PatchGridModel(bankData, bankDriver);
         table = new DNDPatchTable(myModel);
         table2 = table;
-        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
         table.setRowSelectionAllowed(false);
         table.setColumnSelectionAllowed(false);
+	table.setAutoResizeMode(autoResizeMode);
         table.addMouseListener(new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
 		    table2.setRowSelectionInterval
@@ -122,7 +125,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 
 		    if (table.getRowCount() > 0) {
 			PatchEdit.saveAction.setEnabled(true);
-			PatchEdit.menuSaveAs.setEnabled(true);
+			PatchEdit.saveAsAction.setEnabled(true);
 			PatchEdit.searchAction.setEnabled(true);
 		    }
 		    if (table.getRowCount() > 1) {
@@ -178,7 +181,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 		    PatchEdit.storeAction.setEnabled(false);
 		    PatchEdit.editAction.setEnabled(false);
 		    PatchEdit.saveAction.setEnabled(false);
-		    PatchEdit.menuSaveAs.setEnabled(false);
+		    PatchEdit.saveAsAction.setEnabled(false);
 		    PatchEdit.sortAction.setEnabled(false);
 		    PatchEdit.searchAction.setEnabled(false);
 		    PatchEdit.dupAction.setEnabled(false);
@@ -199,6 +202,11 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket {
 
         //Add the scroll pane to this window.
         getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+	for (int col = 0; col < table.getColumnCount(); col++) {
+	    TableColumn column = table.getColumnModel().getColumn(col);
+	    column.setPreferredWidth(preferredColumnWidth);
+	}
 
         //...Then set the window size or call pack...
         setSize(600, 300);
