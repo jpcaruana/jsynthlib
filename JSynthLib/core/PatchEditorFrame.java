@@ -34,7 +34,7 @@ public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
     /** Scroll Pane for the editor frame. */
     protected JPanel scrollPane;
     /** Note that calling addWidget() method may change the value of this. */
-    protected GridBagConstraints gbc;
+    protected GridBagConstraints gbc = new GridBagConstraints();
     /** A list of widget added by addWidget method. */
     protected ArrayList widgetList = new ArrayList();
 
@@ -80,7 +80,7 @@ public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
      *            patch library or a bank patch.
      */
     protected PatchEditorFrame(String name, ISinglePatch patch) {
-    	this(name, patch, null);
+    	this(name, patch, new JPanel(new GridBagLayout()));
     }
     protected PatchEditorFrame(String name, ISinglePatch patch, JPanel panel) {
         super(PatchEdit.getDesktop(), name);
@@ -90,11 +90,6 @@ public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
         // make a backup copy
         originalPatch = (IPatch) p.clone();
 
-        gbc = new GridBagConstraints();
-        if (panel == null) {
-            panel = new JPanel();
-            panel.setLayout(new GridBagLayout());
-        }
         scrollPane = panel;
         scroller = new JScrollPane(scrollPane);
         getContentPane().add(scroller);
