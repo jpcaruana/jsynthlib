@@ -35,7 +35,7 @@ import javax.swing.JButton;
  */
 // deviceclass.newInstance() in core/DeviceListWriter fails without
 // `public'.  Why???!!!
-public final class PadInfo {
+public final class PadInfo implements Cloneable {
     /**
      * Name of Pad. "Kick", "Ride", etc.
      */
@@ -99,7 +99,7 @@ public final class PadInfo {
 		? (this.name + (this.rim ? " [Rim]" : " [Head]"))
 		: this.name);
     }
-
+    */
     // clone() must be defined since super.clone() is a protected method.
     public Object clone () {
 	try {
@@ -108,7 +108,7 @@ public final class PadInfo {
 	    throw new InternalError(e.toString());
 	}
     }
-
+    /*
     // only for test
     public static void main(String[] args) {
 	PadInfo p0 = new PadInfo("P0", 0, true, true, true, true);
