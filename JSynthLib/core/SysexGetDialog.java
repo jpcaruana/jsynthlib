@@ -300,9 +300,10 @@ public class SysexGetDialog extends JDialog {
       }
       bankComboBox.setEnabled(bankComboBox.getItemCount() > 1);
 
-      if (driver.patchNumbers.length > 1) {
-	for (int i = 0 ; i < driver.patchNumbers.length ; i++) {
-	  patchNumComboBox.addItem(driver.patchNumbers[i]);
+      String patchNumbers[] = driver.getPatchNumbers();
+      if (patchNumbers.length > 1) {
+	for (int i = 0 ; i < patchNumbers.length ; i++) {
+	  patchNumComboBox.addItem(patchNumbers[i]);
 	}
       }
       // N.B. Do not enable patch selection for banks

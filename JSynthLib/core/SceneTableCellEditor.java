@@ -83,15 +83,16 @@ public class SceneTableCellEditor implements TableCellEditor, TableModelListener
             box=new JComboBox();
             
             driver=((SceneListModel)table.getModel()).getSceneAt(row).getPatch().getDriver();
-            if (driver.patchNumbers.length > 1) {
+	    String patchNumbers[] = driver.getPatchNumbers();
+            if (patchNumbers.length > 1) {
                 if (col==3) {
                     for (int i = 0 ; i < driver.bankNumbers.length ; i++) {
                         box.addItem(driver.bankNumbers[i]);
                     }
                 }
                 if (col==4)
-                    for (int i = 0 ; i < driver.patchNumbers.length ; i++) {
-                        box.addItem(driver.patchNumbers[i]);
+                    for (int i = 0 ; i < patchNumbers.length ; i++) {
+                        box.addItem(patchNumbers[i]);
                     }
             }
             
@@ -109,4 +110,3 @@ public class SceneTableCellEditor implements TableCellEditor, TableModelListener
     }
     
 }
-

@@ -242,6 +242,6 @@ public class DevDrvPatchSelector extends JDialog {
      */
     protected String[] getPatchNumbers(Driver driver)
     {
-        return driver.patchNumbers;
+        return driver.getPatchNumbers();
     }
 }

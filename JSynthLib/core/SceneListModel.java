@@ -44,7 +44,7 @@ class SceneListModel extends javax.swing.table.AbstractTableModel implements Abs
          if (col==1) return myScene.getPatch().getDriver().getPatchType();
          if (col==2) return myScene.getPatch().getDriver().getPatchName(myScene.getPatch());
          if (col==3) return myScene.getPatch().getDriver().bankNumbers[myScene.getBankNumber()];
-         if (col==4) return myScene.getPatch().getDriver().patchNumbers[myScene.getPatchNumber()];
+         if (col==4) return myScene.getPatch().getDriver().getPatchNumbers()[myScene.getPatchNumber()];
          return myScene.getComment();
 	 } catch (Exception e) {
 	     ErrorMsg.reportStatus(e);

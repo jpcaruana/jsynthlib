@@ -781,6 +781,14 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
     }
 
     /*
+     * Returns String[] returns full list of patchNumbers
+     */
+    public String[] getPatchNumbers()
+    {
+        return patchNumbers;
+    }
+
+    /*
      * Returns String[] list of patch numbers for writable patches.
      * This can be overridden if some patch locations are read only.
      * e.g. the Waldorf Pulse has 100 patches, but only 0 to 39 are writable.
