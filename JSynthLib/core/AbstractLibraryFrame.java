@@ -22,4 +22,6 @@ public interface AbstractLibraryFrame extends PatchBasket {
      */    
     AbstractPatchListModel getAbstractPatchListModel();
    
+    public void ExtractSelectedPatch();
+   
 }

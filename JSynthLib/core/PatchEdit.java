@@ -943,7 +943,7 @@ public class PatchEdit extends JFrame
         {
             try
             {
-                ((LibraryFrame)desktop.getSelectedFrame ()).ExtractSelectedPatch ();
+                ((AbstractLibraryFrame)desktop.getSelectedFrame ()).ExtractSelectedPatch ();
             } catch (Exception ex)
             {ErrorMsg.reportError ("Error","Can not Extract (Maybe its not a bank?)",ex);};
         }
