@@ -18,7 +18,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.EventObject;
 
-import javax.sound.midi.SysexMessage;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -352,12 +351,8 @@ class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
             ErrorMsg.reportError("Error", "No Patch Selected.");
             return;
         }
-        SysexMessage[] msgs = getSelectedPatch().getMessages();
-        if (msgs == null)
-        		return;
         FileOutputStream fileOut = new FileOutputStream(file);
-        for (int i = 0; i < msgs.length; i++)
-        		fileOut.write(msgs[i].getMessage(),0,msgs[i].getLength());
+        fileOut.write(getSelectedPatch().getByteArray());
         fileOut.close();
     }
 

@@ -2,7 +2,6 @@ package core;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
@@ -141,13 +140,6 @@ public class Patch implements IPatch {
 	return false;
     }
 
-    /**
-     * Set <code>driver</code> field by
-     * guessing from <code>sysex</code> by using
-     * <code>Driver.suportsPatch</code> method.
-     * @return <code>true</code> if a driver is found,
-     * <code>false</code> otherwise.
-     */
     public boolean chooseDriver() {
         //Integer intg = new Integer(0);
         //StringBuffer driverString = new StringBuffer();
@@ -174,73 +166,52 @@ public class Patch implements IPatch {
 	return false;
     }
 
-    /** Getter for property date. */
     public String getDate() {
 	return date.toString();
     }
 
-    /** Setter for property date. */
     public void setDate(String date) {
 	this.date = new StringBuffer(date);
     }
 
-    /** Getter for property author. */
     public String getAuthor() {
 	return author.toString();
     }
 
-    /** Setter for property author. */
     public void setAuthor(String author) {
 	this.author = new StringBuffer(author);
     }
 
-    /** Getter for property comment. */
     public String getComment() {
 	return comment.toString();
     }
 
-    /** Setter for property comment. */
     public void setComment(String comment) {
 	this.comment = new StringBuffer(comment);
     }
 
-    /** Return Device for this patch. */
     public Device getDevice() {
 	return driver.getDevice();
     }
 
-    /** Return Driver for this patch. */
     public Driver getDriver() {
 	return driver;
     }
 
-    /** Set driver. */
     public void setDriver(Driver driver) {
   	this.driver = (driver == null) ? AppConfig.getNullDriver() : driver;
     }
 
+    public byte[] getByteArray() {
+    		return sysex;
+    }
+    
 	public SysexMessage[] getMessages() {
-		if (sysex == null)
+		try {
+			return MidiUtil.byteArrayToSysexMessages(sysex);
+		} catch (InvalidMidiDataException ex) {
 			return null;
-		ArrayList l = new ArrayList();
-		int start, end = -1;
-		while (end < sysex.length) {
-			start = end + 1;
-			end = start + 1;
-			while ((sysex[end] & 0xF0) == 0 && end < sysex.length)
-				end++;
-			byte[] b = new byte[end - start];
-			System.arraycopy(sysex, start, b, 0, end - start);
-			SysexMessage msg = new SysexMessage();
-			try {
-				msg.setMessage(b,b.length);
-			} catch (InvalidMidiDataException ex) {
-				// Should I do something else here?
-				ErrorMsg.reportError("Invalid Midi Message","This patch contains invalid MIDI sysex data.",ex);
-			}
-			l.add(msg);
 		}
-		return (SysexMessage[])l.toArray(new SysexMessage[0]);
 	}
     // Transferable interface methods
 
@@ -275,15 +246,6 @@ public class Patch implements IPatch {
     }
     // end of Clone interface method
 
-    /**
-     * Dissect a <code>Patch</code> which has a <code>Converter</code>
-     * driver into an array of <code>Patch</code>.  Each patch in the
-     * original patch must be for a same Device, but may be for some
-     * different Drivers.
-     *
-     * @return a <code>Patch[]</code> value
-     * @see Converter
-     */
     // called by ImportAllDialog, ImportMidiFile, SysexGetDialog,
     // LibraryFrame, and SceneFrame.
     public IPatch[] dissect() {
@@ -357,9 +319,9 @@ public class Patch implements IPatch {
     		getDriver().setPatchName(this, s);
     }
 	public void useSysexFromPatch(IPatch ip) {
-		Patch p = (Patch)ip;
-		if (p.sysex.length != sysex.length)
+		byte[] s = ip.getByteArray();
+		if (s.length != sysex.length)
 			throw new IllegalArgumentException();
-		sysex = p.sysex;
+		sysex = s;
 	}
 }

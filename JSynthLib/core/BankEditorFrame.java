@@ -13,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.sound.midi.SysexMessage;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -197,12 +196,8 @@ public class BankEditorFrame extends JSLFrame implements PatchBasket {
     	 * static final writePatch(OutputStream, IPatch) in Patch.
     	 */
         if (!checkSelected()) return;
-        SysexMessage[] msgs = getSelectedPatch().getMessages();
-        if (msgs == null)
-        		return; // Exception?
         FileOutputStream fileOut = new FileOutputStream(file);
-        for (int i = 0; i < msgs.length; i++)
-        		fileOut.write(msgs[i].getMessage(),0,msgs[i].getLength());
+        fileOut.write(getSelectedPatch().getByteArray());
         fileOut.close();
     }
 

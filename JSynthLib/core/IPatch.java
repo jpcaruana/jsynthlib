@@ -33,6 +33,15 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
 	public Driver getDriver();
 	/** Set driver. */
 	public void setDriver(Driver driver);
+    /**
+     * Dissect an <code>IPatch</code> which has a <code>Converter</code>
+     * driver into an array of <code>IPatch</code>.  Each patch in the
+     * original patch must be for a same Device, but may be for some
+     * different Drivers.
+     *
+     * @return a <code>Patch[]</code> value
+     * @see Converter
+     */
 	public IPatch[] dissect();
 	/**
 	 * Return a hexadecimal string for Driver.supportsPatch at most 16
@@ -40,10 +49,22 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
 	 * @see Driver#supportsPatch
 	 */
 	public StringBuffer getPatchHeader();
+	/**
+	 * Returns the patch's name. This is not necessarily the name
+	 * stored on the synth.
+	 */
 	public String getName();
+	/** Set the patches name. */
 	public void setName(String name);
+	/** Get an array of sysex messages representing this patch. */
 	public SysexMessage[] getMessages();
+	/** Get a byte array representing this patch. */
+	public byte[] getByteArray();
+	/** Change this patch to contain the same data as p.
+	 * Used for backing up edited patches.
+	 * @param p Patch whose data we should use.
+	 */
+	public void useSysexFromPatch(IPatch p);
 	
 	public Object clone();
-	public void useSysexFromPatch(IPatch p);
 }

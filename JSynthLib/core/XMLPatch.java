@@ -3,6 +3,7 @@ package core;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -136,6 +137,17 @@ public class XMLPatch implements IPatch {
 	public SysexMessage[] getMessages() {
 		return messages;
 	}
+	
+	public byte[] getByteArray() {
+		SysexMessage[] msgs = getMessages();
+		if (msgs == null)
+			return null;
+		ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
+		for (int i = 0; i < msgs.length; i++)
+			fileOut.write(msgs[i].getMessage(),0,msgs[i].getLength());
+		return fileOut.toByteArray();
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
 	 */

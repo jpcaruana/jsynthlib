@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import javax.sound.midi.SysexMessage;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -348,12 +347,8 @@ class LibraryFrame extends JSLFrame implements AbstractLibraryFrame {
 	    ErrorMsg.reportError("Error", "No Patch Selected.");
 	    return;
 	}
-        SysexMessage[] msgs = getSelectedPatch().getMessages();
-        if (msgs == null)
-        		return;
         FileOutputStream fileOut = new FileOutputStream(file);
-        for (int i = 0; i < msgs.length; i++)
-        		fileOut.write(msgs[i].getMessage(),0,msgs[i].getLength());
+        fileOut.write(getSelectedPatch().getByteArray());
         fileOut.close();
     }
 
