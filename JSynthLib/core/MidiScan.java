@@ -150,15 +150,14 @@ public class MidiScan extends  Thread {
 						// Check, wether the driver is already in the list
 						boolean dontadd = false;
 						for (int checkloop = 0; checkloop < PatchEdit.appConfig.deviceCount(); checkloop++) {
-						    Device checkDevice = (Device) PatchEdit.appConfig.getDevice(checkloop);
-						    if (checkDevice.toString().equalsIgnoreCase(PatchEdit.devConfig.classForIDString(se).toString())) {
-							//if ((se.getManufacturerName().equals(checkDevice.getManufacturerName()))&&(se.getModelName().equals(checkDevice.getModelName()))) {
+						    String checkDevice = ((Device) PatchEdit.appConfig.getDevice(checkloop)).getClass().getName();
+						    if (checkDevice.equalsIgnoreCase(PatchEdit.devConfig.classNameForIDString(se))) {
 							dontadd = true; // Oh, its already there....
 						    }
 						}
 						if (!dontadd) { // add it only, if it is not in the list
-						    Device useDevice = PatchEdit.devConfig.classForIDString(se);
-						    PatchEdit.appConfig.addDevice(useDevice);
+						    String cls = PatchEdit.devConfig.classNameForIDString(se);
+						    Device useDevice = PatchEdit.appConfig.addDevice(cls);
 
 						    useDevice.setPort(j);
 						    useDevice.setInPort(i);

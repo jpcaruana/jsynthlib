@@ -81,16 +81,6 @@ public class Device /*implements Serializable, Storable*/ {
      * @deprecated Use Device(String, String, String, String, String).
      */
     public Device () {
-	/*
-        inquiryID = "NONE";
-	infoText = "There is no information about this Device.";
-	// DeviceListWriter calls this constructor
-	if (PatchEdit.appConfig != null) {
-	    // set default MIDI port number
-	    setInPort(PatchEdit.appConfig.getInitPortIn());
-	    setPort(PatchEdit.appConfig.getInitPortOut());
-	}
-	*/
     }
 
     /**
@@ -115,16 +105,21 @@ public class Device /*implements Serializable, Storable*/ {
 	    ? "There is no information about this Device." : infoText;
 	this.authors = authors;
 	this.synthName = modelName;
+    }
 
-	// DeviceListWriter calls this constructor
-	// DeviceListWriter calls only no arg constructor. Hiroo
-	/*
-	if (PatchEdit.appConfig != null) {
-	    // set default MIDI port number
-	    setInPort(PatchEdit.appConfig.getInitPortIn());
-	    setPort(PatchEdit.appConfig.getInitPortOut());
-	}
-	*/
+    public void setPreferences(Preferences p) {
+	prefs = p;
+	// set default MIDI in/out port
+	setInPort(prefs.getInt("inPort", PatchEdit.appConfig.getInitPortIn()));
+	setPort(prefs.getInt("port", PatchEdit.appConfig.getInitPortOut()));
+	// do we still need the following fields?
+	synthName = prefs.get("synthName", synthName);
+	channel = prefs.getInt("channel", channel);
+	deviceID = prefs.getInt("deviceID", deviceID);
+    }
+
+    public Preferences getPreferences() {
+	return prefs;
     }
 
     /**
@@ -218,7 +213,7 @@ public class Device /*implements Serializable, Storable*/ {
     public void setChannel (int channel) { // public for storable
         this.channel = channel;
         if (prefs != null)
-        		prefs.putInt("channel", channel);
+	    prefs.putInt("channel", channel);
 	// Remove the following lines when 'driver.channel' becomes 'private'.
 	/*
 	Iterator iter = driverList.iterator();
@@ -251,7 +246,7 @@ public class Device /*implements Serializable, Storable*/ {
     public void setDeviceID(int deviceID) { // public for storable
         this.deviceID = deviceID;
         if (prefs != null)
-        		prefs.putInt("devicID", deviceID);
+	    prefs.putInt("devicID", deviceID);
     }
 
     /**
@@ -414,21 +409,6 @@ public class Device /*implements Serializable, Storable*/ {
 	}
     }
     */
-
-    public void setPreferences(Preferences p) {
-	prefs = p;
-	// set default MIDI in/out port
-	setInPort(prefs.getInt("inPort", PatchEdit.appConfig.getInitPortIn()));
-	setPort(prefs.getInt("port", PatchEdit.appConfig.getInitPortOut()));
-	// do we still need the following fields?
-	synthName = prefs.get("synthName", synthName);
-	channel = prefs.getInt("channel", channel);
-	deviceID = prefs.getInt("deviceID", deviceID);
-    }
-
-    public Preferences getPreferences() {
-	return prefs;
-    }
 
     /**
      * Getter for DeviceName.

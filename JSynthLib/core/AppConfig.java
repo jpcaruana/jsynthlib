@@ -1,8 +1,8 @@
 /**
- * AppConfig.java - class to hold collect application configuration variables
- * in one place for easy saving and loading, and separation of data from
- * display code.  Implements the Storable interface, so it can be easily
- * persisted to a Properties file.
+ * AppConfig.java - class to hold collect application configuration
+ * variables in one place for easy saving and loading, and separation
+ * of data from display code.  Persistent values are keeped by using
+ * <code>java.util.prefs.Preferences</code>.
  * @author Zellyn Hunter (zellyn@zellyn.com)
  * @version $Id$
  */
@@ -10,9 +10,9 @@
 package core;
 
 //import java.io.FileNotFoundException;
-import java.io.IOException;
+//import java.io.IOException;
 //import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+//import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.prefs.BackingStoreException;
@@ -24,13 +24,12 @@ import javax.swing.UIManager;
 import org.jsynthlib.jsynthlib.Dummy;
 
 public class AppConfig {
-	// static?
-    private ArrayList deviceList = new ArrayList();
+    private static ArrayList deviceList = new ArrayList();
     private static MidiWrapper midiWrapper = null;
     private static boolean initMasterController = false;
-    private Transmitter masterInTrns;
+    private static Transmitter masterInTrns;
     private static boolean initFaderIn = false;
-    private Transmitter faderInTrns;
+    private static Transmitter faderInTrns;
 
     private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
     private static Preferences prefsDev = prefs.node("devices");
@@ -40,12 +39,28 @@ public class AppConfig {
 	midiWrappers = MidiWrapper.getSuitableWrappers();
     }
     /**
-     * This one loads the settings from the config file.
+     * Initialize.
+     */
+    AppConfig () {
+	try {
+	    prefs.sync();
+	} catch (BackingStoreException e) {
+	    ErrorMsg.reportStatus(e);
+	}
+        setMidiPlatform(getMidiPlatform());
+        setLookAndFeel(getLookAndFeel());
+
+	masterInTrns = MidiUtil.getTransmitter(getFaderPort());
+	faderInTrns = MidiUtil.getTransmitter(getFaderPort());
+    }
+
+    /**
+     * Restore deviceList.
      */
     boolean loadPrefs() {
 	try {
 	    // Load the appconfig
-	    load();
+	    loadDevices();
 	    return true;
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus("loadPrefs: " + e);
@@ -53,27 +68,29 @@ public class AppConfig {
 	    return false;
 	} finally {
 	    if (deviceCount() == 0) {
-		addDevice(new synthdrivers.Generic.GenericDevice());
+		addDevice("synthdrivers.Generic.GenericDevice");
 	    }
 	}
     }
 
-    /**
-     * Load the properties from the file.
-     * @throws IOException
-     */
-    private void load() throws IOException, BackingStoreException, NoSuchMethodException,
-		IllegalAccessException,	InstantiationException, InvocationTargetException {
-        prefs.sync();
-        // Call setters that act on the value.
-        setMidiPlatform(getMidiPlatform());
-        setLookAndFeel(getLookAndFeel());
-        loadDevices();
-        try {
-	    masterInTrns = MidiUtil.getTransmitter(getFaderPort());
-            faderInTrns = MidiUtil.getTransmitter(getFaderPort());
-        } catch (Exception e) {
+    private void loadDevices() {
+	String[] devs;
+	try {
+	    devs = prefsDev.childrenNames();
+	} catch (BackingStoreException e) {
 	    ErrorMsg.reportStatus(e);
+	    return;
+	}
+
+	for (int i = 0; i < devs.length; i++) {
+	    // get class name from preferences node name
+	    //ErrorMsg.reportStatus("loadDevices: " + devs[i]);
+	    String s = devs[i].substring(0, devs[i].indexOf('#'));
+	    //ErrorMsg.reportStatus("loadDevices: -> " + s);
+	    String className = PatchEdit.devConfig.classNameForShortName(s);
+	    //ErrorMsg.reportStatus("loadDevices: -> " + s);
+
+	    addDevice(className, prefsDev.node(devs[i]));
 	}
     }
 
@@ -91,11 +108,9 @@ public class AppConfig {
     }
 
     /**
-     * Save the properties to the file
-     * @throws IOException
      * @throws FileNotFoundException
      */
-    private void store() throws IOException, BackingStoreException {
+    private void store() throws BackingStoreException {
     	// This shouldn't be necessary unless the jvm crashes.
     	// Save prefs
         prefs.flush();
@@ -106,60 +121,60 @@ public class AppConfig {
     /** Getter for libPath */
     public String getLibPath() { return prefs.get("libPath", "."); }
     /** Setter for libPath */
-    public void setLibPath(String libPath) {prefs.put("libPath",libPath);}
+    public void setLibPath(String libPath) { prefs.put("libPath", libPath); }
 
     /** Getter for sysexPath */
-    public String getSysexPath() { return prefs.get("sysexPath","."); }
+    public String getSysexPath() { return prefs.get("sysexPath", "."); }
     /** Setter for sysexPath */
     public void setSysexPath(String sysexPath) {
         prefs.put("sysexPath", sysexPath);
     }
 
     /** Getter for note */
-    public int getNote() { return  prefs.getInt("note",0); }
+    public int getNote() { return  prefs.getInt("note", 0); }
     /** Setter for note */
     public void setNote(int note) { prefs.putInt("note", note); }
 
     /** Getter for velocity */
-    public int getVelocity() { return  prefs.getInt("velocity",0); }
+    public int getVelocity() { return  prefs.getInt("velocity", 0); }
     /** Setter for velocity */
     public void setVelocity(int velocity) { prefs.putInt("velocity", velocity); }
 
     /** Getter for delay */
-    public int getDelay() { return  prefs.getInt("delay",0); }
+    public int getDelay() { return  prefs.getInt("delay", 0); }
     /** Setter for delay */
     public void setDelay(int delay) { prefs.putInt("delay", delay); }
 
     /**Getter for RepositoryURL */
     public String getRepositoryURL() {
-        return prefs.get("repositoryURL","http://www.jsynthlib.org");
+        return prefs.get("repositoryURL", "http://www.jsynthlib.org");
     }
     /**Setter for RepositoryURL */
     public void setRepositoryURL(String url) {
-        prefs.put("repositoryURL",url);
+        prefs.put("repositoryURL", url);
     }
 
     /**Getter for RepositoryUser */
     public String getRepositoryUser() {
-        return prefs.get("repositoryUser","");
+        return prefs.get("repositoryUser", "");
     }
     /**Setter for RepositoryUser */
     public void setRepositoryUser(String user) {
-        prefs.put("repositoryUser",user);
+        prefs.put("repositoryUser", user);
     }
 
     /**Getter for RepositoryPass */
     public String getRepositoryPass() {
-        return prefs.get("repositoryPass","");
+        return prefs.get("repositoryPass", "");
     }
     /**Setter for RepositoryPass */
-    public void setRepositoryPass(String Pass) {
-        prefs.put("repositoryPass",Pass);
+    public void setRepositoryPass(String password) {
+        prefs.put("repositoryPass", password);
     }
 
 
     /** Getter for lookAndFeel */
-    public int getLookAndFeel() { return  prefs.getInt("lookAndFeel",0); }
+    public int getLookAndFeel() { return  prefs.getInt("lookAndFeel", 0); }
     /** Setter for lookAndFeel */
     public void setLookAndFeel(int lookAndFeel) {
         prefs.putInt("lookAndFeel", lookAndFeel);
@@ -174,7 +189,7 @@ public class AppConfig {
 
     /** Getter for guiStyle */
     public int getGuiStyle() {
-        return prefs.getInt("guiStyle",MacUtils.isMac() ? 1 : 0);
+        return prefs.getInt("guiStyle", MacUtils.isMac() ? 1 : 0);
     }
     /** Setter for guiStyle */
     public void setGuiStyle(int guiStyle) {
@@ -182,7 +197,7 @@ public class AppConfig {
     }
 
     /** Getter for midiPlatform */
-    public int getMidiPlatform() { return  prefs.getInt("midiPlatform",0); }
+    public int getMidiPlatform() { return  prefs.getInt("midiPlatform", 0); }
 
     /** Setter for midiPlatform */
     public void setMidiPlatform(int midiPlatform) {
@@ -235,15 +250,15 @@ public class AppConfig {
     }
 
     /** Getter for midiEnable */
-    public boolean getMidiEnable() { return prefs.getBoolean("midiEnable",false); }
+    public boolean getMidiEnable() { return prefs.getBoolean("midiEnable", false); }
     /** Setter for midiEnable */
     public void setMidiEnable(boolean midiEnable) {
-	prefs.putBoolean("midiEnable",midiEnable);
+	prefs.putBoolean("midiEnable", midiEnable);
 	ErrorMsg.reportStatus("setMidiEnable: " + midiEnable);
     }
 
     /** Getter for initPortIn */
-    public int getInitPortIn() { return prefs.getInt("initPortIn",0); }
+    public int getInitPortIn() { return prefs.getInt("initPortIn", 0); }
     /** Setter for initPortIn */
     public void setInitPortIn(int initPortIn) {
         if (initPortIn < 0) initPortIn = 0;
@@ -251,7 +266,7 @@ public class AppConfig {
     }
 
     /** Getter for initPortOut */
-    public int getInitPortOut() { return  prefs.getInt("initPortOut",0); }
+    public int getInitPortOut() { return  prefs.getInt("initPortOut", 0); }
     /** Setter for initPortOut */
     public void setInitPortOut(int initPortOut) {
         if (initPortOut < 0) initPortOut = 0;
@@ -266,7 +281,7 @@ public class AppConfig {
     }
 
     /** Getter for masterController */
-    public int getMasterController() { return  prefs.getInt("masterController",0); }
+    public int getMasterController() { return  prefs.getInt("masterController", 0); }
     /** Setter for masterController */
     public void setMasterController(int masterController) {
 	boolean changed = (!initMasterController
@@ -293,7 +308,7 @@ public class AppConfig {
     }
 
     /** Getter for faderPort */
-    public int getFaderPort() { return prefs.getInt("faderPort",0); }
+    public int getFaderPort() { return prefs.getInt("faderPort", 0); }
     /** Setter for faderPort */
     public void setFaderPort(int faderPort) {
 	boolean changed = (!initFaderIn
@@ -313,44 +328,60 @@ public class AppConfig {
 
     //int[] faderChannel (0 <= channel < 16, 16:off)
     /** Indexed getter for faderChannel */
-    public int getFaderChannel(int i) { return  prefs.getInt("faderChannel"+i,0); }
+    public int getFaderChannel(int i) { return  prefs.getInt("faderChannel" + i, 0); }
     /** Indexed setter for faderChannel */
     public void setFaderChannel(int i, int faderChannel) {
-        prefs.putInt("faderChannel"+i, faderChannel);
+        prefs.putInt("faderChannel" + i, faderChannel);
     }
 
     //int[] faderController (0 <= controller < 256, 256:off)
-    public int getFaderController(int i) { return  prefs.getInt("faderController"+i,0); }
+    public int getFaderController(int i) { return  prefs.getInt("faderController" + i, 0); }
     /** Indexed setter for faderController */
     public void setFaderController(int i, int faderController) {
-        prefs.putInt("faderController"+i, faderController);
+        prefs.putInt("faderController" + i, faderController);
     }
 
-    // Standard getters/setters
-    /** Indexed getter for deviceList elements */
-    Device getDevice(int i) { return (Device) this.deviceList.get(i); }
+    /**
+     * Add Device into <code>deviceList</code>.
+     *
+     * @param className name of Device class
+     * (ex. "synthdrivers.KawaiK4.KawaiK4Device").
+     * @param prefs <code>Preferences</code> node for the Device.
+     * @return a <code>Device</code> value created.
+     */
+    private Device addDevice(String className, Preferences prefs) {
+	Device device;
+	try {
+	    Class deviceClass = Class.forName(className);
+	    device = (Device) deviceClass.newInstance();
+	} catch (Exception e) {
+	    ErrorMsg.reportError("Failed to create class for class",
+				 "Failed to create class for class '"
+				 + className + "'");
+	    return null;
+	}
+
+	device.setPreferences(prefs);
+    	deviceList.add(device); // always returns true
+
+	return device;
+    }
 
     /**
-     * Adder for deviceList elements.  Called by DeviceAddDialog and
-     * MidiScan.
+     * Add Device into <code>deviceList</code>. A new Preferences node
+     * will be created for the Device.
+     *
+     * @param className name of Device class
+     * (ex. "synthdrivers.KawaiK4.KawaiK4Device").
+     * @return a <code>Device</code> value created.
      */
-    void addDevice(Device device) {
-	device.setPreferences(getDeviceNode(device));
-    	deviceList.add(device); // always returns true
-	/*
-	int i = deviceList.size() - 1;
-	device.setPort(PatchEdit.appConfig.getInitPortOut());
-	device.setInPort(PatchEdit.appConfig.getInitPortIn());
-	devices.put("device" + i, device.getClass().getName());
-	devices.put("node" + i, getNextDeviceNode());
-	device.setPreferences(getPreferences(i));
-	devices.putInt("count", deviceList.size());
-	*/
+    // Called by DeviceAddDialog and MidiScan.
+    Device addDevice(String className) {
+	return addDevice(className, getDeviceNode(className));
     }
 
     /** returns the 1st unused device node name. */
-    private Preferences getDeviceNode(Device dev) {
-	String s = dev.getClass().getName();
+    private Preferences getDeviceNode(String s) {
 	ErrorMsg.reportStatus("getDeviceNode: " + s);
 	s = s.substring(s.lastIndexOf('.') + 1, s.lastIndexOf("Device"));
 	ErrorMsg.reportStatus("getDeviceNode: -> " + s);
@@ -364,6 +395,9 @@ public class AppConfig {
 	    return null;
 	}
     }
+
+    /** Indexed getter for deviceList elements */
+    Device getDevice(int i) { return (Device) this.deviceList.get(i); }
 
     /**
      * Remover for deviceList elements.
@@ -403,35 +437,6 @@ public class AppConfig {
 	return devices.node(key);
     }
     */
-    private void loadDevices() throws NoSuchMethodException, IllegalAccessException,
-	InstantiationException, InvocationTargetException {
-	String[] devs;
-	try {
-	    devs = prefsDev.childrenNames();
-	} catch (BackingStoreException e) {
-	    ErrorMsg.reportStatus(e);
-	    return;
-	}
-	ErrorMsg.reportStatus("loadDevices: devs.length = " + devs.length);
-	for (int i = 0; i < devs.length; i++) {
-	    try {
-		// get class name from preferences node name
-		//ErrorMsg.reportStatus("loadDevices: " + devs[i]);
-		String s = devs[i].substring(0, devs[i].indexOf('#'));
-		//ErrorMsg.reportStatus("loadDevices: -> " + s);
-		s = PatchEdit.devConfig.classNameForShortName(s);
-		//ErrorMsg.reportStatus("loadDevices: -> " + s);
-
-		Class c = Class.forName(s);
-		Device dev = (Device) c.newInstance();
-		dev.setPreferences(prefsDev.node(devs[i]));
-		deviceList.add(i, dev);
-	    } catch (ClassNotFoundException e) {
-		ErrorMsg.reportStatus(e);
-	    }
-	}
-    }
-
     /*
     private String getNextDeviceNode() {
 	int i = devices.getInt("next_node", 0);
@@ -440,39 +445,9 @@ public class AppConfig {
     }
     */
 
-    // Moved from SynthConfigDialog.java
-    /** Revalidate deviceNum element of drivers of each device */
-    /*
-    public void reassignDeviceDriverNums() {
-	for (int i = 0; i < deviceList.size(); i++) {
-	    Device dev = (Device) deviceList.get(i);
-	    reassignDeviceDriverNums(i, dev);
-	}
-    }
-    */
-    /** Revalidate deviceNum element of drivers of a device */
-    // Only for backward compatibility.  Remove this when no
-    // driver uses deviceNum and driverNum.
-    /*
-    private void reassignDeviceDriverNums(int i, Device dev) {
-	for (int j = 0; j < dev.driverList.size(); j++) {
-	    Driver drv = (Driver) dev.driverList.get(j);
-	    drv.setDeviceNum(i);
-	    drv.setDriverNum(j);
-	}
-    }
-    */
     /** Getter for the index of <code>device</code>. */
     int getDeviceIndex(Device device) {
 	return deviceList.indexOf(device);
-	/*
-	Iterator it = deviceList.iterator();
-	for (int i = 0; it.hasNext(); i++) {
-	    if ((Device) it.next() == device)
-		return i;
-	}
-	return -1;		// throw error !!!FIXIT!!!
-	*/
     }
 
     /** Getter/setter for MidiDevice.info */

@@ -138,17 +138,18 @@ class DevicesConfig {
      * @param deviceName the name of the device.
      * @return an instance of the device's class.
      */
+    /*
     Device classForDevice(String deviceName) {
 	return createDevice(deviceProps.getProperty(deviceName));
     }
-
+    */
     /**
      * Given a inquery ID String, return its Device.
      * @param IDString inquery ID String
      * @return the Device class
      */
-    Device classForIDString(String IDString) {
-	return createDevice(inqueryIDProps.getProperty(IDString));
+    String classNameForIDString(String IDString) {
+	return inqueryIDProps.getProperty(IDString);
     }
 
     /** Return Enumeration of inquery ID Strings. */
@@ -163,19 +164,6 @@ class DevicesConfig {
      */
     String classNameForShortName(String shortName) {
 	return shortNameProps.getProperty(shortName);
-    }
-
-    private Device createDevice(String className) {
-	Device device = null;
-	try {
-	    Class deviceClass = Class.forName(className);
-	    device = (Device) deviceClass.newInstance();
-	} catch (Exception e) {
-	    ErrorMsg.reportError("Failed to create class for class",
-				 "Failed to create class for class '"
-				 + className + "'");
-	}
-	return device;
     }
 
     /**
