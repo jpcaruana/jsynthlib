@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.OberheimMatrix;
 import core.*;
 import javax.swing.*;
@@ -6,10 +9,7 @@ public class OberheimMatrixSingleDriver extends Driver
 
    public OberheimMatrixSingleDriver()
    {
-   manufacturer="Oberheim";
-   model="Matrix 6/6R/1000";
-   patchType="Single";
-   id="Matrix";
+   super ("Single","Brian Klock");
    sysexID= "F010060**";
 //   inquiryID="F07E**0602100600*************F7";
     sysexRequestDump=new SysexHandler("F0 10 06 04 01 *patchNum* F7");
@@ -52,7 +52,7 @@ public void calculateChecksum(Patch p,int start,int end,int ofs)
  
   public void setBankNum(int bankNum)
   {
-        try{  PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x10,(byte)0x06,(byte)0x0A,
+        try{  PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x10,(byte)0x06,(byte)0x0A,
 	  (byte)bankNum,(byte)0xF7});} catch (Exception e) {}
   }
   public void storePatch (Patch p, int bankNum,int patchNum)
@@ -116,8 +116,7 @@ public Patch createNewPatch()
 	 byte [] sysex = new byte[275];
 	 sysex[0]=(byte)0xF0; sysex[1]=(byte)0x10;sysex[2]=(byte)0x06;sysex[3]=(byte)0x0D;sysex[4]=(byte)0x00;
 	 sysex[274]=(byte)0xF7;
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;

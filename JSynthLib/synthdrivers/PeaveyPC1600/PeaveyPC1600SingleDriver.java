@@ -1,6 +1,7 @@
 //======================================================================================================================
 // Summary: PeaveyPC1600SingleDriver.java
 // Author: phil@muqus.com - 07/2001
+// @version $Id$
 // Notes: Peavey PC1600 single driver (only tested on PC1600x)
 //    When you dump "curr prst" from the PC 1600x, you get the following string:
 //
@@ -56,13 +57,9 @@ public class PeaveyPC1600SingleDriver extends Driver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public PeaveyPC1600SingleDriver() {
-    manufacturer = "Peavey";
-    model = "PC1600";
-    patchType = "Single";
-    id = "PvPC16";
+    super ("Single","Phil Shepherd");
     sysexID = "F000001B0B**04";
 //    inquiryID = "F07E**06024000000A***********F7";
-    authors="Phil Shepherd";
 //    patchSize = PATCH_SIZE;
     numSysexMsgs = 1;
     patchNameStart = PATCH_NAME_START;
@@ -111,7 +108,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
     sendPatchWorker(p);
 
     // Request PC1600 stores edit buffer with this patchNum
-    SYSEX_WRITE_EDIT_BUFFER.send(port, (byte)channel, patchNum);
+    SYSEX_WRITE_EDIT_BUFFER.send(getPort(), (byte)getChannel(), patchNum);
   }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -126,7 +123,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    SYSEX_RECALL_PRESET.send(port, (byte)channel, patchNum);
-    SYSEX_REQUEST_EDIT_BUFFER.send(port, (byte)channel);
+    SYSEX_RECALL_PRESET.send(getPort(), (byte)getChannel(), patchNum);
+    SYSEX_REQUEST_EDIT_BUFFER.send(getPort(), (byte)getChannel());
   }
 }

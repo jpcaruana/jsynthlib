@@ -1,6 +1,8 @@
 /* Made by Yves Lefebvre
    email : ivanohe@abacom.com
    www.abacom.com/~ivanohe
+
+   @version $Id$
 */
 
 package synthdrivers.NovationNova1;
@@ -24,12 +26,8 @@ public class NovationNova1SingleDriver extends Driver
 
     public NovationNova1SingleDriver()
     {
-        manufacturer="Novation";
-        model="Nova1";
-        patchType="Single";
-        id="Nova1";
+	super ("Single","Yves Lefebvre");
         sysexID="F000202901210*0009";
-        authors="Yves Lefebvre";
         sysexRequestDump=new SysexHandler("F0 00 20 29 01 21 @@ 03 F7"); 
 	patchSize=296;
         patchNameStart=9;
@@ -66,8 +64,7 @@ public class NovationNova1SingleDriver extends Driver
         newsysex[8] = (byte)(0x05+bankNum);
         newsysex[9] = (byte)(patchNum);
         System.arraycopy(p.sysex,9,newsysex,10,296-9); //-10);
-        Patch patchtowrite = new Patch(newsysex);
-        patchtowrite.ChooseDriver();
+        Patch patchtowrite = new Patch(newsysex, this);
         // need to convert to a "patch dump and write" format
         try {Thread.sleep(100); } catch (Exception e){}
         sendPatchWorker(patchtowrite );
@@ -81,8 +78,8 @@ public class NovationNova1SingleDriver extends Driver
         if( NovationNova1PatchSender.bShowMenu == true )
         {
             NovationNova1PatchSender.deviceIDoffset = deviceIDoffset;
-            NovationNova1PatchSender.channel = channel;
-            NovationNova1PatchSender nps= new NovationNova1PatchSender(null,p,port);
+            NovationNova1PatchSender.channel = getChannel();
+            NovationNova1PatchSender nps= new NovationNova1PatchSender(null,p,getPort());
             nps.show();
         }
         else
@@ -100,9 +97,8 @@ public class NovationNova1SingleDriver extends Driver
     {
         byte [] sysex = new byte[296];
         System.arraycopy(NovationNova1InitPatch.initpatch,0,sysex,0,296);
-        sysex[6]=(byte)(channel-1);
-        Patch p = new Patch(sysex);
-        p.ChooseDriver();
+        sysex[6]=(byte)(getChannel()-1);
+        Patch p = new Patch(sysex, this);
         calculateChecksum(p);	 
         return p;
     }
@@ -116,7 +112,7 @@ public class NovationNova1SingleDriver extends Driver
     {
         try 
         {               
-            PatchEdit.MidiOut.writeShortMessage(port,(byte)(0xB0+(channel-1)),(byte)0x20,(byte)(bankNum+5));
+            PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0xB0+(getChannel()-1)),(byte)0x20,(byte)(bankNum+5));
         }catch (Exception e) {};    
     }
 }

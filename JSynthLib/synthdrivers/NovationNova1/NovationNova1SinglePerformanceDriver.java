@@ -1,6 +1,8 @@
 /* Made by Yves Lefebvre
    email : ivanohe@abacom.com
    www.abacom.com/~ivanohe
+
+   @version $Id$
 */
 
 package synthdrivers.NovationNova1;
@@ -12,20 +14,14 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
 
     public NovationNova1SinglePerformanceDriver()
     {
-        manufacturer="Novation";
-        model="Nova1";
-        patchType="Performance (single)";
-        id="Nova1";
+	super("Peformance (single)","Yves Lefebvre",6,1);
         sysexID="F000202901210*000*";
         //sysexID="";
-        authors="Yves Lefebvre";
        sysexRequestDump=new SysexHandler("F0 00 20 29 01 21 @@ 08 F7");
         deviceIDoffset=6;
         bankNumbers =new String[] {"Single Performance"};
         patchNumbers=new String[] {"Part 1-","Part 2-","Part 3-","Part 4-","Part 5-","Part 6-" };
 
-        numPatches=patchNumbers.length;
-        numColumns=1;
         singleSysexID="F000202901210*000*";
         singleSize=296;
     }
@@ -115,14 +111,13 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
 
             sysex[0]=(byte)0xF0;sysex[1]=(byte)0x00;sysex[2]=(byte)0x20;
             sysex[3]=(byte)0x29;sysex[4]=(byte)0x01;sysex[5]=(byte)0x21;
-            sysex[6]=(byte)(channel-1);
+            sysex[6]=(byte)(getChannel()-1);
             sysex[7]=(byte)0x00;
             sysex[8]=(byte)0x09;
             sysex[295]=(byte)0xF7;
             System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,9,296-9);
-            Patch p = new Patch(sysex);
-            p.ChooseDriver();
-            ((Driver) (PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);   
+            Patch p = new Patch(sysex, getDevice());
+            p.getDriver().calculateChecksum(p);   
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }
@@ -139,12 +134,11 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
         sysexHeader [3]=(byte)0x29;
         sysexHeader [4]=(byte)0x01;
         sysexHeader [5]=(byte)0x21; 
-        sysexHeader [6]=(byte)(channel-1);
+        sysexHeader [6]=(byte)(getChannel()-1);
         sysexHeader [7]=(byte)0x00;
         sysexHeader [8] = (byte)(0x00); //this is the part number in the performance
 
-        Patch p = new Patch(sysex);
-        p.ChooseDriver();
+        Patch p = new Patch(sysex, this);
         for (int i=0;i<8;i++) 
         {
             sysexHeader [8] = (byte)i;
@@ -186,7 +180,7 @@ public class NovationNova1SinglePerformanceDriver extends BankDriver
             Patch perf = new Patch(newsysex2);
 
             System.arraycopy(bank.sysex,296*8,perf.sysex,0,406);
-            perf.sysex[387] = (byte)(channel-1); // there is a small sysex msg at the end that
+            perf.sysex[387] = (byte)(getChannel()-1); // there is a small sysex msg at the end that
                                               // need to have the channel byte set
             sendPatchWorker(perf);
         }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}

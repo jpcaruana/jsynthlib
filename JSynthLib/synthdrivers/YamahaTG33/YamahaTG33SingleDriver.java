@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.YamahaTG33;
 import core.*;
 
@@ -8,10 +11,7 @@ public class YamahaTG33SingleDriver extends Driver
 
    public YamahaTG33SingleDriver()
    {
-   manufacturer="Yamaha";
-   model="TG33/SY22";
-   patchType="Single";
-   id="TG33";
+   super ("Single","Brian Klock");
    sysexID="F043**7E****4C4D2020303031325645";
    patchNameStart=28;
    patchNameSize=8;
@@ -40,11 +40,11 @@ public void storePatch (Patch p, int bankNum,int patchNum)
    try{
 
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x09,(byte)0xF7});
+   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x09,(byte)0xF7});
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x03,(byte)0xF7});
+   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x03,(byte)0xF7});
    Thread.sleep(100);
-   PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x04,(byte)0xF7});
+   PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x43,(byte)0x16,(byte)0x26,(byte)0x07,(byte)0x04,(byte)0xF7});
    }catch (Exception e){ErrorMsg.reportError("Error","Unable to Store Patch",e);}
   }
 public Patch createNewPatch()
@@ -56,8 +56,7 @@ public Patch createNewPatch()
      sysex[9]=(byte)0x20;sysex[10]=(byte)0x30;sysex[11]=(byte)0x30;
      sysex[12]=(byte)0x31;sysex[13]=(byte)0x32;sysex[14]=(byte)0x56;
      sysex[15]=(byte)0x45;  sysex[604]=(byte)0xF7;     
-	Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+	Patch p = new Patch(sysex, this);
 	   setPatchName(p,"NewPatch");
 	 calculateChecksum(p);	 
 	 return p;

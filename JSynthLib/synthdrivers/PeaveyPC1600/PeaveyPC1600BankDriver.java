@@ -1,6 +1,7 @@
 //======================================================================================================================
 // Summary: PeaveyPC1600BankDriver.java
 // Author: phil@muqus.com - 07/2001
+// @version $Id$
 // Notes: Peavey PC1600 bank driver (only tested on PC1600x)
 //
 //   F0 00 00 1B 0B 00 01 32 nn <nibbleized data> F7
@@ -60,21 +61,16 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public PeaveyPC1600BankDriver() {
-    manufacturer = "Peavey";
-    model = "PC1600";
-    patchType = "Bank";
-    id = "PvPC16";
+    super ("Bank","Phil Shepherd",PeaveyPC1600SingleDriver.PATCH_NUMBERS.length,3);
     sysexID = "F000001b0b**0132";
 //    inquiryID = "F07E**06024000000A***********F7";
     sysexRequestDump = SYSEX_REQUEST_DUMP;
-    authors="Phil Shepherd";
 //    patchSize =
     numSysexMsgs = 1;
 //    patchNameStart =
 //    patchNameSize =
     deviceIDoffset = PeaveyPC1600SingleDriver.DEVICE_ID_OFFSET;
 
-    numColumns = 3;                                                 // 51/3 = 17 rows
 //    singleSysexID = "F0411000101220**0000";
 //    singleSize =
 
@@ -84,8 +80,6 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 
     bankNumbers = PeaveyPC1600SingleDriver.BANK_NUMBERS;
     patchNumbers = PeaveyPC1600SingleDriver.PATCH_NUMBERS;
-
-    numPatches = NUM_PATCHES;
   }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -115,7 +109,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 
 //    Utility.interrogateSysex(p.sysex);
     NibbleSysex nibbleSysex = new NibbleSysex(bank.sysex, FIRST_PRESET_POINTER_START);
-    for (int i = 0; i < numPatches + 1; i++) {
+    for (int i = 0; i < getNumPatches() + 1; i++) {
       patchIndex[i] = nibbleSysex.getNibbleInt(PRESET_POINTER_BYTES, NIBBLE_MULTIPLIER)*PRESET_POINTER_FACTOR;
     }
 
@@ -182,11 +176,11 @@ public class PeaveyPC1600BankDriver extends BankDriver {
 
     // Update the <memory pointers>
     int sizeDiff = newPatchSize - oldPatchSize;
-    for (int i = patchNum + 1; i < numPatches; i++) {
+    for (int i = patchNum + 1; i < getNumPatches(); i++) {
       patchIndex[i] += sizeDiff;
     }
     NibbleSysex nibbleSysex = new NibbleSysex(bank.sysex, FIRST_PRESET_POINTER_START);
-    for (int i = 0; i < numPatches; i++) {
+    for (int i = 0; i < getNumPatches(); i++) {
       nibbleSysex.putNibbleInt(patchIndex[i]/PRESET_POINTER_FACTOR, PRESET_POINTER_BYTES, NIBBLE_MULTIPLIER);
     }
   }
@@ -198,8 +192,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
   public void deletePatch (Patch bank, int patchNum) {
 //ErrorMsg.reportStatus("PeaveyPC1600BankDriver->deletePatch: " + patchNum);
 
-    Patch p = new Patch(BSYSEX_INIT_PRESET);
-    p.ChooseDriver();
+    Patch p = new Patch(BSYSEX_INIT_PRESET, getDevice());
 //ErrorMsg.reportStatus("  PeaveyPC1600BankDriver->deletePatch: " + p.getDriver().getPatchName(p));
     putPatch(bank,  p, patchNum);
   }
@@ -225,7 +218,7 @@ public class PeaveyPC1600BankDriver extends BankDriver {
     nibbleSysex.putSysex((byte)0xF7);
 
     Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    //p.ChooseDriver();
 	  return p;
   }
 

@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.YamahaTG33;
 import core.*;
 import java.io.*;
@@ -7,10 +10,7 @@ public class YamahaTG33BankDriver extends BankDriver
     
     public YamahaTG33BankDriver ()
     {
-        manufacturer="Yamaha";
-        model="TG33/SY22";
-        patchType="Bank";
-        id="TG33";
+	super ("Bank","Brian Klock",64,4);
         sysexID="F043**7E****4C4D2020303031325643";
         deviceIDoffset=2;
         bankNumbers =new String[]
@@ -26,8 +26,6 @@ public class YamahaTG33BankDriver extends BankDriver
           "71","72","73","74","75","76","77","78",
           "81","82","83","84","85","86","87","88"};
           
-          numPatches=patchNumbers.length;
-          numColumns=4;
           singleSize=605;
           singleSysexID="F043**7E****4C4D2020303031325645";
           
@@ -112,9 +110,8 @@ public class YamahaTG33BankDriver extends BankDriver
             sysex[12]=(byte)0x31;sysex[13]=(byte)0x32;sysex[14]=(byte)0x56;
             sysex[15]=(byte)0x45;  sysex[604]=(byte)0xF7;
             System.arraycopy (bank.sysex,getPatchStart (patchNum),sysex,16,587);
-            Patch p = new Patch (sysex);
-            p.ChooseDriver ();
-            PatchEdit.getDriver (p.deviceNum,p.driverNum).calculateChecksum (p);
+            Patch p = new Patch (sysex, getDevice());
+            p.getDriver().calculateChecksum (p);
             return p;
         }catch (Exception e)
         {ErrorMsg.reportError ("Error","Error in TG33 Bank Driver",e);return null;}
@@ -129,8 +126,7 @@ public class YamahaTG33BankDriver extends BankDriver
         sysex[9]=(byte)0x20;sysex[10]=(byte)0x30;sysex[11]=(byte)0x30;
         sysex[12]=(byte)0x31;sysex[13]=(byte)0x32;sysex[14]=(byte)0x56;
         sysex[15]=(byte)0x43;  sysex[37630]=(byte)0xF7;
-        Patch p = new Patch (sysex);
-        p.ChooseDriver ();
+        Patch p = new Patch (sysex, this);
         for (int i=4;i<64;i+=4)
         {sysex[getPatchStart (i)-2]=0x12;sysex[getPatchStart (i)-1]=0x2C;};
         

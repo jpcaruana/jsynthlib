@@ -1,6 +1,8 @@
 /* Made by Yves Lefebvre
    email : ivanohe@abacom.com
    www.abacom.com/~ivanohe
+
+   @version $Id$
 */
 
 package synthdrivers.NovationNova1;
@@ -16,13 +18,9 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
 
     public NovationNova1BankDriver()
     {
-        manufacturer="Novation";
-        model="Nova1";
-        patchType="Bank";
-        id="Nova1";
+	super ("Bank","Yves Lefebvre",128,4);
         sysexID="F000202901210*020*";
         //sysexID="";
-        authors="Yves Lefebvre";
 	deviceIDoffset=6;
         bankNumbers =new String[] {"Bank A","Bank B"};
         patchNumbers=new String[] {"00-","01-","02-","03-","04-","05-","06-","07-",
@@ -43,8 +41,6 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
                                    "116-","117-","118-","119-","120-","121-","122-","123-",
                                    "124-","125-","126-","127"};
    
-        numPatches=patchNumbers.length;
-        numColumns=4;
         singleSysexID="F000202901210*0009";
         singleSize=296;
 
@@ -123,14 +119,13 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
 
             sysex[0]=(byte)0xF0;sysex[1]=(byte)0x00;sysex[2]=(byte)0x20;
             sysex[3]=(byte)0x29;sysex[4]=(byte)0x01;sysex[5]=(byte)0x21;
-            sysex[6]=(byte)(channel-1);
+            sysex[6]=(byte)(getChannel()-1);
             sysex[7]=(byte)0x00;
             sysex[8]=(byte)0x09;
             sysex[295]=(byte)0xF7;
             System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,9,296-9);
-            Patch p = new Patch(sysex);
-            p.ChooseDriver();
-            ((Driver) (PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);   
+            Patch p = new Patch(sysex, getDevice());
+            p.getDriver().calculateChecksum(p);   
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }
@@ -153,12 +148,11 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         sysexHeader [3]=(byte)0x29;
         sysexHeader [4]=(byte)0x01;
         sysexHeader [5]=(byte)0x21; 
-        sysexHeader [6]=(byte)(channel-1);
+        sysexHeader [6]=(byte)(getChannel()-1);
         sysexHeader [7]=(byte)0x02;
         sysexHeader [8] = (byte)(0x05); //default to create a bank A
         sysexHeader [9] = (byte)0x00;   //this is the patch number
-        Patch p = new Patch(sysex);
-        p.ChooseDriver();
+        Patch p = new Patch(sysex, this);
         for (int i=0;i<128;i++) 
         {
             sysexHeader [9] = (byte)i;
@@ -203,10 +197,10 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
     }
 public void requestPatchDump(int bankNum, int patchNum) {
     byte[] sysex;
-    if (bankNum==0) sysex=bankARequestDump.toByteArray((byte)channel,patchNum);
-    else sysex=bankBRequestDump.toByteArray((byte)channel,patchNum);
+    if (bankNum==0) sysex=bankARequestDump.toByteArray((byte)getChannel(),patchNum);
+    else sysex=bankBRequestDump.toByteArray((byte)getChannel(),patchNum);
    
-    SysexHandler.send(port, sysex);
+    SysexHandler.send(getPort(), sysex);
   }
 
 }

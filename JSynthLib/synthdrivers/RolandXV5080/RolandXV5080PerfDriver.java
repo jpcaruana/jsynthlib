@@ -1,6 +1,7 @@
 //======================================================================================================================
 // Summary: RolandXV5080PerfDriver.java
 // Author: phil@muqus.com - 07/2001
+// @version $Id$
 // Notes: Perf driver for Roland XV-5080
 //  1) A user patch dump consists of 52 sysex messages, total length 2205 bytes
 //======================================================================================================================
@@ -44,14 +45,10 @@ public class RolandXV5080PerfDriver extends Driver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public RolandXV5080PerfDriver() {
-    manufacturer = "Roland";
-    model = "XV5080";
-    patchType = "Perf";
-    id = "RdXv5";
+    super ("Perf","Phil Shepherd");
     sysexID = "F0411000101220**0000";
 //    inquiryID = "F07E**06024000000A***********F7";
     sysexRequestDump = SYSEX_REQUEST_DUMP;
-authors="Phil Shepherd";
     patchSize = PATCH_SIZE;
     patchNameStart = PATCH_NAME_START;
     patchNameSize = PATCH_NAME_SIZE;
@@ -94,9 +91,9 @@ authors="Phil Shepherd";
   public void setBankNum(int bankNum) {
     try {
       // BnH 00H mmH  n=MIDI channel number, mm=85
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x00, (byte)85);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x00, (byte)85);
       // BnH 00H llH  n=MIDI channel number, ll=00H
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x20, (byte)0);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x20, (byte)0);
     } catch (Exception e) {};
   }
 
@@ -128,8 +125,8 @@ authors="Phil Shepherd";
 //----------------------------------------------------------------------------------------------------------------------
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = SYSEX_REQUEST_DUMP.toByteArray((byte)channel, patchNum);
+    byte[] sysex = SYSEX_REQUEST_DUMP.toByteArray((byte)getChannel(), patchNum);
     RolandXV5080PatchDriver.calculateChecksum(sysex, 6, sysex.length - 3, sysex.length - 2);
-    SysexHandler.send(port, sysex);
+    SysexHandler.send(getPort(), sysex);
   }
 }

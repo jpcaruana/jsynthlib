@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.OberheimMatrix;
 import core.*;
 import javax.swing.*;
@@ -6,10 +9,7 @@ public class OberheimMatrixBankDriver extends BankDriver
 
    public OberheimMatrixBankDriver()
    {
-   manufacturer="Oberheim";
-   model="Matrix 6/6R/1000";
-   patchType="Bank";
-   id="Matrix";
+   super ("Bank","Brian Klock",100,5);
    sysexID= "F010060**";
    //inquiryID="F07E**06021006000200*********F7";
    patchSize=27500;
@@ -31,8 +31,6 @@ public class OberheimMatrixBankDriver extends BankDriver
                               "80-","81-","82-","83-","84-","85-","86-","87-",
                               "88-","89-","90-","91-","92-","93-","94-","95-",
                               "96-","97-","98-","99-"};
-  numPatches=patchNumbers.length;
-  numColumns=5;
   singleSize=275;
   singleSysexID="F010060**";
   }
@@ -62,7 +60,7 @@ public void calculateChecksum(Patch p,int start,int end,int ofs)
   public void setBankNum(int bankNum)
   {
        
-	  try{  PatchEdit.MidiOut.writeLongMessage(port,new byte[] {(byte)0xF0,(byte)0x10,(byte)0x06,(byte)0x0A,
+	  try{  PatchEdit.MidiOut.writeLongMessage(getPort(),new byte[] {(byte)0xF0,(byte)0x10,(byte)0x06,(byte)0x0A,
 	  (byte)bankNum,(byte)0xF7});} catch (Exception e) {}
   }
   public void storePatch (Patch p, int bankNum,int patchNum)
@@ -131,21 +129,20 @@ public void putPatch(Patch bank,Patch p,int patchNum)
   try{
      byte [] sysex=new byte[275];
      System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,0,275);
-     Patch p = new Patch(sysex);
-     p.ChooseDriver();
-     PatchEdit.getDriver(p.deviceNum,p.driverNum).calculateChecksum(p);   
+     Patch p = new Patch(sysex, getDevice());
+     p.getDriver().calculateChecksum(p);   
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix 1000 Bank Driver",e);return null;}
    }
   protected void sendPatch (Patch p)
    {
      byte []tmp=new byte[275];
-    if (deviceIDoffset>0) p.sysex[deviceIDoffset]=(byte)(channel-1);
+    if (deviceIDoffset>0) p.sysex[deviceIDoffset]=(byte)(getChannel()-1);
     try {       
        for (int i=0;i<100;i++) 
        {
        System.arraycopy(p.sysex,275*i,tmp,0,275);
-       PatchEdit.MidiOut.writeLongMessage(port,tmp);
+       PatchEdit.MidiOut.writeLongMessage(getPort(),tmp);
        Thread.sleep(15);
        }
     }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}
@@ -156,8 +153,7 @@ public Patch createNewPatch()
 	 for (int i=0;i<100;i++){
 	 sysex[0+275*i]=(byte)0xF0; sysex[1+275*i]=(byte)0x10;sysex[2+275*i]=(byte)0x06;sysex[3+275*i]=(byte)0x0D;sysex[4+275*i]=(byte)0x00;
 	 sysex[274+275*i]=(byte)0xF7;}
-         Patch p = new Patch(sysex);
-	 p.ChooseDriver();
+         Patch p = new Patch(sysex, this);
 	 for (int i=0;i<100;i++)
 	  setPatchName(p,i,"NewPatch");
 	 calculateChecksum(p);	 

@@ -1,6 +1,7 @@
 //======================================================================================================================
 // Summary: RolandXV5080PerfBankDriver.java
 // Author: phil@muqus.com - 07/2001
+// @version $Id$
 // Notes: Perf bank driver for Roland - XV5080
 //  1) Assumes a perf bank dump consists of all 64 user patches.  Dumped from XV-5080 using:
 //      - Press System/Utility twice so LED flashes
@@ -28,10 +29,7 @@ public class RolandXV5080PerfBankDriver extends BankDriver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public RolandXV5080PerfBankDriver() {
-    manufacturer = "Roland";
-    model = "XV5080";
-    patchType = "PerfBank";
-    id = "RdXv5";
+    super ("PerfBank","Phil Shepherd",RolandXV5080PerfDriver.PATCH_NUMBERS.length,4);
     sysexID = "F0411000101220000000";
 //    inquiryID = "F07E**06024000000A***********F7";
     sysexRequestDump = SYSEX_REQUEST_DUMP;
@@ -41,10 +39,8 @@ public class RolandXV5080PerfBankDriver extends BankDriver {
 //    patchNameSize =
     deviceIDoffset = 0;
 
-    numColumns = 4;
     singleSysexID = "F0411000101220**0000";
     singleSize = RolandXV5080PerfDriver.PATCH_SIZE;
-authors="Phil Shepherd";
 //  checksumStart =
 //  checksumEnd =
 //  checksumOffset =
@@ -52,7 +48,6 @@ authors="Phil Shepherd";
     bankNumbers = RolandXV5080PerfDriver.BANK_NUMBERS;
     patchNumbers = RolandXV5080PerfDriver.PATCH_NUMBERS;
 
-    numPatches = patchNumbers.length;
   }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -62,9 +57,9 @@ authors="Phil Shepherd";
   public void setBankNum(int bankNum) {
     try {
       // BnH 00H mmH  n=MIDI channel number, mm=65H
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x00, (byte)0x65);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x00, (byte)0x65);
       // BnH 00H llH  n=MIDI channel number, ll=00H
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x20, (byte)0);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x20, (byte)0);
     } catch (Exception e) {};
   }
 
@@ -73,7 +68,7 @@ authors="Phil Shepherd";
 //----------------------------------------------------------------------------------------------------------------------
 
   public String getPatchName(Patch p) {
-    return numPatches + " patches";
+    return getNumPatches() + " patches";
   }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -112,8 +107,7 @@ authors="Phil Shepherd";
     try {
       byte[] sysex = new byte[RolandXV5080PerfDriver.PATCH_SIZE];
       System.arraycopy(bank.sysex, RolandXV5080PerfDriver.PATCH_SIZE * patchNum, sysex, 0, RolandXV5080PerfDriver.PATCH_SIZE);
-      Patch p = new Patch(sysex);
-      p.ChooseDriver();
+      Patch p = new Patch(sysex, getDevice());
       return p;
     } catch (Exception ex) {
       ErrorMsg.reportError("Error", "Error in XV5080 Perf Bank Driver", ex);
@@ -141,8 +135,8 @@ authors="Phil Shepherd";
 //----------------------------------------------------------------------------------------------------------------------
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = SYSEX_REQUEST_DUMP.toByteArray((byte)channel, patchNum);
+    byte[] sysex = SYSEX_REQUEST_DUMP.toByteArray((byte)getChannel(), patchNum);
     RolandXV5080PatchDriver.calculateChecksum(sysex, 6, sysex.length - 3, sysex.length - 2);
-    SysexHandler.send(port, sysex);
+    SysexHandler.send(getPort(), sysex);
   }
 }

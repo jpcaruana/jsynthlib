@@ -1,6 +1,7 @@
 //======================================================================================================================
 // Summary: RolandXV5080PatchDriver.java
 // Author: phil@muqus.com - 07/2001
+// @version $Id$
 // Notes: Patch driver for Roland XV-5080
 //  1) A user patch dump consists of 9 sysex messages, total length 1056 bytes
 //======================================================================================================================
@@ -50,12 +51,8 @@ public class RolandXV5080PatchDriver extends Driver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public RolandXV5080PatchDriver() {
-    manufacturer = "Roland";
-    model = "XV5080";
-    patchType = "Patch";
-    id = "RdXv5";
+    super ("Patch","Phil Shepherd");
     sysexID = "F0411000101230**0000";
-authors="Phil Shepherd";
     //    inquiryID = "F07E**06024000000A***********F7";
 //    sysexRequestDump = SYSEX_REQUEST_DUMP;
 
@@ -104,9 +101,9 @@ authors="Phil Shepherd";
   public void setBankNum(int bankNum) {
     try {
       // BnH 00H mmH  n=MIDI channel number, mm=85
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x00, (byte)87);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x00, (byte)87);
       // BnH 00H llH  n=MIDI channel number, ll=00H
-      PatchEdit.MidiOut.writeShortMessage(port, (byte)(0xB0+(channel-1)), (byte)0x20, (byte)0);
+      PatchEdit.MidiOut.writeShortMessage(getPort(), (byte)(0xB0+(getChannel()-1)), (byte)0x20, (byte)0);
     } catch (Exception e) {};
   }
 
@@ -137,9 +134,9 @@ authors="Phil Shepherd";
 //----------------------------------------------------------------------------------------------------------------------
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = SYSEX_REQUEST_DUMP.toByteArray((byte)channel, patchNum);
+    byte[] sysex = SYSEX_REQUEST_DUMP.toByteArray((byte)getChannel(), patchNum);
     calculateChecksum(sysex, 6, sysex.length - 3, sysex.length - 2);
-    SysexHandler.send(port, sysex);
+    SysexHandler.send(getPort(), sysex);
   }
 
 //----------------------------------------------------------------------------------------------------------------------
