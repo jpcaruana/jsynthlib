@@ -23,7 +23,6 @@ import javax.swing.event.ListDataListener;
 import core.ComboBoxWidget;
 import core.EnvelopeWidget;
 import core.ErrorMsg;
-import core.IPatch;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
@@ -121,7 +120,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
   }
   */
   class MyScrollBarWidget extends ScrollBarWidget {
-    MyScrollBarWidget(String l, IPatch p, int min, int max, int b,
+    MyScrollBarWidget(String l, Patch p, int min, int max, int b,
 			     ParamModel ofs, SysexSender s) {
       super(l, p, min, max, b, ofs, s);
     }
@@ -145,7 +144,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
     if ( (byte)(address >> 8) == (byte) -1)
       sendaddress = (address & 0x7f007f) | (mid << 8);
     MyScrollBarWidget bar =
-      new MyScrollBarWidget(name, p, min, max, offset,
+      new MyScrollBarWidget(name, (Patch) p, min, max, offset,
 			    new MotifParamModel((Patch)p, address, mid, _short),
 			    new ParamSender(sendaddress, _short));
     addWidget(panel, bar, slidercount++, false);

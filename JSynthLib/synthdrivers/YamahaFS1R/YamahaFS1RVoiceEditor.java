@@ -427,7 +427,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 		oComboListener.notifyChange(new BitModel((Patch)p, 0x04, aOp, 7, 0).get());
 		
 		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel1.add(new ComboActionWidget("Wave", p, new BitModel((Patch)p, 0x04, aOp, 7, 0), new BitSender((Patch)p, 0x04, aOp), oWaves, oComboListener));
+		oPanel1.add(new ComboActionWidget("Wave", (Patch) p, new BitModel((Patch)p, 0x04, aOp, 7, 0), new BitSender((Patch)p, 0x04, aOp), oWaves, oComboListener));
 		oPanel1.add(new KnobLookupWidget("Freq coarse", p, new FS1RModel((Patch)p, 0x01, aOp), new FS1RSender(0x01, aOp), FreqCoarseName));
 		oPanel1.add(new KnobWidget("Freq fine", p, 0, 0x7F, 0, new FS1RModel((Patch)p, 0x02, aOp), new FS1RSender(0x02, aOp)));
 		oPanel1.add(new KnobWidget("Freq scaling", p, 0, 99, 0, new FS1RModel((Patch)p, 0x03, aOp), new FS1RSender(0x03, aOp)));
