@@ -1,33 +1,27 @@
 /*
- * ReassignPatchDialog.java  
- * $Id$
+ * ReassignPatchDialog.java
  */
 
 package core;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-
 import javax.swing.*;
 
-
 /**
- *
- * ReassignPatchDialog.java - If more than two devices are loaded which supports the given patch,
+ * If more than two devices are loaded which supports the given patch,
  * show this Dialog to choose a new Device/Driver combination for the patch.
  * The internal patch assignment is used to send/play a patch.
  * @author  Torsten Tittmann
- * @version v 1.0, 2003-02-03 
+ * @version $Id$
  */
 public class ReassignPatchDialog extends JDialog {
 
   //===== Instance variables
+  /** The last index in driver Combo Box. */
   private int driverNum;
   private Patch p;
   private StringBuffer patchString;
-
-  private ArrayList deviceAssignmentList = new ArrayList();
 
   private JLabel myLabel;
   private JComboBox deviceComboBox;
@@ -49,48 +43,41 @@ public class ReassignPatchDialog extends JDialog {
     dialogPanel.add(myLabel, BorderLayout.NORTH);
 
     //=================================== Combo Panel ==================================
-    int deviceNum = 0;
+    //----- Create the combo boxes
+    deviceComboBox = new JComboBox();
+    deviceComboBox.addActionListener(new DeviceActionListener());
+    driverComboBox = new JComboBox();
+
     int nDriver = 0;		// number of matched driver
-    //----- First Populate the Device/Driver List with Device/Driver. which supports the patch
-    for (int i=0, n=0; i<PatchEdit.appConfig.deviceCount();i++)
+    // First Populate the Device/Driver List with Device/Driver. which
+    // supports the patch
+    for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++)
     {
       Device device = PatchEdit.appConfig.getDevice(i);
       boolean newDevice = true;
       for (int j=0, m=0; j<device.driverList.size();j++)
       {
 	Driver driver = (Driver) device.driverList.get(j);
-	if (driver.supportsPatch(patchString, p))
+	if (!(driver instanceof Converter)
+	    && (driver.supportsPatch(patchString, p)))
 	{
 	  if (newDevice)	// only one entry for each supporting device
 	  {
-	    deviceAssignmentList.add(new deviceAssignment( i, device) );	// the original deviceNum/device
+	    deviceComboBox.addItem(device);
 	    newDevice = false;
-            n++;		// How many deviceAssignment?
 	  }
-	  ((deviceAssignment)deviceAssignmentList.get(n-1)).add(j, driver);	// the original driverNum/driver
 
-	  if (p.getDriver() == driver) // default is patch internal deviceNum & driverNum
+	  if (p.getDriver() == driver) // default is the driver associated with patch
 	  {
-	    deviceNum = n-1;
-            driverNum = m;
+	    int n = deviceComboBox.getItemCount();
+	    driverNum = m;
+            deviceComboBox.setSelectedIndex(n - 1); // invoke DeviceActionListener
           }
 	  nDriver++;
           m++;
         }
       }	// driver loop
     } // device loop
-
-    //----- Create the combo boxes
-    deviceComboBox = new JComboBox();
-    deviceComboBox.addActionListener(new DeviceActionListener());
-    driverComboBox = new JComboBox();
-
-    //----- Populate the combo boxes with the entries of the deviceAssignmentList
-    for (int i=0; i<deviceAssignmentList.size();i++)
-    {
-      deviceComboBox.addItem( deviceAssignmentList.get(i) );
-    }
-    deviceComboBox.setSelectedIndex(deviceNum);		// This was the original device
     deviceComboBox.setEnabled(deviceComboBox.getItemCount() > 1);
 
     //----- Layout the labels in a panel.
@@ -153,7 +140,6 @@ public class ReassignPatchDialog extends JDialog {
     }
   }
 
-
  /**
   *
   */
@@ -163,48 +149,39 @@ public class ReassignPatchDialog extends JDialog {
     this.setLocation((screenSize.width - size.width)/2, (screenSize.height - size.height)/2);
   }
 
-
  /**
   * Makes the actual work after pressing the 'Reassign' button
   */
   class ReassignActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-
-      p.setDriver(((driverAssignment) driverComboBox.getSelectedItem()).getDriver());
-      driverNum = driverComboBox.getSelectedIndex();
+      p.setDriver((Driver) driverComboBox.getSelectedItem());
 
       setVisible(false);
       dispose();
     }
   }
 
-
  /**
-  * Repopulate the Driver ComboBox with valid drivers after a Device change 
+  * Repopulate the Driver ComboBox with valid drivers after a Device change
   */
   class DeviceActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-
-      deviceAssignment myDevAssign = (deviceAssignment)deviceComboBox.getSelectedItem();
-//       driverAssignment myDrvAssign;
-
       driverComboBox.removeAllItems();
 
-      if (myDevAssign != null)
-      {
-	ArrayList driverAssignmentList = myDevAssign.getDriverAssignmentList();
-        for (int j=0;j<driverAssignmentList.size ();j++)
-        {
-	  driverAssignment myDrvAssign = (driverAssignment)driverAssignmentList.get(j);
-
-          if ( !(Converter.class.isInstance (myDrvAssign.getDriver()) ) &&
-	       ( myDrvAssign.getDriver().supportsPatch(patchString,p)) )  
-              driverComboBox.addItem(myDrvAssign);
+      Device device = (Device) deviceComboBox.getSelectedItem();
+      int nDriver = 0;
+      for (int i = 0; i < device.driverList.size(); i++) {
+        Driver driver = (Driver) device.driverList.get(i);
+        if (!(driver instanceof Converter)
+            && driver.supportsPatch(patchString, p)) {
+          driverComboBox.addItem(driver);
+          nDriver++;
         }
       }
-      driverComboBox.setSelectedIndex(driverNum);	// the original driver is the default
+      // the original driver is the default
+      // When a different device is selected, driverNum can be out of range.
+      driverComboBox.setSelectedIndex(Math.min(driverNum, nDriver - 1));
       driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
     }
   }
-} 
-
+}

@@ -1,29 +1,25 @@
 /*
- * SysexStoreDialog.java  
- * $Id$
+ * SysexStoreDialog.java
  */
 
 package core;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 
 /**
- *
- * SysexStoreDialog.java - Dialog to choose the Device, Driver, BankNumber and PatchNumber of 
- * the location, where a Patch should be stored
- * (more than one of each device is supported, but only devices/drivers are selectable, which support the patch)
+ * Dialog to choose the Device, Driver, BankNumber and PatchNumber of
+ * the location, where a Patch should be stored.  More than one of
+ * each device is supported, but only devices/drivers are selectable,
+ * which support the patch.
  * @author  Torsten Tittmann
- * @version v 1.0, 2003-02-03 
+ * @version $Id$
  */
 public class SysexStoreDialog extends JDialog {
 
   //===== Instance variables
-//   private Driver driver;
-//   private Device device;
-//   private int bankNum;
+  /** The last index in driver Combo Box. */
   private int driverNum;
   private int patchNum;
   private Patch p;
@@ -73,28 +69,34 @@ public class SysexStoreDialog extends JDialog {
 
     //----- Populate the combo boxes only with devices, which supports the patch
     boolean driverMatched = false;
-    for (int i=0, n=0;i<PatchEdit.appConfig.deviceCount();i++)
+    for (int i=0; i < PatchEdit.appConfig.deviceCount(); i++)
     {
-      Device device=(Device)PatchEdit.appConfig.getDevice(i);
-
-      for (int j=0, m=0;j<device.driverList.size();j++)
+      Device device = PatchEdit.appConfig.getDevice(i);
+      boolean newDevice = true;
+      for (int j=0, m=0; j<device.driverList.size();j++)
       {
 	Driver driver = (Driver) device.driverList.get(j);
-	if (driver.supportsPatch(patchString, p))
+	if (!(driver instanceof Converter)
+	    && (driver.supportsPatch(patchString, p)))
 	{
-          deviceComboBox.addItem(device);
-	  driverMatched=true;
-
-	  if (p.getDriver() == driver)
+	  if (newDevice)	// only one entry for each supporting device
 	  {
-            deviceComboBox.setSelectedIndex(n);
-            driverComboBox.setSelectedIndex(m);
+	    deviceComboBox.addItem(device);
+	    newDevice = false;
+	  }
+
+	  if (p.getDriver() == driver) // default is the driver associated with patch
+	  {
+	    int n = deviceComboBox.getItemCount();
+	    driverNum = m;
+            deviceComboBox.setSelectedIndex(n - 1); // invoke DeviceActionListener
           }
-	  n++;
-	  m++;
+	  driverMatched = true;
+          m++;
         }
-      }
-    }
+      }	// driver loop
+    } // device loop
+    deviceComboBox.setEnabled(deviceComboBox.getItemCount() > 1);
 
     //----- Layout the labels in a panel.
     JPanel labelPanel = new JPanel(new GridLayout(0, 1, 5, 5));
@@ -153,9 +155,8 @@ public class SysexStoreDialog extends JDialog {
     }
   }
 
-
  /**
-  * 
+  *
   */
   private void centerDialog () {
     Dimension screenSize = this.getToolkit().getScreenSize();
@@ -163,15 +164,13 @@ public class SysexStoreDialog extends JDialog {
     this.setLocation((screenSize.width - size.width)/2, (screenSize.height - size.height)/2);
   }
 
-
  /**
   * Makes the actual work after pressing the 'Store' button
   */
   class StoreActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 
-//       Device device   = (Device)deviceComboBox.getSelectedItem();
-      Driver driver   = (Driver)driverComboBox.getSelectedItem();
+      Driver driver = (Driver) driverComboBox.getSelectedItem();
       int bankNum  = bankComboBox.getSelectedIndex();
       int patchNum = patchNumComboBox.getSelectedIndex();
       driver.storePatch(p, bankNum, patchNum);
@@ -181,34 +180,32 @@ public class SysexStoreDialog extends JDialog {
     }
   }
 
-
  /**
-  * Repopulate the Driver ComboBox with valid drivers after a Device change 
+  * Repopulate the Driver ComboBox with valid drivers after a Device change
   */
   class DeviceActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
       driverComboBox.removeAllItems();
-//       bankComboBox.removeAllItems();
-//       patchNumComboBox.removeAllItems();
 
-      Device device = (Device)deviceComboBox.getSelectedItem();
-      if (device != null)
-      {
-        for (int j=0;j<device.driverList.size ();j++)
-        {
-	  Driver driver = (Driver) device.driverList.get(j);
-          if (!(Converter.class.isInstance(driver))
-	      && driver.supportsPatch(patchString, p))
-              driverComboBox.addItem (device.getDriver(j));
-        }
+      Device device = (Device) deviceComboBox.getSelectedItem();
+      int nDriver = 0;
+      for (int i = 0; i < device.driverList.size(); i++) {
+	Driver driver = (Driver) device.driverList.get(i);
+        if (!(driver instanceof Converter)
+	    && driver.supportsPatch(patchString, p)) {
+          driverComboBox.addItem (driver);
+          nDriver++;
+	}
       }
+      // the original driver is the default
+      // When a different device is selected, driverNum can be out of range.
+      driverComboBox.setSelectedIndex(Math.min(driverNum, nDriver - 1));
       driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
     }
   }
 
-
  /**
-  * Repopulate the Bank/Patch ComboBox with valid entries after a Device/Driver change 
+  * Repopulate the Bank/Patch ComboBox with valid entries after a Device/Driver change
   */
   class DriverActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
@@ -232,7 +229,7 @@ public class SysexStoreDialog extends JDialog {
 	  {
             patchNumComboBox.addItem(driver.patchNumbers[i]);
           }
-          patchNumComboBox.setSelectedIndex(patchNum);
+          patchNumComboBox.setSelectedIndex(Math.min(patchNum, patchNumComboBox.getItemCount() - 1));
         }
       }
 

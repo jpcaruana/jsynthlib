@@ -1,29 +1,24 @@
 /*
- * SysexSendToDialog.java  
- * $Id$
+ * SysexSendToDialog.java
  */
 
 package core;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
 
 /**
- *
- * SysexSendToDialog.java - Dialog to choose a Device and Driver 
- * to send the patch into an Edit buffer
- * (more than one of each device is supported, but only devices/drivers are selectable, which support the patch)
+ * Dialog to choose a Device and Driver to send the patch into an Edit
+ * buffer.  More than one of each device is supported, but only
+ * devices/drivers are selectable, which support the patch.
  * @author  Torsten Tittmann
- * @version v 1.0, 2003-02-03 
- */
+ * @version $Id$ */
 public class SysexSendToDialog extends JDialog {
 
   //===== Instance variables
-//   private boolean driverMatched=false;
-//   private Driver driver;
-//   private Device device;
+  /** The last index in driver Combo Box. */
+  private int driverNum;
   private Patch p;
   private StringBuffer patchString;
 
@@ -50,33 +45,32 @@ public class SysexSendToDialog extends JDialog {
     //----- Create the combo boxes
     deviceComboBox = new JComboBox();
     deviceComboBox.addActionListener(new DeviceActionListener());
-
     driverComboBox = new JComboBox();
 
-    //----- Populate the combo boxes only with devices, which supports the patch
-    Driver driver = null;
-    for (int i=0, n=0;i<PatchEdit.appConfig.deviceCount();i++)
-    {
-      Device device = (Device) PatchEdit.appConfig.getDevice(i);
-      for (int j=0, m=0; j < device.driverList.size(); j++)
-      {
-	Driver drv = (Driver) device.driverList.get(j);
-	if (drv.supportsPatch(patchString, p))
-	{
-	  driver = drv;
-          deviceComboBox.addItem(device);
-	  driverComboBox.addItem(drv);
-
-	  if (p.getDriver() == drv) // default is patch internal deviceNum & driverNum
-	  {
-            deviceComboBox.setSelectedIndex(n);
-            driverComboBox.setSelectedIndex(m);
+    // Populate the combo boxes only with devices, which supports the patch
+    Driver lastDriver = null;
+    // Skipping the generic device (i == 0)
+    for (int i=1; i < PatchEdit.appConfig.deviceCount(); i++) {
+      Device device = PatchEdit.appConfig.getDevice(i);
+      boolean newDevice = true;
+      for (int j=0, m=0; j<device.driverList.size();j++) {
+	Driver driver = (Driver) device.driverList.get(j);
+	if (!(driver instanceof Converter)
+	    && (driver.supportsPatch(patchString, p))) {
+	  if (newDevice) {	// only one entry for each supporting device
+	    deviceComboBox.addItem(device);
+	    newDevice = false;
+	  }
+	  if (p.getDriver() == driver) { // default is the driver associated with patch
+	    driverNum = m;
+            deviceComboBox.setSelectedIndex(deviceComboBox.getItemCount() - 1); // invoke DeviceActionListener
           }
-	  n++;
-	  m++;
+          m++;
+	  lastDriver = driver;
         }
-      }
-    }
+      }	// driver loop
+    } // device loop
+    deviceComboBox.setEnabled(deviceComboBox.getItemCount() > 1);
 
     //----- Layout the labels in a panel.
     JPanel labelPanel = new JPanel(new GridLayout(0, 1, 5, 5));
@@ -122,14 +116,14 @@ public class SysexSendToDialog extends JDialog {
     centerDialog();
 
     // show() or not to show(), that's the question!
-    if (driver != null)
+    if (lastDriver != null)
     {
       if (deviceComboBox.getItemCount()>1 ||
           driverComboBox.getItemCount()>1 )
 	this.show();
       else
       {
-        driver.sendPatch(p);
+        lastDriver.sendPatch(p);
 	dispose();
       }
     }
@@ -140,7 +134,6 @@ public class SysexSendToDialog extends JDialog {
     }
   }
 
-
  /**
   *
   */
@@ -150,16 +143,13 @@ public class SysexSendToDialog extends JDialog {
     this.setLocation((screenSize.width - size.width)/2, (screenSize.height - size.height)/2);
   }
 
-
  /**
   * Makes the actual work after pressing the 'Send to...' button
   */
   class SendToActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
 
-//    Device device = (Device)deviceComboBox.getSelectedItem();
       Driver driver = (Driver)driverComboBox.getSelectedItem();
-
       driver.sendPatch(p);
 
       setVisible(false);
@@ -167,26 +157,26 @@ public class SysexSendToDialog extends JDialog {
     }
   }
 
-
  /**
-  * Repopulate the Driver ComboBox with valid drivers after a Device change 
+  * Repopulate the Driver ComboBox with valid drivers after a Device change
   */
   class DeviceActionListener implements ActionListener {
     public void actionPerformed (ActionEvent evt) {
-
-      Device device = (Device)deviceComboBox.getSelectedItem();
       driverComboBox.removeAllItems();
 
-      if (device != null)
-      {
-        for (int j=0;j<device.driverList.size ();j++)
-        {
-          if ( !(Converter.class.isInstance (device.driverList.get (j))) &&
-		( ((Driver)device.driverList.get(j)).supportsPatch(patchString,p)) )
-              driverComboBox.addItem (device.getDriver(j));
-        }
+      Device device = (Device) deviceComboBox.getSelectedItem();
+      int nDriver = 0;
+      for (int i = 0; i < device.driverList.size(); i++) {
+	Driver driver = (Driver) device.driverList.get(i);
+        if (!(driver instanceof Converter)
+	    && driver.supportsPatch(patchString, p)) {
+          driverComboBox.addItem (driver);
+          nDriver++;
+	}
       }
-
+      // the original driver is the default
+      // When a different device is selected, driverNum can be out of range.
+      driverComboBox.setSelectedIndex(Math.min(driverNum, nDriver - 1));
       driverComboBox.setEnabled(driverComboBox.getItemCount() > 1);
     }
   }
