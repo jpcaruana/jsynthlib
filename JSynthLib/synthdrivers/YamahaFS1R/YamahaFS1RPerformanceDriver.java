@@ -224,7 +224,7 @@ public class YamahaFS1RPerformanceDriver extends Driver
 	/**
 	 *  Return editor window for performance
 	 *
-	 *@param  p  data of the performance
+	 *@param ip  data of the performance
 	 *@return    Description of the Return Value
 	 */
 	public JSLFrame editPatch(IPatch ip)

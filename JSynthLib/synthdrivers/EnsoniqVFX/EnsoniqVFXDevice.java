@@ -13,8 +13,7 @@ import java.util.prefs.Preferences;
  * made with first getting the version and then choosing the good parameters in a
  * table with the version as the key.
  *
- * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
- * @created    17 septembre 2002
+ * @author     <a href="mailto:dqueffeulou@free.fr">Denis Queffeulou</a>  (created 17 Sep 2002) 
  * @version    $Id$
  */
 public class EnsoniqVFXDevice extends Device

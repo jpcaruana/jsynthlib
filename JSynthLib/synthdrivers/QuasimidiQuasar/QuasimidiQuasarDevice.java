@@ -21,7 +21,7 @@
 
 package synthdrivers.QuasimidiQuasar;
 
-import core.*;
+import core.Device;
 
 import java.util.prefs.Preferences;
 /**

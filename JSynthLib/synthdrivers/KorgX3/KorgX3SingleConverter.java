@@ -31,7 +31,7 @@ public class KorgX3SingleConverter extends Converter {
    * are transformed to 164 bytes. In MIDI data, every 7th byte has
    * the next seven bytes' uppest bits.
    *
-   * @param p Patch to be converted
+   * @param ip Patch to be converted
    * @return Converted patch
    */
   public IPatch[] extractPatch (IPatch ip) {

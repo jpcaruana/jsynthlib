@@ -10,8 +10,7 @@ import core.SysexHandler;
 /**
  *  Bank driver for Ensoniq VFX
  *
- * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
- * @created    17 septembre 2002
+ * @author     <a href="mailto:dqueffeulou@free.fr">Denis Queffeulou</a>  (created 17 Sep 2002)
  * @version $Id$
  */
 public class EnsoniqVFXBankDriver extends BankDriver

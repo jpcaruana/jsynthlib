@@ -381,7 +381,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * This method is called by extended classes.
      * Override this for different checksum calculation method.
      *
-     * @param p a <code>Patch</code> value
+     * @param patch a <code>Patch</code> value
      * @param start start offset
      * @param end end offset
      * @param ofs offset of the checksum data
@@ -434,7 +434,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * patch to a correct size. Useful for files containg more than one
      * bank for example. Some drivers are incompatible with this method
      * so it reqires explicit activation with the trimSize variable.
-     * @param p the patch, which should be trimmed to the right size
+     * @param ip the patch, which should be trimmed to the right size
      * @return the size of the (modified) patch
      */
     protected int trimSysex(IPatch ip) { // no driver overrides this now.
@@ -547,7 +547,7 @@ public class Driver extends Object /*implements Serializable, Storable*/ {
      * this driver is the correct one to support the patch.
      *
      * @param patchString the result of <code>p.getPatchHeader()</code>.
-     * @param p a <code>Patch</code> value
+     * @param ip a <code>Patch</code> value
      * @return <code>true</code> if this driver supports the Patch.
      * @see #patchSize
      * @see #sysexID

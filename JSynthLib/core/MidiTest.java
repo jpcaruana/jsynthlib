@@ -129,16 +129,17 @@ public class MidiTest implements Runnable {
 		}
 	}
 
+	
+	private static final boolean testShortMessage = true;
+	private static final boolean testSysexMessage = true;
+	
 	/**
 	 * This just returns a vector full of MidiMessage objects that
 	 * the tester uses to send out through the loopback. -
 	 * emenaker 2003.03.24
 	 *
-	 * @return
 	 * @throws Exception
 	 */
-	private static final boolean testShortMessage = true;
-	private static final boolean testSysexMessage = true;
 	private static Vector getMidiMessages() throws Exception {
 		Vector msgList = new Vector();
 		ShortMessage msg = new ShortMessage();

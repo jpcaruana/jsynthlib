@@ -9,9 +9,8 @@ import core.SysexHandler;
  *  Multi driver for VFX. Multi have no name.
  * The message type seems to be 0B instead of 06 as the doc says. The size is
  * also changed. 
- *@author     Denis Queffeulou mailto:dqueffeulou@free.fr
- *@created    17 septembre 2002
- *@version    $Id$
+ * @author     <a href="mailto:dqueffeulou@free.fr">Denis Queffeulou</a>  (created 17 Sep 2002)
+ * @version    $Id$
  */
 public class EnsoniqVFXMultiDriver extends Driver
 {

@@ -117,7 +117,7 @@ public class Patch implements IPatch {
     /**
      * Set <code>driverNum</code> by guessing from <code>sysex</code>
      * by using <code>Driver.suportsPatch</code> method.
-     * @param deviceNum The known device number
+     * @param dev The known device
      * @see Driver#supportsPatch
      */
     private boolean chooseDriver(Device dev) {

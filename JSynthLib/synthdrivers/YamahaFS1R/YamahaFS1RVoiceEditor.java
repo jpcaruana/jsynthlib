@@ -387,8 +387,8 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 	}
 
 	/**
-		Build a window for one voiced operator
-		@param aOperatorNumber 1..8
+	 * Build a window for one voiced operator
+     * @param aOp Operator number (1 ... 8)
 	*/
 	private Container buildOperatorWindow(int aOp) {
 		Box oPane = Box.createVerticalBox();
@@ -513,7 +513,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 
 	/**
 		Build a window for one unvoiced operator
-		@param aOperatorNumber 1..8
+		@param aOp Operator number (1 ... 8)
 	*/
 	private Container buildUnvoicedWindow(int aOp) {
 		Box oPane = Box.createVerticalBox();

@@ -134,7 +134,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	/**
 	 *  Gets the patchName of a patch in the bank
 	 *
-	 *@param  p         bank sysex
+	 *@param  ip        bank sysex
 	 *@param  patchNum  number of the patch in the bank
 	 *@return           The patchName 
 	 */
@@ -153,7 +153,7 @@ public class YamahaFS1RBankDriver extends BankDriver
 	/**
 	 *  Sets the patchName attribute of the YamahaFS1RBankDriver object
 	 *
-	 *@param  p         The new patchName value
+	 *@param  ip         The new patchName value
 	 *@param  patchNum  The new patchName value
 	 *@param  name      The new patchName value
 	 */

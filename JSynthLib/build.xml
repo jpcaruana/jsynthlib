@@ -26,15 +26,15 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.5 2004-07-23 05:51:59 jbackhaus Exp $
+	Version: $Id: build.xml,v 1.6 2004-08-03 05:28:17 jbackhaus Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
 
 	<description>  JSynthLib: A universal synth librarian  </description>
-		
+
 	<!-- User-defined properties -->
-	<property file="build.properties"/>		
+	<property file="build.properties"/>
 
 	<!-- Defaults -->
 	<property name="src" location="."/>
@@ -43,7 +43,7 @@
 	<property name="build" location="build"/>
 	<property name="dist"  location="dist"/>
 	<property name="synthdrivers"  location="${build}/synthdrivers"/>
-	
+
 	<property name="synth"  value="**"/>
 	<property name="deprecation"  value="on"/>
 
@@ -90,10 +90,11 @@
 	<!-- Documentation -->
 	<target name="api_docs" depends="init"
 			description="Generate API documentation">
-		<mkdir dir="${api_docs}"/>
-		<javadoc sourcepath="${src}" destdir="${api_docs}" nohelp="true">
+		<mkdir dir="${api_docs}"/>		
+		<javadoc destdir="${api_docs}" nohelp="true" private="true">			
 			<packageset dir="${src}">
 				<include name="*/**"/>
+				<exclude name="midiprovider/**"/>
 			</packageset>
 		</javadoc>
 	</target>
@@ -159,7 +160,7 @@
 	</target>
 
 	<target name="rd" depends="run-debug"/>
-	
+
 
 	<!-- Update driver information -->
 	<target name="update-drivers"
@@ -187,13 +188,13 @@
 			<fileset dir="${synthdrivers}" includes="${synth}/**/*.class"/>
 		</delete>
 	</target>
-	
+
 	<target name="cs" depends="clean-synthdrivers"/>
 
 	<!-- ==================== Administrative targets  ======================= -->
 	<target name="build-core" depends="clean-synthdrivers,build"/>
 	<target name="bc" depends="build-core"/>
-	
+
 	<target name="clean-build" depends="clean,build"/>
 	<target name="cb" depends="clean-build"/>
 
@@ -227,7 +228,7 @@ The following targets are available:
   run-debug            Run the application with debug level 2
   rd                   Short form of "run-debug"
   update-drivers       Update synth drivers information with debug level 2
-  ud                   Short form of "update-drivers"  
+  ud                   Short form of "update-drivers"
 		</echo>
 	</target>
 

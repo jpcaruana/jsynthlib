@@ -8,9 +8,8 @@ package synthdrivers.KawaiK5000;
 
 import core.*;
 import java.util.prefs.Preferences;
+
 /**
- *
- * @author  
  * @version $Id$
  */
 public class KawaiK5000Device extends Device

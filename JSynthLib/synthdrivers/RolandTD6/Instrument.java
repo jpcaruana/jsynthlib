@@ -31,7 +31,8 @@ import core.TreeWidget;
  *
  * @author <a href="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
- * @see TreeNodes, TD6SingleEditor
+ * @see TreeNodes
+ * @see TD6SingleEditor
  */
 final class Instrument implements TreeWidget.Nodes {
     private static final Object[] ROOT = {

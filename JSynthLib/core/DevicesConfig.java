@@ -147,7 +147,7 @@ class DevicesConfig {
 	return deviceProps.getProperty(deviceName);
     }
 
-    /**
+    /*
      * Given a device name, return an instance of its class.
      * @param deviceName the name of the device.
      * @return an instance of the device's class.
@@ -157,7 +157,7 @@ class DevicesConfig {
 	return createDevice(deviceProps.getProperty(deviceName));
     }
     */
-    
+        
     Device createDevice(String className, Preferences prefs) {
     		if (className.charAt(0) == ':') {
     			return XMLDeviceFactory.createDevice(className.substring(1),
