@@ -52,6 +52,7 @@ public class MidiConfigPanel extends ConfigPanel {
 		public void actionPerformed (ActionEvent e) {
 		    setContainerEnabled(channelPanel, cbxEnMidi.isSelected());
 		    cbMC.setEnabled(cbxEnMC.isSelected());
+		    disableUnavailableWidgets();
 		}
 	});
 
@@ -246,7 +247,10 @@ public class MidiConfigPanel extends ConfigPanel {
 	} else {
 	    resetPortComboBoxes();
 	}
+	disableUnavailableWidgets();
+    }
 
+    private void disableUnavailableWidgets() {
 	// master controller requires both MIDI input and output
 	if (!MidiUtil.isOutputAvailable() || !MidiUtil.isInputAvailable()) {
 	    appConfig.setMasterInEnable(false);
