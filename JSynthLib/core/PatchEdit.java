@@ -537,6 +537,7 @@ public class PatchEdit extends JFrame
                 case 2: MidiOut=new WireMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
                 case 3: MidiOut=new LinuxMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
                 case 4: MidiOut=new MacOSXMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
+                case 5: MidiOut=new JavasoundMidiWrapper (appConfig.getInitPortIn(),appConfig.getInitPortOut()); break;
             }
             MidiIn=MidiOut;
         } catch (Exception e)

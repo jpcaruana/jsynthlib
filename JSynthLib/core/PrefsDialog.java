@@ -1,3 +1,6 @@
+/**
+ * @version $Id$
+ */
 package core;
 import jmidi.*;
 import javax.swing.JList.*;
@@ -198,6 +201,7 @@ public class PrefsDialog extends JDialog
         cbPlatform.addItem ("MS Windows (WireProvider)");
         cbPlatform.addItem ("GNU/Linux  (/dev/*)");
         cbPlatform.addItem ("MacOS X");
+        cbPlatform.addItem ("JavaSound (for JDK1.4.2)");
         cbPlatform.addItemListener (new ItemListener ()
         {
             public void itemStateChanged (ItemEvent e)
