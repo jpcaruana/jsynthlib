@@ -135,7 +135,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 	  final int index = pad;
 	  final boolean rimp = isRim;
 	  b.addActionListener
-	    (new ActionListener() { 
+	    (new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		  // deselect privious selected button
 		  if (isRim)
@@ -152,21 +152,8 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 		  // pad selection is changed.
 		  for (int i = 0; i < widgetList.size(); i++) {
 		    SysexWidget w = (SysexWidget) widgetList.get(i);
-		    if (w.paramModel != null) {
-		      w.setValue(p);
-		      // If a method update() is defined by
-		      // SysexWidget the following if-else statement
-		      // can be replaced by the following one line.
-		      //w.update();
-		      if (w instanceof ScrollBarWidget)
-			((ScrollBarWidget) w).slider.setValue(w.getValue());
-		      else if (w instanceof ScrollBarLookupWidget)
-			((ScrollBarLookupWidget) w).slider.setValue(w.getValue());
-		      else if (w instanceof TreeWidget)
-			((TreeWidget) w).update();
-		      else if (w instanceof CheckBoxWidget)
-			((CheckBoxWidget) w).cb.setSelected((w.getValue() != 0));
-		    }
+		    //ErrorMsg.reportStatus(((Object) w).toString());
+		    w.setValue();
 		  }
 		}
 	      });
@@ -254,7 +241,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 				  new TD6PadModel(patch, 0xd),
 				  new TD6PadSender(0xd)),
 	      1, 1, 1, 1, snum++);
-    //   MIDI note number 
+    //   MIDI note number
     addWidget(padParamPane,
 	      new ScrollBarWidget("Note Number", patch,
 				  0, 127, 0,
@@ -484,7 +471,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
     pack();
     show();
   }
-  
+
   /**
    * SysexSender for a selected pad.  Used by widgets in padParamPane.
    */
@@ -553,7 +540,7 @@ public final class TD6SingleEditor extends PatchEditorFrame {
 	padList[pad].buttonRim.setText(treeWidget.getNode(d).toString());
       else
 	padList[pad].buttonHead.setText(treeWidget.getNode(d).toString());
-      
+
     }
   }
 
