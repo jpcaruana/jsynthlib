@@ -212,17 +212,15 @@ public final class MidiUtil {
      * @see #getReceiver
      * @see #send
      */
-    private static MidiDevice getOutputMidiDevice(int port) {
+    private static MidiDevice getOutputMidiDevice(int port)
+	throws MidiUnavailableException {
 	MidiDevice dev = null;
-	try {
-	    dev = MidiSystem.getMidiDevice(outputMidiDeviceInfo[port]);
-	    if (!dev.isOpen()) {
-		ErrorMsg.reportStatus("open outport: "
-				      + dev.getDeviceInfo().getName());
-		dev.open();
-	    }
-	} catch (MidiUnavailableException e) {
-	    ErrorMsg.reportStatus(e);
+
+	dev = MidiSystem.getMidiDevice(outputMidiDeviceInfo[port]);
+	if (!dev.isOpen()) {
+	    ErrorMsg.reportStatus("open outport: "
+				  + dev.getDeviceInfo().getName());
+	    dev.open();
 	}
 	return dev;
     }
@@ -236,20 +234,17 @@ public final class MidiUtil {
      * @see #getOutputMidiDeviceInfo()
      * @see #getReceiver
      * @see #send
+     @ throws MidiUnavailableException
      */
-    static Receiver getReceiver(int port) {
+    static Receiver getReceiver(int port) throws MidiUnavailableException {
 	if (midiOutRcvr[port] != null)
 	    return midiOutRcvr[port];
 
 	MidiDevice dev = getOutputMidiDevice(port);
-	try {
-	    Receiver r = dev.getReceiver();
-	    midiOutRcvr[port] = r;
-	    return r;
-	} catch (MidiUnavailableException e) {
-	    ErrorMsg.reportStatus(e);
-	}
-	return null;
+
+	Receiver r = dev.getReceiver();
+	midiOutRcvr[port] = r;
+	return r;
     }
 
     /**
@@ -474,7 +469,7 @@ public final class MidiUtil {
 	}
 
 	public void send(MidiMessage msg, long timeStamp) {
-	    ErrorMsg.reportStatus("InputQueue: " + msg);
+	    //ErrorMsg.reportStatus("InputQueue: " + msg);
 	    list.add(msg);
 	    log("XMIT: ", msg);
 	}

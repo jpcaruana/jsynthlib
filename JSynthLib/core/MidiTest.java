@@ -38,9 +38,9 @@ public class MidiTest implements Runnable {
 				       "transferred properly. This process usually takes about\n" +
 				       "5 to 10 seconds, so be patient.\n");
 
-		if (PatchEdit.newMidiAPI)
-			rcvr = MidiUtil.getReceiver(outport);
 		try {
+			if (PatchEdit.newMidiAPI)
+				rcvr = MidiUtil.getReceiver(outport);
 			Vector msgList = getMidiMessages();
 
 			/*
