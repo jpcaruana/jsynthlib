@@ -32,12 +32,8 @@ public class AccessVirusDevice extends Device implements ItemListener {
     
     /** Creates new AccessVirus */
     public AccessVirusDevice() {
-        manufacturerName = "Access";
-        modelName = "Virus";
-        //patchType = "Bank";
-        synthName = "Virus";
+	super ("Access","Virus",null,DRIVER_INFO,"Kenneth L. Martinez");
         deviceId = 17;
-        infoText = DRIVER_INFO;
         //avConfig = new AccessVirusConfig();
         Driver drv;
         JOptionPane.showMessageDialog(PatchEdit.getInstance(),

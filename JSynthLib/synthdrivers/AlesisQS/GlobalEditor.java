@@ -8,6 +8,7 @@ import javax.swing.event.*;
 /**
  * Editor for AlesisQS global parameters.
  * @author Zellyn Hunter (zjh, zellyn@zellyn.com)
+ * @version $Id$
  *
  *  #  Parameter name                Func  Pot     HiLim    bit address
  *                                      Page  LoLim     bits

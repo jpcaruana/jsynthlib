@@ -30,6 +30,7 @@ package synthdrivers.AlesisQS;
  * 7: 0 G7 G6 G5 G4 G3 G2 G1   <br/>
  *
  * @author Zellyn Hunter (zellyn@bigfoot.com, zjh)
+ * @version $Id$
  */
 
 public class SysexRoutines

@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.BossDR660;
 import core.*;
 import java.io.*;
@@ -8,10 +11,7 @@ public class BossDR660DrumkitDriver extends Driver
   int [] xvrt;
    public BossDR660DrumkitDriver()
    {
-   manufacturer="Boss";
-   model="DR660";
-   patchType="Drumkit";
-   id="DR660";
+   super ("Drumkit","Brian Klock");
    sysexID="F041**5212";
    patchNameStart=1378;
    patchNameSize=7;
@@ -29,7 +29,7 @@ public class BossDR660DrumkitDriver extends Driver
   {
     try {       
          
-        PatchEdit.MidiOut.writeShortMessage(port,(byte)(0xC0+(channel-1)),(byte)xvrt[patchNum]);
+        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0xC0+(getChannel()-1)),(byte)xvrt[patchNum]);
 	Thread.sleep(150);
     } catch (Exception e) {};    
   }			      
@@ -37,16 +37,16 @@ public class BossDR660DrumkitDriver extends Driver
  public void calculateChecksum (Patch p)
    { for (int i=0;i<55;i++) 
 	   {calculateChecksum(p,23*i+5,23*i+20,23*i+21);
-	    p.sysex[i*23+2]=((byte)(channel-1));
+	    p.sysex[i*23+2]=((byte)(getChannel()-1));
 	   }
      calculateChecksum(p,1265+5,1265+63,1265+64);
-     p.sysex[1265+2]=((byte)(channel-1));
+     p.sysex[1265+2]=((byte)(getChannel()-1));
      calculateChecksum(p,1331+5,1331+21,1331+22);
-     p.sysex[1331+2]=((byte)(channel-1));
+     p.sysex[1331+2]=((byte)(getChannel()-1));
      calculateChecksum(p,1355+5,1355+11,1355+12);
-     p.sysex[1355+2]=((byte)(channel-1));
+     p.sysex[1355+2]=((byte)(getChannel()-1));
      calculateChecksum(p,1369+5,1369+15,1369+16);
-     p.sysex[1369+2]=((byte)(channel-1));
+     p.sysex[1369+2]=((byte)(getChannel()-1));
      
    }                  
 
@@ -87,18 +87,18 @@ public class BossDR660DrumkitDriver extends Driver
 
         sendPatch(p);
         Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x90+(channel-1)),(byte)36,(byte)127);
+        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x90+(getChannel()-1)),(byte)36,(byte)127);
         Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x80+(channel-1)),(byte)36,(byte)0);
-        PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x90+(channel-1)),(byte)42,(byte)127);
+        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x80+(getChannel()-1)),(byte)36,(byte)0);
+        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x90+(getChannel()-1)),(byte)42,(byte)127);
         Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x80+(channel-1)),(byte)42,(byte)0);
-       PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x90+(channel-1)),(byte)38,(byte)127);
+        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x80+(getChannel()-1)),(byte)42,(byte)0);
+       PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x90+(getChannel()-1)),(byte)38,(byte)127);
         Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x80+(channel-1)),(byte)38,(byte)0);
-       PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x90+(channel-1)),(byte)46,(byte)127);
+        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x80+(getChannel()-1)),(byte)38,(byte)0);
+       PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x90+(getChannel()-1)),(byte)46,(byte)127);
         Thread.sleep(100); 
-        PatchEdit.MidiOut.writeShortMessage(port,(byte)(0x80+(channel-1)),(byte)46,(byte)0); 
+        PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0x80+(getChannel()-1)),(byte)46,(byte)0); 
      } catch (Exception e){ErrorMsg.reportError("Error","Unable to Play Drums",e);}       
   }
 public Patch createNewPatch()
@@ -108,8 +108,7 @@ public Patch createNewPatch()
     byte [] buffer =new byte [1387];
     fileIn.read(buffer);
     fileIn.close();
-    Patch p=new Patch(buffer);
-    p.ChooseDriver();
+    Patch p=new Patch(buffer, this);
     return p;
   }catch (Exception e) {ErrorMsg.reportError("Error","Unable to find Defaults",e);return null;}
   }

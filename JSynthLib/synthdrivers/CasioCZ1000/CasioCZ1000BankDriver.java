@@ -1,6 +1,8 @@
 /* Made by Yves Lefebvre
    email : ivanohe@abacom.com
    www.abacom.com/~ivanohe
+
+   @version $Id$
 */
 
 package synthdrivers.CasioCZ1000;
@@ -12,10 +14,7 @@ public class CasioCZ1000BankDriver extends BankDriver
 
     public CasioCZ1000BankDriver()
     {
-        manufacturer="Casio";
-        model="CZ-1000";
-        patchType="Bank";
-        id="CZ1000";
+	super ("Bank","Yves Lefebvre",16,4);
         sysexID="F04400007*";
         deviceIDoffset=0;
         bankNumbers =new String[] {"Internal Bank"};
@@ -23,9 +22,6 @@ public class CasioCZ1000BankDriver extends BankDriver
                                    "08-","09-","10-","11-","12-","13-","14-","15-",
                                    "16-"};
    
-        numPatches=patchNumbers.length;
-        authors="Yves Lefebvre";
-        numColumns=4;
         singleSysexID="F04400007*";
         singleSize=264;
 
@@ -77,14 +73,13 @@ public class CasioCZ1000BankDriver extends BankDriver
             sysex[1]=(byte)0x44;
             sysex[2]=(byte)0x00;
             sysex[3]=(byte)0x00;
-            sysex[4]=(byte)(0x70 + channel-1);
+            sysex[4]=(byte)(0x70 + getChannel()-1);
             sysex[5]=(byte)0x20;
             sysex[6]=(byte)(0x60); // to send to edit buffer
             sysex[263]=(byte)0xF7;
             System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,7,264-7);
-            Patch p = new Patch(sysex);
-            p.ChooseDriver();
-            ((Driver) (PatchEdit.getDriver(p.deviceNum,p.driverNum))).calculateChecksum(p);   
+            Patch p = new Patch(sysex, getDevice());
+            p.getDriver().calculateChecksum(p);   
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }
@@ -100,12 +95,11 @@ public class CasioCZ1000BankDriver extends BankDriver
         sysexHeader [1]=(byte)0x44;
         sysexHeader [2]=(byte)0x00;
         sysexHeader [3]=(byte)0x00;
-        sysexHeader [4]=(byte)(0x70 + channel-1);
+        sysexHeader [4]=(byte)(0x70 + getChannel()-1);
         sysexHeader [5]=(byte)0x20; // store command
         sysexHeader [6]=(byte)0x20; // patch number (internal start at 0x20)
 
-        Patch p = new Patch(sysex);
-        p.ChooseDriver();
+        Patch p = new Patch(sysex, this);
         for (int i=0;i<16;i++) 
         {
             sysexHeader [6] = (byte)(0x20 + i); // patch nunmber
@@ -121,8 +115,7 @@ public class CasioCZ1000BankDriver extends BankDriver
     { 
         // This is called when the user want to Store a bank.
         byte [] newsysex = new byte[264];
-        Patch p = new Patch(newsysex);
-        p.ChooseDriver();
+        Patch p = new Patch(newsysex, getDevice());
         try 
         {       
             for (int i=0;i<16;i++) 

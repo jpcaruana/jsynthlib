@@ -13,7 +13,7 @@ import core.*;
 /**
  *
  * @author  Chris Halls
- * @version 0.9
+ * @version $Id$
  */
 public class AlesisQSDevice extends Device
 {

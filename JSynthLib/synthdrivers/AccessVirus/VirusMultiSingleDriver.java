@@ -68,11 +68,7 @@ public class VirusMultiSingleDriver extends Driver {
  
   
   public VirusMultiSingleDriver() {
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Access";
-    model = "Virus";
-    patchType = "Multi Single";
-    id = "Virus";
+    super ("Multi Single","Kenneth L. Martinez");
     sysexID = "F000203301**11";
     sysexRequestDump = new SysexHandler("F0 00 20 33 01 10 31 01 *patchNum* F7");
 
@@ -123,13 +119,12 @@ public class VirusMultiSingleDriver extends Driver {
   }
 
   public Patch createNewPatch() {
-    Patch p = new Patch(NEW_PATCH);
-    p.ChooseDriver();
+    Patch p = new Patch(NEW_PATCH, this);
     return p;
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()),
+    sysexRequestDump.send(getPort(), (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()),
         new NameValue("bankNum", 1), new NameValue("patchNum", patchNum)
     );
   }

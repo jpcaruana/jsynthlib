@@ -37,7 +37,7 @@ import java.awt.event.ActionEvent;
 /**
  * Single program editor
  * @author Chris Halls
- * @version 0.1
+ * @version $Id$
  */
 class AlesisQSProgramEditor extends PatchEditorFrame
 {

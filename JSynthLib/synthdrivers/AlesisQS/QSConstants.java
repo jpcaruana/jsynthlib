@@ -3,6 +3,7 @@ package synthdrivers.AlesisQS;
 /**
  * Various constants used for the QS Synths
  * @author Zellyn Hunter (zellyn@bigfoot.com, zjh)
+ * @version $Id$
  */
 
 public class QSConstants

@@ -1,4 +1,6 @@
 // written by Kenneth L. Martinez
+// 
+// @version $Id$
 
 package synthdrivers.AlesisA6;
 
@@ -15,11 +17,8 @@ public class AlesisA6Device extends Device
   /** Creates new AlesisA6Device */
   public AlesisA6Device()
   {
-    manufacturerName = "Alesis";
-    modelName = "A6";
-    //patchType = "Bank";
-    synthName = "Andromeda";
-    infoText = DRIVER_INFO;
+    super ("Alesis","A6",null,DRIVER_INFO,"Kenneth L. Martinez");
+    setSynthName("Andromeda");
 
     addDriver(new AlesisA6PgmBankDriver());
     addDriver(new AlesisA6PgmSingleDriver());

@@ -5,6 +5,7 @@
  * March 2002
  * Authors: Zellyn Hunter (zellyn@bigfoot.com, zjh)
  *          Chris Halls <chris.halls@nikocity.de>
+ * @version $Id$
  * GPL v2
  */
 
@@ -24,12 +25,8 @@ public class AlesisQSProgramDriver extends Driver
   public AlesisQSProgramDriver()
   {
     super("Program", "Zellyn Hunter/Chris Halls");
-    manufacturer=QSConstants.MANUFACTURER;
-    model=QSConstants.MODEL;
-    id="QS";
     sysexID="F000000E0E**";
     sysexRequestDump=new SysexHandler("F0 00 00 0E 0E *opcode* *patchNum* F7");
-    inquiryID=QSConstants.INQUIRY_ID;
     //patchSize=350/7*8;
     patchSize=QSConstants.PATCH_SIZE_PROGRAM;
     // zjh - I think this should be 0 so sendPatchWorker doesn't use it
@@ -111,8 +108,7 @@ public class AlesisQSProgramDriver extends Driver
     sysex[QSConstants.POSITION_LOCATION] = 0;
 
     // Create the patch, and set the name
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
     setPatchName(p, QSConstants.DEFAULT_NAME_PROG);
     return p;
   }
@@ -149,7 +145,7 @@ public class AlesisQSProgramDriver extends Driver
     }
 
     sysexRequestDump.send(
-      port, (byte)channel,
+      getPort(), (byte)getChannel(),
       new NameValue("opcode", opcode),
       new NameValue("patchNum", location)
     );

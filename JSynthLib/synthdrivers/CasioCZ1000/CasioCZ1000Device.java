@@ -8,16 +8,14 @@ import core.*;
 /**
  *
  * @author  Brian Klock
- * @version
+ * @version $Id$
  */
 public class CasioCZ1000Device extends Device
 {
  
     public CasioCZ1000Device ()
     {
-     manufacturerName="Casio";
-	
-        modelName="CZ1000";
+	super ("Casio","CZ1000",null,null,"Yves Lefebvre");;
         setSynthName("CZ");
         addDriver (new CasioCZ1000SingleDriver ());
         addDriver (new CasioCZ1000BankDriver ());

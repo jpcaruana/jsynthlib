@@ -1,4 +1,6 @@
 // written by Kenneth L. Martinez
+//
+// @version $Id$
 
 package synthdrivers.AlesisA6;
 
@@ -10,11 +12,7 @@ public class AlesisA6MixBankDriver extends BankDriver
 
   public AlesisA6MixBankDriver()
   {
-    manufacturer = "Alesis";
-    authors = "Kenneth L. Martinez";
-    model = "A6";
-    patchType = "Mix Bank";
-    id = "Andromeda";
+    super ("Mix Bank","Kenneth L. Martinez",AlesisA6PgmSingleDriver.patchList.length,4);
     sysexID = "F000000E1D04**00";
     sysexRequestDump = new SysexHandler("F0 00 00 0E 1D 0B *bankNum* F7");
     patchSize = 151040;
@@ -23,8 +21,6 @@ public class AlesisA6MixBankDriver extends BankDriver
     deviceIDoffset = -1;
     bankNumbers  = AlesisA6PgmSingleDriver.bankList;
     patchNumbers = AlesisA6PgmSingleDriver.patchList;
-    numPatches = patchNumbers.length;
-    numColumns = 4;
     singleSize = 1180;
     singleSysexID = "F000000E1D04";
   }
@@ -68,7 +64,7 @@ public class AlesisA6MixBankDriver extends BankDriver
   {
     byte sysex[] = new byte[1180];
     System.arraycopy(bank.sysex, patchNum * 1180, sysex, 0, 1180);
-    Patch p = new Patch(sysex);
+    Patch p = new Patch(sysex, getDevice());
     return p;
   }
 
@@ -116,7 +112,7 @@ public class AlesisA6MixBankDriver extends BankDriver
         System.arraycopy(p.sysex, i * 1180, tmp, 0, 1180);
         tmp[6] = (byte)bankNum;
         tmp[7] = (byte)i; // mix #
-        PatchEdit.MidiOut.writeLongMessage(port, tmp);
+        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
         Thread.sleep(15);
       }
       PatchEdit.waitDialog.hide();
@@ -130,7 +126,7 @@ public class AlesisA6MixBankDriver extends BankDriver
 
   public void requestPatchDump(int bankNum, int patchNum)
   {
-    sysexRequestDump.send(port, (byte)channel, new NameValue("bankNum", bankNum),
+    sysexRequestDump.send(getPort(), (byte)getChannel(), new NameValue("bankNum", bankNum),
       new NameValue("patchNum", patchNum)
     );
   }

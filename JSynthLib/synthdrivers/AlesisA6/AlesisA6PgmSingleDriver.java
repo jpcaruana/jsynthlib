@@ -1,4 +1,6 @@
 // written by Kenneth L. Martinez
+//
+// @version $Id$
 
 package synthdrivers.AlesisA6;
 
@@ -27,11 +29,7 @@ public class AlesisA6PgmSingleDriver extends Driver
 
   public AlesisA6PgmSingleDriver()
   {
-    manufacturer = "Alesis";
-    authors = "Kenneth L. Martinez";    
-    model = "A6";
-    patchType = "Prog Single";
-    id = "Andromeda";
+    super ("Prog Single","Kenneth L. Martinez");
     sysexID = "F000000E1D00****";
     sysexRequestDump = new SysexHandler("F0 00 00 0E 1D 01 *bankNum* *patchNum* F7");
 
@@ -157,7 +155,7 @@ public class AlesisA6PgmSingleDriver extends Driver
     System.arraycopy(p.sysex, 0, sysex, 0, 2350);
     sysex[6] = 0; // user bank
     sysex[7] = 127; // program # 127
-    sysex[2350] = (byte)(0xC0 + channel - 1); // program change
+    sysex[2350] = (byte)(0xC0 + getChannel() - 1); // program change
     sysex[2351] = (byte)127; // program # 127
     Patch p2 = new Patch(sysex);
     try
@@ -469,8 +467,7 @@ public class AlesisA6PgmSingleDriver extends Driver
       (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
       (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xF7
     };
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
 //    setPatchName(p, "NewPatch");
     return p;
   }

@@ -10,6 +10,7 @@ import java.io.*;
  * Mix program driver for Alesis QS series synths
  * Feb 2002
  * @author Zellyn Hunter (zellyn@bigfoot.com, zjh)
+ * @version $Id$
  * GPL v2
  */
 
@@ -17,13 +18,9 @@ public class AlesisQSMixDriver extends Driver
 {
   public AlesisQSMixDriver()
   {
-    manufacturer=QSConstants.MANUFACTURER;
-    model=QSConstants.MODEL;
-    patchType="Mix";
-    id="QS";
+    super ("Mix","Zellyn Hunter");
     sysexID="F000000E0E**";
     sysexRequestDump=new SysexHandler("F0 00 00 0E 0E *opcode* *patchNum* F7");
-    inquiryID=QSConstants.INQUIRY_ID;
     //patchSize=350/7*8;
     patchSize=QSConstants.PATCH_SIZE_MIX;
     // zjh - I think this should be 0 so sendPatchWorker doesn't use it
@@ -105,8 +102,7 @@ public class AlesisQSMixDriver extends Driver
     sysex[QSConstants.POSITION_LOCATION] = 0;
 
     // Create the patch, and set the name
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
     setPatchName(p, QSConstants.DEFAULT_NAME_MIX);
     return p;
   }
@@ -134,7 +130,7 @@ public class AlesisQSMixDriver extends Driver
     int opcode = QSConstants.OPCODE_MIDI_USER_MIX_DUMP_REQ;
 
     sysexRequestDump.send(
-      port, (byte)channel,
+      getPort(), (byte)getChannel(),
       new NameValue("opcode", opcode),
       new NameValue("patchNum", location)
     );

@@ -8,6 +8,7 @@ import core.SysexSender;
  * F0 00 00 0E 0E 10 <0mmfffff> <0ssppppp> <0ccccddv> <0vvvvvvvv> F7
  * (value is 8 bit 2's complement)
  * @author Zellyn Hunter (zjh, zellyn@zellyn.com)
+ * @version $Id$
  */
 
 public class MidiEditSender extends SysexSender

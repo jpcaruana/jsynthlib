@@ -1,6 +1,8 @@
 /* Made by Yves Lefebvre
    email : ivanohe@abacom.com
    www.abacom.com/~ivanohe
+
+   @version $Id$
 */
 
 package synthdrivers.CasioCZ1000;
@@ -31,15 +33,11 @@ public class CasioCZ1000SingleDriver extends Driver
 
     public CasioCZ1000SingleDriver()
     {
-        manufacturer="Casio";
-        model="CZ-1000";
-        patchType="Single";
-        id="CZ1000";
+	super ("Single","Yves Lefebvre");
         sysexID="F04400007*";
         patchSize=264;
         patchNameStart=0;
         patchNameSize=0;
-        authors="Yves Lefebvre";
         deviceIDoffset=0;
         checksumStart=0;
         checksumEnd=0;
@@ -54,16 +52,15 @@ public class CasioCZ1000SingleDriver extends Driver
     {
         byte [] newsysex = new byte[264];
         System.arraycopy(p.sysex,0,newsysex,0,264);
-        newsysex[4] = (byte)(0x70 + channel -1); // must do it ourselve since sendPatchWorker didn't support
+        newsysex[4] = (byte)(0x70 + getChannel() -1); // must do it ourselve since sendPatchWorker didn't support
                                                  // adding midi channel info in half a byte
         newsysex[5] = (byte)(0x20); // 20 is to send data to the Casio
         newsysex[6] = (byte)(0x20+patchNum); //0x20 is the offset to internal memory location
-        Patch patchtowrite = new Patch(newsysex);
-        patchtowrite.ChooseDriver();
+        Patch patchtowrite = new Patch(newsysex, this);
         // need to convert to a "patch dump and write" format
         try {Thread.sleep(100); } catch (Exception e){}
         try {       
-            PatchEdit.MidiOut.writeLongMessage(port,patchtowrite.sysex);
+            PatchEdit.MidiOut.writeLongMessage(getPort(),patchtowrite.sysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
         try {Thread.sleep(100); } catch (Exception e){}
         setBankNum(bankNum);
@@ -74,14 +71,13 @@ public class CasioCZ1000SingleDriver extends Driver
     { 
         byte [] newsysex = new byte[264];
         System.arraycopy(p.sysex,0,newsysex,0,264);
-        newsysex[4] = (byte)(0x70 + channel -1); // must do it ourselve since sendPatchWorker didn't support
+        newsysex[4] = (byte)(0x70 + getChannel() -1); // must do it ourselve since sendPatchWorker didn't support
                                                  // adding midi channel info in half a byte
         newsysex[5] = (byte)(0x20); // 0x20 is to send data to the Casio
         newsysex[6] = (byte)(0x60); // 0x60 is edit buffer location
-        Patch patchtowrite = new Patch(newsysex);
-        patchtowrite.ChooseDriver();
+        Patch patchtowrite = new Patch(newsysex, this);
         try {       
-            PatchEdit.MidiOut.writeLongMessage(port,newsysex);
+            PatchEdit.MidiOut.writeLongMessage(getPort(),newsysex);
         }catch (Exception e) {ErrorMsg.reportStatus(e);}
     }
 
@@ -98,12 +94,11 @@ public class CasioCZ1000SingleDriver extends Driver
         sysex[1]=(byte)0x44;
         sysex[2]=(byte)0x00;
         sysex[3]=(byte)0x00;
-        sysex[4]=(byte)(0x70+channel-1);
+        sysex[4]=(byte)(0x70+getChannel()-1);
         sysex[5]=(byte)0x20;
         sysex[6]=(byte)0x60; // default to send for edit buffer
         sysex[263]=(byte)0xF7;
-        Patch p = new Patch(sysex);
-        p.ChooseDriver();
+        Patch p = new Patch(sysex, this);
         calculateChecksum(p);	 
         return p;
     }
@@ -121,7 +116,7 @@ public class CasioCZ1000SingleDriver extends Driver
     {
         // we only support internal memory now (add 0x20 to patchnum) since we can't write on preset or cartridge
         try {       
-            PatchEdit.MidiOut.writeShortMessage(port,(byte)(0xC0+(channel-1)),(byte)(0x20+patchNum));
+            PatchEdit.MidiOut.writeShortMessage(getPort(),(byte)(0xC0+(getChannel()-1)),(byte)(0x20+patchNum));
         } catch (Exception e) {};    
     }
 }

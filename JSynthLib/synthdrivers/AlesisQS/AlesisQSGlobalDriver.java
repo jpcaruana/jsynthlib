@@ -10,6 +10,7 @@ import java.io.*;
  * Global program driver for Alesis QS series synths
  * Feb 2002
  * @author Zellyn Hunter (zjh, zellyn@zellyn.com)
+ * @version $Id$
  * GPL v2
  */
 
@@ -17,13 +18,9 @@ public class AlesisQSGlobalDriver extends Driver
 {
 	public AlesisQSGlobalDriver()
 	{
-		manufacturer=QSConstants.MANUFACTURER;
-		model=QSConstants.MODEL;
-		patchType="Global";
-		id="QS";
+		super ("Global","Zellyn Hunter");
 		sysexID="F000000E0E**";
 		sysexRequestDump=new SysexHandler("F0 00 00 0E 0E 0B F7");
-		inquiryID=QSConstants.INQUIRY_ID;
 		//patchSize=350/7*8;
 		patchSize=QSConstants.PATCH_SIZE_GLOBAL;
 		// zjh - I think this should be 0 so sendPatchWorker doesn't use it
@@ -75,8 +72,7 @@ public class AlesisQSGlobalDriver extends Driver
 		sysex[QSConstants.POSITION_OPCODE] = QSConstants.OPCODE_MIDI_GLOBAL_DATA_DUMP;
 
 		// Create the patch, and set the name
-		Patch p = new Patch(sysex);
-		p.ChooseDriver();
+		Patch p = new Patch(sysex, this);
 		return p;
 	}
 
@@ -98,7 +94,7 @@ public class AlesisQSGlobalDriver extends Driver
 		//setBankNum(bankNum);
 		//setPatchNum(patchNum);
 
-		sysexRequestDump.send( port, (byte)channel );
+		sysexRequestDump.send( getPort(), (byte)getChannel() );
 	}
 
 

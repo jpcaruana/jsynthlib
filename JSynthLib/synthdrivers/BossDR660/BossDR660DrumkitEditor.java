@@ -1,3 +1,6 @@
+/*
+ * @version $Id$
+ */
 package synthdrivers.BossDR660;
 import core.*;
 import javax.swing.*;
@@ -67,7 +70,7 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
     super ("Boss DR660 Drumkit Editor",patch);   
   JPanel kitPane=new JPanel();
   kitPane.setLayout(new GridBagLayout());gbc.weightx=1;
-  addWidget(kitPane,new PatchNameWidget(patch," Name"),1,1,2,1,0);
+  addWidget(kitPane,new PatchNameWidget(" Name",patch),1,1,2,1,0);
   addWidget(kitPane,new ComboBoxWidget("Sense Curve A",patch,new ParamModel(patch,0x554),new BankSender(0),new String []
       			{"Exp1","Lin1","Exp2","Lin2","XfdO","XfdI","Fix1","Fix2"}),1,2,1,1,1);
   addWidget(kitPane,new ComboBoxWidget("Sense Curve B",patch,new ParamModel(patch,0x555),new BankSender(1),new String []
@@ -99,12 +102,11 @@ class BossDR660DrumkitEditor extends PatchEditorFrame{
     SysexWidget w;
    for (int i=0; i<widgetList.size();i++)
    {w= ((SysexWidget)widgetList.get(i)); 
-	if (w.paramModel!=null) {w.setValue(p);
+	 w.setValue();
 	 if (w instanceof ScrollBarWidget) ((ScrollBarWidget)w).slider.setValue(w.getValue());
 	 if (w instanceof ScrollBarLookupWidget) ((ScrollBarLookupWidget)w).slider.setValue(w.getValue());
          if (w instanceof ComboBoxWidget) ((ComboBoxWidget)w).cb.setSelectedIndex(w.getValue());
          if (w instanceof CheckBoxWidget) ((CheckBoxWidget)w).cb.setSelected((w.getValue()>0));
-     }
    }
   }}
   );

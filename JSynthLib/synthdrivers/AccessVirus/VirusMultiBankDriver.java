@@ -15,11 +15,7 @@ public class VirusMultiBankDriver extends BankDriver {
   static final int NUM_IN_BANK = 128;
   
    public VirusMultiBankDriver ()  {
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Access";
-    model = "Virus";
-    patchType = "Multi Bank";
-    id = "Virus";
+    super ("Multi Bank","Kenneth L. Martinez",VirusMultiSingleDriver.PATCH_LIST.length,4);
     sysexID = "F000203301**11";
     sysexRequestDump = new SysexHandler("F0 00 20 33 01 10 33 01 F7");
     singleSysexID = "F000203301**11";
@@ -33,8 +29,6 @@ public class VirusMultiBankDriver extends BankDriver {
     checksumEnd = 264;
     bankNumbers  = VirusMultiSingleDriver.BANK_LIST;
     patchNumbers = VirusMultiSingleDriver.PATCH_LIST;
-    numPatches = patchNumbers.length;
-    numColumns = 4;
   }
 
   public void calculateChecksum(byte sysex[], int start, int end, int ofs) {
@@ -66,7 +60,7 @@ public class VirusMultiBankDriver extends BankDriver {
   public Patch getPatch(Patch bank, int patchNum) {
     byte sysex[] = new byte[singleSize];
     System.arraycopy(bank.sysex, patchNum * singleSize, sysex, 0, singleSize);
-    Patch p = new Patch(sysex);
+    Patch p = new Patch(sysex, getDevice());
     return p;
   }
 
@@ -109,7 +103,7 @@ public class VirusMultiBankDriver extends BankDriver {
         tmp[BANK_NUM_OFFSET] = (byte)1;
         tmp[PATCH_NUM_OFFSET] = (byte)i; // multi #
         calculateChecksum(tmp, checksumStart, checksumEnd,checksumOffset);
-        PatchEdit.MidiOut.writeLongMessage(port, tmp);
+        PatchEdit.MidiOut.writeLongMessage(getPort(), tmp);
         Thread.sleep(50);
       }
       PatchEdit.waitDialog.hide();
@@ -127,13 +121,12 @@ public class VirusMultiBankDriver extends BankDriver {
       tmp[PATCH_NUM_OFFSET] = (byte)i; // multi #
       System.arraycopy(tmp, 0, sysex, i * singleSize, singleSize);
     }
-    Patch p = new Patch(sysex);
-    p.ChooseDriver();
+    Patch p = new Patch(sysex, this);
     return p;
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()), new NameValue("bankNum", 1)
+    sysexRequestDump.send(getPort(), (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()), new NameValue("bankNum", 1)
     );
   }
  

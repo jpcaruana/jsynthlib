@@ -7,6 +7,7 @@ import core.ParamModel;
  * Param model AlesisQS keyboards.  Allows changing of specific ranges of bits
  * in the patch, taking into account the compression scheme.
  * @author Zellyn Hunter (zjh, zellyn@zellyn.com)
+ * @version $Id$
  */
 
 public class QSParamModel extends ParamModel

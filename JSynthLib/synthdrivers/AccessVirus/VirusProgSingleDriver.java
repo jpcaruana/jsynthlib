@@ -67,11 +67,7 @@ public class VirusProgSingleDriver extends Driver {
   
  
   public VirusProgSingleDriver() {
-    authors = "Kenneth L. Martinez";
-    manufacturer = "Access";
-    model = "Virus";
-    patchType = "Prog Single";
-    id = "Virus";
+    super ("Prog Single","Kenneth L. Martinez");
     sysexID = "F000203301**10";
     sysexRequestDump = new SysexHandler("F0 00 20 33 01 @@ 30 *bankNum* *patchNum* F7");
 
@@ -130,8 +126,7 @@ public class VirusProgSingleDriver extends Driver {
   }
 
   public Patch createNewPatch() {
-    Patch p = new Patch(NEW_PATCH);
-    p.ChooseDriver();
+    Patch p = new Patch(NEW_PATCH, this);
     return p;
   }
   /*
@@ -145,7 +140,7 @@ public class VirusProgSingleDriver extends Driver {
   }
   */
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()),
+    sysexRequestDump.send(getPort(), (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()),
         new NameValue("bankNum", bankNum + 1), new NameValue("patchNum", patchNum)
     );
   }
