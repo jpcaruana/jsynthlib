@@ -1,7 +1,11 @@
 /*
  * JSynthlib - Device for Yamaha DX7 Mark-I
  * ========================================
+<<<<<<< YamahaDX7Device.java
  * @version $Id$
+=======
+ * @version $Id$
+>>>>>>> 1.9
  * @author  Torsten Tittmann
  *
  * Copyright (C) 2002-2003  Torsten.Tittmann@t-online.de
@@ -61,7 +65,7 @@ public class YamahaDX7Device extends Device
     infoText=DX7Strings.INFO_TEXT;
 
     // DX7 voice patch - basic patch for all modells of the DX7 family
-    addDriver (0, new YamahaDX7Converter());
+    //addDriver (0, new YamahaDX7Converter());
     addDriver (new YamahaDX7VoiceSingleDriver());
     addDriver (new YamahaDX7VoiceBankDriver());
 
