@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.10 2005-01-31 07:35:44 jbackhaus Exp $
+	Version: $Id: build.xml,v 1.11 2005-03-04 11:46:09 jbackhaus Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -72,11 +72,11 @@
 	<target name="build" depends="init"
 			description="Build the complete package">
 		<!-- Compile -->
-		<javac srcdir="${src}" destdir="${build}" classpath="groovy.jar;asm.jar" deprecation="${deprecation}">
+		<javac srcdir="${src}" destdir="${build}" classpath="groovy.jar" deprecation="${deprecation}">
 			<include name="**/*.java"/>
 			<exclude name="core/MacOSXMidiWrapper.java" unless="isMacOS"/>
 			<exclude name="midiprovider/**/*.java"/>
-		</javac>				
+		</javac>
 		<!-- Images -->
 		<copy todir="${build}/images">
 			<fileset dir="images"/>
