@@ -204,19 +204,32 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
         JMenuBar menuBar = new JMenuBar();
 
+	// create "File" Menu
+        JMenu menuFile = new JMenu("File");
+	mnemonics.put(menuFile, new Integer(KeyEvent.VK_F));
+	mi = menuFile.add(newAction);
+	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
+        menuFile.add(newSceneAction);
+        mi = menuFile.add(openAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, mask));
+        mi = menuFile.add(saveAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, mask));
+        menuFile.add(saveAsAction);
+
+        menuFile.addSeparator();
+        menuFile.add(importAction);
+        menuFile.add(exportAction);
+        menuFile.add(importAllAction);
+
+        if (!MacUtils.isMac()) {
+	    menuFile.addSeparator();
+	    menuFile.add(exitAction);
+	}
+	menuBar.add(menuFile);
+
 	// create "Library" Menu
         JMenu menuLib = new JMenu("Library");
 	mnemonics.put(menuLib, new Integer(KeyEvent.VK_L));
-
-	mi = menuLib.add(newAction);
-	mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
-        menuLib.add(newSceneAction);
-        mi = menuLib.add(openAction);
-        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, mask));
-        mi = menuLib.add(saveAction);
-        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, mask));
-        menuLib.add(saveAsAction);
-        menuLib.addSeparator();
 
         menuLib.add(transferSceneAction);
         menuLib.addSeparator();
@@ -224,10 +237,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         menuLib.add(sortAction);
         menuLib.add(searchAction);
         menuLib.add(dupAction);
-        if (!MacUtils.isMac()) {
-	    menuLib.addSeparator();
-	    menuLib.add(exitAction);
-	}
 	menuBar.add(menuLib);
 
 	// create "Patch" Menu
@@ -244,11 +253,6 @@ public final class PatchEdit /*implements MidiDriverChangeListener*/ {
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, mask));
         mi = menuPatch.add(deleteAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        menuPatch.addSeparator();
-
-        menuPatch.add(importAction);
-        menuPatch.add(exportAction);
-        menuPatch.add(importAllAction);
         menuPatch.addSeparator();
 
         mi = menuPatch.add(sendAction);
