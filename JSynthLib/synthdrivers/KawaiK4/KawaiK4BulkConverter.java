@@ -1,6 +1,5 @@
 package synthdrivers.KawaiK4;
 import core.Converter;
-import core.IPatch;
 import core.Patch;
 
 /**
@@ -29,8 +28,8 @@ public class KawaiK4BulkConverter extends Converter {
      * Convert a bulk patch into an array of single bank, multi bank,
      * drumset, and effect bank patches.
      */
-    public IPatch[] extractPatch(IPatch ip) {
-        byte[] sysex = ip.getByteArray();
+    public Patch[] extractPatch(Patch p) {
+        byte[] sysex = p.getByteArray();
         // System.out.println("Length p: " + sysex.length);
         byte[] sx = new byte[HSIZE + SSIZE + 1]; // Single Bank
         byte[] mx = new byte[HSIZE + MSIZE + 1]; // Multi Bank
@@ -76,6 +75,6 @@ public class KawaiK4BulkConverter extends Converter {
         pf[2] = new Patch(ex);
         pf[3] = new Patch(dx);
 
-        return (IPatch[]) pf;
+        return pf;
     }
 }

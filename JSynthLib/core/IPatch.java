@@ -51,8 +51,10 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
      * Drivers.
      * 
      * @return a <code>IPatch[]</code> value
-     * @see Converter
+     * @see IConverter
      */
+    // called by ImportAllDialog, ImportMidiFile, SysexGetDialog,
+    // LibraryFrame, and SceneFrame.
     IPatch[] dissect();
 
     /**

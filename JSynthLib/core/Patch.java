@@ -268,8 +268,6 @@ public class Patch implements IPatch {
 
     // end of Clone interface method
 
-    // called by ImportAllDialog, ImportMidiFile, SysexGetDialog,
-    // LibraryFrame, and SceneFrame.
     public IPatch[] dissect() {
         IPatch[] patarray;
         Device dev = getDevice();
@@ -278,9 +276,9 @@ public class Patch implements IPatch {
 
             for (int idrv = 0; idrv < dev.driverCount(); idrv++) {
                 IDriver drv = dev.getDriver(idrv);
-                if ((drv instanceof Converter)
+                if ((drv instanceof IConverter)
                         && drv.supportsPatch(patchString, this)) {
-                    patarray = ((Converter) drv).extractPatch(this);
+                    patarray = ((IConverter) drv).extractPatch(this);
                     if (patarray != null)
                         break search; // found!
                 }
@@ -289,8 +287,7 @@ public class Patch implements IPatch {
             return new IPatch[] { this };
         }
         // Conversion was sucessfull, we have at least one
-        // converted patch assign the original deviceNum and
-        // individual driverNum to each patch of patarray
+        // converted patch. Assign a proper driver to each patch of patarray
         for (int i = 0; i < patarray.length; i++) {
             StringBuffer patchString = patarray[i].getPatchHeader();
             for (int jdrv = 0; jdrv < dev.driverCount(); jdrv++) {

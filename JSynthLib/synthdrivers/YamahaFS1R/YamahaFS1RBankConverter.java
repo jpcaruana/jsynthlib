@@ -19,7 +19,7 @@ public class YamahaFS1RBankConverter extends Converter
 		patchSize = 129340;
 	}
 	
-	public IPatch[] extractPatch (IPatch p) 
+	public Patch[] extractPatch (Patch p) 
 	{
 		Patch oBank[] = new Patch[1];
 		oBank[0] = importFSEditor(p.getByteArray());

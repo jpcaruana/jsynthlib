@@ -45,8 +45,8 @@ public class YamahaTG100AllConverter extends Converter {
     /**
     * Converts 8266 Byte sysex files to the 6720 Bytes of a Voice Bank
     */
-    public IPatch[] extractPatch(IPatch ip) {
-    	byte[] sysex = ip.getByteArray();
+    public Patch[] extractPatch(Patch p) {
+    	byte[] sysex = p.getByteArray();
         Patch[] newPatchArray = new Patch[1];
         byte [] temporarySysex = new byte[TG100Constants.PATCH_SIZE * TG100Constants.PATCH_NUMBER_LENGTH];
 

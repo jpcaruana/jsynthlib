@@ -322,8 +322,8 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Add Driver.  Usually a constructor of a subclass of
      * <code>Device</code> calls this.  Bulk converters must be added
      * before simple drivers!
-     * @param driver Driver to be added.
-     * @see Converter
+     * @param driver IDriver to be added.
+     * @see IConverter
      */
     protected void addDriver(IDriver driver) {
         if (driver instanceof IPatchDriver)

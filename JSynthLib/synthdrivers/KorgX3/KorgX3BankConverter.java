@@ -33,8 +33,8 @@ public class KorgX3BankConverter extends Converter {
    * @param ip Patch to be converted
    * @return Converted patch
    */
-  public IPatch[] extractPatch (IPatch ip) {
-    byte[] sysex = ip.getByteArray();
+  public Patch[] extractPatch (Patch p) {
+    byte[] sysex = p.getByteArray();
     byte[] ps;
     byte[] pd;
     pd = new byte[37600+KorgX3BankDriver.EXTRA_HEADER];

@@ -34,8 +34,8 @@ public class KorgX3SingleConverter extends Converter {
    * @param ip Patch to be converted
    * @return Converted patch
    */
-  public IPatch[] extractPatch (IPatch ip) {
-    byte[] sysex = ip.getByteArray();
+  public Patch[] extractPatch (Patch p) {
+    byte[] sysex = p.getByteArray();
     byte[] ps; // source
     byte[] pd; // destination
     

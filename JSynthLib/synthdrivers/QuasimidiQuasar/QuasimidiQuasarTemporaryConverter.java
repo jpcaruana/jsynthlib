@@ -45,9 +45,9 @@ public class QuasimidiQuasarTemporaryConverter extends Converter {
     /**
     * Converts 644 Byte sysex files to the 223 Bytes the "Single Performance" driver uses
     */
-    public IPatch[] extractPatch(IPatch ip) {
-    	byte[] sysex = ip.getByteArray();
-        IPatch[] newPatchArray = new Patch[1];
+    public Patch[] extractPatch(Patch p) {
+    	byte[] sysex = p.getByteArray();
+        Patch[] newPatchArray = new Patch[1];
         byte [] temporarySysex = new byte[QuasarConstants.PATCH_SIZE];
 
         // starting at 19h (=25): Temporary name: 17 Bytes

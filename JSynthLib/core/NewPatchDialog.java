@@ -133,7 +133,7 @@ public class NewPatchDialog extends JDialog
 	    Device device = (Device) deviceComboBox.getSelectedItem();
 	    for (int i = 0; i < device.driverCount(); i++) {
 		IDriver driver = device.getDriver(i);
-		if (!(driver instanceof Converter)) {
+		if (driver instanceof IPatchDriver) {
 		    try {
 			// If the actual driver doesn't override the
 			// method "createNewPatch" this command will

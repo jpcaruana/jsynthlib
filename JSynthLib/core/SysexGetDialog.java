@@ -71,7 +71,7 @@ public class SysexGetDialog extends JDialog {
       Device device=AppConfig.getDevice(i);
       for (int j=0; j < device.driverCount(); j++) {
 	IDriver driver = device.getDriver(j);
-        if (!(driver instanceof Converter)) { // Skipping a converter
+        if (driver instanceof IPatchDriver) { // Skipping a converter
 	  deviceComboBox.addItem(device);
 	  break;
         }
@@ -184,7 +184,7 @@ public class SysexGetDialog extends JDialog {
 	    for (int j=0;j<device.driverCount();j++)
 	    {
 	      IDriver d = device.getDriver(j);
-	      if (!(d instanceof Converter)
+	      if (d instanceof IPatchDriver
 		  && d.supportsPatch(patchString, pk)) {
 		// driver found
 		driver = (IPatchDriver)d;
@@ -249,7 +249,7 @@ public class SysexGetDialog extends JDialog {
        Device device = (Device) deviceComboBox.getSelectedItem();
        for (int i = 0; i < device.driverCount(); i++) {
 	 IDriver driver = (IDriver) device.getDriver(i);
-	 if (!(driver instanceof Converter)) {
+	 if (driver instanceof IPatchDriver) {
 	   driverComboBox.addItem(driver);
 	 }
        }
