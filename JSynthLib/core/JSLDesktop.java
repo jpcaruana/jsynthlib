@@ -9,12 +9,14 @@ public class JSLDesktop {
     protected static JFrame selected = null;
     static AbstractAction toolBarAction = new AbstractAction ("Tool Bar") {
 	    public void actionPerformed(ActionEvent e) {
-		PatchEdit.desktop.showToolBar();
+		JSLDesktop.showToolBar();
 	    }
 	};
     private static Boolean in_fake_activation = Boolean.FALSE;
+    private static int xdecoration = 0, ydecoration = 0;
+    private static JSLDesktop instance = null;
 
-    public JSLDesktop() {
+    protected JSLDesktop() {
 	if (JSLFrame.useInternalFrames()) {
 	    proxy = new JSLJDesktop();
 	} else {
@@ -22,18 +24,26 @@ public class JSLDesktop {
 	}
     }
 
-    public JSLFrame[] getAllFrames() { return proxy.getAllJSLFrames(); }
-    public JSLFrame getSelectedFrame() { return proxy.getSelectedJSLFrame(); }
+    public static JSLDesktop getInstance() {
+	if (instance == null)
+	    instance = new JSLDesktop();
+	return instance;
+    }
+
+    public static JSLFrame[] getAllFrames() { return proxy.getAllJSLFrames(); }
+    public static JSLFrame getSelectedFrame() { return proxy.getSelectedJSLFrame(); }
     public static JFrame getSelectedWindow() { return selected; }
     static JFrame getLastSelectedWindow() { return proxy.getLastSelectedWindow(); }
-    public Dimension getSize() { return proxy.getSize(); }
-    public void add(JSLFrame f) { proxy.add(f); }
-    public JMenu createWindowMenu() { return proxy.createWindowMenu(); }
-    void registerFrame(JSLFrame f) { proxy.registerFrame(f); }
-    void setupInitialMenuBar(JToolBar tb) { proxy.setupInitialMenuBar(tb); }
-    public void showToolBar() { proxy.showToolBar(); }
-    JSLFrame getToolBar() { return proxy.getToolBar(); }
-    JSLFrame getInvisible() { return proxy.getInvisible(); }
+    public static Dimension getSize() { return proxy.getSize(); }
+    public static void add(JSLFrame f) { proxy.add(f); }
+    public static JMenu createWindowMenu() { return proxy.createWindowMenu(); }
+    static void registerFrame(JSLFrame f) { proxy.registerFrame(f); }
+    static void setupInitialMenuBar(JToolBar tb) { proxy.setupInitialMenuBar(tb); }
+    public static void showToolBar() { proxy.showToolBar(); }
+    static JSLFrame getToolBar() { return proxy.getToolBar(); }
+    static JSLFrame getInvisible() { return proxy.getInvisible(); }
+    static int getXDecoration() { return xdecoration; }
+    static int getYDecoration() { return ydecoration; }
     private interface JSLDesktopProxy {
 	public JSLFrame[] getAllJSLFrames();
 	public JSLFrame getSelectedJSLFrame();
@@ -154,7 +164,14 @@ public class JSLDesktop {
 	    tb.setFloatable(false);
 	    toolbar.getContentPane().add(tb);
 	    toolbar.pack();
+	    JFrame f = toolbar.getJFrame();
+	    Dimension gs = f.getGlassPane().getSize();
+	    Dimension ts = f.getSize();
+	    xdecoration = (int)(ts.getWidth() - gs.getWidth());
+	    ydecoration = (int)(ts.getHeight() - gs.getHeight());
+	    toolbar.setLocation(xdecoration/2, ydecoration);
 	    toolbar.setVisible(true);
+	    JSLFrame.resetFrameCount();
 	}
 	public JSLFrame getInvisible() { return invisible; }
 	public JMenu createWindowMenu() {
@@ -187,8 +204,9 @@ public class JSLDesktop {
 	}
 	public JSLFrame getSelectedJSLFrame() {
 	    try {
-		return (JSLFrame)
-		    ((JSLFrame.JSLFrameProxy)selected).getJSLFrame();
+		if (selected == toolbar.getJFrame())
+		    return last_selected.getJSLFrame();
+		return ((JSLFrame.JSLFrameProxy)selected).getJSLFrame();
 	    } catch (Exception e) { return null; }
 	}
 	public JSLFrame[] getAllJSLFrames() {
@@ -224,7 +242,7 @@ public class JSLDesktop {
 	public void JSLFrameClosing(JSLFrameEvent e) {
 	    JSLFrame f = e.getJSLFrame();
 	    if (f == toolbar) {
-		if (windows.size() < 2) {
+		if (windows.size() < 2 && invisible == null) {
 		    PatchEdit.exitAction.exit();
 		} else {
 		    ErrorMsg.reportStatus("\"" + f.getTitle() + "\" hidden. " +

@@ -26,6 +26,9 @@ public class PatchEdit implements MidiDriverChangeListener {
     // public static NoteChooserDialog noteChooserDialog; -- replaced by NoteChooserConfigPanel - emenaker 2003.03.17
     public static WaitDialog waitDialog; // define showWaitDialog() and hideWaitDialog()
 
+    /**
+     * @deprecated Anything that uses this should be changed to use JSLDesktop or JSLDesktop.getInstance()
+     **/
     static JSLDesktop desktop;
     static Patch Clipboard;
     static JPopupMenu menuPatchPopup; // define showMenuPatchPopup()
@@ -93,7 +96,7 @@ public class PatchEdit implements MidiDriverChangeListener {
 	// Set up the GUI.
 	createActions();
 
-	desktop = new JSLDesktop();
+	desktop = JSLDesktop.getInstance();
 	desktop.setupInitialMenuBar(createToolBar());
 	if (MacUtils.isMac())
 	    initForMac(exitAction, prefsAction, aboutAction);
@@ -464,17 +467,19 @@ public class PatchEdit implements MidiDriverChangeListener {
     private void openFrame(File file) {
         LibraryFrame frame = new LibraryFrame(file);
         try {
+	    // Does this need to be before open?
 	    frame.setVisible(true);
 	    frame.open(file);
 	    desktop.add(frame);
 	} catch (Exception e) {
-	    ErrorMsg.reportStatus(e);
+	    frame.dispose();
 	    SceneFrame frame2 = new SceneFrame(file);
 	    try {
 		frame2.setVisible(true);
 		frame2.open(file);
 		desktop.add(frame2);
 	    } catch (Exception e2) {
+		frame2.dispose();
 		ErrorMsg.reportError("Error", "Error Loading Library", e2);
 		return;
 	    }
@@ -491,22 +496,18 @@ public class PatchEdit implements MidiDriverChangeListener {
 
     /** This one saves a Library to Disk */
     private void saveFrame() {
+	File fn = null;
 	try {
-	    Object oFrame = desktop.getSelectedFrame();
+	    JSLFrame oFrame = desktop.getSelectedFrame();
+	    if (oFrame.getTitle().startsWith("Unsaved ")) {
+		fn = showSaveDialog();
+		if (fn == null)
+		    return;
+	    }
 	    if (oFrame instanceof LibraryFrame) {
-		LibraryFrame libFrame = (LibraryFrame) oFrame;
-		if (libFrame.getTitle().startsWith("Unsaved Library")) {
-		    saveFrameAs();
-		    return;
-		}
-		libFrame.save();
+		saveFrame((LibraryFrame)oFrame, fn);
 	    } else if (oFrame instanceof SceneFrame) {
-		SceneFrame sceneFrame = (SceneFrame) oFrame;
-		if (sceneFrame.getTitle().startsWith("Unsaved ")) {
-		    saveFrameAs();
-		    return;
-		}
-		sceneFrame.save();
+		saveFrame((SceneFrame)oFrame, fn);
 	    }
 	} catch (Exception e) {
 	    ErrorMsg.reportError("Error", "Unable to Save Library", e);
@@ -514,41 +515,64 @@ public class PatchEdit implements MidiDriverChangeListener {
 	}
     }
 
-    /** Save and specify a file name */
-    private void saveFrameAs() {
-        CompatibleFileDialog fc2 = new CompatibleFileDialog();
-        FileFilter type1 = new ExtensionFilter("PatchEdit Library Files (*.patchlib)", ".patchlib");
+    private File showSaveDialog() {
+	CompatibleFileDialog fc2 = new CompatibleFileDialog();
+        FileFilter type1 =
+	    new ExtensionFilter("PatchEdit Library Files (*.patchlib)",
+				".patchlib");
         fc2.addChoosableFileFilter(type1);
         fc2.setFileFilter(type1);
         fc2.setCurrentDirectory(new File (appConfig.getLibPath()));
-        if (fc2.showSaveDialog(PatchEdit.getInstance()) != JFileChooser.APPROVE_OPTION)
-            return;
+        if (fc2.showSaveDialog(PatchEdit.getInstance()) 
+	        != JFileChooser.APPROVE_OPTION)
+            return null;
         File file = fc2.getSelectedFile();
+
+	if (!file.getName().toUpperCase().endsWith(".PATCHLIB"))
+	    file = new File(file.getPath() + ".patchlib");
+	if (file.isDirectory()) {
+	    ErrorMsg.reportError("Error", "Can not Save over a Directory");
+	    return null;
+	}
+	if (file.exists())
+	    if (JOptionPane.showConfirmDialog(null, "Are you sure?",
+		    "File Exists", JOptionPane.YES_NO_OPTION)
+		    == JOptionPane.NO_OPTION)
+		return null;
+	return file;
+    }
+    
+    /** Save and specify a file name */
+    private void saveFrameAs() {
 	try {
-	    if (desktop.getSelectedFrame() == null) {
-		ErrorMsg.reportError("Error", "Unable to Save Library. Library to save must be focused");
-	    } else {
-		if (!file.getName().toUpperCase().endsWith(".PATCHLIB"))
-		    file = new File(file.getPath() + ".patchlib");
-		if (file.isDirectory()) {
-		    ErrorMsg.reportError("Error", "Can not Save over a Directory");
-		    return;
-		}
-		if (file.exists())
-		    if (JOptionPane.showConfirmDialog(null, "Are you sure?", "File Exists",
-						      JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
-			return;
-		try {
-		    ((LibraryFrame) desktop.getSelectedFrame()).save(file);
-		} catch (Exception pr) {
-		    ((SceneFrame) desktop.getSelectedFrame()).save(file);
-		}
+	    JSLFrame oFrame = desktop.getSelectedFrame();
+	    File fn = showSaveDialog();
+	    if (fn == null)
+		return;
+	    if (oFrame instanceof LibraryFrame) {
+		saveFrame((LibraryFrame)oFrame, fn);
+	    } else if (oFrame instanceof SceneFrame) {
+		saveFrame((SceneFrame)oFrame, fn);
 	    }
 	} catch (Exception ex) {
 	    ErrorMsg.reportError("Error", "Unable to Save Library", ex);
+	    return;
 	}
     }
 
+    private void saveFrame(LibraryFrame lf, File file) throws Exception {
+	if (file == null)
+	    lf.save();
+	else
+	    lf.save(file);
+    }
+
+    private void saveFrame(SceneFrame sf, File file) throws Exception {
+	if (file == null)
+	    sf.save();
+	else
+	    sf.save(file);
+    }
 
     // Generally the app is started by running JSynthLib, so the
     // following few lines are not necessary, but I won't delete them

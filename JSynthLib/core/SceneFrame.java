@@ -300,7 +300,7 @@ public class SceneFrame extends JSLFrame implements AbstractLibraryFrame {
         setSize(600,300);
 
         //Set the window's location.
-        setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+	moveToDefaultLocation();
 
         this.addFocusListener(new java.awt.event.FocusListener() {
             public void focusGained(java.awt.event.FocusEvent e) {

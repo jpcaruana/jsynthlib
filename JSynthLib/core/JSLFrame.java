@@ -16,6 +16,7 @@ public class JSLFrame {
 
     // for JSLJFrame
     private static JFrame lastselection = null;
+    private static int frame_count = 0;
 
 
     public JSLFrame() {
@@ -23,8 +24,10 @@ public class JSLFrame {
 	    proxy = new JSLIFrame(this);
 	else
 	    proxy = new JSLJFrame(this);
+	// This is really means PatchEdit.desktop, not JSLDesktop.getInstance()
 	if (PatchEdit.desktop != null)
-	    PatchEdit.desktop.registerFrame(this);
+	    JSLDesktop.registerFrame(this);
+	frame_count++;
     }
     public JSLFrame(String s, boolean resizable, boolean closable,
 		    boolean maximizable, boolean iconifiable) {
@@ -33,9 +36,12 @@ public class JSLFrame {
 				  iconifiable);
 	else
 	    proxy = new JSLJFrame(this, s);
+	// This is really means PatchEdit.desktop, not JSLDesktop.getInstance()
 	if (PatchEdit.desktop != null)
-	    PatchEdit.desktop.registerFrame(this);
+	    JSLDesktop.registerFrame(this);
+	frame_count++;
     }
+    static void resetFrameCount() { frame_count = 0; }
     JFrame getJFrame() { 
 	if (proxy instanceof JFrame)
 	    return (JFrame)proxy;
@@ -68,7 +74,7 @@ public class JSLFrame {
     public void reshape(int a, int b, int c, int d) { proxy.reshape(a,b,c,d); }
     public boolean isSelected() { return proxy.isSelected(); }
     // This is probably naughty.
-    public JSLDesktop getDesktopPane() { return PatchEdit.desktop; }
+    public JSLDesktop getDesktopPane() { return JSLDesktop.getInstance(); }
     public JSLFrameListener[] getJSLFrameListeners() {
 	return proxy.getJSLFrameListeners();
     }
@@ -83,6 +89,8 @@ public class JSLFrame {
     static boolean useInternalFrames() { return useIFrames; }
 
     JSLFrameProxy getProxy() { return proxy; }
+
+    public void moveToDefaultLocation() { proxy.moveToDefaultLocation(); }
 
     interface JSLFrameProxy {
 	public void moveToFront();
@@ -115,6 +123,7 @@ public class JSLFrame {
 	public void removeJSLFrameListener(JSLFrameListener l);
 	public void setPreferredSize(Dimension d);
 	public boolean isSelected();
+	public void moveToDefaultLocation();
     }
 
     class JSLIFrame extends JInternalFrame implements JSLFrameProxy,
@@ -211,26 +220,26 @@ public class JSLFrame {
 	public void removeJSLFrameListener(JSLFrameListener l) {
 	    listeners.remove(l);
 	}
+	public void moveToDefaultLocation() {
+	    setLocation(30*frame_count, 30*frame_count);
+	}
     }
     class JSLJFrame extends JFrame implements JSLFrameProxy,
 						      WindowListener {
 	private WeakReference parent;
 	protected ArrayList listeners = new ArrayList();
-	double takemem[] = null;
 
 	public JSLJFrame(JSLFrame p) {
 	    super();
 	    addWindowListener(this);
 	    parent = new WeakReference(p);
 	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-	    takemem = new double[1000000];
 	}
 	public JSLJFrame(JSLFrame p, String title) {
 	    super(title);
 	    addWindowListener(this);
 	    parent = new WeakReference(p);
 	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-	    takemem = new double[1000000];
 	}
 	public JSLFrame getJSLFrame() { return (JSLFrame)parent.get(); }
 	public void moveToFront() { toFront(); }
@@ -255,7 +264,7 @@ public class JSLFrame {
 		    JMenuBar mb = getJMenuBar();
 		    setJMenuBar(null);
 		    
-		    PatchEdit.desktop.getInvisible().getJFrame().requestFocus();
+		    JSLDesktop.getInvisible().getJFrame().requestFocus();
 		    requestFocus();
 		}
 	    }
@@ -335,7 +344,7 @@ public class JSLFrame {
 	public void setPreferredSize(Dimension d) {}
 	public boolean isSelected() {
 	    //return isActive() || lastselection == this;
-	    JSLDesktop d = PatchEdit.desktop;
+	    JSLDesktop d = JSLDesktop.getInstance();
 	    JFrame f = d.getSelectedWindow();
 	    return (f == this)
 		|| (f == d.getToolBar().getJFrame() 
@@ -347,7 +356,26 @@ public class JSLFrame {
 				WindowEvent.WINDOW_ACTIVATED, null);
 	    processWindowEvent(we);
 	}
+	public void moveToDefaultLocation() {
+	    int x, y, yofs = 0;
+	    int xsep = 30;
+	    int ysep = JSLDesktop.getYDecoration();
+	    Dimension d = JSLDesktop.getSize();
 
+	    JFrame tb = JSLDesktop.getToolBar().getJFrame();
+	    if (tb != null && tb.getLocation().getY() < 100)
+		yofs = (int)
+		    (tb.getLocation().getY() - ysep + tb.getSize().getHeight());
+	    x = (xsep*frame_count) %
+		(int)(d.getWidth() - getSize().getWidth());
+	    if (x < 0)
+		x = 0;
+	    y = yofs + (ysep*frame_count)
+		% (int)(d.getHeight() - getSize().getHeight() - yofs);
+	    if (y < 0)
+		y = yofs + ysep;
+	    setLocation(x,y);
+	}
     }
 }
 

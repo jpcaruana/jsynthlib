@@ -15,12 +15,13 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
     private static Action close_action = new AbstractAction("Close") {
 	    public void actionPerformed(ActionEvent ex) {
 		try {
-		    PatchEdit.desktop.getSelectedFrame().setClosed(true);
+		    JFrame f = JSLDesktop.getSelectedWindow();
+		    ((JSLFrame.JSLFrameProxy)f).getJSLFrame().setClosed(true);
 		} catch (Exception e) {
-		    if (PatchEdit.desktop == null) {
+		    if (JSLDesktop.getInstance() == null) {
 			System.err.println("Error: No JSLDesktkop. Can't close"
 					   + " any windows.");
-		    } else if (PatchEdit.desktop.getSelectedFrame() == null) {
+		    } else if (JSLDesktop.getSelectedFrame() == null) {
 			System.err.println("Error: No selected JSLFrame. " +
 					   "Can't close window.");
 		    } else {
@@ -38,7 +39,7 @@ public class JSLWindowMenu extends JMenu implements WindowListener,
 	    setMnemonic(KeyEvent.VK_W);
 	}
 	add(PatchEdit.monitorAction);
-	//add(PatchEdit.desktop.toolBarAction);
+	//add(JSLDesktop.toolBarAction);
 	addSeparator();
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 	JMenuItem mi = add(close_action);

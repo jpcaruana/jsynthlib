@@ -38,6 +38,7 @@ class SceneListModel extends javax.swing.table.AbstractTableModel implements Abs
      }
 
      public Object getValueAt(int row, int col) {
+	 try {
          Scene myScene=(Scene)sceneList.get(row);
          if (col==0) return myScene.getPatch().getDevice().getSynthName();
          if (col==1) return myScene.getPatch().getDriver().getPatchType();
@@ -45,7 +46,10 @@ class SceneListModel extends javax.swing.table.AbstractTableModel implements Abs
          if (col==3) return myScene.getPatch().getDriver().bankNumbers[myScene.getBankNumber()];
          if (col==4) return myScene.getPatch().getDriver().patchNumbers[myScene.getPatchNumber()];
          return myScene.getComment();
-
+	 } catch (Exception e) {
+	     ErrorMsg.reportStatus(e);
+	     return null;
+	 }
      }
 
         /*
