@@ -48,16 +48,16 @@ public class YamahaTX802MicroTuningBankDriver extends DX7FamilyMicroTuningBankDr
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information
 			YamahaTX802Strings.dxShowInformation(toString(), YamahaTX802Strings.MICRO_TUNING_CARTRIDGE_STRING);
-      
+
 		if( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
-			// switch off memory protection 
-			YamahaTX802SysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10) );
+			// switch off memory protection
+			YamahaTX802SysexHelpers.swOffMemProt(this, (byte)(getChannel()+0x10) );
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information
 				YamahaTX802Strings.dxShowInformation(toString(), YamahaTX802Strings.MEMORY_PROTECTION_STRING);
 		}
-		
+
 		sendPatchWorker(p);
 	};
 
@@ -67,7 +67,7 @@ public class YamahaTX802MicroTuningBankDriver extends DX7FamilyMicroTuningBankDr
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 			// show Information
 			YamahaTX802Strings.dxShowInformation(toString(), YamahaTX802Strings.MICRO_TUNING_CARTRIDGE_STRING);
-    
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

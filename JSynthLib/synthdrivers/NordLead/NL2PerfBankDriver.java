@@ -105,11 +105,11 @@ public class NL2PerfBankDriver extends BankDriver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
+    int devID = ((NordLeadDevice) (getDevice())).getGlobalChannel();
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      sysexRequestDump.send(getPort(), (byte)(((NordLeadDevice) (getDevice())).getGlobalChannel()),
-        new NameValue("bankNum", 41),
-        new NameValue("patchNum", i)
-      );
+      send(sysexRequestDump.toSysexMessage(devID,
+					   new NameValue("bankNum", 41),
+					   new NameValue("patchNum", i)));
       try {
         Thread.sleep(250); // it takes some time for each performance to be sent
       } catch (Exception e) {

@@ -41,19 +41,19 @@ public class YamahaTX802PerformanceBankDriver extends DX7FamilyPerformanceIIIBan
 	{
 		return super.createNewPatch();
 	}
-	  
+
 
 	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
-			// switch off memory protection 
-			YamahaTX802SysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10) );
+			// switch off memory protection
+			YamahaTX802SysexHelpers.swOffMemProt(this, (byte)(getChannel()+0x10) );
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information
 				YamahaTX802Strings.dxShowInformation(toString(), YamahaTX802Strings.MEMORY_PROTECTION_STRING);
 		}
-   
+
 		sendPatchWorker(p);
 	};
 }

@@ -42,6 +42,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import core.ComboBoxWidget;
+import core.Driver;
 import core.EnvelopeNode;
 import core.EnvelopeWidget;
 import core.NameValue;
@@ -485,10 +486,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 	// transmit OperatorState to Synth
 	private void SendOpState()
 	{
-		xmitVoiceOperatorState( (int) ( p.getDriver().getPort() ) ,
-			(byte)( 0x10+  p.getDriver().getChannel() ),
-			(byte)( OperatorState & 0x3f )
-		);
+		xmitVoiceOperatorState(p.getDriver(), OperatorState & 0x3f);
 	}
 
 
@@ -511,9 +509,9 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
        private final static SysexHandler VoiceOPstate = new SysexHandler("f0 43 @@ 01 1b *value* f7");
 
        // send voice operator state
-       private static void xmitVoiceOperatorState(int p, byte ch, byte st)		     // port, channel, OperatorState
+       private static void xmitVoiceOperatorState(Driver drv, int st)		     // channel, OperatorState
        {
-	       VoiceOPstate.send(p, ch, new NameValue("value", st));
+	       drv.send(VoiceOPstate.toSysexMessage(0x10 + drv.getChannel(), new NameValue("value", st)));
        }
 
 

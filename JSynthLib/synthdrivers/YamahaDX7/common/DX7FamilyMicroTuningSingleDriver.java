@@ -102,6 +102,6 @@ public class DX7FamilyMicroTuningSingleDriver extends Driver
 
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
-		SYSEX_REQUEST_DUMP[patchNum].send(getPort(), (byte)(getChannel()+0x20) );
+	    send(SYSEX_REQUEST_DUMP[patchNum].toSysexMessage(getChannel()+0x20));
 	}
 }

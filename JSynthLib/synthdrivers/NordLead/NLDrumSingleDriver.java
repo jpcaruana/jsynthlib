@@ -228,11 +228,9 @@ public class NLDrumSingleDriver extends Driver {
   public void requestPatchDump(int bankNum, int patchNum) {
     setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
     setPatchNum(patchNum + 99); // select drum sound, then get data from edit buffer
-    sysexRequestDump.send(getPort(), (byte) (((NordLeadDevice) getDevice()).getGlobalChannel()),
-        new NameValue("bankNum", 10), new NameValue("patchNum", 0)
-    );
+    send(sysexRequestDump.toSysexMessage(((NordLeadDevice) getDevice()).getGlobalChannel(),
+					 new NameValue("bankNum", 10),
+					 new NameValue("patchNum", 0)));
   }
-  
-  
 }
 

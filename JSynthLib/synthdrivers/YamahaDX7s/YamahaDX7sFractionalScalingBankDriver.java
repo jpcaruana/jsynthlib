@@ -51,7 +51,7 @@ public class YamahaDX7sFractionalScalingBankDriver extends DX7FamilyFractionalSc
 
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection (internal+cartridge!)
-			YamahaDX7sSysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)0 );
+			YamahaDX7sSysexHelpers.swOffMemProt(this, (byte)(getChannel()+0x10), (byte)0 );
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information
@@ -59,7 +59,7 @@ public class YamahaDX7sFractionalScalingBankDriver extends DX7FamilyFractionalSc
 		}
 		
 		// choose the desired MIDI Receive block ((1-32), (33-64))
-		YamahaDX7sSysexHelpers.chRcvBlock(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum));
+		YamahaDX7sSysexHelpers.chRcvBlock(this, (byte)(getChannel()+0x10), (byte)(bankNum));
 
 		sendPatchWorker(p);
 	};
@@ -72,8 +72,8 @@ public class YamahaDX7sFractionalScalingBankDriver extends DX7FamilyFractionalSc
 			YamahaDX7sStrings.dxShowInformation(toString(), YamahaDX7sStrings.FRACTIONAL_SCALING_CARTRIDGE_STRING);
 
 		// choose the desired MIDI transmit block (internal (1-32), internal (33-64))
-		YamahaDX7sSysexHelpers.chXmitBlock(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum));
+		YamahaDX7sSysexHelpers.chXmitBlock(this, (byte)(getChannel()+0x10), (byte)(bankNum));
 
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

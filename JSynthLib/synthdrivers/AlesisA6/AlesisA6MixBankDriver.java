@@ -126,9 +126,9 @@ public class AlesisA6MixBankDriver extends BankDriver
 
   public void requestPatchDump(int bankNum, int patchNum)
   {
-    sysexRequestDump.send(getPort(), (byte)getChannel(), new NameValue("bankNum", bankNum),
-      new NameValue("patchNum", patchNum)
-    );
+    send(sysexRequestDump.toSysexMessage(getChannel(),
+					 new NameValue("bankNum", bankNum),
+					 new NameValue("patchNum", patchNum)));
   }
 }
 

@@ -131,11 +131,9 @@ public class AlesisQSMixDriver extends Driver
     int location = patchNum;
     int opcode = QSConstants.OPCODE_MIDI_USER_MIX_DUMP_REQ;
 
-    sysexRequestDump.send(
-      getPort(), (byte)getChannel(),
-      new NameValue("opcode", opcode),
-      new NameValue("patchNum", location)
-    );
+    send(sysexRequestDump.toSysexMessage(getChannel(),
+					 new NameValue("opcode", opcode),
+					 new NameValue("patchNum", location)));
   }
 
 

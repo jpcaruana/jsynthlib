@@ -147,11 +147,9 @@ public class AlesisQSProgramDriver extends Driver
       opcode = QSConstants.OPCODE_MIDI_EDIT_PROG_DUMP_REQ;
     }
 
-    sysexRequestDump.send(
-      getPort(), (byte)getChannel(),
-      new NameValue("opcode", opcode),
-      new NameValue("patchNum", location)
-    );
+    send(sysexRequestDump.toSysexMessage(getChannel(),
+					 new NameValue("opcode", opcode),
+					 new NameValue("patchNum", location)));
   }
 
 

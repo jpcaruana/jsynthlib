@@ -67,10 +67,10 @@ public class YamahaDX7sFractionalScalingSingleDriver extends DX7FamilyFractional
 			YamahaDX7sStrings.dxShowInformation(toString(), YamahaDX7sStrings.FRACTIONAL_SCALING_CARTRIDGE_STRING);
 
 		// keyswitch to voice mode
-		YamahaDX7sSysexHelpers.chVoiceMode(getPort(), (byte)(getChannel()+0x10));
+		YamahaDX7sSysexHelpers.chVoiceMode(this, (byte)(getChannel()+0x10));
 		// 0-63 int voices, 64-127 cartridge voices
 		setPatchNum(patchNum+32*bankNum);
 
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

@@ -63,10 +63,10 @@ public class YamahaDX7IIAdditionalVoiceSingleDriver extends DX7FamilyAdditionalV
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
 		// keyswitch to voice mode
-		YamahaDX7IISysexHelpers.chVoiceMode(getPort(), (byte)(getChannel()+0x10));
+		YamahaDX7IISysexHelpers.chVoiceMode(this, (byte)(getChannel()+0x10));
 		// 0-63 int voices, 64-127 cartridge voices
 		setPatchNum(patchNum+32*bankNum);
 
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

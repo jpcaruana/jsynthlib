@@ -64,6 +64,6 @@ public class YamahaTX7PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	{
 		setPatchNum (patchNum);
 
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

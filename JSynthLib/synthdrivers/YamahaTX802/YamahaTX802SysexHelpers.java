@@ -30,36 +30,36 @@ public class YamahaTX802SysexHelpers
 	// simulate panel button pushes constants
 	protected final static int DEPRESS   = 0x7F;
 	protected final static int RELEASE   = 0x00;
-	  
+
 	protected final static int SYSTEM_SETUP = 0x53;
 	protected final static int TG8		= 0x60;       // Tongenerator 1 On/Off / Parameter Select
 	protected final static int OFF		= 0x4e;       // Off / -1 / no
 	protected final static int ON		= 0x4f;       // On  / +1 / yes
-  
+
 	// parameter change
-	protected final static SysexHandler System	 = new SysexHandler("f0 43 @@ 19 *param* *action* f7"); 
+	protected final static SysexHandler System	 = new SysexHandler("f0 43 @@ 19 *param* *action* f7");
 	protected final static SysexHandler Button	 = new SysexHandler("f0 43 @@ 1B *switch* *OnOff* f7"); // don't care about "OnOff"
 
 	// switch off internal/cartridge memory protection
-	protected static void swOffMemProt(int p, byte ch)					// port, channel
+	protected static void swOffMemProt(Driver d, byte ch)					// port, channel
 	{
-		Button.send(p, ch, new NameValue("switch",SYSTEM_SETUP), new NameValue("OnOff",DEPRESS));
-		Button.send(p, ch, new NameValue("switch",TG8),		 new NameValue("OnOff",DEPRESS));
-		Button.send(p, ch, new NameValue("switch",OFF),		 new NameValue("OnOff",DEPRESS));
+		d.send(Button.toSysexMessage(ch, new NameValue("switch",SYSTEM_SETUP), new NameValue("OnOff",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("switch",TG8),	       new NameValue("OnOff",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("switch",OFF),	       new NameValue("OnOff",DEPRESS)));
 	}
 
-	protected static void swOnMemProt(int p, byte ch)						// port, channel
+	protected static void swOnMemProt(Driver d, byte ch)						// port, channel
 	{
-		Button.send(p, ch, new NameValue("switch",SYSTEM_SETUP), new NameValue("OnOff",DEPRESS));
-		Button.send(p, ch, new NameValue("switch",TG8),		 new NameValue("OnOff",DEPRESS));
-		Button.send(p, ch, new NameValue("switch",ON),		 new NameValue("OnOff",DEPRESS));
+		d.send(Button.toSysexMessage(ch, new NameValue("switch",SYSTEM_SETUP), new NameValue("OnOff",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("switch",TG8),	       new NameValue("OnOff",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("switch",ON),	       new NameValue("OnOff",DEPRESS)));
 	}
 
-	// choose the desired MIDI receive/transmit block 
-	protected static void chBlock(int p, byte ch, byte bn)				// port, channel, 
-	{ System.send(p, ch, new NameValue("param", 0x4d), new NameValue("action",bn)); }	// bn: 0 = 1-32, 1 = 33-64
+	// choose the desired MIDI receive/transmit block
+	protected static void chBlock(Driver d, byte ch, byte bn)				// port, channel,
+	{ d.send(System.toSysexMessage(ch, new NameValue("param", 0x4d), new NameValue("action",bn))); }	// bn: 0 = 1-32, 1 = 33-64
 
-	// choose voice mode 
-	protected static void chVoiceMode(int p, byte ch)					// port, channel
-	{ Button.send(p, ch, new NameValue("switch", 0x52), new NameValue("OnOff", 0x00)); }	// parameter 82, OnOff = don't care
+	// choose voice mode
+	protected static void chVoiceMode(Driver d, byte ch)					// port, channel
+	{ d.send(Button.toSysexMessage(ch, new NameValue("switch", 0x52), new NameValue("OnOff", 0x00))); }	// parameter 82, OnOff = don't care
 }

@@ -47,7 +47,7 @@ public class YamahaTX802VoiceBankDriver extends DX7FamilyVoiceBankDriver
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection
-			YamahaTX802SysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10));
+			YamahaTX802SysexHelpers.swOffMemProt(this, (byte)(getChannel()+0x10));
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information
@@ -55,7 +55,7 @@ public class YamahaTX802VoiceBankDriver extends DX7FamilyVoiceBankDriver
 		}
 
 		// choose the desired MIDI Receive block (internal (1-32), internal (33-64))
-		YamahaTX802SysexHelpers.chBlock(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum));
+		YamahaTX802SysexHelpers.chBlock(this, (byte)(getChannel()+0x10), (byte)(bankNum));
 
 		sendPatchWorker(p);
 	};
@@ -64,8 +64,8 @@ public class YamahaTX802VoiceBankDriver extends DX7FamilyVoiceBankDriver
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
 		// choose the desired MIDI transmit block (internal (1-32), internal (33-64))
-		YamahaTX802SysexHelpers.chBlock(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum));
+		YamahaTX802SysexHelpers.chBlock(this, (byte)(getChannel()+0x10), (byte)(bankNum));
       
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

@@ -126,8 +126,8 @@ public class RolandXV5080PerfDriver extends Driver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = SYSEX_REQUEST_DUMP.toByteArray((byte)getChannel(), patchNum);
+    byte[] sysex = SYSEX_REQUEST_DUMP.toByteArray(getChannel(), patchNum);
     RolandXV5080PatchDriver.calculateChecksum(sysex, 6, sysex.length - 3, sysex.length - 2);
-    SysexHandler.send(getPort(), sysex);
+    send(sysex);
   }
 }

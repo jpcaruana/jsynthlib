@@ -112,9 +112,9 @@ public void calculateChecksum(Patch p)
 
   public void requestPatchDump(int bankNum, int patchNum) {
       if (bankNum == 0)
-      SYSEX_REQUEST_A_DUMP.send(getPort(), (byte)getChannel(), patchNum);
+      send(SYSEX_REQUEST_A_DUMP.toSysexMessage(getChannel(), patchNum));
     else
-      SYSEX_REQUEST_D_DUMP.send(getPort(), (byte)getChannel(), patchNum);
+      send(SYSEX_REQUEST_D_DUMP.toSysexMessage(getChannel(), patchNum));
   }
 
 //----- End phil@muqus.com

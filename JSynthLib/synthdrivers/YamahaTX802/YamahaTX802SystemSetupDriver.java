@@ -54,7 +54,7 @@ public class YamahaTX802SystemSetupDriver extends DX7FamilySystemSetupIIIDriver
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection
-			YamahaTX802SysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10) );
+			YamahaTX802SysexHelpers.swOffMemProt(this, (byte)(getChannel()+0x10) );
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information

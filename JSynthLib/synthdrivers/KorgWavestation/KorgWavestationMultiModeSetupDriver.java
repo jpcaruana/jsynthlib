@@ -13,12 +13,12 @@ import core.SysexHandler;
  * @version $Id$
  */
 public class KorgWavestationMultiModeSetupDriver extends Driver {
-    
+
     public KorgWavestationMultiModeSetupDriver() {
 	super ("Multi Mode Setup","Gerrit Gehnen");
         sysexID="F0423*2855";
         sysexRequestDump=new SysexHandler("F0 42 @@ 28 06 F7");
-        
+
         trimSize=2761;
         patchNameStart=0;
         patchNameSize=0;
@@ -26,20 +26,20 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
         checksumStart=5;
         checksumEnd=2758;
         checksumOffset=2759;
-     
+
     }
-    
+
     /**
-     */    
+     */
     public void storePatch(Patch p, int bankNum,int patchNum) {
         //        int patchValue = patchNum;
         //int bankValue  = 0;
                calculateChecksum(p);
-                
+
         try
         {Thread.sleep(100); } catch (Exception e)
         {}
-        
+
         p.sysex[2]=(byte)(0x30 + getChannel() - 1);
         try {
             send(p.sysex);
@@ -51,16 +51,16 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
         {}
      */
     }
-    
+
     public void sendPatch(Patch p) {
         p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
-        
+
         try {
             send(p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
     }
-    
+
     public Patch createNewPatch() {
         byte [] sysex=new byte[2761];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
@@ -69,17 +69,17 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
 
         /*sysex[2759]=checksum;*/
         sysex[2760]=(byte)0xF7;
-        
+
         Patch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
         calculateChecksum(p);
         return p;
     }
-    
+
     public void calculateChecksum(Patch p,int start,int end,int ofs) {
         int i;
         int sum=0;
-        
+
 //        System.out.println("Checksum was" + p.sysex[ofs]);
         for (i=start;i<=end;i++) {
             sum+=p.sysex[i];
@@ -87,13 +87,9 @@ public class KorgWavestationMultiModeSetupDriver extends Driver {
         p.sysex[ofs]=(byte)(sum % 128);
 //        System.out.println("Checksum new is" + p.sysex[ofs]);
     }
-    
+
     public void requestPatchDump(int bankNum, int patchNum) {
-        byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(),0);
-        
-        SysexHandler.send(getPort(), sysex);
+        send(sysexRequestDump.toSysexMessage(getChannel(),0));
     }
-    
-    
 }
 

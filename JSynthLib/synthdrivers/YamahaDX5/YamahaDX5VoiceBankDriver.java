@@ -58,7 +58,7 @@ public class YamahaDX5VoiceBankDriver extends DX7FamilyVoiceBankDriver
 		if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 			// show Information
 			YamahaDX5Strings.dxShowInformation(toString(), YamahaDX5Strings.SELECT_PATCH_STRING);
-		
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

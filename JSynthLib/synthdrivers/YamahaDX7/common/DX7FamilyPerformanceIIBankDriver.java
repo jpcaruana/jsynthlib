@@ -206,6 +206,6 @@ public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+	    send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

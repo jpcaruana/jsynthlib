@@ -45,62 +45,60 @@ class YamahaDX7SysexHelper
 	protected final static SysexHandler releaseStore = new SysexHandler("f0 43 @@ 08 20 00 f7");		 //BUTTON release: 
 
 	// make system informations available
-	protected static void mkSysInfoAvail(int p, byte ch)	// port, channel
+	protected static void mkSysInfoAvail(Driver d, byte ch)	// driver, channel
 	{
-		Button.send(p, ch, new NameValue("button",FUNCTION) , new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",FUNCTION) , new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",FUNCTION), new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",FUNCTION), new NameValue("action",RELEASE)));
 
-		Button.send(p, ch, new NameValue("button",BATTERY)  , new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",BATTERY)  , new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",BATTERY),  new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",BATTERY),  new NameValue("action",RELEASE)));
 
-		Button.send(p, ch, new NameValue("button",MIDI_CH)  , new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",MIDI_CH)  , new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",MIDI_CH),  new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",MIDI_CH),  new NameValue("action",RELEASE)));
 
-		Button.send(p, ch, new NameValue("button",SYSINFO)  , new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",SYSINFO)  , new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",SYSINFO),  new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",SYSINFO),  new NameValue("action",RELEASE)));
 
-		Button.send(p, ch, new NameValue("button",YES)	    , new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",YES)	    , new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",YES),	   new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",YES),	   new NameValue("action",RELEASE)));
 	}
 
 	// switch off memory protection
-	protected static void swOffMemProt(int p, byte ch, byte mp, byte bn)	// port, channel, memory protection of internal/cartridge, internal/cartridge
+	protected static void swOffMemProt(Driver d, byte ch, byte mp, byte bn)	// driver, channel, memory protection of internal/cartridge, internal/cartridge
 	{
-		Button.send(p, ch, new NameValue("button",mp),	      new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",mp),	      new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",mp),	new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",mp),	new NameValue("action",RELEASE)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",NO),	new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",NO),	new NameValue("action",RELEASE)));
 
-		Button.send(p, ch, new NameValue("button",NO),	      new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",NO),	      new NameValue("action",RELEASE));
-
-		Button.send(p, ch, new NameValue("button",bn),	      new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",bn),	      new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",bn),	new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",bn),	new NameValue("action",RELEASE)));
 	}
 
 	// transmit bank dump
-	protected static void xmitBankDump(int p, byte ch)	// port, channel
+	protected static void xmitBankDump(Driver d, byte ch)	// driver, channel
 	{
-		Button.send(p, ch, new NameValue("button",MIDI_XMIT), new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",MIDI_XMIT), new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",MIDI_XMIT), new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",MIDI_XMIT), new NameValue("action",RELEASE)));
 
-		Button.send(p, ch, new NameValue("button",YES)	    , new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",YES)	    , new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",YES),	    new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",YES),	    new NameValue("action",RELEASE)));
 
-		Button.send(p, ch, new NameValue("button",MEMSELINT), new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",MEMSELINT), new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",MEMSELINT), new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",MEMSELINT), new NameValue("action",RELEASE)));
 	}
 
 	// switch to desired bank
-	protected static void chBank(int p, byte ch, byte bn)	// port, channel, internal/cartridge
+	protected static void chBank(Driver d, byte ch, byte bn)	// driver, channel, internal/cartridge
 	{
-		Button.send(p, ch, new NameValue("button",bn),	      new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",bn),	      new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",bn),	new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",bn),	new NameValue("action",RELEASE)));
 	}
 
 	// switch to desired patch number
-	protected static void chPatch(int p, byte ch, byte pn)	// port, channel, patch number
+	protected static void chPatch(Driver d, byte ch, byte pn)	// driver, channel, patch number
 	{
-		Button.send(p, ch, new NameValue("button",pn),	      new NameValue("action",DEPRESS));
-		Button.send(p, ch, new NameValue("button",pn),	      new NameValue("action",RELEASE));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",pn),	new NameValue("action",DEPRESS)));
+		d.send(Button.toSysexMessage(ch, new NameValue("button",pn),	new NameValue("action",RELEASE)));
 	}
-
 }

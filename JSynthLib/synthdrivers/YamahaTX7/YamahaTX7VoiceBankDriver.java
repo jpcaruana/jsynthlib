@@ -48,7 +48,7 @@ public class YamahaTX7VoiceBankDriver extends DX7FamilyVoiceBankDriver
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 )
 		{
 			// switch off memory protection
-			YamahaTX7SysexHelper.swOffMemProt.send(getPort(), (byte)(getChannel()+0x10));
+			send(YamahaTX7SysexHelper.swOffMemProt.toSysexMessage(getChannel()+0x10));
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
@@ -61,7 +61,7 @@ public class YamahaTX7VoiceBankDriver extends DX7FamilyVoiceBankDriver
 
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 
 }

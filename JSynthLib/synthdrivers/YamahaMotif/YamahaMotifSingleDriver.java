@@ -25,7 +25,7 @@ public abstract class YamahaMotifSingleDriver extends Driver
     sysexID="F0430*6B00000E"+base_address+"**";
     //inquiryID="F07E7F06024300417*040000007FF7";
     sysexRequestDump=new SysexHandler("F0 43 @@ 6B 0E " + base_address+ " ** F7");
-       
+
     for (int i=0;i<patchNumbers.length; i++) {
       StringBuffer sb = new StringBuffer(4);
       sb.append( (char)('A' + i/16 ) );
@@ -75,7 +75,7 @@ public abstract class YamahaMotifSingleDriver extends Driver
   protected void sendPatchWorker(Patch p, int patchnum) {
     // Fix the header/footer
     for (int offset = 0;
-	 offset <= p.sysex.length - YamahaMotifSysexUtility.SYSEX_OVERHEAD; 
+	 offset <= p.sysex.length - YamahaMotifSysexUtility.SYSEX_OVERHEAD;
 	 offset += p.sysex.length - YamahaMotifSysexUtility.SYSEX_OVERHEAD) {
       p.sysex[offset + YamahaMotifSysexUtility.ADDRESS_OFFSET + 1] =
 	(patchnum == -1) ? Byte.parseByte(edit_buffer_base_address, 16) :
@@ -86,12 +86,12 @@ public abstract class YamahaMotifSingleDriver extends Driver
 	(byte) ((patchnum == -1) ? 0 : ( patchnum & 128 ));
       YamahaMotifSysexUtility.checksum(p.sysex, offset);
     }
-    // Send each message separately so it doesn't get screwed up by the 
+    // Send each message separately so it doesn't get screwed up by the
     // midi wrapper.
     YamahaMotifSysexUtility.splitAndSendBulk( p.sysex, this,
 					      getChannel() - 1 );
     // Put header back so that it will be recognized.
-    p.sysex[YamahaMotifSysexUtility.ADDRESS_OFFSET + 1] = 
+    p.sysex[YamahaMotifSysexUtility.ADDRESS_OFFSET + 1] =
       Byte.parseByte(base_address, 16);
   }
 
@@ -100,14 +100,11 @@ public abstract class YamahaMotifSingleDriver extends Driver
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = sysexRequestDump.toByteArray((byte)(getChannel()+32),
-						patchNum);
-        
-    SysexHandler.send(getPort(), sysex);
+    send(sysexRequestDump.toSysexMessage((getChannel()+32), patchNum));
   }
   // Stolen from the YamahaFS1RVoiceEditor
   // I probably should use some other method to do this, but I'm lazy.
-  public Patch createNewPatch() { 
+  public Patch createNewPatch() {
     try {
       InputStream fileIn= getClass().getResourceAsStream(defaults_filename);
       byte [] buffer =new byte [patchSize];

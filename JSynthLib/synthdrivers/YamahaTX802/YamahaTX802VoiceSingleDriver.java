@@ -62,10 +62,10 @@ public class YamahaTX802VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
 		// keyswitch to voice mode
-		YamahaTX802SysexHelpers.chVoiceMode(getPort(), (byte)(getChannel()+0x10));
+		YamahaTX802SysexHelpers.chVoiceMode(this, (byte)(getChannel()+0x10));
 		// 0-63 int voices
 		setPatchNum(patchNum+32*bankNum);
 
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

@@ -96,7 +96,7 @@ public class AlesisQSGlobalDriver extends Driver
 		//setBankNum(bankNum);
 		//setPatchNum(patchNum);
 
-		sysexRequestDump.send( getPort(), (byte)getChannel() );
+		send(sysexRequestDump.toSysexMessage(getChannel()));
 	}
 
 

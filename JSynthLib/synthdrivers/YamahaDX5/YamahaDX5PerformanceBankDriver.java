@@ -74,7 +74,7 @@ public class YamahaDX5PerformanceBankDriver extends DX7FamilyPerformanceBankDriv
 			YamahaDX5Strings.dxShowInformation(toString(), YamahaDX5Strings.SELECT_PATCH_STRING);
 		}
 
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 
 }

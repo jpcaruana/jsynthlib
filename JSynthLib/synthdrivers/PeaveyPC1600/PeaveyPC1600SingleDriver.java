@@ -110,7 +110,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
     sendPatchWorker(p);
 
     // Request PC1600 stores edit buffer with this patchNum
-    SYSEX_WRITE_EDIT_BUFFER.send(getPort(), (byte)getChannel(), patchNum);
+    send(SYSEX_WRITE_EDIT_BUFFER.toSysexMessage(getChannel(), patchNum));
   }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ public class PeaveyPC1600SingleDriver extends Driver {
 //----------------------------------------------------------------------------------------------------------------------
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    SYSEX_RECALL_PRESET.send(getPort(), (byte)getChannel(), patchNum);
-    SYSEX_REQUEST_EDIT_BUFFER.send(getPort(), (byte)getChannel());
+    send(SYSEX_RECALL_PRESET.toSysexMessage(getChannel(), patchNum));
+    send(SYSEX_REQUEST_EDIT_BUFFER.toSysexMessage(getChannel()));
   }
 }

@@ -185,10 +185,9 @@ public class NLPerfSingleDriver extends Driver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(getPort(), (byte) (((NordLeadDevice) getDevice()).getGlobalChannel()),
-        new NameValue("bankNum", 41), new NameValue("patchNum", patchNum)
-    );
+    send(sysexRequestDump.toSysexMessage(((NordLeadDevice) getDevice()).getGlobalChannel(),
+					 new NameValue("bankNum", 41),
+					 new NameValue("patchNum", patchNum)));
   }
-  
 }
 

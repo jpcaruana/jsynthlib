@@ -47,7 +47,7 @@ public class YamahaDX7VoiceBankDriver extends DX7FamilyVoiceBankDriver
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01 ) == 1 ) {
 			// switch off memory protection of internal voices
-			YamahaDX7SysexHelper.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)0x21, (byte)0x25);
+			YamahaDX7SysexHelper.swOffMemProt(this, (byte)(getChannel()+0x10), (byte)0x21, (byte)0x25);
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
@@ -56,9 +56,9 @@ public class YamahaDX7VoiceBankDriver extends DX7FamilyVoiceBankDriver
 
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
 			// make Sys Info available
-			YamahaDX7SysexHelper.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
+			YamahaDX7SysexHelper.mkSysInfoAvail(this, (byte)(getChannel()+0x10));
 			// switch back to voice mode (internal voices)
-			YamahaDX7SysexHelper.chBank(getPort(), (byte)(getChannel()+0x10), (byte)(0x25));
+			YamahaDX7SysexHelper.chBank(this, (byte)(getChannel()+0x10), (byte)(0x25));
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information
@@ -73,9 +73,9 @@ public class YamahaDX7VoiceBankDriver extends DX7FamilyVoiceBankDriver
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
 			// make Sys Info available
-			YamahaDX7SysexHelper.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
+			YamahaDX7SysexHelper.mkSysInfoAvail(this, (byte)(getChannel()+0x10));
 			// let the DX7 transmit the bank dump
-			YamahaDX7SysexHelper.xmitBankDump(getPort(), (byte)(getChannel()+0x10));
+			YamahaDX7SysexHelper.xmitBankDump(this, (byte)(getChannel()+0x10));
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
 				// show Information

@@ -11,9 +11,9 @@ import java.io.*;
 import javax.swing.*;
 public class NovationNova1BankDriver extends BankDriver
 {
-final static SysexHandler bankARequestDump = new 
+final static SysexHandler bankARequestDump = new
 SysexHandler("F0 00 20 29 01 21 @@ 12 05 F7 ");
-final static SysexHandler bankBRequestDump = new 
+final static SysexHandler bankBRequestDump = new
 SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
 
     public NovationNova1BankDriver()
@@ -40,7 +40,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
                                    "108-","109-","110-","111-","112-","113-","114-","115-",
                                    "116-","117-","118-","119-","120-","121-","122-","123-",
                                    "124-","125-","126-","127"};
-   
+
         singleSysexID="F000202901210*0009";
         singleSize=296;
 
@@ -52,15 +52,15 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         start+=10;  //sysex header
         return start;
     }
-    public String getPatchName(Patch p,int patchNum) 
+    public String getPatchName(Patch p,int patchNum)
     {
         int nameStart=getPatchStart(patchNum);
-        try 
+        try
         {
             StringBuffer s= new StringBuffer(new String(p.sysex,nameStart,
             16,"US-ASCII"));
             return s.toString();
-        } catch (UnsupportedEncodingException ex) {return "-";}   
+        } catch (UnsupportedEncodingException ex) {return "-";}
     }
 
     public void setPatchName(Patch p,int patchNum, String name)
@@ -68,19 +68,19 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         patchNameSize=16;
         patchNameStart=getPatchStart(patchNum);
 
-        if (name.length()<patchNameSize) 
+        if (name.length()<patchNameSize)
         {
             name=name+"            ";
         }
         byte [] namebytes = new byte [64];
-        try 
+        try
         {
             namebytes=name.getBytes("US-ASCII");
             for (int i=0;i<patchNameSize;i++)
             p.sysex[patchNameStart+i]=namebytes[i];
         } catch (UnsupportedEncodingException ex) {return;}
     }
- 
+
 
     public void calculateChecksum(Patch p,int start,int end,int ofs)
     {
@@ -91,7 +91,7 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
     public void calculateChecksum (Patch p)
     {
 
-    }                                     
+    }
 
     public void putPatch(Patch bank,Patch p,int patchNum)
     {
@@ -125,14 +125,14 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
             sysex[295]=(byte)0xF7;
             System.arraycopy(bank.sysex,getPatchStart(patchNum),sysex,9,296-9);
             Patch p = new Patch(sysex, getDevice());
-            p.getDriver().calculateChecksum(p);   
+            p.getDriver().calculateChecksum(p);
             return p;
         }catch (Exception e) {ErrorMsg.reportError("Error","Error in Nova1 Bank Driver",e);return null;}
     }
 
     public Patch createNewPatch()
     {
-        // On the Nova, Bank A or Bank B dump are just a collection of 128 writable single dump 
+        // On the Nova, Bank A or Bank B dump are just a collection of 128 writable single dump
         // ie : single dump meant to go to a specific memory location (see the storePatch method
         // of the SingleDriver. There is no additionnal header on the Bank dump itself.
         // In fact, we could probably create partial bank dump or partial bank instead.
@@ -147,60 +147,58 @@ SysexHandler("F0 00 20 29 01 21 @@ 12 06 F7 ");
         sysexHeader [2]=(byte)0x20;
         sysexHeader [3]=(byte)0x29;
         sysexHeader [4]=(byte)0x01;
-        sysexHeader [5]=(byte)0x21; 
+        sysexHeader [5]=(byte)0x21;
         sysexHeader [6]=(byte)(getChannel()-1);
         sysexHeader [7]=(byte)0x02;
         sysexHeader [8] = (byte)(0x05); //default to create a bank A
         sysexHeader [9] = (byte)0x00;   //this is the patch number
         Patch p = new Patch(sysex, this);
-        for (int i=0;i<128;i++) 
+        for (int i=0;i<128;i++)
         {
             sysexHeader [9] = (byte)i;
             System.arraycopy(sysexHeader,0,p.sysex,i*297,10);
-            System.arraycopy(NovationNova1InitPatch.initpatch,9,p.sysex,(i*297)+10,296-9);          
+            System.arraycopy(NovationNova1InitPatch.initpatch,9,p.sysex,(i*297)+10,296-9);
             p.sysex[(297*i)+296] = (byte)0xF7;
         }
-        calculateChecksum(p);	 
+        calculateChecksum(p);
         return p;
     }
 
     public void storePatch (Patch bank, int bankNum,int patchNum)
-    { 
+    {
         // This is called when the user want to Store a bank.
-        // The bank number (bank A or B) information is written in EACH writable single dump 
+        // The bank number (bank A or B) information is written in EACH writable single dump
         // (a bank is just a group of individual single dump)
         // We must overwrite all the individual patch in the bank to set there BankNumber to
         // either 5 (Nova bank A) or 6 (Nova bank B)
 
-        for (int i=0;i<128;i++) 
+        for (int i=0;i<128;i++)
         {
             bank.sysex[getPatchStart(i)-2] = (byte)(bankNum+5);
         }
-        
+
         byte [] newsysex = new byte[297];
         Patch p = new Patch(newsysex);
-        try 
-        {       
-            for (int i=0;i<128;i++) 
+        try
+        {
+            for (int i=0;i<128;i++)
             {
                 System.arraycopy(bank.sysex,297*i,p.sysex,0,297);
                 sendPatchWorker(p);
-                Thread.sleep(150); // Nova have problem receiving too fast, 
+                Thread.sleep(150); // Nova have problem receiving too fast,
                                 // NOTE : Do not modify this to send the bank in one shot! It will be faster but some patch will not be received correctly on the Nova!
             }
         }catch (Exception e) {ErrorMsg.reportError("Error","Unable to send Patch",e);}
     }
 
 
-    public void setBankNum(int bankNum)
-    {
+    public void setBankNum(int bankNum) {
     }
-public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex;
-    if (bankNum==0) sysex=bankARequestDump.toByteArray((byte)getChannel(),patchNum);
-    else sysex=bankBRequestDump.toByteArray((byte)getChannel(),patchNum);
-   
-    SysexHandler.send(getPort(), sysex);
-  }
 
+    public void requestPatchDump(int bankNum, int patchNum) {
+	if (bankNum==0)
+	    send(bankARequestDump.toSysexMessage(getChannel(),patchNum));
+	else
+	    send(bankBRequestDump.toSysexMessage(getChannel(),patchNum));
+    }
 }

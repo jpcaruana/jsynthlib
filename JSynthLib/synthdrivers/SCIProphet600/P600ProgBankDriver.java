@@ -98,9 +98,9 @@ public class P600ProgBankDriver extends BankDriver {
 
   public void requestPatchDump(int bankNum, int patchNum) {
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      sysexRequestDump.send(getPort(), (byte)getChannel(), new NameValue("bankNum", bankNum),
-        new NameValue("patchNum", i)
-      );
+      send(sysexRequestDump.toSysexMessage(getChannel(),
+					   new NameValue("bankNum", bankNum),
+					   new NameValue("patchNum", i)));
       try {
         Thread.sleep(50);
       } catch (Exception e) {

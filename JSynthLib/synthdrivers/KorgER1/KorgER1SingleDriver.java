@@ -13,7 +13,7 @@ import core.SysexHandler;
 
 public class KorgER1SingleDriver extends Driver
 {
-    
+
     public KorgER1SingleDriver ()
     {
 	super ("Single","Yves Lefebvre");
@@ -38,14 +38,14 @@ public class KorgER1SingleDriver extends Driver
          "48-","49-","50-","51-","52-","53-","54-","55-",
          "56-","57-","58-","59-","60-","61-","62-","63-",
          "64-"};
-         
+
     }
-    
+
     public void storePatch (Patch p, int bankNum,int patchNum)
     {
         int patchValue = patchNum;
         int bankValue  = 0;
-        
+
         if(bankNum == 1 || bankNum == 3)
         {
             patchValue += 64;
@@ -54,26 +54,26 @@ public class KorgER1SingleDriver extends Driver
         {
             bankValue = 1; // bank A and B is at bank 0 location. C and D is at Bank 1
         }
-        
+
         setBankNum (bankValue);
         setPatchNum (patchValue);
-        
+
         try
         {Thread.sleep (100); } catch (Exception e)
         {}
-                
+
         p.sysex[2]=(byte)(0x30 + getChannel() - 1);
         try
         {
             send(p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
-        
+
         try
         {Thread.sleep (100); } catch (Exception e)
         {}
         // Send a write request to store the patch in eprom
-        
+
         byte [] sysex = new byte[8];
         sysex[0] = (byte)0xF0;
         sysex[1] = (byte)0x42;
@@ -88,20 +88,20 @@ public class KorgER1SingleDriver extends Driver
             send(sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
-        
+
     }
-    
+
     public void sendPatch (Patch p)
     {
         p.sysex[2]=(byte)(0x30 + getChannel() - 1); // the only thing to do is to set the byte to 3n (n = channel)
-        
+
         try
         {
             send(p.sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus (e);}
     }
-    
+
     public Patch createNewPatch ()
     {
         byte [] sysex = new byte[1085];
@@ -116,33 +116,29 @@ public class KorgER1SingleDriver extends Driver
         calculateChecksum (p);
         return p;
     }
-    
+
     public void calculateChecksum (Patch p,int start,int end,int ofs)
     {
         // no checksum
     }
-    
-    
+
+
     public void setPatchNum (int patchNum)
     {
-        
+
         try
         {
             send(0xC0+(getChannel()-1), patchNum);
         } catch (Exception e)
         {};
     }
-    
-    
+
+
     //public JSLFrame editPatch(Patch p)
     // {
     //     return new KorgER1SingleEditor(p);
     // }
   public void requestPatchDump(int bankNum, int patchNum) {
-    byte[] sysex = sysexRequestDump.toByteArray((byte)getChannel(), patchNum+0x30);
-   
-    SysexHandler.send(getPort(), sysex);
+    send(sysexRequestDump.toSysexMessage(getChannel(), patchNum+0x30));
   }
-
 }
-

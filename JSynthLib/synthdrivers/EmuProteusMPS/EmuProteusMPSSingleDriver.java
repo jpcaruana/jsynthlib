@@ -26,9 +26,9 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
    bankNumbers =new String[] {"0-ROM Bank","1-RAM Bank","2-Card Bank",
                               "3-ROM Bank","4-ROM Bank"};
    patchNumbers = generateNumbers(0,99,"00-");
-   
+
    }
-                     
+
    public String getPatchName(Patch p) {
          if (patchNameSize==0) return ("-");
          try {
@@ -56,7 +56,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
         } catch (UnsupportedEncodingException ex) {return;}
     calculateChecksum(p);
   }
-    
+
    public void storePatch (Patch p,int bankNum,int patchNum)
    {
      p.sysex[5]=(byte)((bankNum*100+patchNum)%128);
@@ -68,7 +68,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
     /*
    public void choosePatch (Patch p)
    {
-     
+
      Integer patchNum;
      String input=JOptionPane.showInputDialog(null,"Send to Which Patch Location (0-499)",
                   "Emu Proteus MPS",JOptionPane.QUESTION_MESSAGE);
@@ -81,7 +81,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
     */
    public void sendPatch (Patch p)
    {
-     
+
      Integer patchNum=new Integer(100);
      p.sysex[5]=(byte)(patchNum.intValue()%128);
      p.sysex[6]=(byte)(patchNum.intValue()/128);
@@ -94,7 +94,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
   {
     int i;
     int sum=0;
-   
+
     for (i=7;i<=316;i++)
       sum+=p.sysex[i];
     p.sysex[checksumOffset]=(byte)(sum % 128);
@@ -108,7 +108,7 @@ final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *b
 	 sysex[318]=(byte)0xF7;
          Patch p = new Patch(sysex, this);
 	 setPatchName(p,"New Patch");
-	 calculateChecksum(p);	 
+	 calculateChecksum(p);
 	 return p;
  }
 public JSLFrame editPatch(Patch p)
@@ -116,12 +116,10 @@ public JSLFrame editPatch(Patch p)
      return new EmuProteusMPSSingleEditor(p);
  }
   public void requestPatchDump(int bankNum, int patchNum) {
-   SysexRequestDump.send(
-        getPort(), (byte)getChannel(),
-        new NameValue("bankNum", (bankNum*100+patchNum)%128),
-        new NameValue("patchNum", (bankNum*100+patchNum)/128)
-      );
-   
+   send(SysexRequestDump.toSysexMessage(getChannel(),
+					new NameValue("bankNum", (bankNum*100+patchNum)%128),
+					new NameValue("patchNum", (bankNum*100+patchNum)/128)));
+
   }
 
 }

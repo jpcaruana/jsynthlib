@@ -135,8 +135,8 @@ public class VirusProgBankDriver extends BankDriver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(getPort(), (byte) getDeviceID(),
-			  new NameValue("bankNum", bankNum + 1));
+    send(sysexRequestDump.toSysexMessage(getDeviceID(),
+					 new NameValue("bankNum", bankNum + 1)));
   }
 }
 

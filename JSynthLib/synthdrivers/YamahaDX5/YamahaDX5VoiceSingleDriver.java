@@ -71,6 +71,6 @@ public class YamahaDX5VoiceSingleDriver extends DX7FamilyVoiceSingleDriver
 		
 		//setPatchNum (patchNum);
 
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

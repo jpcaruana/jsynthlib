@@ -47,7 +47,7 @@ public class YamahaDX7PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
-			// show Information 
+			// show Information
 			YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.STORE_SINGLE_PERFORMANCE_STRING);
 
 		sendPatchWorker (p);
@@ -57,19 +57,18 @@ public class YamahaDX7PerformanceSingleDriver extends DX7FamilyPerformanceSingle
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
-			// show Information 
+			// show Information
 			YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.PERFORMANCE_STRING);
 	}
 
-	
 	public JSLFrame editPatch(Patch p)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSPBPflag() & 0x01 ) == 1 ) {
 			// make Sys Info available
-			YamahaDX7SysexHelper.mkSysInfoAvail(getPort(), (byte)(getChannel()+0x10));
+			YamahaDX7SysexHelper.mkSysInfoAvail(this, (byte)(getChannel()+0x10));
 		} else {
 			if ( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01 ) == 1 )
-				// show Information 
+				// show Information
 				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.PERFORMANCE_EDITOR_STRING);
 		}
 

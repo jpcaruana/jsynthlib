@@ -42,12 +42,12 @@ public class YamahaDX7sVoiceBankDriver extends DX7FamilyVoiceBankDriver
 		return super.createNewPatch();
 	}
 
-		
+
 	public void storePatch (Patch p, int bankNum,int patchNum)
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection (internal+cartridge!)
-			YamahaDX7sSysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)(0) );
+			YamahaDX7sSysexHelpers.swOffMemProt(this, (byte)(getChannel()+0x10), (byte)(0) );
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show information
@@ -55,7 +55,7 @@ public class YamahaDX7sVoiceBankDriver extends DX7FamilyVoiceBankDriver
 		}
 
 		// choose the desired MIDI Receive block (internal (1-32), internal (33-64))
-		YamahaDX7sSysexHelpers.chRcvBlock(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum));
+		YamahaDX7sSysexHelpers.chRcvBlock(this, (byte)(getChannel()+0x10), (byte)(bankNum));
 
 		sendPatchWorker(p);
 	};
@@ -64,8 +64,8 @@ public class YamahaDX7sVoiceBankDriver extends DX7FamilyVoiceBankDriver
 	public void requestPatchDump(int bankNum, int patchNum)
 	{
 		// choose the desired MIDI transmit block (internal (1-32), internal (33-64))
-		YamahaDX7sSysexHelpers.chXmitBlock(getPort(), (byte)(getChannel()+0x10), (byte)(bankNum));
-      
-		sysexRequestDump.send(getPort(), (byte)(getChannel()+0x20) );
+		YamahaDX7sSysexHelpers.chXmitBlock(this, (byte)(getChannel()+0x10), (byte)(bankNum));
+
+		send(sysexRequestDump.toSysexMessage(getChannel()+0x20));
 	}
 }

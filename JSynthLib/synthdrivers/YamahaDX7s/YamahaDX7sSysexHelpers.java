@@ -28,22 +28,22 @@ public class YamahaDX7sSysexHelpers
 {
 	// ###############################################  DX7s ############################################
 	// parameter change
-	protected final static SysexHandler System	 = new SysexHandler("f0 43 @@ 19 *param* *action* f7"); 
-	protected final static SysexHandler Button	 = new SysexHandler("f0 43 @@ 1B *switch* *OnOff* f7"); 
+	protected final static SysexHandler System	 = new SysexHandler("f0 43 @@ 19 *param* *action* f7");
+	protected final static SysexHandler Button	 = new SysexHandler("f0 43 @@ 1B *switch* *OnOff* f7");
 
 	// switch off internal/cartridge memory protection
-	protected static void swOffMemProt(int p, byte ch, byte bn)				// port, channel, 
-	{ System.send(p, ch, new NameValue("param", 0x53), new NameValue("action",bn)); }	// bn: bit0 = internal, bit1 = cartridge
+	protected static void swOffMemProt(Driver d, byte ch, byte bn)				// port, channel,
+	{ d.send(System.toSysexMessage(ch, new NameValue("param", 0x53), new NameValue("action",bn))); }	// bn: bit0 = internal, bit1 = cartridge
 
-	// choose the desired MIDI transmit block 
-	protected static void chXmitBlock(int p, byte ch, byte bn)				// port, channel, 
-	{ System.send(p, ch, new NameValue("param", 0x4c), new NameValue("action",bn)); }	// bn: 0 = 1-32, 1 = 33-64
+	// choose the desired MIDI transmit block
+	protected static void chXmitBlock(Driver d, byte ch, byte bn)				// port, channel,
+	{ d.send(System.toSysexMessage(ch, new NameValue("param", 0x4c), new NameValue("action",bn))); }	// bn: 0 = 1-32, 1 = 33-64
 
-	// choose the desired MIDI receive block 
-	protected static void chRcvBlock(int p, byte ch, byte bn)				// port, channel, 
-	{ System.send(p, ch, new NameValue("param", 0x4d), new NameValue("action",bn)); }	// bn: 0 = 1-32, 1 = 33-64
+	// choose the desired MIDI receive block
+	protected static void chRcvBlock(Driver d, byte ch, byte bn)				// port, channel,
+	{ d.send(System.toSysexMessage(ch, new NameValue("param", 0x4d), new NameValue("action",bn))); }	// bn: 0 = 1-32, 1 = 33-64
 
 	// choose voice mode (voice button)
-	protected static void chVoiceMode(int p, byte ch)					// port, channel
-	{ Button.send(p, ch, new NameValue("switch", 0x20), new NameValue("OnOff", 0x7f)); }	// switch 32
+	protected static void chVoiceMode(Driver d, byte ch)					// port, channel
+	{ d.send(Button.toSysexMessage(ch, new NameValue("switch", 0x20), new NameValue("OnOff", 0x7f))); }	// switch 32
 }

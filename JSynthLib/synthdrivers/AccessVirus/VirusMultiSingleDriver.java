@@ -126,11 +126,8 @@ public class VirusMultiSingleDriver extends Driver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(getPort(), (byte) getDeviceID(),
-        new NameValue("bankNum", 1), new NameValue("patchNum", patchNum)
-    );
+    send(sysexRequestDump.toSysexMessage(getDeviceID(),
+         new NameValue("bankNum", 1), new NameValue("patchNum", patchNum)));
   }
-  
- 
 }
 

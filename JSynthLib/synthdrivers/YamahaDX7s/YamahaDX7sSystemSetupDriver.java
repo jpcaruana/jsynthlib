@@ -54,7 +54,7 @@ public class YamahaDX7sSystemSetupDriver extends DX7FamilySystemSetupIIDriver
 	{
 		if ( ( ((DX7FamilyDevice)(getDevice())).getSwOffMemProtFlag() & 0x01) == 1 ) {
 			// switch off memory protection (internal+cartridge!)
-			YamahaDX7sSysexHelpers.swOffMemProt(getPort(), (byte)(getChannel()+0x10), (byte)0 );
+			YamahaDX7sSysexHelpers.swOffMemProt(this, (byte)(getChannel()+0x10), (byte)0 );
 		} else {
 			if( ( ((DX7FamilyDevice)(getDevice())).getTipsMsgFlag() & 0x01) == 1 )
 				// show Information

@@ -107,11 +107,11 @@ public class NLPatchBankDriver extends BankDriver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
+    int devID = ((NordLeadDevice) getDevice()).getGlobalChannel();
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      sysexRequestDump.send(getPort(), (byte) (((NordLeadDevice) getDevice()).getGlobalChannel()),
-        new NameValue("bankNum", bankNum + 11),
-        new NameValue("patchNum", i)
-      );
+      send(sysexRequestDump.toSysexMessage(devID,
+					   new NameValue("bankNum", bankNum + 11),
+					   new NameValue("patchNum", i)));
       try {
         Thread.sleep(50);
       } catch (Exception e) {
@@ -120,6 +120,5 @@ public class NLPatchBankDriver extends BankDriver {
       }
     }
   }
-  
 }
 

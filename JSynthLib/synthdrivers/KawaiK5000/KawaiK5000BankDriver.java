@@ -286,9 +286,9 @@ public Patch createNewPatch()
 
   public void requestPatchDump(int bankNum, int patchNum) {
     if (bankNum == 0)
-      SYSEX_REQUEST_A_DUMP.send(getPort(), (byte)getChannel());
+      send(SYSEX_REQUEST_A_DUMP.toSysexMessage(getChannel()));
     else
-      SYSEX_REQUEST_D_DUMP.send(getPort(), (byte)getChannel());
+      send(SYSEX_REQUEST_D_DUMP.toSysexMessage(getChannel()));
   }
 
 //----- End phil@muqus.com
