@@ -367,10 +367,13 @@ class YamahaFS1RPerformanceEditor extends PatchEditorFrame
 					mVoiceSelector[aPart-1].cb.addItemListener(new ItemListener() {
 						// send the bank voice to the current part
 						public void itemStateChanged (ItemEvent e) {
+							if (e.getStateChange() == ItemEvent.SELECTED)
+							{
 				//System.out.println("SEND PATCH");
-							JComboBox oCB = (JComboBox)e.getSource();
-							Patch oPatch = YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+oCB.getSelectedIndex());
-							YamahaFS1RVoiceDriver.getInstance().sendPatch (oPatch, aPart);
+								JComboBox oCB = (JComboBox)e.getSource();
+								Patch oPatch = YamahaFS1RBankDriver.getInstance().getPatch(((YamahaFS1RBankEditor)bankFrame).getBankPatch(), 128+oCB.getSelectedIndex());
+								YamahaFS1RVoiceDriver.getInstance().sendPatch (oPatch, aPart);
+							}
 						}
 					});
 					mVoiceSelector[aPart-1].cb.addItemListener(oList[0]);
