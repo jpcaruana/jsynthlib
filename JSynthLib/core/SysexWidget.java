@@ -194,7 +194,7 @@ public abstract class SysexWidget extends JPanel {
                 sender.send(driver, value);
             }
         } else {
-            driver.sendParameter(patch, parameter);
+            parameter.send(patch);
         }
     }
 
@@ -405,6 +405,8 @@ public abstract class SysexWidget extends JPanel {
         public String getString(IPatch p);
         public int getLength();
         public void set(IPatch p, String stringval);
+        
+        public void send(IPatch p);
     }
     public IParameter getParameter() {
         return parameter;

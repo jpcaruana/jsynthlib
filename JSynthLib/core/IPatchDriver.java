@@ -90,13 +90,4 @@ public interface IPatchDriver extends IDriver {
      * by driver selection comboboxes.
      */
     String toString();
-
-    /**
-     * Send a single parameter to the synth.
-     *
-     * @param patch Patch containing the data.
-     * @param param Description of the parameter.
-     */
-    // FIXME Rib, remove this.  (Hiroo)
-    void sendParameter(IPatch patch, SysexWidget.IParameter param);
 }

@@ -401,9 +401,6 @@ abstract public class Driver implements IPatchDriver {
         + getPatchType();
     }
 
-    public void sendParameter(IPatch patch, SysexWidget.IParameter param) {
-        // Subclasses of Driver should use SysexSenders, no this.
-    }
     // end of IPatchDriver interface methods
     //
     // mothods for Patch class

@@ -141,4 +141,11 @@ public class XMLParameter implements SysexWidget.IParameter {
     public String encode(XMLPatch p) {
         return decoder.encode(get(p), this);
     }
+
+    /* (non-Javadoc)
+     * @see core.SysexWidget.IParameter#send(core.IPatch)
+     */
+    public void send(IPatch p) {
+        ((XMLDriver) p.getDriver()).sendParameter(p, this);
+    }
 }
