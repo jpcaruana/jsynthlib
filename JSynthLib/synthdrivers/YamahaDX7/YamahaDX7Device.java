@@ -29,6 +29,8 @@ import core.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Set;
+import java.util.Arrays;
 
 public class YamahaDX7Device extends Device
 {
@@ -37,14 +39,14 @@ public class YamahaDX7Device extends Device
 
   // the Support of these Synths are implemented
   public String[] whichSynthString = {"DX7","TX7"};
-  public String   whichSynth;
+  private String  whichSynth;
 
   // Simulate DX7 panel button pushes by sending SysEx commands ?
   JCheckBox       sPBP;
-  public int      sPBPval;
+  private int     sPBPval;
   // switch off panel button pushes information message?
   JCheckBox       sPBPmsg;
-  public int      sPBPmsgVal;
+  private int      sPBPmsgVal;
 
   // length of infoText lines should be aprox. 70 characters
   //               "____________________________________________________________________"
@@ -144,9 +146,9 @@ public class YamahaDX7Device extends Device
                 "\nAt this time only the direction JSynthLib->DX7 is working. If a parameter is changed on"+	// tt+lb
                 " the DX7 itself, JSynthlib doesn't become aware of this.";					// tt+lb
 
-        whichSynth="DX7";
-        sPBPval=0;    // Disable 'Enable DX7 Remote Control?' function by default!
-        sPBPmsgVal=1; // Enable 'Display Hints and Tips?' function by default!
+        setWhichSynth("DX7");
+        setSPBPval(0);    // Disable 'Enable DX7 Remote Control?' function by default!
+        setSPBPmsgVal(1); // Enable 'Display Hints and Tips?' function by default!
     }
 
     public JPanel config()
@@ -163,15 +165,15 @@ public class YamahaDX7Device extends Device
       c.gridx=0;c.gridy=1;c.gridwidth=3;c.gridheight=2;
       panel.add(new JLabel("Choose a supported Synthesizer"),c);
       JComboBox synthList = new JComboBox(whichSynthString);
-      synthList.setSelectedItem(whichSynth);
+      synthList.setSelectedItem(getWhichSynth());
       synthList.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
           JComboBox cb = (JComboBox)e.getSource();
           String synthindex = (String)cb.getSelectedItem();
-          whichSynth = synthindex;
-          setSynthName(whichSynth);
+          setWhichSynth(synthindex);
+          setSynthName(getWhichSynth());
         }
       });
       c.gridx=3;c.gridy=1;c.gridwidth=3;c.gridheight=2;
@@ -180,14 +182,14 @@ public class YamahaDX7Device extends Device
       c.gridx=0;c.gridy=3;c.gridwidth=3;c.gridheight=2;
       panel.add(new JLabel("Enable DX7 Remote Control?"),c);
       sPBP = new JCheckBox();
-      sPBP.setSelected(sPBPval==1);
+      sPBP.setSelected(getSPBPval()==1);
       sPBP.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
           JCheckBox chb = (JCheckBox)e.getSource();
-          if (chb.isSelected()) sPBPval = 1;
-            else sPBPval = 0;
+          if (chb.isSelected()) setSPBPval(1);
+            else setSPBPval(0);
         }
       });
       c.gridx=3;c.gridy=3;c.gridwidth=1;c.gridheight=2;
@@ -196,14 +198,14 @@ public class YamahaDX7Device extends Device
       c.gridx=0;c.gridy=5;c.gridwidth=3;c.gridheight=2;
       panel.add(new JLabel("Display Hints and Tips?"),c);
       sPBPmsg = new JCheckBox();
-      sPBPmsg.setSelected(sPBPmsgVal==1);
+      sPBPmsg.setSelected(getSPBPmsgVal()==1);
       sPBPmsg.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
           JCheckBox chb = (JCheckBox)e.getSource();
-          if (chb.isSelected()) sPBPmsgVal = 1;
-            else sPBPmsgVal = 0;
+          if (chb.isSelected()) setSPBPmsgVal(1);
+            else setSPBPmsgVal(0);
         }
       });
       c.gridx=3;c.gridy=5;c.gridwidth=1;c.gridheight=2;
@@ -293,5 +295,38 @@ public class YamahaDX7Device extends Device
     DX7Button.send(p, ch, new NameValue("button",pn),        new NameValue("action",DEPRESS));
     DX7Button.send(p, ch, new NameValue("button",pn),        new NameValue("action",RELEASE));
   }
+
+
+	// For storable interface
+
+	/** Getter for whichSynth */
+	public String getWhichSynth() { return this.whichSynth; };
+	/** Setter for whichSynth */
+	public void setWhichSynth(String whichSynth) { this.whichSynth = whichSynth; };
+
+	/** Getter for sPBPval */
+	public int getSPBPval() { return this.sPBPval; };
+	/** Setter for sPBPval */
+	public void setSPBPval(int sPBPval) { this.sPBPval = sPBPval; };
+
+	/** Getter for sPBPmsgVal */
+	public int getSPBPmsgVal() { return this.sPBPmsgVal; };
+	/** Setter for sPBPmsgVal */
+	public void setSPBPmsgVal(int sPBPmsgVal) { this.sPBPmsgVal = sPBPmsgVal; };
+
+
+	/**
+	 * Get the names of properties that should be stored and loaded.
+	 * @return a Set of field names
+	 */
+	public Set storedProperties() {
+		final String[] storedPropertyNames = {
+			"whichSynth", "sPBPval", "sPBPmsgVal",
+		};
+		Set set = super.storedProperties();
+		set.addAll(Arrays.asList(storedPropertyNames));
+		return set;
+	}
+
 
 }

@@ -60,9 +60,9 @@ public class YamahaDX7SingleDriver extends Driver
 
   public void sendPatch (Patch p)
   {
-    if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("DX7")==0 )
+    if ( ((YamahaDX7Device)(device)).getWhichSynth().compareTo("DX7")==0 )
     {
-      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // DX7 Remote Control
+      if ( ((YamahaDX7Device)(device)).getSPBPval()==1 ) // DX7 Remote Control
       {
         // make Sys Info available
         ((YamahaDX7Device)(device)).mkDX7SysInfoAvail(port, (byte)(channel+0x10));
@@ -76,9 +76,9 @@ public class YamahaDX7SingleDriver extends Driver
         sendPatchWorker (p);
       }
     }
-    else if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("TX7")==0 )
+    else if ( ((YamahaDX7Device)(device)).getWhichSynth().compareTo("TX7")==0 )
     {
-      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // TX7 Remote Control
+      if ( ((YamahaDX7Device)(device)).getSPBPval()==1 ) // TX7 Remote Control
       {
         // switch off TX7 memory protection (is it realy necessary?)
         ((YamahaDX7Device)(device)).swOffTX7MemProt.send(port, (byte)(channel+0x10)); // TX7 function parameter change
@@ -95,9 +95,9 @@ public class YamahaDX7SingleDriver extends Driver
 
   public void storePatch (Patch p, int bankNum,int patchNum)
   {
-    if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("DX7")==0 )
+    if ( ((YamahaDX7Device)(device)).getWhichSynth().compareTo("DX7")==0 )
     {
-      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // DX7 Remote Control
+      if ( ((YamahaDX7Device)(device)).getSPBPval()==1 ) // DX7 Remote Control
       {
         // make Sys Info available
         ((YamahaDX7Device)(device)).mkDX7SysInfoAvail(port, (byte)(channel+0x10));
@@ -118,7 +118,7 @@ public class YamahaDX7SingleDriver extends Driver
       }
       else // DX7 manually control
       {
-        if ( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+        if ( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
           // Informations about DX7 patch receiving
           JOptionPane.showMessageDialog(PatchEdit.instance,
                                         getDriverName()+"Driver:"+((YamahaDX7Device)(device)).dx7ReceiveString,
@@ -127,7 +127,7 @@ public class YamahaDX7SingleDriver extends Driver
 
         sendPatchWorker(p);
 
-        if ( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+        if ( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
           // Informations about manually storing of a voice patch
           JOptionPane.showMessageDialog(PatchEdit.instance,
                                         getDriverName()+"Driver:"+((YamahaDX7Device)(device)).dx7StoreString,
@@ -135,16 +135,16 @@ public class YamahaDX7SingleDriver extends Driver
                                         JOptionPane.INFORMATION_MESSAGE);
       }
     }
-    else if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("TX7")==0 )
+    else if ( ((YamahaDX7Device)(device)).getWhichSynth().compareTo("TX7")==0 )
     {
-      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // TX7 Remote Control
+      if ( ((YamahaDX7Device)(device)).getSPBPval()==1 ) // TX7 Remote Control
       {
         // switch off TX7 memory protection (is it realy necessary?)
         ((YamahaDX7Device)(device)).swOffTX7MemProt.send(port, (byte)(channel+0x10)); // TX7 function parameter change
 
         sendPatchWorker(p);
 
-        if( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+        if( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
             // Informations about storing of a voice patch
             JOptionPane.showMessageDialog(PatchEdit.instance,
                                           getDriverName()+"Driver:"+((YamahaDX7Device)(device)).tx7StoreString,
@@ -153,7 +153,7 @@ public class YamahaDX7SingleDriver extends Driver
       }
       else // TX7 manually control
       {
-        if( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+        if( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
             // Informations about TX7 patch receiving
             JOptionPane.showMessageDialog(PatchEdit.instance,
                                           getDriverName()+"Driver:"+((YamahaDX7Device)(device)).tx7ReceiveString,
@@ -162,7 +162,7 @@ public class YamahaDX7SingleDriver extends Driver
 
         sendPatchWorker(p);
 
-        if( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+        if( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
             // Informations about storing of a voice patch
             JOptionPane.showMessageDialog(PatchEdit.instance,
                                           getDriverName()+"Driver:"+((YamahaDX7Device)(device)).tx7StoreString,
@@ -176,9 +176,9 @@ public class YamahaDX7SingleDriver extends Driver
 
   public void requestPatchDump(int bankNum, int patchNum)
   {
-    if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("DX7")==0 )
+    if ( ((YamahaDX7Device)(device)).getWhichSynth().compareTo("DX7")==0 )
     {
-      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // DX7 Remote Control
+      if ( ((YamahaDX7Device)(device)).getSPBPval()==1 ) // DX7 Remote Control
       {
         // make Sys Info available
         ((YamahaDX7Device)(device)).mkDX7SysInfoAvail(port, (byte)(channel+0x10));
@@ -189,7 +189,7 @@ public class YamahaDX7SingleDriver extends Driver
       }
       else // DX7 manually control
       {
-        if ( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+        if ( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
           // Information about requesting a patch
           JOptionPane.showMessageDialog(PatchEdit.instance,
                                         getDriverName()+"Driver:"+((YamahaDX7Device)(device)).dx7RequestVoiceString,
@@ -206,9 +206,9 @@ public class YamahaDX7SingleDriver extends Driver
                }
       }
     }
-    else if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("TX7")==0 )
+    else if ( ((YamahaDX7Device)(device)).getWhichSynth().compareTo("TX7")==0 )
     {
-      if ( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+      if ( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
         // Information about requesting a single voice patch
         JOptionPane.showMessageDialog(PatchEdit.instance,
                                       getDriverName()+"Driver:"+((YamahaDX7Device)(device)).tx7RequestVoiceString,
@@ -243,9 +243,9 @@ public class YamahaDX7SingleDriver extends Driver
 
   public JInternalFrame editPatch(Patch p)
   {
-    if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("DX7")==0 )
+    if ( ((YamahaDX7Device)(device)).getWhichSynth().compareTo("DX7")==0 )
     {
-      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // DX7 Remote Control
+      if ( ((YamahaDX7Device)(device)).getSPBPval()==1 ) // DX7 Remote Control
       {
         // make Sys Info available
         ((YamahaDX7Device)(device)).mkDX7SysInfoAvail(port, (byte)(channel+0x10));
@@ -254,7 +254,7 @@ public class YamahaDX7SingleDriver extends Driver
       }
       else // DX7 manually control
       {
-        if ( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+        if ( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
           // Informations about DX7 patch receiving
           JOptionPane.showMessageDialog(PatchEdit.instance,
                                         getDriverName()+"Driver:"+((YamahaDX7Device)(device)).dx7ReceiveString,
@@ -262,16 +262,16 @@ public class YamahaDX7SingleDriver extends Driver
                                         JOptionPane.INFORMATION_MESSAGE);
       }
     }
-    else if ( ((YamahaDX7Device)(device)).whichSynth.compareTo("TX7")==0 )
+    else if ( ((YamahaDX7Device)(device)).getWhichSynth().compareTo("TX7")==0 )
     {
-      if ( ((YamahaDX7Device)(device)).sPBPval==1 ) // TX7 Remote Control
+      if ( ((YamahaDX7Device)(device)).getSPBPval()==1 ) // TX7 Remote Control
       {
         // switch off TX7 memory protection (is it realy necessary?)
         ((YamahaDX7Device)(device)).swOffTX7MemProt.send(port, (byte)(channel+0x10)); // TX7 function parameter change
       }
       else // TX7 manually control
       {
-        if( ((YamahaDX7Device)(device)).sPBPmsgVal==1 )
+        if( ((YamahaDX7Device)(device)).getSPBPmsgVal()==1 )
             // Informations about TX7 patch receiving
             JOptionPane.showMessageDialog(PatchEdit.instance,
                                           getDriverName()+"Driver:"+((YamahaDX7Device)(device)).tx7ReceiveString,

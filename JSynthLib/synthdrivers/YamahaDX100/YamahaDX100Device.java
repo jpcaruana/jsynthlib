@@ -10,6 +10,9 @@ import core.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Set;
+import java.util.Arrays;;
+
 /**
  *
  * @author  Gerrit Gehnen
@@ -17,7 +20,7 @@ import java.awt.event.*;
  */
 public class YamahaDX100Device extends Device implements ItemListener
 {
-    public int whichSynth;    
+    private int whichSynth;
     JRadioButton b1;
     JRadioButton b2;
     JRadioButton b3;
@@ -36,7 +39,7 @@ public class YamahaDX100Device extends Device implements ItemListener
 		  "JSynthLib supports the DX21/27/100 as both a Single and Bank Librarian and also supports Patch Editing."+
 		  "Note that though these three synths share one driver, some parameters may only effect the sound on certain "+
 		  "models. Therefore, under 'configuration' you can choose which of the three models you own.";
-        whichSynth=21;         
+        setWhichSynth(21);         
     }
     public JPanel config()
    {
@@ -44,9 +47,9 @@ public class YamahaDX100Device extends Device implements ItemListener
  
       panel.add(new JLabel("Choose a supported Synthesizer"));
       ButtonGroup bg= new ButtonGroup();
-      b1 = new JRadioButton ("DX21",whichSynth==21);
-      b2 = new JRadioButton ("DX27",whichSynth==27);
-      b3 = new JRadioButton ("DX100",whichSynth==100);
+      b1 = new JRadioButton ("DX21",getWhichSynth()==21);
+      b2 = new JRadioButton ("DX27",getWhichSynth()==27);
+      b3 = new JRadioButton ("DX100",getWhichSynth()==100);
       b1.addItemListener(this);
       b2.addItemListener(this);
       b3.addItemListener(this);
@@ -59,8 +62,30 @@ public class YamahaDX100Device extends Device implements ItemListener
    }
       public void itemStateChanged(ItemEvent e){
         if (e.getStateChange()!=ItemEvent.SELECTED) return;
-	if (e.getItemSelectable()==b1) {whichSynth=21;setSynthName("DX21");}
-	if (e.getItemSelectable()==b2) {whichSynth=27;setSynthName("DX27");}
-	if (e.getItemSelectable()==b3) {whichSynth=100;setSynthName("DX100");}
+	if (e.getItemSelectable()==b1) {setWhichSynth(21);setSynthName("DX21");}
+	if (e.getItemSelectable()==b2) {setWhichSynth(27);setSynthName("DX27");}
+	if (e.getItemSelectable()==b3) {setWhichSynth(100);setSynthName("DX100");}
       }  
+
+
+	// For storable interface
+
+	/** Getter for whichSynth */
+	public int getWhichSynth() { return this.whichSynth; };
+	/** Setter for whichSynth */
+	public void setWhichSynth(int whichSynth) { this.whichSynth = whichSynth; };
+
+	/**
+	 * Get the names of properties that should be stored and loaded.
+	 * @return a Set of field names
+	 */
+	public Set storedProperties() {
+		final String[] storedPropertyNames = {
+			"whichSynth",
+		};
+		Set set = super.storedProperties();
+		set.addAll(Arrays.asList(storedPropertyNames));
+		return set;
+	}
+
 }
