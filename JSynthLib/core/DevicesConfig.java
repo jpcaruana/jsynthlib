@@ -6,6 +6,7 @@
  * elsewhere on the path.
  * @author Zellyn Hunter (zellyn@zellyn.com)
  * @version $Id$
+ * @see DeviceListWriter
  */
 
 package core;
@@ -18,29 +19,34 @@ import java.util.Iterator;
 import java.io.InputStream;
 import java.io.IOException;
 
-public class DevicesConfig {
+class DevicesConfig {
 
-    /* Properties representing config file */
+    /** Properties representing config file, synthdrivers.properties. */
     private Properties configProps = new Properties();
-    /* Properties representing devices and class names */
-    private Properties deviceProps = new Properties();
-    /* ArrayList of device names */
-    private ArrayList deviceNames = new ArrayList();
-    /* Properties representing the ID-Strings and device names */
-    private Properties deviceIDProps = new Properties();
 
     /**
-     * Main method for debugging - print out all configured Devices
+     * Properties representing devices and class names.
+     * Long name -&gt class name.
      */
-    public static void main(String[] args) {
-	DevicesConfig devConf = new DevicesConfig();
-	devConf.printAll();
-    }
+    private Properties deviceProps = new Properties();
+    /**
+     * Properties representing the inquery ID Strings.
+     * Inquery ID string -&gt class name.
+     */
+    private Properties inqueryIDProps = new Properties();
+    /**
+     * Properties representing the short name Strings.
+     * Short name string -&gt class name.
+     */
+    private Properties shortNameProps = new Properties();
+
+    /** ArrayList of device names (long name). */
+    private ArrayList deviceNames = new ArrayList();
 
     /**
      * Constructor
      */
-    public DevicesConfig() {
+    DevicesConfig() {
 	// Load properties file
 	InputStream in = this.getClass().getResourceAsStream("/" + Constants.RESOURCE_NAME_DEVICES_CONFIG);
 	//Properties configProps = new Properties();
@@ -64,92 +70,129 @@ public class DevicesConfig {
 	while (propNames.hasMoreElements()) {
 	    String propName = (String) propNames.nextElement();
 	    if (propName.startsWith(Constants.PROP_PREFIX_DEVICE_NAME)) {
-		String deviceKey = propName.substring(Constants.PROP_PREFIX_DEVICE_NAME.length());
-		String deviceName = configProps.getProperty(propName);
-		String deviceClass = configProps.getProperty(
-							     Constants.PROP_PREFIX_DEVICE_CLASS + deviceKey);
+		// /deviceName\./ : Kawai K4/K4R Driver
+		// /deviceName\./(.*)/
+		String shortName = propName.substring(Constants.PROP_PREFIX_DEVICE_NAME.length());
+		String deviceName  = configProps.getProperty(propName);
+		String deviceClass = configProps.getProperty(Constants.PROP_PREFIX_DEVICE_CLASS + shortName);
+		String IDString    = configProps.getProperty(Constants.PROP_PREFIX_ID_STRING + shortName);
 
-		if ((deviceName == null) || (deviceClass == null)) {
-		    ErrorMsg.reportError("Failed loading Devices",
-					 "Config file inconsistency found "
-					 + "for '" + deviceKey + "' device");
-		} else {
+		try {
+		    deviceNames.add(deviceName);
+		    // deviceProps: deviceName -> deviceClass
 		    deviceProps.setProperty(deviceName, deviceClass);
-		    this.deviceNames.add(deviceName);
-		}
-	    }
-	    if (propName.startsWith(Constants.PROP_PREFIX_ID_STRING)) {
-		String deviceKey = propName.substring(Constants.PROP_PREFIX_ID_STRING.length());
-		String deviceName = configProps.getProperty(Constants.PROP_PREFIX_DEVICE_NAME + deviceKey);
-		String IDString = configProps.getProperty(Constants.PROP_PREFIX_ID_STRING + deviceKey);
-
-		if ((deviceName == null) || (IDString == null)) {
+		    // inqueryIDProps: inquiry ID String -> deviceName
+		    inqueryIDProps.setProperty(IDString, deviceClass);
+		    // shortNameProps: short name String -> deviceName
+		    shortNameProps.setProperty(shortName, deviceClass);
+		} catch (NullPointerException e) {
 		    ErrorMsg.reportError("Failed loading Devices",
 					 "Config file inconsistency found "
-					 + "for '" + deviceKey + "' ID string");
-		} else {
-		    deviceIDProps.setProperty(IDString, deviceName);
-		    //this.deviceNames.add(deviceName);
+					 + "for '" + shortName + "' device");
 		}
+		/*
+	    } else if (propName.startsWith(Constants.PROP_PREFIX_ID_STRING)) {
+		// /inquiryID\./ : ex. F07E**0602400000040000000000f7
+		// /inquiryID\./(.*)/
+		String shortName = propName.substring(Constants.PROP_PREFIX_ID_STRING.length());
+		//String deviceName = configProps.getProperty(Constants.PROP_PREFIX_DEVICE_NAME + shortName);
+		String deviceClass = configProps.getProperty(Constants.PROP_PREFIX_DEVICE_CLASS + shortName);
+		String IDString = configProps.getProperty(Constants.PROP_PREFIX_ID_STRING + shortName);
+
+		if ((deviceClass != null) && (IDString != null)) {
+		    // inqueryIDProps: IDString -> deviceName
+		    inqueryIDProps.setProperty(IDString, deviceClass);
+		    //deviceNames.add(deviceName);
+		} else {
+		    ErrorMsg.reportError("Failed loading Devices",
+					 "Config file inconsistency found "
+					 + "for '" + shortName + "' ID string");
+		}
+		*/
 	    }
 	}
-	Collections.sort(this.deviceNames);
+	Collections.sort(deviceNames);
     }
 
     /**
-     * Return the device names
+     * Return the device names (long name).
      * @return the names of configured devices
      */
-    public String[] deviceNames() {
-	String[] retVal = new String[this.deviceNames.size()];
-	return (String[]) this.deviceNames.toArray(retVal);
-    }
-
-    public Enumeration IDStrings() {
-	return deviceIDProps.keys();
+    String[] deviceNames() {
+	String[] retVal = new String[deviceNames.size()];
+	return (String[]) deviceNames.toArray(retVal);
     }
 
     /**
-     * Given a device name, return its class name
+     * Given a device name, i.e. "Kawai K4/K4R Driver", return its
+     * class name.
      * @param deviceName the name of the device
      * @return the class name
      */
-    public String classNameForDevice(String deviceName) {
-	return this.deviceProps.getProperty(deviceName);
-    }
-
-    public Device classForIDString(String IDString) {
-	Device device = null;
-	String deviceName = this.deviceIDProps.getProperty(IDString);
-	return this.classForDevice(deviceName);
+    String classNameForDevice(String deviceName) {
+	return deviceProps.getProperty(deviceName);
     }
 
     /**
-     * Given a device name, return an instance of its class
-     * @param deviceName the name of the device
-     * @return an instance of the device's class
+     * Given a device name, return an instance of its class.
+     * @param deviceName the name of the device.
+     * @return an instance of the device's class.
      */
-    public Device classForDevice(String deviceName) {
+    Device classForDevice(String deviceName) {
+	return createDevice(deviceProps.getProperty(deviceName));
+    }
+
+    /**
+     * Given a inquery ID String, return its Device.
+     * @param IDString inquery ID String
+     * @return the Device class
+     */
+    Device classForIDString(String IDString) {
+	return createDevice(inqueryIDProps.getProperty(IDString));
+    }
+
+    /** Return Enumeration of inquery ID Strings. */
+    Enumeration IDStrings() {
+	return inqueryIDProps.keys();
+    }
+
+    /**
+     * Given a short device name, i.e. "KawaiK4", return its class name
+     * @param shortName the short name of the device
+     * @return the class name
+     */
+    String classNameForShortName(String shortName) {
+	return shortNameProps.getProperty(shortName);
+    }
+
+    private Device createDevice(String className) {
 	Device device = null;
-	String className = this.deviceProps.getProperty(deviceName);
 	try {
 	    Class deviceClass = Class.forName(className);
 	    device = (Device) deviceClass.newInstance();
 	} catch (Exception e) {
-	    ErrorMsg.reportError("Failed to find class for device",
-				 "Failed to find class for device '"
-				 + deviceName + "'");
+	    ErrorMsg.reportError("Failed to create class for class",
+				 "Failed to create class for class '"
+				 + className + "'");
 	}
 	return device;
     }
 
     /**
+     * Main method for debugging - print out all configured Devices
+     */
+    public static void main(String[] args) {
+	DevicesConfig devConf = new DevicesConfig();
+	devConf.printAll();
+    }
+
+    /**
      * Dump out all properties
      */
-    public void printAll() {
-	for (Iterator i = this.deviceNames.iterator(); i.hasNext();) {
+    private void printAll() {
+	for (Iterator i = deviceNames.iterator(); i.hasNext();) {
 	    String deviceName = (String) i.next();
-	    String deviceClass = this.deviceProps.getProperty(deviceName);
+	    String deviceClass = classNameForDevice(deviceName);
 	    System.out.println(deviceName + ":" + deviceClass);
 	}
     }
