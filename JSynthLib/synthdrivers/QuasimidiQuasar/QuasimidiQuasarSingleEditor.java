@@ -380,25 +380,43 @@ public class QuasimidiQuasarSingleEditor extends PatchEditorFrame {
 		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
 		// Arp on/off & Arpeggiator resolution
-		tempPanel.add(new ArpPak1Widget("On/Off", p, new ParamModel(patch, 68), new QuasarSender(0x00, 0x3C)) );
+		MultiWidgetParams[] arpPak1Params = new MultiWidgetParams[2];
+		arpPak1Params[0] = new MultiWidgetParams("On/Off", 2);
+		arpPak1Params[1] = new MultiWidgetParams("Resolution", 0, 1, QuasarConstants.ARP_RESOLUTIONS);
+		tempPanel.add(new MultiWidget(arpPak1Params, p, new ParamModel(patch, 68), new QuasarSender(0x00, 0x3C)) );
+		//tempPanel.add(new ArpPak1Widget("On/Off", p, new ParamModel(patch, 68), new QuasarSender(0x00, 0x3C)) );
+
 		// Arpeggiator speed
-		//tempPanel.add(new KnobWidget("Speed", p, 0, 127, 0, new ParamModel(patch, 69), new QuasarSender(0x00, 0x3D) ) );
-		
+
+		// This is needed because the ComboBoxWidget constructor accepts no int arrays
 		Integer[] tempArray = new Integer[QuasarConstants.ARP_SPEED.length];
 		for (int count = 0; count < QuasarConstants.ARP_SPEED.length; count++) {
 			tempArray[count] = new Integer(QuasarConstants.ARP_SPEED[count]);
-		}		
+		}
 		tempPanel.add(new ComboBoxWidget("Speed", p, new ParamModel(patch, 69), new QuasarSender(0x00, 0x3D), tempArray) );
 		// Arpeggiator gate
 		tempPanel.add(new KnobWidget("Gate", p, 0, 127, 0, new ParamModel(patch, 70), new QuasarSender(0x00, 0x3E) ) );
 		verticalBox.add(tempPanel);
-		
+
 		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		tempPanel.add(new ArpPak2Widget("", p, new ParamModel(patch, 71), new QuasarSender(0x00, 0x3F)) );
+		MultiWidgetParams[] arpPak2Params = new MultiWidgetParams[5];
+		arpPak2Params[0] = new MultiWidgetParams("Sync", 5, 6, QuasarConstants.ARP_SYNC);
+		arpPak2Params[1] = new MultiWidgetParams("Direction", 3, 4, QuasarConstants.ARP_DIRECTIONS);
+		arpPak2Params[2] = new MultiWidgetParams("Sort", 2);
+		arpPak2Params[3] = new MultiWidgetParams("Hold", 1);
+		arpPak2Params[4] = new MultiWidgetParams("Dyn", 0);
+		tempPanel.add(new MultiWidget(arpPak2Params, p, new ParamModel(patch, 71), new QuasarSender(0x00, 0x3F)) );
+		//tempPanel.add(new ArpPak2Widget("", p, new ParamModel(patch, 71), new QuasarSender(0x00, 0x3F)) );
 		verticalBox.add(tempPanel);
-		
+
 		tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		tempPanel.add(new ArpPak3Widget("", p, new ParamModel(patch, 72), new QuasarSender(0x00, 0x40)) );
+		MultiWidgetParams[] arpPak3Params = new MultiWidgetParams[4];
+		arpPak3Params[0] = new MultiWidgetParams("Track", 3, 6, QuasarConstants.ARP_TRACKS);
+		arpPak3Params[1] = new MultiWidgetParams("Thru", 2);
+		arpPak3Params[2] = new MultiWidgetParams("Out", 1);
+		arpPak3Params[3] = new MultiWidgetParams("Freeze", 0);
+		tempPanel.add(new MultiWidget(arpPak3Params, p, new ParamModel(patch, 72), new QuasarSender(0x00, 0x40)) );
+		//tempPanel.add(new ArpPak3Widget("", p, new ParamModel(patch, 72), new QuasarSender(0x00, 0x40)) );
 		verticalBox.add(tempPanel);
 
 		return verticalBox;
