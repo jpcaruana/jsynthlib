@@ -103,7 +103,7 @@ public class VirusMultiBankDriver extends BankDriver {
       PatchEdit.waitDialog.show();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
-        tmp[deviceIDoffset] = (byte)(((AccessVirusDevice)device).getDeviceId()- 1);
+        tmp[deviceIDoffset] = (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()- 1);
         tmp[BANK_NUM_OFFSET] = (byte)1;
         tmp[PATCH_NUM_OFFSET] = (byte)i; // multi #
         calculateChecksum(tmp, checksumStart, checksumEnd,checksumOffset);
@@ -131,7 +131,7 @@ public class VirusMultiBankDriver extends BankDriver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    sysexRequestDump.send(port, (byte)(((AccessVirusDevice)device).getDeviceId()), new NameValue("bankNum", 1)
+    sysexRequestDump.send(port, (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()), new NameValue("bankNum", 1)
     );
   }
  

@@ -222,7 +222,7 @@ public class NLDrumSingleDriver extends Driver {
   }
 
   protected void sendPatchWorker(Patch p) {
-    p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)device).getGlobalChannel() - 1);
+    p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
     try {
       PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
     } catch (Exception e) {
@@ -233,7 +233,7 @@ public class NLDrumSingleDriver extends Driver {
   public void requestPatchDump(int bankNum, int patchNum) {
     setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
     setPatchNum(patchNum + 99); // select drum sound, then get data from edit buffer
-    sysexRequestDump.send(port, (byte)(((NordLeadDevice)device).getGlobalChannel()),
+    sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", 10), new NameValue("patchNum", 0)
     );
   }

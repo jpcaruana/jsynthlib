@@ -88,7 +88,7 @@ public class NLDrumBankDriver extends BankDriver {
       PatchEdit.waitDialog.show();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
-        tmp[deviceIDoffset] = (byte)(((NordLeadDevice)device).getGlobalChannel() - 1);
+        tmp[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
         tmp[PATCH_NUM_OFFSET] = (byte)(i + 99); // program #
         PatchEdit.MidiOut.writeLongMessage(port, tmp);
@@ -118,7 +118,7 @@ public class NLDrumBankDriver extends BankDriver {
     for (int i = 0; i < NUM_IN_BANK; i++) {
       setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
       setPatchNum(i + 99); // select drum sound, then get data from edit buffer
-      sysexRequestDump.send(port, (byte)(((NordLeadDevice)device).getGlobalChannel()),
+      sysexRequestDump.send(port, (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel()),
         new NameValue("bankNum", 10),
         new NameValue("patchNum", 0)
       );
