@@ -1236,8 +1236,14 @@ public class PatchEdit extends JFrame
                         port=appConfig.getDevice(Clipboard.deviceNum).getPort();
                         if ((appConfig.getFaderEnable())&(desktop.getSelectedFrame () instanceof PatchEditorFrame) && (buffer[0]&0xF0) == 0xB0)
                             sendFaderMessage (buffer[0],buffer[1],buffer[2]);
+			else
+			    if ( (buffer[0]&0xF0) == 0xD0)
+				{
+				    //do nothing for now
+				}
                         else
-                        {
+                         
+			    {
                             if (((buffer[0] & 0xF0) > 0x70) && ((buffer[0] & 0xF0) <0xF0 ))
                                 buffer[0]=(byte)((buffer[0] & 0xF0) +appConfig.getDevice(Clipboard.deviceNum).getChannel()-1);
                             PatchEdit.MidiOut.writeLongMessage (port,buffer,size);

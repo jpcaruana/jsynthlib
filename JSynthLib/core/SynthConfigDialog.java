@@ -152,6 +152,7 @@ public class SynthConfigDialog extends JDialog
 	try
         {
             PatchEdit.appConfig.removeDevice(table2.getSelectedRow ());
+            reassignDeviceDriverNums();
             revalidateLibraries();
 	  ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
             table2.repaint ();
@@ -171,6 +172,7 @@ public class SynthConfigDialog extends JDialog
         table=table2;
 	DeviceAddDialog dad= new DeviceAddDialog (null);
         dad.show ();
+        reassignDeviceDriverNums();
         revalidateLibraries();
 	((SynthTableModel)table.getModel ()).fireTableDataChanged ();
         
@@ -191,6 +193,27 @@ public class SynthConfigDialog extends JDialog
 	  PatchEdit.waitDialog.hide();
 	}
     }
+
+    /** Revalidate deviceNum element of drivers of each device */
+    public void reassignDeviceDriverNums()
+    {
+      Device dev;
+
+      for ( int i =0;i<PatchEdit.appConfig.deviceCount (); i++)
+      {
+        // Outer Loop, iterating over all installed devices
+        dev=(Device)PatchEdit.appConfig.getDevice (i);
+
+        for (int j=0;j<dev.driverList.size ();j++)
+        {
+          // Inner Loop, iterating over all Drivers of a device
+          ((Driver)dev.driverList.get (j)).setDeviceNum(i);
+          ((Driver)dev.driverList.get (j)).setDriverNum(j);
+        }
+      }
+    }
+
+
     // METHOD ADDED BY GERRIT GEHNEN
 
     void ScanPressed ()
@@ -210,6 +233,7 @@ public class SynthConfigDialog extends JDialog
         midiScan=new MidiScan ((SynthTableModel)table.getModel (),pm,this);
         
         midiScan.start ();
+        reassignDeviceDriverNums();
         revalidateLibraries();
         ((SynthTableModel)table.getModel ()).fireTableDataChanged ();
     }

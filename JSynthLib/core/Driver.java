@@ -72,6 +72,13 @@ public class Driver extends Object implements Serializable, Storable
    /**Which device does this driver go with?*/
    protected Device device;
 
+   /**Which deviceNum does the device of this driver goes with?*/
+   private int deviceNum;
+
+   /**Which driverNum does the device of this driver goes with?*/
+   private int driverNum;
+
+
     /**Constructs a generic Driver*/
     public Driver ()
     {
@@ -103,6 +110,16 @@ public class Driver extends Object implements Serializable, Storable
     {id=s;}
     public void setDevice(Device d)
     {device=d;}
+    public void setDeviceNum(int deviceNum)
+    {this.deviceNum=deviceNum;}
+    public int getDeviceNum()
+    {return this.deviceNum;}
+    public void setDriverNum(int driverNum)
+    {this.driverNum=driverNum;}
+    public int getDriverNum()
+    {return this.driverNum;}
+
+
     /**Gets the name of the patch from the sysex. If the patch uses some weird
      * format or encoding, this needs to be overidden in the particular driver*/
     public String getPatchName (Patch p)
@@ -310,12 +327,22 @@ public void choosePatch (Patch p, int patchNum)
         return port;
     }
     
+    public int getInPort ()
+    {
+        return inPort;
+    }
+    
     /** Setter for property port.
      * @param port New value of property port.
      */
     public void setPort (int port)
     {
         this.port = port;
+    }
+    
+    public void setInPort (int inPort)
+    {
+        this.inPort = inPort;
     }
     
 
@@ -391,7 +418,7 @@ public void choosePatch (Patch p, int patchNum)
 	// For storable interface
 
 
-	private String[] storedPropertyNames = {
+	private String[] storedPropertyNames = {"deviceNum", "driverNum", "port", "inPort", "channel"
 	};
 
 	/**
