@@ -23,7 +23,9 @@ package synthdrivers.YamahaTG100;
 
 import core.Driver;
 import core.IPatch;
+import core.JSLFrame;
 import core.Patch;
+
 
 /**
  * Driver for Yamaha TG100 Singles's (Yamaha calls them "Voices")
@@ -65,12 +67,12 @@ public class YamahaTG100SingleDriver extends Driver {
     }
 
     // For internal use only!!!
-    private void storePatch(Patch p, int patchNum) {
+    private void storePatch(IPatch p, int patchNum) {
         int iTemp = TG100Constants.SYSEX_VOICE_START_ADDRESS3
                     + (patchNum * TG100Constants.SYSEX_SINGLE_VOICE_SIZE);
 
-        p.sysex[5] = (byte) ((iTemp / 128) + TG100Constants.SYSEX_VOICE_START_ADDRESS2 );
-        p.sysex[6] = (byte) (iTemp % 128);
+        ((Patch)p).sysex[5] = (byte) ((iTemp / 128) + TG100Constants.SYSEX_VOICE_START_ADDRESS2 );
+        ((Patch)p).sysex[6] = (byte) (iTemp % 128);
 
         calculateChecksum(p);
         sendPatchWorker(p);
@@ -79,7 +81,7 @@ public class YamahaTG100SingleDriver extends Driver {
     /**
     * Saves the Patch to Voice 1 as there is no Edit Buffer
     */
-    public void sendPatch(Patch p) {
+    public void sendPatch(IPatch p) {
         setPatchNum(0);
         storePatch(p, 0);
     }
@@ -91,7 +93,7 @@ public class YamahaTG100SingleDriver extends Driver {
     * @param bankNum    Ignored
     * @param patchNum   The number of the internal voice memory
     */
-    public void storePatch (Patch p, int bankNum, int patchNum) {
+    public void storePatch (IPatch p, int bankNum, int patchNum) {
         //setBankNum(64);
         setPatchNum(patchNum);
         storePatch(p, patchNum);
@@ -276,7 +278,7 @@ public class YamahaTG100SingleDriver extends Driver {
         return p;
     }
     
-    public JSLFrame editPatch(Patch p) {
+    public JSLFrame editPatch(IPatch p) {
 	    return new YamahaTG100SingleEditor(p);
     }
 }
