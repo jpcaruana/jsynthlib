@@ -11,7 +11,10 @@ import java.util.Arrays;
  * @version $Id$
  */
 public class Driver extends Object implements Serializable, Storable {
-    /** Which device does this driver go with? */
+    /**
+     * Which device does this driver go with?
+     * @deprecated Use the getter method.
+     */
     // can be private
     protected Device device;
     /** Which deviceNum does the device of this driver goes with? */
@@ -19,17 +22,24 @@ public class Driver extends Object implements Serializable, Storable {
     /** Which driverNum does the device of this driver goes with? */
     private int driverNum;
 
-    /** The patch type. eg. "Single", "Bank", "Drumkit", etc. */
-    // can be private final
+    /**
+     * The patch type. eg. "Single", "Bank", "Drumkit", etc.
+     * @deprecated Use the getter method.
+     */
+    // This can be "private static final".
     protected String patchType;
-    /** The names of the authors of this driver. */
-    // can be private final
+    /**
+     * The names of the authors of this driver.
+     * @deprecated Use the getter method.
+     */
+    // This can be "private static final".
     protected String authors;
 
     /*
      * The following fields are used by default methods defined in
-     * this file.  If your extending driver can use a method, set the
-     * corresponding fields.  Otherwise override the method.
+     * this file.  If your extending driver can use a default method
+     * as is, set the corresponding fields.  Otherwise override the
+     * method.
      */
     // for default set/getPatchName methods
     /**
@@ -51,21 +61,21 @@ public class Driver extends Object implements Serializable, Storable {
      * Offset of checksum byte.<p>
      * Need to be set if default <code>calculateChecksum(Patch)</code>
      * method is used.
-     * @see #calculateCheckSum(Patch)
+     * @see #calculateChecksum(Patch)
      */
     protected int checksumOffset;
     /**
      * Start of range that Checksum covers.<p>
      * Need to be set if default <code>calculateChecksum(Patch)</code>
      * method is used.
-     * @see #calculateCheckSum(Patch)
+     * @see #calculateChecksum(Patch)
      */
     protected int checksumStart;
     /**
      * End of range that Checksum covers.<p>
      * Need to be set if default <code>calculateChecksum(Patch)</code>
      * method is used.
-     * @see #calculateCheckSum(Patch)
+     * @see #calculateChecksum(Patch)
      */
     protected int checksumEnd;
 
@@ -79,14 +89,14 @@ public class Driver extends Object implements Serializable, Storable {
     // for default choosePatch methods
     /**
      * Array holding names/numbers/names for all banks.
-     * @see #choosePatch(Patch, int, int)
-     * @see #choosePatch()
+     * @see #choosePatch(Patch,int,int)
+     * @see #choosePatch(Patch)
      */
     protected String[] bankNumbers;
     /**
      * Array holding names/numbers for all patches.
-     * @see #choosePatch(Patch, int, int)
-     * @see #choosePatch()
+     * @see #choosePatch(Patch,int,int)
+     * @see #choosePatch(Patch)
      */
     protected String[] patchNumbers;
 
@@ -98,9 +108,9 @@ public class Driver extends Object implements Serializable, Storable {
     protected int patchSize;
     /**
      * The hex header that sysex files of the format this driver
-     * supports will have. It can have wildcards (<code>*</code>). The
-     * program will attempt to match loaded sysex drivers with the
-     * sysexID of a loaded driver. It can be up to 16 bytes.
+     * supports will have.  The program will attempt to match loaded
+     * sysex drivers with the sysexID of a loaded driver.  It can be
+     * up to 16 bytes and have wildcards (<code>*</code>).
      * (ex. <code>"F041**003F12"</code>)
      * @see #supportsPatch
      */
@@ -109,7 +119,7 @@ public class Driver extends Object implements Serializable, Storable {
     // for default sendPatchWorker method
     /**
      * Offset of channel (deviceID) in sysex.
-     * @see sendPatchWorker
+     * @see #sendPatchWorker
      */
     protected int deviceIDoffset;  //location of device id
 
@@ -132,24 +142,37 @@ public class Driver extends Object implements Serializable, Storable {
      * The following fields are obsoleted when the Device class was
      * introduced.  Use getter functions to access them.
      */
-    /** The MIDI Out port the user assigns to this driver. */
+    /**
+     * The MIDI Out port the user assigns to this driver.
+     * @deprecated Use the getter method.
+     */
     protected int port;
-    /** The MIDI In port the user assigns to this driver. */  // phil@muqus.com
-    protected int inPort;                                     // phil@muqus.com
-    /**The company which made the Synthesizer
-     * @deprecated Don't use this. */
+    /**
+     * The MIDI In port the user assigns to this driver.
+     * @deprecated Use the getter method.
+     */
+    protected int inPort;	// phil@muqus.com
+    /**
+     * The company which made the Synthesizer
+     * @deprecated Use the getter method.
+     */
     protected String manufacturer;
-    /**The models supported by this driver eg TG33/SY22
-     * @deprecated Don't use this. */
+    /**
+     * The models supported by this driver eg TG33/SY22
+     * @deprecated Use the getter method.
+     */
     protected String model;
-    /**The response to the Universal Inquiry Message.
-     * It can have wildcards (*). It can be up
-     * to 16 bytes
-     * @deprecated Don't use this. */
+    /**
+     * The response to the Universal Inquiry Message.  It can have
+     * wildcards (*). It can be up to 16 bytes
+     * @deprecated Use the getter method.
+     */
     // ADDED BY GERRIT GEHNEN
     protected String inquiryID;
-    /** A Shorthand alias for the Synth this driver supports (eg TG33,K5k)
-     * @deprecated Don't use this. */
+    /**
+     * A Shorthand alias for the Synth this driver supports (eg TG33,K5k)
+     * @deprecated Use getSynthName() method.
+     */
     protected String id;
 
     /**
@@ -166,6 +189,7 @@ public class Driver extends Object implements Serializable, Storable {
 
     /**
      * Constructs a generic Driver.
+     * @deprecated Use Driver(String, String).
      */
     public Driver() {
         sysexID = "MATCHNONE";
@@ -174,7 +198,7 @@ public class Driver extends Object implements Serializable, Storable {
 	manufacturer = "Generic";
 	model = "";
         patchType = "Sysex";
-	id = "???";
+// 	id = "???";
         patchNameSize = 0;
         patchNumbers = new String[128];
         for (int i = 0; i < 128; i++)
@@ -194,19 +218,19 @@ public class Driver extends Object implements Serializable, Storable {
 	return device;
     }
     /** Setter for property <code>deviceNum</code>. */
-    public void setDeviceNum(int deviceNum) { // for storable interface
+    public void setDeviceNum(int deviceNum) { // 'public' for storable interface
 	this.deviceNum = deviceNum;
     }
     /** Getter for property <code>deviceNum</code>. */
-    public int getDeviceNum() {	// for storable interface
+    public int getDeviceNum() {	// 'public' for storable interface
 	return this.deviceNum;
     }
     /** Setter for property <code>driverNum</code>. */
-    public void setDriverNum(int driverNum) { // for storable interface
+    public void setDriverNum(int driverNum) { // 'public' for storable interface
 	this.driverNum = driverNum;
     }
     /** Getter for property <code>driverNum</code>. */
-    public int getDriverNum() {	// for storable interface
+    public int getDriverNum() {	// 'public' for storable interface
 	return this.driverNum;
     }
     /** Getter for property <code>patchType</code>. */
@@ -219,40 +243,35 @@ public class Driver extends Object implements Serializable, Storable {
     }
     /** Setter for property <code>port</code>. */
     // remove when 'port' becomes 'private'.
-    public void setPort(int port) { // for storable interface
+    public void setPort(int port) { // 'public' for storable interface
         this.port = port;
 	//device.setPort(port);
     }
     /** Getter for property <code>port</code>. */
     public int getPort() {	// called by bank driver
-        return port;
-	//return device.port;
+	return device.getPort();
     }
     /** Setter for property <code>inPort</code>. */
     // remove when 'inPort' becomes 'private'.
-    public void setInPort(int inPort) { // for storable interface
+    public void setInPort(int inPort) { // 'public' for storable interface
         this.inPort = inPort;
 	//device.setInPort(inPort);
     }
     /** Getter for property <code>inPort</code>. */
-    public int getInPort() {	// for storable interface
-        return inPort;
-	//return device.inPort;
+    public int getInPort() {	// 'public' for storable interface
+	return device.getInPort();
     }
     /** Getter for property <code>device.manufacturerName</code>. */
     protected String getManufacturerName() {
-	return manufacturer;
-	//return device.manufacturerName;
+	return device.getManufacturerName();
     }
     /** Getter for property <code>device.modelName</code>. */
     protected String getModelName() {
-	return model;
-	//return device.modelName;
+	return device.getModelName();
     }
     /** Getter for property <code>device.synthName</code>. */
     protected String getSynthName() {
-	return id;
-	//return device.synthName;
+	return device.getSynthName();
     }
     /** Getter for property <code>device.channel</code>. */
     public int getChannel() {	// called by bank driver
@@ -276,11 +295,11 @@ public class Driver extends Object implements Serializable, Storable {
         if (patchNameSize == 0)
 	    return ("-");
         try {
-	    StringBuffer s = new StringBuffer(new String(p.sysex, patchNameStart,
-							 patchNameSize, "US-ASCII"));
-	    return s.toString();
+// 	    StringBuffer s = new StringBuffer(new String(p.sysex, patchNameStart,
+// 							 patchNameSize, "US-ASCII"));
+// 	    return s.toString();
 	    // Why don't we simply do the following? Hiroo
-// 	    return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
+ 	    return new String(p.sysex, patchNameStart, patchNameSize, "US-ASCII");
 	} catch (UnsupportedEncodingException ex) {
 	    return "-";
 	}
@@ -328,10 +347,10 @@ public class Driver extends Object implements Serializable, Storable {
         for (int i = start; i <= end; i++)
             sum += p.sysex[i];
 	// Here are examples of checksum caluculation
-        //p.sysex[ofs] = (byte) (sum % 128);
-        //p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 127);
-        //p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
-        p.sysex[ofs] = (byte) (p.sysex[ofs] & 127);   //to ensure that checksum is in range 0-127;
+        p.sysex[ofs] = (byte) (sum & 0xff);
+        p.sysex[ofs] = (byte) (p.sysex[ofs] ^ 0xff);
+        p.sysex[ofs] = (byte) (p.sysex[ofs] + 1);
+        p.sysex[ofs] = (byte) (p.sysex[ofs] & 0xff);   //to ensure that checksum is in range 0-127;
         ErrorMsg.reportStatus("Checksum is now " + p.sysex[ofs]);
     }
 
@@ -390,7 +409,8 @@ public class Driver extends Object implements Serializable, Storable {
      * @param bankNum initially selected bank number.
      * @param patchNum initially selected patch number.
      */
-    void choosePatch(Patch p, int bankNum, int patchNum) {
+    // Nobody extends this method now.
+    protected void choosePatch(Patch p, int bankNum, int patchNum) {
 	int bank = 0;
 	int patch = 0;
 	String bankstr;
@@ -446,26 +466,29 @@ public class Driver extends Object implements Serializable, Storable {
     /**
      * Compares the header & size of a Patch to this driver to see if
      * this driver is the correct one to support the patch.
+     *
+     * @param patchString the result of <code>p.getPatchHeader()</code>.
+     * @param p a <code>Patch</code> value
+     * @return <code>true</code> if this driver supports the Patch.
+     * @see #patchSize
+     * @see #sysexID
      */
-    boolean supportsPatch(StringBuffer patchString, Patch p) {
-// 	System.out.println("SupportsPatch:" + manufacturer + " " + model
-// 			   + " " + patchType + " " + patchSize + " "
-// 			   + p.sysex.length);
+    protected boolean supportsPatch(StringBuffer patchString, Patch p) {
 	// check the length of Patch
         if ((patchSize != p.sysex.length) && (patchSize != 0))
 	    return false;
-	// Why StringBuffer? !!!FIXIT!!!
-        StringBuffer driverString = new StringBuffer(sysexID);
-        StringBuffer compareString = new StringBuffer();
-        if (patchString.length() < driverString.length())
+
+        if (patchString.length() < sysexID.length())
 	    return false;
-        for (int j = 0, i = 0; j < driverString.length(); j++, i++) {
-	    switch (driverString.charAt(j)) {
+
+        StringBuffer compareString = new StringBuffer();
+        for (int i = 0; i < sysexID.length(); i++) {
+	    switch (sysexID.charAt(i)) {
 	    case '*':
 		compareString.append(patchString.charAt(i));
 		break;
 	    default:
-		compareString.append(driverString.charAt(j));
+		compareString.append(sysexID.charAt(i));
             }
         }
 // 	System.out.println(getDriverName());
@@ -473,7 +496,7 @@ public class Driver extends Object implements Serializable, Storable {
 // 	System.out.println("DriverString:" + driverString);
 // 	System.out.println("PatchString: " + patchString);
         return (compareString.toString().equalsIgnoreCase
-		(patchString.toString().substring(0, driverString.length())));
+		(patchString.toString().substring(0, sysexID.length())));
     }
 
     //
@@ -484,7 +507,7 @@ public class Driver extends Object implements Serializable, Storable {
         try {
 	    PatchEdit.MidiOut.writeShortMessage
 		(port,
-		 (byte) (0xC0 + (channel - 1)),	// Program Change
+		 (byte) (0xC0 + ((channel - 1) & 0xf)),	// Program Change
 		 (byte) patchNum); // Program Number
 	} catch (Exception e) {
 	}
@@ -495,12 +518,12 @@ public class Driver extends Object implements Serializable, Storable {
         try {
 	    PatchEdit.MidiOut.writeShortMessage
 		(port,
-		 (byte) (0xB0 + (channel - 1)),	// Control Change
+		 (byte) (0xB0 + ((channel - 1) & 0xf)),	// Control Change
 		 (byte) 0x00,	// Bank Select
 		 (byte) (bankNum / 128)); // Bank Number (MSB)
 	    PatchEdit.MidiOut.writeShortMessage
 		(port,
-		 (byte) (0xB0 + (channel - 1)),	// Control Change
+		 (byte) (0xB0 + ((channel - 1) & 0xf)),	// Control Change
 		 (byte) 0x20,	// Bank Select (LSB)
 		 (byte) (bankNum % 128)); // Bank Number (LSB)
 	} catch (Exception e) {
@@ -532,8 +555,7 @@ public class Driver extends Object implements Serializable, Storable {
     /** Does the actual work to send a patch to the synth. */
     // Why do we need both sendPatch(Patch) and sendPatchWorker(Patch)?
     protected void sendPatchWorker(Patch p) {
-	// set channel (device ID)
-        if (deviceIDoffset > 0)
+        if (deviceIDoffset > 0)	// set channel (device ID)
 	    p.sysex[deviceIDoffset] = (byte) (channel - 1);
         try {
 	    PatchEdit.MidiOut.writeLongMessage(port, p.sysex);
@@ -583,13 +605,13 @@ public class Driver extends Object implements Serializable, Storable {
 	    Thread.sleep(100);
 	    PatchEdit.MidiOut.writeShortMessage
 		(port,
-		 (byte) (0x90 + (channel - 1)),	// Note On with channel
+		 (byte) (0x90 + ((channel - 1) & 0xf)),	// Note On with channel
 		 (byte) PatchEdit.appConfig.getNote(),
 		 (byte) PatchEdit.appConfig.getVelocity());
 	    Thread.sleep(PatchEdit.appConfig.getDelay());
 	    PatchEdit.MidiOut.writeShortMessage
 		(port,
-		 (byte) (0x80 + (channel - 1)),	// Note Off
+		 (byte) (0x80 + ((channel - 1) & 0xf)),	// Note Off
 		 (byte) PatchEdit.appConfig.getNote(),
 		 (byte) 0);
 	} catch (Exception e) {
@@ -597,27 +619,25 @@ public class Driver extends Object implements Serializable, Storable {
 	}
     }
 
-    //
     // For storable interface
-    //
-    private String[] storedPropertyNames = {
-	"deviceNum", "driverNum", "port", "inPort", "channel"
-    };
-
     /**
      * Get the names of properties that should be stored and loaded.
      * @return a Set of field names
      */
-    public Set storedProperties() { // extending a public method
+    public Set storedProperties() {
+	final String[] storedPropertyNames = {
+	    "deviceNum", "driverNum", /*"port", "inPort",*/ "channel"
+	};
 	HashSet set = new HashSet();
-	set.addAll(Arrays.asList(this.storedPropertyNames));
+	set.addAll(Arrays.asList(storedPropertyNames));
 	return set;
     }
 
     /** Method that will be called after loading. */
-    public void afterRestore() { // extending a public method
+    public void afterRestore() {
 	// do nothing
     }
+    // end of storable interface
 
     //
     // For debugging.
