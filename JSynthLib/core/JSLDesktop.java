@@ -34,7 +34,7 @@ import javax.swing.SwingUtilities;
 public class JSLDesktop implements JSLFrameListener {
     private JSLDesktopProxy proxy;
     private Boolean in_fake_activation = Boolean.FALSE;
-    private static int frame_count = 0;
+    private int frame_count = 0;
     private int xdecoration = 0, ydecoration = 0;
     private Action exitAction;
     /** @see #setGUIMode(boolean) */
@@ -81,8 +81,10 @@ public class JSLDesktop implements JSLFrameListener {
     Point getDefaultLocation(Dimension frameSize) {
         int xofs = 0;
         int yofs = 0;
+        int xsep = 30;
+        int ysep = 30;
         if (!useMDI()) {
-            if (isMac) {
+            if (isMac) { // no toolbar window
                 xofs = 100;
                 yofs = 100;
             } else {
@@ -92,18 +94,27 @@ public class JSLDesktop implements JSLFrameListener {
                     yofs = (int) (tb.getLocation().getY() + tb.getSize()
                             .getHeight());
                 }
+                ysep = ydecoration;
             }
         }
 
-        int xsep = 30;
-        int ysep = isMac || useMDI() ? 30 : ydecoration;
         Dimension screenSize = getSize();
-        int x = xofs + (xsep * frame_count) % (int) (screenSize.getWidth() - frameSize.getWidth() - xofs);
-        if (x < 0)
-            x = 0;
-        int y = yofs + (ysep * frame_count) % (int) (screenSize.getHeight() - frameSize.getHeight() - yofs);
-        if (y < 0)
-            y = yofs + ysep;
+        int x, xRemain;
+        xRemain = (int) (screenSize.getWidth() - frameSize.getWidth() - xofs);
+        x = xRemain > 0 ? (xofs + (xsep * frame_count) % xRemain) : xofs;
+        if (x + frameSize.getWidth() > screenSize.getWidth()) {
+            x = xofs;
+            if (x + frameSize.getWidth() > screenSize.getWidth())
+                x = 0;
+        }
+        int y, yRemain;
+        yRemain = (int) (screenSize.getHeight() - frameSize.getHeight() - yofs);
+        y = yRemain > 0 ? (yofs + (ysep * frame_count) % yRemain) : yofs;
+        if (y + frameSize.getHeight() > screenSize.getHeight()) {
+            y = yofs;
+            if (y + frameSize.getHeight() > screenSize.getHeight())
+                y = 0;
+        }
 
         frame_count++;
         return new Point(x, y);
@@ -173,6 +184,9 @@ public class JSLDesktop implements JSLFrameListener {
     public void JSLFrameClosed(JSLFrameEvent e) {
         windows.remove(e.getJSLFrame());
         proxy.FrameClosed(e.getJSLFrame());
+        if (windows.isEmpty() 
+                || (!useMDI && ((JSLFakeDesktop) proxy).toolbar != null && windows.size() == 1))
+            frame_count = 0; // reset frame position
     }
     public void JSLFrameDeactivated(JSLFrameEvent e) {}
     public void JSLFrameDeiconified(JSLFrameEvent e) {}
