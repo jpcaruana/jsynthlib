@@ -30,7 +30,7 @@ public class YamahaFS1RBankConverter extends Converter
 	{
 		Patch oBank = (Patch)YamahaFS1RBankDriver.getInstance().createNewPatch();
 		int oIndex = 26; 
-		int oIDest = 0;//YamahaFS1RBankDriver.DATA_START;
+		int oIDest = YamahaFS1RBankDriver.DATA_START;
 		for (int p = 0; p < 128; p++)
 		{
 			oBank.sysex[oIDest++] = (byte)0xF0;
