@@ -83,10 +83,8 @@ public class YamahaDX7VoiceBankDriver extends DX7FamilyVoiceBankDriver
 				// show Information
 				YamahaDX7Strings.dxShowInformation(toString(), YamahaDX7Strings.REQUEST_VOICE_STRING);
 
-			byte buffer[] = new byte[256*1024];
 			try {
-				while (PatchEdit.MidiIn.messagesWaiting(getInPort()) > 0)
-				      PatchEdit.MidiIn.readMessage(getInPort(), buffer, 1024);
+				PatchEdit.MidiIn.clearMidiInBuffer(getInPort());
 			} catch (Exception ex) {
 				ErrorMsg.reportError("Error", "Error Clearing Midi In buffer.",ex);
 			}
