@@ -13,11 +13,11 @@ public class ScrollBarWidget extends SysexWidget {
     /** JTextField to display value. */
     protected JTextField text;
     /** JSlider widget */
-    public JSlider slider;	// accessed by PatchEditorFrame and some drivers
+    public JSlider slider;	// accessed by Yamaha DX7 drivers !!!FIXIT!!!
 
     /**Set Label Width explicitly to? zero disables*/
-    protected int forceLabelWidth=0;
-      
+    protected int forceLabelWidth = 0;
+
     /** Constructor for setting up the ScrollBarWidget.
      * @param l Label for the Widget
      * @param p The patch, which is edited
@@ -33,7 +33,9 @@ public class ScrollBarWidget extends SysexWidget {
 			   ParamModel ofs, SysexSender s) {
         super(l, p, min, max, ofs, s);
         base = b;
-        setup();
+
+	createWidgets();
+        layoutWidgets();
     }
     /**
      * Constructor for setting up the ScrollBarWidget with an
@@ -48,27 +50,33 @@ public class ScrollBarWidget extends SysexWidget {
         setValue(valueInit);
     }
 
-    protected void setup() {
-        setLayout(new BorderLayout());
-        add(getJLabel(), BorderLayout.WEST);
-	
-        
-	
+    protected void createWidgets() {
 	slider = new JSlider(JSlider.HORIZONTAL,
 			     getValueMin(), getValueMax(), getValue());
         slider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
-		    int v = slider.getValue();
-		    text.setText(new Integer(v + base).toString());
-		    sendSysex(v);
+		    eventListener(e);
 		}
 	    });
-	slider.setMinimumSize(new Dimension(50, 25));
-	slider.setMaximumSize(new Dimension(125, 25));
-	add(slider, BorderLayout.CENTER);
-
 	text = new JTextField(new Integer(getValue() + base).toString(), 4);
 	text.setEditable(false);
+    }
+
+    /** invoked when the slider is moved. */
+    protected void eventListener(ChangeEvent e) {
+	int v = slider.getValue();
+	text.setText(new Integer(v + base).toString());
+	sendSysex(v);
+    }
+
+    protected void layoutWidgets() {
+        setLayout(new BorderLayout());
+
+	slider.setMinimumSize(new Dimension(50, 25));
+	slider.setMaximumSize(new Dimension(125, 25));
+
+        add(getJLabel(), BorderLayout.WEST);
+	add(slider, BorderLayout.CENTER);
 	add(text, BorderLayout.EAST);
     }
 
@@ -88,19 +96,17 @@ public class ScrollBarWidget extends SysexWidget {
         slider.setEnabled(e);
     }
 
-    public void setForceLabelWidth(int i)
-    {
-	forceLabelWidth=i;
+    /** ??? */
+    public void setForceLabelWidth(int i) {
+	forceLabelWidth = i;
 
-	if (forceLabelWidth>0)
-	    {
-		Dimension d = getJLabel().getPreferredSize();
-		d.setSize(forceLabelWidth,d.getHeight()+3);
-		getJLabel().setPreferredSize(d);
-	        d = getJLabel().getMinimumSize();
-		d.setSize(forceLabelWidth,d.getHeight()+1);
-		getJLabel().setMinimumSize(d);
-				
-	    }
+	if (forceLabelWidth > 0) {
+	    Dimension d = getJLabel().getPreferredSize();
+	    d.setSize(forceLabelWidth, d.getHeight() + 3);
+	    getJLabel().setPreferredSize(d);
+	    d = getJLabel().getMinimumSize();
+	    d.setSize(forceLabelWidth, d.getHeight() + 1);
+	    getJLabel().setMinimumSize(d);
+	}
     }
 }

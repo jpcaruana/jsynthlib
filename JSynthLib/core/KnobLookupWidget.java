@@ -6,10 +6,9 @@ import javax.swing.event.*;
 import com.dreamfabric.DKnob;
 
 /**
-   A rotary knob type widget.
-*/
+ * A rotary knob type widget.
+ */
 public class KnobLookupWidget extends KnobWidget {
-
     private String[] mValueLabels;
 
     public KnobLookupWidget(String l, Patch p, int aMin, int aMax,
@@ -18,9 +17,6 @@ public class KnobLookupWidget extends KnobWidget {
 	super(l, p, aMin, aMax, 0, ofs, s);
         //mBase = 0;
 	mValueLabels = aValueLabels;
-	// called by super class
-        //setupUI();
-	// System.out.println("value = "+getValue());
 	mKnob.setToolTipText(mValueLabels[getValue()]);
     }
 
@@ -30,17 +26,13 @@ public class KnobLookupWidget extends KnobWidget {
 	this(l, p, 0, aValueLabels.length - 1, ofs, s, aValueLabels);
     }
 
-    protected void setupListener() {
-	// Add a change listener to the knob
-	mKnob.addChangeListener(new ChangeListener() {
-		public void stateChanged(ChangeEvent e) {
-		    DKnob t = (DKnob) e.getSource();
-		    int oValue = Math.round(t.getValue() * (getValueMax() - getValueMin())) + getValueMin();
-		    t.setToolTipText(mValueLabels[oValue]);
-		    t.setValueAsString(mValueLabels[oValue]);
-		    sendSysex(oValue);
-		    //System.out.println("value = "+(oValue + mBase));
-		}
-	    });
+    protected void eventListener(ChangeEvent e) {
+	DKnob t = (DKnob) e.getSource();
+	int oValue = Math.round(t.getValue() * (getValueMax() - getValueMin()))
+	    + getValueMin();
+	t.setToolTipText(mValueLabels[oValue]);
+	t.setValueAsString(mValueLabels[oValue]);
+	sendSysex(oValue);
+	//System.out.println("value = "+(oValue + mBase));
     }
 }

@@ -6,9 +6,9 @@ import java.awt.event.*;
 import javax.swing.event.*;
 
 public class SpinnerWidget extends SysexWidget {
-    private int base;
-    private JTextField text;
-    private JSpinner spinner;
+    protected int base;
+    protected JTextField text;
+    protected JSpinner spinner;
 
     /**
      * Constructor for setting up the SpinnerWidget.
@@ -26,7 +26,9 @@ public class SpinnerWidget extends SysexWidget {
 			 ParamModel ofs, SysexSender s) {
         super(l, p, min, max, ofs, s);
         base = b;
-        setup();
+
+	createWidgets();
+        layoutWidgets();
     }
 
     /*
@@ -36,26 +38,33 @@ public class SpinnerWidget extends SysexWidget {
         setValue(valueInit);
     }
     */
-    protected void setup() {
-        setLayout(new BorderLayout());
-        add(getJLabel(), BorderLayout.WEST);
 
+    protected void createWidgets() {
         SpinnerNumberModel model = new SpinnerNumberModel
 	    (getValue() + base, getValueMin() + base, getValueMax() + base, 1);
         spinner = new JSpinner(model);
         spinner.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
-		    // Maybe the displayed value differ from sysex
-		    // value for 'base'
-		    sendSysex(((Integer) spinner.getValue()).intValue() - base);
+		    eventListener(e);
 		}
 	    });
+    }
+
+    /** invoked when the value is changed. */
+    protected void eventListener(ChangeEvent e) {
+	// Maybe the displayed value differ from sysex value for 'base'.
+	sendSysex(((Integer) spinner.getValue()).intValue() - base);
+    }
+
+    protected void layoutWidgets() {
+        setLayout(new BorderLayout());
+        add(getJLabel(), BorderLayout.WEST);
         add(spinner, BorderLayout.CENTER);
     }
 
     public void setValue(int v) {
 	super.setValue(v);
-	// Maybe the displayed value differ from sysex value for 'base'
+	// Maybe the displayed value differ from sysex value for 'base'.
 	spinner.setValue(new Integer(v + base));
     }
 

@@ -2,6 +2,7 @@ package core;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Insets;
+import java.awt.event.InputEvent;
 
 /**
  * Base class of SysexWidgets.
@@ -40,7 +41,7 @@ public abstract class SysexWidget extends JPanel {
      * @deprecated This will be 'private'.  Driver does not have to
      * use this as far as I see. (Hiroo)
      */
-    public ParamModel paramModel; // accessed by some drivers unnecessarily.
+    private ParamModel paramModel; // accessed by some drivers unnecessarily.
 
     /**
      * slider number.<p>
@@ -97,12 +98,16 @@ public abstract class SysexWidget extends JPanel {
 	this(l, p, Integer.MIN_VALUE, Integer.MAX_VALUE, ofs, s);
     }
 
-    // for PatchNameWidget and EnvelopWidget
+    /**
+     * @deprecated use <code>SysexWidget(l, p, null, null)</code>
+     */
     protected SysexWidget(String l, Patch p) {
 	this(l, p, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
     }
 
-    // for LabelWidget
+    /**
+     * @deprecated use <code>SysexWidget(l, null, null, null)</code>
+     */
     protected SysexWidget(String l) {
 	this(l, null, Integer.MIN_VALUE, Integer.MAX_VALUE, null, null);
     }
@@ -134,6 +139,14 @@ public abstract class SysexWidget extends JPanel {
     }
     */
 
+    /** create Widgets. */
+    abstract protected void createWidgets();
+    /**
+     * layout Widgets. By overriding this method, a patch editor can
+     * change the layout as he wants.
+     */
+    abstract protected void layoutWidgets();
+
     /** Return the current value. */
     public int getValue() {
 	return valueCurr;
@@ -149,7 +162,7 @@ public abstract class SysexWidget extends JPanel {
     }
 
     /** Set value, and update widget state. Extended class have to
-	override this if necessary. */
+	override this to update the widget state. */
     protected void setValue(int v) {
 	_setValue(v);
     }
@@ -203,19 +216,6 @@ public abstract class SysexWidget extends JPanel {
         }
     }
 
-    /**
-     * Set value from fader and send System Exclusive message to a
-     * MIDI port.<p>
-     * Called by PatchEditorFrame.faderMoved(byte, byte).
-     * This method is used and must be extended by a SysexWidget with
-     * multiple prameters. (i.e. numFaders != 1, only EnvelopeWidget now)
-     *
-     * @param fader fader number.
-     * @param value value to be set. [0-127]
-     */
-    protected void setFaderValue(int fader, int value) {
-    }
-
     /** Return min value. */
     protected int getValueMin() {
 	return valueMin;
@@ -236,6 +236,16 @@ public abstract class SysexWidget extends JPanel {
 	    valueCurr = min;
     }
 
+    /** Return <code>Patch</code> value. */
+    protected Patch getPatch() {
+	return patch;
+    }
+
+    /** Return <code>driver</code> value. */
+    protected Driver getDriver() {
+	return driver;
+    }
+
     /** Getter of label. */
     public String getLabel() {
 	return label;
@@ -247,39 +257,22 @@ public abstract class SysexWidget extends JPanel {
 	jlabel.setText(l);
     }
 
-    /** Setter of label.  This does not change jlabel widget. */
+    /**
+     * Setter of label.  This does not change the text in
+     * <code>jlabel</code> widget.
+     */
     protected void _setLabel(String l) {
 	label = l;
     }
 
-    /** Getter of jlabel.<p> */
+    /** Getter of jlabel. */
     protected JLabel getJLabel() {
 	return jlabel;
     }
 
-    /** Set label string. */
+    /** Setter of jlabel. */
     protected void setJLabel(JLabel l) {
 	jlabel = l;
-    }
-
-    /** Getter of Patch name. */
-    public String getPatchName() {
-	if (driver == null)
-	    return "Patch Name";
-	return driver.getPatchName(patch);
-    }
-
-    /** Setter of Patch name. */
-    protected void setPatchName(String s) {
-	if (driver != null)
-	    driver.setPatchName(patch, s);
-    }
-
-    /** Getter of Patch name size. */
-    public int getPatchNameSize() {
-	if (driver == null)
-	    return 0;
-	return driver.patchNameSize;
     }
 
     /* Getter of <code>paramModel</code>.
@@ -299,8 +292,11 @@ public abstract class SysexWidget extends JPanel {
      * slider/button  number : 1, 2,..., 16
      *
      * @param num ((bank number) - 1) * 16 + ((slider/button number) - 1)
+     * @see PatchEditorFrame
      */
-    public void setSliderNum(int num) {	// called by YamahaMotifNormalVoiceEditor.java.  Why?
+    // Used to extend PatchEdit.addWidget() method.  See
+    // YamahaMotifNormalVoiceEditor.java.
+    public void setSliderNum(int num) {
         _setSliderNum(num);
         if (num > 0)
 	    setToolTipText("Bank " + ((num - 1) / 16)
@@ -312,24 +308,37 @@ public abstract class SysexWidget extends JPanel {
         }
     }
 
-    /** Setter of sliderNum. */
+    /** Setter of fader slider number. */
     protected void _setSliderNum(int num) {
 	sliderNum = num;
     }
 
-    /** Getter of sliderNum. */
+    /** Getter of fader slider number. */
     protected int getSliderNum() {
 	return sliderNum;
     }
 
-    /** Getter of numFaders. */
+    /** Get number of faders. */
     protected int getNumFaders() {
 	return numFaders;
     }
 
-    /** Setter of numFaders. */
+    /** Set number of faders. */
     protected void setNumFaders(int v) {
 	numFaders = v;
+    }
+
+    /**
+     * Set the value specified by <code>fader</code> and send System
+     * Exclusive message to a MIDI port.<p>
+     * Called by PatchEditorFrame.faderMoved(byte, byte).
+     * This method is used and must be extended by a SysexWidget with
+     * multiple prameters. (i.e. numFaders != 1, only EnvelopeWidget now)
+     *
+     * @param fader fader number.
+     * @param value value to be set. [0-127]
+     */
+    protected void setFaderValue(int fader, int value) {
     }
 
     /** Enable/disable the widget. */

@@ -8,9 +8,8 @@ import javax.swing.event.*;
  * @version $Id$
  */
 public class ComboBoxWidget extends SysexWidget {
-    /** JComboBox widget */
-    public JComboBox cb;	// access by some drivers
-    private Object[] options;
+    public JComboBox cb;	// should be protected !!!FIXIT!!!
+    protected Object[] options;
 
     /**
      * Constructor for setting up the ComboBoxWidget.
@@ -27,35 +26,38 @@ public class ComboBoxWidget extends SysexWidget {
 			  ParamModel ofs, SysexSender s, Object[] o) {
 	super(l, p, min, min + o.length - 1, ofs, s);
         options = o;
-        setup();
+
+	createWidgets();
+        layoutWidgets();
     }
 
     public ComboBoxWidget(String l, Patch p,
 			  ParamModel ofs, SysexSender s, Object [] o) {
         this(l, p, 0, ofs, s, o);
     }
-    /*
-    public ComboBoxWidget(String l, Patch p,
-			  ParamModel ofs, SysexSender s, String [] o,
-			  int valueInit) {
-	this(l, p, 0, ofs, s, o);
-	setValue(valueInit);
-    }
-    */
-    protected void setup() {
-        setLayout(new FlowLayout());
+
+    protected void createWidgets() {
         cb = new JComboBox(options);
         cb.setSelectedIndex(getValue() - getValueMin());
         cb.addItemListener(new ItemListener() {
 		public void itemStateChanged(ItemEvent e) {
-			if (e.getStateChange() == ItemEvent.SELECTED)
-			{
-				sendSysex(cb.getSelectedIndex() + getValueMin());
-			}
+		    eventListener(e);
 		}
 	    });
-        add(getJLabel());
+    }
+
+    /** invoked when the an item is selected. */
+    protected void eventListener(ItemEvent e) {
+	if (e.getStateChange() == ItemEvent.SELECTED) {
+	    sendSysex(cb.getSelectedIndex() + getValueMin());
+	}
+    }
+
+    protected void layoutWidgets() {
+        setLayout(new FlowLayout());
         cb.setMaximumSize(new Dimension(125, 25));
+
+        add(getJLabel());
         add(cb);
     }
 

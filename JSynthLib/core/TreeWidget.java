@@ -32,17 +32,13 @@ import javax.swing.tree.*;
  *
  * See synthdrivers.RolandTD6.TD6SingleEditor as an example.<p>
  *
- * This widget is still under development. The inferface may be
- * changed. If you would like to use this in you driver, contact the
- * author.  It will save your time.
- *
  * Created: Sun Jun 22 13:53:35 2003
  *
  * @author <a href ="mailto:hiroo.hayashi@computer.org">Hiroo Hayashi</a>
  * @version $Id$
  */
 public class TreeWidget extends SysexWidget {
-    private JTree tree;
+    protected JTree tree;
     private Nodes treeNodes;
     private DefaultMutableTreeNode rootNode;
 
@@ -68,10 +64,12 @@ public class TreeWidget extends SysexWidget {
 		      ParamModel paramModel, SysexSender sysexString) {
 	super(label, patch, paramModel, sysexString);
 	this.treeNodes = treeNodes;
-	setup();
+
+	createWidgets();
+        layoutWidgets();
     } // TreeWidget constructor
 
-    private void setup() {
+    protected void createWidgets() {
 	//Create the nodes.
 	rootNode = populate(treeNodes.getRoot());
 
@@ -83,21 +81,7 @@ public class TreeWidget extends SysexWidget {
 	//Listen for when the selection changes.
 	tree.addTreeSelectionListener(new TreeSelectionListener() {
 		public void valueChanged(TreeSelectionEvent e) {
-		    DefaultMutableTreeNode node
-			= (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-
-		    if (node != null && node.isLeaf()) {
-			/*
-			ErrorMsg.reportStatus("TreeSelectionLister: "
-					      + e.getPath());
-			int[] tmp = getIndices(e.getPath());
-			for (int i = 0; i < tmp.length; i++)
-			    System.out.println(tmp[i]);
-			*/
-			sendSysex(treeNodes.getValue(getIndices(e.getPath())));
-		    } else {
-			return;
-		    }
+		    eventListener(e);
 		}
 	    });
 
@@ -114,15 +98,34 @@ public class TreeWidget extends SysexWidget {
 	renderer.setLeafIcon(null);
 	tree.setCellRenderer(renderer);
 
-	//Create the scroll pane and add the tree to it.
-	JScrollPane treeScrollPane = new JScrollPane(tree);
-	// consider to add Dimension parameter to all SysexWidget classes
-	// !!!FIXIT!!!
-	treeScrollPane.setPreferredSize(new Dimension(180, 320));
-	add(treeScrollPane, BorderLayout.CENTER);
-
 	// set selection
 	//setSelection(getValue());
+    }
+
+    /** invoked when a node is selected. */
+    protected void eventListener(TreeSelectionEvent e) {
+	DefaultMutableTreeNode node
+	    = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+
+	if (node != null && node.isLeaf()) {
+	    /*
+	      ErrorMsg.reportStatus("TreeSelectionLister: "
+	      + e.getPath());
+	      int[] tmp = getIndices(e.getPath());
+	      for (int i = 0; i < tmp.length; i++)
+	      System.out.println(tmp[i]);
+	    */
+	    sendSysex(treeNodes.getValue(getIndices(e.getPath())));
+	} else {
+	    return;
+	}
+    }
+
+    protected void layoutWidgets() {
+	//Create the scroll pane and add the tree to it.
+	JScrollPane treeScrollPane = new JScrollPane(tree);
+	treeScrollPane.setPreferredSize(new Dimension(180, 320));
+	add(treeScrollPane, BorderLayout.CENTER);
     }
 
     /**
@@ -210,7 +213,10 @@ public class TreeWidget extends SysexWidget {
 	return getNode(treeNodes.getIndices(n));
     }
 
-    protected Object getNode(int indices[] ) {
+    /**
+     * Return a tree node object specified by <code>indices[]</code>.
+     */
+    protected Object getNode(int indices[]) {
 	TreeNode node = rootNode;
 	for (int i = 0; i < indices.length; i++)
 	    node = node.getChildAt(indices[i]);
@@ -253,14 +259,12 @@ public class TreeWidget extends SysexWidget {
      *   'getValue( { 2, 1 } )' returns '48'.
      */
     public interface Nodes {
-
 	/**
 	 * Returns tree strucutre.  Used by TreeWidget.
 	 *
 	 * @return an array of a tree structure.
 	 */
 	Object[] getRoot();
-
 	/**
 	 * Returns an array of indices which specifies a node whose value is
 	 * <code>n</code>.
@@ -276,6 +280,5 @@ public class TreeWidget extends SysexWidget {
 	 * @return a node value
 	 */
 	int getValue(int[] indices);
-
     } // Nodes
 } // TreeWidget

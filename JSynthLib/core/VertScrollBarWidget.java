@@ -24,25 +24,26 @@ public class VertScrollBarWidget extends ScrollBarWidget {
 	super(l, p, min, max, b, ofs, s);
     }
 
-    protected void setup() {
-	setLayout(new BorderLayout());
-	add(getJLabel(), BorderLayout.NORTH);
-
+    protected void createWidgets() {
 	slider = new JSlider(JSlider.VERTICAL,
 			     getValueMin(), getValueMax(), getValue());
 	slider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
-		    int v = slider.getValue();
-		    text.setText(new Integer(v + base).toString());
-		    sendSysex(v);
+		    eventListener(e);
 		}
 	    });
 	text = new JTextField(new Integer(getValue() + base).toString(), 4);
+	text.setEditable(false);
+    }
+
+    protected void layoutWidgets() {
+	setLayout(new BorderLayout());
+
 	slider.setMinimumSize(new Dimension(25, 50));
 	slider.setMaximumSize(new Dimension(25, 100));
 
+	add(getJLabel(), BorderLayout.NORTH);
 	add(slider, BorderLayout.CENTER);
 	add(text, BorderLayout.SOUTH);
-	text.setEditable(false);
     }
 }

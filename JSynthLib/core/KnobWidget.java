@@ -21,133 +21,147 @@ public class KnobWidget extends SysexWidget {
     /** display offset */
     private int mBase;
     protected DKnob mKnob = new DKnob();
+    protected JLabel mLabelImage;
     //protected JLabel mLabel;
     private ImageIcon[] mImages;
-    private JLabel mLabelImage;
 
     /**
-       Special constructor for derived classes.
-    */
+     * Special constructor for derived classes.
+     */
     protected KnobWidget(String l, Patch p, int min, int max,
 			 ParamModel ofs, SysexSender s) {
-		super(l, p, min, max, ofs, s);
-        setupUI();
+	super(l, p, min, max, ofs, s);
+
+	createWidgets();
+        layoutWidgets();
     }
 
     /**
-       @param base value display offset
-    */
+     * @param base value display offset
+     */
     public KnobWidget(String l, Patch p, int min, int max, int base,
 		      ParamModel ofs, SysexSender s) {
-		super(l, p, min, max, ofs, s);
+	super(l, p, min, max, ofs, s);
         mBase = base;
-        setupUI();
+
+	createWidgets();
+        layoutWidgets();
     }
 
     /**
-       Display an image to the right of the value.
-       @param aImages array of images corresponding to each value.
-    */
+     * Display an image to the right of the value.
+     * @param aImages array of images corresponding to each value.
+     */
     public KnobWidget(String l, Patch p, int min, int max, int base,
 		      ParamModel ofs, SysexSender s, ImageIcon[] aImages) {
-		super(l, p, min, max, ofs, s);
+	super(l, p, min, max, ofs, s);
         mBase = base;
-		mImages = aImages;
-        setupUI();
+	mImages = aImages;
+
+	createWidgets();
+        layoutWidgets();
+    }
+
+    protected void createWidgets() {
+	mKnob.setDragType(DKnob.SIMPLE_MOUSE_DIRECTION);
+	if (getLabel() != null) {
+	    //mLabel = new JLabel(getLabel(), SwingConstants.CENTER);
+	    getJLabel().setHorizontalAlignment(SwingConstants.CENTER);
+	}
+	int oValue = getValue();
+	mKnob.setToolTipText(Integer.toString(oValue + mBase));
+	// positionner la valeur courante
+	mKnob.setValue(((float) getValue() - getValueMin()) / (getValueMax() - getValueMin()));
+
+	if (mImages != null) {
+	    mLabelImage = new JLabel(mImages[oValue]);
+	}
+
+	// Add a change listener to the knob
+	mKnob.addChangeListener(new ChangeListener() {
+		public void stateChanged(ChangeEvent e) {
+		    eventListener(e);
+		}
+	    });
+	// mouse wheel event is supported by J2SE 1.4 and later
+	mKnob.addMouseWheelListener(new MouseWheelListener() {
+		public void mouseWheelMoved(MouseWheelEvent e) {
+		    mouseWheelListener(e);
+		}
+	    });
+    }
+
+    /** invoked when knob is moved. */
+    protected void eventListener(ChangeEvent e) {
+	DKnob t = (DKnob) e.getSource();
+	int oValue = Math.round(t.getValue() * (getValueMax() - getValueMin())) + getValueMin();
+	String oVStr = Integer.toString(oValue + mBase);
+	t.setToolTipText(oVStr);
+	t.setValueAsString(oVStr);
+	if (mLabelImage != null) {
+	    mLabelImage.setIcon(mImages[oValue]);
+	}
+	sendSysex(oValue);
+    }
+
+    /** invoked when mouse wheel is moved. */
+    protected void mouseWheelListener(MouseWheelEvent e) {
+	DKnob t = (DKnob) e.getSource();
+	if (t.hasFocus()) // to make consistent with other operation.
+	    t.setValue(t.getValue()
+		       + (e.getWheelRotation()
+			  / (float) (getValueMax() - getValueMin())));
+    }
+
+    protected void layoutWidgets() {
+	//int oWidthOff;
+	if (mImages != null) {
+	    JPanel oPane = new JPanel(new BorderLayout(0, 0));
+	    oPane.add(mKnob, BorderLayout.NORTH);
+	    if (getLabel() != null) {
+		//oPane.add(mLabel, BorderLayout.SOUTH);
+		oPane.add(getJLabel(), BorderLayout.SOUTH);
+	    }
+	    setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+	    add(oPane);
+	    add(mLabelImage);
+	    //oWidthOff = 100;
+	} else {
+	    setLayout(new BorderLayout(0, 0));
+	    //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+	    add(mKnob, BorderLayout.NORTH);
+	    if (getLabel() != null) {
+		//add(mLabel, BorderLayout.SOUTH);
+		add(getJLabel(), BorderLayout.SOUTH);
+	    }
+	    //oWidthOff = 0;
+	}
+	//setMaximumSize(new Dimension(120+oWidthOff, 80));
     }
 
     /**
-       In order to get it public.
-    */
+     * In order to get it public.
+     */
+    // Why this is required?  If it is a good reason, make
+    // SysexWidget.setMinMax public.  !!!FIXIT!!!
     public void setMinMax(int min, int max) {
-		super.setMinMax(min, max);
-    }
-
-    protected void setupUI() {
-		mKnob.setDragType(DKnob.SIMPLE_MOUSE_DIRECTION);
-		if (getLabel() != null) {
-			//mLabel = new JLabel(getLabel(), SwingConstants.CENTER);
-			getJLabel().setHorizontalAlignment(SwingConstants.CENTER);
-		}
-		int oValue = getValue();
-		mKnob.setToolTipText(Integer.toString(oValue + mBase));
-
-		int oWidthOff = 0;
-		if (mImages != null) {
-			JPanel oPane = new JPanel(new BorderLayout(0, 0));
-			oPane.add(mKnob, BorderLayout.NORTH);
-			if (getLabel() != null) {
-				//oPane.add(mLabel, BorderLayout.SOUTH);
-				oPane.add(getJLabel(), BorderLayout.SOUTH);
-			}
-			setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			add(oPane);
-			mLabelImage = new JLabel(mImages[oValue]);
-			add(mLabelImage);
-			oWidthOff = 100;
-		} 
-		else {
-			setLayout(new BorderLayout(0, 0));
-			//setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-			add(mKnob, BorderLayout.NORTH);
-			if (getLabel() != null) {
-				//add(mLabel, BorderLayout.SOUTH);
-				add(getJLabel(), BorderLayout.SOUTH);
-			}
-		}
-		// positionner la valeur courante
-		mKnob.setValue(((float) getValue() - getValueMin()) / (getValueMax() - getValueMin()));
-		//setMaximumSize(new Dimension(120+oWidthOff, 80));
-	
-		setupListener();
-		setupMouseWheelListener();
-    }
-
-    protected void setupListener() {
-		// Add a change listener to the knob
-		mKnob.addChangeListener(new ChangeListener() {
-		public void stateChanged(ChangeEvent e) {
-		    DKnob t = (DKnob) e.getSource();
-		    int oValue = Math.round(t.getValue() * (getValueMax() - getValueMin())) + getValueMin();
-		    String oVStr = Integer.toString(oValue + mBase);
-		    t.setToolTipText(oVStr);
-		    t.setValueAsString(oVStr);
-		    if (mLabelImage != null) {
-			mLabelImage.setIcon(mImages[oValue]);
-		    }
-		    sendSysex(oValue);
-		}
-	    });
-    }
-
-    // This is not overridden by KnobLookupWidget.
-    protected void setupMouseWheelListener() {
-		// mouse wheel event is supported by J2SE 1.4 and later
-		mKnob.addMouseWheelListener(new MouseWheelListener() {
-		public void mouseWheelMoved(MouseWheelEvent e) {
-		    DKnob t = (DKnob) e.getSource();
-		    if (t.hasFocus()) // to make consistent with other operation.
-			t.setValue(t.getValue()
-				   + (e.getWheelRotation()
-				      / (float) (getValueMax() - getValueMin())));
-		}
-	    });
+	super.setMinMax(min, max);
     }
 
     public void setValue(int v) {
-		super.setValue(v);
-		String oVStr = Integer.toString(v + mBase);
-		mKnob.setToolTipText(oVStr);
-		mKnob.setValueAsString(oVStr);
-		if (mLabelImage != null) {
-			mLabelImage.setIcon(mImages[v]);
-		}
-		mKnob.setValue(((float) v - getValueMin())
+	super.setValue(v);
+	String oVStr = Integer.toString(v + mBase);
+	mKnob.setToolTipText(oVStr);
+	mKnob.setValueAsString(oVStr);
+	if (mLabelImage != null) {
+	    mLabelImage.setIcon(mImages[v]);
+	}
+	mKnob.setValue(((float) v - getValueMin())
 		       / (getValueMax() - getValueMin()));
     }
 
     public void setEnabled(boolean e) {
         mKnob.setEnabled(e);
-		getJLabel().setEnabled(e);
+	getJLabel().setEnabled(e);
     }
 }

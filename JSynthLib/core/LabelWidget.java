@@ -5,7 +5,6 @@ import java.awt.event.*;
 import javax.swing.event.*;
 
 public class LabelWidget extends SysexWidget {
-
     /**
      * Creates a new <code>LabelWidget</code> instance.
      *
@@ -13,8 +12,10 @@ public class LabelWidget extends SysexWidget {
      * @see SysexWidget
      */
     public LabelWidget(String label) {
-	super(label);
-        add(getJLabel());
+	super(label, null, null, null);
+
+	layoutWidgets();
+	createWidgets();
     }
 
     /**
@@ -22,18 +23,24 @@ public class LabelWidget extends SysexWidget {
      *
      * @param jl a JLabel widget.
      */
+    // For what is this?
     public LabelWidget(JLabel jl) {
-        super(jl.toString());
+        super(jl.toString(), null, null, null);
 	setJLabel(jl);		// overwrite jlabel
-        add(jl);
+
+	layoutWidgets();
     }
-    /*
-    private void setup() {
-        //  setLayout(new BorderLayout());
-        add(new JLabel(label));
+
+    protected void createWidgets() {
+	// do nothing
+    }
+
+    protected void layoutWidgets() {
+        //setLayout(new BorderLayout());
+        add(getJLabel());
         //add(new JLabel(label), BorderLayout.CENTER);
     }
-    */
+
     public void setEnabled(boolean e) {
         getJLabel().setEnabled(e);
     }

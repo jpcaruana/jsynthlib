@@ -34,33 +34,21 @@ public class EnvelopeWidget extends SysexWidget {
      * @see EnvelopeNode
      */
     public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n) {
-	this(l,p,n,0,0);
+	this(l, p, n, 0, 0);
     }
 
-    public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n, int xpad, int ypad) {
-	super(l, p);
+    public EnvelopeWidget(String l, Patch p, EnvelopeNode[] n,
+			  int xpad, int ypad) {
+	super(l, p, null, null);
 	nodes = n;
 	xpadding=xpad;
 	ypadding=ypad;
-	setup();
+
+	createWidgets();
+        layoutWidgets();
     }
 
-    public void setSliderNum(int num) {
-        _setSliderNum(num);
-        setToolTipText("Bank " + ((num - 1) / 16)
-		       + "  Sliders " + (((num - 1) % 16) + 1)
-		       + " to " + (((num - 1) % 16) + getNumFaders()));
-// Should be???	       + " to " + (((num - 1 + numValues - 1) % 16) + 1));
-        for (int j = 0; j < numValues; j++) {
-	    String t = ("Bank " + ((num - 1) / 16)
-			+ "  Slider " + (((num - 1 + j) % 16) + 1));
-	    values[j].setToolTipText(t);
-	    valueLabels[j].setToolTipText(t);
-	}
-    }
-
-    protected void setup() {
-        setLayout(new BorderLayout());
+    protected void createWidgets() {
         valueLabels = new JLabel[nodes.length * 2];
         values = new JTextField[nodes.length * 2];
         int j = 0;
@@ -87,6 +75,12 @@ public class EnvelopeWidget extends SysexWidget {
         numValues = j;
         setNumFaders(numValues); // numFaders == numValues?
 
+	envelopeCanvas = new EnvelopeCanvas(nodes, values);
+    }
+
+    protected void layoutWidgets() {
+        setLayout(new BorderLayout());
+
         JPanel valuePane = new JPanel();
         valuePane.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -96,7 +90,7 @@ public class EnvelopeWidget extends SysexWidget {
         gbc.weighty = 1;
         gbc.insets = new Insets(ypadding, xpadding, ypadding, xpadding);
 
-        for (j = 0; j < numValues; j++) {
+        for (int j = 0; j < numValues; j++) {
 	    // name of he X/Y axis paramters
 	    gbc.gridx = 0;
 	    gbc.gridy = j;
@@ -112,8 +106,21 @@ public class EnvelopeWidget extends SysexWidget {
 	}
         add(valuePane, BorderLayout.EAST);
         add(getJLabel(), BorderLayout.NORTH);
-	envelopeCanvas = new EnvelopeCanvas(nodes, values);
         add(envelopeCanvas, BorderLayout.CENTER);
+    }
+
+    public void setSliderNum(int num) {
+        _setSliderNum(num);
+        setToolTipText("Bank " + ((num - 1) / 16)
+		       + "  Sliders " + (((num - 1) % 16) + 1)
+		       + " to " + (((num - 1) % 16) + getNumFaders()));
+// Should be???	       + " to " + (((num - 1 + numValues - 1) % 16) + 1));
+        for (int j = 0; j < numValues; j++) {
+	    String t = ("Bank " + ((num - 1) / 16)
+			+ "  Slider " + (((num - 1 + j) % 16) + 1));
+	    values[j].setToolTipText(t);
+	    valueLabels[j].setToolTipText(t);
+	}
     }
 
     /**

@@ -5,12 +5,12 @@ import java.awt.event.*;
 import javax.swing.event.*;
 
 public class CheckBoxWidget extends SysexWidget {
-    public JCheckBox cb;	// will be private
+    public JCheckBox cb;	// should be prortected !!!FIXIT!!!
 
     /**
      * Creates a new <code>CheckBoxWidget</code> instance.
      *
-     * @param l a label text for the sysexWidget.
+     * @param l a label text for JCheckBox widget..
      * @param p a <code>Patch</code>, which is edited.
      * @param ofs a <code>ParamModel</code> instance.
      * @param s a <code>SysexSender</code> instance.
@@ -18,38 +18,33 @@ public class CheckBoxWidget extends SysexWidget {
      */
     public CheckBoxWidget(String l, Patch p, ParamModel ofs, SysexSender s) {
 	super(l, p, 0, 1, ofs, s);
-	setup();
+
+	createWidgets();
+        layoutWidgets();
     }
 
-    // comment out since exactly same as one in SysexWidget.java
-    /*
-    public void setSliderNum(int num) {
-	sliderNum = num;
-	if (num > 0)
-	    cb.setToolTipText("Bank " + ((num - 1) / 16)
-			      + "  Slider " + (((num - 1) % 16) + 1));
-	if (num < 0) {
-	    num = 0 - num;
-	    cb.setToolTipText("Bank " + ((num - 1) / 16)
-			      + "  Button " + (((num - 1) % 16) + 1));
-	}
-    }
-    */
-
-    protected void setup() {
-	setLayout(new BorderLayout());
+    protected void createWidgets() {
 	if (getValue() == 0)
 	    cb = new JCheckBox(getLabel(), false);
 	else
 	    cb = new JCheckBox(getLabel(), true);
 	cb.addItemListener(new ItemListener() {
 		public void itemStateChanged(ItemEvent e) {
-		    if (e.getStateChange() == ItemEvent.SELECTED)
-			sendSysex(1);
-		    else
-			sendSysex(0);
+		    eventListener(e);
 		}
 	    });
+    }
+
+    /** invoked when the check box is toggled. */
+    protected void eventListener(ItemEvent e) {
+	if (e.getStateChange() == ItemEvent.SELECTED)
+	    sendSysex(1);
+	else
+	    sendSysex(0);
+    }
+
+    protected void layoutWidgets() {
+	setLayout(new BorderLayout());
 	add(cb);
     }
 
@@ -57,6 +52,11 @@ public class CheckBoxWidget extends SysexWidget {
 	super.setValue(v);
 	//cb.doClick();
 	cb.setSelected(v != 0);
+    }
+
+    public void setValue(boolean v) {
+	super.setValue(v ? 1 : 0);
+	cb.setSelected(v);
     }
 
     public void setLabel(String l) {

@@ -14,7 +14,7 @@ public class ScrollBarLookupWidget extends SysexWidget {
     /** JTextField to display value. */
     protected JTextField text;
     /** JSlider widget */
-    public JSlider slider;	// accessed by PatchEditorFrame and some drivers
+    public JSlider slider;	// accessed by some drivers !!!FIXIT!!!
 
     /** Constructor for setting up the ScrollBarWidgetLookup.
      * @param l Label for the Widget
@@ -30,29 +30,39 @@ public class ScrollBarLookupWidget extends SysexWidget {
 				 ParamModel ofs, SysexSender s, String[] o) {
 	super(l, p, min, max, ofs, s);
 	options = o;
-	setup();
+
+	createWidgets();
+	layoutWidgets();
     }
 
-    protected void setup() {
-	setLayout(new BorderLayout());
-	add(getJLabel(), BorderLayout.WEST);
-
+    protected void createWidgets() {
         slider = new JSlider(JSlider.HORIZONTAL,
 			     getValueMin(), getValueMax(), getValue());
 	slider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
-		    int v = slider.getValue();
-		    text.setText(options[v]);
-		    sendSysex(v);
+		    eventListener(e);
 		}
 	    });
 	text = new JTextField(options[getValue()], 4);
+	text.setEditable(false);
+    }
+
+    /** invoked when the slider is moved. */
+    protected void eventListener(ChangeEvent e) {
+	int v = slider.getValue();
+	text.setText(options[v]);
+	sendSysex(v);
+    }
+
+    protected void layoutWidgets() {
+	setLayout(new BorderLayout());
+
 	slider.setMinimumSize(new Dimension(75, 25));
 	slider.setMaximumSize(new Dimension(125, 25));
 
+	add(getJLabel(), BorderLayout.WEST);
 	add(slider, BorderLayout.CENTER);
 	add(text, BorderLayout.EAST);
-	text.setEditable(false);
     }
 
     public void setValue(int v) {
@@ -64,11 +74,10 @@ public class ScrollBarLookupWidget extends SysexWidget {
         slider.setEnabled(e);
     }
 
-    public void changeOptions(String [] o) {
+    public void changeOptions(String[] o) {
 	if (o != options) {
 	    options = o;
 	    text.setText(options[getValue()]);
 	}
     }
-
 }
