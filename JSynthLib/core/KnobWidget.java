@@ -20,11 +20,11 @@ import com.dreamfabric.DKnob;
 */
 public class KnobWidget extends SysexWidget {
     /** decalage a l'affichage */
-    protected int mBase;
+    private int mBase;
     protected DKnob mKnob = new DKnob();
-    protected JLabel mLabel;
-    protected ImageIcon[] mImages;
-    protected JLabel mLabelImage;
+    //protected JLabel mLabel;
+    private ImageIcon[] mImages;
+    private JLabel mLabelImage;
 
     /**
        Constructeur special pour les classes derivees.
@@ -32,6 +32,7 @@ public class KnobWidget extends SysexWidget {
     protected KnobWidget(String l, Patch p, int min, int max,
 			 ParamModel ofs, SysexSender s) {
 	super(l, p, min, max, ofs, s);
+        setupUI();
     }
 
     /**
@@ -56,10 +57,11 @@ public class KnobWidget extends SysexWidget {
         setupUI();
     }
 
-    public void setupUI() {
+    protected void setupUI() {
 	mKnob.setDragType(DKnob.SIMPLE_MOUSE_DIRECTION);
-	if (label != null) {
-	    mLabel = new JLabel(label, SwingConstants.CENTER);
+	if (getLabel() != null) {
+	    //mLabel = new JLabel(getLabel(), SwingConstants.CENTER);
+	    getJLabel().setHorizontalAlignment(SwingConstants.CENTER);
 	}
 	int oValue = getValue();
 	mKnob.setToolTipText(Integer.toString(oValue + mBase));
@@ -68,8 +70,9 @@ public class KnobWidget extends SysexWidget {
 	if (mImages != null) {
 	    JPanel oPane = new JPanel(new BorderLayout(0, 0));
 	    oPane.add(mKnob, BorderLayout.NORTH);
-	    if (mLabel != null) {
-		oPane.add(mLabel, BorderLayout.SOUTH);
+	    if (getLabel() != null) {
+		//oPane.add(mLabel, BorderLayout.SOUTH);
+		oPane.add(getJLabel(), BorderLayout.SOUTH);
 	    }
 	    setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 	    add(oPane);
@@ -80,12 +83,13 @@ public class KnobWidget extends SysexWidget {
 	    setLayout(new BorderLayout(0, 0));
 	    //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 	    add(mKnob, BorderLayout.NORTH);
-	    if (mLabel != null) {
-		add(mLabel, BorderLayout.SOUTH);
+	    if (getLabel() != null) {
+		//add(mLabel, BorderLayout.SOUTH);
+		add(getJLabel(), BorderLayout.SOUTH);
 	    }
 	}
 	// positionner la valeur courante
-	mKnob.setValue(((float) getValue() - valueMin) / (valueMax - valueMin));
+	mKnob.setValue(((float) getValue() - getValueMin()) / (getValueMax() - getValueMin()));
 	//setMaximumSize(new Dimension(120+oWidthOff, 80));
 
 	setupListener();
@@ -97,15 +101,14 @@ public class KnobWidget extends SysexWidget {
 	mKnob.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
 		    DKnob t = (DKnob) e.getSource();
-		    int oValue = Math.round(t.getValue() * (valueMax - valueMin)) + valueMin;
+		    int oValue = Math.round(t.getValue() * (getValueMax() - getValueMin())) + getValueMin();
 		    String oVStr = Integer.toString(oValue + mBase);
 		    t.setToolTipText(oVStr);
 		    t.setValueAsString(oVStr);
-		    KnobWidget.super.setValue(oValue);
 		    if (mLabelImage != null) {
 			mLabelImage.setIcon(mImages[oValue]);
 		    }
-		    sendSysex();
+		    sendSysex(oValue);
 		}
 	    });
     }
@@ -119,8 +122,24 @@ public class KnobWidget extends SysexWidget {
 		    if (t.hasFocus()) // to make consistent with other operation.
 			t.setValue(t.getValue()
 				   + (e.getWheelRotation()
-				      / (float) (valueMax - valueMin)));
+				      / (float) (getValueMax() - getValueMin())));
 		}
 	    });
+    }
+
+    public void setValue(int v) {
+	super.setValue(v);
+	String oVStr = Integer.toString(v + mBase);
+	mKnob.setToolTipText(oVStr);
+	mKnob.setValueAsString(oVStr);
+	if (mLabelImage != null) {
+	    mLabelImage.setIcon(mImages[v]);
+	}
+	mKnob.setValue(((float) v - getValueMin())
+		       / (getValueMax() - getValueMin()));
+    }
+
+    public void setEnabled(boolean e) {
+        mKnob.setEnabled(e);
     }
 }

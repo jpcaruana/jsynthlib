@@ -12,21 +12,22 @@ public class KnobLookupWidget extends KnobWidget {
 
     private String[] mValueLabels;
 
+    public KnobLookupWidget(String l, Patch p, int aMin, int aMax,
+			    ParamModel ofs, SysexSender s,
+			    String[] aValueLabels) {
+	super(l, p, aMin, aMax, 0, ofs, s);
+        //mBase = 0;
+	mValueLabels = aValueLabels;
+	// called by super class
+        //setupUI();
+	// System.out.println("value = "+getValue());
+	mKnob.setToolTipText(mValueLabels[getValue()]);
+    }
+
     public KnobLookupWidget(String l, Patch p,
 			    ParamModel ofs, SysexSender s,
 			    String[] aValueLabels) {
 	this(l, p, 0, aValueLabels.length - 1, ofs, s, aValueLabels);
-    }
-
-    public KnobLookupWidget(String l, Patch p, int aMin, int aMax,
-			    ParamModel ofs, SysexSender s,
-			    String[] aValueLabels) {
-	super(l, p, aMin, aMax, ofs, s);
-        mBase = 0;
-	mValueLabels = aValueLabels;
-        setupUI();
-	//		System.out.println("value = "+getValue());
-	mKnob.setToolTipText(mValueLabels[getValue()]);
     }
 
     protected void setupListener() {
@@ -34,12 +35,11 @@ public class KnobLookupWidget extends KnobWidget {
 	mKnob.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
 		    DKnob t = (DKnob) e.getSource();
-		    int oValue = Math.round(t.getValue() * (valueMax - valueMin)) + valueMin;
+		    int oValue = Math.round(t.getValue() * (getValueMax() - getValueMin())) + getValueMin();
 		    t.setToolTipText(mValueLabels[oValue]);
 		    t.setValueAsString(mValueLabels[oValue]);
-		    KnobLookupWidget.super.setValue(oValue);
+		    sendSysex(oValue);
 		    //System.out.println("value = "+(oValue + mBase));
-		    sendSysex();
 		}
 	    });
     }

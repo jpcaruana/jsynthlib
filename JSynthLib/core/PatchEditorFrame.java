@@ -134,11 +134,10 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	return null;
     }
 
-    // IOException is verbose !!!FIXIT!!!
-    public void ImportPatch (File file) throws IOException, FileNotFoundException {
+    public void ImportPatch (File file) throws FileNotFoundException {
     }
 
-    public void ExportPatch (File file) throws IOException, FileNotFoundException {
+    public void ExportPatch (File file) throws FileNotFoundException {
     }
 
     public void DeleteSelectedPatch () {
@@ -198,6 +197,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	    gbc.gridwidth = gridwidth;
 	    gbc.gridheight = gridheight;
 	    scrollPane.add(widget, gbc);
+
 	    widget.setSliderNum(slidernum);
 	    if (widget instanceof ScrollBarWidget)
 		sliderList.add(((ScrollBarWidget) widget).slider);
@@ -205,6 +205,7 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 		sliderList.add(((VertScrollBarWidget) widget).slider);
 	    if (widget instanceof ScrollBarLookupWidget)
 		sliderList.add(((ScrollBarLookupWidget) widget).slider);
+
 	    widgetList.add(widget);
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
@@ -222,14 +223,15 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	    gbc.gridwidth = gridwidth;
 	    gbc.gridheight = gridheight;
 	    parent.add(widget, gbc);
-	    widget.setSliderNum(slidernum);
 
+	    widget.setSliderNum(slidernum);
 	    if (widget instanceof ScrollBarWidget)
 		sliderList.add(((ScrollBarWidget) widget).slider);
 	    if (widget instanceof VertScrollBarWidget)
 		sliderList.add(((VertScrollBarWidget) widget).slider);
 	    if (widget instanceof ScrollBarLookupWidget)
 		sliderList.add(((ScrollBarLookupWidget) widget).slider);
+
 	    widgetList.add(widget);
 	} catch (Exception e) {
 	    ErrorMsg.reportStatus(e);
@@ -257,11 +259,11 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	if (recentWidget != null) {
 	    if (fader == faderBank * 16)
 		fader = lastFader;
-	    if (recentWidget.isShowing() && (recentWidget.sliderNum == fader)) {
-		if (recentWidget.numFaders == 1)
-		    recentWidget.setValue((int) (recentWidget.valueMin + ((float) (value) / 127 * (recentWidget.valueMax - recentWidget.valueMin))));
+	    if (recentWidget.isShowing() && (recentWidget.getSliderNum() == fader)) {
+		if (recentWidget.getNumFaders() == 1)
+		    recentWidget.setValue((int) (recentWidget.getValueMin() + ((float) (value) / 127 * (recentWidget.getValueMax() - recentWidget.getValueMin()))));
 		else
-		    recentWidget.setValue(fader, (int) value);
+		    recentWidget.setFaderValue(fader, (int) value);
 		recentWidget.repaint();
 		return;
 	    }
@@ -269,15 +271,14 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	lastFader = fader;
 	for (int i = 0; i < widgetList.size(); i++) {
 	    w = (SysexWidget) widgetList.get(i);
-	    // `|' `&' should be `||' `&&' !!!FIXIT!!!
-	    if (((w.sliderNum == fader)
-		 | ((w.sliderNum < fader) & w.sliderNum + w.numFaders > fader))
-		&& (w.isShowing())) {
+	    if ((w.getSliderNum() == fader
+		 || (w.getSliderNum() < fader && w.getSliderNum() + w.getNumFaders() > fader))
+		&& w.isShowing()) {
 		recentWidget = w;
-		if (recentWidget.numFaders == 1)
-		    recentWidget.setValue((int) (recentWidget.valueMin + ((float) (value) / 127 * (recentWidget.valueMax - recentWidget.valueMin))));
+		if (recentWidget.getNumFaders() == 1)
+		    recentWidget.setValue((int) (recentWidget.getValueMin() + ((float) (value) / 127 * (recentWidget.getValueMax() - recentWidget.getValueMin()))));
 		else
-		    recentWidget.setValue(fader, (int) value);
+		    recentWidget.setFaderValue(fader, (int) value);
 		recentWidget.repaint();
 		return;
 	    }
@@ -288,19 +289,19 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	SysexWidget w;
 	for (int i = 0; i < widgetList.size(); i++) {
 	    w = (SysexWidget) widgetList.get(i);
-	    if (w.jlabel != null) {
-		if (((Math.abs(w.sliderNum - 1) & 0xf0)) == faderBank * 16) {
+	    if (w.getLabel() != null) {
+		if (((Math.abs(w.getSliderNum() - 1) & 0xf0)) == faderBank * 16) {
 		    Color c = UIManager.getColor("controlText");
 		    if (c == null)
 			c = new Color(75, 75, 100);
-		    w.jlabel.setForeground(c);
+		    w.getJLabel().setForeground(c);
 		} else {
 		    Color c = UIManager.getColor("textInactiveText");
 		    if (c == null)
 			c = new Color(102, 102, 153);
-		    w.jlabel.setForeground(c);
+		    w.getJLabel().setForeground(c);
 		}
-		w.jlabel.repaint();
+		w.getJLabel().repaint();
 	    }
 	}
     }
@@ -312,8 +313,8 @@ public class PatchEditorFrame extends JInternalFrame implements PatchBasket {
 	SysexWidget x;
 	for (int i = 0; i < widgetList.size(); i++) {
 	    x = (SysexWidget) widgetList.get(i);
-	    if ((x.sliderNum + x.numFaders - 1) > high)
-		high = x.sliderNum + x.numFaders - 1;
+	    if ((x.getSliderNum() + x.getNumFaders() - 1) > high)
+		high = x.getSliderNum() + x.getNumFaders() - 1;
 	}
 	numFaderBanks = (high / 16) + 1;
 	faderHighlight();

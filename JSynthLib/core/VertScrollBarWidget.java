@@ -8,30 +8,36 @@ import javax.swing.event.*;
  * @version $Id$
  */
 public class VertScrollBarWidget extends ScrollBarWidget {
-    int base;
-    JTextField text;
-    public JSlider slider;
-
+    /** Constructor for setting up the VertScrollBarWidget.
+     * @param l Label for the Widget
+     * @param p The patch, which is edited
+     * @param min Minimum value
+     * @param max Maximum value
+     * @param b base value. This value is added to the actual value
+     * for display purposes
+     * @param ofs a <code>ParamModel</code> instance.
+     * @param s sysexSender for transmitting the value at editing the parameter
+     * @see SysexWidget
+     */
     public VertScrollBarWidget(String l, Patch p, int min, int max, int b,
 			       ParamModel ofs, SysexSender s) {
 	super(l, p, min, max, b, ofs, s);
     }
 
-    public void setup() {
-	super.setup();
+    protected void setup() {
 	setLayout(new BorderLayout());
-	add(new JLabel(label), BorderLayout.NORTH);
-	if (valueCurr > valueMax)
-	    valueCurr = valueMax;
-	slider = new JSlider(JSlider.VERTICAL, valueMin, valueMax, valueCurr);
+	add(getJLabel(), BorderLayout.NORTH);
+
+	slider = new JSlider(JSlider.VERTICAL,
+			     getValueMin(), getValueMax(), getValue());
 	slider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
-		    setValue(slider.getValue());
-		    sendSysex();
-		    text.setText(new Integer(valueCurr + base).toString());
+		    int v = slider.getValue();
+		    text.setText(new Integer(v + base).toString());
+		    sendSysex(v);
 		}
 	    });
-	text = new JTextField(new Integer(valueCurr + base).toString(), 4);
+	text = new JTextField(new Integer(getValue() + base).toString(), 4);
 	slider.setMinimumSize(new Dimension(25, 50));
 	slider.setMaximumSize(new Dimension(25, 100));
 

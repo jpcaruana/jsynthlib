@@ -8,30 +8,43 @@ import java.awt.event.*;
 import javax.swing.event.*;
 
 public class PatchNameWidget extends SysexWidget {
-    int base;
-    JTextField name;
-    String label;
+    private JTextField name;
 
-    public PatchNameWidget(Patch p, String n) {
-        patch = p;
-        label = n;
+    /**
+     * Creates a new <code>PatchNameWidget</code> instance.
+     *
+     * @param l a label text.
+     * @param p a <code>Patch</code>, which is edited.
+     * @see SysexWidget
+     */
+    public PatchNameWidget(String label, Patch patch) {
+	super(label, patch);
         setup();
     }
 
-    public void setup() {
-	// super.setup();
+    /** @deprecated Use Patch(String, Patch) */
+    // The order of argument is not consistent with others!!!FIXIT!!!
+    public PatchNameWidget(Patch patch, String label) {
+	super(label, patch);
+        setup();
+    }
+
+    protected void setup() {
 	setLayout(new BorderLayout());
-        add(new JLabel(label), BorderLayout.WEST);
-        name = new JTextField(((Driver) (PatchEdit.getDriver(patch.deviceNum, patch.driverNum))).getPatchName(patch),
-			      ((Driver) (PatchEdit.getDriver(patch.deviceNum, patch.driverNum))).patchNameSize);
+        add(getJLabel(), BorderLayout.WEST);
+        name = new JTextField(getPatchName(), getPatchNameSize());
 	name.addFocusListener(new FocusListener() {
 		public void focusGained(FocusEvent e) {
 		}
+		// No system exclusive messages is sent.
 		public void focusLost(FocusEvent e) {
-		    ((Driver) (PatchEdit.getDriver(patch.deviceNum, patch.driverNum))).setPatchName(patch, name.getText());
+		    setPatchName(name.getText());
 		}
 	    });
         add(name, BorderLayout.EAST);
     }
 
+    public void setEnabled(boolean e) {
+        name.setEnabled(e);
+    }
 }

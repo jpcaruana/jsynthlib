@@ -2,25 +2,16 @@
    about a single node (point) in the Widget */
 package core;
 
-/* When Constructing an Envelope Node, here's the meaning of the parameters passed to the constructor:
-minx- The minimum value permitted by the Synth-Parameter which rides the X-Axis of the Node
-maxx -The maximum value   ""            ""                        ""               ""
-miny-      minumum        ""            ""                        ""     Y-Axis    ""
-maxy- The  maximum        ""            ""                        ""       ""      ""
-ofsx and ofsy- For the X and Y parameters-- this is the ParameterModel which provides reading/writing abilities to the
-sysex data representing the parameter
-basey- Sometimes you don't want Zero on a Y-access-riding-parameter to be all the way down at the bottom. This gives it a
-little bit of rise. BaseY will be added to all Y values. (This doesn't change the function of the envelopeWidget, but makes
-it look nicer and possibly be more intuitive to use
-invertx- sometimes on an riding attribute 0 is the fastest, other times its the slowest. THis allows you to choose
-x & y- The objects which send sysex messages to the synths when the Node is moved
-namex, name y, the names of the parameters riding each access
-**Using nulls for the Models and Senders and setting min to max means that a node is stationary on that access and has no
-related parameter
-**Using EnvelopeNode.SAME for MinY-MaxY means that the height remains at whatever the previous node was at
-*/
+/**
+ * Each <code>EnvelopeNode</code> is one of the movable squares on the
+ * envelope. Some of these nodes are stationary, some contain two
+ * parameters on the synth and can be moved vertically and
+ * horizontally, and others contain only one parameter and can
+ * therefore be moved in only one direction.
+ * @see EnvelopeWidget
+ */
 public class EnvelopeNode {
-    public final static int SAME=5000;
+    public static final int SAME = 5000;
     int minX;
     int minY;
     int maxX;
@@ -34,9 +25,55 @@ public class EnvelopeNode {
     String nameX;
     String nameY;
 
-    public EnvelopeNode(int minx, int maxx,ParamModel ofsx,
+    /**
+     * Construcutor for a <code>EnvelopeNode</code>.<p>
+     *
+     * Using <code>null</code>s for the Models and Senders and setting
+     * min to max means that a node is stationary on that axis and has
+     * no related parameter.<p>
+     *
+     * Using <code>EnvelopeNode.SAME</code> for <code>miny</code> or
+     * <code>maxy</code> means that the height remains at whatever
+     * the previous node was at.
+     *
+     * @param minx The minimum value permitted by the synth
+     * parameter which rides the X axis of the node.
+     * @param maxx The maximum value permitted by the synth
+     * parameter which rides the X axis of the node.
+     * @param ofsx The Parameter Model which provides reading/writing
+     * abilities to the sysex data representing the parameter.
+     *
+     * @param miny The minimum value permitted by the synth
+     * parameter which rides the Y axis of the node.
+     * @param maxy The maximum value permitted by the synth
+     * parameter which rides the Y axis of the node.
+     * @param ofsy The Parameter Model which provides reading/writing
+     * abilities to the sysex data representing the parameter.
+     *
+     * @param basey The value will be added to all Y values.  This
+     * doesn't change the function of the EnvelopeWidget, but makes it
+     * look nicer and possibly be more intuitive to use.  Sometimes
+     * you don't want zero on a Y-axis-riding-parameter to be all the
+     * way down at the bottom. This gives it a little bit of rise.
+     *
+     * @param invertx Sometimes on an X-axis-riding attribute 0 is the
+     * fastest, other times it is the slowest. This allows you to choose.
+     *
+     * @param x The SysexSender which send system exclusive messages
+     * to the synths when the Node is moved on the X axis direction.
+     * @param y The SysexSender which send system exclusive messages
+     * to the synths when the Node is moved on the Y axis direction.
+     *
+     * @param namex The names of the X-axis parameters riding each
+     * access.
+     * @param namey The names of the Y-axis parameters riding each
+     * access.
+     *
+     * @see EnvelopeWidget
+     */
+    public EnvelopeNode(int minx, int maxx, ParamModel ofsx,
 			int miny, int maxy, ParamModel ofsy,
-			int basey,boolean invertx,
+			int basey, boolean invertx,
 			SysexSender x, SysexSender y,
 			String namex, String namey) {
 	baseY = basey;

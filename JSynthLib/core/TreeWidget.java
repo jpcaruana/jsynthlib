@@ -50,36 +50,29 @@ public class TreeWidget extends SysexWidget {
     //Optionally play with line styles.  Possible values are
     //"Angled", "Horizontal", and "None"(the default).
     private final boolean playWithLineStyle = false;
-    private final String lineStyle = "Angled"; 
+    private final String lineStyle = "Angled";
 
     /**
      * Creates a new <code>TreeWidget</code> instance.
      *
      * @param label not used in the current implementation.
-     * @param patch a <code>Patch</code> value
+     * @param patch a <code>Patch</code>, which is edited.
      * @param treeNodes a <code>TreeNodes</code> object specifying the
      * tree data structure.
      * @param paramModel a <code>ParamModel</code> value
-     * @param sysexString a <code>SysexSender</code> value
+     * @param sysexString SysexSender for transmitting the value at
+     * editing the parameter.
+     * @see SysexWidget
      * @see TreeNodes
      */
     public TreeWidget(String label, Patch patch, TreeNodes treeNodes,
 		      ParamModel paramModel, SysexSender sysexString) {
-	this.label = label;		// not used
+	super(label, patch, paramModel, sysexString);
 	this.treeNodes = treeNodes;
-	this.patch = patch;
-	this.paramModel = paramModel;
-	this.sysexString = sysexString;
-	setValue(patch);
-
 	setup();
     } // TreeWidget constructor
-  
-    // This method should be private, but SysexWidget class defines as
-    // public...
-    public void setup() {
-	super.setup();
 
+    private void setup() {
 	//Create the nodes.
 	rootNode = populate(treeNodes.getRoot());
 
@@ -92,7 +85,7 @@ public class TreeWidget extends SysexWidget {
 	tree.addTreeSelectionListener(new TreeSelectionListener() {
 		public void valueChanged(TreeSelectionEvent e) {
 		    DefaultMutableTreeNode node
-			=(DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+			= (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
 		    if (node != null && node.isLeaf()) {
 			/*
@@ -102,9 +95,7 @@ public class TreeWidget extends SysexWidget {
 			for (int i = 0; i < tmp.length; i++)
 			    System.out.println(tmp[i]);
 			*/
-			// don't have to set seletction here
-			setValue(treeNodes.getValue(getIndices(e.getPath())), false);
-			sendSysex();
+			sendSysex(treeNodes.getValue(getIndices(e.getPath())));
 		    } else {
 			return;
 		    }
@@ -124,7 +115,7 @@ public class TreeWidget extends SysexWidget {
 	renderer.setLeafIcon(null);
 	tree.setCellRenderer(renderer);
 
-	//Create the scroll pane and add the tree to it. 
+	//Create the scroll pane and add the tree to it.
 	JScrollPane treeScrollPane = new JScrollPane(tree);
 	// consider to add Dimension parameter to all SysexWidget classes
 	// !!!FIXIT!!!
@@ -206,7 +197,7 @@ public class TreeWidget extends SysexWidget {
 	tree.setSelectionPath(path);
 	// Make sure the user can see the lovely new node.
 	tree.scrollPathToVisible(path);
-    }  
+    }
 
     /**
      * Return a tree node object specified by <code>n</code>.
@@ -225,19 +216,6 @@ public class TreeWidget extends SysexWidget {
 	    node = node.getChildAt(indices[i]);
 	return node;
     }
-  
-    /**
-     * Set a value.  Select the corresponding tree node if setSelection
-     * is <code>true</code>.
-     *
-     * @param value an <code>int</code> value to be set.
-     * @param setSelection select the tree node if <code>true</code>.
-     */
-    protected void setValue(int value, boolean setSelection) {
-	super.setValue(value);
-	if (setSelection)
-	    setSelection(value);
-    }
 
     /**
      * Set a value and Select the corresponding tree node.
@@ -245,14 +223,11 @@ public class TreeWidget extends SysexWidget {
      * @param value an <code>int</code> value to be set.
      */
     public void setValue(int value) {
-	setValue(value, true);
+	super.setValue(value);
+	setSelection(value);
     }
 
-    /**
-     * Update the widget status.
-     */
-    public void update() {
-	setSelection(getValue());
+    public void setEnabled(boolean e) {
+        tree.setEnabled(e);
     }
-
 } // TreeWidget
