@@ -27,10 +27,12 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
     protected Patch  bankData;
     protected BankDriver bankDriver;
     protected final BankEditorFrame instance;
- 
+
     public BankEditorFrame (Patch p)
     {
-        super(PatchEdit.getDriver (p.deviceNum,p.driverNum).model+" "+PatchEdit.getDriver (p.deviceNum,p.driverNum).patchType+" Window",
+        super(PatchEdit.appConfig.getDevice(p.deviceNum).modelName + " "
+	      + PatchEdit.getDriver (p.deviceNum,p.driverNum).patchType
+	      + " Window",
         true, //resizable
         true, //closable
         true, //maximizable
@@ -40,11 +42,11 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         bankDriver=(BankDriver)PatchEdit.getDriver (p.deviceNum ,p.driverNum);
         InitBankEditorFrame ();
     }
-    
+
     protected void InitBankEditorFrame ()
     {
         //...Create the GUI and put it in the window...
-        
+
         myModel = new PatchGridModel (bankData,bankDriver);
         table = new DNDPatchTable (myModel);
         table2=table;
@@ -63,7 +65,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 table2.columnAtPoint (new Point (e.getX (),e.getY ())),
                 table2.columnAtPoint (new Point (e.getX (),e.getY ()))
                 );
-                
+
                 PatchEdit.extractAction.setEnabled (true);
                 PatchEdit.sendAction.setEnabled (true);
                 PatchEdit.sendToAction.setEnabled (false);	// not available yet!
@@ -83,7 +85,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 PatchEdit.copyAction.setEnabled (true);
                 PatchEdit.deleteAction.setEnabled (true);
                 PatchEdit.exportAction.setEnabled (true);
-                
+
                 if(e.isPopupTrigger ())
                 {
                     PatchEdit.menuPatchPopup.show (table2, e.getX (), e.getY ());
@@ -96,7 +98,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 {
                     PatchEdit.menuPatchPopup.show (table2, e.getX (), e.getY ());
                 }
-                
+
             }
             public void mouseClicked (MouseEvent e)
             {
@@ -105,9 +107,9 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                     PlaySelectedPatch ();
                 }
             }
-            
+
         });
-        
+
         this.addInternalFrameListener (new InternalFrameListener ()
         {
             public void internalFrameOpened (InternalFrameEvent e)
@@ -125,7 +127,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 PatchEdit.importAction.setEnabled (true);
                 PatchEdit.importAllAction.setEnabled (true);
                 PatchEdit.newPatchAction.setEnabled (true);
-                
+
                 if (table.getRowCount ()>0)
                 {
                     PatchEdit.saveAction.setEnabled (true);
@@ -159,14 +161,14 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                     PatchEdit.deleteAction.setEnabled (true);
                     PatchEdit.exportAction.setEnabled (true);
                 }
-                
+
                 //System.out.println ("Frame activated"+table.getSelectedRowCount ());
             }
             public void internalFrameClosing (InternalFrameEvent e)
             {
               JInternalFrame[] jList =PatchEdit.desktop.getAllFrames ();
 	       for (int j=0;j<jList.length;j++)
-		    if (jList[j] instanceof PatchEditorFrame) 
+		    if (jList[j] instanceof PatchEditorFrame)
 		     {
     		             if (((PatchEditorFrame)(jList[j])).bankFrame==instance)
 			       { jList[j].moveToFront();
@@ -175,7 +177,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
 			       }
 		     }
             }
-            
+
             public void internalFrameDeactivated (InternalFrameEvent e)
             {
                 //PatchEdit.receiveAction.setEnabled (false);
@@ -199,25 +201,25 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
                 PatchEdit.importAllAction.setEnabled (false);
                 PatchEdit.exportAction.setEnabled (false);
                 PatchEdit.newPatchAction.setEnabled (false);
-                
+
                 //System.out.println ("Frame deactivated");
             }
         }
         );
-        
+
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane (table);
-        
+
         //Add the scroll pane to this window.
         getContentPane ().add (scrollPane, BorderLayout.CENTER);
-                
+
         //...Then set the window size or call pack...
         setSize (600,300);
-        
+
         //Set the window's location.
-        
+
     }
-    
+
     boolean checkSelected ()
     {
         if ((table.getSelectedRowCount ()==0) || (table.getSelectedColumnCount ()==0))
@@ -294,7 +296,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         Patch p=getSelectedPatch ();
         if (p==null)
         {ErrorMsg.reportError ("Error","That patch is blank.");return;}
-        PatchEdit.getDriver (p.deviceNum,p.driverNum).sendPatch (p);        
+        PatchEdit.getDriver (p.deviceNum,p.driverNum).sendPatch (p);
 	PatchEdit.getDriver (p.deviceNum,p.driverNum).playPatch (p);
     }
 
@@ -304,7 +306,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         Patch p=getSelectedPatch ();
         if (p==null)
         {ErrorMsg.reportError ("Error","That patch is blank.");return;}
-        //PatchEdit.getDriver(p.deviceNum,p.driverNum).choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com    
+        //PatchEdit.getDriver(p.deviceNum,p.driverNum).choosePatch(p, table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow()); // phil@muqus.com
         new SysexStoreDialog(p,table.getSelectedColumn()*bankDriver.numPatches/bankDriver.numColumns+table.getSelectedRow() );
     }
 
@@ -318,7 +320,7 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
         pf.setBankEditorInformation (this,table.getSelectedRow (),table.getSelectedColumn ());
         return pf;
     }
-	
+
     public void PastePatch ()
     {
         if (!checkSelected ()) return ;
@@ -336,5 +338,5 @@ public class BankEditorFrame extends JInternalFrame implements PatchBasket
   bankData.ChooseDriver();
   if (bankData.deviceNum==0) {try{setClosed(true);}catch (Exception e){}; return;}
   bankDriver=(BankDriver)PatchEdit.getDriver(bankData.deviceNum,bankData.driverNum);}
-  
+
 }
