@@ -64,7 +64,7 @@ class AlesisDMProDrumKitEditor extends PatchEditorFrame
     // Common Pane
     JPanel cmnPane=new JPanel();
     cmnPane.setLayout(new FlowLayout());
-    addWidget(cmnPane,new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,18,1,0);
+    addWidget(cmnPane,new PatchNameWidget(" Name  ", patch),0,0,18,1,0);
     gbc.gridx = 0;
     gbc.gridy = 0;
     scrollPane.add(cmnPane, gbc);

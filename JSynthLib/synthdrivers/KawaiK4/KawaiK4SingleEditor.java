@@ -103,7 +103,7 @@ class KawaiK4SingleEditor extends PatchEditorFrame {
 	//setLongestLabel("Volume ");
 	lw = getLabelWidth("Volume ");
 	addWidget(cmnPane,
-		  new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),
+		  new PatchNameWidget(" Name  ", patch),
 		  0, 0, 2, 1, 0);
 	// gbc.weightx=1;
 	addWidget(cmnPane,

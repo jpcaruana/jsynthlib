@@ -99,7 +99,7 @@ class OberheimMatrixSingleEditor extends PatchEditorFrame
 // Common									*
   JPanel commonPane=new JPanel();
   commonPane.setLayout(new GridBagLayout());gbc.weightx=1;
-  addWidget(commonPane,new PatchNameWidget(" Name", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,3,1,0);
+  addWidget(commonPane,new PatchNameWidget(" Name", patch),0,0,3,1,0);
   addWidget(commonPane,new ScrollBarWidget("VCA Amount",patch,0,63,0,new MtxModel(patch,31),new MtxSender(27)),0,1,5,1,10);
   addWidget(commonPane,new ScrollBarWidget("Portamento Rate",patch,0,63,0,new MtxModel(patch,32),new MtxSender(44)),0,2,5,1,11);
   addWidget(commonPane,new CheckBoxWidget("Legato Portamento Enable",patch,new MtxModel(patch,34),new MtxSender(47)),0,3,4,1,-8);

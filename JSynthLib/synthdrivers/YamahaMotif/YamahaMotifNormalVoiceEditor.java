@@ -21,7 +21,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import core.ComboBoxWidget;
-import core.Driver;
 import core.EnvelopeWidget;
 import core.ErrorMsg;
 import core.ParamModel;
@@ -208,7 +207,7 @@ public class YamahaMotifNormalVoiceEditor extends PatchEditorFrame {
       // Add an action listener to update the name, or do one ourselves.
       //panel = Box.createHorizontalBox();
       //c.add(panel);
-      addWidget(panel, new PatchNameWidget("Name", p, ((Driver) p.getDriver()).getPatchNameSize()),slidercount++);
+      addWidget(panel, new PatchNameWidget("Name", p),slidercount++);
       //addHGlue();
       //panel = Box.createHorizontalBox();
       //c.add(panel);

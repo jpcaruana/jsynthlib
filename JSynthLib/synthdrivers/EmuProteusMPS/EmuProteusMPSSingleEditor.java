@@ -166,7 +166,7 @@ int [][][] effectARanges = new int [][][] {{},{{100,255}},{{100,255}},{{100,255}
   gbc.weightx=5;
   JPanel cmnPane=new JPanel();
   cmnPane.setLayout(new GridBagLayout());	 gbc.weightx=0;
-   addWidget(cmnPane,new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,4,1,0);
+   addWidget(cmnPane,new PatchNameWidget(" Name  ", patch),0,0,4,1,0);
 // gbc.weightx=1;
    addWidget(cmnPane,new ScrollBarLookupWidget("Pitch Bend Range",patch,0,13,new MPSModel(patch,0x7B),new MPSSender(123),new String[]{
       "None","+/-1","+/-2","+/-3","+/-4","+/-5","+/-6","+/-7","+/-8","+/-9","+/-10","+/-11","+/-12","Global"}),0,1,5,1,1);

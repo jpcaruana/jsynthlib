@@ -114,6 +114,11 @@ public interface IPatch extends Cloneable, Transferable, Serializable {
     /** Get type of Patch. */
     String getType();
 
+    /**
+     * Get the maximum number of characters in the patch name. (0 if no name)
+     */
+    int getNameSize();
+
     /** Look up manufacturer name from Sysex data. */
     String lookupManufacturer();
 

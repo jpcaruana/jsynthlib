@@ -85,7 +85,7 @@ class KawaiK4MultiEditor extends PatchEditorFrame {
 					   "Common", TitledBorder.CENTER, TitledBorder.CENTER));
 	gbc.weightx = 0;
 	addWidget(cmnPane,
-		  new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),
+		  new PatchNameWidget(" Name  ", patch),
 		  0, 0, 4, 1, 0);
 	addWidget(cmnPane,
 		  new ScrollBarWidget("Volume", patch, 0, 100, 0, new K4Model(patch, 10), null),

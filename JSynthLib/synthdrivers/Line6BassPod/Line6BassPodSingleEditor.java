@@ -199,7 +199,7 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
     private void addPatchNamePanel(JPanel parentPanel, Patch patch) {
         JPanel patchNamePanel = new JPanel();
         parentPanel.add(patchNamePanel);
-        addWidget(patchNamePanel, new PatchNameWidget("Program Name ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,1,1,1);
+        addWidget(patchNamePanel, new PatchNameWidget("Program Name ", patch),0,0,1,1,1);
     }
     
     /** Adds the amp select panel. */

@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;
-import core.Driver;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
@@ -57,7 +56,7 @@ class MKS50PatchSingleEditor extends PatchEditorFrame
     JPanel leftPane = new JPanel();
     leftPane.setLayout(new GridBagLayout());
 
-    addWidget(leftPane, new PatchNameWidget("Name", patch, ((Driver) patch.getDriver()).getPatchNameSize()), 0, 0, 2, 1, 0);
+    addWidget(leftPane, new PatchNameWidget("Name", patch), 0, 0, 2, 1, 0);
     addWidget(leftPane, new ScrollBarLookupWidget("Tone", patch, 0, 127,
       new ParamModel(patch, 7), new MKSPatchSender(0), toneList), 0, 1, 2, 1, 1);
     addWidget(leftPane, new ComboBoxWidget("Key Range Low", patch,

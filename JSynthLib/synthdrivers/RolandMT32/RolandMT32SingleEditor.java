@@ -117,7 +117,7 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
         JPanel cmnPane=new JPanel();
         cmnPane.setLayout(new GridBagLayout());	 
         gbc.weightx=0;   							         
-        addWidget(cmnPane, new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()), 0, gy, 2, 1, 0);
+        addWidget(cmnPane, new PatchNameWidget(" Name  ", patch), 0, gy, 2, 1, 0);
         gy++;
         addWidget(cmnPane, new ScrollBarWidget("Part 1&2 Struct", patch,0,12,1,lwc, 
             new MT32Model(patch,0x0A), new MT32Sender(k+0x0A)),0,gy,5,1,1);

@@ -360,6 +360,11 @@ public class XMLPatch implements ISinglePatch {
         return LookupManufacturer.get(sysex[0][1], sysex[0][2], sysex[0][3]);
     }
 
+    public int getNameSize() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
     public boolean hasNullDriver() {
         return driver == AppConfig.getNullDriver();
     }

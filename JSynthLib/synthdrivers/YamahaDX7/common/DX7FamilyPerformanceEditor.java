@@ -33,7 +33,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import core.ComboBoxWidget;
-import core.Driver;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
@@ -172,7 +171,7 @@ public class DX7FamilyPerformanceEditor extends PatchEditorFrame
 		JPanel cmnPane= new JPanel();
 		cmnPane.setLayout(new GridBagLayout());gbc.weightx=0;gbc.anchor=GridBagConstraints.EAST;
 
-		addWidget(cmnPane,new PatchNameWidget("Performance Name (30 Char.)", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,9,1,1);
+		addWidget(cmnPane,new PatchNameWidget("Performance Name (30 Char.)", patch),0,0,9,1,1);
 		
 		if (!isDX7(patch)) {
 

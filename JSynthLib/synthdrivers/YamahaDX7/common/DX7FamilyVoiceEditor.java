@@ -219,7 +219,7 @@ public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListen
 		});
 		addWidget(cmnPane,new ScrollBarWidget("Feedback",patch,0,7,0,new ParamModel(patch,6+135),new VoiceSender(135)),1,3,6,1,18);
 		addWidget(cmnPane,new ScrollBarLookupWidget("Key Transpose",patch,0,48,new ParamModel(patch,6+144),new VoiceSender(144),KeyTransposeName),1,1,6,1,19);
-		addWidget(cmnPane,new PatchNameWidget("Name (10 Char.)", patch, ((Driver) patch.getDriver()).getPatchNameSize()),1,0,6,1,0);
+		addWidget(cmnPane,new PatchNameWidget("Name (10 Char.)", patch),1,0,6,1,0);
 		gbc.gridx=0;gbc.gridy=4;gbc.gridwidth=1;gbc.gridheight=1;
 		cmnPane.add(new JLabel(" "),gbc);
 		gbc.gridx=0;gbc.gridy=5;gbc.gridwidth=1;gbc.gridheight=1;

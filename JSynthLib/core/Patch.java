@@ -233,6 +233,10 @@ public class Patch implements ISinglePatch, IBankPatch {
         return driver.getPatchType();
     }
 
+    public int getNameSize() {
+        return driver.getPatchNameSize();
+    }
+
     public final String lookupManufacturer() {
         return LookupManufacturer.get(sysex[1], sysex[2], sysex[3]);
     }
@@ -383,5 +387,4 @@ public class Patch implements ISinglePatch, IBankPatch {
                 + Utility.hexDumpOneLine(sysex, 0, -1, 20));
         return buf.toString();
     }
-
 }

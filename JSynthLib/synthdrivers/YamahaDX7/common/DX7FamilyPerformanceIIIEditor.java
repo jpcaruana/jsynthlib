@@ -29,7 +29,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import core.ComboBoxWidget;
-import core.Driver;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
@@ -158,7 +157,7 @@ public class DX7FamilyPerformanceIIIEditor extends PatchEditorFrame
 		perfPane.setLayout(new GridBagLayout());gbc.weightx=0;
 
 		gbc.gridx=0;gbc.gridy= 0;gbc.gridwidth=1;gbc.gridheight=1;perfPane.add(new JLabel(" "),gbc);
-		addWidget(perfPane,new PatchNameWidget("Name (20 Char.)", patch, ((Driver) patch.getDriver()).getPatchNameSize()), 0, 1,6, 1, 0);
+		addWidget(perfPane,new PatchNameWidget("Name (20 Char.)", patch), 0, 1,6, 1, 0);
 
 		gbc.gridx=0;gbc.gridy= 2;gbc.gridwidth=1;gbc.gridheight=1;perfPane.add(new JLabel(" "),gbc);
 		gbc.gridx=0;gbc.gridy= 3;gbc.gridwidth=3;gbc.gridheight=1;perfPane.add(new JLabel("Voice Channel offset"),gbc);

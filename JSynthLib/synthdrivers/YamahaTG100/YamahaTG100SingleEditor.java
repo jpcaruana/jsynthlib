@@ -83,7 +83,7 @@ public class YamahaTG100SingleEditor extends PatchEditorFrame {
 		// Name
 		gbc.gridx = 0;
         gbc.gridy = 0;
-		commonPanel.add(new PatchNameWidget("Name", p, ((Driver) p.getDriver()).getPatchNameSize()), gbc);
+		commonPanel.add(new PatchNameWidget("Name", p), gbc);
 		// Voice Mode
 		ComboBoxWidget voiceModeWidget = new ComboBoxWidget("Voice Mode", p, new TG100Model(patch, 7), new TG100Sender(0x00), TG100Constants.VOICE_MODE);
 		voiceModeWidget.addEventListener(new ItemListener() {

@@ -129,7 +129,7 @@ class KorgX3SingleEditor extends PatchEditorFrame
 
     JPanel globalPane = new JPanel();
     globalPane.setLayout(new GridBagLayout());
-    addWidget(globalPane, new PatchNameWidget(" Name  ", patch, ((Driver) patch.getDriver()).getPatchNameSize()),0,0,1,1,0);
+    addWidget(globalPane, new PatchNameWidget(" Name  ", patch),0,0,1,1,0);
     addWidget(globalPane, new ComboBoxWidget("Osc Mode",patch,new X3Model(patch,10),
 					     new X3Sender(10),new String []{"SINGLE","DOUBLE","DRUMS"}),1,0,1,1,1);
     addWidget(globalPane, new ComboBoxWidget("Assign",patch,new X3Model(patch,11,0),

@@ -21,6 +21,16 @@ public class PatchNameWidget extends SysexWidget {
         createWidgets();
         layoutWidgets();
     }
+
+    /**
+     * Creates a new <code>PatchNameWidget</code> instance.
+     * @param label a label text.
+     * @param patch a <code>Patch</code>, which is edited.
+     */
+    public PatchNameWidget(String label, IPatch patch) {
+        this(label, patch, patch.getNameSize());
+    }
+
     /**
      * Creates a new <code>PatchNameWidget</code> instance.
      * @param label a label text.

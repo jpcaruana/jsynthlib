@@ -18,7 +18,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import core.ComboBoxWidget;
-import core.Driver;
 import core.JSLDesktop;
 import core.JSLFrame;
 import core.KnobWidget;
@@ -57,7 +56,7 @@ class YamahaFS1RFseqEditor extends PatchEditorFrame
 		Box oPanel = Box.createVerticalBox();
 		
 		JPanel oPanel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		oPanel1.add(new PatchNameWidget("Name", p, ((Driver) p.getDriver()).getPatchNameSize()));
+		oPanel1.add(new PatchNameWidget("Name", p));
 		oPanel1.add(new ComboBoxWidget("Loop mode", p, new YamahaFS1RFseqDriver.Model((Patch)p, 0x14), new YamahaFS1RFseqDriver.Sender(0x14), new String []{"One way", "Round"}));
 		oPanel1.add(new ComboBoxWidget("Pitch mode", p, new YamahaFS1RFseqDriver.Model((Patch)p, 0x17), new YamahaFS1RFseqDriver.Sender(0x17), new String []{"Pitch", "Non-pitch"}));
 		YamahaFS1RFseqDriver.Model oFrameModel = new YamahaFS1RFseqDriver.Model((Patch)p, 0x1B);
