@@ -35,13 +35,13 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 		add (l0,gbc);
 		cb4 = new JComboBox ();
 		resetComboBoxes();
-     
+
 		gbc.gridx=3;gbc.gridy=1;gbc.gridwidth=3;gbc.gridheight=1;
 		add (cb4,gbc);
 		enabledBox=new JCheckBox ("Enable Faders");
 		gbc.gridx=6;gbc.gridy=1;gbc.gridwidth=1;gbc.gridheight=1;
 		add (enabledBox,gbc);
-     
+
 		String n[]=new String[37];
 	 	n[0]="Active Slider";
 		for (int i=0;i<16;i++) n[i+1]=("Slider #"+(i+1));
@@ -98,12 +98,12 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 				PresetKawaiK5000 ();
 			}
 		});
-     
+
 		buttonPanel.add (b1); buttonPanel.add (b2);
 		gbc.gridx=0;gbc.gridy=8;gbc.gridwidth=7;gbc.gridheight=1;  gbc.fill=GridBagConstraints.BOTH;
 		add (buttonPanel,gbc);
 	}
-	
+
 	/**
 	* This is called every time the config dialog box is opened.
 	* It tells the implementing class to set all GUI elements to
@@ -125,7 +125,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 		enabledBox.setSelected (appConfig.getFaderEnable());
 		faderPortWas=appConfig.getFaderPort();
 	}
-	
+
 	/**
 	* This is the opposite of init(). The implementing class should
 	* copy all GUI settings to internal data elements (and also
@@ -133,10 +133,11 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	*/
 	public void commitSettings() {
 		appConfig.setFaderPort(cb4.getSelectedIndex());
-        
+
 		if (appConfig.getFaderPort()!=faderPortWas)
 		{
 			//FIXME: This is not portable to other MIDI libraries--working around strange JavaMIDI bugs
+			/*
 			try {
 				((JavaMidiWrapper)(core.PatchEdit.MidiIn)).faderMidiPort.setDeviceNumber (MidiPort.MIDIPORT_INPUT,appConfig.getFaderPort());
 				 core.PatchEdit.MidiIn.setInputDeviceNum (appConfig.getFaderPort());
@@ -145,6 +146,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 				 JOptionPane.showMessageDialog (null, "You must exit and restart the program for this change to take effect","Changing Fader Port", JOptionPane.INFORMATION_MESSAGE);
 			} catch (Exception e) {
 			}
+			*/
 			faderPortWas=appConfig.getFaderPort();
 		}
 		appConfig.setFaderController(currentFader, cbController.getSelectedIndex());
@@ -161,7 +163,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 	 * midi driver we're using. This is called by the constructor and also by the
 	 * midiDriverChanged(MidiWrapper) callback method - emenaker 2003.03.18
 	 *
-	 */	
+	 */
 	private void resetComboBoxes() {
 		cb4.removeAllItems();
 		try {
@@ -169,7 +171,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 				cb4.addItem (j+": "+core.PatchEdit.MidiIn.getInputDeviceName (j));
 		} catch (Exception e) {}
 	}
-	
+
 	/**
 	* This should return the name that should go on the tab (if using a tabbed config dialog).
 	* Otherwise, it could be used for a frame title, etc. However, this can be overridden by
@@ -216,7 +218,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 		cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
 		cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
 	}
-    
+
 	private void PresetKawaiK5000 ()
 	{
 		appConfig.setFaderController(0,1); appConfig.setFaderChannel(0,0);
@@ -232,7 +234,7 @@ public class FaderBoxConfigPanel extends ConfigPanel implements MidiDriverChange
 		appConfig.setFaderController(11,76);appConfig.setFaderController(12,72);
 		appConfig.setFaderController(13,80);appConfig.setFaderController(14,81);
 		appConfig.setFaderController(15,82);appConfig.setFaderController(16,83);
-        
+
 		cbController.setSelectedIndex (appConfig.getFaderController(lb1.getSelectedIndex()));
 		cbChannel.setSelectedIndex (appConfig.getFaderChannel(lb1.getSelectedIndex()));
 	}
