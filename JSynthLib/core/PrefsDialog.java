@@ -29,7 +29,7 @@ public class PrefsDialog extends JDialog {
 
     /**
      * Constructor
-     * @param Parent the parent JFrame
+     * @param parent the parent JFrame
      */
     public PrefsDialog (JFrame parent /*, AppConfig appConfig*/) {
         super(parent, "User Preferences", true);
@@ -40,7 +40,7 @@ public class PrefsDialog extends JDialog {
 
     /**
      * Allows for different buttons to be enabled on the dialog box
-     * @param Parent Parent frame
+     * @param parent Parent frame
      * @param buttonsAllowed Either OK, OK_CANCEL, or OK_CANCEL_APPLY
      */
     public PrefsDialog (JFrame parent, int buttonsAllowed) {
