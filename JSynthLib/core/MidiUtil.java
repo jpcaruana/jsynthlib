@@ -61,14 +61,21 @@ public final class MidiUtil {
     private static Receiver[] midiOutRcvr;
     private static MidiUtil.SysexInputQueue[] sysexInputQueue;
 
+    private static boolean midi_unavailable;
+
     // static initialization
     static {
+	midi_unavailable = false;
 	try {
 	    outputMidiDeviceInfo = createOutputMidiDeviceInfo();
 	    inputMidiDeviceInfo = createInputMidiDeviceInfo();
 	} catch (MidiUnavailableException e) {
 	    ErrorMsg.reportStatus(e);
+	    midi_unavailable = true;
 	}
+	if (!midi_unavailable && outputMidiDeviceInfo.length == 0
+	    && inputMidiDeviceInfo.length == 0)
+	    midi_unavailable = true;
 	midiOutRcvr = new Receiver[outputMidiDeviceInfo.length];
 	sysexInputQueue = new MidiUtil.SysexInputQueue[inputMidiDeviceInfo.length];
     }
@@ -215,7 +222,8 @@ public final class MidiUtil {
     private static MidiDevice getOutputMidiDevice(int port)
 	throws MidiUnavailableException {
 	MidiDevice dev = null;
-
+	if (outputMidiDeviceInfo.length == 0)
+	    return null;
 	dev = MidiSystem.getMidiDevice(outputMidiDeviceInfo[port]);
 	if (!dev.isOpen()) {
 	    ErrorMsg.reportStatus("open outport: "
@@ -241,6 +249,9 @@ public final class MidiUtil {
 	    return midiOutRcvr[port];
 
 	MidiDevice dev = getOutputMidiDevice(port);
+	
+	if (dev == null)
+	    return null;
 
 	Receiver r = dev.getReceiver();
 	midiOutRcvr[port] = r;
@@ -260,6 +271,8 @@ public final class MidiUtil {
      */
     private static MidiDevice getInputMidiDevice(int port) {
 	MidiDevice dev = null;
+	if (inputMidiDeviceInfo.length == 0)
+	    return null;
 	try {
 	    dev = MidiSystem.getMidiDevice(inputMidiDeviceInfo[port]);
 	    if (!dev.isOpen()) {
@@ -286,6 +299,8 @@ public final class MidiUtil {
     static Transmitter getTransmitter(int port) {
 	// Transmitter cannot be shared.
 	MidiDevice dev = getInputMidiDevice(port);
+	if (dev == null)
+	    return null;
 	try {
 	    return dev.getTransmitter();
 	} catch (MidiUnavailableException e) {
@@ -874,5 +889,7 @@ public final class MidiUtil {
 	((ShortMessage) msg).setMessage(ShortMessage.SONG_POSITION_POINTER, 0x4B, 0x70); // 2B
 	System.out.println(midiMessageToString(msg));
     }
+
+    public static boolean unavailable() { return midi_unavailable; }
 
 } // MidiUtil

@@ -229,7 +229,12 @@ public class MidiConfigPanel extends ConfigPanel {
     public void init() {
 	if (!PatchEdit.newMidiAPI)
 	    setComboBox(cbDriver, PatchEdit.appConfig.getMidiPlatform());
-	cbxEnMidi.setSelected(appConfig.getMidiEnable());
+	if (MidiUtil.unavailable()) {
+	    cbxEnMidi.setSelected(false);
+	    cbxEnMidi.setEnabled(false);
+	} else {
+	    cbxEnMidi.setSelected(appConfig.getMidiEnable());
+	}
 	setContainerEnabled(channelPanel, cbxEnMidi.isSelected());
 	cbxEnMC.setSelected(appConfig.getMasterInEnable());
 	cbMC.setEnabled(cbxEnMC.isSelected());
