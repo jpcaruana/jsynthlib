@@ -94,7 +94,7 @@ public class VirusMultiBankDriver extends BankDriver {
     putPatch(p, pgm, patchNum);
   }
 
-  protected void sendPatchWorker (Patch p) {
+  protected void sendPatch (Patch p) {
     sendPatchWorker(p, 0);
   }
 

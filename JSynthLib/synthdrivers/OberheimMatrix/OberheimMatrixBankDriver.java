@@ -137,7 +137,7 @@ public void putPatch(Patch bank,Patch p,int patchNum)
     return p;
     }catch (Exception e) {ErrorMsg.reportError("Error","Error in Matrix 1000 Bank Driver",e);return null;}
    }
-  protected void sendPatchWorker (Patch p)
+  protected void sendPatch (Patch p)
    {
      byte []tmp=new byte[275];
     if (deviceIDoffset>0) p.sysex[deviceIDoffset]=(byte)(channel-1);

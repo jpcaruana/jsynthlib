@@ -92,7 +92,7 @@ public class DX7FamilyMicroTuningSingleDriver extends Driver
 		p.sysex[14]=(byte)(0x45);
 		p.sysex[15]=(byte)(0x20);
 	
-		sendPatchWorker (p);
+		super.sendPatch (p);
 	}
 
 
@@ -107,7 +107,7 @@ public class DX7FamilyMicroTuningSingleDriver extends Driver
 			p.sysex[15]=(byte)(0x00+patchNum-1);
 		}
 	
-		sendPatchWorker (p);
+		super.sendPatch (p);
 	}
 
 

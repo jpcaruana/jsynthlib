@@ -144,17 +144,19 @@ public class KorgX3SingleDriver extends Driver
    * 
    * @param p Patch to be sent
    */
+  /*
   public void sendPatch (Patch p)
   { 
     sendPatchWorker(p);
   }
-
+  */
   /**
    * Overrided sendPatchWorker. Actually sends the patch to the synthesizer.
    *
    * @param p Patch to be sent
    */
-  protected void sendPatchWorker (Patch p)
+  //protected void sendPatchWorker (Patch p)
+  protected void sendPatch (Patch p)
   {
     // ##TODO## first go to program edit mode so that the edit buffer will be active.
     // then write PROGRAM PARAMETER DUMP, F0423g3540[data]F7

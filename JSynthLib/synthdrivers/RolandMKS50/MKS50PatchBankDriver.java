@@ -196,7 +196,7 @@ public class MKS50PatchBankDriver extends BankDriver
     return PatchNum/4*266 + PatchNum%4*64 + 9;
   }
 
-  protected void sendPatchWorker (Patch p)
+  protected void sendPatch (Patch p)
   {
     byte []tmp = new byte[266];  // send in 16 messages containing 4 tones each
     try

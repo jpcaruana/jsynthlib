@@ -102,7 +102,8 @@ public class VirusProgBankDriver extends BankDriver {
     putPatch(p, pgm, patchNum);
   }
 
-  protected void sendPatchWorker (Patch p) {
+  //protected void sendPatchWorker (Patch p) {
+  protected void sendPatch (Patch p) {
     sendPatchWorker(p, 0);
   }
 

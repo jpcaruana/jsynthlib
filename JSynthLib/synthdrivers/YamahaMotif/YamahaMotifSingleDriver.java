@@ -68,7 +68,7 @@ public abstract class YamahaMotifSingleDriver extends Driver
   }
 
   /** Send to edit buffer */
-  protected void sendPatchWorker (Patch p) {
+  protected void sendPatch (Patch p) {
     sendPatchWorker(p, -1);
   }
   /**Does the actual work to send a patch to the synth*/

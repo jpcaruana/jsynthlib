@@ -85,7 +85,7 @@ public class NLPatchSingleDriver extends Driver {
     Patch p2 = new Patch(p.sysex);
     p2.sysex[BANK_NUM_OFFSET] = (byte)bankNum;
     p2.sysex[PATCH_NUM_OFFSET] = (byte)patchNum;
-    sendPatchWorker(p2);
+    mySendPatch(p2);
   }
 
   // Sends a patch to a set location in the user bank
@@ -111,7 +111,7 @@ public class NLPatchSingleDriver extends Driver {
     return p;
   }
 
-  protected void sendPatchWorker(Patch p) {
+  protected void mySendPatch(Patch p) {
     p.sysex[deviceIDoffset] = (byte)(((NordLeadDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getGlobalChannel() - 1);
     try {
       PatchEdit.MidiOut.writeLongMessage(port, p.sysex);

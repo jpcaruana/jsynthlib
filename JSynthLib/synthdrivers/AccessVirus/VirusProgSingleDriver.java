@@ -134,7 +134,7 @@ public class VirusProgSingleDriver extends Driver {
     p.ChooseDriver();
     return p;
   }
-
+  /*
   protected void sendPatchWorker(Patch p) {
     p.sysex[deviceIDoffset] = (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId() - 1);
     try {
@@ -143,7 +143,7 @@ public class VirusProgSingleDriver extends Driver {
       ErrorMsg.reportStatus (e);
     }
   }
-
+  */
   public void requestPatchDump(int bankNum, int patchNum) {
     sysexRequestDump.send(port, (byte)(((AccessVirusDevice)(PatchEdit.appConfig.getDevice(getDeviceNum()))).getDeviceId()),
         new NameValue("bankNum", bankNum + 1), new NameValue("patchNum", patchNum)

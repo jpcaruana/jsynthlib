@@ -78,7 +78,7 @@ public class NLPerfBankDriver extends BankDriver {
 
   public void setPatchName(Patch p,int patchNum, String name) {}
 
-  protected void sendPatchWorker (Patch p) {
+  protected void sendPatch (Patch p) {
     sendPatchWorker(p, 0);
   }
 
