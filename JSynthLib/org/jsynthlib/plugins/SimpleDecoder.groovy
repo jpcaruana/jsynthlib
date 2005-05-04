@@ -32,7 +32,7 @@ class SimpleDecoder extends Decoder {
     public XMLParameter newParameter(String type) { 
         Parameter p = new Parameter(this, size)
         p.setSize(default_size) // Set default size
-        t = 0
+        int t = 0
         switch (type) {
         case "constant":
             t = XMLParameter.CONSTANT
@@ -54,7 +54,7 @@ class SimpleDecoder extends Decoder {
     }
 
     public void finishParameter(XMLParameter p) {
-        if (p === null)
+        if (p == null)
             throw new Exception("Uh oh")
         if (p.type == XMLParameter.STRING)
             size += p.length*p.size
@@ -80,7 +80,7 @@ class SimpleDecoder extends Decoder {
             shift = 0
             s_offset = word_size
         }
-        value = 0
+        int value = 0
         for (i in offset .. offset + size - 1) {
             // grr! looks like groovy doesn't support | or &
             // or shifting a byte
@@ -95,8 +95,8 @@ class SimpleDecoder extends Decoder {
         if (p.size == 1) {
             return new String(msg, p.getOffset(), p.getLength(), p.getCharset())
         } else {
-        		o = p.getOffset()
-        		s = p.getSize()
+            int o = p.getOffset()
+            int s = p.getSize()
             StringBuffer b = new StringBuffer()
             for (i in 0 .. p.length - 1) {
                 b.append((char)_decode(o + s*i, s, msg))
@@ -105,15 +105,15 @@ class SimpleDecoder extends Decoder {
     }
 
     public void encode(int value, XMLParameter param, byte[] msg) {
-        b = _encode(value - param.getBase(), param.getSize())
+        byte[] b = _encode(value - param.getBase(), param.getSize())
         for (i in 0 .. param.getSize() - 1)
             msg[i + param.getOffset()] = b[i]
     }
     
-    private Byte[] _encode(int value, int size) {
-        shift = offset = 0
-        Byte[] b = new Byte[size]
-        mask = 1 << (word_size + 1)
+    private byte[] _encode(int value, int size) {
+        int shift = 0, offset = 0
+        byte[] b = new byte[size]
+        int mask = 1 << (word_size + 1)
         if (big_endian) {
             shift = word_size*(size - 1)
             offset = -word_size
@@ -129,8 +129,8 @@ class SimpleDecoder extends Decoder {
     }
     
     public String encode(int value, XMLParameter param) {
-        retval = new StringBuffer()
-        b = _encode(value + param.getBase(), param.getSize())
+        StringBuffer retval = new StringBuffer()
+        byte[] b = _encode(value + param.getBase(), param.getSize())
         for (i in 0 .. param.getSize() - 1) {
             if (b[i] < 0x10)
                 retval.append("0")
@@ -140,17 +140,17 @@ class SimpleDecoder extends Decoder {
     }
 
     public void encodeString(String value, XMLParameter p, byte[] msg) {
-        i = 0
-        size = p.getSize()
-        offset = p.getOffset()
+        int i = 0
+        int size = p.getSize()
+        int offset = p.getOffset()
         while (i < p.length && i < value.length() ) {
-            b = _encode((int)value.charAt(i), size)
+            byte[] b = _encode((int)value.charAt(i), size)
             for (j in 0 .. size - 1)
                 msg[offset + i*size + j] = b[j]
             i += 1
         }
         while (i < p.getLength()) {
-            b = _encode(32, size) // " "
+            byte[] b = _encode(32, size) // " "
             for (j in 0 .. size - 1)
                 msg[offset + i*size + j] = b[j]
             i += 1        
@@ -162,30 +162,33 @@ class SimpleDecoder extends Decoder {
     }
 
 	public void main(args) {
-	   c = SimpleDecoder.class.getConstructor(new Class[] { Integer.class,
-	                                                        Boolean.class
-	                                                      });
-	   PluginRegistry.registerDecoder("BE 7bit words",c, new Object[] {7,true});
-	   PluginRegistry.registerDecoder("LE 7bit words",c, new Object[] {7,false});
-	   PluginRegistry.registerDecoder("BE Nibbles",c, new Object[] {4,true});
-	   PluginRegistry.registerDecoder("LE Nibbles",c, new Object[] {4,false});
+	   Class[] args = [ Integer.class, Boolean.class ]
+	   def c = SimpleDecoder.class.getConstructor(args);
+	   Object[] pargs = [7, true]
+	   PluginRegistry.registerDecoder("BE 7bit words",c, pargs);
+	   pargs[1] = false
+	   PluginRegistry.registerDecoder("LE 7bit words",c, pargs);
+	   pargs[0] = 4
+	   PluginRegistry.registerDecoder("LE Nibbles",c, pargs);
+	   pargs[1] = true
+	   PluginRegistry.registerDecoder("BE Nibbles",c, pargs);
 	}
 	
 }
 class Parameter extends XMLParameter {
-	public int offset;
-	public int size;
-	protected String charset
-	protected boolean signed = false
-	protected int base = 0
+    @Property public int offset;
+    @Property public int size;
+    @Property protected String charset
+    @Property protected boolean signed = false
+    @Property protected int base = 0
 	   
-	Parameter(decoder, offset) {
+    Parameter(decoder, offset) {
         super(decoder)
-	    this.offset = offset
-	}
+	this.offset = offset
+    }
 	   
     public void setSize(int size) {
-	   this.size = size
+       this.size = size
     }
     public void setSize(String s) {
         this.size = Integer.decode(s)
