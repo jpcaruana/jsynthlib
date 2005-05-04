@@ -1,6 +1,8 @@
 package org.jsynthlib.utils;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.util.LinkedList;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -14,8 +16,15 @@ import org.xml.sax.helpers.AttributesImpl;
 public class XMLWriter {
 	private AttributesImpl attributes = new AttributesImpl();
 	private TransformerHandler xml;
+	private LinkedList elements = new LinkedList();
+    
+	public XMLWriter(OutputStream s) throws TransformerConfigurationException { 
+	    this (new StreamResult(s));
+        }
 	public XMLWriter(File f) throws TransformerConfigurationException {
-		StreamResult output = new StreamResult(f);
+	    this(new StreamResult(f));
+	}
+	public XMLWriter(StreamResult output) throws TransformerConfigurationException {
 		SAXTransformerFactory tf = (SAXTransformerFactory)  SAXTransformerFactory.newInstance();
 		xml = tf.newTransformerHandler();
 		xml.setResult(output);
@@ -34,6 +43,7 @@ public class XMLWriter {
 	public void startElement(String element) throws SAXException {
 		xml.startElement("","",element, attributes);
 		attributes.clear();
+		elements.addFirst(element);
 	}
 
 	public void writeProperty(String key, String value) throws SAXException {
@@ -43,7 +53,10 @@ public class XMLWriter {
 	}
 	
 	public void endElement(String key) throws SAXException {
-		xml.endElement("","",key);
+	    String expected = (String) elements.removeFirst();
+	    if (!expected.equals(key))
+	        throw new SAXException("Closing tag " + key + " doesn't match opening tag " + expected);
+	    xml.endElement("","",key); 
 	}
 
 	public void write(String text) throws SAXException {
