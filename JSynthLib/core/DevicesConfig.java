@@ -29,7 +29,7 @@ import org.jsynthlib.jsynthlib.xml.XMLDeviceFactory;
 
 class DevicesConfig {
     /* enable XML Device which are still under development. */
-    private static final boolean 	useXMLDevice = false;
+    private static final boolean 	useXMLDevice = true;
 
     /** Character used in the Preferences as file separator for xml files */
     private static final char XML_FILE_SEPARATOR = ':';
@@ -123,8 +123,8 @@ class DevicesConfig {
                     shortName, // ShortName
                     deviceClass, // DeviceClass
                     xmldevices[i][1], // IDString
-                    "Unknown", // Manufacturer
-                    "Unknown"  // Type
+                    xmldevices[i][3], // Manufacturer
+                    xmldevices[i][3].substring(0,1)  // Type
                 );
             }
         }

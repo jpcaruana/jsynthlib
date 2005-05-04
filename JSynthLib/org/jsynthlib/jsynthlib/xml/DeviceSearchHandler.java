@@ -77,6 +77,7 @@ class DeviceSearchHandler extends DefaultHandler {
 				tags.addFirst("x"+el);
 			}
 		}
-		public String getName() { return manuf.toString() + " " + name.toString(); }
+		public String getManufacturer() { return manuf.toString(); }
+		public String getName() { return name.toString(); }
 		public String getId() { return id.toString(); }
 	}
