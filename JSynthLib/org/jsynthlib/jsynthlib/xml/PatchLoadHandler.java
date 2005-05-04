@@ -2,6 +2,7 @@ package org.jsynthlib.jsynthlib.xml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
@@ -58,7 +59,7 @@ public class PatchLoadHandler extends AdvDefaultHandler {
     }
     public class SysexBuilder {
         private String name;
-        private ArrayList params = new ArrayList();
+        private LinkedHashMap params = new LinkedHashMap();
         private Pattern header;
         private int size = -1;
         private Decoder decoder;
@@ -87,7 +88,7 @@ public class PatchLoadHandler extends AdvDefaultHandler {
         public void addParameter(XMLParameter p) throws SAXParseException {
             decoder.finishParameter(p);
             p.setSysexIndex(id);
-            params.add(p);
+            params.put(p.getName(), p);
         }
         public void addString(XMLParameter p) throws SAXParseException {
             addParameter(p);
@@ -102,7 +103,7 @@ public class PatchLoadHandler extends AdvDefaultHandler {
             addParameter(p);
         }
         public SysexDesc getSysex() throws SAXException {
-            XMLParameter[] pa = (XMLParameter[])params.toArray(new XMLParameter[0]);
+            XMLParameter[] pa = (XMLParameter[])params.values().toArray(new XMLParameter[0]);
             if (size != -1) {
                 if (decoder != null) {
                     if (decoder.getSize() + 2 > size)
