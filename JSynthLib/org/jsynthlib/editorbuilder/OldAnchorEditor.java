@@ -144,7 +144,7 @@ java.io.Serializable, WidgetListListener {
     protected void notifyListeners() {
         Iterator it = listeners.iterator();
         while (it.hasNext())
-            ((ChangeListener)it.next()).stateChanged(new ChangeEvent(this));
+            ((ChangeListener)it.next()).stateChanged(new ChangeEvent(anchor));
     }
     public void addChangeListener(ChangeListener l) {
         listeners.add(l);

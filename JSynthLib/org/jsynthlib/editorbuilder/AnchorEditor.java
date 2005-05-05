@@ -30,7 +30,7 @@ public class AnchorEditor extends PropertyEditorSupport implements ChangeListene
      */
     public void stateChanged(ChangeEvent e) {
         try {
-            super.setValue(editorValue.clone());
+            super.setValue(((Anchor)e.getSource()).clone());
         } catch (CloneNotSupportedException e1) {
             e1.printStackTrace();
         }
