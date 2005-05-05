@@ -13,6 +13,7 @@ class SimpleDecoder extends Decoder {
 
     private int word_size
     private boolean big_endian
+    private int cur_offset = 0
     private int size = 0
     private int default_size
     
@@ -30,7 +31,7 @@ class SimpleDecoder extends Decoder {
     }
     
     public XMLParameter newParameter(String type) { 
-        Parameter p = new Parameter(this, size)
+        SimpleDecoderParameter p = new SimpleDecoderParameter(this, cur_offset)
         p.setSize(default_size) // Set default size
         int t = 0
         switch (type) {
@@ -57,9 +58,11 @@ class SimpleDecoder extends Decoder {
         if (p == null)
             throw new Exception("Uh oh")
         if (p.type == XMLParameter.STRING)
-            size += p.length*p.size
+            cur_offset = p.offset + p.length*p.size
         else
-            size += p.size
+            cur_offset = p.offset + p.size
+        if (cur_offset > size)
+            size = cur_offset
     }
 
     public void setSize(String s) {
@@ -175,16 +178,17 @@ class SimpleDecoder extends Decoder {
 	}
 	
 }
-class Parameter extends XMLParameter {
+// Groovy doesn't seem to support inner classes
+class SimpleDecoderParameter extends XMLParameter {
     @Property public int offset;
     @Property public int size;
     @Property protected String charset
     @Property protected boolean signed = false
     @Property protected int base = 0
 	   
-    Parameter(decoder, offset) {
+    SimpleDecoderParameter(decoder, offset) {
         super(decoder)
-	this.offset = offset
+        this.offset = offset
     }
 	   
     public void setSize(int size) {
@@ -195,6 +199,9 @@ class Parameter extends XMLParameter {
     }
     public void setCharset(String s) {
         charset = s
+    }
+    public void setAddress(String s) {
+    	offset = Integer.decode(s)
     }
     // This is the amount added to the value for display
     public void setOffset(String s) {
