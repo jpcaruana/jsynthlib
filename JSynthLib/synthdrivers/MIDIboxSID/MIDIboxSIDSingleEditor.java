@@ -172,7 +172,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	"108 | Assigned LFOs for Filter",
 	"109 | Assigned Envelopes for Filter",
 	"110 | Assigned Envelope Curves",
-	"111 | -",                
+	"111 | Sound Engine Options",
 	"112 | Voice 1/2/3 Note Delay",
 	"113 | Voice 1 Single Note Delay",
 	"114 | Voice 2 Single Note Delay",
@@ -202,7 +202,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	"C-5","C#5","D-5","D#5","E-5","F-5","F#5","G-5","G#5","A-5","A#5","B-5",
 	"C-6","C#6","D-6","D#6","E-6","F-6","F#6","G-6","G#6","A-6","A#6","B-6",
 	"C-7","C#7","D-7","D#7","E-7","F-7","F#7","G-7","G#7","A-7","A#7","B-7",
-	"C-8"};
+	"C-8","C#8","D-8","D#8","E-8","F-8","F#8","G-8"};
 
     MIDIboxSIDWavetableModel dataModel = new MIDIboxSIDWavetableModel();
     JTable table = new JTable(dataModel);
@@ -219,13 +219,26 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 ///////////////////////////////////////////////////////////////////////////////
 	JPanel cmnPane=new JPanel();
 	cmnPane.setLayout(new GridBagLayout());
-	addWidget(cmnPane,new PatchNameWidget(" Name  ",patch),0,0,2,1,0);
+	addWidget(cmnPane,new PatchNameWidget(" Name  ",patch),0,0,5,1,0);
 
 	// horizontal location, the vertical location, the horizontal size, and the vertical size). The last number is the fader number
 
-        addWidget(cmnPane,new ComboBoxWidget("Play Mode",patch,new SIDModel(patch,0x11,0,0x7f,new int[]{0x0,0x01,0x3,0x7f}),new SIDSender(patch,0x11,0,0x7f,new int[]{0x0,0x1,0x3,0x7f}),new String []{"MONO", "LEGATO","WT Seq only","POLY"}),0,1,2,1,1);
-	addWidget(cmnPane,new ComboBoxWidget("Portam. Mode",patch,new SIDModel(patch,0x12),new SIDSender(patch,0x12),new String []{"Full Time", "Fingered (SusKey)"}),0,2,2,1,2);
-	addWidget(cmnPane,new KnobWidget("Volume",patch,0,127,0,new SIDModel(patch,0x10),new SIDSender(patch,0x10)),2,1,1,3,3);
+        addWidget(cmnPane,new ComboBoxWidget("Play Mode",patch,new SIDModel(patch,0x11,0,0x7f,new int[]{0x0,0x01,0x3,0x7f}),new SIDSender(patch,0x11,0,0x7f,new int[]{0x0,0x1,0x3,0x7f}),new String []{"MONO", "LEGATO","WT Seq only","POLY"}),0,1,3,1,1);
+	addWidget(cmnPane,new ComboBoxWidget("Portam. Mode",patch,new SIDModel(patch,0x12),new SIDSender(patch,0x12),new String []{"Full Time", "Fingered (SusKey)"}),0,2,3,1,2);
+	addWidget(cmnPane,new KnobWidget("Volume",patch,0,127,0,new SIDModel(patch,0x10),new SIDSender(patch,0x10)),3,1,2,3,3);
+
+	gbc.gridx=0;gbc.gridy=3;gbc.gridwidth=2;gbc.gridheight=1; cmnPane.add(new JLabel("SE Options:"),gbc);
+	JPanel cmnOptPane=new JPanel();
+	cmnOptPane.setLayout(new GridBagLayout());
+	addWidget(cmnOptPane,new CheckBoxWidget("6",patch,new SIDModel(patch,0x16,6),new SIDSender(patch,0x16,6)),0,0,1,1,-200);
+	addWidget(cmnOptPane,new CheckBoxWidget("5",patch,new SIDModel(patch,0x16,5),new SIDSender(patch,0x16,5)),1,0,1,1,-200);
+	addWidget(cmnOptPane,new CheckBoxWidget("4",patch,new SIDModel(patch,0x16,4),new SIDSender(patch,0x16,4)),2,0,1,1,-200);
+	addWidget(cmnOptPane,new CheckBoxWidget("3",patch,new SIDModel(patch,0x16,3),new SIDSender(patch,0x16,3)),3,0,1,1,-200);
+	addWidget(cmnOptPane,new CheckBoxWidget("2",patch,new SIDModel(patch,0x16,2),new SIDSender(patch,0x16,2)),4,0,1,1,-200);
+	addWidget(cmnOptPane,new CheckBoxWidget("1",patch,new SIDModel(patch,0x16,1),new SIDSender(patch,0x16,1)),5,0,1,1,-200);
+	addWidget(cmnOptPane,new CheckBoxWidget("0",patch,new SIDModel(patch,0x16,0),new SIDSender(patch,0x16,0)),6,0,1,1,-200);
+	gbc.gridx=2;gbc.gridy=3;gbc.gridwidth=3;gbc.gridheight=1;
+	cmnPane.add(cmnOptPane,gbc);
 
 	gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=5;gbc.gridheight=2;
 	cmnPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Common",TitledBorder.CENTER,TitledBorder.CENTER));  
@@ -271,7 +284,7 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	    addWidget(panel,new KnobWidget("Rate",patch,0,127,0,new SIDModel(patch,0x61+i*3),new SIDSender(patch,0x61+i*3)),0,0,1,3,40);
 	    addWidget(panel,new KnobWidget("Depth",patch,0,127,-64,new SIDModel(patch,0x62+i*3),new SIDSender(patch,0x62+i*3)),1,0,1,3,41);
 	    addWidget(panel,new ComboBoxWidget("Mode",patch,new SIDModel(patch,0x60+i*3,0,0x7,new int[]{0x0,0x01,0x3,0x7}),new SIDSender(patch,0x60+i*3,0,0x7,new int[]{0x0,0x01,0x3,0x7}),new String []{"off", "unsynced","Sync w/ assigned notes","Sync w/ all notes"}),2,0,5,1,42);
-	    addWidget(panel,new ComboBoxWidget("Waveform",patch,new SIDModel(patch,0x60+i*3,4,0x7),new SIDSender(patch,0x60+i*3,4,0x7),new String []{"SINE", "TRIANGLE","SAW","PULSE","RANDOM"}),3,1,5,1,43);
+	    addWidget(panel,new ComboBoxWidget("Waveform",patch,new SIDModel(patch,0x60+i*3,4,0x7),new SIDSender(patch,0x60+i*3,4,0x7),new String []{"SINE", "TRIANGLE","SAW","PULSE","RANDOM","AIN"}),3,1,5,1,43);
 	}
 	gbc.gridx=0;gbc.gridy=GridBagConstraints.RELATIVE;gbc.gridwidth=5;gbc.gridheight=1;
 	scrollPane.add(LFOPane,gbc);
@@ -356,12 +369,31 @@ class MIDIboxSIDSingleEditor extends PatchEditorFrame
 	JPanel WAVTPane=new JPanel();
 	WAVTPane.setLayout(new GridBagLayout());
 
-	addWidget(WAVTPane,new ComboBoxWidget("Parameter #1",patch,new SIDModel(patch,0x5a),new SIDSender(patch,0x5a),ccName),0,0,3,1,13);
-	addWidget(WAVTPane,new ComboBoxWidget("Parameter #2",patch,new SIDModel(patch,0x5b),new SIDSender(patch,0x5b),ccName),0,1,3,1,14);
-	addWidget(WAVTPane,new ComboBoxWidget("Parameter #3",patch,new SIDModel(patch,0x5c),new SIDSender(patch,0x5c),ccName),0,2,3,1,15);
-	addWidget(WAVTPane,new ScrollBarWidget("Rate",patch,0,127,0,new SIDModel(patch,0x59),new SIDSender(patch,0x59)),0,3,5,1,16);
+	ComboBoxWidget  WT1CCBox  = new ComboBoxWidget("Parameter #1",patch,new SIDModel(patch,0x5a),new SIDSender(patch,0x5a),ccName);
+	dataModel.setColumnCC(0, (byte)((Patch)p).sysex[8+0x5a]);
+	ComboBoxWidget  WT2CCBox  = new ComboBoxWidget("Parameter #2",patch,new SIDModel(patch,0x5b),new SIDSender(patch,0x5b),ccName);
+	dataModel.setColumnCC(1, (byte)((Patch)p).sysex[8+0x5b]);
+	ComboBoxWidget  WT3CCBox  = new ComboBoxWidget("Parameter #3",patch,new SIDModel(patch,0x5c),new SIDSender(patch,0x5c),ccName);
+	dataModel.setColumnCC(2, (byte)((Patch)p).sysex[8+0x5c]);
+	
+	table.repaint();
 
-       
+        WT1CCBox.addEventListener(new ActionListener() { public void actionPerformed(ActionEvent e) {
+	    dataModel.setColumnCC(0, (byte)((Patch)p).sysex[8+0x5a]); table.repaint(); } });
+        WT2CCBox.addEventListener(new ActionListener() { public void actionPerformed(ActionEvent e) {
+	    dataModel.setColumnCC(1, (byte)((Patch)p).sysex[8+0x5b]); table.repaint(); } });
+        WT3CCBox.addEventListener(new ActionListener() { public void actionPerformed(ActionEvent e) {
+	    dataModel.setColumnCC(2, (byte)((Patch)p).sysex[8+0x5c]); table.repaint(); } });
+
+
+	ScrollBarWidget WTRateBar = new ScrollBarWidget("Rate",patch,0,127,0,new SIDModel(patch,0x59),new SIDSender(patch,0x59));
+
+	addWidget(WAVTPane,WT1CCBox,0,0,3,1,13);
+	addWidget(WAVTPane,WT2CCBox,0,1,3,1,14);
+	addWidget(WAVTPane,WT3CCBox,0,2,3,1,15);
+	addWidget(WAVTPane,WTRateBar,0,3,5,1,16);
+
+
         table.setPreferredScrollableViewportSize(new Dimension(100, 100));
         JScrollPane scrollpane = new JScrollPane(table);
 	gbc.gridx=0;gbc.gridy=5;gbc.gridwidth=5;gbc.gridheight=20;
