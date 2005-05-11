@@ -390,8 +390,10 @@ public final class MidiUtil {
 	    if ((d[i] & 0xFF) == SysexMessage.SYSTEM_EXCLUSIVE) {
 		int j;
 		// let cause exception if there is no END_OF_EXCLUSIVE
-		for (j = i + 1; (d[j] & 0xff) != ShortMessage.END_OF_EXCLUSIVE; j++)
+		for (j = i + 1; j < d.length && (d[j] & 0xff) != ShortMessage.END_OF_EXCLUSIVE; j++)
 		    ;
+		if (j == d.length)
+		    throw new InvalidMidiDataException("Missing EOX");
 		// here d[j] is EOX.
 		int l = j - i + 1;
 		byte[] b = new byte[l];
