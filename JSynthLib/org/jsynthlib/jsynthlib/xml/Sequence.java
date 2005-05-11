@@ -31,7 +31,7 @@ public class Sequence {
     }
     public String[] getSequence() throws CompilationFailedException, IOException {
     		GroovyShell s = PluginRegistry.groovyShell();
-		Closure c = (Closure)s.evaluate("return { " + variable + " | " + value + " }");
+		Closure c = (Closure)s.evaluate("return { " + variable + " -> " + value + " }");
 		String result[] = new String[end - start + 1];
 		for (int i = start; i <= end; i++)
 			result[i - start] = c.call(new Object[] { new Integer(i) }).toString();

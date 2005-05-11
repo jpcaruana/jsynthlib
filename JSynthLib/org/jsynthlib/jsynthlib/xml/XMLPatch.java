@@ -278,8 +278,9 @@ public class XMLPatch implements ISinglePatch {
             throw new IllegalArgumentException();
         }
         XMLPatch p = (XMLPatch)_p;
+        p.flush();
         sysex = p.sysex;
-        cache = (HashMap) p.cache.clone();
+        cache.clear();
         name = p.name;
     }
     
@@ -314,7 +315,7 @@ public class XMLPatch implements ISinglePatch {
             boolean found = false;
             while (it.hasNext()) {
                 SysexDesc d = (SysexDesc)it.next();
-                if (d.matches(header)) {
+                if (d.matches(header) && d.getSize() == messages[i].getLength() - 1) { // don't count the first byte of the sysex message
                     found = true;
                     sysex[d.getId()] = messages[i].getData();
                     it.remove();
@@ -389,13 +390,17 @@ public class XMLPatch implements ISinglePatch {
     public XMLPatch newPatch() {
         XMLPatch patch = newEmptyPatch();
         for (int i = 0; i < descs.length; i++) {
-            patch.sysex[i] = new byte[descs[i].getSize() - 1];
+            patch.sysex[i] = new byte[descs[i].getSize()];
             patch.sysex[i][patch.sysex[i].length - 1] = (byte) 0xF7;
             XMLParameter[] params = descs[i].getParams();
             for (int j = 0; j < params.length; j++) {
                 XMLParameter p = params[j];
                 if (p.getDefault() != 0) {
-                    descs[i].getDecoder().encode(p.getDefault(),p, patch.sysex[i]);
+                    try {
+                        descs[i].getDecoder().encode(p.getDefault(),p, patch.sysex[i]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        System.err.println("Arf!");//FIXME!
+                    }
                 }
             }
         }

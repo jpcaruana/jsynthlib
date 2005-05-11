@@ -2702,6 +2702,11 @@
 	</sysex>
     <sysex id="amp">
       <header>F0430.6B001E410120</header>
+      <constant>
+        <name>Address Mid</name>
+		<address>6</address>
+        <default>0x01</default>
+      </constant>
     </sysex>
     <sysex id="pitch">
       <header>F0430.6B001D420100</header>

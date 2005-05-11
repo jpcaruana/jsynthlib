@@ -83,7 +83,11 @@ public class PatchLoadHandler extends AdvDefaultHandler {
             this.name = name;
         }
         public void setSize(String size) {
-            this.size = Integer.decode(size).intValue();
+            setSize(Integer.decode(size).intValue());
+        }
+        public void setSize(int size) {
+            // add 1 for the EOX byte
+            this.size = size + 1;
         }
         public void addParameter(XMLParameter p) throws SAXParseException {
             decoder.finishParameter(p);
@@ -106,15 +110,15 @@ public class PatchLoadHandler extends AdvDefaultHandler {
             XMLParameter[] pa = (XMLParameter[])params.values().toArray(new XMLParameter[0]);
             if (size != -1) {
                 if (decoder != null) {
-                    if (decoder.getSize() + 2 > size)
+                    if (decoder.getSize() + 1 > size)
                         throw new SAXParseException("Parameters are larger than specified size of sysex", locator);
-                    else if (size < decoder.getSize() + 2)
+                    else if (size < decoder.getSize() + 1)
                         ErrorMsg.reportStatus("Sysex " + name + " larger than parameters.");
                 }
             } else {
                 if (decoder == null)
                     throw new SAXParseException("Size must be specified for a sysex message if it has no decoder.",locator);
-                size = decoder.getSize() + 2;
+                setSize(decoder.getSize());
             }
             SysexDesc d = new SysexDesc(pa, header, size, decoder, checksum,name, id);
             curpatch._addSysexDesc(d);
