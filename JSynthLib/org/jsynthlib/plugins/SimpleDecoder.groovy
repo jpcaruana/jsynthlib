@@ -169,11 +169,11 @@ class SimpleDecoder extends Decoder {
 	   def c = SimpleDecoder.class.getConstructor(args);
 	   Object[] pargs = [7, true]
 	   PluginRegistry.registerDecoder("BE 7bit words",c, pargs);
-	   pargs[1] = false
+	   pargs = [7, false]
 	   PluginRegistry.registerDecoder("LE 7bit words",c, pargs);
-	   pargs[0] = 4
+	   pargs = [4, false]
 	   PluginRegistry.registerDecoder("LE Nibbles",c, pargs);
-	   pargs[1] = true
+	   pargs = [4, true]
 	   PluginRegistry.registerDecoder("BE Nibbles",c, pargs);
 	}
 	

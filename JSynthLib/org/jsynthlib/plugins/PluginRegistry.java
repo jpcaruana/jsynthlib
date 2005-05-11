@@ -42,6 +42,7 @@ public class PluginRegistry {
         decoders.put(name, new PluginEntry(c, args));
     }
     
+    // FIXME: Have groovy search user_path
     public static void setPluginPath(String path) {
         user_path = path;
     }
