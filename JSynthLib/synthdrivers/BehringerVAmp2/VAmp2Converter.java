@@ -38,7 +38,8 @@ import core.*;
  */
 public class VAmp2Converter extends Converter {
 
-    /** Constructor for VAmp2Converter */
+    /** Constructor for VAmp2Converter
+     */
     VAmp2Converter() {
         super(Constants.CONVERTER_NAME, Constants.AUTHOR);
 
@@ -52,9 +53,16 @@ public class VAmp2Converter extends Converter {
      * Extracts the last valid patch in a dump request and validates it. Note
      * that supportsPatch does not convert the patch. It only attempts to parse
      * out the last patch of a block of data and compare the header to the
-     * Alesis header bytes. The job of actually converting the patch is handled
+     * V-Amp 2 header bytes. The job of actually converting the patch is handled
      * by extractPatch. If supportsPatch returns true, JSynthLib Core will call
      * extractPatch.
+     * @param patchString
+     *              String representing the patch header & identifying information of a driver.
+     * @param sysex
+     *              Byte array containing the sysex data.
+     * @return
+     *              Boolean representing if the patch is supported by this driver. A value
+     *              of true indicates the patch is supported.
      */
     public boolean supportsPatch(String patchString, byte[] sysex) {
         if ((sysex.length == Constants.HDR_SIZE + Constants.SINGLE_PATCH_SIZE
@@ -82,6 +90,11 @@ public class VAmp2Converter extends Converter {
      * and returns true if there is a match. This is a more thorough check than
      * the isVAmpPatch method, in that it checks the whole header, including the
      * opcode byte.
+     * @param sysex
+     *              Byte array containing the sysex data.
+     * @return
+     *              Boolean representing if the patch is supported by this driver. A value
+     *              of true indicates the patch is supported.
      */
     private boolean thisSupportsPatch(byte[] sysex) {
         if (isVAmpPatch(sysex, 0)) {
@@ -99,8 +112,10 @@ public class VAmp2Converter extends Converter {
     }
 
     /**
-     * Extracts a Alesis patch from a Alesis patch dump response (block of
+     * Extracts a V-Amp 2 patch from a V-Amp 2 patch dump response (block of
      * data). Calls parseSysex to do the extraction.
+     * @return
+     *          A patch object containing the extracted sysex data.
      */
     public Patch[] extractPatch(Patch p) {
         byte[] sysex = parseSysex(p.getByteArray());
@@ -120,6 +135,9 @@ public class VAmp2Converter extends Converter {
      * Attempts to parse a VAmp patch from an VAmp response to a dump request.
      * If parseSysex cannot find a valid VAmp patch within the block of data, it
      * returns the original block of data, unchanged.
+     * @return
+     *          Sysex data for the last valid patch in a block of data, or if it cannot
+     *          extract a valid patch, the original block of data is returned unchanged.
      */
     private byte[] parseSysex(byte[] sysex) {
         int patchLength = sysex.length;
@@ -165,6 +183,9 @@ public class VAmp2Converter extends Converter {
      * Checks the first 5 bytes of the patch header and returns true if the
      * patch is a VAmp patch. This is a generic check that does not include the
      * opcode byte.
+     * @return
+     *          A boolean representing whether a patch is a valid V-Amp patch or not.
+     *          A value of true indicates the patch is a valid V-Amp patch.
      */
     private boolean isVAmpPatch(byte[] patchBytes, int offset) {
         int identLength = 5;

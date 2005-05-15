@@ -116,11 +116,23 @@ public class AmpSelectModel extends JPanel implements ActionListener {
             "1 x 12'' Blackface"
     };
 
+    /**
+     * JLabel which displays "Based on:" and a description of the currently selected amp model.
+     */
     private JLabel ampDesc;
 
+    /**
+     * JLabel which displays the suggested cabinet model for the currently selected amp model.
+     */
     private JLabel suggestedCab;
 
-    /** Constructs an AmpSelectModel */
+    /**
+     * Constructs an AmpSelectModel.
+     * @param ampSelectCB
+     *              The ComboBoxWidget for the amp model selection.
+     * @param parentPanel
+     *              The panel containing ampSelectCB.
+     */
     AmpSelectModel(ComboBoxWidget ampSelectCB, JPanel parentPanel) {
         ampSelectCB.addEventListener(this);
         ampDesc = newJLabel("Based on: "
@@ -150,7 +162,11 @@ public class AmpSelectModel extends JPanel implements ActionListener {
         return aLabel;
     }
 
-    /** Handles ActionEvents for the amp select combo box. */
+    /** 
+     * Handles ActionEvents for the amp select combo box.
+     * @param e
+     *          An ActionEvent.
+     */
     public void actionPerformed(ActionEvent e) {
         JComboBox cb = (JComboBox) e.getSource();
         int selectedIndex = cb.getSelectedIndex();

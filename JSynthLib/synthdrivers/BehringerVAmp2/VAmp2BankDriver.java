@@ -84,6 +84,12 @@ public class VAmp2BankDriver extends BankDriver {
      * where patchNum is in the range 0 through 124. The header and trailer
      * bytes are stripped from the sysex data and the target location within the
      * bank is overwritten.
+     * @param bank
+     *              The target bank where the patch will be placed.
+     * @param p
+     *              The patch to be placed into the target bank.
+     * @param patchNum
+     *              The location within the bank where the patch will be placed.
      */
     protected void putPatch(Patch bank, Patch p, int patchNum) {
         if (!canHoldPatch(p)) {
@@ -103,6 +109,12 @@ public class VAmp2BankDriver extends BankDriver {
      * patchNum, where patchNum is in the range 0 through 124. The patch is
      * extracted from the bank and a valid V-Amp 2 preset patch header is
      * appended at the beginning and 0xF7 is appended at the end.
+     * @param bank
+     *              The bank from which the patch will be retrieved.
+     * @param patchNum
+     *              The location of the requested patch within the bank.
+     * @return
+     *            A reference to the requested patch.
      */
     protected Patch getPatch(Patch bank, int patchNum) {
         byte[] sysex = new byte[singleSize];
@@ -126,6 +138,12 @@ public class VAmp2BankDriver extends BankDriver {
      * Gets the name of a patch within the bank. Patch p is the bank patch. int
      * patchNum represents the location of the single patch within the bank,
      * designated by a number between 0 and 124.
+     * @param p
+     *              The target bank patch containing the single patch whose name is to be retrieved.
+     * @param patchNum
+     *              The location within the bank of the single patch whose name is to be retrieved.
+     * @return
+     *              A String containing the patch name.
      */
     protected String getPatchName(Patch p, int patchNum) {
         int nameStart = getPatchStart(patchNum) + Constants.PATCH_NAME_START;
@@ -143,6 +161,12 @@ public class VAmp2BankDriver extends BankDriver {
      * patchNum represents the location of the single patch within the bank,
      * designated by a number between 0 and 124. String name contains the name
      * to be assigned to the patch.
+     * @param p
+     *              The target bank patch containing the single patch whose name is to be changed.
+     * @param patchNum
+     *              The location within the bank of the single patch whose name is to be changed.
+     * @param name
+     *              A String containing the new patch name.
      */
     protected void setPatchName(Patch p, int patchNum, String name) {
         int nameStart = getPatchStart(patchNum) + Constants.PATCH_NAME_START;
@@ -163,7 +187,10 @@ public class VAmp2BankDriver extends BankDriver {
         }
     }
 
-    /** Creates a new bank patch. */
+    /** Creates a new bank patch.
+     * @return
+     *            A reference to the new bank patch.
+     */
     protected Patch createNewPatch() {
         byte[] sysex = new byte[Constants.HDR_SIZE
                 + (Constants.SINGLE_PATCH_SIZE * Constants.PATCHES_PER_BANK)
@@ -185,6 +212,12 @@ public class VAmp2BankDriver extends BankDriver {
     /**
      * Requests a dump of a V-Amp 2 bank consisting of 125 patches. The bankNum
      * and patchNum parameters are ignored.
+     * @param bankNum
+     *              Parameter provided to match the method in the superclass. Values pased in this 
+     *              parameter are ignored.
+     * @param patchNum
+     *              Parameter provided to match the method in the superclass. Values pased in this 
+     *              parameter are ignored.
      */
     public void requestPatchDump(int bankNum, int patchNum) {
         int channel = getChannel();
@@ -193,10 +226,17 @@ public class VAmp2BankDriver extends BankDriver {
     }
 
     /**
-     * Extracts all 125 preset patches from and bank patch and sends all to the
+     * Extracts all 125 preset patches from a bank patch and sends all to the
      * device. Patch p represents the bank patch to be stored. For the V-Amp 2,
      * the bankNum and patchNum parameters are ignored (since the V-Amp 2 only
      * has one bank).
+     * @param p     The patch to be stored.
+     * @param bankNum
+     *              Parameter provided to match the method in the superclass. Values pased in this 
+     *              parameter are ignored.
+     * @param patchNum
+     *              Parameter provided to match the method in the superclass. Values pased in this 
+     *              parameter are ignored.
      */
     protected void storePatch(Patch p, int bankNum, int patchNum) {
         Patch[] thisPatch = new Patch[Constants.PATCHES_PER_BANK];

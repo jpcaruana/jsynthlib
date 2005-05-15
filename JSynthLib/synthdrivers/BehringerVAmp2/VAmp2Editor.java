@@ -38,7 +38,8 @@ import java.awt.Container;
  */
 public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
 
-    /** Array of strings representing the names of all amp models for the V-Amp 2. */
+    /** Array of strings representing the names of all amp models for the V-Amp 2.
+     */
     private static final String[] AMP_MODEL_STRING = {
         "American Blues",
         "Modern Class A",
@@ -74,7 +75,8 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         "Custom Clean"
     };
     
-    /** Array of strings representing the 16 cabinet models of the V-Amp 2. */
+    /** Array of strings representing the 16 cabinet models of the V-Amp 2.
+     */
     private static final String[] CAB_MODEL_STRING = {
         "No Cabinet",
         "1 x 8'' Vintage Tweed",
@@ -94,7 +96,8 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         "4 x 12'' V-AMP Custom"
     };
     
-    /** Array of strings representing the 16 effects combos of the V-Amp 2. */
+    /** Array of strings representing the 16 effects combos of the V-Amp 2.
+     */
     private static final String[] EFF_NAME = {
         "Echo",
         "Delay",
@@ -165,6 +168,9 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         "Long Amb"
     };
     
+    /**
+     * Used to set the widgetCount for all widgets.>
+     */
     private int posWidgetCount = 1;
 
     private AmpSelectModel ampSelectModel = null;
@@ -175,6 +181,8 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
     
     /**
      * Constructs a VAmp2Editor for the selected patch.
+     * @param patch
+     *          The patch to be edited.
      */
     VAmp2Editor(Patch patch) {
         super("VAmp2 Patch Editor", patch);
@@ -192,7 +200,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
 //        addProtoEditor(patch, scrollPane, mainPanel);
     }
 
-    /** Creates the left panel of the editor given the patch. */
+    /** Creates the left panel of the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to left panel.
+     */
     private JPanel newLeftPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.Y_AXIS));
@@ -202,14 +215,24 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
 
-    /** Adds the patch name panel to the editor given the patch. */
+    /** Adds the patch name panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the patch name panel.
+     */
     private JPanel newPatchNamePanel(Patch patch) {
         JPanel aPanel = new JPanel();
         addWidget(aPanel, new PatchNameWidget("Preset Name ", patch),0,0,1,1,1);
         return aPanel;
     }
     
-    /** Adds the Amp Model panel to the editor given the patch. */
+    /** Adds the Amp Model panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the amp model panel.
+     */
     private JPanel newAmpModelPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.Y_AXIS));
@@ -221,7 +244,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
     }
     
     
-    /** Adds the Preamp panel to the editor given the patch. */
+    /** Adds the Preamp panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the preamp panel.
+     */
     private JPanel newPreampPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.Y_AXIS));
@@ -231,7 +259,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
     
-    /** Adds the Drive Switch panel to the editor given the patch. */
+    /** Adds the Drive Switch panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the drive switch panel.
+     */
     private JPanel newDriveSwitchPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.X_AXIS));
@@ -244,7 +277,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
     
-    /** Adds the Preamp Controls panel to the editor given the patch. */
+    /** Adds the Preamp Controls panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the preamp controls panel.
+     */
     private JPanel newPreampCtrlsPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.X_AXIS));
@@ -260,7 +298,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
     
-    /** Adds the right panel to the editor given the patch. */
+    /** Adds the right panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the right panel.
+     */
     private JPanel newRightPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.Y_AXIS));
@@ -271,7 +314,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
 
-    /** Adds the Effects panel to the editor given the patch. */
+    /** Adds the Effects panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the effects panel.
+     */
     private JPanel newEffectsPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.Y_AXIS));
@@ -288,7 +336,10 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
     
-    /** Handles ActionEvents for the effects combo box.*/
+    /** Handles ActionEvents for the effects combo box.*
+     * @param e
+     *          An ActionEvent.
+     */
     public void actionPerformed(ActionEvent e) {
         JComboBox cb = (JComboBox)e.getSource();
         int selectedIndex = cb.getSelectedIndex();
@@ -319,7 +370,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         cl.show(effParmsPanel, EFF_PANEL_NAME[EFF_PANEL_ASSGNMT[selectedIndex]]);
     }
     
-    /** Creates the different panels for each of the effects configurations.*/
+    /** Creates the different panels for each of the effects configurations.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the effect parms panel.
+     */
     private JPanel newEffParmsPanel(Patch patch) {
         JPanel aPanel = new JPanel(new CardLayout());
 
@@ -342,7 +398,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
 
-    /** Sets up the Delay effects panel. */
+    /** Sets up the Delay effects panel.
+     * @param parentPanel
+     *          The Panel the delay panel will be added to.
+     * @param patch
+     *          The patch to be edited.
+     */
     private void setupDelayPanel(JPanel parentPanel, Patch patch) {
         JPanel delayParmPanel = new JPanel();        
         delayParmPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Delay Parameters",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -358,7 +419,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         parentPanel.add(delayTimePanel);
     }
     
-    /** Sets up the Modulation/Delay effects panel. */
+    /** Sets up the Modulation/Delay effects panel.
+     * @param parentPanel
+     *          The Panel the mod delay panel will be added to.
+     * @param patch
+     *          The patch to be edited.
+     */
     private void setupModDelayPanel(JPanel parentPanel, Patch patch) {
         JPanel modPanel = new JPanel();        
         modPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),"Modulation",TitledBorder.CENTER,TitledBorder.CENTER));
@@ -374,7 +440,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         parentPanel.add(delayTimePanel);
     }
    
-    /** Sets up the Chorus/Compressor effects panel. */
+    /** Sets up the Chorus/Compressor effects panel.
+     * @param parentPanel
+     *          The Panel the delay panel will be added to.
+     * @param patch
+     *          The patch to be edited.
+     */
     private void setupChorusCompPanel(JPanel parentPanel, Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
@@ -384,7 +455,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         parentPanel.add(aPanel);
     }
 
-    /** Sets up the Compressor effects panel. */
+    /** Sets up the Compressor effects panel.
+     * @param parentPanel
+     *          The Panel the compressor panel will be added to.
+     * @param patch
+     *          The patch to be edited.
+     */
     private void setupCompressorPanel(JPanel parentPanel, Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
@@ -393,7 +469,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         parentPanel.add(aPanel);
     }
     
-    /** Sets up the Auto Wah effects panel. */
+    /** Sets up the Auto Wah effects panel.
+     * @param parentPanel
+     *          The Panel the Auto Wah panel will be added to.
+     * @param patch
+     *          The patch to be edited.
+     */
     private void setupAutoWahPanel(JPanel parentPanel, Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
@@ -402,7 +483,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         parentPanel.add(aPanel);
     }
     
-    /** Sets up the Phaser/Flanger effects panel. */
+    /** Sets up the Phaser/Flanger effects panel.
+     * @param parentPanel
+     *          The Panel the Phaser/Flanger panel will be added to.
+     * @param patch
+     *          The patch to be edited.
+     */
     private void setupPhaserFlangerPanel(JPanel parentPanel, Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
@@ -412,7 +498,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         parentPanel.add(aPanel);
     }
     
-    /** Sets up the Chorus/Rotary effects panel. */
+    /** Sets up the Chorus/Rotary effects panel.
+     * @param parentPanel
+     *          The Panel the Chorus/Rotary panel will be added to.
+     * @param patch
+     *          The patch to be edited.
+     */
     private void setupChorusRotaryPanel(JPanel parentPanel, Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
@@ -422,7 +513,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         parentPanel.add(aPanel);
     }
     
-    /** Sets up the Tremelo effects panel. */
+    /** Sets up the Tremelo effects panel.
+     * @param parentPanel
+     *          The Panel the Tremelo panel will be added to.
+     * @param patch
+     *          The patch to be edited.
+     */
     private void setupTremeloPanel(JPanel parentPanel, Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
@@ -431,7 +527,14 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         parentPanel.add(aPanel);
     }
     
-    /** Adds the miscPanel panel to the editor given the patch. */
+    /** Adds the miscPanel panel to the editor given the patch. The
+     * miscPanel holds the gate panel, the reverb panel and the wah
+     * panel.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the miscellaneous panel.
+     */
     private JPanel newMiscPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.X_AXIS));
@@ -442,7 +545,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
     
-    /** Adds the Noise Gate panel to the editor given the patch. */
+    /** Adds the Noise Gate panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the noise gate panel.
+     */
     private JPanel newGatePanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.X_AXIS));
@@ -451,7 +559,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
     
-    /** Adds the Reverb panel to the editor given the patch. */
+    /** Adds the Reverb panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the reverb panel.
+     */
     private JPanel newReverbPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.X_AXIS));
@@ -461,7 +574,12 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
         return aPanel;
     }
     
-    /** Adds the Wah panel to the editor given the patch. */
+    /** Adds the Wah panel to the editor given the patch.
+     * @param patch
+     *          The patch to be edited.
+     * @return
+     *          A reference to the Wah panel.
+     */
     private JPanel newWahPanel(Patch patch) {
         JPanel aPanel = new JPanel();        
         aPanel.setLayout(new BoxLayout(aPanel, BoxLayout.X_AXIS));
@@ -543,6 +661,8 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
      *            The CC number of the parameter
      * @param options
      *            Array, which contains the list of the options in the combobox.
+     * @return
+     *            A reference to the ComboBoxWidget.
      */
     private ComboBoxWidget newComboBoxWidget(JComponent panel, String wLabel, Patch patch, int sysexOffset, int ccNum, Object[] options) {
         ComboBoxWidget cb = new ComboBoxWidget(wLabel,
@@ -576,6 +696,8 @@ public class VAmp2Editor extends PatchEditorFrame implements ActionListener {
      *            The CC number of the parameter
      * @param options
      *            Array, which contains the list of the options in the combobox.
+     * @return
+     *            A reference to the ComboBoxWidget.
      */
     private ComboBoxWidget newEffectsComboBoxWidget(JComponent panel, String wLabel, Patch patch, int sysexOffset, int ccNum, Object[] options) {
         ComboBoxWidget cb = new ComboBoxWidget(wLabel,

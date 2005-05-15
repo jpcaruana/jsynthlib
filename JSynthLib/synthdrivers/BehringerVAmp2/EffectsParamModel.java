@@ -32,6 +32,14 @@ import core.*;
  * @author Jeff Weber
  */
 class EffectsParamModel extends ParamModel {
+    
+    /**
+     * Array of byte arrays representing default values for the effect parameters.
+     * Every time one of the sixteen pre-defined effects configurations is selected,
+     * the V-Amp sets up default effects parameters in it's internal memory. The V-Amp
+     * editor has to emulate this to keep it's internal buffer in sync with the device.
+     * These are the values the editor uses to set up the defaults.
+     */
     private static byte[][] EFFECT_DEFAULT = {
     {  // 00 Echo
         (byte)0x00, (byte)0x40, (byte)0x40, (byte)0x40, (byte)0x40, (byte)0x01, (byte)0x18, (byte)0x00,
@@ -102,14 +110,22 @@ class EffectsParamModel extends ParamModel {
     /**
      * Constructs a EffectsParamModel given the patch, the offset into the sysex
      * record, and the mask representing the parameter.
+     *
+     * @param p
+     *          The patch to be edited.
+     * @param offset
+     *          The offset into the patch (including the size of the sysex header)
+     *          representing the value to be edited.
      */
     EffectsParamModel(Patch p, int offset) {
         super(p, offset);
     }
     
     /**
-     * Updates the byte in the sysex record defined by offset with the value
-     * supplied by i.
+     * Updates the byte in the sysex record defined by this EffectsParamModel.
+     *
+     * @param value
+     *          The new value of this parameter.
      */
     public void set(int value) {
         patch.sysex[ofs] = (byte) value;
@@ -121,8 +137,10 @@ class EffectsParamModel extends ParamModel {
         ErrorMsg.reportStatus("  " + Utility.hexDump(patch.sysex, 0, -1, 16));
     }
     
-    /** Gets the value of the byte in the
-     * sysex record defined by offset and returns the value as an int.
+    /**
+     * Gets the value of the byte in the sysex record defined by this EffectsParamModel.
+     * @return
+     *            The value of this parameter.
      */
     public int get() {
         return (int) patch.sysex[ofs];

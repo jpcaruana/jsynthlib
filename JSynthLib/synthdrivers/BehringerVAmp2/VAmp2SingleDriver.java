@@ -35,8 +35,6 @@ public class VAmp2SingleDriver extends Driver {
     protected static final SysexHandler SYS_REQ = new SysexHandler(
             Constants.VAMP2_SINGLE_DUMP_REQ_ID); //VAmp2 Dump Request
 
-    /** Sysex program dump byte array representing a new VAmp2 patch
-     */
     /** Constructs a VAmp2Driver.
      */
     public VAmp2SingleDriver() {
@@ -45,6 +43,8 @@ public class VAmp2SingleDriver extends Driver {
         patchNumbers = Constants.PRGM_PATCH_LIST;
     }
 
+    /** Constructs a VAmp2Driver.
+     */
     protected VAmp2SingleDriver(String patchType) {
         super(patchType, Constants.AUTHOR);
         sysexID = Constants.VAMP2_SINGLE_MATCH_ID;
@@ -54,26 +54,33 @@ public class VAmp2SingleDriver extends Driver {
         patchNameSize = Constants.PATCH_NAME_SIZE;
     }
 
+    /* (non-Javadoc)
+     * @see core.Driver#setPatchNum(int)
+     */
     protected void setPatchNum(int patchNum) {
     }
 
+    /* (non-Javadoc)
+     * @see core.Driver#setBankNum(int)
+     */
     protected void setBankNum(int bankNum) {
     }
 
-    /** VAmp2SingleDriver patch does not utilize checksum. Method overridden with
-     * null method.
+    /* (non-Javadoc)
+     * @see core.Driver#calculateChecksum(core.Patch)
      */
     protected void calculateChecksum(Patch p) {
     }
 
-    /** VAmp2SingleDriver patch does not utilize checksum. Method overridden with
-     * null method.
+    /* (non-Javadoc)
+     * @see core.Driver#calculateChecksum(core.Patch, int, int, int)
      */
     protected void calculateChecksum(Patch patch, int start, int end, int offset) {
     }
 
-    /** Sends a single program patch to the edit buffer. Patch p is the patch
-     * to be sent.
+    /** Sends a single program patch to the edit buffer. 
+     * @param p
+     *              The patch to be sent.
      */
     protected void sendPatch(Patch p) {
         byte newSysex[] = new byte[p.sysex.length];
@@ -83,8 +90,12 @@ public class VAmp2SingleDriver extends Driver {
     }
 
     /** Sends a a single program patch to a set patch location in the device.
-     * bankNum is a user bank number in the range 0 to 24.
-     * patchNum is a patch number within the bank, in the range 0 to 4.
+     * @param p
+     *                  The patch to be send.
+     * @param bankNum
+     *                  The user bank number in the range 0 to 124.
+     * @param patchNum
+     *                  The patch number within the bank, in the range 0 to 4.
      */
     protected void storePatch(Patch p, int bankNum, int patchNum) {
         int progNum = bankNum * 5 + patchNum;
@@ -98,6 +109,8 @@ public class VAmp2SingleDriver extends Driver {
 
     /** Presents a dialog instructing the user to play his instrument.
      * The V-Amp 2 does not "Play" patches, so a dialog is presented instead.
+     * @param p
+     *              The patch to be "played".
      */
     protected void playPatch(Patch p) {
         JFrame frame = new JFrame();
@@ -109,6 +122,10 @@ public class VAmp2SingleDriver extends Driver {
      * to have 25 banks of 5 patches each, but internally it has only one bank
      * of 125 patches, selected by a single program change. The program change
      * number is calculated as progNum = bankNum * 5 + patchNum.
+     * @param bankNum
+     *              The number of the bank containing the requested patch.
+     * @param patchNum
+     *              The number of the requested patch.
      */
     public void requestPatchDump(int bankNum, int patchNum) {
         int channel = getChannel();
@@ -120,6 +137,8 @@ public class VAmp2SingleDriver extends Driver {
     }
 
     /** Creates a new patch with default values.
+     * @return
+     *          A reference to a new patch containing default values
      */
     protected Patch createNewPatch() {
         Patch p = new Patch(Constants.NEW_SINGLE_SYSEX, this);
@@ -128,6 +147,8 @@ public class VAmp2SingleDriver extends Driver {
     }
 
     /** Opens an edit window on the specified patch.
+     * @param p
+     *          The patch to be edited.
      */
     protected JSLFrame editPatch(Patch p) {
         return new VAmp2Editor((Patch) p);

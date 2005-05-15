@@ -31,6 +31,7 @@ import javax.sound.midi.InvalidMidiDataException;
  * @author Jeff Weber
  */
 class CCSender extends SysexSender implements SysexWidget.ISender {
+
     /** Represents the Continuous Controller number. */
     private int param;
 
@@ -55,9 +56,12 @@ class CCSender extends SysexSender implements SysexWidget.ISender {
     private int offset = 0;
 
     /**
-     * Constructs a CCSender for the given CC number. The CC number is given by
-     * param. This constructor is used when the range of values sent by the
-     * associated widget is 0 to 127 and the range does not need to be reversed.
+     * Constructs a CCSender for the given CC number. This constructor is used
+     * when the range of values sent by the associated widget is 0 to 127 and
+     * the range does not need to be reversed.
+     *
+     * @param param
+     *          The CC number of the given parameter.
      */
     CCSender(int param) {
         this(param, 1, false, 0);
@@ -68,6 +72,11 @@ class CCSender extends SysexSender implements SysexWidget.ISender {
      * the value. This constructor is used when the range of values sent by the
      * associated widget is 0 to 127 and the output to the device needs to be
      * reversed.
+     *
+     * @param param
+     *          The CC number of the given parameter.
+     * @param reverse
+     *          Set to true if the parameter range is to be reversed (low to high).
      */
     CCSender(int param, boolean reverse) {
         this(param, 1, reverse, 0);
@@ -77,6 +86,11 @@ class CCSender extends SysexSender implements SysexWidget.ISender {
      * Constructs a CCSender for the given CC number, where the output to the
      * device needs to be scaled by a multiplier. multiplier is a scaling factor
      * applied to the output value.
+     *
+     * @param param
+     *          The CC number of the given parameter.
+     * @param multiplier
+     *          Scaling factor applied to the input value.
      */
     CCSender(int param, int multiplier) {
         this(param, multiplier, false, 0);
@@ -87,6 +101,13 @@ class CCSender extends SysexSender implements SysexWidget.ISender {
      * device needs to be reversed and an offset applied. This constructor is
      * used when values sent by the SysexWidget both needs to have an offset
      * applied and needs to be reversed over the range 127 to 0.
+     *
+     * @param param
+     *          The CC number of the given parameter.
+     * @param reverse
+     *          Set to true if the parameter range is to be reversed (low to high).
+     * @param offset
+     *          Offset factor added to the input value.
      */
     CCSender(int param, boolean reverse, int offset) {
         this(param, 1, reverse, offset);
@@ -97,6 +118,15 @@ class CCSender extends SysexSender implements SysexWidget.ISender {
      * multiplier is a scaling factor that is applied to the output value. A
      * reverse value of true reverses the value over the range. The offset value
      * is added to the input value before it is sent.
+     *
+     * @param param
+     *          The CC number of the given parameter.
+     * @param multiplier
+     *          Scaling factor applied to the input value.
+     * @param reverse
+     *          Set to true if the parameter range is to be reversed (low to high).
+     * @param offset
+     *          Offset factor added to the input value.
      */
     private CCSender(int param, int multiplier, boolean reverse, int offset) {
         this.param = param;
@@ -106,9 +136,11 @@ class CCSender extends SysexSender implements SysexWidget.ISender {
     }
 
     /**
-     * Sends a CC message for the given parameter and value. IPatchDriver driver
-     * supplies the reference to the driver. int value supplies the value of the
-     * associated widget.
+     * Sends a CC message for the given parameter and value
+     * @param driver
+     *          Reference to IPatchDriver.
+     * @param value
+     *          Value of associated widget.
      */
     public void send(IPatchDriver driver, int value) {
         value = Math.min(127, value * multiplier);

@@ -47,7 +47,12 @@ class ScaledParamModel extends ParamModel {
 
     /** Constructs a ScaledParamModel. Patch p is the reference to the patch
      * containing the sysex record. int o is the offset into the sysex record
-     * in non-nibblized bytes, not including the header bytes. */
+     * in non-nibblized bytes, not including the header bytes. 
+     * @param p
+     *          The patch to be edited.
+     * @param o
+     *          The offset into the patch to be edited.
+     */
     ScaledParamModel(Patch p, int o) {
         this(p, o, 1, 1);
     }
@@ -57,6 +62,14 @@ class ScaledParamModel extends ParamModel {
      * in non-nibblized bytes, not including the header bytes. int maxCC is
      * the maximum CC value that will be sent by the control. int maxSysex
      * is the maximum sysex value represented the control in the sysex record.
+     * @param p
+     *          The patch to be edited.
+     * @param o
+     *          The offset into the patch to be edited.
+     * @param maxCC
+     *          The maximum CC value that will be used for this parameter.
+     * @param maxSysex
+     *          The maximum sysex value that will be used for this parameter.
      */
     ScaledParamModel(Patch p, int o, int maxCC, int maxSysex) {
         this(p, o, maxCC, maxSysex, false);
@@ -69,6 +82,18 @@ class ScaledParamModel extends ParamModel {
      * is the maximum sysex value represented the control in the sysex record.
      * boolean reverse reverses the range of values sent by the sysexWidget
      * over the range 127 to 0. A value of true causes the range to be reversed.
+     * @param p
+     *          The patch to be edited.
+     * @param o
+     *          The offset into the patch to be edited.
+     * @param maxCC
+     *          The maximum CC value that will be used for this parameter.
+     * @param maxSysex
+     *          The maximum sysex value that will be used for this parameter.
+     * @param reverse
+     *          A boolean value representing whether the values are reversed
+     *          across the range of the parameter (eg. 127 to 0. A value of true
+     *          indicates the values will be reversed.
      */
     ScaledParamModel(Patch p, int o, int maxCC, int maxSysex, boolean reverse) {
         super(p, o);
@@ -79,8 +104,11 @@ class ScaledParamModel extends ParamModel {
 
     /** Scales the value of i according maxSysex and sets the sysex value at
      * offset ofs to the result. Also reverses the value over the range if
-     * reverse is true. */
-    public void set(int i) {
+     * reverse is true.
+     * @param i
+     *          The current value of the parameter.
+     */
+public void set(int i) {
         if (reverse) {
             i = (maxSysex - i);
         }
@@ -88,7 +116,10 @@ class ScaledParamModel extends ParamModel {
     }
 
     /** Returns the value at offset ofs, scaled according to maxCC and maxSysex.
-     Also reverses the value over the range if reverse is true. */
+     *  Also reverses the value over the range if reverse is true.
+      * @return
+     *            The value of this ParamModel.
+    */
     public int get() {
         int returnValue = (int) patch.sysex[ofs] * maxCC / maxSysex;
         return returnValue;
