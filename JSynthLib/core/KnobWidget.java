@@ -30,13 +30,36 @@ public class KnobWidget extends SysexWidget {
     //protected JLabel mLabel;
     private ImageIcon[] mImages;
 
+    /**
+     * Creates a new <code>KnobWidget</code> instance.
+     *    
+     * @param patch a <code>Patch</code> value.
+     * @param param a <code>Parameter</code> value.     
+     */
     public KnobWidget(IPatch patch, IParameter param) {
+        this(patch, param, -1, -1);
+    }
+    
+    /**
+     * Creates a new <code>KnobWidget</code> instance.
+     *    
+     * @param patch a <code>Patch</code> value.
+     * @param param a <code>Parameter</code> value. 
+     * @param width The width of the knob.
+     * @param height The height of the knob.
+     */
+    public KnobWidget(IPatch patch, IParameter param, int width, int height) {
         super(patch, param);
+        
+        if (width > 0 && height > 0) {
+            mKnob = new DKnob(width, height);
+        }
         
         mBase = 0;
         createWidgets();
         layoutWidgets();
     }
+    
     /**
      * Creates a new <code>KnobWidget</code> instance.
      *
@@ -50,11 +73,34 @@ public class KnobWidget extends SysexWidget {
      */
     public KnobWidget(String label, IPatch patch, int min, int max, int base,
 		      IParamModel pmodel, ISender sender) {
-	super(label, patch, min, max, pmodel, sender);
-        mBase = base;
-
-	createWidgets();
-        layoutWidgets();
+        this(label, patch, min, max, base, pmodel, sender, null, -1, -1);
+    }
+    
+    /**
+     * Creates a new <code>KnobWidget</code> instance.
+     *
+     * @param label label String.
+     * @param patch a <code>Patch</code> value.
+     * @param min minimum value.
+     * @param max maximum value.
+     * @param base value display offset.
+     * @param pmodel a <code>ParamModel</code> object.
+     * @param sender a <code>ISender</code> object.
+     * @param width The width of the knob.
+     * @param height The height of the knob.
+     */
+    public KnobWidget(String label, IPatch patch, int min, int max, int base,
+              IParamModel pmodel, ISender sender, int width, int height) {
+        this(label, patch, min, max, base, pmodel, sender, null, width, height);        
+    }
+    
+    /**
+     * Display an image to the right of the value.
+     * @param aImages array of images corresponding to each value.
+     */
+    public KnobWidget(String label, IPatch patch, int min, int max, int base,
+              IParamModel pmodel, ISender sender, ImageIcon[] aImages) {
+        this(label, patch, min, max, base, pmodel, sender, aImages, -1, -1);
     }
 
     /**
@@ -62,10 +108,27 @@ public class KnobWidget extends SysexWidget {
      * @param aImages array of images corresponding to each value.
      */
     public KnobWidget(String label, IPatch patch, int min, int max, int base,
-		      IParamModel pmodel, ISender sender, ImageIcon[] aImages) {
+		      IParamModel pmodel, ISender sender, ImageIcon[] aImages, 
+		      int width, int height) {
 	super(label, patch, min, max, pmodel, sender);
         mBase = base;
 	mImages = aImages;
+    
+	if (width > 0 && height > 0) {
+            mKnob = new DKnob(width, height);
+        }
+
+	createWidgets();
+        layoutWidgets();
+    }
+
+    /**
+     * Special constructor for derived classes.
+     * @deprecated
+     */
+    protected KnobWidget(String label, IPatch patch, int min, int max,
+			 IParamModel pmodel, ISender sender) {
+	super(label, patch, min, max, pmodel, sender);
 
 	createWidgets();
         layoutWidgets();
