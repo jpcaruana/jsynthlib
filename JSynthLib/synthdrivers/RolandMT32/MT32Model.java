@@ -50,7 +50,7 @@ class MT32Model extends ParamModel {
 		else if ((bitmask & 32) == 32) mult = 32;
 		else if ((bitmask & 64) == 64) mult = 64;
 		else if ((bitmask & 128) == 128) mult = 128;
-                System.out.println("offset: " + offset + "  b: " + b);
+        //System.out.println("offset: " + offset + "  b: " + b);
 	    }
 
 	    public void set(int i) {

@@ -76,7 +76,7 @@ public class RolandMT32SystemDriver extends Driver {
 
 	    calculateChecksum(p, HSIZE, HSIZE+SSIZE-2, HSIZE+SSIZE-1 );
 
-        System.out.println ("store System");
+//        System.out.println ("store System");
 //	    sendPatchWorker(p);
 //      send(p.sysex);
 	    try {
@@ -153,7 +153,7 @@ public class RolandMT32SystemDriver extends Driver {
 //	    setPatchName(p, "System");
 //	    calculateChecksum(p);
 	    calculateChecksum(p, 5, HSIZE+SSIZE-2, HSIZE+SSIZE-1 );
-	    System.out.println ("Checksumcalc " + 5 + " to " + (HSIZE+SSIZE-2) + " into " + (HSIZE+SSIZE-1));
+//	    System.out.println ("Checksumcalc " + 5 + " to " + (HSIZE+SSIZE-2) + " into " + (HSIZE+SSIZE-1));
 	    return p;
     }
 
