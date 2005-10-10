@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 Fred Jan Kraan
+ * Copyright 2004,2005 Fred Jan Kraan
  *
  * This file is part of JSynthLib.
  *
@@ -20,13 +20,15 @@
  */
 
 /*
- * WaveModel.java v.0.3
- * part of the Roland MT-32 driver
+ * WaveModel.java for Roland MT-32
+ * 
+ * @version $Id$
  */
 
 package synthdrivers.RolandMT32;
 import core.Patch;
 import core.SysexWidget;
+
 
 class WaveModel implements SysexWidget.IParamModel {
     private Patch patch;

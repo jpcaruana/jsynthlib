@@ -1,0 +1,22 @@
+The timbre area's contain the actual definition of the sounds produced.
+Timbre Temp contain the actual active sounds.
+Timbre Memory are the storage locations of the user definable sounds. Initially 
+they contain copies of the fixed internal sounds.
+The patch area's are the link between sounds and MIDI channels with some extra
+generic configuration. The Patch Temp area contain the configuration of the 
+Timbre Temp sounds. The Patch Memory area contains the 128 user selectable sounds
+initially they are the 128 fixed internal sounds (group A and B).
+
+
+Patch Temp Area  (1-8)             16 bytes  Configuration of the eight active sounds
+Setup Temp Area  (rhytm part)       4 bytes  Setup of the rhythm channel sounds
+Timbre Temp Area (1-8)            256 bytes  Partial parameters of the eight current active sounds 
+Patch Memory     (1-128)            9 bytes  Configuration of the 128 predefined sounds
+Timbre Memory    (1-64)           256 bytes  The 64 user defined sounds in the MEMORY group
+System Area      (1)               22 bytes  Global settings (master tune, reverb, partial reserve?
+                                             midi channel and master volume)
+Display          (1)               20 bytes  Contents of the display (write only)
+All parameter reset
+
+Configuration includes the name of the sound, the structure (partial configuration) and 
+partial enable. 

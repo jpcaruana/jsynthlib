@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 Fred Jan Kraan
+ * Copyright 2004,2005 Fred Jan Kraan
  *
  * This file is part of JSynthLib.
  *
@@ -19,29 +19,31 @@
  * USA
  */
 
+/**
+ * Device class for Roland MT32.
+ * 
+ * @version $Id$
+ */
+
 package synthdrivers.RolandMT32;
 import core.Device;
 import java.util.prefs.Preferences;
 
-/**
- * Device class for Roland MT32.
- * @author  Fred Jan Kraan
- * @version $Id$
- */
 public class RolandMT32Device extends Device {
     private static final String INFO_TEXT
     = "The driver for this synthesiser is created with an absolute minimal knowledge " +
-      "of the JSynthLib architecture. Only the SingleDriver is implemented, and not " +
-      "even complete.\n" +
-      "Bugs:\n" +
-      "- The driver can retrieve all eight Timbre Temp Areas, but all changes are applied " + 
-      "to the Timbre Temp Area 1.\n" +
-      "- Save and send do not work.";
+      "of the JSynthLib and MT-32 architecture. Basically for each MT32 memory region " +
+      "a driver and an editor is build. If more than one data set is available in this " +
+      "region, a bank driver is build too.\n" +
+      "A separate document describes the different data sets and their relations. The " +
+      "great number of different drivers and editors is a bit daunting, but remember that " +
+      "the MT32 is a multi timbral instrument which can produce sounds on nine midi " +
+      "channels simultaneously\n";
       
 
     /** Constructor for DeviceListWriter. */
     public RolandMT32Device() {
-	super("Roland", "MT32", "F041..16",
+	super("Roland", "MT32", "F041**16",
 	      INFO_TEXT, "Fred Jan Kraan");
     }
 
@@ -50,13 +52,19 @@ public class RolandMT32Device extends Device {
 	this();
 	this.prefs = prefs;
 
-//        addDriver(new KawaiK4BulkConverter());
-        addDriver(new RolandMT32SingleDriver());
-//        addDriver(new KawaiK4BankDriver());
-//        addDriver(new KawaiK4MultiDriver());
-//        addDriver(new KawaiK4MultiBankDriver());
-//        addDriver(new KawaiK4EffectDriver());
-//        addDriver(new KawaiK4EffectBankDriver());
-//        addDriver(new KawaiK4DrumsetDriver());
+        addDriver(new RolandMT32PatchTempDriver());
+        addDriver(new RolandMT32PatchTempBankDriver());
+        addDriver(new RolandMT32PatchMemoryDriver());
+        addDriver(new RolandMT32PatchMemoryBankDriver());
+        addDriver(new RolandMT32RhythmSetupTempDriver());
+        addDriver(new RolandMT32TimbreTempDriver());
+        addDriver(new RolandMT32TimbreTempBankDriver());
+        addDriver(new RolandMT32TimbreMemoryDriver());
+        addDriver(new RolandMT32TimbreMemoryBankDriver());
+        addDriver(new RolandMT32SystemDriver());
+        addDriver(new RolandMT32DisplayDriver());
+        
+        setDeviceID(10);
+
     }
 }

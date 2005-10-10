@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 Fred Jan Kraan
+ * Copyright 2004,2005 Fred Jan Kraan
  *
  * This file is part of JSynthLib.
  *
@@ -19,19 +19,23 @@
  * USA
  */
 
-/*
- * RolandMT32SingleEditor.java v.0.3
- * part of the Roland MT-32 driver
+/**
+ * Timbre Temp Editor for Roland MT32.
+ *
+ * @version $Id$
  */
 
 package synthdrivers.RolandMT32;
 import core.*;
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
+import javax.swing.event.*;
 
-class RolandMT32SingleEditor extends PatchEditorFrame {
+class RolandMT32TimbreTempEditor extends PatchEditorFrame {
+    
+    ImageIcon algoIcon[]=new ImageIcon[13];
+    
     private final String[] noteName = new String[] {
 	"C1", "C#1", "D1", "D#1", "E1", "F1", "F#1", "G1", "G#1", "A1", "A#1", "B1",
 	"C2", "C#2", "D2", "D#2", "E2", "F2", "F#2", "G2", "G#2", "A2", "A#2", "B2",
@@ -89,47 +93,114 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
         " 36 Strings Attack", " 37 Strings Maintain", " 38 Strings Attack", " 39 String Att Decay1",
         " 40 String Att Decay2", " 41 String Att Decay3", " 42 String Att Decay4", " 43 Strings Maintain",
         " 44 Bow Attack 1", " 45 Bow Attack 2", " 46 Kettle Drum" ," 47 Kettle & String",
-        " 48 Bowed Attack", " 49 Organ", " 50 Xylophone (Tubes)", " 51 Tubes Repeat",
-        " 52 ", " 53 Space Noise Maintain", " 54 Base Drum", " 55 Snare Drum",
-        " 56 Snare Drum", " 57 Floor Tom", " 58 Closed HiHat", " 59 Open HiHat",
-        " 60 Closed HiHat Loop", " 61 Open HiHat Loop", " 62 Closed HiHat", " 63 Rim Shot",
+        " 48 Bowed Attack", " 49 Organ", " 50 Tubes High Loop", " 51 Phone Ring Loop",
+        " 52 Tubes Low Loop", " 53 Space Noise Loop", " 54 Base Drum", " 55 Snare Drum",
+        " 56 Snare Drum", " 57 Floor Tom", " 58 Closed HiHat", " 59 Open HiHat Cont.",
+        " 60 Closed HiHat", " 61 Open HiHat Cont.", " 62 Closed HiHat", " 63 Rim Shot",
         " 64 Hand Clap", " 65 ", " 66 ", " 67 ",
-        " 68 ", " 69 ", " 70 ", " 71 ", " 72 ", " 73 ", " 74 ", " 75 ",
-        " 76 ", " 77 ", " 78 ", " 79 ", " 80 ", " 81 ", " 82 ", " 83 ", 
-        " 84 ", " 85 ", " 86 ", " 87 ", " 88 ", " 89 ", " 90 ", " 91 ", 
-        " 92 ", " 93 ", " 94 ", " 95 ", " 96 ", " 97 ", " 98 ", " 99 ",
-        "100 ", "101 ", "102 ", "103 ", "104 ", "105 ", "106 ", "107 ", 
-        "108 ", "109 ", "110 ", "111 ", "112 ", "113 ", "114 ", "115 ", 
-        "116 ", "117 ", "118 ", "119 ", "120 ", "121 ", "122 ", "123 ", 
-        "124 ", "125 ", "126 ", "127 "
+        " 68 Cow Bell Attack", " 69 ", " 70 ", " 71 ", 
+        " 72 ", " 73 ", " 74 BassD Loop", " 75 Snare Loop",
+        " 76 Elec.Snare Loop", " 77 Tom Loop", " 78 HiHat Loop", " 79 Loop", 
+        " 80 Loop", " 81 Loop", " 82 Loop", " 83 Loop", 
+        " 84 ", " 85 ", " 86 ", " 87 ", 
+        " 88 ", " 89 ", " 90 Clave Attack Loop", " 91 Loop", 
+        " 92  Loop", " 93  Loop", " 94  Loop", " 95  Loop", 
+        " 96  Loop", " 97  Loop", " 98  Loop",  " 99 Loop",
+        "100 Loop", "101 Loop", "102 Loop", "103 Loop", 
+        "104 Loop", "105 Loop", "106 Loop", "107 Loop", 
+        "108 Loop", "109 Loop", "110 Loop", "111 Loop", 
+        "112 Loop", "113 Loop", "114 Loop", "115 Loop", 
+        "116 Loop", "117 Loop", "118 Loop", "119 Loop", 
+        "120 Loop", "121 Loop", "122 Loop", "123 Loop", 
+        "124 Loop", "125 Loop", "126 Loop", "127 BassD/Snare Loop"
     };
-                                            
-    /** For Alignment, a size to scrollbar labels */
-    //private int labelWidth;
+    /* 'S' is Synth, 'P' is PCM sample, 'R' is reverb
+     * First is partial 1 or 3, second is partial 2 or 4
+     * '-' is mono mix, '=' is each partial own channel
+     * +P and +S means the first partial (1 or 3) is also bypassing
+     * the reverb
+     */
+    final String [] PartMuteName = new String [] { "",    "1",     "2",     "1,2", 
+    		                                       "3",   "1,2",   "1,3",   "1,2,3",
+                                                   "4",   "1,4",   "2,4",   "1,2,4", 
+                                                   "3,4", "1,2,4", "2,3,4", "1,2,3,4"
+    };
 
-    public RolandMT32SingleEditor(Patch patch) {
-	super ("Roland MT-32 Single Editor", patch);
+//    final String [] PartStrName = new String [] { "S,S -",     "S,S -R +S", "P,S -",     "P,S -R +P",
+//                                                  "S,P -R +S", "P,P -",     "P,P -R +P", "S,S =",
+//                                                  "P,P =",     "S,S -R",    "P,S -R",    "S,P -R",
+//                                                  "P,P -R"
+//    };
+    
+    public RolandMT32TimbreTempEditor(Patch patch) {
+	super ("Roland MT-32 Timbre Temp Editor", patch);
+        
+        algoIcon[0] = new ImageIcon(getClass().getResource("01_ss-.gif"));
+        algoIcon[1] = new ImageIcon(getClass().getResource("02_ss-r+s.gif"));
+        algoIcon[2] = new ImageIcon(getClass().getResource("03_ps-.gif"));
+        algoIcon[3] = new ImageIcon(getClass().getResource("04_ps-r+p.gif"));
+        algoIcon[4] = new ImageIcon(getClass().getResource("05_sp-r+s.gif"));
+        algoIcon[5] = new ImageIcon(getClass().getResource("06_pp-.gif"));
+        algoIcon[6] = new ImageIcon(getClass().getResource("07_pp-r+p.gif"));
+        algoIcon[7] = new ImageIcon(getClass().getResource("08_ss_-.gif"));
+        algoIcon[8] = new ImageIcon(getClass().getResource("09_pp_-.gif"));
+        algoIcon[9] = new ImageIcon(getClass().getResource("10_ss-r.gif"));
+        algoIcon[10]= new ImageIcon(getClass().getResource("11_ps-r.gif"));
+        algoIcon[11]= new ImageIcon(getClass().getResource("12_sp-r.gif"));
+        algoIcon[12]= new ImageIcon(getClass().getResource("13_pp-r.gif"));
+        int algoVal12 = patch.sysex[0x0A];
+        if (algoVal12 > 12 || algoVal12 < 0) { 
+            algoVal12 = 0; 
+        }
+        final JLabel structImg12=new JLabel(algoIcon[algoVal12]);
+        int algoVal34 = patch.sysex[0x0B];
+        if (algoVal34 > 12 || algoVal34 < 0) { 
+            algoVal34 = 0; 
+        }
+        final JLabel structImg34=new JLabel(algoIcon[algoVal34]);
+        
+        MT32Model TTAModH = new MT32Model(patch,-3);
+        MT32Model TTAModM = new MT32Model(patch,-2);
+        MT32Model TTAModL = new MT32Model(patch,-1);
+        int TTAAddrH = TTAModH.get();
+        int TTAAddrM = TTAModM.get();
+        int TTAAddrL = TTAModL.get();
+        
+        ErrorMsg.reportStatus("Timbre source address: " + TTAAddrH + " / " + TTAAddrM + " / " + TTAAddrL);
+
 //      Common Pane
         gbc.weightx=5;
+        int gx = 1;  // column count
         int gy = 0;  // row count
-        int k = 0;  // timbre number offset. Not implemented yet.
-        int lwc = getLabelWidth("Part 1&2 Struct  ");  // Longest label length
+        int k = TTAAddrL + (TTAAddrM * 0x80);  // timbre address offset. 
+        int basad = TTAAddrH;
+        int lwc = getLabelWidth("Partial 3&4 Structure ");  // Longest label length
         JPanel cmnPane=new JPanel();
         cmnPane.setLayout(new GridBagLayout());	 
-        gbc.weightx=0;   							         
-        addWidget(cmnPane, new PatchNameWidget(" Name  ", patch), 0, gy, 2, 1, 0);
+        gbc.weightx=0;   
+        gbc.gridx=2;gbc.gridy=6;gbc.gridwidth=1;gbc.gridheight=1;
+
+        addWidget(cmnPane, new PatchNameWidget(" Name  ", patch), gx, gy, 2, 1, 0);
         gy++;
-        addWidget(cmnPane, new ScrollBarWidget("Part 1&2 Struct", patch,0,12,1,lwc, 
-            new MT32Model(patch,0x0A), new MT32Sender(k+0x0A)),0,gy,5,1,1);
+        final ComboBoxWidget struct12 = new ComboBoxWidget("Partial 1&2 Structure", patch, 0,
+                new MT32Model(patch, 0x0A), new MT32Sender(k+0x0A, basad), algoIcon);
+        addWidget(cmnPane,struct12,gx,gy,3,1,11);
+
         gy++;
-        addWidget(cmnPane, new ScrollBarWidget("Part 3&4 Struct", patch,0,12,1,lwc, 
-            new MT32Model(patch,0x0B), new MT32Sender(k+0x0B)),0,gy,5,1,2);
+
+        final ComboBoxWidget struct34 = new ComboBoxWidget("Partial 3&4 Structure", patch, 0,
+                new MT32Model(patch, 0x0A), new MT32Sender(k+0x0A, basad), algoIcon);
+        addWidget(cmnPane,struct34,gx,gy,3,1,11);;
+
         gy++;
-        addWidget(cmnPane, new ScrollBarWidget("Partial Mute", patch,0,15,0,lwc, 
-            new MT32Model(patch,0x0C), new MT32Sender(k+0x0C)),0,gy,5,1,3);
+        addWidget(cmnPane, new ComboBoxWidget("Partial On", patch, 
+                new MT32Model(patch,0x0C), new MT32Sender(k+0x0C, basad), 
+                PartMuteName), gx, gy, 1, 1, 11); 
         gy++;
         addWidget(cmnPane, new CheckBoxWidget ("Env Mode", patch, 
-            new MT32Model(patch,0x0D), new MT32Sender(k+0x0D)),0,gy,5,1,4);   
+            new MT32Model(patch,0x0D), new MT32Sender(k+0x0D, basad)),gx,gy,5,1,4);   
+
+        gbc.gridx=0;gbc.gridy=0;gbc.gridwidth=1;gbc.gridheight=4;
 
         gbc.gridx=0; gbc.gridy=0; gbc.gridwidth=5; gbc.gridheight=3;
         gbc.fill=GridBagConstraints.BOTH;
@@ -154,62 +225,70 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
             int lww = getLabelWidth("WG PW VELO SENS  "); // Longest label lenght
             JTabbedPane partNTabPane = new JTabbedPane();
             
-            // WG and P_ENV panel on partial panel
+            // WG panel on partial panel
             JPanel WGPane = new JPanel();
             WGPane.setLayout(new GridBagLayout());
 
             addWidget(WGPane, new ComboBoxWidget("WG PITCH COARSE", patch, 
-                new MT32Model(patch,j+0x00), new MT32Sender(j+k+0x00), noteName), 0, gy, 1, 1, 11);
+                new MT32Model(patch,j+0x00), new MT32Sender(j+k+0x00, basad), noteName), 0, gy, 1, 1, 11);
             gy++;
             addWidget(WGPane, new ScrollBarWidget("WG PITCH FINE", patch, 0, 100, -50, lww, 
-                new MT32Model(patch,j+0x01), new MT32Sender(j+k+0x01)),0,gy,3,1,12);
+                new MT32Model(patch,j+0x01), new MT32Sender(j+k+0x01, basad)),0,gy,3,1,12);
             gy++;
             addWidget(WGPane,new ComboBoxWidget("WG PITCH FOLLOW", patch, 
-                new MT32Model(patch,j+0x02), new MT32Sender(j+k+0x02), pKeyFollow), 0, gy, 1, 1, 13);
+                new MT32Model(patch,j+0x02), new MT32Sender(j+k+0x02, basad), pKeyFollow), 0, gy, 1, 1, 13);
             gy++;
             addWidget(WGPane,new CheckBoxWidget("WG PITCH BENDER SW", patch, 
-                new MT32Model(patch,j+0x03), new MT32Sender(j+k+0x03)),1,gy,1,1,14);   
+                new MT32Model(patch,j+0x03), new MT32Sender(j+k+0x03, basad)),1,gy,1,1,14);   
             gy++;
             addWidget(WGPane,new ComboBoxWidget("WG WAVEFORM", patch, 
-                new MT32Model(patch,j+0x04), new MT32Sender(j+k+0x04),waveName), 0, gy, 1, 1, 15);
+                new MT32Model(patch,j+0x04), new MT32Sender(j+k+0x04, basad),waveName), 0, gy, 1, 1, 15);
             gy++;
             addWidget(WGPane,new ComboBoxWidget("WG PCM WAVE #", patch, 
-                new MT32Model(patch,j+0x05), new MT32Sender(j+k+0x05),WGPCMWAVE), 0, gy, 1, 1, 15);
-//            addWidget(WGPane,new ScrollBarWidget("WG PCM WAVE #", patch, 0, 127, 1, lww, 
-//                new MT32Model(patch,j+0x05), new MT32Sender(j+k+0x05)), 0, gy, 3, 1, 16);
+                new MT32Model(patch,j+0x05), new MT32Sender(j+k+0x05, basad),WGPCMWAVE), 0, gy, 1, 1, 15);
             gy++;
             addWidget(WGPane,new ScrollBarWidget("WG PULSE WIDTH", patch, 0, 100, 0, lww,
-                new MT32Model(patch,j+0x06), new MT32Sender(j+k+0x06)), 0, gy, 3, 1, 17);
+                new MT32Model(patch,j+0x06), new MT32Sender(j+k+0x06, basad)), 0, gy, 3, 1, 17);
             gy++;
             addWidget(WGPane,new ScrollBarWidget("WG PW VELO SENS", patch, 0, 14, -7, lww,
-                new MT32Model(patch,j+0x07), new MT32Sender(j+k+0x07)), 0, gy, 3, 1, 18);
+                new MT32Model(patch,j+0x07), new MT32Sender(j+k+0x07, basad)), 0, gy, 3, 1, 18);
+
+            WGPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+                "",TitledBorder.CENTER,TitledBorder.CENTER));
+            partNTabPane.add(WGPane, gbc);
+            partNTabPane.addTab("Wave Generator", WGPane);
+            
+            // P_ENV panel on partial panel
+            JPanel PEPane = new JPanel();
+            PEPane.setLayout(new GridBagLayout());
+
+            gy = 0;
+            addWidget(PEPane,new ScrollBarWidget("P-ENV DEPTH", patch, 0, 10, 0, lww,
+                new MT32Model(patch,j+0x08), new MT32Sender(j+k+0x08, basad)), 0, gy, 3, 1, 19);
             gy++;
-            addWidget(WGPane,new ScrollBarWidget("P-ENV DEPTH", patch, 0, 10, 0, lww,
-                new MT32Model(patch,j+0x08), new MT32Sender(j+k+0x08)), 0, gy, 3, 1, 19);
+            addWidget(PEPane,new ScrollBarWidget("P-ENV VELO SENS", patch, 0, 100, 0, lww,
+                new MT32Model(patch,j+0x09), new MT32Sender(j+k+0x09, basad)), 0, gy, 3, 1, 20);
             gy++;
-            addWidget(WGPane,new ScrollBarWidget("P-ENV VELO SENS", patch, 0, 100, 0, lww,
-                new MT32Model(patch,j+0x09), new MT32Sender(j+k+0x09)), 0, gy, 3, 1, 20);
-            gy++;
-            addWidget(WGPane,new ScrollBarWidget("P-ENV TIME KEYF", patch, 0, 4, 0, lww,
-                new MT32Model(patch,j+0x0A), new MT32Sender(j+k+0x0A)), 0, gy, 3, 1, 21);
+            addWidget(PEPane,new ScrollBarWidget("P-ENV TIME KEYF", patch, 0, 4, 0, lww,
+                new MT32Model(patch,j+0x0A), new MT32Sender(j+k+0x0A, basad)), 0, gy, 3, 1, 21);
             gy++;
 
             EnvelopeWidget.Node[] pNodes = new EnvelopeWidget.Node[] {
                 new EnvelopeWidget.Node(
                     0, 0,     null, 0, 100, new MT32Model(patch,j+0x0F), 
-                    0, false, null,         new MT32Sender(j+k+0x0F), 
+                    0, false, null,         new MT32Sender(j+k+0x0F, basad), 
                     null,           "LEVEL 0"),     
 	        new EnvelopeWidget.Node(
                     0, 100,   new MT32Model(patch,j+0x0B), 0, 100, new MT32Model(patch,j+0x10), 
-                    0, false, new MT32Sender(j+k+0x0B),            new MT32Sender(j+k+0x10), 
+                    0, false, new MT32Sender(j+k+0x0B, basad),     new MT32Sender(j+k+0x10, basad), 
                     "TIME 1 Atk",                          "LEVEL 1 Atk"),     	
 	        new EnvelopeWidget.Node(
                     0, 100,    new MT32Model(patch,j+0x0C), 0, 100, new MT32Model(patch,j+0x11), 
-                    25, false, new MT32Sender(j+k+0x0C),            new MT32Sender(j+k+0x11), 
+                    25, false, new MT32Sender(j+k+0x0C, basad),     new MT32Sender(j+k+0x11, basad), 
                     "TIME 2 Dcy",                           "LEVEL 2 Dcy"),
 	        new EnvelopeWidget.Node(
                     0,100,     new MT32Model(patch,j+0x0D), 0, 100, new MT32Model(patch,j+0x12), 
-                    25, false, new MT32Sender(j+k+0x0D),            new MT32Sender(j+k+0x12), 
+                    25, false, new MT32Sender(j+k+0x0D, basad),     new MT32Sender(j+k+0x12, basad), 
                     "TIME 3 Sus",                          "LEVEL S Sus"),
                 new EnvelopeWidget.Node(
                     50, 50,  null,   EnvelopeWidget.Node.SAME, EnvelopeWidget.Node.SAME, null, 
@@ -217,26 +296,26 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
                     null,            null),     
 	        new EnvelopeWidget.Node(
                     0, 100,   new MT32Model(patch,j+0x0E), 0, 100, new MT32Model(patch,j+0x13), 
-                    0, false, new MT32Sender(j+k+0x0E),            new MT32Sender(j+k+0x13), 
+                    0, false, new MT32Sender(j+k+0x0E, basad),     new MT32Sender(j+k+0x13, basad), 
                     "TIME 4 Rel",                          "LEVEL E End"),
             };
-            addWidget(WGPane,
+            addWidget(PEPane,
 	        new EnvelopeWidget("P-ENV", patch, pNodes), 0, gy, 3, 5, 19);
             gy=gy+9; // Ajust for number of parameters
-            addWidget(WGPane, new ScrollBarWidget("P_LFO RATE", patch, 0, 100, 0, lww,
-                new MT32Model(patch,j+0x14), new MT32Sender(j+k+0x14)), 0, gy, 3, 1, 38);
+            addWidget(PEPane, new ScrollBarWidget("P_LFO RATE", patch, 0, 100, 0, lww,
+                new MT32Model(patch,j+0x14), new MT32Sender(j+k+0x14, basad)), 0, gy, 3, 1, 38);
             gy++;
-            addWidget(WGPane,new ScrollBarWidget("P_LFO DEPTH", patch, 0, 100, 0, lww,
-                new MT32Model(patch,j+0x15), new MT32Sender(j+k+0x15)), 0, gy, 3, 1, 38);
+            addWidget(PEPane,new ScrollBarWidget("P_LFO DEPTH", patch, 0, 100, 0, lww,
+                new MT32Model(patch,j+0x15), new MT32Sender(j+k+0x15, basad)), 0, gy, 3, 1, 38);
             gy++;
-            addWidget(WGPane,new ScrollBarWidget("P_LFO MOD SENS", patch, 0, 100, 0, lww,
-                new MT32Model(patch,j+0x16), new MT32Sender(j+k+0x16)), 0, gy, 3, 1, 38);
+            addWidget(PEPane,new ScrollBarWidget("P_LFO MOD SENS", patch, 0, 100, 0, lww,
+                new MT32Model(patch,j+0x16), new MT32Sender(j+k+0x16, basad)), 0, gy, 3, 1, 38);
             gy++;
          
-            WGPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
+            PEPane.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.RAISED),
                 "",TitledBorder.CENTER,TitledBorder.CENTER));
-            partNTabPane.add(WGPane, gbc);
-            partNTabPane.addTab("Wave Generator & Pitch Envelope", WGPane);
+            partNTabPane.add(PEPane, gbc);
+            partNTabPane.addTab("Pitch Envelope", PEPane);
 
             
             // TVF panel on partial panel
@@ -246,31 +325,31 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
 
             gy = 0;
             addWidget(TVFPane,new ScrollBarWidget("TVF CUTOFF FREQ",patch,0,100,0, lwf,
-                new MT32Model(patch,j+0x17),new MT32Sender(j+k+0x17)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x17),new MT32Sender(j+k+0x17, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVFPane,new ScrollBarWidget("TVF RESONANCE",patch,0,30,0, lwf,
-                new MT32Model(patch,j+0x18),new MT32Sender(j+k+0x18)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x18),new MT32Sender(j+k+0x18, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVFPane,new ComboBoxWidget("TVF KEYFOLLOW",patch,
-                new MT32Model(patch,j+0x19),new MT32Sender(j+k+0x19),tKeyFollow),0,gy,1,1,13);									    
+                new MT32Model(patch,j+0x19),new MT32Sender(j+k+0x19, basad),tKeyFollow),0,gy,1,1,13);									    
             gy++;
             addWidget(TVFPane,new ComboBoxWidget("TVF BIAS POINT/DIR",patch,
-                new MT32Model(patch,j+0x1A),new MT32Sender(j+k+0x1A),biasPoint),0,gy,3,1,55);									    
+                new MT32Model(patch,j+0x1A),new MT32Sender(j+k+0x1A, basad),biasPoint),0,gy,3,1,55);									    
             gy++;
             addWidget(TVFPane,new ScrollBarWidget("TVF BIAS LEVEL",patch,0,14,-7, lwf,
-                new MT32Model(patch,j+0x1B),new MT32Sender(j+k+0x1B)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x1B),new MT32Sender(j+k+0x1B, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVFPane,new ScrollBarWidget("TVF ENV DEPTH",patch,0,100,0, lwf,
-                new MT32Model(patch,j+0x1C),new MT32Sender(j+k+0x1C)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x1C),new MT32Sender(j+k+0x1C, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVFPane,new ScrollBarWidget("TVF ENV VELO SENS",patch,0,100,0, lwf,
-                new MT32Model(patch,j+0x1D),new MT32Sender(j+k+0x1D)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x1D),new MT32Sender(j+k+0x1D, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVFPane,new ScrollBarWidget("TVF ENV DEPTH KEYF",patch,0,4,0, lwf,
-                new MT32Model(patch,j+0x1E),new MT32Sender(j+k+0x1E)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x1E),new MT32Sender(j+k+0x1E, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVFPane,new ScrollBarWidget("TVF ENV TIME KEYF",patch,0,4,0, lwf,
-                new MT32Model(patch,j+0x1F),new MT32Sender(j+k+0x1F)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x1F),new MT32Sender(j+k+0x1F, basad)),0,gy,3,1,55);
             gy++;
             EnvelopeWidget.Node[] fNodes = new EnvelopeWidget.Node[] {
                 new EnvelopeWidget.Node(0,  0,  
@@ -279,19 +358,19 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
                     null, null),     
 	        new EnvelopeWidget.Node(
                     0, 100,    new MT32Model(patch,j+0x20), 0, 100, new MT32Model(patch,j+0x25),
-                    25, false, new MT32Sender(j+k+0x20),            new MT32Sender(j+k+0x25),
+                    25, false, new MT32Sender(j+k+0x20, basad),     new MT32Sender(j+k+0x25, basad),
                     "TIME 1",                               "LEVEL 1"),
 	        new EnvelopeWidget.Node(
                     0, 100,    new MT32Model(patch,j+0x21), 0, 100, new MT32Model(patch,j+0x26),
-                    25, false, new MT32Sender(j+k+0x21),            new MT32Sender(j+k+0x26),
+                    25, false, new MT32Sender(j+k+0x21, basad),     new MT32Sender(j+k+0x26, basad),
                     "TIME 2",                               "LEVEL 2"),
 	        new EnvelopeWidget.Node(
                     0, 100, new MT32Model(patch,j+0x22), 0, 100, new MT32Model(patch,j+0x27),
-                    25, false, new MT32Sender(j+k+0x22),         new MT32Sender(j+k+0x27),
+                    25, false, new MT32Sender(j+k+0x22, basad),  new MT32Sender(j+k+0x27, basad),
                     "TIME 3",                            "LEVEL 3"),
 	        new EnvelopeWidget.Node(
                     0,100,    new MT32Model(patch,j+0x23), 0,100, new MT32Model(patch,j+0x28),
-                    25,false, new MT32Sender(j+k+0x23),           new MT32Sender(j+k+0x28),
+                    25,false, new MT32Sender(j+k+0x23, basad),    new MT32Sender(j+k+0x28, basad),
                     "TIME 4",                              "LEVEL S"),
                 new EnvelopeWidget.Node(
                     50,50,   null, 5000,5000, null, 
@@ -299,7 +378,7 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
                     null,          null),     
 	        new EnvelopeWidget.Node(0,100,  
                     new MT32Model(patch,j+0x24),0,  0, null, 0,false,
-                    new MT32Sender(j+k+0x24),          null,                  
+                    new MT32Sender(j+k+0x24, basad),   null,                  
                     "TIME 5",                          null)
             };
             addWidget(TVFPane,
@@ -321,28 +400,28 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
             int lwa = getLabelWidth("TVA ENV TIME_FOLLOW ");  // Longest label string
             
             addWidget(TVAPane,new ScrollBarWidget("TVA LEVEL",patch,0,100,0, lwa,
-                new MT32Model(patch,j+0x29), new MT32Sender(j+k+0x29)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x29), new MT32Sender(j+k+0x29, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVAPane,new ScrollBarWidget("TVA VELO SENS",patch,0,100,0, lwa,
-                new MT32Model(patch,j+0x2A), new MT32Sender(j+k+0x2A)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x2A), new MT32Sender(j+k+0x2A, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVAPane,new ScrollBarWidget("TVA BIAS POINT 1",patch,0,127,0, lwa,
-                new MT32Model(patch,j+0x2B), new MT32Sender(j+k+0x2B)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x2B), new MT32Sender(j+k+0x2B, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVAPane,new ScrollBarWidget("TVA BIAS LEVEL 1",patch,0,12,-12, lwa,
-                new MT32Model(patch,j+0x2C),new MT32Sender(j+k+0x2C)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x2C),new MT32Sender(j+k+0x2C, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVAPane,new ScrollBarWidget("TVA BIAS POINT 2",patch,0,127,0, lwa,
-                new MT32Model(patch,j+0x2D),new MT32Sender(j+k+0x2D)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x2D),new MT32Sender(j+k+0x2D, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVAPane,new ScrollBarWidget("TVA BIAS LEVEL 2",patch,0,12,-12, lwa,
-                new MT32Model(patch,j+0x2E),new MT32Sender(j+k+0x2E)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x2E),new MT32Sender(j+k+0x2E, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVAPane,new ScrollBarWidget("TVA ENV TIME KEYF",patch,0,4,0, lwa,
-                new MT32Model(patch,j+0x2F),new MT32Sender(j+k+0x2F)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x2F),new MT32Sender(j+k+0x2F, basad)),0,gy,3,1,55);
             gy++;
             addWidget(TVAPane,new ScrollBarWidget("TVA ENV TIME_FOLLOW",patch,0,4,0, lwa,
-                new MT32Model(patch,j+0x30),new MT32Sender(j+k+0x30)),0,gy,3,1,55);
+                new MT32Model(patch,j+0x30),new MT32Sender(j+k+0x30, basad)),0,gy,3,1,55);
             gy++;
 //            System.out.print ("i / j " + i + " / " + j);
             EnvelopeWidget.Node[] aNodes = new EnvelopeWidget.Node[] {
@@ -353,19 +432,19 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
                     null,           null),                  // namex,                 namey
 	        new EnvelopeWidget.Node(
                     0, 100,   new MT32Model(patch,j+0x31), 0, 100, new MT32Model(patch,j+0x36),
-                    25,false, new MT32Sender(j+k+0x31),            new MT32Sender(j+k+0x36),
+                    25,false, new MT32Sender(j+k+0x31, basad),     new MT32Sender(j+k+0x36, basad),
                     "TIME 1",                              "LEVEL 1"),
 	        new EnvelopeWidget.Node(
                     0, 100,    new MT32Model(patch,j+0x32), 0, 100, new MT32Model(patch,j+0x37),
-                    25, false, new MT32Sender(j+k+0x32),            new MT32Sender(j+k+0x37),
+                    25, false, new MT32Sender(j+k+0x32, basad),     new MT32Sender(j+k+0x37, basad),
                     "TIME 2",                               "LEVEL 2"),
 	        new EnvelopeWidget.Node(
                     0, 100, new MT32Model(patch,j+0x33), 0, 100, new MT32Model(patch,j+0x38),
-                    25, false, new MT32Sender(j+k+0x33),         new MT32Sender(j+k+0x38),
+                    25, false, new MT32Sender(j+k+0x33, basad),  new MT32Sender(j+k+0x38, basad),
                     "TIME 3",                            "LEVEL 3"),
 	        new EnvelopeWidget.Node(
                     0, 100,    new MT32Model(patch,j+0x34), 0, 100, new MT32Model(patch,j+0x39), 
-                    25, false, new MT32Sender(j+k+0x34),            new MT32Sender(j+k+0x39),
+                    25, false, new MT32Sender(j+k+0x34, basad),     new MT32Sender(j+k+0x39, basad),
                     "TIME 4",                               "LEVEL S"),
                 new EnvelopeWidget.Node(
                     50, 50,   null, 5000, 5000, null, 
@@ -373,7 +452,7 @@ class RolandMT32SingleEditor extends PatchEditorFrame {
                     null,           null),     
 	        new EnvelopeWidget.Node(
                     0, 100,   new MT32Model(patch,j+0x35), 0,  0, null, 
-                    0, false, new MT32Sender(j+k+0x35),           null,                  
+                    0, false, new MT32Sender(j+k+0x35, basad),    null,                  
                     "TIME 5",                              null)
             };
             addWidget(TVAPane,

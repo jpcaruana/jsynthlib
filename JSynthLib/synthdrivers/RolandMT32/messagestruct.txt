@@ -6,9 +6,55 @@ for each channel.
 The MIDI inplementation specifies addresses in 7 bit hex, so 
 '00 7F' is followed by '01 00'.
 
+Messages:
+- Request RQ1 (not send by MT-32)
+F0 - System Exclusive start 
+41 - Manufacturer ID (Roland)
+10 - Device ID
+16 - Model ID (MT-32)
+11 - Request command
+ah - Address high byte (category)
+am - Address middle byte
+al - Address low byte
+sh - Size high byte
+sm - Size middle byte
+sl - Size low byte
+ck - Checksum ((0 - ah + am + al + sh + sm + sl) & 0x7F)
+F7 - System Exclusice end
 
+- Data set DT1 (accepted and send by MT-32 as reply to RQ1)
+F0 - System Exclusive start         0
+41 - Manufacturer ID (Roland)       1
+10 - Device ID                      2
+16 - Model ID (MT-32)               3
+12 - Data set command               4
+ah - Address high byte (category)   5
+am - Address middle byte            6
+al - Address low byte               7
+dd - data                           8 -
+..
+ck - Checksum ((0 - ah + am + al + sh + sm + sl + dd + .. ) & 0x7F)
+F7 - System Exclusice end
+
+The MT-32 also supports seven Handshaking communication messages. See the
+MIDI implementation.
 
 Timbre Temp Area (part 1) 04 00 00 - 04 01 75 
+Timbre Temp Area (part 2) 04 01 76 - 04 03 6B
+Timbre Temp Area (part 3) 04 03 6C - 04 05 61
+Timbre Temp Area (part 4) 04 05 62 - 04 07 57
+Timbre Temp Area (part 5) 04 07 58 - 04 09 4D
+Timbre Temp Area (part 6) 04 09 4E - 04 0B 43
+Timbre Temp Area (part 7) 04 0B 44 - 04 0D 3D
+Timbre Temp Area (part 8) 04 0D 3E - 04 0F 33
+
+Note that Timbre Memory is not battery backupped or saved at reset. 
+Timbre Memory #1          08 00 00 - 08 01 7F
+Timbre Memory #2          08 02 00 - 08 03 7F
+..
+Timbre Memory #63         08 7C 00 - 08 7D 7F
+Timbre Memory #64         08 7E 00 - 08 7F 7F
+
 
 Timbre common
 in real hex
@@ -23,6 +69,7 @@ in real hex
 82-BB         Partial parameters (for partial# 3)
 BC-F5         Partial parameters (for partial# 4)
 
+Partial parameters 1 - 4
 Offset Address      Description
 --------------      -----------
 00 00H              0aaa aaaa     WG PITCH COARSE 0-96 (C1,C#1-C9)
@@ -100,13 +147,39 @@ Each Timbre Temp Area is '01 76' (0xF6, 246) bytes large
 Each Partial Parameter set is (0x39, 57) bytes large
 Checksum is (00 - (04 + aa + aa + dd) & 0x7F)
 
+Parameter Base Address
 
-Skeleton SysEx command for setting parameter
+Temporary area (accesible on each basic channel)
+Start Address        Description
+-------------        ---------------------------
+00 00 00             Patch Temp Area (parts 1-8)
+01 00 00             Set Up Temp Area (rhyhtm part) *4-1
+02 00 00             Timbre Temp Area (parts 1-8) *4-2
 
-Data set DT1 12h
-
-00-04 F0 41 10 16 12
-05-07 aa aa aa
-08    dd
-09    cc
-0A    F7
+Whole Part (accessible on unit#)
+Start Address        Description
+-------------       ----------------------------
+03 00 00            Patch Temp Area (part 1)
+03 00 10            Patch Temp Area (part 2)
+:
+03 00 60            Patch Temp Area (part 7)
+03 00 70            Patch Temp Area (part 8)
+03 01 10            Set up Temp Area (rhythm part)
+04 00 00            Timbre Temp Area (part 1)   *4-2
+04 01 76            Timbre Temp Area (part 2)   *4-2
+:
+04 0b 44            Timbre Temp Area (part 7)   *4-2
+04 0d 3a            Timbre Temp Area (part 8)   *4-2
+04 00 00            Timbre Temp Area (part 1)
+05 00 00            Patch Memory #1
+05 00 08            Patch Memory #2
+:
+05 07 70            Patch Memory #127
+05 07 78            Patch Memory #128
+08 00 00            Timbre Memory #1   *4-2
+08 00 00            Timbre Memory #2   *4-2
+:
+08 00 00            Timbre Memory #63  *4-2
+08 00 00            Timbre Memory #64  *4-2
+10 00 00            System Area
+20 00 00            Display            *4-3

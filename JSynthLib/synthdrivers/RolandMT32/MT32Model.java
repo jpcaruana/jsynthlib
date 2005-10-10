@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 Fred Jan Kraan
+ * Copyright 2004,2005 Fred Jan Kraan
  *
  * This file is part of JSynthLib.
  *
@@ -19,17 +19,45 @@
  * USA
  */
 
-/*
- * MT32Model.java v.0.3
- * part of the Roland MT-32 driver
+/**
+ * MT32 Model for Roland MT32.
+ *
+ * @version $Id$
  */
 
 package synthdrivers.RolandMT32;
 import core.*;
 
 class MT32Model extends ParamModel {
+	    private int bitmask;
+	    private int mult;
 
-    public MT32Model(Patch p, int o) {
-        super(p, o + 8); // o + 8: offset in message vs. address
-    }
-}
+	    public MT32Model(Patch p, int offset) {
+	        super(p, offset + 8);
+	        bitmask = 255;
+	        mult = 1;
+	    }
+
+	    public MT32Model(Patch p, int offset, int b) {
+	        super(p, offset + 8);
+	        this.bitmask = bitmask;
+		ofs = offset + 8; patch = p; bitmask = b;
+		if ((bitmask & 1) == 1) mult = 1;
+		else if ((bitmask & 2) == 2) mult = 2;
+		else if ((bitmask & 4) == 4) mult = 4;
+		else if ((bitmask & 8) == 8) mult = 8;
+		else if ((bitmask & 16) == 16) mult = 16;
+		else if ((bitmask & 32) == 32) mult = 32;
+		else if ((bitmask & 64) == 64) mult = 64;
+		else if ((bitmask & 128) == 128) mult = 128;
+                System.out.println("offset: " + offset + "  b: " + b);
+	    }
+
+	    public void set(int i) {
+		patch.sysex[ofs] = (byte) i;
+	    }
+
+	    public int get() {
+		return patch.sysex[ofs];
+	    }
+	}
