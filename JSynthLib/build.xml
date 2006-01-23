@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.11 2005-03-04 11:46:09 jbackhaus Exp $
+	Version: $Id: build.xml,v 1.12 2006-01-23 08:06:06 jbackhaus Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -106,6 +106,9 @@
 		<copy todir="${build}/synthdrivers/RolandTD6">
 			<fileset dir="synthdrivers/RolandTD6" includes="**/*.syx"/>
 		</copy>
+		<copy todir="${build}/synthdrivers/TCElectronicGMajor">
+			<fileset dir="synthdrivers/TCElectronicGMajor" includes="**/*.syx"/>
+		</copy>
 		<copy todir="${build}/synthdrivers/WaldorfMW2">
 			<fileset dir="synthdrivers/WaldorfMW2" includes="**/*.syx"/>
 		</copy>
@@ -114,6 +117,9 @@
 		</copy>
 		<copy todir="${build}/synthdrivers/YamahaMotif">
 			<fileset dir="synthdrivers/YamahaMotif" includes="**/*.syx"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/YamahaUB99">
+			<fileset dir="synthdrivers/YamahaUB99" includes="**/*.dat"/>
 		</copy>
 		<!-- Extra files -->
 		<copy file="doc/documentation.html" todir="${build}/doc"/>
