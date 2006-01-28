@@ -50,7 +50,7 @@ public class MIDIboxSIDSlowSender
 	b[2] = (byte)0x00;
 	b[3] = (byte)0x7e;
 	b[4] = (byte)0x46;
-	b[5] = (byte)(driver.getChannel()-1);
+	b[5] = (byte)((driver.getDeviceID()-1) & 0x7f);
 	b[6] = (byte)0x06;
 	b[7] = (byte)(parameter >= 0x80 ? 0x01 : 0x00);
 	b[8] = (byte)(parameter & 0x7f);

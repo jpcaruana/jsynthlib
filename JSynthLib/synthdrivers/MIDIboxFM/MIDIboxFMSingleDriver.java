@@ -25,6 +25,7 @@
 package synthdrivers.MIDIboxFM;
 
 import core.*;
+import javax.swing.JOptionPane;
 
 public class MIDIboxFMSingleDriver extends Driver
 {
@@ -60,9 +61,27 @@ public class MIDIboxFMSingleDriver extends Driver
 	checksumOffset=266;
     }
 
+    public void requestPatchDump(int bankNum, int patchNum) 
+    {
+        //clearMidiInBuffer(); now done by SysexGetDialog.GetActionListener.
+        //setBankNum(bankNum);       // not for MBFM!
+        //setPatchNum(patchNum);     // not for MBFM!
+        if (sysexRequestDump == null) {
+            JOptionPane.showMessageDialog
+            (PatchEdit.getInstance(),
+                    "The " + toString()
+                    + " driver does not support patch getting.\n\n"
+                    + "Please start the patch dump manually...",
+                    "Get Patch", JOptionPane.WARNING_MESSAGE);
+        } else
+            send(sysexRequestDump.toSysexMessage(getDeviceID(),
+                    new SysexHandler.NameValue("bankNum", bankNum),
+                    new SysexHandler.NameValue("patchNum", patchNum)));
+    }
+
     public void storePatch(Patch p, int bankNum,int patchNum)
     {
-	((Patch)p).sysex[5]=(byte)((getChannel()-1)&0x7f);
+	((Patch)p).sysex[5]=(byte)((getDeviceID()-1)&0x7f);
 	((Patch)p).sysex[6]=(byte)0x02;
 	((Patch)p).sysex[7]=(byte)sysex_type;
 	((Patch)p).sysex[8]=(byte)(bankNum);
@@ -73,7 +92,7 @@ public class MIDIboxFMSingleDriver extends Driver
 
     public void sendPatch(Patch p)
     { 
-	((Patch)p).sysex[5]=(byte)((getChannel()-1)&0x7f);
+	((Patch)p).sysex[5]=(byte)((getDeviceID()-1)&0x7f);
 	((Patch)p).sysex[6]=(byte)0x02;
 	((Patch)p).sysex[7]=(byte)sysex_type;
 

@@ -135,7 +135,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	    sysex[2]=(byte)0x00;
 	    sysex[3]=(byte)0x7e;
 	    sysex[4]=(byte)0x46;
-	    sysex[5]=(byte)((getChannel()-1)&0x7f);
+	    sysex[5]=(byte)((getDeviceID()-1)&0x7f);
 	    sysex[6]=(byte)0x02;
 	    sysex[7]=(byte)(patchNum);
 	    sysex[265]=(byte)0xF7;
@@ -155,7 +155,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 	sysex[2]=(byte)0x00;
 	sysex[3]=(byte)0x7e;
 	sysex[4]=(byte)0x46;
-	sysex[5]=(byte)((getChannel()-1)&0x7f);
+	sysex[5]=(byte)((getDeviceID()-1)&0x7f);
 	sysex[6]=(byte)0x04;
 	sysex[128*256+8]=(byte)0xF7;
 
