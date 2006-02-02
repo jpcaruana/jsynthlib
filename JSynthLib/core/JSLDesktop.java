@@ -223,43 +223,46 @@ public class JSLDesktop implements JSLFrameListener {
         private static final int INSET = 100;
 
         JSLJDesktop(String title, JMenuBar mb, JToolBar tb) {
-	    super();
-	    frame = new JFrame(title);
-	    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	    frame.setBounds(INSET, INSET,
-			       screenSize.width  - INSET * 2,
-			       screenSize.height - INSET * 2);
+            super();
+            frame = new JFrame(title);
+            // Emenaker - 2006-02-02
+            // TODO: Move the actual filename to some central config location
+            frame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/JSLIcon48x48.png"));
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            frame.setBounds(INSET, INSET,
+                       screenSize.width  - INSET * 2,
+                       screenSize.height - INSET * 2);
 
-	    //Quit this app when the big window closes.
-	    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-	    frame.addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent e) {
-		        if (confirmExiting())
-		            exitAction.actionPerformed(null);
-		    }
-		});
+            //Quit this app when the big window closes.
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    if (confirmExiting())
+                        exitAction.actionPerformed(null);
+                }
+            });
 
-	    Container c = frame.getContentPane();
-	    if (tb != null) {
-	        c.add(tb, BorderLayout.NORTH);
-	        tb.setVisible(true);
-	    }
-	    c.add(this, BorderLayout.CENTER);
-	    if (mb != null)
-	        frame.setJMenuBar(mb);
-	    setOpaque(false);
-	    putClientProperty("JDesktopPane.dragMode", "outline");
+            Container c = frame.getContentPane();
+            if (tb != null) {
+                c.add(tb, BorderLayout.NORTH);
+                tb.setVisible(true);
+            }
+            c.add(this, BorderLayout.CENTER);
+            if (mb != null)
+                frame.setJMenuBar(mb);
+            setOpaque(false);
+            putClientProperty("JDesktopPane.dragMode", "outline");
 
-	    frame.setVisible(true);
-	}
+            frame.setVisible(true);
+        }
 
         public void add(JSLFrame f) {
             add(f.getJInternalFrame());
 	}
 
-        public void updateLookAndFeel() {
-            SwingUtilities.updateComponentTreeUI(frame);
-            //selected.pack();
+    public void updateLookAndFeel() {
+        SwingUtilities.updateComponentTreeUI(frame);
+        //selected.pack();
 	}
 	public JFrame getSelectedWindow() { return frame; }
 	public JSLFrame getSelectedJSLFrame() {
