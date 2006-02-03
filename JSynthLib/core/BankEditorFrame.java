@@ -253,6 +253,10 @@ public class BankEditorFrame extends Actions.MenuFrame implements PatchBasket {
         p.play();
     }
 
+    public void printPatch() {
+        BankPrinter bp = new BankPrinter(table);
+    }
+
     public void storeSelectedPatch() {
         new SysexStoreDialog(getSelectedPatch(), getSelectedPatchNum());
     }

@@ -58,9 +58,10 @@ final public class Actions {
     static final long EN_SEND_TO		= 0x0000000040000000L;
     static final long EN_SORT			= 0x0000000080000000L;
     static final long EN_STORE			= 0x0000000100000000L;
-    static final long EN_TRANSFER_SCENE		= 0x0000000200000000L;
+    static final long EN_TRANSFER_SCENE	= 0x0000000200000000L;
     static final long EN_UPLOAD			= 0x0000000400000000L;
     static final long EN_PREV_FADER		= 0x0000000800000000L;
+    static final long EN_PRINT  		= 0x0000001000000000L;
 
     /** All actions excluding ones which are always eanbled.  */
     static final long EN_ALL	= (//EN_ABOUT
@@ -126,6 +127,7 @@ final public class Actions {
     private static Action pasteAction;
     private static Action playAction;
     private static Action prefsAction;
+    private static Action printAction;
     private static Action reassignAction;
     private static Action saveAction;
     private static Action saveAsAction;
@@ -175,6 +177,7 @@ final public class Actions {
         importAllAction		= new ImportAllAction(mnemonics);
         sendAction		= new SendAction(mnemonics);
         sendToAction		= new SendToAction(mnemonics);
+        printAction		= new PrintAction(mnemonics);
         storeAction		= new StoreAction(mnemonics);
         getAction		= new GetAction(mnemonics);
 
@@ -290,6 +293,7 @@ final public class Actions {
 
         mi = menuPatch.add(editAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, mask));
+        mi = menuPatch.add(printAction);
         mi = menuPatch.add(playAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, mask));
         menuPatch.addSeparator();
@@ -608,12 +612,18 @@ final public class Actions {
 	    transferSceneAction.setEnabled(b);
 	if ((v & EN_UPLOAD) != 0)
 	    uploadAction.setEnabled(b);
+    if ((v & EN_PRINT) != 0)
+        printAction.setEnabled(b);
     }
 
     /** Create a new Library Window and load a Library from disk to
 	fill it! Fun! */
     static void openFrame(File file) {
-        PatchEdit.showWaitDialog("Loading " + file + " ...");
+        // PatchEdit.showWaitDialog("Loading " + file + " ...");
+        // The previous line won't do anything unless we use a new thread to do the loading.
+        // Right now, it's using the GUI event thread (since it was triggered from a GUI button
+        // so the GUI never gets a chance to make the WaitDialog until we've finished loading.
+        // - Emenaker, 2006-02-02
         AbstractLibraryFrame frame;
         if (file.exists()) {
             // try LibraryFrame then SceneFrame
@@ -625,18 +635,21 @@ final public class Actions {
                 try {
                     frame.open(file);
                 } catch (Exception e1) {
-                    PatchEdit.hideWaitDialog();
+                    // PatchEdit.hideWaitDialog();
+                    // See comment at beginning of this method
                     ErrorMsg.reportError("Error", "Error Loading Library:\n "
                             + file.getAbsolutePath(), e1);
                     return;
                 }
             }
         } else {
-            PatchEdit.hideWaitDialog();
+            // PatchEdit.hideWaitDialog();
+            // See comment at beginning of this method
             ErrorMsg.reportError("Error", "File Does Not Exist:\n" + file.getAbsolutePath() );
             return;
         }
-        PatchEdit.hideWaitDialog();
+        // PatchEdit.hideWaitDialog();
+        // See comment at beginning of this method
 
         addLibraryFrame(frame);
     }
@@ -807,6 +820,26 @@ final public class Actions {
 		ErrorMsg.reportError("Error", "Patch to 'Send to...' must be highlighted in the focused Window.", ex);
 	    }
 	}
+    }
+
+    // Added by Joe Emenaker - 2005-10-24
+    private static class PrintAction extends AbstractAction {
+        public PrintAction(Map mnemonics) {
+            super("Print", null);
+            //mnemonics.put(this, new Integer(''));
+            setEnabled(true);
+        }
+        public void actionPerformed(ActionEvent e) {
+            try {
+                if(getSelectedFrame() instanceof BankEditorFrame) {
+                    ((BankEditorFrame) getSelectedFrame()).printPatch();
+                } else {
+                    ErrorMsg.reportError("Error", "You can only print a Bank window.");
+                }
+            } catch (Exception ex) {
+                ErrorMsg.reportError("Error", "Patch to Play must be highlighted in the focused Window.", ex);
+            }
+        }
     }
 
     private static class DeleteAction extends AbstractAction {
