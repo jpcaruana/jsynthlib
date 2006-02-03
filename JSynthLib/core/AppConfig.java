@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.jsynthlib.jsynthlib.Dummy;
 
@@ -186,6 +186,11 @@ public final class AppConfig {
 
     /** Setter for lookAndFeel */
     static void setLookAndFeel(int lookAndFeel) {
+        // This causes dialogs and non-internal frames to be painted with the
+        // look-and-feel. Emenaker 2005-06-08
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+
         prefs.putInt("lookAndFeel", lookAndFeel);
         UIManager.LookAndFeelInfo [] installedLF;
         installedLF = UIManager.getInstalledLookAndFeels();
