@@ -87,7 +87,8 @@ public class DriverUtil {
                     return drv;
             }
         }
-        return null;
+        // Changed from "return null" - Emenaker 2006-02-03
+        return AppConfig.getNullDriver();
     }
 
     /**
