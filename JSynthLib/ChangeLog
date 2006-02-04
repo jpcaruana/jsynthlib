@@ -1,0 +1,31 @@
+ChangeLog for JSynthLib
+$Id: ChangeLog,v 1.1 2006-02-04 19:07:56 jbackhaus Exp $
+
+Note: ChangeLog started after release 0.20.0!
+The first logged changes are the ones from version 0.19 to 0.20.
+
+***********
+Release 0.x (Not released yet)
+***********
+
+New synth drivers:
+- Behringer V-Amp 2
+- Roland MKS-7
+- T.C. Electronics GMajor
+- Yamaha UB99
+
+************
+Release 0.20
+************
+
+New synth drivers:
+- Alesis DM5
+- Behringer FCB1010
+- Line 6 BassPod
+- Line 6 Pod 2
+- Quasimidi Quasar
+- Roland JV-80
+- Waldorf Microwave 2 (XT/XTK) -> Librarian only
+- Yamaha TG-100
+
+
