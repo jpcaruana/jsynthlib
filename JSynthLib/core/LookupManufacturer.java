@@ -280,7 +280,7 @@ public class LookupManufacturer {
         "Strand Lighting",
         "AMEK Systems & Controls",
         "UNASSIGNED!",
-        "Dr.Böhm/Musician International",
+        "Dr.B?hm/Musician International",
         "UNASSIGNED!",
         "Trident",
         "Real World Design",
@@ -335,10 +335,6 @@ public class LookupManufacturer {
         "IBK MIDI"      // 0x38
     };
 
-    /** Creates new LookupManufacturer */
-    private LookupManufacturer() {
-    }
-
     /**
      * Returns Manufacturer name.
      */
@@ -367,5 +363,19 @@ public class LookupManufacturer {
         }
 
         return "Invalid Manufacturer";
+    }
+
+    public static String get(byte[] d, int offset) {
+        return(get(d[offset], d[offset+1], d[offset+2]));
+    }
+
+    public static int lengthOfID(byte number1) {
+        if (number1>0)
+            return 1;
+        return 3;
+    }
+
+    public static int lengthOfID(byte[] data, int offset) {
+        return(lengthOfID(data[offset]));
     }
 }
