@@ -1,9 +1,9 @@
 package synthdrivers.Generic;
 
-import core.PatchEditorFrame;
+// import core.PatchEditorFrame;
 import core.Patch;
-import java.awt.*;
-import synthdrivers.AlesisSR16.DataModel;
+// import java.awt.*;
+// import synthdrivers.AlesisSR16.DataModel;
 
 import javax.sound.midi.SysexMessage;
 
@@ -29,10 +29,11 @@ public class HexDumpEditorFrame extends SingleTextAreaFrame {
         appendBytes(bytes);
     }
 
+/*
     public HexDumpEditorFrame(DataModel dm) {
         this(dm.getDecodedBytes());
     }
-
+*/
     public HexDumpEditorFrame(Patch p) {
         this();
         SysexMessage[] messages = p.getMessages();
