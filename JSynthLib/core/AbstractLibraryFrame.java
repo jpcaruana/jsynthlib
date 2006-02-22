@@ -47,7 +47,7 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
     private final String TYPE;
     private PatchTransferHandler pth;
     /** Has the library been altered since it was last saved? */
-    private boolean changed = false;
+        private boolean changed = false;
     private JLabel statusBar;
     private File filename;
 
@@ -135,6 +135,7 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
 
         table.getModel().addTableModelListener(new TableModelListener() {
             public void tableChanged(TableModelEvent e) {
+                changed=true;
                 statusBar.setText(myModel.getRowCount() + " Patches");
                 enableActions();
             }
@@ -241,7 +242,12 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
 
     protected void changed() {
         myModel.fireTableDataChanged();
-        changed = true;
+        // This is done in tableChanged for the TableModelListener
+        // changed = true;
+    }
+
+    public boolean isChanged() {
+        return(changed);
     }
 
     public void exportPatch(File file) throws IOException,
@@ -315,6 +321,7 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
     }
 
     public JSLFrame editSelectedPatch() {
+        // TODO: "changed" should only be set to true if the patch was modified.
         changed = true;
         return getSelectedPatch().edit();
     }
@@ -364,6 +371,10 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
             s.close();
             f.close();
             changed = false;
+
+            XMLFileUtils.writePatchBasket(this, filename + ".xml");
+
+
         } catch (IOException e) {
             throw e;
         } finally {
@@ -379,16 +390,26 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
     }
 
     void open(File file) throws IOException, ClassNotFoundException {
+        boolean readXMLFile = true;
+        boolean readOldFile = true;
+
         setTitle(file.getName());
         filename = file;
-        FileInputStream f = new FileInputStream(file);
-        ObjectInputStream s = new ObjectInputStream(f);
-        myModel.setList((ArrayList) s.readObject());
-        s.close();
-        f.close();
+
+        if(readOldFile) {
+            FileInputStream f = new FileInputStream(file);
+            ObjectInputStream s = new ObjectInputStream(f);
+            myModel.setList((ArrayList) s.readObject());
+            s.close();
+            f.close();
+        }
+        if(readXMLFile) {
+            XMLFileUtils.readPatchBasket(this,file.getName() + ".xml");
+        }
         revalidateDrivers();
         myModel.fireTableDataChanged();
         changed = false;
+
     }
 
     abstract FileFilter getFileFilter();
