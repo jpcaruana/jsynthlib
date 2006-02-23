@@ -51,7 +51,7 @@ class SceneFrame extends AbstractLibraryFrame {
     }
 
     PatchTableModel createTableModel() {
-        return new SceneListModel(false);
+        return new SceneListModel(/* false */);
     }
 
     void setupColumns() {
@@ -150,12 +150,18 @@ class SceneFrame extends AbstractLibraryFrame {
         private final String[] columnNames = { "Synth", "Type", "Patch Name",
                 "Bank Number", "Patch Number", "Comment" };
 
-        private boolean changed;
+// TODO: Remove these comments after June, 2006
+// This isn't the same "changed" as the one used in AbstractLibraryFrame, and this one is never used
+// - Emenaker 2006-02-21
+//        private boolean changed;
 
         private ArrayList list = new ArrayList();
 
-        public SceneListModel(boolean c) {
-            changed = c;
+        public SceneListModel(/*boolean c*/) {
+// TODO: Remove these comments after June, 2006
+// This isn't the same "changed" as the one used in AbstractLibraryFrame, and this one is never used
+// - Emenaker 2006-02-21
+//            changed = c;
         }
 
         public int getRowCount() {
@@ -227,7 +233,10 @@ class SceneFrame extends AbstractLibraryFrame {
         public void setValueAt(Object value, int row, int col) {
             //ErrorMsg.reportStatus("SetValue at "+row+" "+col+"
             // Value:"+value);
-            changed = true;
+// TODO: Remove these comments after June, 2006
+// This isn't the same "changed" as the one used in AbstractLibraryFrame, and this one is never used
+// - Emenaker 2006-02-21
+//            changed = true;
             Scene myScene = getSceneAt(row);
             switch (col) {
             case BANK_NUM:
@@ -308,19 +317,27 @@ class SceneFrame extends AbstractLibraryFrame {
                         Scene s = (Scene) t.getTransferData(SCENE_FLAVOR);
                         // Serialization loses a transient field, driver.
                         s.getPatch().setDriver();
-                        ((SceneListModel) ((JTable) c).getModel()).addScene(s);
+                        SceneListModel model = (SceneListModel) ((JTable) c).getModel();
+                        model.addScene(s);
+                        // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
+                        model.fireTableDataChanged();
                         return true;
                     } else if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
                         IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
                         // Serialization loses a transient field, driver.
                         p.setDriver();
-                        ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
+                        PatchTableModel model = (PatchTableModel) ((JTable) c).getModel();
+                        model.addPatch(p);
+                        // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
+                        model.fireTableDataChanged();
                         return true;
                     } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
                         String s = (String) t.getTransferData(TEXT_FLAVOR);
                         IPatch p = getPatchFromUrl(s);
-                        ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
-                        return true;
+                        PatchTableModel model = (PatchTableModel) ((JTable) c).getModel();
+                        model.addPatch(p);
+                        // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
+                        model.fireTableDataChanged();
                     }
                 } catch (UnsupportedFlavorException e) {
                     ErrorMsg.reportStatus(e);

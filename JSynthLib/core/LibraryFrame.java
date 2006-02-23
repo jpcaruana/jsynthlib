@@ -3,15 +3,9 @@ package core;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumn;
 
@@ -42,7 +36,7 @@ class LibraryFrame extends AbstractLibraryFrame {
     }
 
     PatchTableModel createTableModel() {
-        return new PatchListModel(false);
+        return new PatchListModel(/* false */);
     }
 
     void setupColumns() {
@@ -165,12 +159,18 @@ class LibraryFrame extends AbstractLibraryFrame {
         private final String[] columnNames = { "Synth", "Type", "Patch Name",
                 "Field 1", "Field 2", "Comment" };
 
-        private boolean changed;
+// TODO: Remove these comments after June, 2006
+// This isn't the same "changed" as the one used in AbstractLibraryFrame, and this one is never used
+// - Emenaker 2006-02-21
+//        private boolean changed;
 
         private ArrayList list = new ArrayList();
 
-        PatchListModel(boolean c) {
-            changed = c;
+        PatchListModel(/* boolean c */) {
+// TODO: Remove these comments after June, 2006
+// This isn't the same "changed" as the one used in AbstractLibraryFrame, and this one is never used
+// - Emenaker 2006-02-21
+//            changed = c;
         }
 
         public int getRowCount() {
@@ -236,7 +236,10 @@ class LibraryFrame extends AbstractLibraryFrame {
          * data can change.
          */
         public void setValueAt(Object value, int row, int col) {
-            changed = true;
+// TODO: Remove these comments after June, 2006
+// This isn't the same "changed" as the one used in AbstractLibraryFrame, and this one is never used
+// - Emenaker 2006-02-21
+//            changed = true;
             IPatch myPatch = (IPatch) list.get(row);
             switch (col) {
             case PATCH_NAME:
@@ -293,14 +296,18 @@ class LibraryFrame extends AbstractLibraryFrame {
 
     private static class PatchListTransferHandler extends PatchTransferHandler {
         protected Transferable createTransferable(JComponent c) {
-            PatchTableModel pm = (PatchTableModel) ((JTable) c).getModel();
+            JTable table = (JTable) c;
+            PatchTableModel pm = (PatchTableModel) table.getModel();
             IPatch p = pm.getPatchAt(((JTable) c).getSelectedRow());
             ErrorMsg.reportStatus("PatchListTransferHandler.createTransferable " + p);
             return p;
         }
 
         protected boolean storePatch(IPatch p, JComponent c) {
-            ((PatchTableModel) ((JTable) c).getModel()).addPatch(p);
+            PatchTableModel model = (PatchTableModel) ((JTable) c).getModel();
+            model.addPatch(p);
+            // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
+            model.fireTableDataChanged();
             return true;
         }
 
