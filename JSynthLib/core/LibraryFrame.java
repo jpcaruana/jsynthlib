@@ -1,7 +1,6 @@
 package core;
 
 import java.awt.Toolkit;
-import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.util.*;
 
@@ -119,7 +118,7 @@ class LibraryFrame extends AbstractLibraryFrame {
                 p = q;
         }
         JOptionPane.showMessageDialog(null, numDeleted
-                + " Patches were Deleted", "Delete Duplicates",
+                + " PatchesAndScenes were Deleted", "Delete Duplicates",
                 JOptionPane.INFORMATION_MESSAGE);
         changed();
     }
@@ -295,13 +294,6 @@ class LibraryFrame extends AbstractLibraryFrame {
     }
 
     private static class PatchListTransferHandler extends PatchTransferHandler {
-        protected Transferable createTransferable(JComponent c) {
-            JTable table = (JTable) c;
-            PatchTableModel pm = (PatchTableModel) table.getModel();
-            IPatch p = pm.getPatchAt(((JTable) c).getSelectedRow());
-            ErrorMsg.reportStatus("PatchListTransferHandler.createTransferable " + p);
-            return p;
-        }
 
         protected boolean storePatch(IPatch p, JComponent c) {
             PatchTableModel model = (PatchTableModel) ((JTable) c).getModel();

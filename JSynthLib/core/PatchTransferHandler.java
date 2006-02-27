@@ -9,11 +9,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Vector;
 
-import javax.swing.JComponent;
-import javax.swing.TransferHandler;
+import javax.swing.*;
 
 public abstract class PatchTransferHandler extends TransferHandler {
+    public static final DataFlavor PATCHES_FLAVOR =
+        new DataFlavor(PatchesAndScenes.class, "Patch Array");
+//        new DataFlavor(IPatch[].class, "Patch Array");
+
     public static final DataFlavor PATCH_FLAVOR =
         new DataFlavor(IPatch[].class, "Patch Array");
 
@@ -23,14 +27,38 @@ public abstract class PatchTransferHandler extends TransferHandler {
     public static final DataFlavor TEXT_FLAVOR =
         new DataFlavor(String.class, "String");
 
-    protected static final DataFlavor[] flavors = {
-            PATCH_FLAVOR, SCENE_FLAVOR, TEXT_FLAVOR
+    private DataFlavor[] flavorsAccepted = new DataFlavor[] {
+        PATCHES_FLAVOR,
+        PATCH_FLAVOR,
+        SCENE_FLAVOR,
+        TEXT_FLAVOR,
     };
 
     protected abstract boolean storePatch(IPatch p, JComponent c);
 
+    protected boolean storeScene(Scene s, JComponent c) {
+        // Default behavior is to just get the patch data
+        return storePatch(s.getPatch(), c);
+    }
+
     public int getSourceActions(JComponent c) {
         return COPY;
+    }
+
+    protected Transferable createTransferable(JComponent c) {
+        PatchesAndScenes patchesAndScenes = new PatchesAndScenes();
+        if(c instanceof JTable) {
+            JTable table = (JTable) c;
+            AbstractLibraryFrame.PatchTableModel pm = (AbstractLibraryFrame.PatchTableModel) table.getModel();
+            int[] rowIdxs = table.getSelectedRows();
+            for(int i=0; i<rowIdxs.length; i++) {
+                IPatch patch = pm.getPatchAt(rowIdxs[i]);
+                patchesAndScenes.add(patch);
+            }
+        } else {
+            ErrorMsg.reportStatus("PatchTransferHandler.createTransferable doesn't recognize the component it was given");
+        }
+        return(patchesAndScenes);
     }
 
     // Used by LibraryFrame and BankEditorFrame.
@@ -38,11 +66,47 @@ public abstract class PatchTransferHandler extends TransferHandler {
     public boolean importData(JComponent c, Transferable t) {
         if (canImport(c, t.getTransferDataFlavors())) {
             try {
-                if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
-                    IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
-                    // Serialization loses a transient field, driver.
-                    p.setDriver();
-                    return storePatch(p, c);
+                if (t.isDataFlavorSupported(PATCHES_FLAVOR)) {
+                    Vector patches = (Vector) t.getTransferData(PATCHES_FLAVOR);
+                    for(int i=0; i<patches.size(); i++) {
+                        Object obj = patches.elementAt(i);
+                        if(obj instanceof IPatch) {
+                            IPatch patch = (IPatch) obj;
+                            /**
+                             * Once we get the patch, we need to clone it for the recipient of the paste.
+                             * Otherwise, it would be possible for the user to make multiple pastes from
+                             * a single cut/copy and each window could be altering the *same* object.
+                             * - Emenaker - 2006-02-26
+                             */
+                            ErrorMsg.reportStatus("Cloning: " + patch);
+                            IPatch newPatch = (IPatch) patch.clone();
+                            // Serialization loses a transient field, driver.
+                            newPatch.setDriver();
+                            if(! storePatch(newPatch, c)) {
+                                return(false);
+                            }
+                            continue; // for(int i=0; i<patches.size(); i++)
+                        }
+
+                        if(obj instanceof Scene) {
+                            Scene scene = (Scene) obj;
+                            /**
+                             * Once we get the patch, we need to clone it for the recipient of the paste.
+                             * Otherwise, it would be possible for the user to make multiple pastes from
+                             * a single cut/copy and each window could be altering the *same* object.
+                             * - Emenaker - 2006-02-26
+                             */
+                            ErrorMsg.reportStatus("Cloning: " + scene);
+                            Scene newScene = (Scene) scene.clone();
+                            // Serialization loses a transient field, driver.
+                            if(! storeScene(newScene, c)) {
+                                return(false);
+                            }
+                            continue; // for(int i=0; i<patches.size(); i++)
+                        }
+                        ErrorMsg.reportStatus("PatchTransferHandler.importData was passed an unrecognized object: " + obj);
+                        continue; // for(int i=0; i<patches.size(); i++)
+                    }
                 } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
                     String s = (String) t.getTransferData(TEXT_FLAVOR);
                     IPatch p = getPatchFromUrl(s);
@@ -88,15 +152,18 @@ public abstract class PatchTransferHandler extends TransferHandler {
         return null;
     }
 
-    public boolean canImport(JComponent c, DataFlavor[] flavors) {
-        for (int i = 0; i < flavors.length; i++) {
-            //ErrorMsg.reportStatus(flavors[i].getMimeType());
+    public boolean canImport(JComponent c, DataFlavor[] flavorsOffered) {
+        for (int i = 0; i < flavorsOffered.length; i++) {
+            //ErrorMsg.reportStatus("PatchTransferHandler.canImport(" + flavorsOffered[i].getMimeType() + ")");
             //ErrorMsg.reportStatus(TEXT_FLAVOR.getMimeType());
-            if (PATCH_FLAVOR.match(flavors[i])
-                    || TEXT_FLAVOR.match(flavors[i])) {
-                return true;
+            for(int j=0; j < flavorsAccepted.length; j++) {
+                if (flavorsAccepted[j].match(flavorsOffered[i])) {
+                    //ErrorMsg.reportStatus("PatchTransferHandler CAN import");
+                    return true;
+                }
             }
         }
+        //ErrorMsg.reportStatus("PatchTransferHandler can't import");
         return false;
     }
 

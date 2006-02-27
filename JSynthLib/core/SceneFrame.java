@@ -3,10 +3,8 @@ package core;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 
@@ -265,6 +263,7 @@ class SceneFrame extends AbstractLibraryFrame {
         }
 
         IPatch getPatchAt(int row) {
+//            return ((Scene) list.get(row)).getPatch();
             return ((Scene) list.get(row)).getPatch();
         }
 
@@ -285,10 +284,6 @@ class SceneFrame extends AbstractLibraryFrame {
         }
         // end PatchTableModel interface methods
 
-        void setSceneAt(Scene p, int row) { // not used now
-            list.set(row, p);
-        }
-
         Scene getSceneAt(int row) {
             return (Scene) list.get(row);
         }
@@ -296,68 +291,50 @@ class SceneFrame extends AbstractLibraryFrame {
         void addScene(Scene s) {
             list.add(s);
         }
-
-        void addPatch(IPatch p, int row) { // not used now
-            list.add(row, new Scene(p));
-        }
     }
 
+    /**
+     * SceneListTransferHandler
+     *
+     * This class extends PatchTransferHandler by allowing scenes to be placed into the Transferable and also
+     * allowing scenes to be inserted into the JTable as *scenes* and not just as the inner patch data (which
+     * is the default behavior of PatchTransferHandler) - Emenaker - 2006-02-27
+     */
     private static class SceneListTransferHandler extends PatchTransferHandler {
+
         protected Transferable createTransferable(JComponent c) {
-            SceneListModel pm = (SceneListModel) ((JTable) c).getModel();
-            Scene s = pm.getSceneAt(((JTable) c).getSelectedRow());
-            ErrorMsg.reportStatus("SceneFrame.createTransferable " + s);
-            return s;
-        }
-
-        public boolean importData(JComponent c, Transferable t) {
-            if (canImport(c, t.getTransferDataFlavors())) {
-                try {
-                    if (t.isDataFlavorSupported(SCENE_FLAVOR)) {
-                        Scene s = (Scene) t.getTransferData(SCENE_FLAVOR);
-                        // Serialization loses a transient field, driver.
-                        s.getPatch().setDriver();
-                        SceneListModel model = (SceneListModel) ((JTable) c).getModel();
-                        model.addScene(s);
-                        // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
-                        model.fireTableDataChanged();
-                        return true;
-                    } else if (t.isDataFlavorSupported(PATCH_FLAVOR)) {
-                        IPatch p = (IPatch) t.getTransferData(PATCH_FLAVOR);
-                        // Serialization loses a transient field, driver.
-                        p.setDriver();
-                        PatchTableModel model = (PatchTableModel) ((JTable) c).getModel();
-                        model.addPatch(p);
-                        // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
-                        model.fireTableDataChanged();
-                        return true;
-                    } else if (t.isDataFlavorSupported(TEXT_FLAVOR)) {
-                        String s = (String) t.getTransferData(TEXT_FLAVOR);
-                        IPatch p = getPatchFromUrl(s);
-                        PatchTableModel model = (PatchTableModel) ((JTable) c).getModel();
-                        model.addPatch(p);
-                        // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
-                        model.fireTableDataChanged();
-                    }
-                } catch (UnsupportedFlavorException e) {
-                    ErrorMsg.reportStatus(e);
-                } catch (IOException e) {
-                    ErrorMsg.reportStatus(e);
+            PatchesAndScenes patchesAndScenes = new PatchesAndScenes();
+            if(c instanceof JTable) {
+                JTable table = (JTable) c;
+                SceneListModel slm = (SceneListModel) table.getModel();
+                int[] rowIdxs = table.getSelectedRows();
+                for(int i=0; i<rowIdxs.length; i++) {
+                    Scene scene = slm.getSceneAt(rowIdxs[i]);
+                    patchesAndScenes.add(scene);
                 }
+            } else {
+                ErrorMsg.reportStatus("PatchTransferHandler.createTransferable doesn't recognize the component it was given");
             }
-            // Let user know we tried to paste.
-            Toolkit.getDefaultToolkit().beep();
-            return false;
+            return(patchesAndScenes);
         }
 
-        protected boolean storePatch(IPatch p, JComponent c) { // not used
-            return false;
+        protected boolean storeScene(Scene s, JComponent c) {
+            SceneListModel model = (SceneListModel) ((JTable) c).getModel();
+            model.addScene(s);
+            ErrorMsg.reportStatus("Stored a Scene into a SceneList");
+            // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
+            model.fireTableDataChanged();
+            return true;
         }
 
-        // only for debugging
-//        protected void exportDone(JComponent source, Transferable data, int action) {
-//            ErrorMsg.reportStatus("SceneListTransferHandler.exportDone " + data);
-//        }
+        protected boolean storePatch(IPatch p, JComponent c) {
+            SceneListModel model = (SceneListModel) ((JTable) c).getModel();
+            model.addPatch(p);
+            // TODO This method shouldn't have to worry about calling fireTableDataChanged(). Find a better way.
+            model.fireTableDataChanged();
+            return true;
+//            return false;
+        }
     }
 
     /**
