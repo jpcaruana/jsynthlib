@@ -20,15 +20,31 @@
  */
 
 package synthdrivers.TCElectronicGMajor;
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemListener;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.event.ItemListener;
+
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.ErrorMsg;
+import core.Patch;
+import core.PatchEdit;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.SysexWidget;
 
 class TCElectronicGMajorSingleEditor extends PatchEditorFrame {
 

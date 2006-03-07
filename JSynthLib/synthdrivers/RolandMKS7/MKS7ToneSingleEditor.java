@@ -29,13 +29,11 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import core.CheckBoxWidget;
 import core.ComboBoxWidget;
 import core.EnvelopeWidget;
 import core.ParamModel;
 import core.Patch;
 import core.PatchEditorFrame;
-import core.PatchNameWidget;
 import core.ScrollBarWidget;
 import core.SysexSender;
 

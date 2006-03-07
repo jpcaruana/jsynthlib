@@ -25,21 +25,9 @@
  */
 
 package synthdrivers.MIDIboxSID;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.SysexMessage;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.util.prefs.Preferences;
 
 import core.Device;
-import core.ErrorMsg;
-import java.util.prefs.Preferences;
 
 public class MIDIboxSIDDevice extends Device
 {

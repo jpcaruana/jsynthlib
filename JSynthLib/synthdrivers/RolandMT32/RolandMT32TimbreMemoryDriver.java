@@ -26,12 +26,12 @@
  */
 
 package synthdrivers.RolandMT32;
+
 import core.Driver;
-import core.DriverUtil;
+import core.ErrorMsg;
 import core.JSLFrame;
 import core.Patch;
 import core.SysexHandler;
-import core.ErrorMsg;
 
 
 public class RolandMT32TimbreMemoryDriver extends Driver {

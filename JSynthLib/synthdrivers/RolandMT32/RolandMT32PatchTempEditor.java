@@ -26,12 +26,21 @@
  */
 
 package synthdrivers.RolandMT32;
-import core.*;
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.JComponent;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.ErrorMsg;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.ScrollBarWidget;
 
 class RolandMT32PatchTempEditor extends PatchEditorFrame {
                                             

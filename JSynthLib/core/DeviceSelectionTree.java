@@ -9,7 +9,6 @@ package core;
 
 import javax.swing.JTree;
 import javax.swing.tree.*;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Collection;

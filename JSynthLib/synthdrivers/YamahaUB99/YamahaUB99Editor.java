@@ -20,21 +20,34 @@
  */
 
 package synthdrivers.YamahaUB99;
-import core.*;
-import synthdrivers.YamahaUB99.format.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemListener;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.border.*;
-import javax.swing.event.*;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-
+import java.awt.event.ItemListener;
 import java.util.Vector;
+
+import javax.swing.Box;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+
+import synthdrivers.YamahaUB99.format.DoubleFormat;
+import synthdrivers.YamahaUB99.format.IFormat;
+import synthdrivers.YamahaUB99.format.IntFormat;
+import synthdrivers.YamahaUB99.format.ListFormat;
+import core.CheckBoxWidget;
+import core.ComboBoxWidget;
+import core.ErrorMsg;
+import core.Patch;
+import core.PatchEditorFrame;
+import core.PatchNameWidget;
+import core.SysexWidget;
 
 class YamahaUB99Editor extends PatchEditorFrame {
 

@@ -46,8 +46,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableColumn;
 
-import java.io.InputStream;
-
 import core.Patch;
 import core.CheckBoxWidget;
 import core.ComboBoxWidget;

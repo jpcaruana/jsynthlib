@@ -24,12 +24,16 @@
  */
 
 package synthdrivers.RolandMT32;
-import core.*;
 
-import java.io.*;
-import javax.swing.*;
+import java.io.UnsupportedEncodingException;
 
-import synthdrivers.RolandGP16.RolandGP16SingleDriver;
+import javax.swing.JOptionPane;
+
+import core.BankDriver;
+import core.DriverUtil;
+import core.ErrorMsg;
+import core.Patch;
+import core.SysexHandler;
 
 
 public class RolandMT32TimbreMemoryBankDriver extends BankDriver {

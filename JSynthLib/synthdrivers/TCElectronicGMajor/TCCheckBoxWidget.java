@@ -23,7 +23,6 @@ package synthdrivers.TCElectronicGMajor;
 
 import core.*;
 
-import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
