@@ -135,7 +135,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
 		JPanel mainPane = new JPanel();
 		mainPane.setLayout(new GridBagLayout());
 		gbc.gridy=0;
-		gbc.gridx=gbc.RELATIVE;
+		gbc.gridx=GridBagConstraints.RELATIVE;
         //gbc.weightx = 1;
         mainPane.add(paramgui,gbc);
         //gbc.weightx = 1;
