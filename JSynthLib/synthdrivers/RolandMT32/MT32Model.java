@@ -39,9 +39,10 @@ class MT32Model extends ParamModel {
 	    }
 
 	    public MT32Model(Patch p, int offset, int b) {
-	        super(p, offset + 8);
-	        this.bitmask = bitmask;
-		ofs = offset + 8; patch = p; bitmask = b;
+	        super(p, offset + 8);	        
+		ofs = offset + 8; 
+		patch = p; 
+		bitmask = b;
 		if ((bitmask & 1) == 1) mult = 1;
 		else if ((bitmask & 2) == 2) mult = 2;
 		else if ((bitmask & 4) == 4) mult = 4;
