@@ -1,5 +1,5 @@
 ChangeLog for JSynthLib
-$Id: ChangeLog,v 1.1 2006-02-04 19:07:56 jbackhaus Exp $
+$Id: ChangeLog,v 1.2 2006-03-07 21:26:20 jbackhaus Exp $
 
 Note: ChangeLog started after release 0.20.0!
 The first logged changes are the ones from version 0.19 to 0.20.
@@ -10,6 +10,7 @@ Release 0.x (Not released yet)
 
 New synth drivers:
 - Behringer V-Amp 2
+- Roland JD-800
 - Roland MKS-7
 - T.C. Electronics GMajor
 - Yamaha UB99

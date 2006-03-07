@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.13 2006-03-07 07:27:46 jbackhaus Exp $
+	Version: $Id: build.xml,v 1.14 2006-03-07 21:25:50 jbackhaus Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -102,6 +102,9 @@
 		<!-- .syx files -->
 		<copy todir="${build}/synthdrivers/KawaiK5000">
 			<fileset dir="synthdrivers/KawaiK5000" includes="**/*.syx"/>
+		</copy>
+		<copy todir="${build}/synthdrivers/RolandJD800">
+			<fileset dir="synthdrivers/RolandJD800" includes="**/*.syx"/>
 		</copy>
 		<copy todir="${build}/synthdrivers/RolandTD6">
 			<fileset dir="synthdrivers/RolandTD6" includes="**/*.syx"/>
