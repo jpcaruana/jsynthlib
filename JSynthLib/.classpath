@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry excluding="midiprovider/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Data/eclipse/JSynthLib-CVS/groovy.jar"/>
+	<classpathentry kind="lib" path="groovy.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
