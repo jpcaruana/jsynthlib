@@ -267,13 +267,13 @@ public class JSLDesktop implements JSLFrameListener {
 	public JFrame getSelectedWindow() { return frame; }
 	public JSLFrame getSelectedJSLFrame() {
 	    try {
-		return ((JSLFrame.JSLFrameProxy)getSelectedFrame()).getJSLFrame();
+		return ((JSLFrame.JSLFrameProxy)this.getSelectedFrame()).getJSLFrame();
 	    } catch (NullPointerException e) {
 		return null; // This is normal.
 	    }
 	}
 	public JSLFrame[] getAllJSLFrames() {
-	    JInternalFrame[] ifs = getAllFrames();
+	    JInternalFrame[] ifs = this.getAllFrames();
 	    JSLFrame[] a = new JSLFrame[ifs.length];
 
 	    for (int i = 0; i < ifs.length; i++) {

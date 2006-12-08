@@ -212,10 +212,10 @@ public class JSLFrame {
 	    listeners.add(l);
 	}
 	public void setVisible(boolean b) {
-	    ErrorMsg.reportStatus(ErrorMsg.FRAME, "setVisible : " + getTitle());
+	    ErrorMsg.reportStatus(ErrorMsg.FRAME, "setVisible : " + this.getTitle());
 	    super.setVisible(b);
 	    try {
-                setSelected(b);
+                this.setSelected(b);
             } catch (PropertyVetoException e) {
                 // don't know how this exception occurs
                 e.printStackTrace();
@@ -224,7 +224,7 @@ public class JSLFrame {
 
 	public void internalFrameActivated(InternalFrameEvent e) {
 	    ErrorMsg.reportStatus(ErrorMsg.FRAME,
-	            "\"" + getTitle() + "\" activated.");
+	            "\"" + this.getTitle() + "\" activated.");
 	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.ACTIVATED);
 	    Iterator it = listeners.iterator();
@@ -252,7 +252,7 @@ public class JSLFrame {
 	}
 	public void internalFrameDeactivated(InternalFrameEvent e) {
 	    ErrorMsg.reportStatus(ErrorMsg.FRAME,
-	            "\"" + getTitle() + "\" deactivated.");
+	            "\"" + this.getTitle() + "\" deactivated.");
 	    JSLFrameEvent fe =
 		new JSLFrameEvent(getJSLFrame(), JSLFrameEvent.DEACTIVATED);
 	    Iterator it = listeners.iterator();

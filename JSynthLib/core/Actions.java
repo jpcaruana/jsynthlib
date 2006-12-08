@@ -751,7 +751,7 @@ final public class Actions {
 	public ReassignAction(Map mnemonics) {
 	    super("Reassign...", null); // show a dialog frame???
 	    // mnemonics.put(this, new Integer('R'));
-	    setEnabled(false);
+	    this.setEnabled(false);
 	}
 	public void actionPerformed(ActionEvent e) {
 	    try {
@@ -766,7 +766,7 @@ final public class Actions {
         public PlayAction(Map mnemonics) {
             super("Play", null);
             mnemonics.put(this, new Integer('P'));
-            setEnabled(false);
+            this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
             try {
@@ -781,7 +781,7 @@ final public class Actions {
         public StoreAction(Map mnemonics) {
             super("Store...", null);
             mnemonics.put(this, new Integer('R'));
-            setEnabled(false);
+            this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
             try {
@@ -796,7 +796,7 @@ final public class Actions {
         public SendAction(Map mnemonics) {
             super("Send", null);
 	    mnemonics.put(this, new Integer('S'));
-            setEnabled(false);
+            this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
             try {
@@ -811,7 +811,7 @@ final public class Actions {
 	public SendToAction(Map mnemonics) {
 	    super("Send to...", null);
 	    // mnemonics.put(this, new Integer('S'));
-	    setEnabled(false);
+	    this.setEnabled(false);
 	}
 	public void actionPerformed(ActionEvent e) {
 	    try {
@@ -827,7 +827,7 @@ final public class Actions {
         public PrintAction(Map mnemonics) {
             super("Print", null);
             //mnemonics.put(this, new Integer(''));
-            setEnabled(true);
+            this.setEnabled(true);
         }
         public void actionPerformed(ActionEvent e) {
             try {
@@ -845,7 +845,7 @@ final public class Actions {
     private static class DeleteAction extends AbstractAction {
         public DeleteAction(Map mnemonics) {
             super("Delete", null);
-            setEnabled(false);
+            this.setEnabled(false);
 	    mnemonics.put(this, new Integer('D'));
         }
 
@@ -861,7 +861,7 @@ final public class Actions {
     private static class CopyAction extends AbstractAction {
         public CopyAction(Map mnemonics) {
             super("Copy", null);
-            setEnabled(false);
+            this.setEnabled(false);
 	    mnemonics.put(this, new Integer('C'));
         }
         public void actionPerformed(ActionEvent e) {
@@ -876,7 +876,7 @@ final public class Actions {
     private static class CutAction extends AbstractAction {
         public CutAction(Map mnemonics) {
             super("Cut", null);
-            setEnabled(false);
+            this.setEnabled(false);
 	    mnemonics.put(this, new Integer('T'));
         }
         public void actionPerformed(ActionEvent e) {
@@ -892,7 +892,7 @@ final public class Actions {
     private static class PasteAction extends AbstractAction {
         public PasteAction(Map mnemonics) {
             super("Paste", null);
-            setEnabled(false);
+            this.setEnabled(false);
 	    mnemonics.put(this, new Integer('P'));
         }
         public void actionPerformed(ActionEvent e) {
@@ -917,7 +917,7 @@ final public class Actions {
         public EditAction(Map mnemonics) {
             super("Edit...", null);
 	    mnemonics.put(this, new Integer('E'));
-            setEnabled(false);
+            this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
 	    Worker w = new Worker();
@@ -963,7 +963,7 @@ final public class Actions {
         public ExportAction(Map mnemonics) {
             super("Export...", null);
             mnemonics.put(this, new Integer('O'));
-            setEnabled(false);
+            this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
             CompatibleFileDialog fc3 = new CompatibleFileDialog();
@@ -1004,7 +1004,7 @@ final public class Actions {
 	public GetAction(Map mnemonics) {
 	    super("Get...", null);
 	    mnemonics.put(this, new Integer('G'));
-	    setEnabled(false);
+	    this.setEnabled(false);
 	}
 
 	//-----------------------------------------------------------------
@@ -1021,7 +1021,7 @@ final public class Actions {
 	public UploadAction(Map mnemonics) {
 	    super("Upload...", null);
 	    mnemonics.put(this, new Integer('U'));
-	    setEnabled(false);
+	    this.setEnabled(false);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -1035,7 +1035,7 @@ final public class Actions {
         public ImportAction(Map mnemonics) {
             super("Import...", null);
             mnemonics.put(this, new Integer('I'));
-            setEnabled(false);
+            this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
             CompatibleFileDialog fc2 = new CompatibleFileDialog();
@@ -1084,7 +1084,7 @@ final public class Actions {
         public TransferSceneAction(Map mnemonics) {
             super("Transfer Scene", null); // show a dialog frame???
             // mnemonics.put(this, new Integer('S'));
-            setEnabled(false);
+            this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
             try {
@@ -1122,7 +1122,7 @@ final public class Actions {
     private static class SaveAction extends AbstractAction {
         public SaveAction(Map mnemonics) {
 	    super("Save", null);
-	    setEnabled(false);
+	    this.setEnabled(false);
 	    mnemonics.put(this, new Integer('S'));
         }
 
@@ -1134,7 +1134,7 @@ final public class Actions {
     private static class SaveAsAction extends AbstractAction {
         public SaveAsAction(Map mnemonics) {
 	    super("Save As...", null);
-	    setEnabled(false);
+	    this.setEnabled(false);
 	    mnemonics.put(this, new Integer('A'));
         }
 
@@ -1166,7 +1166,7 @@ final public class Actions {
         public ExtractAction(Map mnemonics) {
             super("Extract", null);
             mnemonics.put(this, new Integer('E'));
-            setEnabled(false);
+            this.setEnabled(false);
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -1181,7 +1181,7 @@ final public class Actions {
     private static class SortAction extends AbstractAction {
         public SortAction(Map mnemonics) {
             super("Sort...", null);
-            setEnabled(false);
+            this.setEnabled(false);
             mnemonics.put(this, new Integer('R'));
         }
 
@@ -1198,7 +1198,7 @@ final public class Actions {
     private static class SearchAction extends AbstractAction {
         public SearchAction(Map mnemonics) {
             super("Search...", null);
-            setEnabled(false);
+            this.setEnabled(false);
             mnemonics.put(this, new Integer('E'));
         }
 
@@ -1216,7 +1216,7 @@ final public class Actions {
     private static class ImportAllAction extends AbstractAction {
         public ImportAllAction(Map mnemonics) {
             super("Import All...", null);
-            setEnabled(false);
+            this.setEnabled(false);
 	    mnemonics.put(this, new Integer('A'));
         }
 
@@ -1242,7 +1242,7 @@ final public class Actions {
     private static class DeleteDuplicatesAction extends AbstractAction {
         public DeleteDuplicatesAction(Map mnemonics) {
             super("Delete Dups...", null);
-            setEnabled(false);
+            this.setEnabled(false);
             mnemonics.put(this, new Integer('D'));
         }
 
@@ -1268,7 +1268,7 @@ final public class Actions {
     private static class NewPatchAction extends AbstractAction {
         public NewPatchAction(Map mnemonics) {
             super("New Patch...", null);
-            setEnabled(false);
+            this.setEnabled(false);
 	    mnemonics.put(this, new Integer('N'));
         }
         public void actionPerformed(ActionEvent e) {
@@ -1298,7 +1298,7 @@ final public class Actions {
     private static class CrossBreedAction extends AbstractAction {
         public CrossBreedAction(Map mnemonics) {
             super("Cross Breed...", null);
-            setEnabled(false);
+            this.setEnabled(false);
             mnemonics.put(this, new Integer('B'));
         }
         public void actionPerformed(ActionEvent e) {
@@ -1342,7 +1342,7 @@ final public class Actions {
     private static class DocsAction extends AbstractAction {
         public DocsAction(Map mnemonics) {
 	    super("Help", null);
-	    setEnabled(true);
+	    this.setEnabled(true);
 	    mnemonics.put(this, new Integer('H'));
         }
         public void actionPerformed(ActionEvent e) {
@@ -1359,7 +1359,7 @@ final public class Actions {
     private static class LicenseAction extends AbstractAction {
         public LicenseAction(Map mnemonics) {
 	    super("License", null);
-	    setEnabled(true);
+	    this.setEnabled(true);
 	    mnemonics.put(this, new Integer('L'));
         }
         public void actionPerformed(ActionEvent e) {
@@ -1376,7 +1376,7 @@ final public class Actions {
     private static class HomePageAction extends AbstractAction {
         public HomePageAction(Map mnemonics) {
 	    super("JSynthLib Home Page", null);
-	    setEnabled(true);
+	    this.setEnabled(true);
 	    mnemonics.put(this, new Integer('P'));
         }
         public void actionPerformed(ActionEvent e) {
@@ -1395,7 +1395,7 @@ final public class Actions {
     private static class MonitorAction extends AbstractAction {
         public MonitorAction(Map mnemonics) {
 	    super("MIDI Monitor", null);
-	    setEnabled(true);
+	    this.setEnabled(true);
 	    mnemonics.put(this, new Integer('M'));
         }
         public void actionPerformed(ActionEvent e) {
