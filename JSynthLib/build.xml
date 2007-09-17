@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.15 2006-03-10 02:29:30 jemenake Exp $
+	Version: $Id: build.xml,v 1.16 2007-09-17 19:11:17 billzwicky Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -81,48 +81,13 @@
 		<copy todir="${build}/images">
 			<fileset dir="images"/>
 		</copy>
-		<copy todir="${build}/synthdrivers/MIDIboxFM/images">
-			<fileset dir="synthdrivers/MIDIboxFM/images" includes="**/*.gif"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/RolandJV80/images">
-			<fileset dir="synthdrivers/RolandJV80/images" includes="**/*.png"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/YamahaDX100">
-			<fileset dir="synthdrivers/YamahaDX100" includes="**/*.gif"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/YamahaDX7/images">
-			<fileset dir="synthdrivers/YamahaDX7/images" includes="**/*.gif"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/YamahaFS1R/images">
-			<fileset dir="synthdrivers/YamahaFS1R/images" includes="**/*.gif"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/YamahaTX81z">
-			<fileset dir="synthdrivers/YamahaTX81z" includes="**/*.gif"/>
-		</copy>
-		<!-- .syx files -->
-		<copy todir="${build}/synthdrivers/KawaiK5000">
-			<fileset dir="synthdrivers/KawaiK5000" includes="**/*.syx"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/RolandJD800">
-			<fileset dir="synthdrivers/RolandJD800" includes="**/*.syx"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/RolandTD6">
-			<fileset dir="synthdrivers/RolandTD6" includes="**/*.syx"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/TCElectronicGMajor">
-			<fileset dir="synthdrivers/TCElectronicGMajor" includes="**/*.syx"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/WaldorfMW2">
-			<fileset dir="synthdrivers/WaldorfMW2" includes="**/*.syx"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/WaldorfPulse">
-			<fileset dir="synthdrivers/WaldorfPulse" includes="**/*.syx"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/YamahaMotif">
-			<fileset dir="synthdrivers/YamahaMotif" includes="**/*.syx"/>
-		</copy>
-		<copy todir="${build}/synthdrivers/YamahaUB99">
-			<fileset dir="synthdrivers/YamahaUB99" includes="**/*.dat"/>
+		<!-- Resources -->
+		<copy todir="${build}/synthdrivers">
+			<fileset dir="synthdrivers">
+				<include name="**/*.gif"/>
+				<include name="**/*.syx"/>
+				<include name="**/*.dat"/>
+			</fileset>
 		</copy>
 		<!-- Extra files -->
 		<copy file="doc/documentation.html" todir="${build}/doc"/>
@@ -275,7 +240,7 @@ The following targets are available:
                          ant -Dsynth=KawaiK4 clean-synthdrivers
                          or
                          ant clean-synthdrivers -Dsynth=KawaiK4
-  cs                   Short form of "cs"
+  cs                   Short form of "clean-synthdrivers"
   dist                 Create package distribution files (jar, sources, ...)
   run                  Run the application
   run-debug            Run the application with debug level 2
