@@ -19,7 +19,7 @@ import javax.swing.*;
 
 import org.jsynthlib.jsynthlib.Dummy;
 
-public final class AppConfig {
+public class AppConfig {
     static final int GUI_MDI	= 0;
     static final int GUI_SDI	= 1;
     private static ArrayList deviceList = new ArrayList();
@@ -384,7 +384,7 @@ public final class AppConfig {
     }
 
     /** Indexed getter for deviceList elements */
-    static Device getDevice(int i) { return (Device) deviceList.get(i); }
+    public static Device getDevice(int i) { return (Device) deviceList.get(i); }
 
     /**
      * Remover for deviceList elements.
@@ -402,7 +402,7 @@ public final class AppConfig {
     }
 
     /** Size query for deviceList */
-    static int deviceCount() {
+    public static int deviceCount() {
 	return deviceList.size();
     }
 
