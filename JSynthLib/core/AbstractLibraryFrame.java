@@ -402,6 +402,9 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
             myModel.setList((ArrayList) s.readObject());
             s.close();
             f.close();
+            if (myModel.getList().size() > 0)
+              // Don't attempt XML if readObject succeeded.
+              readXMLFile = false;
         }
         if(readXMLFile) {
             XMLFileUtils.readPatchBasket(this,file.getName() + ".xml");
