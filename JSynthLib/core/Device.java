@@ -1,14 +1,11 @@
 package core;
-import java.util.ArrayList;
-import java.util.prefs.Preferences;
+import java.awt.*;
+import java.util.*;
+import java.util.prefs.*;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.MidiDevice.Info;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.sound.midi.*;
+import javax.sound.midi.MidiDevice.*;
+import javax.swing.*;
 
 /**
  * Device class defines some informations for your synthsizer, such as
@@ -395,8 +392,8 @@ public abstract class Device /*implements Serializable, Storable*/ {
     /**
      * Show a dialog for the details of the device.
      */
-    public void showDetails() {
-        DeviceDetailsDialog ddd = new DeviceDetailsDialog(this);
-	ddd.setVisible(true);
+    public void showDetails(Frame owner) {
+        DeviceDetailsDialog ddd = new DeviceDetailsDialog(owner, this);
+        ddd.setVisible(true);
     }
 }

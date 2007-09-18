@@ -1,6 +1,6 @@
 package core;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import javax.swing.JDialog;
 
@@ -297,6 +297,16 @@ public class Utility extends Object {
             }
             PatchEdit.hideWaitDialog();
         }
+    }
+
+    /**
+     * @param component Any AWT component.
+     * @return component's containing Frame, or null if none found.
+     */
+    public static Frame getFrame(Component component) {
+        while(component != null && ! (component instanceof Frame))
+            component = component.getParent();
+        return (Frame)component;
     }
 
 } // End Class: Utility

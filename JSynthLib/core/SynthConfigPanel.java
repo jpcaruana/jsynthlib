@@ -1,32 +1,11 @@
 package core;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-//import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.sound.midi.MidiDevice;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-//import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.ProgressMonitor;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
+import javax.sound.midi.*;
+import javax.swing.*;
+import javax.swing.table.*;
 
 /**
  * ConfigPanel for Synthesizer Configuration
@@ -180,8 +159,8 @@ class SynthConfigPanel extends ConfigPanel {
 
     private void showDeviceProperty() {
         if ((table.getSelectedRow() == -1)) // not selected
-	    return;
-        AppConfig.getDevice(table.getSelectedRow()).showDetails();
+            return;
+        AppConfig.getDevice(table.getSelectedRow()).showDetails(Utility.getFrame(this));
         //((TableModel) table.getModel()).fireTableDataChanged();
     }
 

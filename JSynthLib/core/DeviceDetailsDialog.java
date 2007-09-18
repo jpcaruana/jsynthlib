@@ -1,32 +1,21 @@
 package core;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
+import javax.swing.*;
+import javax.swing.table.*;
 
 public class DeviceDetailsDialog extends JDialog {
     private static final int DRIVER_NAME = 0;
     private static final int TYPE	 = 1;
     private static final int AUTHORS	 = 2;
 
-    private JTable table;
+    //private JTable table;
     //private JTable table2;
     private Device device;
 
-    public DeviceDetailsDialog (Device d) {
-        super(PatchEdit.getInstance(),"Device Details",true);
+    public DeviceDetailsDialog (Frame owner, Device d) {
+        super(owner,"Device Details",true);
         device=d;
 
 	JPanel container= new JPanel ();
