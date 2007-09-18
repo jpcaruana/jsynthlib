@@ -139,7 +139,7 @@ public class Knob extends SysexWidget {
     protected void eventListener(MouseWheelEvent e) {
         DKnob t = (DKnob) e.getSource();
         if (t.hasFocus()) // to make consistent with other operation.
-            t.setValue(t.getValue() + (e.getWheelRotation() / (float) (getValueMax() - getValueMin())));
+            t.setValue(t.getValue() - (e.getWheelRotation() / (float) (getValueMax() - getValueMin())));
     }
 
     /** Adds a <code>ChangeListener</code> to the Knob. */

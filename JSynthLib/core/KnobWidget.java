@@ -181,7 +181,7 @@ public class KnobWidget extends SysexWidget {
 	DKnob t = (DKnob) e.getSource();
 	if (t.hasFocus()) // to make consistent with other operation.
 	    t.setValue(t.getValue()
-		       + (e.getWheelRotation()
+		       - (e.getWheelRotation()
 			  / (float) (getValueMax() - getValueMin())));
     }
 
