@@ -862,7 +862,6 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
                 setByte(ofs, getByte(ofs) | pos);
         }
         public int get() {
-            System.out.println(getByte(ofs));
             return (getByte(ofs) & pos) != 0 ? 1 : 0;
         }
     }
