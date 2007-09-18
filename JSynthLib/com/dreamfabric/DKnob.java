@@ -113,12 +113,20 @@ public class DKnob extends JComponent {
 	// Let the user control the knob with the mouse
 	addMouseMotionListener(new MouseMotionAdapter() {
 		public void mouseDragged(MouseEvent me) {
+            float speed = DRAG_SPEED;
+            if((me.getModifiersEx() & (me.BUTTON2_DOWN_MASK | me.BUTTON3_DOWN_MASK)) != 0)
+                speed /= 10;
+            if((me.getModifiersEx() & me.CTRL_DOWN_MASK) != 0)
+                speed /= 10;
+            if((me.getModifiersEx() & me.SHIFT_DOWN_MASK) != 0)
+                speed /= 10;
+            
 		    if ( dragType == SIMPLE) {
-			float f = DRAG_SPEED * ((me.getX() + me.getY()) - dragpos);
+			float f = speed * ((me.getX() + me.getY()) - dragpos);
 			setValue(startVal + f);
 		    }
 		    else if (dragType == SIMPLE_MOUSE_DIRECTION) {
-			float f = (DRAG_SPEED * (me.getX() + me.getY() - dragpos));
+			float f = (speed * (me.getX() + me.getY() - dragpos));
 			setValue(startVal - f);
 		    }
 		    else if ( dragType == ROUND) {
@@ -282,35 +290,45 @@ public class DKnob extends JComponent {
 	    g.fillOval(oOffset + 4, oOffset + 4, size-8, size-8);
 	    g.setColor(Color.white);
 
+        // center of knob is at (oOffset + oSizeDiv2, oOffset + oSizeDiv2)
+        // make the line 2 pixels wide
 	    double oCos = Math.cos(ang);
 	    double oSin = Math.sin(ang);
+        int dx = (int)(2 * oSin);
+        int dy = (int)(2 * oCos);
+        // compute 'right-hand' vertex of needle at center
 	    int x = oOffset + oSizeDiv2 + (int)(oSizeDiv2 * oCos);
 	    int y = oOffset + oSizeDiv2 - (int)(oSizeDiv2 * oSin);
+/*        
+        // Draw pointy needle
 	    g.drawLine(oOffset + oSizeDiv2, oOffset + oSizeDiv2, x, y);
 	    g.setColor(Color.gray);
 	    int s2 = Math.max(size / 6, 6);
 	    g.drawOval(oOffset + s2, oOffset + s2, size - s2*2, size - s2*2);
-
-	    int dx = (int)(2 * oSin);
-	    int dy = (int)(2 * oCos);
-	    /*
-	      g.drawLine(oOffset + dx + oSizeDiv2, oOffset + dy + oSizeDiv2, x, y);
-	      g.drawLine(oOffset - dx + oSizeDiv2, oOffset - dy + oSizeDiv2, x, y);
-	    */
+	    g.drawLine(oOffset + dx + oSizeDiv2, oOffset + dy + oSizeDiv2, x, y);
+	    g.drawLine(oOffset - dx + oSizeDiv2, oOffset - dy + oSizeDiv2, x, y);
+*/
+        
 	    // denis: i prefer rectangular look for indicator needle
+        int s2 = Math.max(size / 6, 6);
+        g.setColor(Color.gray);
+        g.drawOval(oOffset + s2, oOffset + s2, size - s2*2-1, size - s2*2-1);
+        
 	    int xPoints[] = new int[] {oOffset + dx + oSizeDiv2, x + dx, x - dx, oOffset - dx + oSizeDiv2};
 	    int yPoints[] = new int[] {oOffset + dy + oSizeDiv2, y + dy, y - dy, oOffset - dy + oSizeDiv2};
-	    // denis: hightlight the middle for symetric knobs
+	    // denis: hightlight dead center
 	    if (val > (0.5 - MID_OFFSET) && val < (0.5 + MID_OFFSET))
-		g.setColor(Color.white);
+	        g.setColor(Color.white);
 	    else
-		g.setColor(Color.lightGray);
+	        g.setColor(Color.lightGray);
 	    g.fillPolygon(xPoints, yPoints, 4);
-
+        // round tail of needle
+	    g.fillOval(oOffset + oSizeDiv2 - 1, oOffset + oSizeDiv2 - 1, 2, 2);
+        
 	    // denis: display value
 	    if (mValueAsString != null) {
-		g.setColor(Color.white);
-		g.drawString(mValueAsString, oSizeDiv2-5, height-10);
+    		g.setColor(Color.white);
+    		g.drawString(mValueAsString, oSizeDiv2-5, height-10);
 	    }
 	}
     }
