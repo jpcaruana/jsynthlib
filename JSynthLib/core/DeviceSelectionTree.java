@@ -17,19 +17,26 @@ import java.util.Collection;
 public class DeviceSelectionTree extends JTree {
 
     // These are constants used for telling this class how to organize the tree
+    // "Type" is just the first letter of the manuf.
     public static final int GROUP_NONE = 0; // No ordering. Just a flat list of devices
     public static final int GROUP_MANUF = 1; // Devices are grouped by manufacturer
     public static final int GROUP_TYPE = 2; // Devices are grouped by type
     public static final int GROUP_TYPE_MANUF = 3; // Devices are grouped by type, then manufacturer
     public static final int GROUP_MANUF_TYPE = 4; // Devices are grouped by manufacturer, then type
 
-    private int groupStyle = GROUP_TYPE_MANUF;
+    private int groupStyle = GROUP_MANUF;   //There aren't that many mfrs yet.
 
     /**
      * This initializes the tree and populates it will all of the devices known to DevicesConfig
      */
     public DeviceSelectionTree() {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Devices");
+        switch(groupStyle) {
+            case GROUP_MANUF:
+            case GROUP_MANUF_TYPE:
+                rootNode.setUserObject("Manufacturers");
+        }
+        
         setModel(new DefaultTreeModel(rootNode));
         setSelectionModel(new DeviceSelectionModel()); // Prevent user from selecting anything but a device
 
