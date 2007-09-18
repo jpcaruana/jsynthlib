@@ -17,13 +17,8 @@ public class RolandGP16Device extends Device {
     private static final String INFO_TEXT=
 		"Driver set to provide librarian support for the guitar processor Roland GP-16. The Play "+
 		"function performs the same thing as Send,since the GP-16 obviously cannot perform a Play.\n\n"+
-		"Had to change return new IPatch[] {this}; to new Patch[] {this}; in core/Patch.java/dissect() "+
-		"to make it work. The Delete Dups throws an ArrayIndexOutOfBounds Exception. Requesting an All "+
-		"patch and receiving a Group patch writes 'requested a Group patch' in the status box. "+
-		"Any clue why?\n\n"+
-		"Drivers written by Mikael Kurula, released under the Gnu GPL. The librarian seems to work well "+
-		"for me, but of course I take no responsibility for lost patches.\n\n"+
-		"All comments are appreciated at alcarola@kravbrev.se.";
+		"There are many problems, but also some useful functionality. Please feel free to fix the bugs! :)\n\n"+
+		"Drivers originally written by Mikael Kurula, to be reached at alcarola AT gmail DOT com.";
     
 	/** Constructor for DeviceListWriter. */
     public RolandGP16Device() {
