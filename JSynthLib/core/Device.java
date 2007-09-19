@@ -370,14 +370,14 @@ public abstract class Device /*implements Serializable, Storable*/ {
      * Getter for DeviceName.
      * @return String of Device Name with inPort and Channel.
      */
-    public String getDeviceName() {
-        Info di = null;
+    public String getDeviceName() { 
+        String di = "";
         try {
-            di = MidiUtil.getOutputMidiDeviceInfo(getPort());
+            di = MidiUtil.getOutputName(getPort());
         } catch (Exception ex) {}
-	return getManufacturerName() + " " + getModelName()
+	return getManufacturerName() + " " + getModelName() // wirski@op.pl
 	    + " <" + getSynthName() + ">  -  MIDI Out Port: "
-	    + ((di == null) ? "None" : di.getName())
+	    + ((di == "") ? "None" : di)
 	    + "  -  MIDI Channel: " + getChannel();
     }
 

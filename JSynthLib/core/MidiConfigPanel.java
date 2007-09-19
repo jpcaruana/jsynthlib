@@ -61,14 +61,14 @@ class MidiConfigPanel extends ConfigPanel {
 	c.gridx = 0; c.gridy++; c.gridwidth = 1;
 	c.insets = new Insets(10, 0, 0, 0);
 	p.add(new JLabel("Output Port:"), c);
-	cbOut = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
+	cbOut = new JComboBox(MidiUtil.getOutputNames()); // wirski@op.pl
 	c.gridx = 1; c.gridwidth = 2;
         p.add(cbOut, c);
 
 	c.gridx = 0; c.gridy++; c.gridwidth = 1;
 	c.insets = new Insets(0, 0, 0, 0);
         p.add(new JLabel("Input Port:"), c);
-	cbIn = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+	cbIn = new JComboBox(MidiUtil.getInputNames()); // wirski@op.pl
 	c.gridx = 1; c.gridwidth = 2;
         p.add(cbIn, c);
 
@@ -83,7 +83,7 @@ class MidiConfigPanel extends ConfigPanel {
 	label.setToolTipText("MIDI notes from this port are echoed to the output MIDI port.");
         p.add(label, c);
 	c.gridx = 1; c.gridwidth = 2;
-	cbMC = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+	cbMC = new JComboBox(MidiUtil.getInputNames()); // wirski@op.pl
         p.add(cbMC, c);
 
 	// MIDI output buffer size and delay

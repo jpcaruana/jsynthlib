@@ -303,6 +303,9 @@ public class PatchEditorFrame extends Actions.MenuFrame implements PatchBasket {
     }
     public void pastePatch(IPatch _p) {
     }
+
+    public void pastePatch(IPatch _p, int bankNum, int patchNum) {// wirski@op.pl
+    }
     // end of PatchBasket methods
 
     /**

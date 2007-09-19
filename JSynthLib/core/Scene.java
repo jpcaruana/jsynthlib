@@ -49,6 +49,15 @@ public class Scene implements Cloneable, Transferable, Serializable {
         comment=p.getComment();
 
     }
+
+    public Scene(IPatch p, int bankNum, int patchNum) {// wirski@op.pl
+        patch=p;
+        bankNumber=bankNum;
+        patchNumber=patchNum;
+        comment=p.getComment();
+
+    }
+
     /** Getter for property bankNumber.
      * @return Value of property bankNumber.
      */

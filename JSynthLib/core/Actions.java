@@ -62,6 +62,8 @@ final public class Actions {
     static final long EN_UPLOAD			= 0x0000000400000000L;
     static final long EN_PREV_FADER		= 0x0000000800000000L;
     static final long EN_PRINT  		= 0x0000001000000000L;
+    static final long EN_UPDATE_SCENE           = 0x0000002000000000L;
+    static final long EN_UPDATE_SELECTED        = 0x0000004000000000L; 
 
     /** All actions excluding ones which are always eanbled.  */
     static final long EN_ALL	= (//EN_ABOUT
@@ -99,6 +101,8 @@ final public class Actions {
 				   | EN_SORT
 				   | EN_STORE
 				   | EN_TRANSFER_SCENE
+                                     | EN_UPDATE_SCENE
+                                     | EN_UPDATE_SELECTED
 				   | EN_UPLOAD);
 
     private static Action aboutAction;
@@ -137,6 +141,8 @@ final public class Actions {
     private static Action sortAction;
     private static Action storeAction;
     private static Action transferSceneAction;
+    private static Action updateSceneAction;
+    private static Action updateSelectedAction;
     private static Action uploadAction;
 
     private static JPopupMenu menuPatchPopup;
@@ -163,6 +169,7 @@ final public class Actions {
         saveAsAction		= new SaveAsAction(mnemonics);
         newSceneAction		= new NewSceneAction(mnemonics);
         transferSceneAction	= new TransferSceneAction(mnemonics);
+        updateSceneAction         = new UpdateSceneAction(mnemonics);
         sortAction		= new SortAction(mnemonics);
         searchAction		= new SearchAction(mnemonics);
         deleteDuplicatesAction	= new DeleteDuplicatesAction(mnemonics);
@@ -177,6 +184,7 @@ final public class Actions {
         importAllAction		= new ImportAllAction(mnemonics);
         sendAction		= new SendAction(mnemonics);
         sendToAction		= new SendToAction(mnemonics);
+        updateSelectedAction      = new UpdateSelectedAction(mnemonics);//R. Wirski
         printAction		= new PrintAction(mnemonics);
         storeAction		= new StoreAction(mnemonics);
         getAction		= new GetAction(mnemonics);
@@ -253,6 +261,7 @@ final public class Actions {
         mnemonics.put(menuLib, new Integer(KeyEvent.VK_L));
 
         menuLib.add(transferSceneAction);
+        menuLib.add(updateSceneAction);
         menuLib.addSeparator();
 
         menuLib.add(sortAction);
@@ -262,8 +271,9 @@ final public class Actions {
         menuLib.addSeparator();
 
         mi = menuLib.add(newAction);
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, mask));
+        mi = menuLib.add(newSceneAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, mask));
-        menuLib.add(newSceneAction);
         return menuLib;
     }
 
@@ -286,9 +296,11 @@ final public class Actions {
 
         mi = menuPatch.add(sendAction);
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, mask));
+        menuPatch.add(updateSelectedAction); // wirski@op.pl
         menuPatch.add(sendToAction);
         menuPatch.add(storeAction);
-        menuPatch.add(getAction); // phil@muqus.com
+        mi = menuPatch.add(getAction); // phil@muqus.com
+        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, mask)); // wirski@op.pl
         menuPatch.addSeparator();
 
         mi = menuPatch.add(editAction);
@@ -344,7 +356,13 @@ final public class Actions {
     private static Action closeAction = new AbstractAction("Close") {
         public void actionPerformed(ActionEvent ex) {
             try {
-                PatchEdit.getDesktop().getSelectedFrame().setClosed(true);
+                MenuDesktop desktop = PatchEdit.getDesktop();
+                JSLFrame frame = desktop.getSelectedFrame();
+                if (frame != null) {
+                    frame.setClosed(true);
+                } else {
+                    PatchEdit.getDesktop().closingProc();
+                }
             } catch (PropertyVetoException e) {
                 // don't know how to handle this.
                 e.printStackTrace();
@@ -449,6 +467,7 @@ final public class Actions {
         menuPatchPopup = new JPopupMenu();
         menuPatchPopup.add(playAction);
         menuPatchPopup.add(editAction);
+        menuPatchPopup.add(updateSelectedAction);
         menuPatchPopup.addSeparator();
 
         menuPatchPopup.add(sendAction);
@@ -610,6 +629,10 @@ final public class Actions {
 	    storeAction.setEnabled(b);
 	if ((v & EN_TRANSFER_SCENE) != 0)
 	    transferSceneAction.setEnabled(b);
+        if ((v & EN_UPDATE_SCENE) != 0)
+            updateSceneAction.setEnabled(b); // wirski@op.pl
+        if ((v & EN_UPDATE_SELECTED) != 0)
+            updateSelectedAction.setEnabled(b);// wirski@op.pl
 	if ((v & EN_UPLOAD) != 0)
 	    uploadAction.setEnabled(b);
     if ((v & EN_PRINT) != 0)
@@ -873,6 +896,21 @@ final public class Actions {
         }
     }
 
+    private static class UpdateSelectedAction extends AbstractAction {
+        public UpdateSelectedAction(Map mnemonics) {
+            super("Update", null);
+            setEnabled(false);
+            mnemonics.put(this, new Integer('U'));
+        }
+        public void actionPerformed(ActionEvent e) {
+            try {
+                ((SceneFrame) getSelectedFrame()).updateSelected();
+            } catch (Exception ex) {
+                ErrorMsg.reportError("Error", "Patches to update must be highlighted\nin the focused Window.", ex);
+            }
+        }
+    }
+
     private static class CutAction extends AbstractAction {
         public CutAction(Map mnemonics) {
             super("Cut", null);
@@ -916,23 +954,22 @@ final public class Actions {
     private static class EditAction extends AbstractAction {
         public EditAction(Map mnemonics) {
             super("Edit...", null);
-	    mnemonics.put(this, new Integer('E'));
+            mnemonics.put(this, new Integer('E'));
             this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
-	    Worker w = new Worker();
-	    w.setDaemon(true);
-	    w.start();
- 	}
+            Worker w = new Worker();
+            w.setDaemon(true);
+            w.start();
+        }
 	class Worker extends Thread {
 	    public void run() {
 		try {
-		    JSLFrame frm =
-			getSelectedFrame().editSelectedPatch();
+		    JSLFrame frm = getSelectedFrame().editSelectedPatch();
 		    if (frm != null) {
 		        PatchEdit.getDesktop().add(frm);
 		        frm.moveToDefaultLocation();
-			frm.setVisible(true);
+		        frm.setVisible(true);
 			// hack for old Java bug
 			/*
 			if (frm instanceof PatchEditorFrame)
@@ -1095,6 +1132,20 @@ final public class Actions {
         }
     }
 
+    private static class UpdateSceneAction extends AbstractAction {// wirski@op.pl
+        public UpdateSceneAction(Map mnemonics) {
+            super("Update Scene", null);
+            setEnabled(false);
+        }
+        public void actionPerformed(ActionEvent e) {
+            try {
+                ((SceneFrame) getSelectedFrame()).updateScene();
+            } catch (Exception ex) {
+                ErrorMsg.reportError("Error", "Scene Library must be the selected window.", ex);
+            }
+        }
+    }
+
     private static class OpenAction extends AbstractAction {
         static final FileFilter filter;
         static {
@@ -1150,15 +1201,7 @@ final public class Actions {
         }
 
         public void actionPerformed(ActionEvent e) {
-            ErrorMsg.reportStatus("JSynthLib exiting...");
-//            Iterator it = PatchEdit.getDesktop().getJSLFrameIterator();
-//            while (it.hasNext()) {
-//                JSLFrame f = (JSLFrame) it.next();
-//                // TODO : check unsaved data and return if canceled.
-//            }
-
-            AppConfig.savePrefs();
-            System.exit(0);
+            PatchEdit.getDesktop().closingProc();
         }
     }
 

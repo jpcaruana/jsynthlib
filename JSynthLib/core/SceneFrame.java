@@ -4,14 +4,22 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.EventObject;
+import java.lang.reflect.InvocationTargetException;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
 
+import javax.sound.midi.SysexMessage;
+import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitor;
 import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.TableModelEvent;
@@ -19,6 +27,11 @@ import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
+import javax.swing.SwingUtilities;
+
+import core.AbstractLibraryFrame.PatchTableModel;
+
+//import core.SysexGetDialog.TimerActionListener;
 
 /**
  *
@@ -57,17 +70,17 @@ class SceneFrame extends AbstractLibraryFrame {
 
         TableColumn column = null;
         column = table.getColumnModel().getColumn(SYNTH);
-        column.setPreferredWidth(50);
+        column.setPreferredWidth(150); // wirski@op.pl
         column = table.getColumnModel().getColumn(TYPE);
-        column.setPreferredWidth(50);
+        column.setPreferredWidth(100); // wirski@op.pl
         column = table.getColumnModel().getColumn(PATCH_NAME);
-        column.setPreferredWidth(100);
+        column.setPreferredWidth(150); // wirski@op.pl
         column = table.getColumnModel().getColumn(BANK_NUM);
-        column.setPreferredWidth(50);
+        column.setPreferredWidth(150); // wirski@op.pl
         // Set the special pop-up Editor for Bank numbers
         column.setCellEditor(rowEditor);
         column = table.getColumnModel().getColumn(PATCH_NUM);
-        column.setPreferredWidth(50);
+        column.setPreferredWidth(100); // wirski@op.pl
         // Set the special pop-up Editor for Patch Numbers
         column.setCellEditor(rowEditor);
         column = table.getColumnModel().getColumn(COMMENT);
@@ -90,18 +103,18 @@ class SceneFrame extends AbstractLibraryFrame {
         Actions.setEnabled(table.getRowCount() > 0,
                 Actions.EN_SAVE
                 | Actions.EN_SAVE_AS | Actions.EN_SEARCH
-                | Actions.EN_TRANSFER_SCENE);
+                | Actions.EN_TRANSFER_SCENE | Actions.EN_UPDATE_SCENE);
 
         // one or more patches are selected
         Actions.setEnabled(table.getSelectedRowCount() > 0,
-                Actions.EN_DELETE);
+                Actions.EN_DELETE | Actions.EN_UPDATE_SELECTED);
 
         Actions.setEnabled(table.getSelectedRowCount() == 1,
-                Actions.EN_COPY
+                Actions.EN_COPY | Actions.EN_EDIT // wirski@op.pl
                 | Actions.EN_CUT | Actions.EN_EXPORT | Actions.EN_REASSIGN
                 | Actions.EN_STORE | Actions.EN_UPLOAD);
 
-        // one signle patch is selected
+        // one single patch is selected
         Actions.setEnabled(table.getSelectedRowCount() == 1
                 && myModel.getPatchAt(table.getSelectedRow()).isSinglePatch(),
                 Actions.EN_SEND | Actions.EN_SEND_TO | Actions.EN_PLAY);
@@ -131,6 +144,207 @@ class SceneFrame extends AbstractLibraryFrame {
         }
     }
 
+    public void storeSelectedPatch() {
+        Scene scene = ((SceneListModel) myModel).getSceneAt(table.getSelectedRow());
+        new SysexStoreDialog(scene.getPatch(), scene.getBankNumber(), scene.getPatchNumber()); // wirski@op.pl
+    }
+
+    void UpdatePatch(int row) { // wirski@op.pl
+            int repeat;
+            java.util.List queue = new ArrayList();
+            Scene scene = ((SceneListModel) myModel).getSceneAt(row);
+            IPatchDriver driver = scene.getPatch().getDriver();
+            int inPort = driver.getDevice().getInPort();
+            long patchSize = driver.getPatchSize();
+            long sysexSize = 0;
+            do  {
+                repeat = JOptionPane.NO_OPTION;
+                sysexSize = 0;
+                MidiUtil.clearSysexInputQueue(inPort);
+                driver.requestPatchDump(scene.getBankNumber(), scene.getPatchNumber());
+                try {
+                    do {
+                        SysexMessage msg;
+                        msg = (SysexMessage) MidiUtil.getMessage(inPort, patchSize + 500);
+                        queue.add(msg);
+                        sysexSize += msg.getLength();
+                    } while (sysexSize < patchSize);
+                } catch (MidiUtil.TimeoutException ex) {
+                    repeat =  JOptionPane.showConfirmDialog(
+                            null, "Cannot receive sysex from " + driver + ".\nDo you want to try again?",
+                            "Scene Update Warning",
+                            JOptionPane.YES_NO_OPTION);
+                } catch (InvalidMidiDataException ex) {
+                    ErrorMsg.reportError ("Error", "Invalid MIDI data error");
+                }
+            } while (repeat == JOptionPane.YES_OPTION);
+            if (sysexSize == patchSize) {
+                SysexMessage[] msgs = (SysexMessage[]) queue.toArray(new SysexMessage[0]);
+                IPatch[] patarray = driver.createPatches(msgs);
+                if (patarray.length == 1) {
+                    myModel.setPatchAt(patarray[0], row, scene.getBankNumber(), scene.getPatchNumber());
+                } else {
+                    ErrorMsg.reportError ("Error", "To many patches received");
+                } 
+            } else {
+                ErrorMsg.reportError ("Error", "Incorrect patch size received");
+            }
+        }
+
+    public class UpdateSceneTask { // wirski@op.pl
+        private ArrayList Undo;
+        private int lengthOfTask;
+        private int current = 0;
+        private boolean done = false;
+        private boolean canceled = false;
+        private String statMessage;
+        private int noOfPatches;
+        private int[] sceneIndx;
+        private int[] syxArray;
+        int waitToClose=0;
+        public UpdateSceneTask(PatchTableModel model, int[] indx) {
+            Undo = (ArrayList)((SceneListModel) myModel).getList().clone();
+            sceneIndx = indx;
+            noOfPatches = sceneIndx.length;
+            syxArray = new int[noOfPatches];
+            for (int i = 0; i < noOfPatches; i++) {
+                syxArray[i] = ((SceneListModel) myModel).getSceneAt(i).getPatch().getDriver().getPatchSize()/10;
+                lengthOfTask += syxArray[i];
+            }
+            lengthOfTask += 1; // to force progessMonitor not to quit at end of the task
+        }
+
+        public void go() {
+            final SwingWorker worker = new SwingWorker() {
+                public Object construct() {
+                    current = 0;
+                    done = false;
+                    canceled = false;
+                    statMessage = null;
+                    return new ActualTask();
+                }
+            };
+            worker.start();
+        }
+
+        /**
+         * Called from ProgressBarDemo to find out how much work needs
+         * to be done.
+         */
+        public int getLengthOfTask() {
+            return lengthOfTask;
+        }
+
+        /**
+         * Called from ProgressBarDemo to find out how much has been done.
+         */
+        public int getCurrent() {
+            return current;
+        }
+
+        public void cancel() {
+            canceled = true;
+            statMessage = null;
+        }
+
+        /**
+         * Called from ProgressBarDemo to find out if the task has completed.
+         */
+        public boolean isDone() {
+            return done;
+        }
+
+        /**
+         * Returns the most recent status message, or null
+         * if there is no current status message.
+         */
+        public String getMessage() {
+            return statMessage;
+        }
+
+        public void undo() {
+            myModel.setList(Undo);
+            myModel.fireTableDataChanged();
+        }
+
+        /**
+         * The actual long running task.  This runs in a SwingWorker thread.
+         */
+        class ActualTask {
+            ActualTask() {
+                for(int i = 0; i < noOfPatches; i++) {
+                    if (canceled) {
+                        break;
+                    }
+                    IPatch patch = ((SceneListModel) myModel).getSceneAt(i).getPatch();
+                    statMessage = patch.getDriver() + ":" + patch.getName();
+                    UpdatePatch(sceneIndx[i]);
+                    current += syxArray[i];
+                }
+                statMessage = "Finished";
+                done = true;
+                changed = true;
+                myModel.fireTableDataChanged();
+            }
+        }
+    }
+
+    void updateScene() { // wirski@op.pl
+        int len = myModel.getRowCount();
+        int[] indx = new int[len];
+        for (int i = 0; i < len; i++) {
+            indx[i]=i;
+        }
+        updateScene(indx);
+    }
+
+    void updateSelected() {// wirski@op.pl
+        int[] indx = table.getSelectedRows();
+        updateScene(indx);
+    }
+       
+    void updateScene(int[] indx) {// wirski@op.pl
+        final Timer timer;
+        final UpdateSceneTask task;
+        ActionListener TimerListener;
+        task = new UpdateSceneTask(myModel,indx);
+        final ProgressMonitor progressMonitor = new ProgressMonitor(table,
+                "Update Scene",
+                "", 0, task.getLengthOfTask());
+        progressMonitor.setProgress(0);
+        progressMonitor.setMillisToDecideToPopup(0);
+        progressMonitor.setMillisToPopup(0);
+        timer = new Timer( 100, null);
+
+        TimerListener = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                progressMonitor.setProgress(task.getCurrent());
+                String s = task.getMessage();
+                if (s != null) {
+                    progressMonitor.setNote(s);
+                }
+                if (progressMonitor.isCanceled()) {
+                    timer.stop();
+                    progressMonitor.close();
+                    task.cancel();
+                    task.undo();
+                }
+                if (task.isDone()) {
+                    if (task.waitToClose>10) {
+                        timer.stop();
+                        progressMonitor.setProgress(task.getLengthOfTask());
+                    } else {
+                    task.waitToClose++;
+                    }
+                }
+            }
+        };
+        timer.addActionListener(TimerListener);
+ 
+        task.go();
+        timer.start();
+    }
+    
     FileFilter getFileFilter() {
         return FILE_FILTER;
     }
@@ -258,6 +472,14 @@ class SceneFrame extends AbstractLibraryFrame {
             list.add(new Scene(p));
         }
 
+        void addPatch(IPatch p, int bankNum, int patchNum) { // wirski@op.pl
+            list.add(new Scene(p, bankNum, patchNum));
+        }
+
+        void setPatchAt(IPatch p, int row, int bankNum, int patchNum) { // wirski@op.pl
+            list.set(row, new Scene(p, bankNum, patchNum));
+        }
+        
         void setPatchAt(IPatch p, int row) {
             list.set(row, new Scene(p));
         }

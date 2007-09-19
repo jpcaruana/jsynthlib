@@ -19,8 +19,8 @@ public class SysexStoreDialog extends DevDrvPatchSelector {
      * @param patch The Patch to store.
      * @param patchnum The default patchNumber selected in the patch Combobox.
      */
-    public SysexStoreDialog (IPatch patch, int patchnum) {
-        super(patch,patchnum,"Store Sysex Data","Store...");
+    public SysexStoreDialog (IPatch patch, int banknum, int patchnum) {
+        super(patch, banknum, patchnum , "Store Sysex Data","Store...");
     }
 
     /**

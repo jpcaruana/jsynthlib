@@ -23,6 +23,9 @@ import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JFormattedTextField;
+import javax.swing.text.MaskFormatter;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -33,6 +36,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.SwingUtilities;
 
 /**
  * Abstract class for unified handling of Library and Scene frames.
@@ -47,7 +51,7 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
     private final String TYPE;
     private PatchTransferHandler pth;
     /** Has the library been altered since it was last saved? */
-        private boolean changed = false;
+    protected boolean changed = false; // wirski@op.pl
     private JLabel statusBar;
     private File filename;
 
@@ -88,7 +92,7 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
         getContentPane().add(statusPanel, BorderLayout.SOUTH);
 
         //...Then set the window size or call pack...
-        setSize(600, 300);
+        setSize(800, 300); // wirski@op.pl
     }
 
     abstract PatchTableModel createTableModel();
@@ -293,6 +297,11 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
         changed();
     }
 
+    public void pastePatch(IPatch p, int bankNum, int patchNum) {// added by R. Wirski
+        myModel.addPatch(p, bankNum, patchNum);
+        changed();
+    }
+
     public IPatch getSelectedPatch() {
         return myModel.getPatchAt(table.getSelectedRow());
     }
@@ -317,7 +326,7 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
     }
 
     public void storeSelectedPatch() {
-        new SysexStoreDialog(getSelectedPatch(), 0);
+        new SysexStoreDialog(getSelectedPatch(), 0, 0); // wirski@op.pl
     }
 
     public JSLFrame editSelectedPatch() {
@@ -454,11 +463,28 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
      * @author  Gerrit
      */
     abstract class PatchTableModel extends AbstractTableModel {
+
         /**
          * Add a patch to the end of the internal list.
          * @param p The patch to add
          */
         abstract void addPatch(IPatch p);
+
+        /**
+         * Add a patch to the end of the internal list.
+         * and sets bank and patch numbers
+         * @param p The patch to add
+         */
+        abstract void addPatch(IPatch p, int bankNum, int patchNum);// added by R. Wirski
+
+        /**
+         * Set (and replace) the patch at the specified row of the list.
+         * @param p The patch to set
+         * @param row The row of the table.
+         * @param bankNum patch bank number
+         * @param patchNum patch number
+         */
+        abstract void setPatchAt(IPatch p,int row, int bankNum, int patchNum); // added by R. Wirski
 
         /**
          * Set (and replace) the patch at the specified row of the list.

@@ -43,6 +43,8 @@ public class JSLDesktop implements JSLFrameListener {
     protected ArrayList windows = new ArrayList();
     /** just for efficiency. */
     private static boolean isMac = MacUtils.isMac();
+    /** True if we can exit the application */
+    private boolean readyToExit=false;
 
     /** Creates a new JSLDesktop. */
     protected JSLDesktop(String title, JMenuBar mb, JToolBar tb, Action exitAction) {
@@ -198,13 +200,34 @@ public class JSLDesktop implements JSLFrameListener {
      * current UI object with the latest version from the UIManager.
      */
     public void updateLookAndFeel() { proxy.updateLookAndFeel(); }
-
-    private boolean confirmExiting() {
-        return JOptionPane.showConfirmDialog(getRootFrame(),
+    
+    public boolean confirmExiting() { 
+        readyToExit = JOptionPane.showConfirmDialog(PatchEdit.getRootFrame(),
                 "Exit JSynthLib?", "Confirmation",
-                JOptionPane.OK_CANCEL_OPTION) == 0;
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION; // wirski@op.pl
+        return readyToExit;
     }
     
+    public boolean isReadyToExit() { // wirski@op.pl
+        return readyToExit;
+    }
+    
+    public void closingProc() { // wirski@op.pl
+        if (confirmExiting()) {
+            Iterator it = getJSLFrameIterator();
+            while (it.hasNext()) {
+                JSLFrame frame = (JSLFrame) it.next();
+                try {
+                    frame.setClosed(true);
+                } catch (Exception ex) {
+                    ErrorMsg.reportStatus(ex);
+                }
+            }
+            AppConfig.savePrefs();
+            System.exit(0);
+        }
+    }
+
     private interface JSLDesktopProxy {
         JFrame getSelectedWindow();
         JSLFrame[] getAllJSLFrames();
@@ -237,8 +260,7 @@ public class JSLDesktop implements JSLFrameListener {
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
-                    if (confirmExiting())
-                        exitAction.actionPerformed(null);
+                    closingProc();
                 }
             });
 
@@ -345,8 +367,10 @@ public class JSLDesktop implements JSLFrameListener {
 
 	public void updateLookAndFeel() {
             // update toolbar
-            SwingUtilities.updateComponentTreeUI(toolbar.getJFrame());
-            toolbar.pack();
+            if (toolbar != null) { // wirski@op.pl
+                SwingUtilities.updateComponentTreeUI(toolbar.getJFrame());
+                toolbar.pack();
+            };
             // update each Frame
             Iterator it = windows.iterator();
             while (it.hasNext()) {
@@ -403,8 +427,8 @@ public class JSLDesktop implements JSLFrameListener {
 	    showState(f, "selected : " + selected);
 	}
 	public void FrameClosing(JSLFrame f) {
-	    if (f == toolbar && confirmExiting())
-	        exitAction.actionPerformed(null);
+//	    if (f == toolbar && confirmExiting())
+//	        exitAction.actionPerformed(null);
 	}
 	public void FrameClosed(JSLFrame f) {
             showState(f, "closed. " + (windows.size() - 1)

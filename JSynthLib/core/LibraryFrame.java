@@ -266,6 +266,16 @@ class LibraryFrame extends AbstractLibraryFrame {
             list.add(p);
         }
 
+        void addPatch(IPatch p, int bankNum, int patchNum) {// wirski@op.pl
+            ErrorMsg.reportStatus("LibraryFrame.addPatch: Patch=" + p);
+            list.add(p);
+        }
+
+        void setPatchAt(IPatch p, int row, int bankNum, int patchNum) {// wirski@op.pl
+            ErrorMsg.reportStatus("LibraryFrame.setPatchAt: row=" + row + ", Patch=" + p);
+            list.set(row, p);
+        }
+
         void setPatchAt(IPatch p, int row) {
             ErrorMsg.reportStatus("LibraryFrame.setPatchAt: row=" + row + ", Patch=" + p);
             list.set(row, p);

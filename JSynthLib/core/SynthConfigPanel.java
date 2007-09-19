@@ -44,8 +44,7 @@ class SynthConfigPanel extends ConfigPanel {
 	// create synth driver table
         table = new JTable(new TableModel());
 	table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setPreferredScrollableViewportSize(new Dimension(650, 150));
-
+        table.setPreferredScrollableViewportSize(new Dimension(750, 150)); // wirski@op.pl
         TableColumn column;
         column = table.getColumnModel().getColumn(SYNTH_NAME);
         column.setPreferredWidth(75);
@@ -54,17 +53,17 @@ class SynthConfigPanel extends ConfigPanel {
 
 	JComboBox comboBox;
         column = table.getColumnModel().getColumn(MIDI_IN);
-        column.setPreferredWidth(150);
-	comboBox = new JComboBox(MidiUtil.getInputMidiDeviceInfo());
+        column.setPreferredWidth(200); // wirski@op.pl
+	comboBox = new JComboBox(MidiUtil.getInputNames());
 	column.setCellEditor(new DefaultCellEditor(comboBox));
 
         column = table.getColumnModel().getColumn(MIDI_OUT);
-        column.setPreferredWidth(150);
-	comboBox = new JComboBox(MidiUtil.getOutputMidiDeviceInfo());
+        column.setPreferredWidth(200); // wirski@op.pl
+	comboBox = new JComboBox(MidiUtil.getOutputNames());
 	column.setCellEditor(new DefaultCellEditor(comboBox));
 
         column = table.getColumnModel().getColumn(MIDI_CHANNEL);
-        column.setPreferredWidth(75);
+        column.setPreferredWidth(90); // wirski@op.pl
 
         JScrollPane scrollpane = new JScrollPane(table);
         p.add(scrollpane, c);
@@ -262,7 +261,7 @@ class SynthConfigPanel extends ConfigPanel {
                     try {
                         int port = multiMIDI ? myDevice.getInPort() : AppConfig
                                 .getInitPortIn();
-                        return MidiUtil.getInputMidiDeviceInfo(port).getName();
+                        return MidiUtil.getInputName(port); // wirski@op.pl
                     } catch (Exception ex) {
                         return "not available";
                     }
@@ -274,7 +273,7 @@ class SynthConfigPanel extends ConfigPanel {
                     try {
                         int port = multiMIDI ? myDevice.getPort() : AppConfig
                                 .getInitPortOut();
-                        return MidiUtil.getOutputMidiDeviceInfo(port).getName();
+                        return MidiUtil.getOutputName(port); // wirski@op.pl
                     } catch (Exception ex) {
                         return "not available";
                     }
@@ -297,17 +296,17 @@ class SynthConfigPanel extends ConfigPanel {
                     || (col == MIDI_OUT && multiMIDI) || col == MIDI_CHANNEL || col == MIDI_DEVICE_ID);
         }
 
-        public void setValueAt(Object value, int row, int col) {
+        public void setValueAt(Object value, int row, int col) { 
             Device dev = AppConfig.getDevice(row);
             switch (col) {
             case SYNTH_NAME:
                 dev.setSynthName((String) value);
                 break;
             case MIDI_IN:
-                dev.setInPort(MidiUtil.getInPort((MidiDevice.Info) value));
+                dev.setInPort(MidiUtil.getInPort((String) value)); // wirski@op.pl
                 break;
             case MIDI_OUT:
-                dev.setPort(MidiUtil.getOutPort((MidiDevice.Info) value));
+                dev.setPort(MidiUtil.getOutPort((String) value)); // wirski@op.pl
                 break;
             case MIDI_CHANNEL:
                 dev.setChannel(((Integer) value).intValue());

@@ -22,6 +22,7 @@ public class DevDrvPatchSelector extends JDialog {
     /** The last index in driver Combo Box. */
     private int driverNum;
     private int patchNum;
+    private int bankNum;
     protected IPatch p;
     private byte[] sysex;
     private String patchString;
@@ -56,13 +57,14 @@ public class DevDrvPatchSelector extends JDialog {
      * @param action   String which describe the used menu item
      */
     // for SysexStoreDialog
-    public DevDrvPatchSelector (IPatch patch, int patchnum, String wintitle, String action) {
+    public DevDrvPatchSelector (IPatch patch, int banknum, int patchnum, String wintitle, String action) {
         super(PatchEdit.getInstance(), wintitle, true);
 
         p            = patch;
         sysex        = patch.getByteArray();
         patchString  = patch.getPatchHeader();
         this.patchNum = patchnum;
+        this.bankNum = banknum; // wirski@op.pl
         initDialog(action, true);
     }
 
@@ -219,6 +221,8 @@ public class DevDrvPatchSelector extends JDialog {
                     for (int i = 0 ; i < bankNumbers.length ; i++) {
             	        bankComboBox.addItem(bankNumbers[i]);
                     }
+                    bankComboBox.setSelectedIndex(Math.min(bankNum, // wirski@op.pl
+                            bankComboBox.getItemCount() - 1));
                 }
                 if (driver.isSingleDriver()) {
                     // populate patch number combo box

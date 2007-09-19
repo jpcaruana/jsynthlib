@@ -70,7 +70,11 @@ public final class MacUtils extends Application {
 		public void handleQuit(ApplicationEvent e) {
 		    exitAction.actionPerformed(new ActionEvent(e.getSource(), 0,
 							       "Exit"));
-		    e.setHandled(true);
+                    if (PatchEdit.getDesktop().isReadyToExit()) { // wirski@op.pl
+                        e.setHandled(true);
+                    } else {
+                        e.setHandled(false);
+                    }
 		}
 	    });
 	instance.setEnabledPreferencesMenu(true);

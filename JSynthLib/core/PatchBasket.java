@@ -23,6 +23,8 @@ public interface PatchBasket {
     void pastePatch();
     /** Add a patch into the table of patches. */
     void pastePatch(IPatch p); // XXX Shall we rename?
+    /** Add a patch into the table of patches including bank and patch numbers. */
+    void pastePatch(IPatch p, int bankNum, int patchNum); // wirski@op.pl
     /** Get the selected patch. */
     IPatch getSelectedPatch();
 

@@ -86,6 +86,8 @@ public class GeneralConfigPanel extends ConfigPanel {
 	if (AppConfig.getLookAndFeel() != cbLF.getSelectedIndex()) {
             AppConfig.setLookAndFeel(cbLF.getSelectedIndex());
             PatchEdit.getDesktop().updateLookAndFeel();
+            ((JPanel) this).updateUI(); // wirski@op.pl
+            SwingUtilities.updateComponentTreeUI(this.getRootPane()); // wirski@op.pl
 	}
 	if (AppConfig.getGuiStyle() != cbGS.getSelectedIndex()) {
             JOptionPane.showMessageDialog(

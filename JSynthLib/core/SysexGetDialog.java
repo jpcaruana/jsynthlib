@@ -154,11 +154,13 @@ public class SysexGetDialog extends JDialog {
         IPatchDriver driver = (IPatchDriver) driverComboBox.getSelectedItem();
         SysexMessage[] msgs = (SysexMessage[]) queue.toArray(new SysexMessage[0]);
         IPatch[] patarray = driver.createPatches(msgs);
+        int bankNum = bankNumComboBox.getSelectedIndex(); // wirski@op.pl
+        int patchNum = patchNumComboBox.getSelectedIndex(); // wirski@op.pl
 
         try {
             PatchBasket frame = (PatchBasket) PatchEdit.getDesktop().getSelectedFrame();
             for (int i = 0; i < patarray.length; i++) {
-                frame.pastePatch(patarray[i]);
+                frame.pastePatch(patarray[i], ((bankNum == -1) ? 0 : bankNum), ((patchNum == -1) ? 0 : patchNum)); // wirski@op.pl
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null,

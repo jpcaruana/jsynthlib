@@ -258,7 +258,7 @@ public class BankEditorFrame extends Actions.MenuFrame implements PatchBasket {
     }
 
     public void storeSelectedPatch() {
-        new SysexStoreDialog(getSelectedPatch(), getSelectedPatchNum());
+        new SysexStoreDialog(getSelectedPatch(), 0, getSelectedPatchNum());// wirski@op.pl
     }
 
     public JSLFrame editSelectedPatch() {
@@ -276,6 +276,10 @@ public class BankEditorFrame extends Actions.MenuFrame implements PatchBasket {
     }
 
     public void pastePatch(IPatch p) {
+        myModel.setPatchAt(p, table.getSelectedRow(), table.getSelectedColumn());
+    }
+
+    public void pastePatch(IPatch p, int bankNum, int patchNum) {// wirski@op.pl
         myModel.setPatchAt(p, table.getSelectedRow(), table.getSelectedColumn());
     }
 

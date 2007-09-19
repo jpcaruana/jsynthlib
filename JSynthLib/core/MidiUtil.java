@@ -59,6 +59,8 @@ public final class MidiUtil {
 
     private static MidiDevice.Info[] outputMidiDeviceInfo;
     private static MidiDevice.Info[] inputMidiDeviceInfo;
+    private static String[] outputNames; // wirski@op.pl
+    private static String[] inputNames; // wirski@op.pl
     private static Receiver[] midiOutRcvr;
     private static MidiUtil.SysexInputQueue[] sysexInputQueue;
 
@@ -85,6 +87,8 @@ public final class MidiUtil {
 	    isOutputAvailable = false;
 	    isInputAvailable = false;
 	}
+	createNames(); // wirski@op.pl
+        
 	midiOutRcvr = new Receiver[outputMidiDeviceInfo.length];
 	sysexInputQueue = new MidiUtil.SysexInputQueue[inputMidiDeviceInfo.length];
     }
@@ -129,6 +133,21 @@ public final class MidiUtil {
 	return (MidiDevice.Info[]) list.toArray(new MidiDevice.Info[0]);
     }
 
+    /** Fills outputNames and inputNames, with the names of devices
+     * made from their descriptions and names */
+    private static void createNames() { // wirski@op.pl
+        outputNames = new String[outputMidiDeviceInfo.length];
+    	for (int i=0; i < outputMidiDeviceInfo.length; i++) {
+            outputNames[i] = outputMidiDeviceInfo[i].getDescription() +
+                outputMidiDeviceInfo[i].getName();
+        }
+        inputNames = new String[inputMidiDeviceInfo.length];
+        for (int i=0; i < inputMidiDeviceInfo.length; i++) {
+            inputNames[i] = inputMidiDeviceInfo[i].getDescription() +
+                inputMidiDeviceInfo[i].getName();
+        }
+    }
+    
     /** Returns an array of MidiDevice.Info for MIDI Sequencer device. */
     // not used now
     private MidiDevice.Info[] createSequencerMidiDeviceInfo()
@@ -181,6 +200,22 @@ public final class MidiUtil {
 	return inputMidiDeviceInfo;
     }
 
+    static String[] getOutputNames() { // wirski@op.pl
+        return outputNames;
+    }
+
+    static String getOutputName(int port) { // wirski@op.pl
+        return outputNames[port];
+    }
+
+    static String[] getInputNames() { // wirski@op.pl
+        return inputNames;
+    }
+
+    static String getInputName(int port) { // wirski@op.pl
+        return inputNames[port];
+    }
+    
     /**
      * return an entry of MidiDevice.Info for MIDI output.
      * @see #getOutputMidiDeviceInfo()
@@ -200,20 +235,20 @@ public final class MidiUtil {
     static MidiDevice.Info getInputMidiDeviceInfo(int i) {
 	return inputMidiDeviceInfo[i];
     }
-
-    /** for SynthTabelModel (will be obsoleted) */
-    static int getOutPort(MidiDevice.Info info) {
+    
+     /** for SynthTabelModel (will be obsoleted). */
+    static int getOutPort(String info) {
 	for (int i = 0; i < outputMidiDeviceInfo.length; i++) {
-	    if (outputMidiDeviceInfo[i] == info)
+	    if (outputNames[i] == info) // wirski@op.pl
 		return i;
 	}
 	return -1;
     }
 
-    /** for SynthTabelModel (will be obsoleted) */
-    static int getInPort(MidiDevice.Info info) {
+    /** for SynthTabelModel (will be obsoleted). */
+    static int getInPort(String info) {
 	for (int i = 0; i < inputMidiDeviceInfo.length; i++) {
-	    if (inputMidiDeviceInfo[i] == info)
+	    if (inputNames[i] == info) //wirski@op.pl
 		return i;
 	}
 	return -1;

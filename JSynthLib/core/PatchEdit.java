@@ -1,23 +1,21 @@
+package core;
+
+import java.io.*;
+import java.util.*;
+
+import javax.sound.midi.*;
+import javax.swing.*;
+
+import org.jsynthlib.synthview.*;
+
+
+
 /**
  * This is the main JSynthLib application object.  It's called
  * PatchEdit, which is probably ambiguous, but probably to late to
  * change now.
  * @version $Id$
  */
-
-package core;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.Transmitter;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-
 public final class PatchEdit  {
     static DevicesConfig devConfig;
 
@@ -43,7 +41,28 @@ public final class PatchEdit  {
 	// Load config file (JSynthLib.properties).
         boolean loadPrefsSuccessfull = AppConfig.loadPrefs();
 
-	// define event actions
+        // Check if all MIDI ports are available wirski@op.pl
+        for (int i = 0; i < AppConfig.deviceCount(); i++) {
+            try {
+                MidiUtil.getInputMidiDeviceInfo(AppConfig.getDevice(i).getInPort());
+                MidiUtil.getOutputMidiDeviceInfo(AppConfig.getDevice(i).getPort());
+            } catch (Exception ex) {
+                int ans = JOptionPane.showConfirmDialog(
+                        null, "At list one device's MIDI port is unavailable.\n" +
+                        "You might verify your setup and restart the application.\n" +
+                        "Press CANCEL to quit or OK to continue.",
+                        "Unavailable MIDI ports",
+                        JOptionPane.OK_CANCEL_OPTION);
+             if (ans == JOptionPane.CANCEL_OPTION) {
+                 System.exit(0);
+             } else {
+                 break;
+             }
+            }
+        }
+
+        
+        // define event actions
 	Actions.createActions();
 
 	// Set up the GUI.
