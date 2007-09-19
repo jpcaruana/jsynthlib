@@ -23,7 +23,7 @@ public class Constants {
     /** Device properties class prefix */
     public static final String PROP_PREFIX_DEVICE_CLASS = "deviceClass.";
     /** ID properties prefix */
-    public static final String PROP_PREFIX_ID_STRING = "inquriyID.";
+    public static final String PROP_PREFIX_ID_STRING = "inquiryID.";
     /** manufacturer name prefix */
     public static final String PROP_PREFIX_MANUFACTURER = "manufacturer.";
 
