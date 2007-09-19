@@ -34,7 +34,7 @@ public final class DeviceListWriter {
 
     	// for all subdirectories = synthesizer models
         for (int i = 0; i < synthDirs.length; i++) {
-    	    // select *Device.class
+    	    // select *Device.java
             System.out.println(synthDirs[i].toString());
     	    File actSynthDir = new File(synthdevicesDir.toString(), synthDirs[i].getName());
     	    String[] synthDevices = actSynthDir.list(new SynthFileFilter());
@@ -42,8 +42,10 @@ public final class DeviceListWriter {
 		        MyClassLoader loader = new MyClassLoader(actSynthDir.getPath());
     	    	// for each Device class
 	    	    for( int j = 0; j < synthDevices.length; j++) {
-	        	    // get Device class name by removing the ".class" from the list of files
-        		    String devName = synthDevices[j].substring(0, synthDevices[j].indexOf('.'));
+	        	    // get Device class name by removing the ".java" from the list of files
+	    	        String devName = synthDevices[j].substring(0, synthDevices[j].indexOf('.'));
+                    // compute full class name
+                    devName = actSynthDir.toString().replace(File.separatorChar, '.') + "." + devName;
 	        	    try {
 			            setProperty(loader, props, devName);
         		    } catch (Exception e) {
@@ -72,7 +74,7 @@ public final class DeviceListWriter {
 
         Device dev = (Device) deviceclass.newInstance();
         // shortname : delete "Device" at the tail of devName
-        String shortname = devName.substring(0, devName.lastIndexOf("Device"));
+        String shortname = devName.substring(devName.lastIndexOf('.')+1, devName.lastIndexOf("Device"));
 
         props.setProperty(Constants.PROP_PREFIX_DEVICE_CLASS + shortname,
                   deviceclass.getName());
@@ -94,7 +96,7 @@ public final class DeviceListWriter {
 // 	        return ((name.endsWith ("Driver.class")||name.endsWith("Converter.class"))
 // 		        && name.indexOf ('$')==-1);
             System.out.println("Checking " + dir.toString() + " & " + name);
-            return ((name.endsWith("Device.class")) && (name.indexOf('$') == -1));
+            return ((name.endsWith("Device.java")) && (name.indexOf('$') == -1));
 	    }
     } // SynthFileFilter
 
