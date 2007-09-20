@@ -6,8 +6,6 @@ import java.util.*;
 import javax.sound.midi.*;
 import javax.swing.*;
 
-import org.jsynthlib.synthview.*;
-
 
 
 /**
