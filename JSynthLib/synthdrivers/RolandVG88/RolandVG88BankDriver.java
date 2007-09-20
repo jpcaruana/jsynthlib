@@ -41,20 +41,20 @@ public class RolandVG88BankDriver extends BankDriver {
 
 
     public RolandVG88BankDriver(RolandVG88SingleDriver singleDriver) {
-		super("Bank", "Nacho Alonso",singleDriver.NUM_PATCH, NUM_COLUMNS);
+		super("Bank", "Nacho Alonso",RolandVG88SingleDriver.NUM_PATCH, NUM_COLUMNS);
 
 		this.singleDriver = singleDriver;
-		singleSize = singleDriver.SINGLE_SIZE;
-		patchSize = singleDriver.SINGLE_SIZE * singleDriver.NUM_PATCH;
+		singleSize = RolandVG88SingleDriver.SINGLE_SIZE;
+		patchSize = RolandVG88SingleDriver.SINGLE_SIZE * RolandVG88SingleDriver.NUM_PATCH;
 
-		patchNameStart = singleDriver.SINGLE_SIZE * singleDriver.NUM_PATCH ;
+		patchNameStart = RolandVG88SingleDriver.SINGLE_SIZE * RolandVG88SingleDriver.NUM_PATCH ;
 		patchNameSize = BANK_NAME_SIZE;
 
-		bankNumbers	= singleDriver.BANK_NUMBERS;
-		patchNumbers = singleDriver.PATCH_NUMBERS;
+		bankNumbers	= RolandVG88SingleDriver.BANK_NUMBERS;
+		patchNumbers = RolandVG88SingleDriver.PATCH_NUMBERS;
 
-		sysexID		= singleDriver.SYSEX_ID;
-		singleSysexID	= singleDriver.SYSEX_ID;
+		sysexID		= RolandVG88SingleDriver.SYSEX_ID;
+		singleSysexID	= RolandVG88SingleDriver.SYSEX_ID;
 	}
 
     /**
@@ -94,7 +94,7 @@ public class RolandVG88BankDriver extends BankDriver {
      * Calculate checkSum for each patch in a bank 
      */
     public void calculateChecksum(Patch p) {
-		for (int i = 0; i < singleDriver.NUM_PATCH; i++)
+		for (int i = 0; i < RolandVG88SingleDriver.NUM_PATCH; i++)
 			singleDriver.calculateChecksum(p, singleSize * i);
     }
 
@@ -136,7 +136,7 @@ public class RolandVG88BankDriver extends BankDriver {
      */
     public void requestPatchDump(int bankNum, int patchNum) {
 		patchSize = patchSize - BANK_NAME_SIZE;
-		for (int i = 0; i < singleDriver.NUM_PATCH; i++) {
+		for (int i = 0; i < RolandVG88SingleDriver.NUM_PATCH; i++) {
 			singleDriver.requestPatchDump(0, i);
 			try {
 				Thread.sleep(600);	// wait .
@@ -153,7 +153,7 @@ public class RolandVG88BankDriver extends BankDriver {
      */
     public void storePatch(Patch p, int bankNum, int patchNum) {
 		int ofst = 0;
-		for (int i = 0; i < singleDriver.NUM_PATCH; i++, ofst += singleSize) {
+		for (int i = 0; i < RolandVG88SingleDriver.NUM_PATCH; i++, ofst += singleSize) {
 			singleDriver.storePatch(getPatch(p,i), 0, i);
 		}
     }

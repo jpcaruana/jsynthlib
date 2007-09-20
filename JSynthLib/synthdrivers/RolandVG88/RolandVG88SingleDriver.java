@@ -247,7 +247,7 @@ import core.*;
  
     protected void playPatch(Patch p) {
         ErrorMsg  warning = new ErrorMsg();
-            warning.reportWarning("Advice: ",
+            ErrorMsg.reportWarning("Advice: ",
             "VG88 can't play anything by itself. You can test the sound with your guitar.");
 	}
 

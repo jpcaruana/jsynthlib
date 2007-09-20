@@ -21,7 +21,6 @@ public class DKnob extends JComponent {
     private final static float START_ANG = (START/360)*(float)Math.PI*2;
     private final static float LENGTH_ANG = (LENGTH/360)*(float)Math.PI*2;
     private final static float LENGTH_ANG_DIV10 = (float)(LENGTH_ANG/10.01);
-    private final static float DRAG_RES = (float) 0.01;
     private final static float MULTIP = 180 / (float)Math.PI;
     private final static Color DEFAULT_FOCUS_COLOR = new Color(0x8080ff);
 
@@ -114,11 +113,11 @@ public class DKnob extends JComponent {
 	addMouseMotionListener(new MouseMotionAdapter() {
 		public void mouseDragged(MouseEvent me) {
             float speed = DRAG_SPEED;
-            if((me.getModifiersEx() & (me.BUTTON2_DOWN_MASK | me.BUTTON3_DOWN_MASK)) != 0)
+            if((me.getModifiersEx() & (InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK)) != 0)
                 speed /= 10;
-            if((me.getModifiersEx() & me.CTRL_DOWN_MASK) != 0)
+            if((me.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0)
                 speed /= 10;
-            if((me.getModifiersEx() & me.SHIFT_DOWN_MASK) != 0)
+            if((me.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0)
                 speed /= 10;
             
 		    if ( dragType == SIMPLE) {

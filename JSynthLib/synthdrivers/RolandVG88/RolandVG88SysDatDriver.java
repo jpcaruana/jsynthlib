@@ -22,6 +22,7 @@
 package synthdrivers.RolandVG88;
 
 import core.*;
+
 import javax.swing.*;
 
 /**
@@ -90,7 +91,7 @@ import javax.swing.*;
      */
     public void setPatchName(Patch p, String name) {
         ErrorMsg  warning = new ErrorMsg();
-        warning.reportWarning("Advice:",
+        ErrorMsg.reportWarning("Advice:",
             "If you want to assign a name to this System Data patch, use 'Field1' or 'Filed2' or 'Comment' fields");
     }
 
