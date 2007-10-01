@@ -14,20 +14,17 @@ import java.io.*;
  */
 public final class DeviceListWriter {
 
+    private static boolean verbose = false;
+
     // don't have to call constructor for Utility class.
     private DeviceListWriter() {
     }
 
-    private static void writeList() {
+    private static void writeList() throws FileNotFoundException {
         Properties props = new java.util.Properties();
 
         FileOutputStream out;
-        try {
             out = new FileOutputStream(Constants.RESOURCE_NAME_DEVICES_CONFIG);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
         File synthdevicesDir = new File("synthdrivers");
     	// select only directories
         File[] synthDirs = synthdevicesDir.listFiles(new SynthDirsFilter());
@@ -35,7 +32,8 @@ public final class DeviceListWriter {
     	// for all subdirectories = synthesizer models
         for (int i = 0; i < synthDirs.length; i++) {
     	    // select *Device.java
-            System.out.println(synthDirs[i].toString());
+            if(verbose)
+                System.out.println("In dir " + synthDirs[i].toString() + ":");
     	    File actSynthDir = new File(synthdevicesDir.toString(), synthDirs[i].getName());
     	    String[] synthDevices = actSynthDir.list(new SynthFileFilter());
 	        try {
@@ -49,8 +47,8 @@ public final class DeviceListWriter {
 	        	    try {
 			            setProperty(loader, props, devName);
         		    } catch (Exception e) {
-        			ErrorMsg.reportStatus(e);
-	        		ErrorMsg.reportStatus("Exception with " + devName);
+            			ErrorMsg.reportStatus(e);
+    	        		ErrorMsg.reportStatus("Exception with " + devName);
 		         }
     		}
 	    } catch (Exception e) {
@@ -70,7 +68,7 @@ public final class DeviceListWriter {
     private static void setProperty(MyClassLoader loader, Properties props, String devName)
 	    throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 	    Class deviceclass = loader.loadClass(devName, true);
-        System.out.println(deviceclass);
+        System.out.println("Found " + deviceclass.getName());
 
         Device dev = (Device) deviceclass.newInstance();
         // shortname : delete "Device" at the tail of devName
@@ -95,8 +93,10 @@ public final class DeviceListWriter {
     	public boolean accept (File dir, String name) {
 // 	        return ((name.endsWith ("Driver.class")||name.endsWith("Converter.class"))
 // 		        && name.indexOf ('$')==-1);
-            System.out.println("Checking " + dir.toString() + " & " + name);
-            return ((name.endsWith("Device.java")) && (name.indexOf('$') == -1));
+            if(verbose)
+                System.out.println("Checking " + dir.toString() + " & " + name);
+            return ((name.indexOf('$') == -1) &&
+                    (name.endsWith("Device.java") || name.endsWith("Device.class")));
 	    }
     } // SynthFileFilter
 
@@ -203,8 +203,11 @@ public final class DeviceListWriter {
 
     /**
      * @param args the command line arguments
+     * @throws FileNotFoundException if unable to create output file
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+        if(args.length>1 && args[0].equals("-v"))
+            verbose  = true;
         DeviceListWriter.writeList();
         System.exit(0);
     }
