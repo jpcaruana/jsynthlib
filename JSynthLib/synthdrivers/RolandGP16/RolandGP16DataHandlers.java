@@ -5,6 +5,13 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.io.*;
 
+/**
+ * Marker class that allows dependency checking to work.
+ * (It fails if RolandGP16DataHandlers.class isn't found.)
+ */
+abstract class RolandGP16DataHandlers {
+}
+
 /** Standard Roland GP-16 value sender. */
 class VSender extends SysexSender
 {

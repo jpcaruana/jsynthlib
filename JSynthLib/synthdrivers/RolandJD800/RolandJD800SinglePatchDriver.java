@@ -21,15 +21,9 @@
 
 package synthdrivers.RolandJD800;
 
-import java.io.InputStream;
+import java.io.*;
 
-import core.Driver;
-import core.DriverUtil;
-import core.ErrorMsg;
-import core.IPatch;
-//import core.JSLFrame;
-import core.Patch;
-import core.SysexHandler;
+import core.*;
 
 
 /**
@@ -186,7 +180,7 @@ public class RolandJD800SinglePatchDriver extends Driver {
     /**
      * Sends a patch to the synth's edit buffer.<p>
      *
-     * @see storePatch(Patch, int, int)
+     * @see #storePatch(Patch, int, int)
      * @see Patch#send()
      * @see ISinglePatch#send()
      */

@@ -371,8 +371,8 @@ public class XMLPatch implements ISinglePatch {
     }
     
     /**
-     * @param sysex_index
-     * @return
+     * @param sysex_index Which sysex to fetch.
+     * @return Contents of requested sysex.
      */
     public byte[] getMessage(int sysex_index) {
         return sysex[sysex_index];

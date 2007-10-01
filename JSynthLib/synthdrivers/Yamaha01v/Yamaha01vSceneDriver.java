@@ -21,11 +21,7 @@
 
 package synthdrivers.Yamaha01v;
 
-import core.Driver;
-import core.DriverUtil;
-//import core.JSLFrame;
-import core.Patch;
-import core.SysexHandler;
+import core.*;
 
 
 public class Yamaha01vSceneDriver extends Driver {

@@ -338,9 +338,12 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     }
 
     /**
+     * "Normal mode": envelope control give access to params as seen on LCD.
+     * Uses sliders for everything.
+     * 
      * @param patch work area
      * @param firstOffset offset to "final stage" param
-     * @return
+     * @return GUI for envelope.
      */
     protected JPanel getEnvelopeGUI1(Patch patch, int firstOffset) {
         //TODO non-hack-mode == only one stage can be sustain
@@ -385,10 +388,12 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
     
     /**
      * "Normal mode": envelope control give access to params as seen on LCD.
+     * This is an experimental panel that uses the EnvelopeWidget.
+     * Doesn't work for some reason.
      * 
      * @param patch work area
      * @param firstOffset offset to "final stage" param
-     * @return
+     * @return GUI for envelope.
      */
     protected JPanel getEnvelopeGUI2(Patch patch, int firstOffset) {
         JPanel panel = new JPanel();
