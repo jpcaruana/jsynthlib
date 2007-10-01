@@ -26,7 +26,7 @@
 
 	Remko Troncon <remko@ulyssis.org>
 
-	Version: $Id: build.xml,v 1.16 2007-09-17 19:11:17 billzwicky Exp $
+	Version: $Id: build.xml,v 1.17 2007-10-01 23:50:47 billzwicky Exp $
 -->
 
 <project name="JSynthLib" default="build" basedir=".">
@@ -38,10 +38,11 @@
 
 	<!-- Defaults -->
 	<property name="src" location="."/>
-	<property name="docs" location="doc"/>
-	<property name="api_docs" location="doc/api-docs"/>
 	<property name="build" location="build"/>
-	<property name="dist"  location="dist"/>
+	<property name="bin" location="${build}/bin"/>
+	<property name="docs" location="${build}/doc"/>
+	<property name="api_docs" location="${docs}/api-docs"/>
+	<property name="dist"  location="${build}/distribution"/>
 	<property name="synthdrivers"  location="${build}/synthdrivers"/>
 
 	<property name="synth"  value="**"/>
@@ -71,38 +72,70 @@
 	<!-- Building -->
 	<target name="build" depends="init"
 			description="Build the complete package">
+		<mkdir dir="${bin}"/>
 		<!-- Compile -->
-		<javac srcdir="${src}" destdir="${build}" classpath="groovy.jar" deprecation="${deprecation}">
+		<javac srcdir="${src}" destdir="${bin}" 
+			classpath="groovy.jar"
+			deprecation="${deprecation}"
+			source="1.4" target="1.4">
 			<include name="**/*.java"/>
 			<exclude name="core/MacOSXMidiWrapper.java" unless="isMacOS"/>
-			<exclude name="midiprovider/**/*.java"/>
+			<exclude name="midiprovider/**"/>
 		</javac>
 		<!-- Images -->
-		<copy todir="${build}/images">
+		<copy todir="${bin}/images">
 			<fileset dir="images"/>
 		</copy>
 		<!-- Resources -->
-		<copy todir="${build}/synthdrivers">
+		<copy file="synthdrivers.properties" todir="${bin}"/>
+		<copy todir="${bin}/synthdrivers">
 			<fileset dir="synthdrivers">
 				<include name="**/*.gif"/>
+				<include name="**/*.png"/>
 				<include name="**/*.syx"/>
 				<include name="**/*.dat"/>
 			</fileset>
 		</copy>
 		<!-- Extra files -->
-		<copy file="doc/documentation.html" todir="${build}/doc"/>
-		<copy file="doc/programming.html" todir="${build}/doc"/>
-		<copy file="synthdrivers.properties" todir="${build}"/>
+		<copy file="doc/documentation.html" todir="${docs}"/>
+		<copy file="doc/programming.html" todir="${docs}"/>
 	</target>
 
+	
+	<target name="build-run" depends="build"
+			description="Build the official runnable file set">
+		<mkdir dir="${build}/run"/>
+		
+		<!-- Create JAR -->
+		<jar jarfile="${build}/run/${ant.project.name}.jar"
+			 basedir="${bin}"
+			 excludes="core/DeviceListWriter.class,JSynthLib.properties,
+					   linuxdevices.conf">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="JSynthLib"/>
+				<attribute name="Class-Path" value="groovy.jar"/>
+			</manifest>
+		</jar>
+		
+		<!-- Assemble extras -->
+		<copy todir="${build}/run">
+			<fileset dir=".">
+				<include name="groovy.jar"/>
+			</fileset>
+		</copy>
+	</target>
 
+			
 	<!-- Documentation -->
 	<target name="api_docs" depends="init"
 			description="Generate API documentation">
 		<mkdir dir="${api_docs}"/>
-		<javadoc destdir="${api_docs}" nohelp="true" private="${show-private-classes}">
+		<javadoc destdir="${api_docs}" nohelp="true" private="${show-private-classes}"
+			classpath="groovy.jar">
 			<packageset dir="${src}">
 				<include name="*/**"/>
+				<exclude name="doc/**"/>
 				<exclude name="groovy/**"/>
 				<exclude name="midiprovider/**"/>
 				<exclude name="org/codehaus/groovy/**"/>
@@ -113,62 +146,73 @@
 	<target name="doc" depends="api_docs"/>
 
 
-	<!-- Distribution -->
-	<target name="dist" depends="init,build,api_docs"
+	<!-- Distribution --> <!--,api_docs"-->
+	<target name="dist" depends="init,build-run"
 			description="Create package distribution files (jar, sources, ...)">
 		<mkdir dir="${dist}"/>
 
-		<!-- Create JAR -->
-		<jar jarfile="${dist}/${ant.project.name}-${version}.jar"
-			 basedir="${build}"
-			 excludes="core/DeviceListWriter.class,JSynthLib.properties,
-					   linuxdevices.conf,*.bat">
-			<manifest>
-				<attribute name="Main-Class" value="JSynthLib"/>
-			</manifest>
-		</jar>
-		<checksum file="${dist}/${ant.project.name}-${version}.jar"
+		<property name="dist-name" value="${ant.project.name}-${version}"/>
+		
+		<!-- Create runnable bundles -->
+		<zip destfile="${dist}/${dist-name}-bin.zip">
+			<zipfileset dir="${build}/run" includes="**"
+				prefix="${ant.project.name}-${version}/"/>
+			<zipfileset dir="." includes="doc/**"
+				prefix="${ant.project.name}-${version}/"/>  <!-- not the api -->
+		</zip>
+		<checksum file="${dist}/${dist-name}-bin.zip"
 				  forceoverwrite="yes" fileext=".md5"/>
 
-		<!-- Create sources bundle -->
-		<tar destfile="${dist}/${ant.project.name}-${version}.tar.gz"
+		<tar destfile="${dist}/${dist-name}-bin.tar.gz"
 			 compression="gzip" casesensitive="yes" longfile="gnu">
-			<tarfileset dir="." prefix="${ant.project.name}-${version}/">
-				<!-- Base files -->
-				<include name="**/*.java"/>
-				<include name="**/*.gif"/> <!-- needed e.g. for the Yamaha DX-7 driver -->
-				<include name="**/*.png"/> <!-- needed e.g. for the Roland JV80 driver -->
-				<include name="**/*.syx"/> <!-- needed e.g. for the Roland TD6 driver -->
-				<include name="images/**"/>
-				<include name="synthdrivers.properties"/>
-				<include name="${docs}"/>
-				<include name="build.xml"/>
+			<tarfileset dir="${build}/run" includes="**"
+				prefix="${ant.project.name}-${version}/"/>
+			<tarfileset dir="." includes="doc/**"
+				prefix="${ant.project.name}-${version}/"/>  <!-- not the api -->
+		</tar>
+		<checksum file="${dist}/${dist-name}-bin.tar.gz"
+				  forceoverwrite="yes" fileext=".md5"/>
 
-				<!-- Junk -->
-				<exclude name="${api_docs}/**"/>
+		<!-- Create sources bundles -->
+		<zip destfile="${dist}/${dist-name}-src.zip">
+			<zipfileset dir="." prefix="${ant.project.name}-${version}-src/">
+				<exclude name="bin/**"/>
+				<exclude name="build/**"/>
+				<exclude name="**/CVS"/>
+			</zipfileset>
+		</zip>
+		<checksum file="${dist}/${dist-name}-src.zip"
+				  forceoverwrite="yes" fileext=".md5"/>
+		
+		<tar destfile="${dist}/${dist-name}-src.tar.gz"
+			 compression="gzip" casesensitive="yes" longfile="gnu">
+			<tarfileset dir="." prefix="${ant.project.name}-${version}-src/">
+				<exclude name="bin/**"/>
+				<exclude name="build/**"/>
+				<exclude name="**/CVS"/>
 			</tarfileset>
 		</tar>
-		<checksum file="${dist}/${ant.project.name}-${version}.tar.gz"
+		<checksum file="${dist}/${dist-name}-src.tar.gz"
 				  forceoverwrite="yes" fileext=".md5"/>
 
 		<!-- Create API docs bundle -->
-		<tar destfile="${dist}/${ant.project.name}-${version}-api.tar.gz"
+		<tar destfile="${dist}/${dist-name}-api.tar.gz"
 			 compression="gzip" casesensitive="yes" longfile="gnu">
-			<tarfileset dir="${api_docs}"
-						prefix="${ant.project.name}-${version}-api"/>
+			<!-- bare archive can be use by Eclipse -->
+			<tarfileset dir="${api_docs}" includes="**"/>
 		</tar>
 	</target>
 
 
 	<!-- Run -->
 	<target name="run" description="Run the application" depends="init,build">
-		<java classname="JSynthLib" dir="${build}" fork="true"/>
+		<java classname="JSynthLib" dir="${bin}" fork="true"/>
 	</target>
 
 
 	<!-- Run with debug level 2 -->
 	<target name="run-debug" description="Run the application" depends="init,build">
-		<java classname="JSynthLib" dir="${build}" fork="true">
+		<java classname="JSynthLib" dir="${bin}" fork="true">
 			<arg value="2"/>
 		</java>
 	</target>
@@ -179,11 +223,11 @@
 	<!-- Update driver information -->
 	<target name="update-drivers"
 			description="Update synth drivers information" depends="init,build">
-		<delete file="${build}/synthdrivers.properties"/>
-		<java classname="core.DeviceListWriter" dir="${build}" fork="true">
-			<arg value="2"/>
+		<!-- File is gen'd in current dir -->
+		<java classname="core.DeviceListWriter" dir="${bin}" fork="true">
+			<!--arg value="-v"/-->
 		</java>
-		<copy todir="${src}" file="${build}/synthdrivers.properties" />
+		<copy todir="${src}" file="synthdrivers.properties" />
 	</target>
 
 	<target name="ud" depends="update-drivers"/>
@@ -195,27 +239,13 @@
 
 	<!-- Cleanup -->
 	<target name="clean" description="Cleanup all generated files" depends="clean-build-dir">
-		<delete dir="${dist}"/>
-		<delete dir="${api_docs}"/>
 	</target>
-
-	<!-- Cleanup synthdrivers -->
-	<target name="clean-synthdrivers" description="Cleanup the synth driver .class files">
-		<delete>
-			<fileset dir="${synthdrivers}" includes="${synth}/**/*.class"/>
-		</delete>
-	</target>
-
-	<target name="cs" depends="clean-synthdrivers"/>
 
 	<!-- ==================== Administrative targets  ======================= -->
-	<target name="build-core" depends="clean-synthdrivers,build"/>
-	<target name="bc" depends="build-core"/>
-
 	<target name="clean-build" depends="clean-build-dir,build"/>
 	<target name="cb" depends="clean-build"/>
 
-	<target name="all" depends="clean,dist"/>
+	<target name="all" depends="clean,build,update-drivers,dist"/>
 
 	<!-- =============================== Help =============================== -->
 	<target name="targets">
@@ -230,22 +260,13 @@ The following targets are available:
   doc                  Short form of "api_docs"
   build                Build JSynthLib
   clean-build-dir      Cleanup the build directory
-  build-core           First "clean-synthdrivers" and then "build"
-                         Same alternative option as with "clean-synthdrivers"
-  bc                   Short form of "build-core"
-  clean-build          First "clean-build-dir" and then "build"
+  clean-build          First "clean" and then "build"
   cb                   Short form of "clean-build"
-  clean-synthdrivers   Clean all synthdrivers
-                         You can alternatively specify a synthdriver e.g. "KawaiK4":
-                         ant -Dsynth=KawaiK4 clean-synthdrivers
-                         or
-                         ant clean-synthdrivers -Dsynth=KawaiK4
-  cs                   Short form of "clean-synthdrivers"
   dist                 Create package distribution files (jar, sources, ...)
   run                  Run the application
   run-debug            Run the application with debug level 2
   rd                   Short form of "run-debug"
-  update-drivers       Update synth drivers information with debug level 2
+  update-drivers       Update synth drivers information
   ud                   Short form of "update-drivers"
 		</echo>
 	</target>
