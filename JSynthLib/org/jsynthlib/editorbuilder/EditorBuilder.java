@@ -152,9 +152,9 @@ public class EditorBuilder {
         pframe.setJMenuBar(pmb); dframe.setJMenuBar(dmb);
         propframe.setJMenuBar(propmb);
         
-        pframe.show();
-        dframe.show();
-        propframe.show();
+        pframe.setVisible(true);
+        dframe.setVisible(true);
+        propframe.setVisible(true);
     }
     
     protected static class loadParams extends AbstractAction {
@@ -236,19 +236,19 @@ public class EditorBuilder {
     protected static class showpframe extends AbstractAction {
         public showpframe() { super("Parameters");}
         public void actionPerformed(ActionEvent e) {
-            pframe.show();
+            pframe.setVisible(true);
         }
     }
     protected static class showdframe extends AbstractAction {
         public showdframe() { super("Designer");}
         public void actionPerformed(ActionEvent e) {
-            dframe.show();
+            dframe.setVisible(true);
         }
     }
     protected static class showpropframe extends AbstractAction {
         public showpropframe() { super("Properties");}
         public void actionPerformed(ActionEvent e) {
-            propframe.show();
+            propframe.setVisible(true);
         }
     }
 }

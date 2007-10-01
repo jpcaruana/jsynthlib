@@ -57,7 +57,7 @@ Serializable {
             }
         }));
         pf.setJMenuBar(bar);
-        pf.show();
+        pf.setVisible(true);
     }
     
     private void createNodes(DefaultMutableTreeNode top) {

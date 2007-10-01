@@ -209,7 +209,7 @@ public class AdvDefaultHandler extends DefaultHandler {
         Object o = objects.removeFirst();
         element = element.substring(0,1).toUpperCase() + element.substring(1);
         try {
-            o = o.getClass().getMethod("get" + element, null).invoke(o, null);
+            o = o.getClass().getMethod("get" + element, (Class[])null).invoke(o, (Object[])null);
         } catch (NoSuchMethodException e) {
         } catch (Exception e) {
             throw new SAXParseException("Error storing " + element, locator, e);

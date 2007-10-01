@@ -159,7 +159,7 @@ public class BeanPropertySheet extends JPanel {
                 ((JComponent) ed).setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
             c.add(ed);
             d.pack();
-            d.show();
+            d.setVisible(true);
         }
 
         /* (non-Javadoc)

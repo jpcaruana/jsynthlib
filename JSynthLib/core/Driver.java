@@ -262,7 +262,7 @@ abstract public class Driver implements IPatchDriver {
      */
     public boolean canCreatePatch() {
         try {
-            getClass().getDeclaredMethod("createNewPatch", null);
+            getClass().getDeclaredMethod("createNewPatch", (Class[])null);
             return true;
         } catch (Exception ex) {
             return false;
