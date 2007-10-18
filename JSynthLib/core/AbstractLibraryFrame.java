@@ -15,6 +15,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.*;
+import javax.swing.text.MaskFormatter;
 
 /**
  * Abstract class for unified handling of Library and Scene frames.
@@ -104,9 +105,43 @@ abstract class AbstractLibraryFrame extends Actions.MenuFrame implements PatchBa
 
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    playSelectedPatch();
+                    ISinglePatch myPatch = (ISinglePatch) getSelectedPatch();
+                    String name = myPatch.getName();
+                    int nameSize = myPatch.getNameSize();
+                    if (myPatch.hasEditor()) {
+                        Actions.EditActionProc();
+                        changed();
+                    } else if (nameSize != 0) {
+                        final JOptionPane optionPane;
+                        String maskStr = "";
+                        for (int i = 0; i < nameSize; i++) {
+                            maskStr += "*";
+                        }
+                        MaskFormatter Mask = new MaskFormatter();
+                        try {
+                            Mask.setMask(maskStr);
+                        } catch (Exception ex) {
+                            ErrorMsg.reportStatus(ex);
+                        }
+                        JFormattedTextField patchName = new JFormattedTextField(Mask);
+                        patchName.setValue(name);
+                        Object[] options = {new String("OK"), new String("Cancel")};
+                        optionPane = new JOptionPane(patchName,
+                                JOptionPane.PLAIN_MESSAGE,
+                                JOptionPane.YES_NO_OPTION,
+                                null,
+                                options,
+                                options[0]);
+                        JDialog dialog = optionPane.createDialog(table, "Edit patch name");
+                        dialog.setVisible(true);
+                        if (optionPane.getValue() == options[0]) {
+                            String newName = (String)patchName.getValue();
+                            myPatch.setName(newName);
+                            changed();
+                        }
+                    }
                 }
-            }
+              }
         });
 
         //table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

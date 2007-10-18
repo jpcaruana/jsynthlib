@@ -157,6 +157,14 @@ class SceneFrame extends AbstractLibraryFrame {
             int inPort = driver.getDevice().getInPort();
             long patchSize = driver.getPatchSize();
             long sysexSize = 0;
+            boolean variableSize = false;
+            long timeout;
+            if (patchSize == 0) {
+                variableSize = true;
+                timeout = 5000;
+            } else {
+                timeout = patchSize + 500;
+            };
             do  {
                 repeat = JOptionPane.NO_OPTION;
                 sysexSize = 0;
@@ -165,20 +173,22 @@ class SceneFrame extends AbstractLibraryFrame {
                 try {
                     do {
                         SysexMessage msg;
-                        msg = (SysexMessage) MidiUtil.getMessage(inPort, patchSize + 500);
+                        msg = (SysexMessage) MidiUtil.getMessage(inPort, timeout);
                         queue.add(msg);
                         sysexSize += msg.getLength();
-                    } while (sysexSize < patchSize);
+                    } while ((variableSize) || (sysexSize < patchSize));
                 } catch (MidiUtil.TimeoutException ex) {
-                    repeat =  JOptionPane.showConfirmDialog(
+                    if (!variableSize) {
+                        repeat =  JOptionPane.showConfirmDialog(
                             null, "Cannot receive sysex from " + driver + ".\nDo you want to try again?",
                             "Scene Update Warning",
                             JOptionPane.YES_NO_OPTION);
+                    }
                 } catch (InvalidMidiDataException ex) {
                     ErrorMsg.reportError ("Error", "Invalid MIDI data error");
                 }
             } while (repeat == JOptionPane.YES_OPTION);
-            if (sysexSize == patchSize) {
+            if ((variableSize) || (sysexSize == patchSize)) {
                 SysexMessage[] msgs = (SysexMessage[]) queue.toArray(new SysexMessage[0]);
                 IPatch[] patarray = driver.createPatches(msgs);
                 if (patarray.length == 1) {

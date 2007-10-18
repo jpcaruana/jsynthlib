@@ -958,42 +958,45 @@ final public class Actions {
             this.setEnabled(false);
         }
         public void actionPerformed(ActionEvent e) {
-            Worker w = new Worker();
-            w.setDaemon(true);
-            w.start();
+            EditActionProc();
         }
-	class Worker extends Thread {
-	    public void run() {
-		try {
-		    JSLFrame frm = getSelectedFrame().editSelectedPatch();
-		    if (frm != null) {
-		        PatchEdit.getDesktop().add(frm);
-		        frm.moveToDefaultLocation();
-		        frm.setVisible(true);
-			// hack for old Java bug
-			/*
-			if (frm instanceof PatchEditorFrame)
-			    for (int i = 0; i < ((PatchEditorFrame) frm).sliderList.size(); i++) {
-				JSlider slider = (JSlider) ((PatchEditorFrame) frm).sliderList.get(i);
-				Dimension dim = slider.getSize();
-				if (dim.width > 0) {
-				    dim.width++;
-				    slider.setSize(dim);
-				}
-			    }
-			*/
-			try {
-			    frm.setSelected(true);
-			} catch (PropertyVetoException e) {
-			    ErrorMsg.reportStatus(e);
-			}
-		    }
-		} catch (Exception ex) {
-		    ErrorMsg.reportError("Error",
-					 "Error in PatchEditor.", ex);
-		}
-	    }
-	}
+    }
+    static void EditActionProc() {
+        class Worker extends Thread {
+            public void run() {
+            try {
+                JSLFrame frm = getSelectedFrame().editSelectedPatch();
+                if (frm != null) {
+                    PatchEdit.getDesktop().add(frm);
+                    frm.moveToDefaultLocation();
+                    frm.setVisible(true);
+                // hack for old Java bug
+                /*
+                if (frm instanceof PatchEditorFrame)
+                    for (int i = 0; i < ((PatchEditorFrame) frm).sliderList.size(); i++) {
+                    JSlider slider = (JSlider) ((PatchEditorFrame) frm).sliderList.get(i);
+                    Dimension dim = slider.getSize();
+                    if (dim.width > 0) {
+                        dim.width++;
+                        slider.setSize(dim);
+                    }
+                    }
+                */
+                try {
+                    frm.setSelected(true);
+                } catch (PropertyVetoException e) {
+                    ErrorMsg.reportStatus(e);
+                }
+                }
+            } catch (Exception ex) {
+                ErrorMsg.reportError("Error",
+                         "Error in PatchEditor.", ex);
+            }
+            }
+        }
+        Worker w = new Worker();
+        w.setDaemon(true);
+        w.start();
     }
 
     private static class ExportAction extends AbstractAction {
