@@ -25,7 +25,7 @@ import javax.swing.event.MouseInputAdapter;
  * @see SysexWidget
  */
 public class EnvelopeWidget extends SysexWidget {
-    /** Array of Nodes provied by constructor */
+    /** Array of Nodes provided by constructor */
     protected Node[] nodes;
     /** Array of Params (parameter/variable). */
     protected Param[] params;
