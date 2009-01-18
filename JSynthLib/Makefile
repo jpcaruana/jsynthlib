@@ -138,6 +138,7 @@ PACKAGES = \
 	synthdrivers.MIDIboxSID \
 	synthdrivers.NordLead \
 	synthdrivers.NovationNova1 \
+	synthdrivers.NovationXioSynth \
 	synthdrivers.OberheimMatrix \
 	synthdrivers.PeaveyPC1600 \
 	synthdrivers.QuasimidiQuasar \
