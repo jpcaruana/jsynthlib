@@ -317,10 +317,14 @@ public class BankEditorFrame extends Actions.MenuFrame implements PatchBasket {
 
     private static class PatchGridTransferHandler extends PatchTransferHandler {
         protected Transferable createTransferable(JComponent c) {
+            IPatch patch;
+            PatchesAndScenes patchesAndScenes = new PatchesAndScenes();
             JTable t = (JTable) c;
             PatchGridModel m = (PatchGridModel) t.getModel();
-            return m.getPatchAt(t.getSelectedRow(), t
-                    .getSelectedColumn());
+            patch = m.getPatchAt(t.getSelectedRow(), t
+                                 .getSelectedColumn());
+            patchesAndScenes.add(patch);
+            return patchesAndScenes;
         }
 
         protected boolean storePatch(IPatch p, JComponent c) {

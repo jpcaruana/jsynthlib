@@ -198,7 +198,7 @@ public class PrefsDialog extends JDialog {
      * changed or saved.
      */
     void setModified(boolean modified) {
-	if ((buttonsAllowed & APPLY) > 0) {
+	if (apply != null && (buttonsAllowed & APPLY) > 0) {
 	    apply.setEnabled(modified);
 	}
     }
