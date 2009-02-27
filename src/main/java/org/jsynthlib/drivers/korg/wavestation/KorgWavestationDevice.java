@@ -4,7 +4,7 @@
  * Created on 10.Feb.2002
  */
 
-package synthdrivers.KorgWavestation;
+package org.jsynthlib.drivers.korg.wavestation;
 
 import java.util.prefs.Preferences;
 

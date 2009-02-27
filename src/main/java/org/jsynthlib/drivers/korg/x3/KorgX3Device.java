@@ -1,4 +1,4 @@
-package synthdrivers.KorgX3;
+package org.jsynthlib.drivers.korg.x3;
 
 import java.util.prefs.Preferences;
 

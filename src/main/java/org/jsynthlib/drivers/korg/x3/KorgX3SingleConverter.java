@@ -1,4 +1,4 @@
-package synthdrivers.KorgX3;
+package org.jsynthlib.drivers.korg.x3;
 import org.jsynthlib.core.Converter;
 import org.jsynthlib.core.Patch;
 

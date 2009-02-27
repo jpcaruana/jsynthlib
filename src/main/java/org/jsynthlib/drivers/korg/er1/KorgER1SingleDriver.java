@@ -5,7 +5,7 @@
    @version $Id$
  */
 
-package synthdrivers.KorgER1;
+package org.jsynthlib.drivers.korg.er1;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.core.Patch;

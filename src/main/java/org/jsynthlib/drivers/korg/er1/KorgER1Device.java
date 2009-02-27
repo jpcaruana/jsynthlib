@@ -5,7 +5,7 @@
  * Created on 10. Oktober 2001, 22:18
  */
 
-package synthdrivers.KorgER1;
+package org.jsynthlib.drivers.korg.er1;
 
 import java.util.prefs.Preferences;
 

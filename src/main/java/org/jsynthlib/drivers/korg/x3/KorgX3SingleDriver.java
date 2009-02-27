@@ -1,4 +1,4 @@
-package synthdrivers.KorgX3;
+package org.jsynthlib.drivers.korg.x3;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.core.JSLFrame;

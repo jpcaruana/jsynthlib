@@ -1,4 +1,4 @@
-package synthdrivers.KorgWavestation;
+package org.jsynthlib.drivers.korg.wavestation;
 import java.io.UnsupportedEncodingException;
 
 import javax.swing.JOptionPane;

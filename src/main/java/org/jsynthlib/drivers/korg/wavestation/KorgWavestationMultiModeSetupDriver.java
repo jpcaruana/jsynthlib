@@ -1,34 +1,41 @@
-package synthdrivers.KorgWavestation;
+package org.jsynthlib.drivers.korg.wavestation;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.core.Patch;
 import org.jsynthlib.core.SysexHandler;
 
-/** Driver for Korg Wavestation Performance Map
+/** Driver for Korg Wavestation MultiMode Setup.
  *
- * Be carefull: Untested, because I only have access to
- * a file containing some WS patches....
+ * Be carefull: This driver is untested, because I
+ * only have acces to a file containing WS patches....
  *
- * @version $Id$
  * @author Gerrit Gehnen
+ * @version $Id$
  */
-public class KorgWavestationPerformanceMapDriver extends Driver {
+public class KorgWavestationMultiModeSetupDriver extends Driver {
 
-    public KorgWavestationPerformanceMapDriver() {
-	super ("Performance Map","Gerrit Gehnen");
-        sysexID="F0423*285D";
-        sysexRequestDump=new SysexHandler("F0 42 @@ 28 07 F7");
+    public KorgWavestationMultiModeSetupDriver() {
+	super ("Multi Mode Setup","Gerrit Gehnen");
+        sysexID="F0423*2855";
+        sysexRequestDump=new SysexHandler("F0 42 @@ 28 06 F7");
 
-        trimSize=521;
+        trimSize=2761;
         patchNameStart=0;
         patchNameSize=0;
         deviceIDoffset=0;
         checksumStart=5;
-        checksumEnd=518;
-        checksumOffset=519;
+        checksumEnd=2758;
+        checksumOffset=2759;
+
     }
-    
+
+    /**
+     */    
     public void storePatch(Patch p, int bankNum,int patchNum) {
+        //        int patchValue = patchNum;
+        //int bankValue  = 0;
+               calculateChecksum(p);
+
         try
         {Thread.sleep(100); } catch (Exception e)
         {}
@@ -38,7 +45,11 @@ public class KorgWavestationPerformanceMapDriver extends Driver {
             send(((Patch)p).sysex);
         }catch (Exception e)
         {ErrorMsg.reportStatus(e);}
-
+    /*
+        try
+        {Thread.sleep (100); } catch (Exception e)
+        {}
+     */
     }
     
     public void sendPatch(Patch p) {
@@ -51,13 +62,13 @@ public class KorgWavestationPerformanceMapDriver extends Driver {
     }
     
     public Patch createNewPatch() {
-        byte [] sysex=new byte[521];
+        byte [] sysex=new byte[2761];
         sysex[00]=(byte)0xF0;sysex[01]=(byte)0x42;
         sysex[2]=(byte)(0x30+getChannel()-1);
-        sysex[03]=(byte)0x28;sysex[04]=(byte)0x5D;
+        sysex[03]=(byte)0x28;sysex[04]=(byte)0x55;
 
-        /*sysex[519]=checksum;*/
-        sysex[520]=(byte)0xF7;
+        /*sysex[2759]=checksum;*/
+        sysex[2760]=(byte)0xF7;
         
         Patch p = new Patch(sysex, this);
         setPatchName(p,"New Patch");
@@ -69,15 +80,16 @@ public class KorgWavestationPerformanceMapDriver extends Driver {
         int i;
         int sum=0;
 
-        //System.out.println("Checksum was" + p.sysex[ofs]);
+//        System.out.println("Checksum was" + p.sysex[ofs]);
         for (i=start;i<=end;i++) {
             sum+=p.sysex[i];
         }
         p.sysex[ofs]=(byte)(sum % 128);
-        //System.out.println("Checksum new is" + p.sysex[ofs]);
+//        System.out.println("Checksum new is" + p.sysex[ofs]);
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
-        send(sysexRequestDump.toSysexMessage(getChannel(), 0));
+        send(sysexRequestDump.toSysexMessage(getChannel(),0));
     }
 }
+
