@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry excluding="bin/|build/|doc/|midiprovider/" path="" kind="src"/>
-	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"/>
-	<classpathentry path="groovy.jar" kind="lib"/>
-	<classpathentry path="bin" kind="output"/>
-</classpath>
