@@ -56,16 +56,10 @@
 
 	<!-- Initialization -->
 	<target name="init">
-		<!-- Create timestamp -->
 		<tstamp/>
-
-		<!-- Create build dir -->
 		<mkdir dir="${build}"/>
-
-		<!-- Set version number -->
 		<property name="version" value="${DSTAMP}cvs"/>
 		<filter token="version" value="${version}"/>
-		<!--<copy file="Version.java" todir="${build}" filtering="true"/>-->
 	</target>
 
 
@@ -77,7 +71,7 @@
 		<javac srcdir="${src}" destdir="${bin}" 
 			classpath="groovy.jar"
 			deprecation="${deprecation}"
-			source="1.4" target="1.4">
+			source="1.5" target="1.5">
 			<include name="**/*.java"/>
 			<exclude name="core/MacOSXMidiWrapper.java" unless="isMacOS"/>
 			<exclude name="midiprovider/**"/>
