@@ -1,9 +1,9 @@
 package org.jsynthlib.editorbuilder;
 import org.jsynthlib.core.IPatch;
-import org.jsynthlib.jsynthlib.xml.XMLParameter;
 import org.jsynthlib.plugins.Decoder;
 import org.jsynthlib.utils.Writable;
 import org.jsynthlib.utils.XMLWriter;
+import org.jsynthlib.xml.XMLParameter;
 import org.xml.sax.SAXException;
 
 

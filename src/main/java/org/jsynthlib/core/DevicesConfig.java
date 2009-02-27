@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
-import org.jsynthlib.jsynthlib.xml.XMLDeviceFactory;
+import org.jsynthlib.xml.XMLDeviceFactory;
 
 
 class DevicesConfig {

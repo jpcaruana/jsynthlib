@@ -6,9 +6,9 @@ import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.jsynthlib.jsynthlib.xml.Sequence;
 import org.jsynthlib.utils.AdvDefaultHandler;
 import org.jsynthlib.utils.Generator;
+import org.jsynthlib.xml.Sequence;
 import org.xml.sax.SAXException;
 
 

@@ -2,7 +2,7 @@ package org.jsynthlib.plugins;
 
 
 
-import org.jsynthlib.jsynthlib.xml.XMLParameter
+import org.jsynthlib.xml.XMLParameter
 
 /** 
  * Basic decoder for handling n bits per sysex byte.

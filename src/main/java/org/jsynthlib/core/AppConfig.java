@@ -15,15 +15,15 @@ import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import javax.swing.*;
-
-import org.jsynthlib.jsynthlib.Dummy;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 public class AppConfig {
     static final int GUI_MDI	= 0;
     static final int GUI_SDI	= 1;
     private static ArrayList deviceList = new ArrayList();
-    private static Preferences prefs = Preferences.userNodeForPackage(Dummy.class);
+    private static Preferences prefs = Preferences.userNodeForPackage(Object.class);
     private static Preferences prefsDev = prefs.node("devices");
 
     /**

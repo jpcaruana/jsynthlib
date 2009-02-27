@@ -2,7 +2,7 @@ package org.jsynthlib.plugins;
 
 
 
-import org.jsynthlib.jsynthlib.xml.XMLPatch
+import org.jsynthlib.xml.XMLPatch
 
 public class BasicChecksum extends Checksum {
     @Property int start

@@ -1,6 +1,6 @@
 package org.jsynthlib.editorbuilder;
 import org.jsynthlib.core.IPatchDriver;
-import org.jsynthlib.jsynthlib.xml.XMLPatch;
+import org.jsynthlib.xml.XMLPatch;
 
 
 

@@ -2,7 +2,7 @@ package org.jsynthlib.plugins;
 
 
 
-import org.jsynthlib.jsynthlib.xml.XMLPatch
+import org.jsynthlib.xml.XMLPatch
 
 public class DefaultChecksum extends BasicChecksum {
     public byte transform(int sum) {

@@ -1,7 +1,7 @@
 package org.jsynthlib.editorbuilder;
 
-import org.jsynthlib.jsynthlib.xml.XMLParameter;
 import org.jsynthlib.plugins.Decoder;
+import org.jsynthlib.xml.XMLParameter;
 
 
 public class DummyDecoder extends Decoder {

@@ -13,7 +13,6 @@ import java.util.HashMap;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.jsynthlib.core.ErrorMsg;
 
-
 /**
  * @author ribrdb
  */
