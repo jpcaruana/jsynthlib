@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.CasioCZ1000;
+package org.jsynthlib.drivers.casio.cz1000;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

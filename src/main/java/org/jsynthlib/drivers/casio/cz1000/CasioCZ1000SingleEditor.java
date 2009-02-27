@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA
  */
-package synthdrivers.CasioCZ1000;
+package org.jsynthlib.drivers.casio.cz1000;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;

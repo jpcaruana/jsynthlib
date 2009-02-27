@@ -25,7 +25,7 @@
    @version $Id$
 */
 
-package synthdrivers.CasioCZ1000;
+package org.jsynthlib.drivers.casio.cz1000;
 
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.ErrorMsg;
