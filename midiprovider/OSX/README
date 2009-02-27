@@ -1,8 +1,0 @@
-To install, place CAProvider.jar into one of the Java Extension
-folders, preferably /Library/Java/Extensions or
-~/Library/Java/Extension.
-
-  To build simple compile all the sources, and create a jar with the
-classes and META-INF/services/javax.sound.midi.spi.MidiDeviceProvider.
-Build.sh will do just this. If aren't building on a Mac you'll need
-CoreAudio stubs.  You can get some on the jsynthlib-dev yahoo group.
