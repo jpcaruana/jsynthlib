@@ -1,6 +1,6 @@
 // written by Kenneth L. Martinez
 
-package synthdrivers.AccessVirus;
+package org.jsynthlib.drivers.access.virus;
 
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.Patch;

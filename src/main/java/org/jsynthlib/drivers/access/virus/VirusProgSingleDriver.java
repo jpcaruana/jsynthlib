@@ -1,5 +1,5 @@
 // written by Kenneth L. Martinez
-package synthdrivers.AccessVirus;
+package org.jsynthlib.drivers.access.virus;
 
 import javax.swing.JOptionPane;
 

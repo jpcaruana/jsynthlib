@@ -1,4 +1,4 @@
-package synthdrivers.AccessVirus;
+package org.jsynthlib.drivers.access.virus;
 
 import java.util.prefs.Preferences;
 
