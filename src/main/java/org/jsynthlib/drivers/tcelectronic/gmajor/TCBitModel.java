@@ -19,25 +19,21 @@
  * USA
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 
+import org.jsynthlib.core.ParamModel;
 import org.jsynthlib.core.Patch;
-import org.jsynthlib.core.SysexSender;
 
+class TCBitModel extends ParamModel {
+    protected int mask;
+    protected int shift;
 
-class TCBitSender extends SysexSender {
-    int offs, delta;
-    int mask;
-    int shift;
-    Patch patch;
+    TCBitModel(Patch p, int offset, int mask) {
+        super(p, offset);
 
-    public TCBitSender(Patch iPatch, int iParam, int iMask) {
-        patch = iPatch;
-        offs = iParam;
+        this.mask = mask;
 
-        mask = iMask;
         shift = 0;
-
         int j = mask;
         if (j != 0) {
             while ((j & 1) == 0) {
@@ -47,30 +43,23 @@ class TCBitSender extends SysexSender {
         }
     }
 
-    public TCBitSender(Patch iPatch, int iParam, int iMask, int idelta) {
-        this(iPatch, iParam, iMask);
-        delta = idelta;
-    }
-
     protected int getValue() {
-        int value = (patch.sysex[offs+1] << 7);
-        value = (value ^ patch.sysex[offs]);
+        int value = (patch.sysex[ofs+1] << 7);
+        value = (value ^ patch.sysex[ofs]);
         return value;
     }
 
-    public byte [] generate (int value) {
-        patch.sysex[7]=(byte)0x00;
-        patch.sysex[8]=(byte)0x00;
+    public void set(int i) {
+        int j = ((getValue() & (~mask)) | ((i << shift) & mask));
 
-        value = value + delta;
+        patch.sysex[ofs+1] = (byte)((j >> 7) & 127);
+        patch.sysex[ofs] = (byte)(j & 127);
 
-        int j = ((getValue() & (~mask)) | ((value << shift) & mask));
+    }
 
-        patch.sysex[offs+1] = (byte)((j >> 7) & 127);
-        patch.sysex[offs] = (byte)(j & 127);
-
-        patch.sysex[TCElectronicGMajorConst.CHECKSUMOFFSET] = TCElectronicGMajorUtil.calcChecksum(patch.sysex);
-        return patch.sysex;
+    public int get() {
+        int result = ((getValue() & mask) >> shift);
+        return result;
     }
 
 }

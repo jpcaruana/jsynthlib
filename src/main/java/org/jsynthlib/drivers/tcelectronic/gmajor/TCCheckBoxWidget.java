@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;

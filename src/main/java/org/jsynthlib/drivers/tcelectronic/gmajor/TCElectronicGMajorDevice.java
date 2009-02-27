@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 import java.util.prefs.Preferences;
 
 import org.jsynthlib.core.Device;

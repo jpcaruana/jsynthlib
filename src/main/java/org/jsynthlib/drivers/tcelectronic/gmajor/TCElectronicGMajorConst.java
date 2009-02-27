@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 
 public class TCElectronicGMajorConst {
     // don't have to call constructor for Constant class.

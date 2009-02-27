@@ -19,36 +19,58 @@
  * USA
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 
 import org.jsynthlib.core.Patch;
 import org.jsynthlib.core.SysexSender;
 
 
-class TCSender extends SysexSender {
+class TCBitSender extends SysexSender {
     int offs, delta;
+    int mask;
+    int shift;
     Patch patch;
 
-    public TCSender(Patch iPatch, int iParam) {
+    public TCBitSender(Patch iPatch, int iParam, int iMask) {
         patch = iPatch;
         offs = iParam;
+
+        mask = iMask;
+        shift = 0;
+
+        int j = mask;
+        if (j != 0) {
+            while ((j & 1) == 0) {
+                shift++;
+                j = (j >> 1);
+            }
+        }
     }
 
-    public TCSender(Patch iPatch, int iParam, int idelta) {
-        this(iPatch, iParam);
+    public TCBitSender(Patch iPatch, int iParam, int iMask, int idelta) {
+        this(iPatch, iParam, iMask);
         delta = idelta;
     }
 
+    protected int getValue() {
+        int value = (patch.sysex[offs+1] << 7);
+        value = (value ^ patch.sysex[offs]);
+        return value;
+    }
+
     public byte [] generate (int value) {
-        //TODO: EEN SEND METHODE BEDENKEN WAARBIJ DIT AUTOMATISCH WORDT GEREGELD, ZONDER DE STORE FUNCTIE TE ONTREGELEN.
-        //TODO: STORE ZET PATCH- EN BANKNUMMER EN GEBRUIKT SEND.
         patch.sysex[7]=(byte)0x00;
         patch.sysex[8]=(byte)0x00;
 
         value = value + delta;
 
-        TCElectronicGMajorUtil.setValue(patch.sysex, value, offs);
+        int j = ((getValue() & (~mask)) | ((value << shift) & mask));
+
+        patch.sysex[offs+1] = (byte)((j >> 7) & 127);
+        patch.sysex[offs] = (byte)(j & 127);
+
         patch.sysex[TCElectronicGMajorConst.CHECKSUMOFFSET] = TCElectronicGMajorUtil.calcChecksum(patch.sysex);
         return patch.sysex;
     }
+
 }

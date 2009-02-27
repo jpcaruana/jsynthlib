@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 
 import java.io.UnsupportedEncodingException;
 

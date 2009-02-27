@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

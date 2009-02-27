@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 
 import org.jsynthlib.core.ParamModel;
 import org.jsynthlib.core.Patch;

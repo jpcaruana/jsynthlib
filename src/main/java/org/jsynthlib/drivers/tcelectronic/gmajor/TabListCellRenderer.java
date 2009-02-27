@@ -14,7 +14,7 @@
  *  or form) code contained in this file.
  */
 
-package synthdrivers.TCElectronicGMajor;
+package org.jsynthlib.drivers.tcelectronic.gmajor;
 
 import java.awt.Color;
 import java.awt.Component;
