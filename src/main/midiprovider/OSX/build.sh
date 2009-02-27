@@ -1,0 +1,6 @@
+#!/bin/bash
+echo Compiling...
+for n in CAProvider/*.java; do javac -g $n; done
+echo Building jar...
+jar cf ../CAProvider.jar META-INF/services/javax.sound.midi.spi.MidiDeviceProvider CAProvider/*.class
+echo Done.
