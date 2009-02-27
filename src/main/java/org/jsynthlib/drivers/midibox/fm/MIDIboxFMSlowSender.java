@@ -1,5 +1,5 @@
 /*
- * Bank Driver for MIDIbox FM
+ * JSynthlib Slow MIDI Sender for MIDIbox FM
  * =====================================================================
  * @author  Thorsten Klose
  * @version $Id$
@@ -22,40 +22,39 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package synthdrivers.MIDIboxFM;
+package org.jsynthlib.drivers.midibox.fm;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
 
-import org.jsynthlib.core.Patch;
 
-public class MIDIboxFMPatchBankDriver extends MIDIboxFMBankDriver
+public class MIDIboxFMSlowSender
 {
-
-    public MIDIboxFMPatchBankDriver()
+    public void sendSysEx(Driver driver, byte[] buffer, int delay)
     {
-	super("PatchBank", 128, (byte)0x00);
+	try {
+	    driver.send(buffer);
+	} catch(Exception ex) { ex.printStackTrace(); ErrorMsg.reportStatus(ex); }
+
+	try { Thread.sleep(delay); } catch (Exception e) {};
     }
-    
-    public Patch createNewPatch()
+
+    public void sendParameter(Driver driver, int parameter, byte value, int delay)
     {
-	byte [] sysex = new byte[128*256+11];
-	sysex[0]=(byte)0xF0; 
-	sysex[1]=(byte)0x00;
-	sysex[2]=(byte)0x00;
-	sysex[3]=(byte)0x7e;
-	sysex[4]=(byte)0x49;
-	sysex[5]=(byte)((getDeviceID()-1)&0x7f);
-	sysex[6]=(byte)0x04;
-	sysex[7]=(byte)0x00;
-	sysex[8]=(byte)0x00;
-	sysex[128*256+10]=(byte)0xF7;
+	byte[]b = new byte[12];
 
-	Patch p = new Patch(sysex, this);
-	MIDIboxFMPatchDriver PatchDriver = new MIDIboxFMPatchDriver();
-	Patch ps = PatchDriver.createNewPatch();
+	b[0] = (byte)0xF0; 
+	b[1] = (byte)0x00;
+	b[2] = (byte)0x00;
+	b[3] = (byte)0x7e;
+	b[4] = (byte)0x49;
+	b[5] = (byte)(driver.getDeviceID()-1);
+	b[6] = (byte)0x06;
+	b[7] = (byte)0x00;
+	b[8] = (byte)(parameter >= 0x80 ? 0x01 : 0x00);
+	b[9] = (byte)(parameter & 0x7f);
+	b[10] = value;
+	b[11] = (byte)0xF7;
 
-	for(int i=0; i<128; i++)
-	    putPatch(p, ps, i);
-
-	calculateChecksum(p);	 
-	return p;
+	sendSysEx(driver, b, delay);
     }
 }

@@ -22,21 +22,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package synthdrivers.MIDIboxFM;
+package org.jsynthlib.drivers.midibox.fm;
 
 import org.jsynthlib.core.Patch;
 
-public class MIDIboxFMDrumBankDriver extends MIDIboxFMBankDriver
+public class MIDIboxFMEnsBankDriver extends MIDIboxFMBankDriver
 {
     
-    public MIDIboxFMDrumBankDriver()
+    public MIDIboxFMEnsBankDriver()
     {
-	super("DrumBank", 16, (byte)0x10);
+	super("EnsBank", 32, (byte)0x70);
     }
     
     public Patch createNewPatch()
     {
-	byte [] sysex = new byte[16*256+11];
+	byte [] sysex = new byte[32*256+11];
 	sysex[0]=(byte)0xF0; 
 	sysex[1]=(byte)0x00;
 	sysex[2]=(byte)0x00;
@@ -44,15 +44,15 @@ public class MIDIboxFMDrumBankDriver extends MIDIboxFMBankDriver
 	sysex[4]=(byte)0x49;
 	sysex[5]=(byte)((getDeviceID()-1)&0x7f);
 	sysex[6]=(byte)0x04;
-	sysex[7]=(byte)0x10;
+	sysex[7]=(byte)0x70;
 	sysex[8]=(byte)0x00;
-	sysex[16*256+10]=(byte)0xF7;
+	sysex[32*256+10]=(byte)0xF7;
 
 	Patch p = new Patch(sysex, this);
-	MIDIboxFMDrumDriver DrumDriver = new MIDIboxFMDrumDriver();
-	Patch ps = DrumDriver.createNewPatch();
+	MIDIboxFMEnsDriver EnsDriver = new MIDIboxFMEnsDriver();
+	Patch ps = EnsDriver.createNewPatch();
 
-	for(int i=0; i<16; i++)
+	for(int i=0; i<32; i++)
 	    putPatch(p, ps, i);
 
 	calculateChecksum(p);	 

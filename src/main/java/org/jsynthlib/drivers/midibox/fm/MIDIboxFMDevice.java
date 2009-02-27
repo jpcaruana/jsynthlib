@@ -1,12 +1,10 @@
 /*
- * JSynthlib-Device for MIDIbox SID
+ * JSynthlib-Device for MIDIbox FM
  * =====================================================================
  * @author  Thorsten Klose
- * file:    MIDIboxSIDDevice.java
- * date:    2002-11-30
  * @version $Id$
  *
- * Copyright (C) 2002  Thorsten.Klose@gmx.de
+ * Copyright (C) 2005  Thorsten.Klose@gmx.de
  *                     http://www.uCApps.de
  *
  * This program is free software; you can redistribute it and/or
@@ -24,35 +22,39 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package synthdrivers.MIDIboxSID;
+package org.jsynthlib.drivers.midibox.fm;
+
 import java.util.prefs.Preferences;
 
 import org.jsynthlib.core.Device;
 
-
-public class MIDIboxSIDDevice extends Device
+public class MIDIboxFMDevice extends Device
 {
-    private static final String infoText="This driver has been created for MIDIbox SID, a non-commercial DIY "+
-        "synthesizer based on the famous Commodore SID soundchip."+
+    private static final String infoText="This driver has been created for MIDIbox FM, a non-commercial DIY "+
+        "synthesizer based on the OPL3 soundchip from Yamaha."+
         "\n"+
-        "More informations about the features can be found under http://www.uCApps.de/midibox_sid.html";
+        "More informations about the features can be found under http://www.uCApps.de/midibox_fm.html";
 
 
-    /** Creates new MIDIboxSIDDevice */
-    public MIDIboxSIDDevice ()
+    /** Creates new MIDIboxFMDevice */
+    public MIDIboxFMDevice ()
     {
-	super ("MIDIbox","SID","F000007E46000FF7",infoText,"Thorsten Klose");
+	super ("MIDIbox","FM","F000007E49000FF7",infoText,"Thorsten Klose");
     }
 
     /** Constructor for for actual work. */
-    public MIDIboxSIDDevice(Preferences prefs) {
+    public MIDIboxFMDevice(Preferences prefs) {
 	this();
 	this.prefs = prefs;
 
-        //setSynthName("MIDIbox SID");
+        //setSynthName("MIDIbox FM");
 
-        addDriver(new MIDIboxSIDSingleDriver());
-        addDriver(new MIDIboxSIDBankDriver());
+        addDriver(new MIDIboxFMPatchDriver());
+        addDriver(new MIDIboxFMPatchBankDriver());
+        addDriver(new MIDIboxFMDrumDriver());
+        addDriver(new MIDIboxFMDrumBankDriver());
+        addDriver(new MIDIboxFMEnsDriver());
+        addDriver(new MIDIboxFMEnsBankDriver());
     }
 
 }

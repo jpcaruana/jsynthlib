@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package synthdrivers.MIDIboxSID;
+package org.jsynthlib.drivers.midibox.sid;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.ErrorMsg;
 
