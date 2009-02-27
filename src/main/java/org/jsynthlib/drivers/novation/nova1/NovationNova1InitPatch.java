@@ -1,4 +1,4 @@
-package synthdrivers.NovationNova1;
+package org.jsynthlib.drivers.novation.nova1;
 
 public class NovationNova1InitPatch
 {

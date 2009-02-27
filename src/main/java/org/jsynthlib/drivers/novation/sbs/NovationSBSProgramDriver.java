@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.NovationSBS;
+package org.jsynthlib.drivers.novation.sbs;
 
 //import core.JSLFrame;
 import javax.swing.JOptionPane;

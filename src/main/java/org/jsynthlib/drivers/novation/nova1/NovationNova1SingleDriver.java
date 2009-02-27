@@ -5,7 +5,7 @@
    @version $Id$
 */
 
-package synthdrivers.NovationNova1;
+package org.jsynthlib.drivers.novation.nova1;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;

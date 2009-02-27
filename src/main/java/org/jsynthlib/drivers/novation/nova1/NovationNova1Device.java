@@ -8,7 +8,7 @@
  *
  */
 
-package synthdrivers.NovationNova1;
+package org.jsynthlib.drivers.novation.nova1;
 
 import java.util.prefs.Preferences;
 

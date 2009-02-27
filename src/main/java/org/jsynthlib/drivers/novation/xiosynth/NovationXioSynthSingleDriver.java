@@ -1,7 +1,7 @@
 /*
  * @version $Id: NovationXioSynthSingleDriver.java,v 1.9 2008/12/16 $
  */
-package synthdrivers.NovationXioSynth;
+package org.jsynthlib.drivers.novation.xiosynth;
 
 import java.io.UnsupportedEncodingException;
 

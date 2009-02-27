@@ -1,7 +1,7 @@
 /*
  * @version $Id: NovationXioSynthSingleEditor.java,v 1.10 2008/12/16 $
  */
-package synthdrivers.NovationXioSynth;
+package org.jsynthlib.drivers.novation.xiosynth;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 

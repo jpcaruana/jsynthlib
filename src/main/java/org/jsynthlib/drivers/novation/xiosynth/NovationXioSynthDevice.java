@@ -4,7 +4,7 @@
  * Created on 10. Oktober 2001, 21:23
  */
 
-package synthdrivers.NovationXioSynth;
+package org.jsynthlib.drivers.novation.xiosynth;
 
 import java.util.prefs.Preferences;
 

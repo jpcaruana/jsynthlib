@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.NovationSBS;
+package org.jsynthlib.drivers.novation.sbs;
 
 import java.util.prefs.Preferences;
 

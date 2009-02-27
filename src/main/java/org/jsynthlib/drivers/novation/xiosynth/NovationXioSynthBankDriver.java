@@ -1,7 +1,7 @@
 /*
  * @version $Id: NovationXioSynthBankDriver.java,v 1.0 2008/16/12 $
  */
-package synthdrivers.NovationXioSynth;
+package org.jsynthlib.drivers.novation.xiosynth;
 import java.io.UnsupportedEncodingException;
 
 import javax.swing.JOptionPane;
