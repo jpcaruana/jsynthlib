@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package synthdrivers.WaldorfPulse;
+package org.jsynthlib.drivers.waldorf.pulse;
 
 import java.util.prefs.Preferences;
 

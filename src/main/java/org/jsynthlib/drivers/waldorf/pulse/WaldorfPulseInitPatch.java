@@ -1,4 +1,4 @@
-package synthdrivers.WaldorfPulse;
+package org.jsynthlib.drivers.waldorf.pulse;
 
 class WaldorfPulseInitPatch
 {

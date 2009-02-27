@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.WaldorfMW2;
+package org.jsynthlib.drivers.waldorf.mw2;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;

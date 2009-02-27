@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.WaldorfMW2;
+package org.jsynthlib.drivers.waldorf.mw2;
 
 import org.jsynthlib.core.Converter;
 import org.jsynthlib.core.Patch;
