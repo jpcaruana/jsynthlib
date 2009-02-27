@@ -4,7 +4,7 @@
  * Created on 10. Oktober 2001, 22:04
  */
 
-package synthdrivers.EmuProteusMPS;
+package org.jsynthlib.drivers.emu.proteusmps;
 
 import java.util.prefs.Preferences;
 

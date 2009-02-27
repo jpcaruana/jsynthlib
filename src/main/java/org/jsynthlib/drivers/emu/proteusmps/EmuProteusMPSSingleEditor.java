@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.EmuProteusMPS;
+package org.jsynthlib.drivers.emu.proteusmps;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;

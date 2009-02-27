@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.EmuProteusMPS;
+package org.jsynthlib.drivers.emu.proteusmps;
 import java.io.UnsupportedEncodingException;
 
 import javax.swing.JOptionPane;
