@@ -5,7 +5,7 @@
 // Notes: Combi (Multi) Bank driver for K5000 (only tested on K5000s)
 //======================================================================================================================
 
-package synthdrivers.KawaiK5000;
+package org.jsynthlib.drivers.kawai.k5000;
 import java.io.UnsupportedEncodingException;
 
 import org.jsynthlib.core.BankDriver;

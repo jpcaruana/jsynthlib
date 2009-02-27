@@ -1,4 +1,4 @@
-package synthdrivers.KawaiK4;
+package org.jsynthlib.drivers.kawai.k4;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 

@@ -1,4 +1,4 @@
-package synthdrivers.KawaiK4;
+package org.jsynthlib.drivers.kawai.k4;
 
 import org.jsynthlib.core.ParamModel;
 import org.jsynthlib.core.Patch;

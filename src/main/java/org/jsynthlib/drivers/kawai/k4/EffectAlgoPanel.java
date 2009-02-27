@@ -3,7 +3,7 @@
  *
  * Created on 25. November 2001, 20:23
  */
-package synthdrivers.KawaiK4;
+package org.jsynthlib.drivers.kawai.k4;
 
 import java.awt.Color;
 import java.awt.Dimension;

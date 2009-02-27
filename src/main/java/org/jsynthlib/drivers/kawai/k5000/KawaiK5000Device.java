@@ -4,7 +4,7 @@
  * Created on 10. Oktober 2001, 21:46
  */
 
-package synthdrivers.KawaiK5000;
+package org.jsynthlib.drivers.kawai.k5000;
 
 import java.util.prefs.Preferences;
 

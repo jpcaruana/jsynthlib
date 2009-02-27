@@ -5,7 +5,7 @@
 // Notes: Combi (Multi) driver for K5000 (only tested on K5000s)
 //======================================================================================================================
 
-package synthdrivers.KawaiK5000;
+package org.jsynthlib.drivers.kawai.k5000;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.core.Patch;

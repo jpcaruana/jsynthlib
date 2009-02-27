@@ -1,4 +1,4 @@
-package synthdrivers.KawaiK4;
+package org.jsynthlib.drivers.kawai.k4;
 import java.io.UnsupportedEncodingException;
 
 import javax.swing.JOptionPane;
@@ -9,26 +9,28 @@ import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.core.Patch;
 import org.jsynthlib.core.SysexHandler;
 
-/**
- * Bank driver for KAWAI K4/K4r voice patch.
+/** Driver for Kawai K4 Multi Bank
+ *
+ * @author Gerrit Gehnen
  * @version $Id$
  */
-public class KawaiK4BankDriver extends BankDriver {
+
+public class KawaiK4MultiBankDriver extends BankDriver {
     /** Header Size */
     private static final int HSIZE = 8;
     /** Single Patch size */
-    private static final int SSIZE = 131;
+    private static final int SSIZE = 77;
     /** the number of single patches in a bank patch. */
     private static final int NS = 64;
 
-    private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 00 F7");
+    private static final SysexHandler SYS_REQ = new SysexHandler("F0 40 @@ 01 00 04 *bankNum* 40 F7");
 
-    public KawaiK4BankDriver() {
-	super("Bank", "Brian Klock", NS, 4);
+    public KawaiK4MultiBankDriver() {
+	super("MultiBank", "Gerrit Gehnen", NS, 4);
 
-	sysexID = "F040**210004**00";
-	deviceIDoffset = 2;
-	bankNumbers = new String[] {
+        sysexID = "F040**210004**40";
+        deviceIDoffset = 2;
+        bankNumbers = new String[] {
 	    "0-Internal", "1-External"
 	};
 	patchNumbers = new String[16 * 4];
@@ -39,8 +41,8 @@ public class KawaiK4BankDriver extends BankDriver {
 
 	singleSysexID = "F040**2*0004";
 	singleSize = HSIZE + SSIZE + 1;
-	// To distinguish from the Effect bank, which has the same sysexID
-	patchSize = HSIZE + SSIZE * NS + 1;
+	// Why this is not defined?
+	//patchSize = HSIZE + SSIZE * NS + 1;
     }
 
     public int getPatchStart(int patchNum) {
@@ -48,95 +50,91 @@ public class KawaiK4BankDriver extends BankDriver {
     }
 
     public String getPatchName(Patch p, int patchNum) {
-	int nameStart = getPatchStart(patchNum);
-	nameStart += 0; //offset of name in patch data
-	try {
-	    StringBuffer s = new StringBuffer(new String(p.sysex, nameStart,
+        int nameStart = getPatchStart(patchNum);
+        nameStart += 0; //offset of name in patch data
+        try {
+            StringBuffer s = new StringBuffer(new String(p.sysex, nameStart,
 							 10, "US-ASCII"));
-	    return s.toString();
-	} catch (UnsupportedEncodingException ex) {
+            return s.toString();
+        } catch (UnsupportedEncodingException ex) {
 	    return "-";
 	}
     }
 
     public void setPatchName(Patch p, int patchNum, String name) {
-	patchNameSize = 10;
-	patchNameStart = getPatchStart(patchNum);
+        patchNameSize = 10;
+        patchNameStart =  getPatchStart(patchNum);
 
-	if (name.length() < patchNameSize)
+        if (name.length() < patchNameSize)
 	    name = name + "            ";
-	byte[] namebytes = new byte[64];
-	try {
-	    namebytes = name.getBytes("US-ASCII");
-	    for (int i = 0; i < patchNameSize; i++)
-		p.sysex[patchNameStart + i] = namebytes[i];
+        byte[] namebytes = new byte[64];
+        try {
+            namebytes = name.getBytes("US-ASCII");
+            for (int i = 0; i < patchNameSize; i++)
+                p.sysex[patchNameStart + i] = namebytes[i];
 
         } catch (UnsupportedEncodingException ex) {
 	    return;
 	}
     }
 
-    protected void calculateChecksum(Patch p, int start, int end, int ofs)  {
-    	int i;
-	int sum = 0;
-
-	for (i = start; i <= end; i++)
-	    sum += p.sysex[i];
-	sum += 0xA5;
-	p.sysex[ofs] = (byte) (sum % 128);
-	// p.sysex[ofs]=(byte)(p.sysex[ofs]^127);
-	// p.sysex[ofs]=(byte)(p.sysex[ofs]+1);
+    protected void calculateChecksum(Patch p, int start, int end, int ofs) {
+        int sum = 0;
+        for (int i = start; i <= end; i++)
+            sum += p.sysex[i];
+        sum += 0xA5;
+        p.sysex[ofs] = (byte) (sum % 128);
+        // p.sysex[ofs]=(byte)(p.sysex[ofs]^127);
+        // p.sysex[ofs]=(byte)(p.sysex[ofs]+1);
     }
 
     public void calculateChecksum(Patch p) {
-	for (int i = 0; i < NS; i++)
-	    calculateChecksum(p, HSIZE + (i * SSIZE),
+        for (int i = 0; i < NS; i++)
+            calculateChecksum(p, HSIZE + (i * SSIZE),
 			      HSIZE + (i * SSIZE) + SSIZE - 2,
 			      HSIZE + (i * SSIZE) + SSIZE - 1);
     }
 
     public void putPatch(Patch bank, Patch p, int patchNum) {
-	if (!canHoldPatch(p)) {
+        if (!canHoldPatch(p)) {
 	    JOptionPane.showMessageDialog
 		(null,
 		 "This type of patch does not fit in to this type of bank.",
 		 "Error", JOptionPane.ERROR_MESSAGE);
 	    return;
 	}
-
-	System.arraycopy(p.sysex, HSIZE, bank.sysex, getPatchStart(patchNum), SSIZE);
-	calculateChecksum(bank);
+        System.arraycopy(p.sysex, HSIZE, bank.sysex, getPatchStart(patchNum), SSIZE);
+        calculateChecksum(bank);
     }
 
     public Patch getPatch(Patch bank, int patchNum) {
 	byte[] sysex = new byte[HSIZE + SSIZE + 1];
 	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
 	sysex[3] = (byte) 0x20; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
-	sysex[6] = (byte) 0x00; sysex[7] = /*(byte)0x00+*/(byte) patchNum;
+	sysex[6] = (byte) 0x00; sysex[7] = (byte) (0x40 + patchNum);
 	sysex[HSIZE + SSIZE] = (byte) 0xF7;
 	System.arraycopy(bank.sysex, getPatchStart(patchNum), sysex, HSIZE, SSIZE);
-	try {
-	    // pass Single Driver !!!FIXIT!!!
-	    Patch p = new Patch(sysex, getDevice());
-	    p.calculateChecksum();
-	    return p;
-	} catch (Exception e) {
-	    ErrorMsg.reportError("Error", "Error in K4 Bank Driver", e);
+        try {
+            Patch p = new Patch(sysex, getDevice());
+            p.calculateChecksum();
+            return p;
+        } catch (Exception e) {
+	    ErrorMsg.reportError("Error", "Error in K4 MultiBank Driver", e);
 	    return null;
 	}
     }
 
     public Patch createNewPatch() {
-	byte[] sysex = new byte[HSIZE + SSIZE * NS + 1];
-	sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
-	sysex[3] = (byte) 0x21; sysex[4] = (byte) 0x00;	sysex[5] = (byte) 0x04;
-	sysex[6] = (byte) 0x0;  sysex[7] = 0;
+        byte[] sysex = new byte[HSIZE + SSIZE * NS + 1];
+        sysex[0] = (byte) 0xF0; sysex[1] = (byte) 0x40; sysex[2] = (byte) 0x00;
+	sysex[3] = (byte) 0x21; sysex[4] = (byte) 0x00; sysex[5] = (byte) 0x04;
+	sysex[6] = (byte) 0x00; sysex[7] = 0x40;
 	sysex[HSIZE + SSIZE * NS] = (byte) 0xF7;
-	Patch p = new Patch(sysex, this);
-	for (int i = 0; i < NS; i++)
-	    setPatchName(p, i, "New Patch");
-	calculateChecksum(p);
-	return p;
+        Patch p = new Patch(sysex, this);
+        for (int i = 0; i < NS; i++)
+            setPatchName(p, i, "New Patch");
+        calculateChecksum(p);
+        return p;
     }
 
     public void requestPatchDump(int bankNum, int patchNum) {
@@ -151,7 +149,7 @@ public class KawaiK4BankDriver extends BankDriver {
 	}
         p.sysex[3] = (byte) 0x21;
         p.sysex[6] = (byte) (bankNum << 1);
-        p.sysex[7] = (byte) 0x0;
+        p.sysex[7] = (byte) 0x40;
         sendPatchWorker(p);
         try {
 	    Thread.sleep(100);

@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.KawaiK5000;
+package org.jsynthlib.drivers.kawai.k5000;
 import java.io.InputStream;
 
 import org.jsynthlib.core.Driver;

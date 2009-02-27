@@ -3,7 +3,7 @@
  *
  */
 
-package synthdrivers.KawaiK4;
+package org.jsynthlib.drivers.kawai.k4;
 import java.util.prefs.Preferences;
 
 import org.jsynthlib.core.Device;
