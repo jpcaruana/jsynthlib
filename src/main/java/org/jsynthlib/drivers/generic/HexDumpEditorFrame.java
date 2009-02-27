@@ -1,4 +1,4 @@
-package synthdrivers.Generic;
+package org.jsynthlib.drivers.generic;
 
 // import core.PatchEditorFrame;
 // import java.awt.*;

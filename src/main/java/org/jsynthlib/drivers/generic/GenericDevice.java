@@ -2,7 +2,7 @@
  * GenericDevice.java
  */
 
-package synthdrivers.Generic;
+package org.jsynthlib.drivers.generic;
 import java.util.prefs.Preferences;
 
 import org.jsynthlib.core.Device;
@@ -39,7 +39,7 @@ public class GenericDevice extends Device {
         }
         
         protected JSLFrame editPatch(Patch p) {
-            return (new synthdrivers.Generic.HexDumpEditorFrame(p));
+            return (new org.jsynthlib.drivers.generic.HexDumpEditorFrame(p));
         }
     }
 

@@ -1,4 +1,4 @@
-package synthdrivers.Generic;
+package org.jsynthlib.drivers.generic;
 
 
 import java.awt.BorderLayout;
