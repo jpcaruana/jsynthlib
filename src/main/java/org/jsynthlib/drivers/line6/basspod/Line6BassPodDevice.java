@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6Pod20;
+package org.jsynthlib.drivers.line6.basspod;
 
 import java.util.prefs.Preferences;
 
@@ -29,10 +29,10 @@ import org.jsynthlib.core.Device;
 * 
 * @author Jeff Weber
 */
-public class Line6Pod20Device extends Device
+public class Line6BassPodDevice extends Device
 {
     /** Constructor for DeviceListWriter. */
-    public Line6Pod20Device ()
+    public Line6BassPodDevice ()
     {
         super(Constants.MANUFACTURER_NAME,
               Constants.DEVICE_NAME,
@@ -42,13 +42,13 @@ public class Line6Pod20Device extends Device
     }
     
     /** Constructor for for actual work. */
-    public Line6Pod20Device(Preferences prefs) {
+    public Line6BassPodDevice(Preferences prefs) {
         this();
         this.prefs = prefs;
         
-        addDriver(new Line6Pod20Converter());
-        addDriver(new Line6Pod20SingleDriver());
-        addDriver(new Line6Pod20BankDriver());
-        addDriver(new Line6Pod20EdBufDriver());
+        addDriver(new Line6BassPodConverter());
+        addDriver(new Line6BassPodSingleDriver());
+        addDriver(new Line6BassPodBankDriver());
+        addDriver(new Line6BassPodEdBufDriver());
     }    
 }

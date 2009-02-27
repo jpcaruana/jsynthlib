@@ -19,36 +19,27 @@
  * USA
  */
 
-package synthdrivers.Line6BassPod;
+package org.jsynthlib.drivers.line6.pod20;
 
-import java.util.prefs.Preferences;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexSender;
 
-import org.jsynthlib.core.Device;
-
-/** Device file for Line6 Pod
-* 
+/** Hideable version of the KnobWidget.
+*
 * @author Jeff Weber
 */
-public class Line6BassPodDevice extends Device
-{
-    /** Constructor for DeviceListWriter. */
-    public Line6BassPodDevice ()
-    {
-        super(Constants.MANUFACTURER_NAME,
-              Constants.DEVICE_NAME,
-              Constants.INQUIRY_ID,
-              Constants.INFO_TEXT,
-              Constants.AUTHOR);
+class HideableKnobWidget extends KnobWidget {
+    /** Constructs a HideableKnobWidget.*/
+    HideableKnobWidget(String l, Patch p, int min, int max, int base, ParamModel ofs, SysexSender s) {
+        super(l, p, min, max, base, ofs, s);
     }
     
-    /** Constructor for for actual work. */
-    public Line6BassPodDevice(Preferences prefs) {
-        this();
-        this.prefs = prefs;
-        
-        addDriver(new Line6BassPodConverter());
-        addDriver(new Line6BassPodSingleDriver());
-        addDriver(new Line6BassPodBankDriver());
-        addDriver(new Line6BassPodEdBufDriver());
-    }    
+    /** Sets the HideableKnobWidget to visible or invisible according to visibleFlag.*/
+    public void setVisible(boolean visibleFlag) {
+        mKnob.setVisible(visibleFlag);
+        this.getJLabel().setVisible(visibleFlag);
+    }
 }
+

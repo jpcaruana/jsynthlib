@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6BassPod;
+package org.jsynthlib.drivers.line6.basspod;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;

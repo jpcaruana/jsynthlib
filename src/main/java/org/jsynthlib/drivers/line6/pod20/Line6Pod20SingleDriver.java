@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6BassPod;
+package org.jsynthlib.drivers.line6.pod20;
 import java.io.UnsupportedEncodingException;
 
 import javax.swing.JFrame;
@@ -35,7 +35,7 @@ import org.jsynthlib.core.Utility;
 /** Line6 Single Driver. Used for Line6 program patch.
 * @author Jeff Weber
 */
-public class Line6BassPodSingleDriver extends Driver {
+public class Line6Pod20SingleDriver extends Driver {
     
     /** Single Program Dump Request
     */
@@ -48,9 +48,9 @@ public class Line6BassPodSingleDriver extends Driver {
     /** Offset of the patch name in the sysex record, not including the sysex header.*/
     private static int nameStart = Constants.PATCH_NAME_START;
     
-    /** Constructs a Line6BassPodSingleDriver.
-    */
-    public Line6BassPodSingleDriver()
+    /** Constructs a Line6Pod20SingleDriver.
+        */
+    public Line6Pod20SingleDriver()
     {
         super(Constants.SIGL_PATCH_TYP_STR, Constants.AUTHOR);
         sysexID = Constants.SIGL_SYSEX_MATCH_ID;
@@ -63,9 +63,9 @@ public class Line6BassPodSingleDriver extends Driver {
         patchNumbers = Constants.PRGM_PATCH_LIST;
     }
     
-    /** Constructs a Line6BassPodSingleDriver. Called by Line6BassPodEdBufDriver
+    /** Constructs a Line6Pod20SingleDriver. Called by Line6Pod20EdBufDriver
         */
-    public Line6BassPodSingleDriver(String patchType, String authors)
+    public Line6Pod20SingleDriver(String patchType, String authors)
     {
         super(patchType, authors);
     }
@@ -197,7 +197,7 @@ public class Line6BassPodSingleDriver extends Driver {
         */
     protected JSLFrame editPatch(Patch p)
     {
-        return new Line6BassPodSingleEditor((Patch)p);
+        return new Line6Pod20SingleEditor((Patch)p);
     }
 }
 

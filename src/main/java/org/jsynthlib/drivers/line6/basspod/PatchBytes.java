@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6BassPod;
+package org.jsynthlib.drivers.line6.basspod;
 import org.jsynthlib.core.Patch;
 
 /** Utility class for converting between nibblized and un-nibblized formats of

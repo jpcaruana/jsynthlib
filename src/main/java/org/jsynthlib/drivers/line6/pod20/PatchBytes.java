@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6Pod20;
+package org.jsynthlib.drivers.line6.pod20;
 import org.jsynthlib.core.Patch;
 
 /** Utility class for converting between nibblized and un-nibblized formats of

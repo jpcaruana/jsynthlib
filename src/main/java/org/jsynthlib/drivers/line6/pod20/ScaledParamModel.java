@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6BassPod;
+package org.jsynthlib.drivers.line6.pod20;
 
 import org.jsynthlib.core.ParamModel;
 import org.jsynthlib.core.Patch;
@@ -34,7 +34,7 @@ class ScaledParamModel extends ParamModel {
     * maxSysex / maxCC.
     */
     private int maxCC;
-
+    
     /** The maximum sysex value that will be used for the control. This is used
     * when calculating a scaling factor. The scaling factor is calculated as 
     * maxSysex / maxCC.

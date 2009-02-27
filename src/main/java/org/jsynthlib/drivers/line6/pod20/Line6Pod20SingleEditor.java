@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6Pod20;
+package org.jsynthlib.drivers.line6.pod20;
 
 import java.awt.CardLayout;
 

@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6BassPod;
+package org.jsynthlib.drivers.line6.pod20;
 
 import org.jsynthlib.core.SysexWidget;
 

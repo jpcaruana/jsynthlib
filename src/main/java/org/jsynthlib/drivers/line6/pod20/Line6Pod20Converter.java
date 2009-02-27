@@ -19,27 +19,27 @@
  * USA
  */
 
-package synthdrivers.Line6BassPod;
+package org.jsynthlib.drivers.line6.pod20;
 
 import org.jsynthlib.core.Converter;
 import org.jsynthlib.core.Patch;
 
 
 /** Removes "Garbage Data" from Line6 response to dump request and extracts desired patch.
- * 
- * When responding to a sysex data dump request, the PODs sometimes send a single sysex message and sometimes
- * they send a block of multiple messages along with garbage data (the behavior is unpredictable). The last
- * valid sysex message message sent is always the one we are interested in but it can be preceded or succeeded
- * with other garbage data. This converter will attempt to parse out the last Pod patch in the block and discard
- * the rest of the data. It will work with any of the three patch types (program, edit buffer, or bank).
- * This converter will also convert an edit buffer patch to a normal program patch.
- * 
- * @author Jeff Weber
- */
-public class Line6BassPodConverter extends Converter{
+* 
+* When responding to a sysex data dump request, the PODs sometimes send a single sysex message and sometimes
+* they send a block of multiple messages along with garbage data (the behavior is unpredictable). The last
+* valid sysex message message sent is always the one we are interested in but it can be preceded or succeeded
+* with other garbage data. This converter will attempt to parse out the last Pod patch in the block and discard
+* the rest of the data. It will work with any of the three patch types (program, edit buffer, or bank).
+* This converter will also convert an edit buffer patch to a normal program patch.
+* 
+* @author Jeff Weber
+*/
+public class Line6Pod20Converter extends Converter{
     
-    /** Constructor for Line6BassPodConverter */
-    Line6BassPodConverter() {
+    /** Constructor for Line6Pod20Converter */
+    Line6Pod20Converter() {
         super(Constants.CONVERTER_NAME, Constants.AUTHOR);
         
         this.sysexID = Constants.CONV_SYSEX_MATCH_ID;
@@ -83,13 +83,13 @@ public class Line6BassPodConverter extends Converter{
         
         Patch[] newPatchArray = new Patch[1];
         if (sysex[6] == (byte)0x00) {  // Is this a program patch?
-            newPatchArray[0] = new Patch(sysex, new Line6BassPodSingleDriver());
+            newPatchArray[0] = new Patch(sysex, new Line6Pod20SingleDriver());
         } else {
-            newPatchArray[0] = new Patch(sysex, new Line6BassPodBankDriver());
+            newPatchArray[0] = new Patch(sysex, new Line6Pod20BankDriver());
         }
         return newPatchArray;
     }    
-
+    
     /** Attempts to parse a Line6 patch (program, edit buffer, or bank) from 
     * a Line6 response to a dump request. If parseSysex cannot find a valid
     * Line6 patch within the block of data, it returns the original block of
@@ -136,7 +136,7 @@ public class Line6BassPodConverter extends Converter{
             return sysex;
         }
     } 
-
+    
     /** Converts a Line6 Edit Buffer patch to a Line6 program patch.
     * Any time an edit buffer patch is received from a Line6 device it is
     * converted to a program patch. From that point on it is handled like

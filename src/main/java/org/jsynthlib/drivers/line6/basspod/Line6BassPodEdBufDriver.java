@@ -19,27 +19,27 @@
  * USA
  */
 
-package synthdrivers.Line6Pod20;
+package org.jsynthlib.drivers.line6.basspod;
 import org.jsynthlib.core.SysexHandler;
 
 /** Line6 Edit Buffer Driver. Used for Line6 Edit Buffer patch.
 * Note that on the Pod, the edit buffer patch has an 8 byte header and the
 * program patch has a 9 byte header. The only reason for having this driver
 * is to be able to request an edit buffer patch. As soon as the edit buffer
-* patch is received, Line6Pod20Converter converts it to a regular program 
+* patch is received, Line6BassPodConverter converts it to a regular program 
 * patch. From that point on it is handled like any other program patch.
 * 
 * @author Jeff Weber
 */
-public class Line6Pod20EdBufDriver extends Line6Pod20SingleDriver {
+public class Line6BassPodEdBufDriver extends Line6BassPodSingleDriver {
     
     /** Edit Buffer Dump Request
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.EDIT_DUMP_REQ_ID); //Edit Buffer Dump Request
     
-    /** Constructs a Line6Pod20EdBufDriver.
+    /** Constructs a Line6BassPodEdBufDriver.
     */
-    public Line6Pod20EdBufDriver()
+    public Line6BassPodEdBufDriver()
     {
         super(Constants.EDIT_PATCH_TYP_STR, Constants.AUTHOR);
         //Edit buffer patch will be converted to regular program patch right away

@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.Line6Pod20;
+package org.jsynthlib.drivers.line6.basspod;
 
 import org.jsynthlib.core.KnobWidget;
 import org.jsynthlib.core.ParamModel;
@@ -35,7 +35,7 @@ class HideableKnobWidget extends KnobWidget {
     HideableKnobWidget(String l, Patch p, int min, int max, int base, ParamModel ofs, SysexSender s) {
         super(l, p, min, max, base, ofs, s);
     }
-    
+
     /** Sets the HideableKnobWidget to visible or invisible according to visibleFlag.*/
     public void setVisible(boolean visibleFlag) {
         mKnob.setVisible(visibleFlag);
