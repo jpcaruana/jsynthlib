@@ -1,6 +1,6 @@
 // written by Kenneth L. Martinez
 // $Id$
-package synthdrivers.NordLead;
+package org.jsynthlib.drivers.clavia.nordlead;
 
 import javax.swing.JOptionPane;
 
@@ -10,23 +10,26 @@ import org.jsynthlib.core.Patch;
 import org.jsynthlib.core.PatchEdit;
 import org.jsynthlib.core.SysexHandler;
 
-public class NLDrumBankDriver extends BankDriver {
+public class NLPerfBankDriver extends BankDriver {
   static final int BANK_NUM_OFFSET = 4;
   static final int PATCH_NUM_OFFSET = 5;
-  static final int NUM_IN_BANK = 10;
+  static final int NUM_IN_BANK = 100;
+  //NordLeadConfig nlConfig;
   
-  public NLDrumBankDriver() {
-    super ("Drum Bank","Kenneth L. Martinez",NLDrumSingleDriver.PATCH_LIST.length,2);
+  public NLPerfBankDriver() {
+    super ("Perf Bank","Kenneth L. Martinez",NLPerfSingleDriver.PATCH_LIST.length,5);
+  //public NLPerfBankDriver(NordLeadConfig nlc) {
+  //  nlConfig = nlc;
     sysexID = "F033**04**";
     sysexRequestDump = new SysexHandler("F0 33 @@ 04 *bankNum* *patchNum* F7");
     singleSysexID = "F033**04**";
-    singleSize = 1063;
+    singleSize = 711;
     patchSize = singleSize * NUM_IN_BANK;
     patchNameStart = -1;
     patchNameSize = 0;
     deviceIDoffset = 2;
-    bankNumbers  = NLDrumSingleDriver.BANK_LIST;
-    patchNumbers = NLDrumSingleDriver.PATCH_LIST;
+    bankNumbers  = NLPerfSingleDriver.BANK_LIST;
+    patchNumbers = NLPerfSingleDriver.PATCH_LIST;
   }
 
   public void calculateChecksum(Patch p) {
@@ -58,8 +61,7 @@ public class NLDrumBankDriver extends BankDriver {
     }
 
     System.arraycopy(((Patch)p).sysex, 0, ((Patch)bank).sysex, patchNum * singleSize, singleSize);
-    ((Patch)bank).sysex[patchNum * singleSize + PATCH_NUM_OFFSET] =
-       (byte)(patchNum + 99); // set program #
+    ((Patch)bank).sysex[patchNum * singleSize + PATCH_NUM_OFFSET] = (byte)patchNum; // set program #
   }
 
   public Patch getPatch(Patch bank, int patchNum) {
@@ -79,14 +81,14 @@ public class NLDrumBankDriver extends BankDriver {
 //  }
 
   protected void sendPatchWorker (Patch p, int bankNum) {
-    byte tmp[] = new byte[singleSize];  // send in 10 single-program messages
+    byte tmp[] = new byte[singleSize];  // send in 100 single-performance messages
     try {
       PatchEdit.showWaitDialog();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
         tmp[deviceIDoffset] = (byte) (((NordLeadDevice) getDevice()).getGlobalChannel() - 1);
-        tmp[BANK_NUM_OFFSET] = (byte)(bankNum + 1);
-        tmp[PATCH_NUM_OFFSET] = (byte)(i + 99); // program #
+        tmp[BANK_NUM_OFFSET] = (byte)31;
+        tmp[PATCH_NUM_OFFSET] = (byte)i; // performance #
         send(tmp);
         Thread.sleep(50);
       }
@@ -100,7 +102,7 @@ public class NLDrumBankDriver extends BankDriver {
   public Patch createNewPatch() {
     byte tmp[] = new byte[singleSize];
     byte sysex[] = new byte[patchSize];
-    System.arraycopy(NLDrumSingleDriver.NEW_PATCH, 0, tmp, 0, singleSize);
+    System.arraycopy(NLPerfSingleDriver.NEW_PATCH, 0, tmp, 0, singleSize);
     for (int i = 0; i < NUM_IN_BANK; i++) {
       tmp[PATCH_NUM_OFFSET] = (byte)i; // program #
       System.arraycopy(tmp, 0, sysex, i * singleSize, singleSize);
@@ -111,18 +113,17 @@ public class NLDrumBankDriver extends BankDriver {
   public void requestPatchDump(int bankNum, int patchNum) {
     int devID = ((NordLeadDevice) getDevice()).getGlobalChannel();
     for (int i = 0; i < NUM_IN_BANK; i++) {
-      setBankNum(bankNum); // kludge: drum dump request sends 1063 bytes of garbage -
-      setPatchNum(i + 99); // select drum sound, then get data from edit buffer
       send(sysexRequestDump.toSysexMessage(devID,
-					   new SysexHandler.NameValue("bankNum", 10),
-					   new SysexHandler.NameValue("patchNum", 0)));
+					   new SysexHandler.NameValue("bankNum", 41),
+					   new SysexHandler.NameValue("patchNum", i)));
       try {
-        Thread.sleep(400); // it takes some time for each drum patch to be sent
+        Thread.sleep(250); // it takes some time for each performance to be sent
       } catch (Exception e) {
         ErrorMsg.reportStatus (e);
         ErrorMsg.reportError("Error", "Unable to request Patch " + i);
       }
     }
   }
+  
 }
 

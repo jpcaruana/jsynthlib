@@ -1,6 +1,6 @@
 // written by Kenneth L. Martinez
 // $Id$
-package synthdrivers.NordLead;
+package org.jsynthlib.drivers.clavia.nordlead;
 
 import org.jsynthlib.core.BankDriver;
 import org.jsynthlib.core.ErrorMsg;

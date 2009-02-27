@@ -1,6 +1,6 @@
 // written by Kenneth L. Martinez
 // $Id$
-package synthdrivers.NordLead;
+package org.jsynthlib.drivers.clavia.nordlead;
 
 import javax.swing.JOptionPane;
 
@@ -10,20 +10,17 @@ import org.jsynthlib.core.Patch;
 import org.jsynthlib.core.PatchEdit;
 import org.jsynthlib.core.SysexHandler;
 
-public class NLPerfBankDriver extends BankDriver {
+public class NL2PerfBankDriver extends BankDriver {
   static final int BANK_NUM_OFFSET = 4;
   static final int PATCH_NUM_OFFSET = 5;
   static final int NUM_IN_BANK = 100;
-  //NordLeadConfig nlConfig;
-  
-  public NLPerfBankDriver() {
+
+  public NL2PerfBankDriver() {
     super ("Perf Bank","Kenneth L. Martinez",NLPerfSingleDriver.PATCH_LIST.length,5);
-  //public NLPerfBankDriver(NordLeadConfig nlc) {
-  //  nlConfig = nlc;
     sysexID = "F033**04**";
     sysexRequestDump = new SysexHandler("F0 33 @@ 04 *bankNum* *patchNum* F7");
     singleSysexID = "F033**04**";
-    singleSize = 711;
+    singleSize = 715;
     patchSize = singleSize * NUM_IN_BANK;
     patchNameStart = -1;
     patchNameSize = 0;
@@ -86,7 +83,7 @@ public class NLPerfBankDriver extends BankDriver {
       PatchEdit.showWaitDialog();
       for (int i = 0; i < NUM_IN_BANK; i++) {
         System.arraycopy(p.sysex, i * singleSize, tmp, 0, singleSize);
-        tmp[deviceIDoffset] = (byte) (((NordLeadDevice) getDevice()).getGlobalChannel() - 1);
+        tmp[deviceIDoffset] = (byte) (((NordLeadDevice) (getDevice())).getGlobalChannel() - 1);
         tmp[BANK_NUM_OFFSET] = (byte)31;
         tmp[PATCH_NUM_OFFSET] = (byte)i; // performance #
         send(tmp);
@@ -111,7 +108,7 @@ public class NLPerfBankDriver extends BankDriver {
   }
 
   public void requestPatchDump(int bankNum, int patchNum) {
-    int devID = ((NordLeadDevice) getDevice()).getGlobalChannel();
+    int devID = ((NordLeadDevice) (getDevice())).getGlobalChannel();
     for (int i = 0; i < NUM_IN_BANK; i++) {
       send(sysexRequestDump.toSysexMessage(devID,
 					   new SysexHandler.NameValue("bankNum", 41),

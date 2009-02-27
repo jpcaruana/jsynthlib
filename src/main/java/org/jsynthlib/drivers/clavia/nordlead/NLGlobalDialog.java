@@ -1,6 +1,6 @@
 // written by Kenneth L. Martinez
 
-package synthdrivers.NordLead;
+package org.jsynthlib.drivers.clavia.nordlead;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
