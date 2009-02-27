@@ -28,7 +28,6 @@
 
 	Version: $Id: build.xml,v 1.17 2007-10-01 23:50:47 billzwicky Exp $
 -->
-
 <project name="JSynthLib" default="build" basedir=".">
 
 	<description>  JSynthLib: A universal synth librarian  </description>
@@ -37,8 +36,8 @@
 	<property file="build.properties"/>
 
 	<!-- Defaults -->
-	<property name="src" location="."/>
-	<property name="build" location="build"/>
+	<property name="src" location="src/main/java"/>
+	<property name="build" location="target"/>
 	<property name="bin" location="${build}/bin"/>
 	<property name="docs" location="${build}/doc"/>
 	<property name="api_docs" location="${docs}/api-docs"/>
@@ -95,7 +94,6 @@
 		<copy file="doc/programming.html" todir="${docs}"/>
 	</target>
 
-	
 	<target name="build-run" depends="build"
 			description="Build the official runnable file set">
 		<mkdir dir="${build}/run"/>
