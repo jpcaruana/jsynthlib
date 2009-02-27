@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/" kind="src" path=""/>
-	<classpathentry kind="src" path="midiprovider/LinuxCharDev"/>
-	<classpathentry kind="src" path="midiprovider/OSX"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="groovy.jar"/>
 	<classpathentry kind="lib" path="jdom.jar"/>
