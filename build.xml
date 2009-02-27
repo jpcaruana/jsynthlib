@@ -218,7 +218,7 @@
 	<target name="update-drivers"
 			description="Update synth drivers information" depends="init,build">
 		<!-- File is gen'd in current dir -->
-		<java classname="core.DeviceListWriter" dir="${bin}" fork="true">
+		<java classname="org.jsynthlib.core.DeviceListWriter" dir="${bin}" fork="true">
 			<!--arg value="-v"/-->
 		</java>
 		<copy todir="${src}" file="synthdrivers.properties" />

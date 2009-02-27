@@ -28,9 +28,10 @@ import static synthdrivers.RolandD10.D10Constants.BASE_TONE_TEMP_AREA;
 
 import java.util.HashMap;
 
+import org.jsynthlib.core.SysexSender;
+
 import synthdrivers.RolandD10.message.D10DataSetMessage;
 
-import core.SysexSender;
 
 /**
  * @author Roger Westerlund <roger.westerlund@home.se>

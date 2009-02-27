@@ -8,11 +8,12 @@
 package synthdrivers.KawaiK5000;
 import java.io.UnsupportedEncodingException;
 
-import core.BankDriver;
-import core.ErrorMsg;
-import core.Patch;
-import core.SysexHandler;
-import core.Utility;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+import org.jsynthlib.core.Utility;
+
 
 //======================================================================================================================
 // Class: KawaiK5000CombiDriver

@@ -22,8 +22,9 @@ package synthdrivers.RolandJV80;
 
 import javax.sound.midi.SysexMessage;
 
-import core.Converter;
-import core.Patch;
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
+
 
 /**
  * @author Sander Brandenburg

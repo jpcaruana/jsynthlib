@@ -32,12 +32,14 @@ import static synthdrivers.RolandD10.D10Constants.TONE_NAME_START;
 import static synthdrivers.RolandD10.D10Constants.TONE_RECORD_SIZE;
 import static synthdrivers.RolandD10.D10Constants.TONE_SIZE;
 import static synthdrivers.RolandD10.D10Constants.TONE_WRITE_REQUEST;
+
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.RolandD10.message.D10DataSetMessage;
 import synthdrivers.RolandD10.message.D10RequestMessage;
 import synthdrivers.RolandD10.message.D10TransferMessage;
-import core.Driver;
-import core.JSLFrame;
-import core.Patch;
 
 public class RolandD10ToneDriver extends Driver {
 

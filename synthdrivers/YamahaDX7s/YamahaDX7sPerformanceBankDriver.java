@@ -22,9 +22,10 @@
  *
  */
 package synthdrivers.YamahaDX7s;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceIIBankDriver;
-import core.Patch;
 
 public class YamahaDX7sPerformanceBankDriver extends DX7FamilyPerformanceIIBankDriver
 {

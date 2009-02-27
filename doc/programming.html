@@ -431,7 +431,7 @@ This section provides you a big picture of your Synth Driver.  First
 let's describe some concepts.
 
 <dl>
-<dt>Device <dd>A class extends {@link core.Device} class.  It defines some
+<dt>Device <dd>A class extends {@link org.jsynthlib.core.Device} class.  It defines some
 informations for your synthesizer, for example synth model name, MIDI
 port assigned, etc.  And it has a list of drivers (Single Driver, Bank
 Driver, and/or Converter) described below.
@@ -442,7 +442,7 @@ messages of a sound data, etc.
 <dt>Single Driver <dd>Single Driver provides routines to support a
 Single Patch.<p>
 
-A Single Driver extends {@link core.IPatchDriver} class and allows JSynthLib to
+A Single Driver extends {@link org.jsynthlib.core.IPatchDriver} class and allows JSynthLib to
 detect a patch data for the synthesizer, to communicate with the
 synthesizer.  Once this is written, JSynthLib will have Librarian
 support for your synthesizer.<p>
@@ -456,7 +456,7 @@ patches.<p>
 <dt>Bank Driver <dd>Bank Driver provides routines to support a Bank
 Patch.<p>
 
-A Bank Driver extends {@link core.IPatchDriver} and allows JSynthLib to combine a
+A Bank Driver extends {@link org.jsynthlib.core.IPatchDriver} and allows JSynthLib to combine a
 single patch into a bank patch and to extract a single patch from a
 bank patch. While this functionality isn't strictly necessary, it is
 nice to have if your synth supports bulk dump patch.<p>
@@ -464,7 +464,7 @@ nice to have if your synth supports bulk dump patch.<p>
 A Bank Driver can have a Bank Patch Editor.  But you don't have to
 take care of it because usually the default editor can be used.
 
-<dt>Converter <dd>A driver implements {@link core.IConverter} interface.  This is a
+<dt>Converter <dd>A driver implements {@link org.jsynthlib.core.IConverter} interface.  This is a
 special driver.  Converter simply converts a patch, which is imported
 from a file or MIDI input, into it's associated with to another
 format. Most of synthdrivers don't use this.
@@ -477,15 +477,15 @@ to be changed and edited.  It is invoked by a ISinglePatch.edit method.
 A Synth Driver communicates with JSynthLib core by using the following
 interfaces.
 <pre>
-    {@link core.Device} class (required)
+    {@link org.jsynthlib.core.Device} class (required)
 
-    {@link core.IDriver} interface
-      {@link core.IPatchDriver} interface extends {@link core.IDriver} (required)
-      {@link core.IConverter} interface (optional)
+    {@link org.jsynthlib.core.IDriver} interface
+      {@link org.jsynthlib.core.IPatchDriver} interface extends {@link org.jsynthlib.core.IDriver} (required)
+      {@link org.jsynthlib.core.IConverter} interface (optional)
 
-    {@link core.IPatch} interface
-      {@link core.ISinglePatch} interface extends {@link core.IPatch} (required)
-      {@link core.IBankPatch} interface extends {@link core.IPatch} (optional)
+    {@link org.jsynthlib.core.IPatch} interface
+      {@link org.jsynthlib.core.ISinglePatch} interface extends {@link org.jsynthlib.core.IPatch} (required)
+      {@link org.jsynthlib.core.IBankPatch} interface extends {@link org.jsynthlib.core.IPatch} (optional)
 </pre>
 
 All what you have to do is to implement java classes which implements
@@ -495,13 +495,13 @@ your driver with reasonable effort.
 
 Most of the current synthdrivers extend the following classes;
 <pre>
-    {@link core.Device} class
+    {@link org.jsynthlib.core.Device} class
 
-    {@link core.Driver} class implements {@link core.IPatchDriver}
-    {@link core.BankDriver} class implements {@link core.IPatchDriver} (optional)
-    {@link core.Converter} class implements {@link core.IConverter} (optional)
+    {@link org.jsynthlib.core.Driver} class implements {@link org.jsynthlib.core.IPatchDriver}
+    {@link org.jsynthlib.core.BankDriver} class implements {@link org.jsynthlib.core.IPatchDriver} (optional)
+    {@link org.jsynthlib.core.Converter} class implements {@link org.jsynthlib.core.IConverter} (optional)
 
-    {@link core.Patch} class implements {@link core.ISinglePatch} and {@link core.IBankPatch} class
+    {@link org.jsynthlib.core.Patch} class implements {@link org.jsynthlib.core.ISinglePatch} and {@link org.jsynthlib.core.IBankPatch} class
 </pre>
 
 Actually the interfaces described above was just introduced in the
@@ -581,10 +581,10 @@ drivers :)
 <h3><a name="wri_single" href="#toc">III.f. Writing a Single Driver</a></h3>
 
 This section describe how to write a Single Driver by extending {@link
-core.Driver}
-class which is for {@link core.Patch} class.  Keep in mind that what you are doing
-is to implement methods of {@link core.IPatchDriver} interface and methods which
-{@link core.Patch} class requires.
+org.jsynthlib.core.Driver}
+class which is for {@link org.jsynthlib.core.Patch} class.  Keep in mind that what you are doing
+is to implement methods of {@link org.jsynthlib.core.IPatchDriver} interface and methods which
+{@link org.jsynthlib.core.Patch} class requires.
 
 <h4>III.f.1. Create a File</h4>
 
@@ -596,7 +596,7 @@ simple drivers.<p>
 
 <h4>III.f.2. Write the damn thing</h4>
 
-Your Single Driver will be a subclass of the {@link core.Driver} class.  Take
+Your Single Driver will be a subclass of the {@link org.jsynthlib.core.Driver} class.  Take
 a look at the API document and open up the file
 <kbd>Driver.java</kbd>. All of the
 variables and functions are documented as to their purpose. Also look
@@ -615,18 +615,18 @@ perform for your synth.
 
 <h4>III.f.3. Implement <var>calculateChecksum</var> Method</h4>
 
-You may have to override the {@link core.Driver#calculateChecksum(Patch, int, int,
-int)} and/or {@link core.Driver#calculateChecksum(Patch)} methods.<p>
+You may have to override the {@link org.jsynthlib.core.Driver#calculateChecksum(Patch, int, int,
+int)} and/or {@link org.jsynthlib.core.Driver#calculateChecksum(Patch)} methods.<p>
 
-{@link core.Driver#calculateChecksum(Patch, int, int, int)} actually
+{@link org.jsynthlib.core.Driver#calculateChecksum(Patch, int, int, int)} actually
 calculate
 checksum.  The default method uses the most common algorithm used by
 YAMAHA, Roland, and etc.  It adds all of the data bytes, takes the
 lowest 7 bits, XORs them with 127 and adds one to get the checksum.
 If your synth uses a different algorithm, override this method.<p>
 
-{@link core.Driver#calculateChecksum(Patch)} is called by some methods
-in {@link core.Driver} class.  If your synth does not use checksum,
+{@link org.jsynthlib.core.Driver#calculateChecksum(Patch)} is called by some methods
+in {@link org.jsynthlib.core.Driver} class.  If your synth does not use checksum,
 override it by an empty
 method.  If the patch for your synth consists of only one Sysex
 Message, you don't have to override the method.  If your synth uses a
@@ -638,8 +638,8 @@ Methods</h4>
 
 <p>Looking at your driver code (which you stole from the KawaiK4 code
 like I told you to).  You'll see that we had to implement two methods,
-{@link core.Driver#storePatch(Patch, int, int)} and
-{@link core.Driver#sendPatch(Patch)}.  storePatch sends a patch to a buffer in
+{@link org.jsynthlib.core.Driver#storePatch(Patch, int, int)} and
+{@link org.jsynthlib.core.Driver#sendPatch(Patch)}.  storePatch sends a patch to a buffer in
 your synth specified by a user, and sendPatch sends a patch to the
 editing buffer in your synth.  This is common, since usually, slightly
 different sysex messages are used to send a patch to the editing
@@ -656,11 +656,11 @@ There are two functions that will always need to be overridden if you
 wish to provide that functionality because there is no default version
 in core\Driver.java. These are both easy to implement.<p>
 
-One of these is the {@link core.Driver#createNewPatch} method which returns a new
-(blank) patch.  You may use {@link core.DriverUtil#createNewPatch} for
+One of these is the {@link org.jsynthlib.core.Driver#createNewPatch} method which returns a new
+(blank) patch.  You may use {@link org.jsynthlib.core.DriverUtil#createNewPatch} for
 this method.  See <kbd>RolandTD6SingleDriver</kbd> as an example.<p>
 
-The other is the {@link core.Driver#editPatch} method which opens an Single
+The other is the {@link org.jsynthlib.core.Driver#editPatch} method which opens an Single
 Editor window for the patch. You should be able to figure out how to
 write these by looking at the code for the KawaiK4.
 
@@ -679,7 +679,7 @@ Basically, write a Bank Driver the same way you did the Single
 Driver. Copy the BankDriver from the KawaiK4 or one of the other
 synths and edit it to fit your needs. Change all the data in the
 constructor to fit you synth. The Bank Driver subclasses
-{@link core.BankDriver}. I recommend you look at that file and
+{@link org.jsynthlib.core.BankDriver}. I recommend you look at that file and
 figure out which functions you need to override.<p>
 
 You may want to use your Single Driver in your Bank Driver.  You can
@@ -715,17 +715,17 @@ download the JDK.
 <p>The job of your Single Editor class is to set up the interface for
 your editor by using a number of functions and widgets provided by
 JSynthLib and a number of Swing features.  It is invoked by
-{@link core.IPatch#edit()} method.  It returns a {@link core.JSLFrame}
+{@link org.jsynthlib.core.IPatch#edit()} method.  It returns a {@link org.jsynthlib.core.JSLFrame}
 object.  What you have to do is create a class extending
-{@link core.PatchEditorFrame} class which extends {@link core.JSLFrame}
-class.  (You don't have to extend {@link core.PatchEditorFrame}, if you
+{@link org.jsynthlib.core.PatchEditorFrame} class which extends {@link org.jsynthlib.core.JSLFrame}
+class.  (You don't have to extend {@link org.jsynthlib.core.PatchEditorFrame}, if you
 want to create a JSLFrame object from scratch.)
 
 <p>I like to set up all my sliders and CheckBoxes and figure out where
 they go and what there ranges are first, get a nice pretty GUI on
 screen and then go back and put in the numbers to make it actually
 work. Basically you are going to create a number of JPanes and place
-controls inside them using the {@link core.PatchEditorFrame#addWidget} method. Then you
+controls inside them using the {@link org.jsynthlib.core.PatchEditorFrame#addWidget} method. Then you
 insert these JPanes onto <var>scrollPane</var> (the background of the
 window). <var>scrollPane</var> is created by JSynthLib for your
 convenience.
@@ -748,9 +748,9 @@ could cope with mere words.
 
 JSynthLib comes with several SysexWidgets I've created which automatically
 deal with sending sysex and whatnot.  A SysexWidget subclasses
-{@link core.SysexWidget} class.  All you have to do is tell them
+{@link org.jsynthlib.core.SysexWidget} class.  All you have to do is tell them
 where to go and what values to send out. You create and layout them by
-using {@link core.PatchEditorFrame#addWidget} method like this:
+using {@link org.jsynthlib.core.PatchEditorFrame#addWidget} method like this:
 
 <pre>
     // example from the TX81z Editor
@@ -769,7 +769,7 @@ use panes to break the interface into functional sections (such as LFO
 parameters, filter parameters, etc.).
 
 <p>The second parameter is the SysexWidget to create, in this case a
-{@link core.ScrollBarWidget}. Notice that the widget itself takes a few parameters, we'll
+{@link org.jsynthlib.core.ScrollBarWidget}. Notice that the widget itself takes a few parameters, we'll
 get to that in a moment.
 
 <p>The next four parameters represent
@@ -789,7 +789,7 @@ negative numbers (buttons). So the sliders etc. would go
 This section describes some of SysexWidgets provided.  See API
 documents for other SysexWidgets and more details.<p>
 
-<b>{@link core.ScrollBarWidget}</b> contain a label, a slider, and a numeric
+<b>{@link org.jsynthlib.core.ScrollBarWidget}</b> contain a label, a slider, and a numeric
 readout of the value of the slider. They are the most common
 SysexWidgets. The first parameter to the SysexWidget should be its label. the
 second one will always be <var>patch</var>. The next two values are
@@ -800,7 +800,7 @@ should be displayed as -63 to +63). The last two parameters are a
 <a href="#modelsender">Param Model and Sender</a> for this fader (we'll get
 to those after we deal with some other SysexWidgets.).
 
-<p><b>{@link core.ScrollBarLookupWidget}</b> are just like ScrollBarWidget but they
+<p><b>{@link org.jsynthlib.core.ScrollBarLookupWidget}</b> are just like ScrollBarWidget but they
 let the numeric readout contain values other than numbers. They are
 used rarely. For example if a parameter can take the values of OFF,
 1,2,3,4,5,6 or 7, you might use one. You wouldn't want to use a
@@ -808,7 +808,7 @@ ScrollBarWidget because the first value should be OFF, not zero. You could
 also use a ComboBoxWidget in this situation. The constructor is about the
 same as for a combo box.
 
-<p><b>{@link core.ComboBoxWidget}</b> are drop-down list of choices that are best used
+<p><b>{@link org.jsynthlib.core.ComboBoxWidget}</b> are drop-down list of choices that are best used
 for non-numeric data (such as LFO shape). Here's an example of setting
 up a ComboBoxWidget:
 
@@ -825,7 +825,7 @@ Parameters to the constructor are 1) a Label, 2) <var>patch</var>, 3)
 a Param Model, 4) a Sender, and  5) an array of all the values that it can
 contain.
 
-<p><b>{@link core.CheckBoxWidget}</b> are used for parameters that can be either on
+<p><b>{@link org.jsynthlib.core.CheckBoxWidget}</b> are used for parameters that can be either on
 or off. Heres an example:
 
 <pre>
@@ -839,7 +839,7 @@ or off. Heres an example:
 Parameters to the Constructor are 1) a Label, 2) <var>patch</var>, 3)
 a Param Model, and 4) a Sender.
 
-<p><b>{@link core.EnvelopeWidget}</b>, the final SysexWidget type, are vastly more complex
+<p><b>{@link org.jsynthlib.core.EnvelopeWidget}</b>, the final SysexWidget type, are vastly more complex
 than the others.They represent several parameters on the synth, such
 as the attack, decay, sustain, and release of a VCA envelope.
 
@@ -848,7 +848,7 @@ is its first fader number, and it will take as many as it needs starting at
 that one to represent all of it's parameters.
 
 <p>The constructor for an envelope widget takes a list
-of {@link core.EnvelopeWidget.Node}s. Each Node is
+of {@link org.jsynthlib.core.EnvelopeWidget.Node}s. Each Node is
 one of the movable squares on the envelope. Some of these nodes are
 stationary, some contain two parameters on the synth and can be moved
 vertically and horizontally, and others contain only one parameter and
@@ -934,23 +934,23 @@ height remains at whatever the previous node was at.
 EnvelopeWidget are used by various single editors.
 
 <p>
-<b>{@link core.CheckBoxWidget}</b>,
-<b>{@link core.KnobWidget}</b>,
-<b>{@link core.KnobLookupWidget}</b>,
-<b>{@link core.LabelWidget}</b>,
-<b>{@link core.PatchNameWidget}</b>,
-<b>{@link core.ScrollBarLookupWidget}</b>,
-<b>{@link core.VertScrollBarWidget}</b>,
-<b>{@link core.SpinnerWidget}</b>,
-and <b>{@link core.TreeWidget}</b> are also provided.
+<b>{@link org.jsynthlib.core.CheckBoxWidget}</b>,
+<b>{@link org.jsynthlib.core.KnobWidget}</b>,
+<b>{@link org.jsynthlib.core.KnobLookupWidget}</b>,
+<b>{@link org.jsynthlib.core.LabelWidget}</b>,
+<b>{@link org.jsynthlib.core.PatchNameWidget}</b>,
+<b>{@link org.jsynthlib.core.ScrollBarLookupWidget}</b>,
+<b>{@link org.jsynthlib.core.VertScrollBarWidget}</b>,
+<b>{@link org.jsynthlib.core.SpinnerWidget}</b>,
+and <b>{@link org.jsynthlib.core.TreeWidget}</b> are also provided.
 
 <h4><a name="modelsender" href="#toc">III.h.3. Param Model and Sender</a></h4>
 
 Param Model (Parameter Model) and Sender are objects which communicate
 data between the synth and the SysexWidgets.  For example every time a
 SysexWidget moves, its Param Model ({@link
-core.SysexWidget.IParamModel#set}) gets told and then Sender ({@link
-core.SysexWidget.ISender#send}) does.
+org.jsynthlib.core.SysexWidget.IParamModel#set}) gets told and then Sender ({@link
+org.jsynthlib.core.SysexWidget.ISender#send}) does.
 
 <p>We want to keep track
 of the changes to the patch so that when we next call up this patch
@@ -960,9 +960,9 @@ opened. This is what the <strong>Param Model (Parameter Model)</strong>
 is for.
 
 <p>Param Model is a class object which implements {@link
-core.SysexWidget.IParamModel} interface.  The interface provides two
-method, {@link core.SysexWidget.IParamModel#set} and {@link
-core.SysexWidget.IParamModel#get}.  They just read (get) and write
+org.jsynthlib.core.SysexWidget.IParamModel} interface.  The interface provides two
+method, {@link org.jsynthlib.core.SysexWidget.IParamModel#set} and {@link
+org.jsynthlib.core.SysexWidget.IParamModel#get}.  They just read (get) and write
 (set) a parameter value.
 
 <p>The default Param Model (constructor <code>ParamModel(Patch patch,
@@ -1033,12 +1033,12 @@ AlesisDMProModel as an exmaple.
 
 <p>A <strong>Sender</strong> sends a Sysex message generated by Param
 Model to the synth informing it of the change.  It is a class object
-which implements {@link core.SysexWidget.ISender} interface.  The
-interface has only one method, {@link core.SysexWidget.ISender#send}.
+which implements {@link org.jsynthlib.core.SysexWidget.ISender} interface.  The
+interface has only one method, {@link org.jsynthlib.core.SysexWidget.ISender#send}.
 
 <p>Here's an example of a Sender from the Kawai K4 Editor.  It
-extends {@link core.SysexSender} class which implements {@link
-core.SysexWidget.ISender}:
+extends {@link org.jsynthlib.core.SysexSender} class which implements {@link
+org.jsynthlib.core.SysexWidget.ISender}:
 
 <pre>
     class K4Sender extends SysexSender {
@@ -1072,7 +1072,7 @@ This sender has two constructors.  One has a parameter
 <code>source</code> and the other does not.
 
 <p>Here is another example of RolandJV80SystemSetupEditor which uses
-{@link core.SysexSender#SysexSender(String)} constructor.
+{@link org.jsynthlib.core.SysexSender#SysexSender(String)} constructor.
 
 <pre>
     static class JVSender extends SysexSender {
@@ -1104,8 +1104,8 @@ send. The generate function simply puts the value and channel into the
 message and returns it.
 
 <p>RolandTD6.RolandDT1Sender is an example which implements {@link
-core.SysexWidget.ISender} directly without extending {@link
-core.SysexSender}.  It is little complexed to support generic Roland
+org.jsynthlib.core.SysexWidget.ISender} directly without extending {@link
+org.jsynthlib.core.SysexSender}.  It is little complexed to support generic Roland
 DT1 (Data Transfer) message.
 
 <p>Often a Single Editor will have one or more Param Model and/or

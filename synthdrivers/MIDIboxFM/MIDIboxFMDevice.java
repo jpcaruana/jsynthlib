@@ -24,8 +24,9 @@
 
 package synthdrivers.MIDIboxFM;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 public class MIDIboxFMDevice extends Device
 {

@@ -22,7 +22,8 @@
 package synthdrivers.Yamaha01v;
 
 import java.util.prefs.Preferences;
-import core.Device;
+
+import org.jsynthlib.core.Device;
 
 public class Yamaha01vDevice extends Device {
     private static final String INFO_TEXT = "Yamaha 01v librarian.";

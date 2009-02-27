@@ -25,6 +25,12 @@ import core.*;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.InvalidMidiDataException;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatchDriver;
+import org.jsynthlib.core.SysexSender;
+import org.jsynthlib.core.SysexWidget;
+
 /** POD generic Continuous Controller message sender class. 
 * @author Jeff Weber
 */

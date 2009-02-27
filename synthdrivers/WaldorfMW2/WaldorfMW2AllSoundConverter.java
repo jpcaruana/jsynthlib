@@ -21,8 +21,8 @@
 
 package synthdrivers.WaldorfMW2;
 
-import core.Converter;
-import core.Patch;
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
 
 /*
  * 

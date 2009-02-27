@@ -23,6 +23,13 @@ package synthdrivers.TCElectronicGMajor;
 
 import core.*;
 import javax.swing.JOptionPane;
+
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 import java.io.UnsupportedEncodingException;
 
 public class TCElectronicGMajorBankDriver extends BankDriver {

@@ -10,6 +10,15 @@ import javax.swing.event.*;
 import java.awt.*;
 import javax.swing.border.*;
 
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SysexSender;
+
 class KawaiK5000ADDSingleEditor extends PatchEditorFrame {
     final String[] noteName = new String[] { "C#-2", "D-2", "D#-2", "E-2",
             "F-2", "F#-2", "G-2", "G#-2", "A-2", "A#-2", "B-2", "C-1", "C#-1",

@@ -26,8 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import core.Device;
-import core.DriverUtil;
+import org.jsynthlib.core.Device;
+import org.jsynthlib.core.DriverUtil;
+
 
 /**
  * Copied the wavegroup data names from the jvtool project at sourceforge.net

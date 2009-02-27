@@ -24,6 +24,9 @@ package synthdrivers.BehringerFCB1010;
 import core.*;
 import java.awt.event.*;
 
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+
 /** Class ControlGroupModel associates a group of ComboBoxWidgets to a single
 * CheckBoxWidget and handles enabling/disabling the state of all of the ComboBoxWidgets
 * in the group based on the state of the associated CheckBoxWidget.

@@ -25,10 +25,11 @@
 package synthdrivers.YamahaDX7.common;
 import java.io.UnsupportedEncodingException;
 
-import core.BankDriver;
-import core.ErrorMsg;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 
 public class DX7FamilyPerformanceIIBankDriver extends BankDriver
 {

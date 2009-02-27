@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
+import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.plugins.Checksum;
 import org.jsynthlib.plugins.Decoder;
 import org.jsynthlib.utils.AdvDefaultHandler;
@@ -13,7 +14,6 @@ import org.jsynthlib.utils.Generator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import core.ErrorMsg;
 
 /**
  * @author ribrdb

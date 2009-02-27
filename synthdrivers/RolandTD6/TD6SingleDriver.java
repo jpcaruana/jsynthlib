@@ -21,12 +21,12 @@
 
 package synthdrivers.RolandTD6;
 
-import core.Driver;
-import core.DriverUtil;
-import core.ErrorMsg;
-import core.JSLFrame;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 /**
  * Single Driver for Roland Percussion Sound Module TD-6

@@ -28,6 +28,12 @@ import core.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 
 public class RolandMT32TimbreTempBankDriver extends BankDriver {
     /** Header Size */

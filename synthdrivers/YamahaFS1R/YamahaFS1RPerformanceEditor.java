@@ -20,17 +20,18 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import core.BankEditorFrame;
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.JSLFrameEvent;
-import core.JSLFrameListener;
-import core.KnobWidget;
-import core.Patch;
-import core.PatchEdit;
-import core.PatchEditorFrame;
-import core.PatchNameWidget;
-import core.SpinnerWidget;
+import org.jsynthlib.core.BankEditorFrame;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.JSLFrameEvent;
+import org.jsynthlib.core.JSLFrameListener;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.SpinnerWidget;
+
 
 /**
 	Editor for performance, ie group of 4 parts, each part holds a voice.

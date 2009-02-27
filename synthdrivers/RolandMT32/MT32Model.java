@@ -26,6 +26,9 @@
  */
 
 package synthdrivers.RolandMT32;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 class MT32Model extends ParamModel {

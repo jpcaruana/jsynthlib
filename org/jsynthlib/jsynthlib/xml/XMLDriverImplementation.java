@@ -7,9 +7,10 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
-import core.AppConfig;
-import core.Device;
-import core.ErrorMsg;
+import org.jsynthlib.core.AppConfig;
+import org.jsynthlib.core.Device;
+import org.jsynthlib.core.ErrorMsg;
+
 
 /* This is the class that will be extended by the scripting language */
 public class XMLDriverImplementation {

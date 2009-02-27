@@ -24,6 +24,12 @@ package synthdrivers.YamahaTG100;
 import core.*;
 
 import javax.swing.*;
+
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+
 import java.io.*;
 
 /**

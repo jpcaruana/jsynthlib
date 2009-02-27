@@ -21,6 +21,9 @@
 
 package synthdrivers.Line6Pod20;
 
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 /** Delay Speed is represented by three bytes in offsets 27-29. There are two

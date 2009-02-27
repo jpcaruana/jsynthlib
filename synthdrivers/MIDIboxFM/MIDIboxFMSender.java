@@ -24,8 +24,8 @@
 
 package synthdrivers.MIDIboxFM;
 
-import core.SysexSender;
-import core.Patch;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexSender;
 
 class MIDIboxFMSender extends SysexSender
 {

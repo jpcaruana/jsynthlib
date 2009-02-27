@@ -1,7 +1,7 @@
 package synthdrivers.EnsoniqVFX;
-import core.Driver;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 /**
  *  Multi driver for VFX. Multi have no name.

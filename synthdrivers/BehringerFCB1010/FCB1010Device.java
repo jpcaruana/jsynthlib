@@ -21,8 +21,9 @@
 
 package synthdrivers.BehringerFCB1010;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 /** Device file for the Behringer FCB1010
 * 

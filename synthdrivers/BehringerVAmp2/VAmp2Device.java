@@ -21,8 +21,9 @@
 
 package synthdrivers.BehringerVAmp2;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 /** Device file for the Behringer VAmp2
  * 

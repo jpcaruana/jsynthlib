@@ -26,7 +26,7 @@
  */
 
 package synthdrivers.RolandMT32;
-import core.SysexSender;
+import org.jsynthlib.core.SysexSender;
 
 class MT32Sender extends SysexSender {
   /* message: Data set DT1 12h

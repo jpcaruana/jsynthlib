@@ -2,11 +2,11 @@
 
 package synthdrivers.AccessVirus;
 
-import core.BankDriver;
-import core.ErrorMsg;
-import core.Patch;
-import core.PatchEdit;
-import core.SysexHandler;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
 
 /**
  * @version $Id$

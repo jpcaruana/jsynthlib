@@ -20,7 +20,7 @@
  */
 
 package synthdrivers.AlesisDMPro;
-import core.Patch;
+import org.jsynthlib.core.Patch;
 
 /**
  *Support class...

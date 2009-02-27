@@ -22,6 +22,9 @@
  *
  */
 package synthdrivers.YamahaDX7;
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 public class YamahaDX7Converter extends Converter

@@ -9,6 +9,11 @@ package synthdrivers.NovationNova1;
 import core.*;
 import java.io.*;
 import javax.swing.*;
+
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 // XXX extending BankDriver.  Is this correct?
 public class NovationNova1SinglePerformanceDriver extends BankDriver
 {

@@ -1,4 +1,7 @@
 package synthdrivers.KorgX3;
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 /**

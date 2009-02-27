@@ -26,8 +26,9 @@
  */
 
 package synthdrivers.RolandMT32;
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 public class RolandMT32Device extends Device {
     private static final String INFO_TEXT

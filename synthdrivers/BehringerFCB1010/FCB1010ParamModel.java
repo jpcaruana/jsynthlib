@@ -21,6 +21,9 @@
 
 package synthdrivers.BehringerFCB1010;
 
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 /** FCB1010ParamModel. This model is used for all parameters of the FCB1010 and includes.

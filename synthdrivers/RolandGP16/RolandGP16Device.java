@@ -4,8 +4,9 @@
  */
 
 package synthdrivers.RolandGP16;
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 /**
  * Device class for ROLAND GP16.

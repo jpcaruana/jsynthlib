@@ -1,5 +1,9 @@
 package synthdrivers.YamahaFS1R;
 
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 /**

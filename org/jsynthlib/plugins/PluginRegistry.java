@@ -11,8 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.jsynthlib.core.ErrorMsg;
 
-import core.ErrorMsg;
 
 /**
  * @author ribrdb

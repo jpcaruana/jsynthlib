@@ -18,11 +18,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import core.ColumnLayout;
-import core.Driver;
-import core.ErrorMsg;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.ColumnLayout;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 
 public class NovationNova1SingleDriver extends Driver
 {

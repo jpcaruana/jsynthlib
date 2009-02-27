@@ -30,12 +30,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import core.ParamModel;
-import core.Patch;
-import core.PatchEdit;
-import core.PatchEditorFrame;
-import core.SpinnerWidget;
-import core.SysexSender;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.SpinnerWidget;
+import org.jsynthlib.core.SysexSender;
+
 
 public class DX7FamilyFractionalScalingEditor extends PatchEditorFrame 
 {

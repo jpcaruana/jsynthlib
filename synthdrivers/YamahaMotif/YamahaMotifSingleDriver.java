@@ -3,6 +3,11 @@ import core.*;
 
 import java.io.*;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 /** Base driver for Yamaha Motif voices */
 public abstract class YamahaMotifSingleDriver extends Driver
 {

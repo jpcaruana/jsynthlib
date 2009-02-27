@@ -25,13 +25,14 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.JOptionPane;
 
-import core.Driver;
-import core.DriverUtil;
-import core.ErrorMsg;
-import core.ISinglePatch;
-import core.Patch;
-import core.PatchEdit;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.ISinglePatch;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 
 /**
  * Driver for Microwave 2 / XT / XTK single programs
@@ -149,7 +150,7 @@ public class WaldorfMW2SingleDriver extends Driver {
     }
 
     /**
-     * @see core.Driver#createNewPatch()
+     * @see org.jsynthlib.core.Driver#createNewPatch()
      */
     public Patch createNewPatch() {
         byte[] sysex  = new byte[MW2Constants.PATCH_SIZE];

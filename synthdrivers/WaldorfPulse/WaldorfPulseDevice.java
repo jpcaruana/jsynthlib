@@ -23,6 +23,8 @@ package synthdrivers.WaldorfPulse;
 import core.*;
 import java.util.prefs.Preferences;
 
+import org.jsynthlib.core.Device;
+
 public class WaldorfPulseDevice extends Device
 {
     public WaldorfPulseDevice()

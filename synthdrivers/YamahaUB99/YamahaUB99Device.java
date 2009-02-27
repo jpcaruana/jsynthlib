@@ -20,8 +20,9 @@
  */
 
 package synthdrivers.YamahaUB99;
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 public class YamahaUB99Device extends Device {
     private static final String INFO_TEXT="The librarian and editor are for the Yamaha UB99 Magicstomp Guitar Effects Processor version 1.08 firmware.\n\n"

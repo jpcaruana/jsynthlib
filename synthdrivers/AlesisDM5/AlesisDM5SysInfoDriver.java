@@ -20,6 +20,11 @@
  */
 
 package synthdrivers.AlesisDM5;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 /** Alesis DM5 System Info Driver.

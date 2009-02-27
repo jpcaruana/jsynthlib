@@ -36,14 +36,15 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import core.ComboBoxWidget;
-import core.ParamModel;
-import core.Patch;
-import core.PatchEdit;
-import core.PatchEditorFrame;
-import core.ScrollBarWidget;
-import core.SpinnerWidget;
-import core.SysexSender;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SpinnerWidget;
+import org.jsynthlib.core.SysexSender;
+
 
 public class DX7FamilySystemSetupIIIEditor extends PatchEditorFrame
 {

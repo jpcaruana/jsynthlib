@@ -27,6 +27,15 @@ import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.border.*;
 
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.SysexWidget;
+
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;

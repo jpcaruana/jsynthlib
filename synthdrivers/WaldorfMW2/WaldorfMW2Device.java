@@ -23,7 +23,8 @@ package synthdrivers.WaldorfMW2;
 
 import java.util.prefs.Preferences;
 
-import core.Device;
+import org.jsynthlib.core.Device;
+
 
 /**
  * Device class for Microwave 2 / XT / XTK

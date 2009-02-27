@@ -20,8 +20,8 @@
  */
 package synthdrivers.RolandD10;
 
-import core.ParamModel;
-import core.Patch;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
 
 /**
  * This class extends the ParamModel to relocate the offset specified into a

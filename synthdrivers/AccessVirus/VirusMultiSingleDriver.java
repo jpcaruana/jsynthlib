@@ -2,9 +2,9 @@
 
 package synthdrivers.AccessVirus;
 
-import core.Driver;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 /**
  * @version $Id$
  * @author Kenneth L. Martinez

@@ -22,7 +22,8 @@ package synthdrivers.RolandD10;
 
 import java.util.prefs.Preferences;
 
-import core.Device;
+import org.jsynthlib.core.Device;
+
 
 /**
  * @author  Roger Westerlund <roger.westerlund@home.se>

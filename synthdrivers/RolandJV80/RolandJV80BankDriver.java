@@ -23,9 +23,10 @@ package synthdrivers.RolandJV80;
 
 import javax.swing.JOptionPane;
 
-import core.BankDriver;
-import core.DriverUtil;
-import core.Patch;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.Patch;
+
 
 /**
  * @author Sander Brandenburg

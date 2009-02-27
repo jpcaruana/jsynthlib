@@ -23,6 +23,8 @@ package synthdrivers.AlesisDMPro;
 
 import core.*;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 /**
  * Created on 25. December2001, 14:00
  * @author  Peter Hageus

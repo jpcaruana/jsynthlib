@@ -21,12 +21,14 @@
 package synthdrivers.RolandD10;
 
 import static synthdrivers.RolandD10.D10Constants.*;
+
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.RolandD10.message.D10DataSetMessage;
 import synthdrivers.RolandD10.message.D10RequestMessage;
 import synthdrivers.RolandD10.message.D10TransferMessage;
-import core.Driver;
-import core.JSLFrame;
-import core.Patch;
 
 public class RolandD10TimbreDriver extends Driver {
 

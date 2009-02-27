@@ -28,6 +28,9 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
 
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.IPatch;
+
 public class TCCheckBoxWidget extends CheckBoxWidget {
 
     public TCCheckBoxWidget(IPatch patch, IParameter param) {

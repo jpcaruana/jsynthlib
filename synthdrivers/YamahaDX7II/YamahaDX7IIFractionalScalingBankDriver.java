@@ -22,9 +22,10 @@
  *
  */
 package synthdrivers.YamahaDX7II;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyFractionalScalingBankDriver;
-import core.Patch;
 
 public class YamahaDX7IIFractionalScalingBankDriver extends DX7FamilyFractionalScalingBankDriver
 {

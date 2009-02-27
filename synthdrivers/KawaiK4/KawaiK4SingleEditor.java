@@ -9,6 +9,14 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+
 class KawaiK4SingleEditor extends PatchEditorFrame {
     private final String[] noteName = new String[] {
 	"C-1", "C#-1", "D-1", "D#-1", "E-1", "F-1", "F#-1", "G-1", "G#-1", "A-1", "A#-1", "B-1",

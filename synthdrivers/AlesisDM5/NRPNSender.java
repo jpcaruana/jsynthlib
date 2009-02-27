@@ -25,6 +25,10 @@ import core.*;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.InvalidMidiDataException;
 
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatchDriver;
+import org.jsynthlib.core.SysexWidget;
+
 /** The NRPNSender class is used to send NRPNs to the DM5. The parameters
 * handled by the NRPNSender are specifically related to single drumsets--i.e. all
 * the parameters represented by a single set sysex record. 

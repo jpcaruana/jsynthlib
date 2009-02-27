@@ -8,6 +8,11 @@ import java.awt.*;
 
 import javax.swing.border.*;
 
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.ScrollBarWidget;
+
 class RolandGP16SingleEditor extends PatchEditorFrame
 {
   private String [] expAssChoices = new String []{"Off",

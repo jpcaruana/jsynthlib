@@ -21,6 +21,9 @@
 
 package synthdrivers.AlesisDM5;
 
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 /** The BitModel class allows a control to set the individual bits in a byte

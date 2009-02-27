@@ -31,6 +31,12 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.ScrollBarLookupWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+
 class RolandMT32SystemEditor extends PatchEditorFrame {
                                             
     final String [] RevModeName  = new String [] {"Room", "Hall", "Plate", "Tap9 delay" 

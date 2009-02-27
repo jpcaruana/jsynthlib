@@ -21,7 +21,8 @@
 
 import java.util.ArrayList;
 
-import core.PatchEdit;
+import org.jsynthlib.core.PatchEdit;
+
 
 public class JSynthLib {
 

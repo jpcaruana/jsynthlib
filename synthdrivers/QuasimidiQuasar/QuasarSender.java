@@ -27,7 +27,7 @@ package synthdrivers.QuasimidiQuasar;
  * @version $Id$
  */
 
-import core.SysexSender;
+import org.jsynthlib.core.SysexSender;
 
 public class QuasarSender extends SysexSender {
     

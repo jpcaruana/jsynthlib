@@ -24,6 +24,10 @@ package synthdrivers.AlesisDM5;
 import core.*;
 import javax.sound.midi.InvalidMidiDataException;
 
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatchDriver;
+import org.jsynthlib.core.SysexWidget;
+
 /** The TrigSender class is used to send NRPNs to the DM5. The parameters
 * handled by the TrigSender are specifically related to trigger setups--i.e. all
 * the parameters represented by a trigger setup sysex record. 

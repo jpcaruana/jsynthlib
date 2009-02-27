@@ -4,9 +4,10 @@
 package synthdrivers.EnsoniqESQ1;
 import javax.swing.JOptionPane;
 
-import core.BankDriver;
-import core.ErrorMsg;
-import core.Patch;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+
 public class EnsoniqESQ1BankDriver extends BankDriver
 {
 

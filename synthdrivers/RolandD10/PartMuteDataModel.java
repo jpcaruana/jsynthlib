@@ -20,7 +20,7 @@
  */
 package synthdrivers.RolandD10;
 
-import core.Patch;
+import org.jsynthlib.core.Patch;
 
 /**
  * This class handles bit manipulation for the pratial mute checkboxes which

@@ -1,6 +1,6 @@
 package synthdrivers.KawaiK4;
 
-import core.SysexSender;
+import org.jsynthlib.core.SysexSender;
 
 class K4Sender extends SysexSender {
     private int source;

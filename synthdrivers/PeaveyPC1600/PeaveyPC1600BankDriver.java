@@ -13,12 +13,12 @@
 //======================================================================================================================
 
 package synthdrivers.PeaveyPC1600;
-import core.BankDriver;
-import core.ErrorMsg;
-import core.NibbleSysex;
-import core.Patch;
-import core.SysexHandler;
-import core.Utility;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.NibbleSysex;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+import org.jsynthlib.core.Utility;
 
 //======================================================================================================================
 // Class: PeaveyPC1600SingleDriver

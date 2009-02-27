@@ -6,18 +6,18 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.SysexMessage;
 
+import org.jsynthlib.core.Device;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.IPatchDriver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.MidiUtil;
+import org.jsynthlib.core.SysexWidget;
 import org.jsynthlib.jsynthlib.xml.editor.EditorDescription;
 import org.jsynthlib.jsynthlib.xml.editor.EditorParser;
 import org.jsynthlib.jsynthlib.xml.editor.XMLEditor;
 import org.xml.sax.SAXException;
 
-import core.Device;
-import core.ErrorMsg;
-import core.IPatch;
-import core.IPatchDriver;
-import core.JSLFrame;
-import core.MidiUtil;
-import core.SysexWidget;
 
 public class XMLDriver implements IPatchDriver {
     private String authors;

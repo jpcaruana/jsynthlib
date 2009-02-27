@@ -27,12 +27,13 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.EnvelopeWidget;
-import core.Patch;
-import core.PatchNameWidget;
-import core.ScrollBarWidget;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+
 
 
 /**

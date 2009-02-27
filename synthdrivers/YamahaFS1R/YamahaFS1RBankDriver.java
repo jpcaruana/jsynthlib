@@ -6,6 +6,10 @@ import java.io.*;
 import java.text.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+
 /**
  *  Bank driver for Yamaha FS1R
  * Il n'y a pas de format SYSEX de banque donc ?

@@ -24,10 +24,11 @@ package synthdrivers.RolandJV80;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
 
-import core.Device;
-import core.DriverUtil;
-import core.ErrorMsg;
-import core.SysexHandler;
+import org.jsynthlib.core.Device;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.SysexHandler;
+
 
 /**
  * @author Sander Brandenburg

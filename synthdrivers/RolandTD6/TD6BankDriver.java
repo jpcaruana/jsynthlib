@@ -24,6 +24,10 @@ import core.*;
 
 import java.io.UnsupportedEncodingException;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 /**
  * Bank Driver for Roland Percussion Sound Module TD-6
  *

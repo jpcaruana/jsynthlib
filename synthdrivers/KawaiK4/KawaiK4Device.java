@@ -4,8 +4,9 @@
  */
 
 package synthdrivers.KawaiK4;
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 /**
  * Device class for KAWAI K4/K4r.

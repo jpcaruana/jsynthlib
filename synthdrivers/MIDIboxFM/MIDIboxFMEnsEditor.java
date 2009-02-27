@@ -30,11 +30,12 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 
-import core.Patch;
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.PatchEditorFrame;
-import core.ScrollBarWidget;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.ScrollBarWidget;
+
 
 class MIDIboxFMEnsEditor extends PatchEditorFrame
 {

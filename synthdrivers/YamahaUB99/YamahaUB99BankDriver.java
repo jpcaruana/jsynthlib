@@ -24,6 +24,11 @@ package synthdrivers.YamahaUB99;
 import core.*;
 import java.io.UnsupportedEncodingException;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 public class YamahaUB99BankDriver extends BankDriver {
 
     private static final SysexHandler BANKDUMP_REQ = new SysexHandler("F0 43 7D 50 55 42 30 01 ** F7");

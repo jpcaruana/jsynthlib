@@ -1,8 +1,8 @@
 package synthdrivers.EnsoniqVFX;
-import core.Driver;
-import core.ErrorMsg;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 /**
  *  Single driver for VFX. Nybble Hi 4 bytes are transmitted first.

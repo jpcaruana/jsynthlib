@@ -27,6 +27,12 @@ package synthdrivers.MIDIboxFM;
 import core.*;
 import javax.swing.JOptionPane;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 public class MIDIboxFMSingleDriver extends Driver
 {
     private byte sysex_type;

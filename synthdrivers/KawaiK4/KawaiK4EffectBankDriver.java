@@ -1,11 +1,12 @@
 package synthdrivers.KawaiK4;
 
 import javax.swing.JOptionPane;
-import core.BankDriver;
-import core.DriverUtil;
-import core.ErrorMsg;
-import core.Patch;
-import core.SysexHandler;
+
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 /**
  * Bank driver for KAWAI K4/K4r effect patch.

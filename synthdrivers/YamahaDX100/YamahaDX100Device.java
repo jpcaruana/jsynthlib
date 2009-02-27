@@ -15,7 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import core.Device;
+import org.jsynthlib.core.Device;
+
 
 /**
  *

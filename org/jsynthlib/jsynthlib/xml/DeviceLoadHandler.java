@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.jsynthlib.core.IDriver;
 import org.jsynthlib.plugins.PluginRegistry;
 import org.jsynthlib.utils.AdvDefaultHandler;
 import org.jsynthlib.utils.Generator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import core.IDriver;
 
 /**
  * @author ribrdb

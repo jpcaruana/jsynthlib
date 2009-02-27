@@ -23,8 +23,8 @@
  */
 
 package synthdrivers.MIDIboxFM;
-import core.JSLFrame;
-import core.Patch;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
 
 public class MIDIboxFMDrumDriver extends MIDIboxFMSingleDriver
 {

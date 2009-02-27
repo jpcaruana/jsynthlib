@@ -24,8 +24,8 @@
 
 package synthdrivers.MIDIboxFM;
 
-import core.ParamModel;
-import core.Patch;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
 
 class MIDIboxFMModel extends ParamModel
 {

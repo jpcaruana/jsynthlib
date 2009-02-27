@@ -20,8 +20,9 @@
  */
 
 package synthdrivers.TCElectronicGMajor;
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 public class TCElectronicGMajorDevice extends Device {
     private static final String INFO_TEXT="The librarian and editor are for the TC Electronic G-Major version 1.27 firmware.\n"

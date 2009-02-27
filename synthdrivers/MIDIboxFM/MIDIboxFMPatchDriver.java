@@ -24,6 +24,9 @@
 
 package synthdrivers.MIDIboxFM;
 
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 public class MIDIboxFMPatchDriver extends MIDIboxFMSingleDriver

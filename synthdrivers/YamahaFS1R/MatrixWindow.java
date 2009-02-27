@@ -15,10 +15,11 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.Patch;
-import core.SpinnerWidget;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SpinnerWidget;
+
 
 
 /**

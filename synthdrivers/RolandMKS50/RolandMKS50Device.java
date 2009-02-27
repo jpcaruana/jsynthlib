@@ -6,6 +6,8 @@ package synthdrivers.RolandMKS50;
 import core.*;
 import java.util.prefs.Preferences;
 
+import org.jsynthlib.core.Device;
+
 public class RolandMKS50Device extends Device
 {
   /** Creates new RolandMKS50Device */

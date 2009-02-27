@@ -12,16 +12,17 @@ import java.util.LinkedList;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.SysexMessage;
 
-import core.AppConfig;
-import core.Device;
-import core.DriverUtil;
-import core.ErrorMsg;
-import core.IPatch;
-import core.IPatchDriver;
-import core.ISinglePatch;
-import core.JSLFrame;
-import core.LookupManufacturer;
-import core.PatchTransferHandler;
+import org.jsynthlib.core.AppConfig;
+import org.jsynthlib.core.Device;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.IPatchDriver;
+import org.jsynthlib.core.ISinglePatch;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.LookupManufacturer;
+import org.jsynthlib.core.PatchTransferHandler;
+
 
 /**
  * @author ribrdb

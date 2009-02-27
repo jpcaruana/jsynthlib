@@ -22,9 +22,10 @@
  *
  */
 package synthdrivers.YamahaDX7II;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.YamahaDX7.common.DX7FamilyAdditionalVoiceBankDriver;
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
-import core.Patch;
 
 public class YamahaDX7IIAdditionalVoiceBankDriver extends DX7FamilyAdditionalVoiceBankDriver
 {

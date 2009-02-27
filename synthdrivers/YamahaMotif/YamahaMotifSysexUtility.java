@@ -1,6 +1,6 @@
 package synthdrivers.YamahaMotif;
-import core.ErrorMsg;
-import core.Driver;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
 public abstract class YamahaMotifSysexUtility {
 
   public static final int DEVICE_ID_OFFSET = 2;

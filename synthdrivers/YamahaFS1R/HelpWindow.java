@@ -8,8 +8,9 @@ import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.text.Document;
 
-import core.Actions;
-import core.PatchEdit;
+import org.jsynthlib.core.Actions;
+import org.jsynthlib.core.PatchEdit;
+
 
 
 class HelpWindow extends Actions.MenuFrame

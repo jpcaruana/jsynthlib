@@ -3,10 +3,12 @@ package synthdrivers.YamahaFS1R;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexWidget;
+
 import java.util.*;
 
-import core.Patch;
-import core.SysexWidget;
 
 
 /**

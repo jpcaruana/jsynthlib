@@ -27,6 +27,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.KnobLookupWidget;
+import org.jsynthlib.core.SysexWidget;
+
 import com.dreamfabric.DKnob;
 
 /**

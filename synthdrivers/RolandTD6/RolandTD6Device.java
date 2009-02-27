@@ -23,6 +23,9 @@ package synthdrivers.RolandTD6;
 
 import core.*;
 import javax.swing.*;
+
+import org.jsynthlib.core.Device;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.prefs.Preferences;

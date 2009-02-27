@@ -21,6 +21,9 @@
 
 package synthdrivers.AlesisDM5;
 
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.ScrollBarLookupWidget;
+
 import core.*;
 
 /** DM5ScrollBarLookupWidget. Adds functionality to the standard JSynthLib 

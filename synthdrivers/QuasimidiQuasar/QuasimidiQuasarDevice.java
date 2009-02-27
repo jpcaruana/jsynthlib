@@ -21,7 +21,6 @@
 
 package synthdrivers.QuasimidiQuasar;
 
-import core.Device;
 
 import java.util.prefs.Preferences;
 
@@ -32,6 +31,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.jsynthlib.core.Device;
 
 /**
  * Device class for the Quasimidi Quasar

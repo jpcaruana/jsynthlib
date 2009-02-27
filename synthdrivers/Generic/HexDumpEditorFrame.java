@@ -1,11 +1,12 @@
 package synthdrivers.Generic;
 
 // import core.PatchEditorFrame;
-import core.Patch;
 // import java.awt.*;
 // import synthdrivers.AlesisSR16.DataModel;
 
 import javax.sound.midi.SysexMessage;
+
+import org.jsynthlib.core.Patch;
 
 /**
  * This class serves as a initial substitute for a patch editor. It is to be used for verifying that
@@ -48,6 +49,6 @@ public class HexDumpEditorFrame extends SingleTextAreaFrame {
     }
 
     public void appendBytes(byte[] bytes) {
-        append(core.Utility.hexDump(bytes,0,-1,bytesperline, true, true));
+        append(org.jsynthlib.core.Utility.hexDump(bytes,0,-1,bytesperline, true, true));
     }
 }

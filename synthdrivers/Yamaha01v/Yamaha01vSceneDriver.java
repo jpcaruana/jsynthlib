@@ -21,6 +21,12 @@
 
 package synthdrivers.Yamaha01v;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ISinglePatch;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 
@@ -81,7 +87,7 @@ public class Yamaha01vSceneDriver extends Driver {
     
    
     /**
-     * @see core.Driver#createNewPatch()
+     * @see org.jsynthlib.core.Driver#createNewPatch()
      */
     public Patch createNewPatch() {
         byte[] sysex  = new byte[patchSize];

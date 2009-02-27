@@ -21,6 +21,9 @@
 
 package synthdrivers.TCElectronicGMajor;
 
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 class TCBitModel extends ParamModel {

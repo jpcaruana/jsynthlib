@@ -22,9 +22,10 @@ package synthdrivers.RolandD10;
 
 import static synthdrivers.RolandD10.D10Constants.*;
 
+import org.jsynthlib.core.Patch;
 
 
-import core.Patch;
+
 
 public class RolandD10TimbreEditor extends RolandD10EditorFrame {
 

@@ -21,8 +21,9 @@
 
 package synthdrivers.Line6Pod20;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 /** Device file for Line6 Pod
 * 

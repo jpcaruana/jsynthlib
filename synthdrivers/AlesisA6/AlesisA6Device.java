@@ -4,8 +4,9 @@
 
 package synthdrivers.AlesisA6;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 public class AlesisA6Device extends Device
 {

@@ -20,6 +20,8 @@
  */
 
 package synthdrivers.Line6Pod20;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 /** Line6 Edit Buffer Driver. Used for Line6 Edit Buffer patch.

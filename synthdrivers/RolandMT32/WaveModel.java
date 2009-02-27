@@ -26,8 +26,8 @@
  */
 
 package synthdrivers.RolandMT32;
-import core.Patch;
-import core.SysexWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexWidget;
 
 
 class WaveModel implements SysexWidget.IParamModel {

@@ -3,9 +3,9 @@
 
 package synthdrivers.RolandMKS50;
 
-import core.BankDriver;
-import core.ErrorMsg;
-import core.Patch;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
 
 public class MKS50ToneBankDriver extends BankDriver
 {

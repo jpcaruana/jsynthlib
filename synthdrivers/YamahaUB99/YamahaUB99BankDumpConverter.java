@@ -24,6 +24,9 @@ package synthdrivers.YamahaUB99;
 import core.*;
 import javax.sound.midi.SysexMessage;
 
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
+
 public class YamahaUB99BankDumpConverter extends Converter {
 
     private final YamahaUB99Driver singleDriver;

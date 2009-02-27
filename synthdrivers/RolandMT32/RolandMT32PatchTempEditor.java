@@ -35,12 +35,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.ErrorMsg;
-import core.Patch;
-import core.PatchEditorFrame;
-import core.ScrollBarWidget;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.ScrollBarWidget;
+
 
 class RolandMT32PatchTempEditor extends PatchEditorFrame {
                                             

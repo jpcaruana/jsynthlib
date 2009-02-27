@@ -2,11 +2,12 @@
  * @version $Id: NovationXioSynthSingleDriver.java,v 1.9 2008/12/16 $
  */
 package synthdrivers.NovationXioSynth;
-import core.Driver;
-import core.JSLFrame;
-import core.Patch;
 
 import java.io.*;
+
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
 
 public class NovationXioSynthSingleDriver extends Driver
 {

@@ -28,8 +28,8 @@ package synthdrivers.YamahaTG100;
  * @version $Id$
  */
 
-import core.ParamModel;
-import core.Patch;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
 
 public class TG100Model extends ParamModel {
     private boolean has2ByteValue = false;

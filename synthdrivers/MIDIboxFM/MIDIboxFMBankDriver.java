@@ -29,6 +29,12 @@ import core.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 public class MIDIboxFMBankDriver extends BankDriver
 {
     private byte sysex_type;

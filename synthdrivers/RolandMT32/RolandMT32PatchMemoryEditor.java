@@ -31,6 +31,13 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.ScrollBarWidget;
+
 class RolandMT32PatchMemoryEditor extends PatchEditorFrame {
                                             
     final String [] TimbreGroupName  = new String [] {"Group A", 

@@ -1,13 +1,13 @@
 package org.jsynthlib.editorbuilder.widgets;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SpinnerWidget;
+import org.jsynthlib.core.SysexWidget;
+import org.jsynthlib.core.VertScrollBarWidget;
 import org.jsynthlib.editorbuilder.Parameter;
 import org.jsynthlib.utils.XMLWriter;
 import org.xml.sax.SAXException;
 
-import core.KnobWidget;
-import core.ScrollBarWidget;
-import core.SpinnerWidget;
-import core.SysexWidget;
-import core.VertScrollBarWidget;
 
 public class RangeParameterWidget extends ParameterWidget {
 	protected static final String[] types = new String[] {"H. ScrollBar",

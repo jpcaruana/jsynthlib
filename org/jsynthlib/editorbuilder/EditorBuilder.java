@@ -16,11 +16,11 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
+import org.jsynthlib.core.CompatibleFileDialog;
 import org.jsynthlib.editorbuilder.widgets.ContainerWidget;
 import org.jsynthlib.editorbuilder.widgets.Strut;
 import org.jsynthlib.editorbuilder.widgets.Widget;
 
-import core.CompatibleFileDialog;
 
 public class EditorBuilder {
     

@@ -46,17 +46,18 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.Driver;
-import core.EnvelopeWidget;
-import core.ParamModel;
-import core.Patch;
-import core.PatchEditorFrame;
-import core.PatchNameWidget;
-import core.ScrollBarWidget;
-import core.KnobWidget;
-import core.SysexSender;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SysexSender;
+
 
 class MIDIboxSIDSingleEditor extends PatchEditorFrame
 {

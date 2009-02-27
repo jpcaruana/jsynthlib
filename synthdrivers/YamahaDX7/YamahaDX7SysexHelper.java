@@ -22,6 +22,9 @@
  *
  */
 package synthdrivers.YamahaDX7;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 class YamahaDX7SysexHelper

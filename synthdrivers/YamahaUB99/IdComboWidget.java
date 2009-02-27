@@ -29,6 +29,10 @@ import java.awt.event.ItemListener;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
+
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.SysexWidget;
+
 import java.util.Vector;
 
 public class IdComboWidget extends SysexWidget {

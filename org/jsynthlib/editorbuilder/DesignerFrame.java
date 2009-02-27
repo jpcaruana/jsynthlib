@@ -13,13 +13,13 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.editorbuilder.widgets.PanelWidget;
 import org.jsynthlib.editorbuilder.widgets.RootPanelWidget;
 import org.jsynthlib.editorbuilder.widgets.Widget;
 import org.jsynthlib.utils.AutoSpringLayout;
 import org.jsynthlib.utils.XMLWriter;
 
-import core.ErrorMsg;
 
 public class DesignerFrame extends JFrame implements ContainerListener {
     

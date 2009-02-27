@@ -21,15 +21,15 @@
 
 package synthdrivers.RolandJD800;
 
-import core.Driver;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 /**
  * System Area Driver for Roland JD800. This area contains information about
  * master tune, Mix out filter, Effect B master switch, Delay, Chorus and Reverb.
  * It uses standard methods defined in <code>core.Driver</code> package.
- * @see core.Driver
+ * @see org.jsynthlib.core.Driver
  */
 public class RolandJD800SystemArea extends Driver {
     

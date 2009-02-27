@@ -23,6 +23,14 @@ package synthdrivers.RolandJD800;
 
 import java.io.*;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.ISinglePatch;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 
@@ -88,7 +96,7 @@ public class RolandJD800SinglePatchDriver extends Driver {
     /**
      * Creates a patch from a byte array. It must concatenate two sysex messages
      * into one.
-     * @see core.Driver#createPatch(byte[])
+     * @see org.jsynthlib.core.Driver#createPatch(byte[])
      */
     public IPatch createPatch(byte[] sysex) {
         byte[] out = new byte[JD800.SizeOfSinglePatch + JD800.SizeOfSyxHeader];
@@ -105,7 +113,7 @@ public class RolandJD800SinglePatchDriver extends Driver {
      * this driver is the correct one to support the patch. It is
      * overrided as it needs to serve for both sysex message sizes: original two
      * sysex messages and single concatenated one.
-     * @see core.Driver#supportsPatch(String, byte[])
+     * @see org.jsynthlib.core.Driver#supportsPatch(String, byte[])
      */
     public boolean supportsPatch(String patchString, byte[] sysex) {
         // The statement below has been changed when compared to original. The rest is the same.

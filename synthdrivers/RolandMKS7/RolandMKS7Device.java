@@ -26,6 +26,8 @@ package synthdrivers.RolandMKS7;
 import core.*;
 import java.util.prefs.Preferences;
 
+import org.jsynthlib.core.Device;
+
 public class RolandMKS7Device extends Device
 {
   /** Creates new RolandMKS7Device */

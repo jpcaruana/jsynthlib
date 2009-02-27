@@ -1,9 +1,11 @@
 package synthdrivers.Generic;
 
-import core.Patch;
-import core.PatchEditorFrame;
 
 import javax.swing.*;
+
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+
 import java.awt.*;
 
 /**

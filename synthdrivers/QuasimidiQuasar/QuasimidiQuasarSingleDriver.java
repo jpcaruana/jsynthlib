@@ -25,12 +25,13 @@ import java.io.UnsupportedEncodingException;
 
 import javax.swing.JOptionPane;
 
-import core.Driver;
-import core.ErrorMsg;
-import core.JSLFrame;
-import core.Patch;
-import core.PatchEdit;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 
 /** Driver for Quasimidi Quasar Singles Performance's
  *

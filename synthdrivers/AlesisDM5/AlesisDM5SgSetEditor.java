@@ -30,6 +30,18 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import javax.sound.midi.ShortMessage;
 
+import org.jsynthlib.core.AppConfig;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarLookupWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SysexWidget;
+
 
 /** Alesis DM5 Single Drumset Editor Edits individual note parameters and
 * trigger note assignments for a single drumset patch. A single drumset is

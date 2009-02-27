@@ -22,6 +22,9 @@
  *
  */
 package synthdrivers.YamahaTX802;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 public class YamahaTX802SysexHelpers

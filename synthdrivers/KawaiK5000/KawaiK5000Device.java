@@ -9,6 +9,8 @@ package synthdrivers.KawaiK5000;
 import core.*;
 import java.util.prefs.Preferences;
 
+import org.jsynthlib.core.Device;
+
 /**
  * @version $Id$
  */

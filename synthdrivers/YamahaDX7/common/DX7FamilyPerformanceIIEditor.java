@@ -29,14 +29,15 @@ import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import core.ComboBoxWidget;
-import core.EnvelopeWidget;
-import core.ParamModel;
-import core.Patch;
-import core.PatchEdit;
-import core.PatchEditorFrame;
-import core.PatchNameWidget;
-import core.SysexSender;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.SysexSender;
+
 
 public class DX7FamilyPerformanceIIEditor extends PatchEditorFrame 
 {

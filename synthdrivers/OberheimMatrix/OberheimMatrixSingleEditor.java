@@ -9,6 +9,19 @@ import javax.swing.table.*;
 import java.awt.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
+
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SysexSender;
+import org.jsynthlib.core.Utility;
+
 import java.util.*;
 class OberheimMatrixSingleEditor extends PatchEditorFrame
 {
@@ -638,9 +651,9 @@ class MtxSender extends SysexSender
 //and send it out. We actually ignore the value sent in to us, cause the sysexdata already represents status w/ that change
 class BitSender extends SysexSender
 {
-  int parameter;int ofs;core.Patch patch;
+  int parameter;int ofs;org.jsynthlib.core.Patch patch;
   byte []b = new byte [7];
-  public BitSender(core.Patch p,int param,int o)
+  public BitSender(org.jsynthlib.core.Patch p,int param,int o)
   {parameter=param;ofs=o*2+5;patch=p;
    b[0]=(byte)0xF0; b[1]=(byte)0x10;b[2]=(byte)0x06;b[3]=0x06; b[4]=(byte)parameter;b[6]=(byte)0xF7;
   }
@@ -707,7 +720,7 @@ class ModSender extends SysexSender
 {
   int modnum; Patch patch;
   byte []b = new byte [9];
-  public ModSender(core.Patch p,int m)   //m=# of mod matrix to send (0-9)
+  public ModSender(org.jsynthlib.core.Patch p,int m)   //m=# of mod matrix to send (0-9)
   {modnum=m;patch=p;
    b[0]=(byte)0xF0; b[1]=(byte)0x10;b[2]=(byte)0x06;b[3]=0x0B; b[4]=(byte)modnum;b[8]=(byte)0xF7;
   }

@@ -22,9 +22,10 @@
  *
  */
 package synthdrivers.YamahaTX802;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyPerformanceIIIBankDriver;
-import core.Patch;
 
 public class YamahaTX802PerformanceBankDriver extends DX7FamilyPerformanceIIIBankDriver
 {

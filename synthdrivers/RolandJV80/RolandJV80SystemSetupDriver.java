@@ -22,11 +22,12 @@ package synthdrivers.RolandJV80;
 
 import java.util.Date;
 
-import core.Device;
-import core.Driver;
-import core.JSLFrame;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Device;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 
 /**
  * @author Sander Brandenburg

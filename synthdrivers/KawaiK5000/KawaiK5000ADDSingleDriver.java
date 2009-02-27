@@ -4,11 +4,12 @@
 package synthdrivers.KawaiK5000;
 import java.io.InputStream;
 
-import core.Driver;
-import core.ErrorMsg;
-import core.JSLFrame;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 public class KawaiK5000ADDSingleDriver extends Driver
 {
   final static SysexHandler SYSEX_REQUEST_A_DUMP = new SysexHandler("F0 40 @@ 00 00 0A 00 00 *patchNum* F7");  // phil@muqus.com (p23)

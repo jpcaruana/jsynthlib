@@ -5,19 +5,19 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.KnobLookupWidget;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarLookupWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SpinnerWidget;
+import org.jsynthlib.core.SysexWidget;
+import org.jsynthlib.core.VertScrollBarWidget;
 import org.jsynthlib.jsynthlib.xml.XMLParameter;
 import org.jsynthlib.jsynthlib.xml.XMLPatch;
 
-import core.ComboBoxWidget;
-import core.IPatch;
-import core.KnobLookupWidget;
-import core.KnobWidget;
-import core.PatchNameWidget;
-import core.ScrollBarLookupWidget;
-import core.ScrollBarWidget;
-import core.SpinnerWidget;
-import core.SysexWidget;
-import core.VertScrollBarWidget;
 
 
 public class SysexWidgetDescription extends WidgetDescription {

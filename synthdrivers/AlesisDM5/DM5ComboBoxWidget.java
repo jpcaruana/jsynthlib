@@ -21,6 +21,9 @@
 
 package synthdrivers.AlesisDM5;
 
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.IPatch;
+
 import core.*;
 
 /** DM5 ComboBoxWidget. Adds functionality to the standard JSynthLib ComboBoxWidget

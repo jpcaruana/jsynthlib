@@ -9,6 +9,15 @@ import java.awt.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SysexSender;
+
 class NXSParamModel extends ParamModel 
 {
     private int bitmask;

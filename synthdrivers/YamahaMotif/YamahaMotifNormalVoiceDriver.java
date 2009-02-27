@@ -1,4 +1,7 @@
 package synthdrivers.YamahaMotif;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 /** Driver for Yamaha Motif Normal Voices */

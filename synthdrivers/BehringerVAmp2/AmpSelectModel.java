@@ -25,6 +25,9 @@ import core.*;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
+
+import org.jsynthlib.core.ComboBoxWidget;
+
 import java.awt.event.*;
 
 /**

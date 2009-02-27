@@ -6,6 +6,10 @@ import core.*;
 
 import java.io.*;
 import javax.swing.*;
+
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
 public class YamahaTX81zBankDriver extends BankDriver
 {
 

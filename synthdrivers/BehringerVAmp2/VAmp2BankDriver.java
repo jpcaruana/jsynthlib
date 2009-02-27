@@ -25,6 +25,11 @@ import core.*;
 import java.io.UnsupportedEncodingException;
 import javax.swing.JOptionPane;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 /**
  * V-Amp 2 Bank Driver. Used for V-Amp 2 bank patch. The V-Amp 2 appears to the
  * user to have 25 banks consisting of five patch locations apiece. The banks

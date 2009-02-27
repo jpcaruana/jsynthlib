@@ -8,6 +8,12 @@ import core.*;
 
 import javax.swing.*;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 public class AlesisA6PgmSingleDriver extends Driver
 {
   static final String bankList[] = new String[] {"User", "Preset1", "Preset2", "Card 1",

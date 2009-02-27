@@ -26,19 +26,20 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.JSLFrame;
-import core.KnobLookupWidget;
-import core.KnobWidget;
-import core.ParamModel;
-import core.Patch;
-import core.PatchEdit;
-import core.PatchEditorFrame;
-import core.PatchNameWidget;
-import core.SpinnerWidget;
-import core.SysexSender;
-import core.SysexWidget;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.KnobLookupWidget;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.SpinnerWidget;
+import org.jsynthlib.core.SysexSender;
+import org.jsynthlib.core.SysexWidget;
+
 
 /**
 	Voice editor.
@@ -204,7 +205,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 			{
 				if (mPatchCopy != null)
 				{
-					JDialog oDialog = new PasteDialog(core.PatchEdit.getInstance(), mPatchCopy, (Patch) getPatch(), mPart, mOperatorWidgets);
+					JDialog oDialog = new PasteDialog(org.jsynthlib.core.PatchEdit.getInstance(), mPatchCopy, (Patch) getPatch(), mPart, mOperatorWidgets);
 				}
 			}
 		});

@@ -22,7 +22,8 @@
 package synthdrivers.RolandJD800;
 
 import java.util.prefs.Preferences;
-import core.Device;
+
+import org.jsynthlib.core.Device;
 
 /**
  * Device class for Roland JD800.

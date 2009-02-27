@@ -25,6 +25,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+
 /** Single patch driver for Yamaha UB99
  *
  */

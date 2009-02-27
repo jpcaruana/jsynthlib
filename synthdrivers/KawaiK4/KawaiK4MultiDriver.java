@@ -1,9 +1,9 @@
 package synthdrivers.KawaiK4;
-import core.Driver;
-import core.DriverUtil;
-import core.JSLFrame;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 /**
  * Single Multi Patch Driver for Kawai K4.

@@ -21,10 +21,10 @@
 
 package synthdrivers.YamahaTG100;
 
-import core.Driver;
-import core.DriverUtil;
-import core.JSLFrame;
-import core.Patch;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
 
 
 /**

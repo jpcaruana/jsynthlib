@@ -8,6 +8,8 @@ package synthdrivers.EnsoniqESQ1;
 
 import core.*;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 /**
  *
  * @author  Gerrit Gehnen

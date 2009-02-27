@@ -4,6 +4,12 @@ import core.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 /** Driver for Kawai K4 Multi Bank
  *
  * @author Gerrit Gehnen

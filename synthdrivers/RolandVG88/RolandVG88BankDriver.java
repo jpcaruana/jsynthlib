@@ -24,6 +24,11 @@ package synthdrivers.RolandVG88;
 import core.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+
  /**
  * Bank Driver for Roland VG88
  */

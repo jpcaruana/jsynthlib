@@ -1,7 +1,8 @@
 package synthdrivers.AccessVirus;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 /** Device class for the Access Virus
  * @version $Id$

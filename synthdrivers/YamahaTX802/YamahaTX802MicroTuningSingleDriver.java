@@ -22,9 +22,10 @@
  *
  */
 package synthdrivers.YamahaTX802;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.YamahaDX7.common.DX7FamilyMicroTuningSingleDriver;
-import core.JSLFrame;
-import core.Patch;
 
 public class YamahaTX802MicroTuningSingleDriver extends DX7FamilyMicroTuningSingleDriver
 {

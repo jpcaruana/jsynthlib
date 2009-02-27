@@ -21,6 +21,9 @@
 
 package synthdrivers.YamahaUB99;
 
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 class YamahaUB99Model extends ParamModel {

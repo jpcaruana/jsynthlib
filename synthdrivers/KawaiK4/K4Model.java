@@ -1,5 +1,8 @@
 package synthdrivers.KawaiK4;
 
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 class K4Model extends ParamModel {

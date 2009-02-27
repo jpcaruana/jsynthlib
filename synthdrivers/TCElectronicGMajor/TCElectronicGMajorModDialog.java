@@ -24,6 +24,9 @@ package synthdrivers.TCElectronicGMajor;
 import core.*;
 import javax.swing.*;
 import javax.swing.event.*;
+
+import org.jsynthlib.core.Patch;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;

@@ -7,6 +7,8 @@ package synthdrivers.YamahaMotif;
 
 import core.*;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 /**
  * @author  Ryan Brown
  * @version $Id$

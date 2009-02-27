@@ -26,6 +26,13 @@ import java.io.*;
 
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 /**
  * Patch Memory Area (bank) driver for Roland JD800. JD800 operates on memory areas
  * instead of a patch concept. The entire area size is 24576 bytes. The maximum
@@ -123,7 +130,7 @@ public class RolandJD800BankDriver extends BankDriver {
      * this driver is the correct one to support the patch. It is
      * overrided as it needs to serve for both sysex message sizes: original 96
      * sysex messages and single concatenated one.
-     * @see core.Driver#supportsPatch(String, byte[])
+     * @see org.jsynthlib.core.Driver#supportsPatch(String, byte[])
      */
     public boolean supportsPatch(String patchString, byte[] sysex) {
         // The statement below has been changed when compared to original. The rest is the same.

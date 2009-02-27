@@ -3,10 +3,10 @@
 
 package synthdrivers.NordLead;
 
-import core.Driver;
-import core.ErrorMsg;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 public class NLPerfSingleDriver extends Driver {
   static final String BANK_LIST[] = new String[] { "PCMCIA" };

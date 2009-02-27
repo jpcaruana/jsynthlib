@@ -21,6 +21,11 @@
 
 package synthdrivers.BehringerVAmp2;
 
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.Utility;
+
 import core.*;
 
 /**

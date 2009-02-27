@@ -21,6 +21,9 @@
 
 package synthdrivers.Line6BassPod;
 
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 

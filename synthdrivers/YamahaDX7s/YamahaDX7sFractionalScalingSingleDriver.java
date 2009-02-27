@@ -22,10 +22,11 @@
  *
  */
 package synthdrivers.YamahaDX7s;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.YamahaDX7.common.DX7FamilyDevice;
 import synthdrivers.YamahaDX7.common.DX7FamilyFractionalScalingSingleDriver;
-import core.JSLFrame;
-import core.Patch;
 
 public class YamahaDX7sFractionalScalingSingleDriver extends DX7FamilyFractionalScalingSingleDriver
 {

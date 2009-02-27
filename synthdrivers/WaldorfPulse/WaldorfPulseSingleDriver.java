@@ -24,10 +24,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.text.NumberFormat;
 
-import core.Driver;
-import core.JSLFrame;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 
 public class WaldorfPulseSingleDriver extends Driver
 {

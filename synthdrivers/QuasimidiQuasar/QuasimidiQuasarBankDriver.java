@@ -24,6 +24,13 @@ package synthdrivers.QuasimidiQuasar;
 import core.*;
 
 import javax.swing.*;
+
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 import java.io.*;
 
 /**

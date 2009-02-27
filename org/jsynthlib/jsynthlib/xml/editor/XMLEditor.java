@@ -2,9 +2,9 @@ package org.jsynthlib.jsynthlib.xml.editor;
 
 import javax.swing.JPanel;
 
+import org.jsynthlib.core.PatchEditorFrame;
 import org.jsynthlib.jsynthlib.xml.XMLPatch;
 
-import core.PatchEditorFrame;
 
 
 public class XMLEditor extends PatchEditorFrame {

@@ -41,18 +41,19 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import core.ComboBoxWidget;
-import core.Driver;
-import core.EnvelopeWidget;
-import core.ParamModel;
-import core.Patch;
-import core.PatchEditorFrame;
-import core.PatchNameWidget;
-import core.ScrollBarLookupWidget;
-import core.ScrollBarWidget;
-import core.SysexHandler;
-import core.SysexSender;
-import core.SysexWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarLookupWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SysexHandler;
+import org.jsynthlib.core.SysexSender;
+import org.jsynthlib.core.SysexWidget;
+
 
 public class DX7FamilyVoiceEditor extends PatchEditorFrame implements ItemListener
 {

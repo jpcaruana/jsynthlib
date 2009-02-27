@@ -7,6 +7,12 @@ import core.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 public class EmuProteusMPSSingleDriver extends Driver
 {
 final static SysexHandler SysexRequestDump = new SysexHandler("F0 18 08 00 00 *bankNum* *patchNum* F7");

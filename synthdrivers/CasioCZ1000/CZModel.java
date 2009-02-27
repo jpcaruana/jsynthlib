@@ -20,8 +20,8 @@
  */
 package synthdrivers.CasioCZ1000;
 
-import core.ParamModel;
-import core.Patch;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
 
 
 /** 

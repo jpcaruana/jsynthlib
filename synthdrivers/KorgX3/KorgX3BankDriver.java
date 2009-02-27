@@ -4,6 +4,11 @@ import core.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 /**
  * This class is a bank driver for Korg X3 -synthesizer to be used in
  * JSynthLib-program. Might work directly with Korg X2 as well.

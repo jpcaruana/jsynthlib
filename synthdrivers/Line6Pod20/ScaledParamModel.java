@@ -21,6 +21,9 @@
 
 package synthdrivers.Line6Pod20;
 
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 /** Scalable ParamModel--to allow different max values for CC and Sysex.

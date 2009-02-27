@@ -3,10 +3,11 @@ package synthdrivers.YamahaFS1R;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import core.ComboBoxWidget;
-import core.Patch;
-import core.ParamModel;
-import core.SysexSender;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexSender;
+
 
 public class ComboActionWidget extends ComboBoxWidget {
     protected ComboActionListener mListener;

@@ -6,6 +6,8 @@ package synthdrivers.PeaveyPC1600;
 
 import core.*;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 /**
  *
  * @author  Phil Shepherd

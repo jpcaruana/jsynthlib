@@ -1,11 +1,11 @@
 package org.jsynthlib.editorbuilder;
+import org.jsynthlib.core.IPatch;
 import org.jsynthlib.jsynthlib.xml.XMLParameter;
 import org.jsynthlib.plugins.Decoder;
 import org.jsynthlib.utils.Writable;
 import org.jsynthlib.utils.XMLWriter;
 import org.xml.sax.SAXException;
 
-import core.IPatch;
 
 public class Parameter extends XMLParameter implements  Writable {
 	private static DummyPatch dummypatch;

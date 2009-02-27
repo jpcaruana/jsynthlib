@@ -1,6 +1,6 @@
 package synthdrivers.KawaiK4;
-import core.Converter;
-import core.Patch;
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
 
 /**
  * Convert a bulk patch into an array of single bank, multi bank,

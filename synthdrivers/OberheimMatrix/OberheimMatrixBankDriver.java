@@ -2,10 +2,10 @@
  * @version $Id$
  */
 package synthdrivers.OberheimMatrix;
-import core.BankDriver;
-import core.DriverUtil;
-import core.ErrorMsg;
-import core.Patch;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.DriverUtil;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
 public class OberheimMatrixBankDriver extends BankDriver
 {
 

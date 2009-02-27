@@ -20,6 +20,11 @@
  */
 
 package synthdrivers.BehringerFCB1010;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 /** Behringer FCB1010 Driver.

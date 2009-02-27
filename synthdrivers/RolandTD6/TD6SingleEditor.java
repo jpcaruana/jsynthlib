@@ -32,19 +32,20 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.ErrorMsg;
-import core.KnobLookupWidget;
-import core.ParamModel;
-import core.Patch;
-import core.PatchEditorFrame;
-import core.PatchNameWidget;
-import core.ScrollBarLookupWidget;
-import core.ScrollBarWidget;
-import core.SysexWidget;
-import core.TreeWidget;
-import core.VertScrollBarWidget;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.KnobLookupWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarLookupWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SysexWidget;
+import org.jsynthlib.core.TreeWidget;
+import org.jsynthlib.core.VertScrollBarWidget;
+
 
 /**
  * Single Patch Editor for Roland TD-6 Percussion Module.

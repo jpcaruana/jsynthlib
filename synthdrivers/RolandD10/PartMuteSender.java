@@ -20,8 +20,8 @@
  */
 package synthdrivers.RolandD10;
 
-import core.IPatchDriver;
-import core.SysexWidget.ISender;
+import org.jsynthlib.core.IPatchDriver;
+import org.jsynthlib.core.SysexWidget.ISender;
 
 /**
  * This class is used for sending a Tones partitial mute setting. Since there

@@ -20,6 +20,8 @@
  */
 
 package synthdrivers.AlesisDM5;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 /** Alesis DM5 Edit Buffer Driver. This driver subclasses AlesisDM5SgSetDriver

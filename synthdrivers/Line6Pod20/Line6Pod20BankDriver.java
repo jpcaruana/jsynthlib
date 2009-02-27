@@ -24,6 +24,11 @@ import core.*;
 import java.io.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 /** Line6 Bank Driver. Used for Line6 bank patch.
 * Line6 devices appear to the user to have nine banks consisting of four patch locations apiece.
 * The banks are numbered 1 through 9 and the patches are designated by the letters A, B, C, and D.

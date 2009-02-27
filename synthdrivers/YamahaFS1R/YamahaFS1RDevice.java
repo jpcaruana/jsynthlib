@@ -2,6 +2,9 @@
 package synthdrivers.YamahaFS1R;
 
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
+
 import core.*;
 
 /**

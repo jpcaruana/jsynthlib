@@ -46,15 +46,16 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableColumn;
 
-import core.Patch;
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.Driver;
-import core.EnvelopeWidget;
-import core.PatchEditorFrame;
-import core.PatchNameWidget;
-import core.ScrollBarWidget;
-import core.KnobWidget;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+
 
 class MIDIboxFMPatchEditor extends PatchEditorFrame
 {

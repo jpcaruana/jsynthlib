@@ -33,7 +33,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import core.Device;
+import org.jsynthlib.core.Device;
+
 
 public class DX7FamilyDevice extends Device
 {

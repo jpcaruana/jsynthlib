@@ -21,6 +21,8 @@
 
 package synthdrivers.Line6Pod20;
 
+import org.jsynthlib.core.SysexWidget;
+
 import core.*;
 
 /** Dummy do-nothing model. This model is used for the Global Wah on/off setting.

@@ -28,6 +28,12 @@ package synthdrivers.MIDIboxSID;
 import core.*;
 import javax.swing.JOptionPane;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 public class MIDIboxSIDSingleDriver extends Driver
 {
 

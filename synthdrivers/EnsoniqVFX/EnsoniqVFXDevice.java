@@ -4,6 +4,8 @@ package synthdrivers.EnsoniqVFX;
 import core.*;
 import java.util.prefs.Preferences;
 
+import org.jsynthlib.core.Device;
+
 /**
  * Ensoniq VFX device. Copied from the ESQ1.
  * My VFX version seems to be 2.10 (02 0A in the inquiry result ID message).

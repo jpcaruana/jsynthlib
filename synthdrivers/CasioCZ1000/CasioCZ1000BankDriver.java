@@ -28,9 +28,10 @@
 package synthdrivers.CasioCZ1000;
 import javax.swing.JOptionPane;
 
-import core.BankDriver;
-import core.ErrorMsg;
-import core.Patch;
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+
 public class CasioCZ1000BankDriver extends BankDriver
 {
 

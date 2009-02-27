@@ -15,10 +15,10 @@
 //======================================================================================================================
 
 package synthdrivers.PeaveyPC1600;
-import core.Driver;
-import core.NibbleSysex;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.NibbleSysex;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 //======================================================================================================================
 // Class: PeaveyPC1600SingleDriver

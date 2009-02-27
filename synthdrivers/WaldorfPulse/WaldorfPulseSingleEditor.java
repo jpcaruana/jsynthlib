@@ -35,17 +35,18 @@ import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import core.CheckBoxWidget;
-import core.ComboBoxWidget;
-import core.EnvelopeWidget;
-import core.ErrorMsg;
-import core.IPatchDriver;
-import core.ParamModel;
-import core.Patch;
-import core.PatchEditorFrame;
-import core.ScrollBarLookupWidget;
-import core.ScrollBarWidget;
-import core.SysexWidget;
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.EnvelopeWidget;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.IPatchDriver;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.ScrollBarLookupWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+import org.jsynthlib.core.SysexWidget;
+
 
 class WaldorfPulseSingleEditor extends PatchEditorFrame
 {

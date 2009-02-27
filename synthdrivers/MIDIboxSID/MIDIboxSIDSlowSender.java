@@ -25,8 +25,8 @@
  */
 
 package synthdrivers.MIDIboxSID;
-import core.Driver;
-import core.ErrorMsg;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
 
 
 public class MIDIboxSIDSlowSender

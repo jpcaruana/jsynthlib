@@ -27,7 +27,8 @@
 package synthdrivers.MIDIboxSID;
 import java.util.prefs.Preferences;
 
-import core.Device;
+import org.jsynthlib.core.Device;
+
 
 public class MIDIboxSIDDevice extends Device
 {

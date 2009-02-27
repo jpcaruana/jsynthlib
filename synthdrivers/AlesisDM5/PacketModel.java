@@ -21,6 +21,8 @@
 
 package synthdrivers.AlesisDM5;
 
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 /** The PacketModel derives from the BitModel class and allows for editing of

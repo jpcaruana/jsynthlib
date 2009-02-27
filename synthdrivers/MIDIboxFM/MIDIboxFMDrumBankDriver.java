@@ -24,6 +24,8 @@
 
 package synthdrivers.MIDIboxFM;
 
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 import synthdrivers.MIDIboxFM.MIDIboxFMBankDriver;

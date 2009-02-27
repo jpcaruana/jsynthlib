@@ -11,7 +11,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import core.Device;
+import org.jsynthlib.core.Device;
+
 
 public class NordLeadDevice extends Device implements ItemListener {
   static final String DRIVER_INFO =

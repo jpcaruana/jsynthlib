@@ -6,6 +6,8 @@ package synthdrivers.RolandXV5080;
 
 import core.*;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 /**
  *
  * @author  Phil Shepherd

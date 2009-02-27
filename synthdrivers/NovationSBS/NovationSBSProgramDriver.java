@@ -21,10 +21,11 @@
 
 package synthdrivers.NovationSBS;
 
-import core.Driver;
 //import core.JSLFrame;
-import core.Patch;
 import javax.swing.JOptionPane;
+
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.Patch;
 
 
 
@@ -56,7 +57,7 @@ public class NovationSBSProgramDriver extends Driver {
     }    
     
     /**
-     * @see core.Driver#createNewPatch()
+     * @see org.jsynthlib.core.Driver#createNewPatch()
      */
     public Patch createNewPatch() {
         byte[] sysex  = new byte[patchSize];

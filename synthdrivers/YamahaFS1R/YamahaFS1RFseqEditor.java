@@ -17,14 +17,15 @@ import javax.swing.JRadioButton;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import core.Actions;
-import core.ComboBoxWidget;
-import core.KnobWidget;
-import core.Patch;
-import core.PatchEdit;
-import core.PatchEditorFrame;
-import core.PatchNameWidget;
-import core.SpinnerWidget;
+import org.jsynthlib.core.Actions;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.SpinnerWidget;
+
  
 /**
 	Editor for Formant sequence.  

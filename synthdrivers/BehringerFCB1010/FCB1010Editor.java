@@ -27,6 +27,12 @@ import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.border.*;
 
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.ISinglePatch;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+
 /**
 * Behringer FCB1010 Patch Editor
  * 

@@ -22,7 +22,8 @@
 package synthdrivers.NovationSBS;
 
 import java.util.prefs.Preferences;
-import core.Device;
+
+import org.jsynthlib.core.Device;
 
 /**
  * Device class for Novation Super Bass Station.

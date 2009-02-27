@@ -30,7 +30,8 @@ package synthdrivers.YamahaTG100;
 
 import java.util.prefs.Preferences;
 
-import core.Device;
+import org.jsynthlib.core.Device;
+
 /**
  *
  * @author  Joachim Backhaus

@@ -26,6 +26,11 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+
 /** Alesis DM5 Trigger Setup Editor. Edits Gain, Velocity, Cross-Talk, Noise
 * Floor, and Decay parameters for each of the twelve external triggers on the
 * DM5.

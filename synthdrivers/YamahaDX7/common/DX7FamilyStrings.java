@@ -25,6 +25,8 @@ package synthdrivers.YamahaDX7.common;
 import core.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.PatchEdit;
+
 public class DX7FamilyStrings
 {
 	public final static void dxShowInformation(String driver, String string)

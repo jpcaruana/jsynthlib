@@ -21,8 +21,9 @@
 
 package synthdrivers.AlesisDM5;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 /** Device file for Alesis DM5
 * 

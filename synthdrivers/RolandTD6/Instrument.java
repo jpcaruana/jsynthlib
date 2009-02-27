@@ -20,7 +20,7 @@
  */
 
 package synthdrivers.RolandTD6;
-import core.TreeWidget;
+import org.jsynthlib.core.TreeWidget;
 
 /**
  * Instrument.java

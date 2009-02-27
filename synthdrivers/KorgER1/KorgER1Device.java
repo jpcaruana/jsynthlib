@@ -7,8 +7,9 @@
 
 package synthdrivers.KorgER1;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 /**
  *
  * @author Gerrit Gehnen

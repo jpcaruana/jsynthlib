@@ -8,6 +8,8 @@ package synthdrivers.YamahaTX81z;
 
 import core.*;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 /**
  *
  * @author  Brian Klock

@@ -6,6 +6,12 @@ import java.awt.event.*;
 
 import javax.swing.border.*;
 
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.LabelWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.ScrollBarWidget;
+
 /**
  * @author Gerrit Gehnen
  * @version $Id$

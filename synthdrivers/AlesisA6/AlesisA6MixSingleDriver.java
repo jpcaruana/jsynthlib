@@ -8,6 +8,12 @@ import core.*;
 
 import javax.swing.*;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 public class AlesisA6MixSingleDriver extends Driver
 {
   public AlesisA6MixSingleDriver()

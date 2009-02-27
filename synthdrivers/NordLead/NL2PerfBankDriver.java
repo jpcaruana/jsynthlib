@@ -6,6 +6,12 @@ import core.*;
 
 import javax.swing.*;
 
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEdit;
+import org.jsynthlib.core.SysexHandler;
+
 public class NL2PerfBankDriver extends BankDriver {
   static final int BANK_NUM_OFFSET = 4;
   static final int PATCH_NUM_OFFSET = 5;

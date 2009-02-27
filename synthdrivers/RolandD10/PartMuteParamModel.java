@@ -20,7 +20,7 @@
  */
 package synthdrivers.RolandD10;
 
-import core.SysexWidget.IParamModel;
+import org.jsynthlib.core.SysexWidget.IParamModel;
 
 /**
  * This class acts as a param model for each of the four partial mute

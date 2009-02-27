@@ -26,11 +26,11 @@
  */
 
 package synthdrivers.RolandMT32;
-import core.Driver;
-import core.JSLFrame;
-import core.Patch;
-import core.SysexHandler;
-import core.ErrorMsg;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 
 public class RolandMT32RhythmSetupTempDriver extends Driver {

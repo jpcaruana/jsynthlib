@@ -21,8 +21,8 @@
 
 package synthdrivers.TCElectronicGMajor;
 
-import core.SysexSender;
-import core.Patch;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexSender;
 
 
 class TCBitSender extends SysexSender {

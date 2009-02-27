@@ -12,6 +12,8 @@ package synthdrivers.NovationNova1;
 
 import core.*;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 public class NovationNova1Device extends Device
 {
     /** Creates new NovationNovaDevice */

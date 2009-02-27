@@ -5,6 +5,14 @@
 package synthdrivers.Generic;
 import java.util.prefs.Preferences;
 
+import org.jsynthlib.core.Device;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.LookupManufacturer;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+import org.jsynthlib.core.Utility;
+
 import core.*;
 
 /**

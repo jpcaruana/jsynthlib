@@ -20,9 +20,9 @@
  */
 package synthdrivers.CasioCZ1000;
 
-import core.Converter;
-import core.IPatch;
-import core.Patch;
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.Patch;
 
 
 /**

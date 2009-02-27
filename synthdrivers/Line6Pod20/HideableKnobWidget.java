@@ -21,6 +21,11 @@
 
 package synthdrivers.Line6Pod20;
 
+import org.jsynthlib.core.KnobWidget;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexSender;
+
 import core.*;
 
 /** Hideable version of the KnobWidget.

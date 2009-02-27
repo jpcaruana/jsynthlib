@@ -21,9 +21,9 @@
 
 package synthdrivers.Yamaha01v;
 
-import core.Driver;
-import core.Patch;
-import core.SysexHandler;
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
 
 
 public class Yamaha01vRemoteUserDriver extends Driver {
@@ -64,7 +64,7 @@ public class Yamaha01vRemoteUserDriver extends Driver {
     }    
     
     /**
-     * @see core.Driver#createNewPatch()
+     * @see org.jsynthlib.core.Driver#createNewPatch()
      */
     public Patch createNewPatch() {
         byte[] sysex  = new byte[patchSize];

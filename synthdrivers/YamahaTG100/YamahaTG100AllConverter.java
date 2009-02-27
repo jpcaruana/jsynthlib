@@ -21,6 +21,9 @@
 
 package synthdrivers.YamahaTG100;
 
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 

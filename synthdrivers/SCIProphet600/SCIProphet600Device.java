@@ -4,8 +4,9 @@
  */
 package synthdrivers.SCIProphet600;
 
-import core.Device;
 import java.util.prefs.Preferences;
+
+import org.jsynthlib.core.Device;
 
 public class SCIProphet600Device extends Device {
   static final String DRIVER_INFO =

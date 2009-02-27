@@ -25,6 +25,11 @@ import core.*;
 
 import javax.swing.*;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+
 /**
  * DataSystem Driver for Roland VG88
  */

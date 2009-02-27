@@ -21,6 +21,10 @@
 package synthdrivers.RolandD10;
 
 import static synthdrivers.RolandD10.D10Constants.*;
+
+import org.jsynthlib.core.BankDriver;
+import org.jsynthlib.core.Patch;
+
 import synthdrivers.RolandD10.message.D10DataSetMessage;
 import synthdrivers.RolandD10.message.D10RequestMessage;
 import synthdrivers.RolandD10.message.D10TransferMessage;

@@ -5,6 +5,14 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.*;
 
+import org.jsynthlib.core.CheckBoxWidget;
+import org.jsynthlib.core.ComboBoxWidget;
+import org.jsynthlib.core.LabelWidget;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.PatchEditorFrame;
+import org.jsynthlib.core.PatchNameWidget;
+import org.jsynthlib.core.ScrollBarWidget;
+
 /** Editor for Multi-Banks of the Kawai K4.
  * It has two parts:
  * 1. The common part for Name,Volume and Effect

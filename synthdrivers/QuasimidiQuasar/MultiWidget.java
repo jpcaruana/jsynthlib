@@ -28,6 +28,9 @@ import java.awt.FlowLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.jsynthlib.core.IPatch;
+import org.jsynthlib.core.SysexWidget;
+
 /** * Special widget
  *
  * @author Joachim Backhaus

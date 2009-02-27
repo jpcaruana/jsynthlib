@@ -22,6 +22,8 @@
  *
  */
 package synthdrivers.YamahaTX7;
+import org.jsynthlib.core.SysexHandler;
+
 import core.*;
 
 public class YamahaTX7SysexHelper

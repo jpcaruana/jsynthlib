@@ -21,6 +21,9 @@
 
 package synthdrivers.YamahaUB99;
 
+import org.jsynthlib.core.Converter;
+import org.jsynthlib.core.Patch;
+
 import core.*;
 
 public class YamahaUB99Converter extends Converter {

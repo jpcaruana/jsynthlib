@@ -4,6 +4,13 @@ import core.*;
 
 import java.io.*;
 
+import org.jsynthlib.core.Driver;
+import org.jsynthlib.core.JSLFrame;
+import org.jsynthlib.core.ParamModel;
+import org.jsynthlib.core.Patch;
+import org.jsynthlib.core.SysexHandler;
+import org.jsynthlib.core.SysexSender;
+
 /**
  *  Multi driver for FS1R. Multi are named Performance on FS1R.
  * @author     Denis Queffeulou mailto:dqueffeulou@free.fr
