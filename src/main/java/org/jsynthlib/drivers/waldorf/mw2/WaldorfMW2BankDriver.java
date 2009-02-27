@@ -95,9 +95,7 @@ public class WaldorfMW2BankDriver extends BankDriver {
      * @param p a <code>Patch</code> value
      */
     protected void calculateChecksum(Patch p) {
-        int sum;        
         for (int patchNo = 0; patchNo < this.patchNumbers.length; patchNo++) {
-            sum = 0;
             calculateChecksum(p, patchNo);            
         }
     }

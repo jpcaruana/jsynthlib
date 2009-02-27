@@ -281,7 +281,6 @@ public class FCB1010Editor extends PatchEditorFrame implements ActionListener {
         */
     private void doPaste(ISinglePatch p) {
         int startPos = 0;
-        int pasteLength = 0;
         
         int bank = bankSelect.getSelectedIndex();
         int preset = presetSelect.getSelectedIndex();

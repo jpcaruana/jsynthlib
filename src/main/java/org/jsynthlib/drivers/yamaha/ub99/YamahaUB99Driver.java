@@ -106,7 +106,6 @@ public class YamahaUB99Driver extends Driver {
     public byte[] createNewPatchArray() {
         byte[] b = new byte[YamahaUB99Const.SINGLE_SIZE];
         b[1] = 47;
-        int offs = YamahaUB99Const.NAME_OFFSET;
         System.arraycopy(YamahaUB99Const.NEW_PATCH_NAME, 0, b, YamahaUB99Const.NAME_OFFSET, YamahaUB99Const.NAME_SIZE);
         return b;
     }

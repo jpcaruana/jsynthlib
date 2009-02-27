@@ -128,7 +128,6 @@ public class RolandMT32PatchMemoryBankDriver extends BankDriver {
     }
 
     public Patch getPatch(Patch bank, int patchNum) {
-    int addressMSB = 0x03;
     int addressISB = 0x00;
     int addressLSB = 0x00;
 	byte[] sysex = new byte[HSIZE + SSIZE + 1];

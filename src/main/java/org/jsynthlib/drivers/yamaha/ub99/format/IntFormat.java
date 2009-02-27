@@ -24,7 +24,6 @@ package org.jsynthlib.drivers.yamaha.ub99.format;
 public class IntFormat implements IFormat {
     private int start;
     private int step;
-    private String fmt;
 
     public IntFormat(int start, int step) {
         this.start = start;

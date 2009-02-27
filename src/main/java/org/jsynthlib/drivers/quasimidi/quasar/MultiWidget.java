@@ -47,11 +47,7 @@ public class MultiWidget extends SysexWidget {
 	private JLabel[] labels;
 	private JComboBox[] comboBoxes;
 
-	/** An array of the list of the options in the ComboBox. */
-    private Object[] options;
-
 	/**
-	*
 	* @param params	The parameters for the MultiWidget
 	* @param patch 	The patch data
 	* @param pmodel	Model

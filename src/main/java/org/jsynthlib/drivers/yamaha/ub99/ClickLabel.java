@@ -21,7 +21,6 @@
 
 package org.jsynthlib.drivers.yamaha.ub99;
 
-// import core.*;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -49,7 +48,6 @@ public class ClickLabel extends JLabel {
     private int updown;
     private ChangeEvent changeEvent = null;
     private EventListenerList listenerList = new EventListenerList();
-    private Cursor curup;
 
     public ClickLabel() {
         super();

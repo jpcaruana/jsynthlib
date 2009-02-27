@@ -29,7 +29,6 @@ class PasteDialog extends JDialog
 	private JCheckBox mDest[] = new JCheckBox[8];
 	private Patch mSourcePatch;
 	private Patch mDestPatch;
-	private int mPart;
 	private ArrayList[] mWidgets;
 	
 	/**
@@ -42,7 +41,6 @@ class PasteDialog extends JDialog
 		
 		mSourcePatch = aSource;
 		mDestPatch = aDest;
-		mPart = aPart;
 		mWidgets = aWidgets;
 		
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));

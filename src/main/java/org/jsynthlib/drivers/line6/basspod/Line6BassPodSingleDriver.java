@@ -41,10 +41,6 @@ public class Line6BassPodSingleDriver extends Driver {
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.SIGL_DUMP_REQ_ID); //Program Patch Dump Request
     
-    /** Size of the sysex header for a single patch dump
-    */
-    private static int hdrSize = Constants.PDMP_HDR_SIZE;
-    
     /** Offset of the patch name in the sysex record, not including the sysex header.*/
     private static int nameStart = Constants.PATCH_NAME_START;
     

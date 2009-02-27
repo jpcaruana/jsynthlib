@@ -246,7 +246,6 @@ public class Line6BassPodSingleEditor extends PatchEditorFrame {
         
         addWidget(ampKnobsPane,new KnobWidget("Treble",   patch, 0, 127,0,new ScaledParamModel(patch,8 + pgmDumpheaderSize, 127, 63),new CCSender(16)),4,0,1,1,12);
         addWidget(ampKnobsPane,new KnobWidget("Volume",   patch, 0, 127,0,new ScaledParamModel(patch,10 + pgmDumpheaderSize, 127, 63),new CCSender(17)),6,0,1,1,13);
-        JPanel ampBtnsPane = new JPanel();
         
         JPanel modelDescPanel = new JPanel();
         modelDesc = new JLabel();

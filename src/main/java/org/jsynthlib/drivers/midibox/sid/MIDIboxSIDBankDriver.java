@@ -72,7 +72,7 @@ public class MIDIboxSIDBankDriver extends BankDriver
 
     public void storePatch (Patch p, int bankNum, int patchNum)
     { 
-	MIDIboxSIDSlowSender SlowSender = new MIDIboxSIDSlowSender();
+	//MIDIboxSIDSlowSender SlowSender = new MIDIboxSIDSlowSender();
 
 	for(int i=0; i<128; ++i) {
 	    Patch ps = getPatch(p, i);

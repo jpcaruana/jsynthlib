@@ -33,7 +33,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -84,8 +83,6 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
     private int widgetCount = 1;
     
     private Patch patch;
-    
-    private JTextField selectedNoteField;
     
     private PacketModel[] notePacketModel= new PacketModel[8];
     private SysexWidget[] sysexWidget = new SysexWidget[8];
@@ -214,7 +211,7 @@ public class AlesisDM5SgSetEditor extends PatchEditorFrame {
         int familyValue = notePacketModel[0].get();
 
         notePacketModel[1].setPacketIndex(noteValue);
-        int drumSoundValue = notePacketModel[1].get();
+        /*int drumSoundValue = notePacketModel[1].get();*/
 
         notePacketModel[2].setPacketIndex(noteValue);
         int coarseTuneValue = notePacketModel[2].get();

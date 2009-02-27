@@ -33,7 +33,6 @@ public class TG100Sender extends SysexSender {
 
     private static final int SYSEX_2BYTE_LENGTH = 11;
     private static final int SYSEX_1BYTE_LENGTH = 10;
-    private int offsetAddress;
     private byte[] sysex;
 
     // Only 0x10 works here
@@ -44,8 +43,6 @@ public class TG100Sender extends SysexSender {
     }
 
     public TG100Sender(int offsetAddress, boolean has2ByteValue) {
-        this.offsetAddress = offsetAddress;
-
         // 2 Byte values are at offset addresses: 0x18, 0x26, 0x28, 0x30, 0x32
         if(has2ByteValue) {
             sysex = new byte[SYSEX_2BYTE_LENGTH];
@@ -83,8 +80,6 @@ public class TG100Sender extends SysexSender {
 
     private byte[] generate2ByteValue(int value) {
         int sum = 0;
-        int bitmask_1111     = 0x0F;
-        int bitmask_11110000 = 0xF0;
 
         // Data
         sysex[7]  = (byte)((value & TG100Constants.BITMASK_11110000) >> 4);

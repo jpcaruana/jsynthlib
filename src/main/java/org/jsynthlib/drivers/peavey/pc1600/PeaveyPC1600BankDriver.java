@@ -108,8 +108,6 @@ public class PeaveyPC1600BankDriver extends BankDriver {
      if (indexedBank == bank)
        return;
 
-     int currentPatchStart = 0;
-
 //    Utility.interrogateSysex(p.sysex);
     NibbleSysex nibbleSysex = new NibbleSysex(bank.sysex, FIRST_PRESET_POINTER_START);
     for (int i = 0; i < getNumPatches() + 1; i++) {

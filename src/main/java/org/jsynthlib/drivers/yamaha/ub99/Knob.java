@@ -179,7 +179,6 @@ public class Knob extends SysexWidget {
 
     public void setValue(int v) {
         super.setValue(v);
-        String oVStr = display(v);
         mKnob.setValue(((float) v - getValueMin()) / (getValueMax() - getValueMin()));
     }
 

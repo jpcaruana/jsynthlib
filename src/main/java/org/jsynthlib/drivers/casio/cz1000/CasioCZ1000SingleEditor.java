@@ -310,7 +310,7 @@ public class CasioCZ1000SingleEditor extends PatchEditorFrame {
         //TODO non-hack-mode == waveforms 0 1 2 4 5 6, but only one osc can use resonance (6); res 0 1 2 3 only.
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-        int row=-1, width=40;
+        int row=-1;
         // Advanced wave tricks named and decoded by Sealed.
         // http://homepage.mac.com/synth_seal/html/cz1a.html
         String[] wfLabels = new String[] {

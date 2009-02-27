@@ -42,10 +42,6 @@ public class Line6BassPodBankDriver extends BankDriver
     */
     private static final SysexHandler SYS_REQ = new SysexHandler(Constants.BANK_DUMP_REQ_ID); //Program Bank Dump Request
     
-    /** Size of the sysex header for a bank dump
-    */
-    private static int hdrSize = Constants.BDMP_HDR_SIZE;
-    
     /** Offset of the patch name in the sysex record, not including the sysex header.*/
     private static int nameStart = Constants.PATCH_NAME_START;
     

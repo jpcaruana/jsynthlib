@@ -206,7 +206,7 @@ class YamahaFS1RVoiceEditor extends PatchEditorFrame
 			{
 				if (mPatchCopy != null)
 				{
-					JDialog oDialog = new PasteDialog(org.jsynthlib.core.PatchEdit.getInstance(), mPatchCopy, (Patch) getPatch(), mPart, mOperatorWidgets);
+					new PasteDialog(org.jsynthlib.core.PatchEdit.getInstance(), mPatchCopy, (Patch) getPatch(), mPart, mOperatorWidgets);
 				}
 			}
 		});
