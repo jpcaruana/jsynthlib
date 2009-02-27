@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.EnsoniqESQ1;
+package org.jsynthlib.drivers.ensoniq.esq1;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.core.JSLFrame;

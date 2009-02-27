@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.EnsoniqESQ1;
+package org.jsynthlib.drivers.ensoniq.esq1;
 import javax.swing.JOptionPane;
 
 import org.jsynthlib.core.BankDriver;

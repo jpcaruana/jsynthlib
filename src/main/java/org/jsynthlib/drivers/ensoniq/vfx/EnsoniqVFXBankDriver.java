@@ -1,4 +1,4 @@
-package synthdrivers.EnsoniqVFX;
+package org.jsynthlib.drivers.ensoniq.vfx;
 import javax.swing.JOptionPane;
 
 import org.jsynthlib.core.BankDriver;

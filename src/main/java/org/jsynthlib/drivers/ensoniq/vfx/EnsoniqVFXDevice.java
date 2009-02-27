@@ -1,5 +1,5 @@
 
-package synthdrivers.EnsoniqVFX;
+package org.jsynthlib.drivers.ensoniq.vfx;
 
 import java.util.prefs.Preferences;
 

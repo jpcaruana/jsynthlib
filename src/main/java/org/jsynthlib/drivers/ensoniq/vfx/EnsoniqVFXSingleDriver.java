@@ -1,4 +1,4 @@
-package synthdrivers.EnsoniqVFX;
+package org.jsynthlib.drivers.ensoniq.vfx;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.core.Patch;

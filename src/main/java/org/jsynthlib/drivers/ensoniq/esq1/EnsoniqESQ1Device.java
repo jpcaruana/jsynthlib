@@ -4,7 +4,7 @@
  * Created on 10. Oktober 2001, 22:07
  */
 
-package synthdrivers.EnsoniqESQ1;
+package org.jsynthlib.drivers.ensoniq.esq1;
 
 import java.util.prefs.Preferences;
 
