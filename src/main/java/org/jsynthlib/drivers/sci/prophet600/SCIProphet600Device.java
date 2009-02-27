@@ -2,7 +2,7 @@
  * written by Kenneth L. Martinez
  * @version $Id$
  */
-package synthdrivers.SCIProphet600;
+package org.jsynthlib.drivers.sci.prophet600;
 
 import java.util.prefs.Preferences;
 

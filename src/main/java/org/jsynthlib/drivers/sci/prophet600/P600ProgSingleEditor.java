@@ -1,6 +1,6 @@
 // written by Kenneth L. Martinez
 
-package synthdrivers.SCIProphet600;
+package org.jsynthlib.drivers.sci.prophet600;
 
 import java.awt.GridBagLayout;
 
