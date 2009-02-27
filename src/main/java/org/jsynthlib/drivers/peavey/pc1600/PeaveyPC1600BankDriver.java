@@ -12,7 +12,7 @@
 //
 //======================================================================================================================
 
-package synthdrivers.PeaveyPC1600;
+package org.jsynthlib.drivers.peavey.pc1600;
 import org.jsynthlib.core.BankDriver;
 import org.jsynthlib.core.ErrorMsg;
 import org.jsynthlib.core.NibbleSysex;

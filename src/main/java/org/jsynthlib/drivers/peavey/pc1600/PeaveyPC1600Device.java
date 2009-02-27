@@ -2,7 +2,7 @@
  * PC1600Device.java
  */
 
-package synthdrivers.PeaveyPC1600;
+package org.jsynthlib.drivers.peavey.pc1600;
 
 import java.util.prefs.Preferences;
 

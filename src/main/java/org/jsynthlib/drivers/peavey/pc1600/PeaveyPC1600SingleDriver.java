@@ -14,7 +14,7 @@
 //        data = patch data (nibblized hi,lo -- [size*2] bytes)
 //======================================================================================================================
 
-package synthdrivers.PeaveyPC1600;
+package org.jsynthlib.drivers.peavey.pc1600;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.NibbleSysex;
 import org.jsynthlib.core.Patch;
