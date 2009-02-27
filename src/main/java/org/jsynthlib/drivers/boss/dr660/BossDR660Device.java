@@ -4,7 +4,7 @@
  * Created on 10. Oktober 2001, 09:25
  */
 
-package synthdrivers.BossDR660;
+package org.jsynthlib.drivers.boss.dr660;
 
 import java.util.prefs.Preferences;
 

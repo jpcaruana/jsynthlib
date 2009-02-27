@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.BossDR660;
+package org.jsynthlib.drivers.boss.dr660;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
