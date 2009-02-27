@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.QuasimidiQuasar;
+package org.jsynthlib.drivers.quasimidi.quasar;
 
 import org.jsynthlib.core.Converter;
 import org.jsynthlib.core.Patch;

@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.QuasimidiQuasar;
+package org.jsynthlib.drivers.quasimidi.quasar;
 
 import java.io.UnsupportedEncodingException;
 

@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.QuasimidiQuasar;
+package org.jsynthlib.drivers.quasimidi.quasar;
 
 /**
  * Constants for the Quasimidi Quasar synthdriver
