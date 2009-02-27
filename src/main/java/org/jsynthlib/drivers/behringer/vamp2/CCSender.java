@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerVAmp2;
+package org.jsynthlib.drivers.behringer.vamp2;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;

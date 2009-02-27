@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerFCB1010;
+package org.jsynthlib.drivers.behringer.fcb1010;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.JSLFrame;
 import org.jsynthlib.core.Patch;

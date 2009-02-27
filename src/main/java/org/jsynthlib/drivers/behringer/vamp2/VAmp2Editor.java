@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerVAmp2;
+package org.jsynthlib.drivers.behringer.vamp2;
 
 import java.awt.CardLayout;
 import java.awt.Component;

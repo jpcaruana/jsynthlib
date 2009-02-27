@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerVAmp2;
+package org.jsynthlib.drivers.behringer.vamp2;
 
 import org.jsynthlib.core.Converter;
 import org.jsynthlib.core.ErrorMsg;

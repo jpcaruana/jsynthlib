@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerFCB1010;
+package org.jsynthlib.drivers.behringer.fcb1010;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;

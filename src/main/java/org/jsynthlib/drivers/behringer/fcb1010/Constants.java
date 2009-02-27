@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerFCB1010;
+package org.jsynthlib.drivers.behringer.fcb1010;
 
 /** Constants class for the Behringer FCB1010
 * 

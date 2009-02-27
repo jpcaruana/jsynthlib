@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerFCB1010;
+package org.jsynthlib.drivers.behringer.fcb1010;
 
 import org.jsynthlib.core.Converter;
 import org.jsynthlib.core.Patch;

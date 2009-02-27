@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerVAmp2;
+package org.jsynthlib.drivers.behringer.vamp2;
 
 /** VAmp2 Edit Buffer Driver. Used for V-Amp 2 Edit Buffer patch.
  * Note that on the V-Amp 2, the edit buffer patch and the preset patch are

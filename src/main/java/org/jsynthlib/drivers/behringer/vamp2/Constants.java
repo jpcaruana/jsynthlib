@@ -19,7 +19,7 @@
  * USA
  */
 
-package synthdrivers.BehringerVAmp2;
+package org.jsynthlib.drivers.behringer.vamp2;
 
 /**
  * Constants class for the Behringer VAmp2
