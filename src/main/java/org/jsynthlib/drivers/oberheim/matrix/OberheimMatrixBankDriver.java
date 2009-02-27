@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.OberheimMatrix;
+package org.jsynthlib.drivers.oberheim.matrix;
 import org.jsynthlib.core.BankDriver;
 import org.jsynthlib.core.DriverUtil;
 import org.jsynthlib.core.ErrorMsg;

@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.OberheimMatrix;
+package org.jsynthlib.drivers.oberheim.matrix;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

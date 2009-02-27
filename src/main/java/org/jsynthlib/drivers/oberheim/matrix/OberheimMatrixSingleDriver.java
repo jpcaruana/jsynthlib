@@ -1,7 +1,7 @@
 /*
  * @version $Id$
  */
-package synthdrivers.OberheimMatrix;
+package org.jsynthlib.drivers.oberheim.matrix;
 import org.jsynthlib.core.Driver;
 import org.jsynthlib.core.JSLFrame;
 import org.jsynthlib.core.Patch;

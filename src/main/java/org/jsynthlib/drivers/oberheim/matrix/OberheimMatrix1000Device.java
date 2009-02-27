@@ -4,7 +4,7 @@
  * Created on 10. Oktober 2001, 21:39
  */
 
-package synthdrivers.OberheimMatrix;
+package org.jsynthlib.drivers.oberheim.matrix;
 
 import java.util.prefs.Preferences;
 
