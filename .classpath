@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry path="src/main/java" kind="src" excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/"/>
-	<classpathentry path="src/main/resources" output="target/resources" kind="src" excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/"/>
-	<classpathentry path="src/test/java" output="target/test/classes" kind="src" excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/"/>
-	<classpathentry path="src/test/resources" output="target/test/resources" kind="src" excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/"/>
- 	
+	<classpathentry excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/" kind="src" path="src/main/java"/>
+	<classpathentry excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/" kind="src" output="target/resources" path="src/main/resources"/>
+	<classpathentry excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/" kind="src" output="target/test/classes" path="src/test/java"/>
+	<classpathentry excluding="midiprovider/OSX/|midiprovider/LinuxCharDev/" kind="src" output="target/test/resources" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	
 	<classpathentry kind="lib" path="groovy.jar"/>
 	<classpathentry kind="lib" path="jdom.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
