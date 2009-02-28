@@ -1,0 +1,40 @@
+<!-- XML tag, dtd, etc. -->
+<device>
+  <name>Motif</name>
+  <manufacturer>Yamaha</manufacturer>
+  <inquiryid>F07E7F06024300417[CDE]040000007FF7</inquiryid><!-- regex -->
+  <infotext>...</infotext>
+  <authors>Rib Rdb &lt;ribrdb@gmail.com&gt;</authors>
+
+  <driver> <!-- should this have another name? -->
+    <name>Normal Voice</name>
+    <!-- inherit authors? -->
+    <banknames>
+      <name>User</name>
+    </banknames>
+    <patchnames>
+      <sequence id="patchnums">
+	<variable>id</variable>
+	<start>0</start>
+	<end>127</end>
+	<!-- format 0 to A-1, 17 to B-2, etc -->
+	<value>"${(char)(65 + id/16)}-${id%16 + 1}"</value>
+      </sequence>
+    </patchnames>
+
+    <!-- the following are defaults to be inherited by sysex blocks -->
+    <decoder type="BE 7bit words" />
+    <checksum type="twos complement">
+      <start>3</start><!-- byte offset, doesn't include status byte -->
+      <end>-2</end>
+      <address>-1</address>
+    </checksum>
+
+    <patch file="normal_voice.xml" />
+    <editor>test2.xml</editor>
+
+    <class>normal_voice.groovy</class>
+
+  </driver>
+  <!-- drum voices, banks, performances, masters, mixes, plg voices, etc -->
+</device>
