@@ -4,23 +4,24 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 
 public class AutoSpringLayout extends SpringLayout {
-  protected HashMap is_sized = new HashMap();
+  protected Map<Container, Boolean> isSized = new HashMap<Container, Boolean>();
 
   public Dimension minimumLayoutSize(Container parent) {
-    if (is_sized.get(parent) == null
-	    || !((Boolean)is_sized.get(parent)).booleanValue())
+    if (isSized.get(parent) == null
+	    || !((Boolean)isSized.get(parent)).booleanValue())
       sizeContainer(parent);
     return super.minimumLayoutSize(parent);
   }
     
   public Dimension preferredLayoutSize(Container parent) {
-    if (is_sized.get(parent) == null
-	    || !((Boolean)is_sized.get(parent)).booleanValue())
+    if (isSized.get(parent) == null
+	    || !((Boolean)isSized.get(parent)).booleanValue())
       sizeContainer(parent);
     return super.preferredLayoutSize(parent);
   }
@@ -47,7 +48,7 @@ public class AutoSpringLayout extends SpringLayout {
     pconstraints.setConstraint(SpringLayout.SOUTH, Spring.constant(height));
     pconstraints.setConstraint(SpringLayout.EAST, Spring.constant(width));
 
-    is_sized.put(parent, Boolean.TRUE);
+    isSized.put(parent, Boolean.TRUE);
   }
 
   public void layoutContainer(Container parent) {

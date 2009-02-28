@@ -16,6 +16,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.jsynthlib.core.ErrorMsg;
+import org.jsynthlib.utils.SAXEventRecorder.Recording;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -30,14 +31,14 @@ public class AdvDefaultHandler extends DefaultHandler {
 
     private boolean found_start = false;
     protected Locator locator;
-    protected HashMap generators = new HashMap();
-    private LinkedHashMap defaults = new LinkedHashMap();
-    private LinkedList objects = new LinkedList();
-    private LinkedList elements = new LinkedList();
+    protected Map<String, Generator> generators = new HashMap<String, Generator>();
+    private Map<String, DefaultEntry> defaults = new LinkedHashMap<String, DefaultEntry>();
+    private LinkedList<Object> objects = new LinkedList<Object>();
+    private LinkedList<String> elements = new LinkedList<String>();
     private StringBuffer characters = new StringBuffer();
     protected Object output = null;
     private SAXEventRecorder recorder = new SAXEventRecorder();
-    private HashMap recordings = new HashMap();
+    private Map<String, Recording> recordings = new HashMap<String, Recording>();
 
     // Support for delegate parser/handler
     private String start_tag;

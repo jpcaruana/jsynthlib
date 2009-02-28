@@ -16,7 +16,7 @@ import org.xml.sax.helpers.AttributesImpl;
 public class XMLWriter {
 	private AttributesImpl attributes = new AttributesImpl();
 	private TransformerHandler xml;
-	private LinkedList elements = new LinkedList();
+	private LinkedList<String> elements = new LinkedList<String>();
     
 	public XMLWriter(OutputStream s) throws TransformerConfigurationException { 
 	    this (new StreamResult(s));

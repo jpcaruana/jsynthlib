@@ -2,6 +2,7 @@ package org.jsynthlib.utils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -20,8 +21,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author ribrdb
  */
 public class SAXEventRecorder {
-    private ArrayList events = new ArrayList();
-    private LinkedList recordings = new LinkedList();
+    private List<RecordedEvent> events = new ArrayList<RecordedEvent>();
+    private LinkedList<Recording> recordings = new LinkedList<Recording>();
     private int curdepth = 0;
     
     public Recording startRecording() {
