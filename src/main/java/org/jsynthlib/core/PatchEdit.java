@@ -1,10 +1,16 @@
 package org.jsynthlib.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
-import javax.sound.midi.*;
-import javax.swing.*;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 
 
@@ -26,7 +32,7 @@ public final class PatchEdit  {
      * @param debugLevel debug level
      * @param fileList list of file name
      */
-    public PatchEdit(ArrayList fileList, int debugLevel) {
+    public PatchEdit(List fileList, int debugLevel) {
         ErrorMsg.setDebugLevel(debugLevel);
         // for bug report
         ErrorMsg.reportStatus("JSynthLib: " + Constants.VERSION
